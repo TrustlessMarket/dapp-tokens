@@ -24,7 +24,7 @@ const Container = styled.div`
     align-self: center;
     letter-spacing: -0.02em;
     color: ${({ theme }: { theme: DefaultTheme }) => theme.white};
-    font-family: 'IBMPlexMono';
+    font-family: var(--font-heading);
   }
 
   .subTitle {
@@ -50,7 +50,8 @@ const StepBox = styled.div`
 
 const Step = styled.div<{ active: boolean; isEnd: boolean }>`
   border-bottom: 1px solid
-    ${({ theme, isEnd }: { theme: DefaultTheme; isEnd: boolean }) => (isEnd ? 'transparent' : theme.border3)};
+    ${({ theme, isEnd }: { theme: DefaultTheme; isEnd: boolean }) =>
+      isEnd ? 'transparent' : theme.border3};
   padding-bottom: ${({ isEnd }) => (isEnd ? '0px' : '24px')};
 
   opacity: ${({ active }) => (active ? 1 : 0.3)};
@@ -139,7 +140,7 @@ const PostStep = styled.div<{ disable: boolean }>`
       font-size: ${px2rem(16)};
       line-height: ${px2rem(26)};
       color: ${({ theme }: { theme: DefaultTheme }) => theme.text7};
-      font-family: 'IBMPlexMono' !important;
+      font-family: var(--font-heading) !important;
     }
 
     .loading {

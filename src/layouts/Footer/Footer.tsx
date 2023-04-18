@@ -15,7 +15,8 @@ const Wrapper = styled.div`
   margin-top: ${px2rem(140)};
   flex-wrap: wrap;
   gap: ${px2rem(32)};
-  @media screen and (max-width: ${({ theme }: { theme: DefaultTheme }) => theme.breakpoint.md}) {
+  @media screen and (max-width: ${({ theme }: { theme: DefaultTheme }) =>
+      theme.breakpoint.md}) {
     gap: ${px2rem(16)};
   }
 
@@ -27,7 +28,8 @@ const Wrapper = styled.div`
     margin-right: ${px2rem(16)};
     color: ${({ theme }: { theme: DefaultTheme }) => theme.white};
 
-    @media screen and (max-width: ${({ theme }: { theme: DefaultTheme }) => theme.breakpoint.md}) {
+    @media screen and (max-width: ${({ theme }: { theme: DefaultTheme }) =>
+        theme.breakpoint.md}) {
       order: 2;
       padding-bottom: ${px2rem(32)};
     }
@@ -39,7 +41,8 @@ const Wrapper = styled.div`
     flex-wrap: wrap;
     gap: ${px2rem(32)};
 
-    @media screen and (max-width: ${({ theme }: { theme: DefaultTheme }) => theme.breakpoint.md}) {
+    @media screen and (max-width: ${({ theme }: { theme: DefaultTheme }) =>
+        theme.breakpoint.md}) {
       order: 1;
     }
 
@@ -51,7 +54,7 @@ const Wrapper = styled.div`
       font-size: ${px2rem(16)};
       line-height: ${px2rem(28)};
       font-weight: 500;
-      font-family: 'IBMPlexMono';
+      font-family: var(--font-heading);
 
       &:hover {
         opacity: 0.8;
@@ -92,21 +95,39 @@ const Footer = ({ height }: { height: number }) => {
       <div className="footer-right">
         <StyledLink active={false} href={ROUTE_PATH.FAUCET}>
           Faucet
-          <img className="arrow-icon" src={`${CDN_URL}/icons/ic-arrow-outward.svg`} />
+          <img
+            className="arrow-icon"
+            src={`${CDN_URL}/icons/ic-arrow-outward.svg`}
+          />
         </StyledLink>
         <a href={'https://explorer.trustless.computer'} target="_blank">
           Explorer
-          <img className="arrow-icon" src={`${CDN_URL}/icons/ic-arrow-outward.svg`} />
+          <img
+            className="arrow-icon"
+            src={`${CDN_URL}/icons/ic-arrow-outward.svg`}
+          />
         </a>
         <div className="buttonContainer">
           <a href="https://github.com/trustlesscomputer" target="_blank">
-            <img alt="icon" className="icon" src={`${CDN_URL}/icons/ic_github.svg`} />
+            <img
+              alt="icon"
+              className="icon"
+              src={`${CDN_URL}/icons/ic_github.svg`}
+            />
           </a>
           <a href="https://trustless.computer/discord" target="_blank">
-            <img alt="icon" className="icon" src={`${CDN_URL}/icons/ic_discord.svg`} />
+            <img
+              alt="icon"
+              className="icon"
+              src={`${CDN_URL}/icons/ic_discord.svg`}
+            />
           </a>
           <a href="https://twitter.com/DappsOnBitcoin" target="_blank">
-            <img alt="icon" className="icon" src={`${CDN_URL}/icons/ic_twitter.svg`} />
+            <img
+              alt="icon"
+              className="icon"
+              src={`${CDN_URL}/icons/ic_twitter.svg`}
+            />
           </a>
         </div>
       </div>

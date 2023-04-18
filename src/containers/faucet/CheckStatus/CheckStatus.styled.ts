@@ -34,7 +34,7 @@ const PostStep = styled.div`
       font-size: ${px2rem(16)};
       line-height: ${px2rem(26)};
       color: ${({ theme }: { theme: DefaultTheme }) => theme.text7};
-      font-family: 'IBMPlexMono' !important;
+      font-family: var(--font-heading) !important;
     }
 
     .loading {

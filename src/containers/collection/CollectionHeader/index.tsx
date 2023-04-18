@@ -10,15 +10,28 @@ import { CDN_URL } from '@/configs';
 import { TC_EXPLORER } from '@/constants/url';
 import { useSelector } from 'react-redux';
 import { getUserSelector } from '@/state/user/selector';
-import useMintChunks, { IMintChunksParams } from '@/hooks/contract-operations/nft/useMintChunks';
-import useMintBatchChunks, { IMintBatchChunksParams } from '@/hooks/contract-operations/nft/useMintBatchChunks';
+import useMintChunks, {
+  IMintChunksParams,
+} from '@/hooks/contract-operations/nft/useMintChunks';
+import useMintBatchChunks, {
+  IMintBatchChunksParams,
+} from '@/hooks/contract-operations/nft/useMintBatchChunks';
 import useContractOperation from '@/hooks/contract-operations/useContractOperation';
 import { Transaction } from 'ethers';
 import { toast } from 'react-hot-toast';
 import { FileUploader } from 'react-drag-drop-files';
-import { BLOCK_CHAIN_FILE_LIMIT, ERC721_SUPPORTED_EXTENSIONS, ZIP_EXTENSION } from '@/constants/file';
+import {
+  BLOCK_CHAIN_FILE_LIMIT,
+  ERC721_SUPPORTED_EXTENSIONS,
+  ZIP_EXTENSION,
+} from '@/constants/file';
 import { Buffer } from 'buffer';
-import { fileToBase64, getFileExtensionByFileName, isERC721SupportedExt, unzipFile } from '@/utils';
+import {
+  fileToBase64,
+  getFileExtensionByFileName,
+  isERC721SupportedExt,
+  unzipFile,
+} from '@/utils';
 
 interface ICollectionHeader {
   collection?: ICollection;
@@ -29,15 +42,22 @@ const CollectionHeader = (props: ICollectionHeader) => {
   const { collection, onClickEdit } = props;
   const user = useSelector(getUserSelector);
   const [isMinting, setIsMinting] = useState(false);
-  const { run: mintSingle } = useContractOperation<IMintChunksParams, Transaction | null>({
+  const { run: mintSingle } = useContractOperation<
+    IMintChunksParams,
+    Transaction | null
+  >({
     operation: useMintChunks,
   });
-  const { run: mintBatch } = useContractOperation<IMintBatchChunksParams, Transaction | null>({
+  const { run: mintBatch } = useContractOperation<
+    IMintBatchChunksParams,
+    Transaction | null
+  >({
     operation: useMintBatchChunks,
   });
   const [file, setFile] = useState<File | null>(null);
 
-  const isOwner = user?.walletAddress?.toLowerCase() === collection?.creator.toLowerCase();
+  const isOwner =
+    user?.walletAddress?.toLowerCase() === collection?.creator.toLowerCase();
 
   const handleMintSingle = async (file: File): Promise<void> => {
     if (!collection?.contract) {
@@ -86,7 +106,11 @@ const CollectionHeader = (props: ICollectionHeader) => {
         const chunks = Buffer.from(JSON.stringify(obj));
         const chunksSizeInKb = Buffer.byteLength(chunks) / 1000;
         if (chunksSizeInKb > BLOCK_CHAIN_FILE_LIMIT * 1000) {
-          toast.error(`File size error, maximum file size is ${BLOCK_CHAIN_FILE_LIMIT * 1000}kb.`);
+          toast.error(
+            `File size error, maximum file size is ${
+              BLOCK_CHAIN_FILE_LIMIT * 1000
+            }kb.`,
+          );
           return;
         }
         if (currentBatchSize + chunksSizeInKb >= BLOCK_CHAIN_FILE_LIMIT * 1000) {
@@ -114,7 +138,9 @@ const CollectionHeader = (props: ICollectionHeader) => {
       }
       toast.success('Transaction has been created. Please wait for few minutes.');
     } catch (err: unknown) {
-      toast.error((err as Error).message || 'Something went wrong. Please try again later.');
+      toast.error(
+        (err as Error).message || 'Something went wrong. Please try again later.',
+      );
       console.log(err);
     } finally {
       setIsMinting(false);
@@ -134,7 +160,11 @@ const CollectionHeader = (props: ICollectionHeader) => {
     } else {
       const fileSizeInKb = file.size / 1000;
       if (fileSizeInKb > BLOCK_CHAIN_FILE_LIMIT * 1000) {
-        toast.error(`File size error, maximum file size is ${BLOCK_CHAIN_FILE_LIMIT * 1000}kb.`);
+        toast.error(
+          `File size error, maximum file size is ${
+            BLOCK_CHAIN_FILE_LIMIT * 1000
+          }kb.`,
+        );
         return;
       }
 
@@ -161,22 +191,46 @@ const CollectionHeader = (props: ICollectionHeader) => {
           <div className="infor-right">
             <div className="info-header">
               <div className="social">
-                <a href={`${TC_EXPLORER}/address/${collection?.contract}`} target="_blank">
+                <a
+                  href={`${TC_EXPLORER}/address/${collection?.contract}`}
+                  target="_blank"
+                >
                   <img src={`${CDN_URL}/icons/ic-tc-explorer-24x24.svg`} />
                 </a>
                 {collection.social.website && (
-                  <a href={collection.social.website} target="_blank" className="link">
-                    <IconSVG src={`${CDN_URL}/icons/ic_website_black.svg`} maxWidth="24px" />
+                  <a
+                    href={collection.social.website}
+                    target="_blank"
+                    className="link"
+                  >
+                    <IconSVG
+                      src={`${CDN_URL}/icons/ic_website_black.svg`}
+                      maxWidth={'24px'}
+                    />
                   </a>
                 )}
                 {collection.social.discord && (
-                  <a href={collection.social.discord} target="_blank" className="link">
-                    <IconSVG src={`${CDN_URL}/icons/ic_discord_black.svg`} maxWidth="24px" />
+                  <a
+                    href={collection.social.discord}
+                    target="_blank"
+                    className="link"
+                  >
+                    <IconSVG
+                      src={`${CDN_URL}/icons/ic_discord_black.svg`}
+                      maxWidth={'24px'}
+                    />
                   </a>
                 )}
                 {collection.social.twitter && (
-                  <a href={collection.social.twitter} target="_blank" className="link">
-                    <IconSVG src={`${CDN_URL}/icons/ic_twitter_black.svg`} maxWidth="24px" />
+                  <a
+                    href={collection.social.twitter}
+                    target="_blank"
+                    className="link"
+                  >
+                    <IconSVG
+                      src={`${CDN_URL}/icons/ic_twitter_black.svg`}
+                      maxWidth={'24px'}
+                    />
                   </a>
                 )}
               </div>

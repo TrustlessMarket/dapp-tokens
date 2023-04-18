@@ -67,7 +67,12 @@ const TransferModal = (props: Props) => {
   return (
     <StyledModalUpload show={show} onHide={handleClose} centered>
       <Modal.Header>
-        <IconSVG className="cursor-pointer" onClick={handleClose} src={`${CDN_URL}/icons/ic-close.svg`} maxWidth={'22px'} />
+        <IconSVG
+          className="cursor-pointer"
+          onClick={handleClose}
+          src={`${CDN_URL}/icons/ic-close.svg`}
+          maxWidth={'22px'}
+        />
       </Modal.Header>
       <Modal.Body>
         <Title>Transfer NFT</Title>
@@ -96,7 +101,9 @@ const TransferModal = (props: Props) => {
                   className="input"
                   placeholder={`Paste TC wallet address here`}
                 />
-                {errors.toAddress && touched.toAddress && <p className="error">{errors.toAddress}</p>}
+                {errors.toAddress && touched.toAddress && (
+                  <p className="error">{errors.toAddress}</p>
+                )}
               </WrapInput>
 
               <Button disabled={isProcessing} type="submit" className="confirm-btn">

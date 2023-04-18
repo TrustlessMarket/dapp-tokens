@@ -1,5 +1,5 @@
 import Head from 'next/head';
-import type { AppProps } from 'next/app'
+import type { AppProps } from 'next/app';
 import { SEO_TITLE, SEO_DESCRIPTION, SEO_IMAGE } from '@/constants/seo';
 import Web3Provider from '@/components/Web3Provider';
 import { Provider } from 'react-redux';
@@ -20,18 +20,12 @@ export default function App({ Component, pageProps }: AppProps) {
       <Head>
         <title>{title ?? SEO_TITLE}</title>
         <meta property="og:title" content={title ?? SEO_TITLE} />
-        <meta
-          property="og:description"
-          content={description ?? SEO_DESCRIPTION}
-        />
+        <meta property="og:description" content={description ?? SEO_DESCRIPTION} />
         <meta property="og:image" content={image ?? SEO_IMAGE} />
         <meta property="og:type" content="website" />
         <meta property="twitter:title" content={title ?? SEO_TITLE} />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta
-          name="twitter:description"
-          content={description ?? SEO_DESCRIPTION}
-        />
+        <meta name="twitter:description" content={description ?? SEO_DESCRIPTION} />
         <meta name="twitter:image" content={image ?? SEO_IMAGE} />
         <meta
           name="viewport"
@@ -86,31 +80,19 @@ export default function App({ Component, pageProps }: AppProps) {
           sizes="114x114"
           href="/images/favicon-114.png"
         />
-        <link
-          rel="apple-touch-icon"
-          sizes="72x72"
-          href="/images/favicon-72.png"
-        />
+        <link rel="apple-touch-icon" sizes="72x72" href="/images/favicon-72.png" />
         <link
           rel="apple-touch-icon"
           sizes="144x144"
           href="/images/favicon-144.png"
         />
-        <link
-          rel="apple-touch-icon"
-          sizes="60x60"
-          href="/images/favicon-60.png"
-        />
+        <link rel="apple-touch-icon" sizes="60x60" href="/images/favicon-60.png" />
         <link
           rel="apple-touch-icon"
           sizes="120x120"
           href="/images/favicon-120.png"
         />
-        <link
-          rel="apple-touch-icon"
-          sizes="76x76"
-          href="/images/favicon-76.png"
-        />
+        <link rel="apple-touch-icon" sizes="76x76" href="/images/favicon-76.png" />
         <link
           rel="apple-touch-icon"
           sizes="152x152"
@@ -140,5 +122,5 @@ export default function App({ Component, pageProps }: AppProps) {
         </ThemeProvider>
       </Provider>
     </>
-  )
+  );
 }

@@ -14,7 +14,7 @@ const Container = styled.div`
     font-weight: 500;
     letter-spacing: -0.05em;
     text-align: center;
-    font-family: 'IBMPlexMono' !important;
+    font-family: var(--font-heading) !important;
   }
 
   .subTitle {
@@ -71,7 +71,7 @@ const RightStep = styled.div`
     font-size: ${px2rem(34)};
     line-height: ${px2rem(44)};
     font-weight: 600;
-    font-family: 'IBMPlexMono' !important;
+    font-family: var(--font-heading) !important;
   }
 
   .desc {
@@ -91,7 +91,7 @@ const Link = styled.a`
   text-decoration: none;
   width: fit-content;
   text-decoration: none !important;
-  font-family: 'IBMPlexMono' !important;
+  font-family: var(--font-heading) !important;
 
   gap: ${px2rem(10)};
   background: linear-gradient(90deg, #ff8008 0%, #ffc837 100%);
@@ -116,7 +116,7 @@ const Button = styled.div`
   background: ${({ theme }: { theme: DefaultTheme }) => theme.white};
   border-radius: ${px2rem(2)};
   width: fit-content;
-  font-family: 'IBMPlexMono' !important;
+  font-family: var(--font-heading) !important;
 
   gap: ${px2rem(10)};
   background: linear-gradient(90deg, #ff8008 0%, #ffc837 100%);
@@ -136,4 +136,12 @@ const Button = styled.div`
   }
 `;
 
-export { Container, WrapContainer, StepContainer, LeftStep, RightStep, Link, Button };
+export {
+  Container,
+  WrapContainer,
+  StepContainer,
+  LeftStep,
+  RightStep,
+  Link,
+  Button,
+};

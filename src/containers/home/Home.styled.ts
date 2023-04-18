@@ -14,7 +14,7 @@ const Container = styled.div`
     font-weight: 500;
     letter-spacing: -0.05em;
     text-align: center;
-    font-family: 'IBMPlexMono' !important;
+    font-family: var(--font-heading) !important;
   }
 
   .subTitle {
@@ -58,7 +58,7 @@ const ButtonLink = styled.a<{ disabled?: boolean }>`
     text-align: center;
     letter-spacing: 0.01em;
     color: #1c1c1c;
-    font-family: 'IBMPlexMono' !important;
+    font-family: var(--font-heading) !important;
   }
 
   .icon {
@@ -87,7 +87,7 @@ const ButtonLinkSolid = styled.a`
     text-align: center;
     letter-spacing: 0.01em;
     color: #f9d03f;
-    font-family: 'IBMPlexMono' !important;
+    font-family: var(--font-heading) !important;
   }
 
   :hover {
@@ -140,7 +140,7 @@ const RightStep = styled.div`
     font-weight: 500;
     font-size: ${px2rem(34)};
     line-height: ${px2rem(44)};
-    font-family: 'IBMPlexMono' !important;
+    font-family: var(--font-heading) !important;
   }
 
   .desc {
@@ -158,7 +158,7 @@ const Button = styled.div`
   background: ${({ theme }: { theme: DefaultTheme }) => theme.white};
   border-radius: ${px2rem(2)};
   width: fit-content;
-  font-family: 'IBMPlexMono' !important;
+  font-family: var(--font-heading) !important;
 
   font-weight: 500;
   font-size: ${px2rem(18)};
@@ -168,4 +168,13 @@ const Button = styled.div`
   cursor: pointer;
 `;
 
-export { Container, WrapContainer, StepContainer, LeftStep, RightStep, Button, ButtonLink, ButtonLinkSolid };
+export {
+  Container,
+  WrapContainer,
+  StepContainer,
+  LeftStep,
+  RightStep,
+  Button,
+  ButtonLink,
+  ButtonLinkSolid,
+};

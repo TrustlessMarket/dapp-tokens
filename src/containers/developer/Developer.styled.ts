@@ -49,23 +49,22 @@ const Container = styled.div`
     }
   }
 
-    .wrap-container {
-      min-height: auto;
-      height: auto;
-    }
+  .wrap-container {
+    min-height: auto;
+    height: auto;
+  }
 
-    .wrap-content {
-      min-height: auto;
+  .wrap-content {
+    min-height: auto;
 
-      height: auto;
-      flex-direction: column-reverse;
-      margin-top: 32px;
-    }
+    height: auto;
+    flex-direction: column-reverse;
+    margin-top: 32px;
+  }
 
-    .btnFaq {
-      margin-top: 32px;
-    }
-    
+  .btnFaq {
+    margin-top: 32px;
+  }
 `;
 
 const LeftContainer = styled.div`
@@ -187,7 +186,7 @@ const RightContainer = styled.div`
     text-align: center;
     margin-top: 16px;
     line-height: 66px;
-    font-family: 'IBMPlexMono' !important;
+    font-family: var(--font-heading) !important;
   }
 
   a {
@@ -220,7 +219,7 @@ const RightContainer = styled.div`
       line-height: 26px;
       color: ${({ theme }: { theme: DefaultTheme }) => theme.white};
       text-align: center;
-      font-family: 'IBMPlexMono' !important;
+      font-family: var(--font-heading) !important;
     }
   }
 `;
@@ -307,4 +306,12 @@ const StyledFAQItem = styled.div<{ isSelected: boolean }>`
   }
 `;
 
-export { Container, CopyContainer, FAQContainer, LeftContainer, RightContainer, StyledFAQItem, TitleDoc };
+export {
+  Container,
+  CopyContainer,
+  FAQContainer,
+  LeftContainer,
+  RightContainer,
+  StyledFAQItem,
+  TitleDoc,
+};

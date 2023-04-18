@@ -38,7 +38,7 @@ const Container = styled.div`
         font-size: 34px;
         line-height: 44px;
         color: #ffffff;
-        font-family: 'IBMPlexMono' !important;
+        font-family: var(--font-heading) !important;
       }
 
       .subTitle {
@@ -119,29 +119,28 @@ const Container = styled.div`
     }
   }
 
-      .content {
-        gap: 28px;
+  .content {
+    gap: 28px;
+  }
+
+  .left-container {
+    .thumbnail {
+      width: 60%;
+    }
+  }
+
+  .right-container {
+    .header {
+      .title {
+        line-height: 24px;
+        font-size: 24px;
       }
 
-      .left-container {
-        .thumbnail {
-          width: 60%;
-        }
+      .subTitle {
+        font-size: 16px;
       }
-
-      .right-container {
-        .header {
-          .title {
-            line-height: 24px;
-            font-size: 24px;
-          }
-    
-          .subTitle {
-            font-size: 16px;
-          }
-        }
-  
-      }
+    }
+  }
 `;
 
 const Information = styled.div`

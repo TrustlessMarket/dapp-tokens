@@ -143,7 +143,7 @@ const Container = styled.div`
     font-size: ${px2rem(34)};
     line-height: ${px2rem(44)};
     color: #ffffff;
-    font-family: 'IBMPlexMono' !important;
+    font-family: var(--font-heading) !important;
     margin-bottom: ${px2rem(4)};
   }
 
@@ -160,40 +160,40 @@ const Container = styled.div`
     -webkit-box-orient: vertical;
   }
 
-    .image {
-      width: 120px;
-      height: 120px;
-    }
+  .image {
+    width: 120px;
+    height: 120px;
+  }
 
-    .infor {
-      flex-direction: column;
-      gap: 12px;
-    }
+  .infor {
+    flex-direction: column;
+    gap: 12px;
+  }
 
-    .infor-left {
-      width: 100%;
-    }
+  .infor-left {
+    width: 100%;
+  }
 
-    .infor-right {
-      width: 100%;
-      margin-top: ${px2rem(24)};
-      .row {
-        display: flex;
-        flex-direction: row;
-        gap: 30%;
-      }
+  .infor-right {
+    width: 100%;
+    margin-top: ${px2rem(24)};
+    .row {
+      display: flex;
+      flex-direction: row;
+      gap: 30%;
     }
+  }
 
-    .title {
-      font-size: 28px;
-      line-height: 32px;
-    }
+  .title {
+    font-size: 28px;
+    line-height: 32px;
+  }
 
-    .subTitle {
-      margin-top: 6px;
-      -webkit-line-clamp: 4; /* number of lines to show */
-      line-clamp: 4;
-    }
+  .subTitle {
+    margin-top: 6px;
+    -webkit-line-clamp: 4; /* number of lines to show */
+    line-clamp: 4;
+  }
 `;
 
 export { Container };

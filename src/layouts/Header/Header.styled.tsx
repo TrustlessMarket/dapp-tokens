@@ -29,6 +29,7 @@ const Wrapper = styled.div`
 
   .logo {
     z-index: 999;
+    max-width: ${px2rem(40)};
   }
 
   a {
@@ -106,15 +107,22 @@ const Wrapper = styled.div`
   }
 `;
 
-const StyledLink = styled(Link) <{ active: boolean; activeColor?: string }>`
+const StyledLink = styled(Link)<{ active: boolean; activeColor?: string }>`
   cursor: pointer;
   font-weight: 400;
   font-size: ${px2rem(16)};
   line-height: ${px2rem(28)};
   text-decoration: none !important;
-  color: ${({ theme, active, activeColor }: { theme: DefaultTheme; active: boolean; activeColor?: string }) =>
-    active ? activeColor || theme.white : theme.text2};
-  font-family: 'IBMPlexMono';
+  color: ${({
+    theme,
+    active,
+    activeColor,
+  }: {
+    theme: DefaultTheme;
+    active: boolean;
+    activeColor?: string;
+  }) => (active ? activeColor || theme.white : theme.text2)};
+  font-family: var(--font-heading);
   letter-spacing: -0.02em;
 
   :hover {
@@ -129,8 +137,9 @@ const Anchor = styled.a<{ active: boolean }>`
   font-size: ${px2rem(16)};
   line-height: ${px2rem(28)};
   text-decoration: none !important;
-  color: ${({ theme, active }: { theme: DefaultTheme; active: boolean }) => (active ? theme.white : theme.text2)};
-  font-family: 'IBMPlexMono';
+  color: ${({ theme, active }: { theme: DefaultTheme; active: boolean }) =>
+    active ? theme.white : theme.text2};
+  font-family: var(--font-heading);
   letter-spacing: -0.02em;
 
   :hover {
@@ -163,7 +172,8 @@ const WalletBalance = styled.div`
     .divider {
       width: 1px;
       height: 16px;
-      background-color: ${({ theme }: { theme: DefaultTheme }) => theme.primary['5b']};
+      background-color: ${({ theme }: { theme: DefaultTheme }) =>
+        theme.primary['5b']};
     }
   }
 
@@ -202,4 +212,11 @@ const ConnectWalletButton = styled(Button)`
   }
 `;
 
-export { ConnectWalletButton, Wrapper, StyledLink, WalletBalance, WalletAdress, Anchor };
+export {
+  ConnectWalletButton,
+  Wrapper,
+  StyledLink,
+  WalletBalance,
+  WalletAdress,
+  Anchor,
+};

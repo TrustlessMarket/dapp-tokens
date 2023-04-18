@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-export const StyledEmpty = styled.div<{ isTable: boolean }>`
+export const StyledEmpty = styled.span<{ isTable: boolean }>`
   &.notFound {
     display: grid;
     place-items: center;
