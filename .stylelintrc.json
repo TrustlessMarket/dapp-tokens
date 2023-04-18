@@ -1,0 +1,18 @@
+{
+  "processors": ["stylelint-processor-styled-components"],
+  "formatter": "stylelint-checkstyle-formatter",
+  "plugins": ["stylelint-a11y"],
+  "rules": {
+    "selector-class-pattern": [
+      ".*",
+      {
+        "resolveNestedSelectors": true
+      }
+    ]
+  },
+  "extends": [
+    "stylelint-config-standard",
+    "stylelint-config-styled-components",
+    "stylelint-config-prettier"
+  ]
+}
