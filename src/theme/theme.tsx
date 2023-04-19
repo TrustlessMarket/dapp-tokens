@@ -7,7 +7,7 @@ import {
 import { getTheme } from '@/theme/index';
 
 export default function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const darkMode = true;
+  const darkMode = false;
   const themeObject = useMemo(() => getTheme(darkMode), [darkMode]);
   return (
     <StyledComponentsThemeProvider theme={themeObject}>

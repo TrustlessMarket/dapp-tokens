@@ -1,11 +1,8 @@
-import styled, { DefaultTheme } from 'styled-components';
 import px2rem from '@/utils/px2rem';
+import styled, { DefaultTheme } from 'styled-components';
 // import IcDiscord from '@/assets/icons/ic_discord.svg';
 // import IcTwitter from '@/assets/icons/ic_twitter.svg';
 // import IcGithub from '@/assets/icons/ic_github.svg';
-import { StyledLink } from '../Header/Header.styled';
-import { ROUTE_PATH } from '@/constants/route-path';
-import { CDN_URL } from '@/configs';
 
 const Wrapper = styled.div`
   display: flex;
@@ -26,7 +23,7 @@ const Wrapper = styled.div`
     font-size: ${px2rem(16)};
     line-height: ${px2rem(26)};
     margin-right: ${px2rem(16)};
-    color: ${({ theme }: { theme: DefaultTheme }) => theme.white};
+    color: ${({ theme }: { theme: DefaultTheme }) => theme.text1};
 
     @media screen and (max-width: ${({ theme }: { theme: DefaultTheme }) =>
         theme.breakpoint.md}) {
@@ -47,7 +44,7 @@ const Wrapper = styled.div`
     }
 
     a {
-      color: ${({ theme }: { theme: DefaultTheme }) => theme.white};
+      color: ${({ theme }: { theme: DefaultTheme }) => theme.text1};
       display: flex;
       align-items: center;
       gap: ${px2rem(8)};
@@ -92,7 +89,7 @@ const Footer = ({ height }: { height: number }) => {
   return (
     <Wrapper style={{ height }}>
       <p className="text">Open-source software. Made with ❤️ on Bitcoin.</p>
-      <div className="footer-right">
+      {/* <div className="footer-right">
         <StyledLink active={false} href={ROUTE_PATH.FAUCET}>
           Faucet
           <img
@@ -130,7 +127,7 @@ const Footer = ({ height }: { height: number }) => {
             />
           </a>
         </div>
-      </div>
+      </div> */}
     </Wrapper>
   );
 };

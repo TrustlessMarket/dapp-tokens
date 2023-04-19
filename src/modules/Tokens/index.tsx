@@ -97,7 +97,7 @@ const Tokens = () => {
           {/* <img src={IcBitcoinCloud} alt="upload file icon" /> */}
           <div className="upload_content">
             <h3 className="upload_title">BRC-20 on Bitcoin</h3>
-            <Text size="medium" maxWidth="90%">
+            <Text size="medium" maxWidth="90%" color="text1">
               BRC-20 is the standard for fungible tokens on Bitcoin. You can use it
               to represent virtually anything on Bitcoin: a cryptocurrency, a share
               in a company, voting rights in a DAO, an ounce of gold, and more.
@@ -107,7 +107,7 @@ const Tokens = () => {
         <div className="upload_right">
           <Button
             bg={'white'}
-            background={'linear-gradient(90deg, #ff8008 0%, #ffc837 100%)'}
+            background={'#3385FF'}
             onClick={() => setShowModal(true)}
           >
             <Text

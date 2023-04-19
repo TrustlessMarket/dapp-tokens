@@ -31,6 +31,7 @@ export const StyledModalUpload = styled(Modal)`
   .confirm-btn {
     width: 100%;
     margin-top: ${px2rem(8)};
+    background-color: #3385ff;
 
     .confirm-text {
       padding-top: ${px2rem(11)};
@@ -79,4 +80,5 @@ export const Title = styled.h5`
   font-weight: 600;
   font-size: ${px2rem(24)};
   line-height: ${px2rem(34)};
+  color: ${({ theme }: { theme: DefaultTheme }) => theme.text1};
 `;

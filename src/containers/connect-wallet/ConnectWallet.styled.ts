@@ -33,7 +33,7 @@ export const Wrapper = styled.div`
       font-weight: 500;
       font-size: ${px2rem(24)};
       line-height: ${px2rem(34)};
-      color: #fff;
+      color: ${({ theme }) => theme.text1};
       text-align: center;
       margin-bottom: ${px2rem(36)};
     }
@@ -41,9 +41,9 @@ export const Wrapper = styled.div`
 `;
 
 export const ConnectWalletButton = styled.button`
-  background: linear-gradient(90deg, #ff8008 0%, #ffc837 100%);
+  background: #3385ff;
   padding: ${px2rem(15)} ${px2rem(24)};
-  /* color: #fff; */
+  color: #fff;
   font-size: ${px2rem(16)};
   line-height: ${px2rem(26)};
   font-weight: 400;

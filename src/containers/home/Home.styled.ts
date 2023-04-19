@@ -40,7 +40,7 @@ const Container = styled.div`
 const ButtonLink = styled.a<{ disabled?: boolean }>`
   padding: ${px2rem(14)} ${px2rem(24)};
   gap: ${px2rem(10)};
-  background: linear-gradient(90deg, #ff8008 0%, #ffc837 100%);
+  background: #3385ff;
   border-radius: 8px;
   text-decoration: none !important;
   width: fit-content;
