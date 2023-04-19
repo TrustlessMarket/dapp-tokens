@@ -1,4 +1,8 @@
-import { ContractOperationHook, DAppType, DeployContractResponse } from '@/interfaces/contract-operation';
+import {
+  ContractOperationHook,
+  DAppType,
+  DeployContractResponse,
+} from '@/interfaces/contract-operation';
 import ERC20ABIJson from '@/abis/erc20.json';
 import { useWeb3React } from '@web3-react/core';
 import { useCallback, useContext } from 'react';
@@ -15,7 +19,10 @@ export interface ICreateTokenParams {
   maxSupply: number;
 }
 
-const useCreateToken: ContractOperationHook<ICreateTokenParams, DeployContractResponse | null> = () => {
+const useCreateToken: ContractOperationHook<
+  ICreateTokenParams,
+  DeployContractResponse | null
+> = () => {
   const { account, provider } = useWeb3React();
   const { btcBalance, feeRate } = useContext(AssetsContext);
 
@@ -30,7 +37,9 @@ const useCreateToken: ContractOperationHook<ICreateTokenParams, DeployContractRe
           tcTxSizeByte: Buffer.byteLength(byteCode),
           feeRatePerByte: feeRate.fastestFee,
         });
+        // TC_SDK.signTransaction({
 
+        // });
         const estimatedFee = TC_SDK.estimateInscribeFee({
           // TODO remove hardcode
           tcTxSizeByte: 24000,
@@ -50,7 +59,11 @@ const useCreateToken: ContractOperationHook<ICreateTokenParams, DeployContractRe
           );
         }
 
-        const factory = new ContractFactory(ERC20ABIJson.abi, ERC20ABIJson.bytecode, provider.getSigner());
+        const factory = new ContractFactory(
+          ERC20ABIJson.abi,
+          ERC20ABIJson.bytecode,
+          provider.getSigner(),
+        );
         const contract = await factory.deploy(name, symbol, maxSupply);
 
         return {
