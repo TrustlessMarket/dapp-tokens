@@ -1,17 +1,15 @@
 import { SupportedChainId } from '@/constants/chains';
+import { ROUTE_PATH } from '@/constants/route-path';
+import { AssetsContext } from '@/contexts/assets-context';
 import { ContractOperationHook } from '@/interfaces/contract-operation';
+import { getIsAuthenticatedSelector, getUserSelector } from '@/state/user/selector';
 import { capitalizeFirstLetter, switchChain } from '@/utils';
 import { useWeb3React } from '@web3-react/core';
-import { useContext } from 'react';
-import useBitcoin from '../useBitcoin';
-import { useSelector } from 'react-redux';
-import { getIsAuthenticatedSelector, getUserSelector } from '@/state/user/selector';
-import { AssetsContext } from '@/contexts/assets-context';
 import { useRouter } from 'next/router';
-import { ROUTE_PATH } from '@/constants/route-path';
-import { createTransactionHistory } from '@/services/profile';
-import moment from 'moment';
-import { ICreateTransactionPayload } from '@/interfaces/transaction';
+import { useContext } from 'react';
+import { useSelector } from 'react-redux';
+import * as TC_SDK from 'trustless-computer-sdk';
+import useBitcoin from '../useBitcoin';
 
 interface IParams<P, R> {
   operation: ContractOperationHook<P, R>;
@@ -23,14 +21,20 @@ interface IContractOperationReturn<P, R> {
   run: (p: P) => Promise<R>;
 }
 
-const useContractOperation = <P, R>(args: IParams<P, R>): IContractOperationReturn<P, R> => {
-  const { operation, chainId = SupportedChainId.TRUSTLESS_COMPUTER, inscribeable = true } = args;
+const useContractOperation = <P, R>(
+  args: IParams<P, R>,
+): IContractOperationReturn<P, R> => {
+  const {
+    operation,
+    chainId = SupportedChainId.TRUSTLESS_COMPUTER,
+    inscribeable = true,
+  } = args;
   const { call, dAppType, transactionType } = operation();
   const { feeRate } = useContext(AssetsContext);
   const { chainId: walletChainId } = useWeb3React();
   const isAuthenticated = useSelector(getIsAuthenticatedSelector);
   const user = useSelector(getUserSelector);
-  const { createInscribeTx, getUnInscribedTransactionByAddress } = useBitcoin();
+  const { getUnInscribedTransactionByAddress } = useBitcoin();
   const router = useRouter();
 
   const checkAndSwitchChainIfNecessary = async (): Promise<void> => {
@@ -69,11 +73,15 @@ const useContractOperation = <P, R>(args: IParams<P, R>): IContractOperationRetu
 
       // Check unInscribed transactions
       console.time('____unInscribedTxIDsLoadTime');
-      const unInscribedTxIDs = await getUnInscribedTransactionByAddress(user.walletAddress);
+      const unInscribedTxIDs = await getUnInscribedTransactionByAddress(
+        user.walletAddress,
+      );
       console.timeEnd('____unInscribedTxIDsLoadTime');
 
       if (unInscribedTxIDs.length > 0) {
-        throw Error('You have some pending transactions. Please complete all of them before moving on.');
+        throw Error(
+          'You have some pending transactions. Please complete all of them before moving on.',
+        );
       }
 
       console.log('unInscribedTxIDs', unInscribedTxIDs);
@@ -89,23 +97,30 @@ const useContractOperation = <P, R>(args: IParams<P, R>): IContractOperationRetu
       console.log('feeRatePerByte', feeRate.fastestFee);
 
       // Make inscribe transaction
-      const { commitTxID, revealTxID } = await createInscribeTx({
-        tcTxIDs: [...unInscribedTxIDs, Object(tx).hash],
-        feeRatePerByte: feeRate.fastestFee,
-      });
+      // const { commitTxID, revealTxID } = await createInscribeTx({
+      //   tcTxIDs: [...unInscribedTxIDs, Object(tx).hash],
+      //   feeRatePerByte: feeRate.fastestFee,
+      // });
 
-      const currentTimeString = moment().format('YYYY-MM-DDTHH:mm:ssZ');
-      const transactionHistory: ICreateTransactionPayload = {
-        dapp_type: `${transactionType} ${dAppType}`,
-        tx_hash: Object(tx).hash,
-        from_address: Object(tx).from,
-        to_address: Object(tx).to,
-        time: currentTimeString,
-      };
-      if (commitTxID && revealTxID) {
-        transactionHistory.btc_tx_hash = revealTxID;
-      }
-      await createTransactionHistory(transactionHistory);
+      // const currentTimeString = moment().format('YYYY-MM-DDTHH:mm:ssZ');
+      // const transactionHistory: ICreateTransactionPayload = {
+      //   dapp_type: `${transactionType} ${dAppType}`,
+      //   tx_hash: Object(tx).hash,
+      //   from_address: Object(tx).from,
+      //   to_address: Object(tx).to,
+      //   time: currentTimeString,
+      // };
+      // if (commitTxID && revealTxID) {
+      //   transactionHistory.btc_tx_hash = revealTxID;
+      // }
+      // await createTransactionHistory(transactionHistory);
+
+      await TC_SDK.signTransaction({
+        method: `${transactionType} ${dAppType}`,
+        hash: Object(tx).hash,
+        dappURL: window.location.origin,
+        isRedirect: false,
+      });
 
       return tx;
     } catch (err) {
