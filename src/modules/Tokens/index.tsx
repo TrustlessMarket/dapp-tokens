@@ -92,12 +92,16 @@ const Tokens = () => {
 
   return (
     <StyledTokens>
+      <div className="background"></div>
+      <div>
+        <h3 className="upload_title">BRC-20 on Bitcoin</h3>
+      </div>
       <UploadFileContainer>
         <div className="upload_left">
           {/* <img src={IcBitcoinCloud} alt="upload file icon" /> */}
           <div className="upload_content">
-            <h3 className="upload_title">BRC-20 on Bitcoin</h3>
-            <Text size="medium" maxWidth="90%" color="text1">
+            {/* <h3 className="upload_title">BRC-20 on Bitcoin</h3> */}
+            <Text size="medium" color="text1">
               BRC-20 is the standard for fungible tokens on Bitcoin. You can use it
               to represent virtually anything on Bitcoin: a cryptocurrency, a share
               in a company, voting rights in a DAO, an ounce of gold, and more.

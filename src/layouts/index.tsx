@@ -17,7 +17,6 @@ export const Container = styled.div`
   padding: 0 ${px2rem(32)};
   /* padding-left: 6%;
   padding-right: 6%; */
-  background-color: ${({ theme }) => theme.bg1};
 `;
 
 const ContentWrapper = styled.div`
@@ -35,9 +34,7 @@ const Layout: React.FC<PropsWithChildren> = ({ children }) => {
   return (
     <Container>
       <Header height={HEADER_HEIGHT} />
-      <ContentWrapper>
-        {children}
-      </ContentWrapper>
+      <ContentWrapper>{children}</ContentWrapper>
       <Footer height={FO0TER_HEIGHT} />
     </Container>
   );

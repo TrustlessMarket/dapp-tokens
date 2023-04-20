@@ -44,7 +44,6 @@ const Header = ({ height }: { height: number }) => {
 
   return (
     <Wrapper style={{ height }}>
-      <div className="indicator" />
       <Link className="logo" href={ROUTE_PATH.HOME}>
         <Image
           src={`${CDN_URL}/icons/logo-tc-market.svg`}
