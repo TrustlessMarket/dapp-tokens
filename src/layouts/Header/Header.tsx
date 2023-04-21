@@ -1,5 +1,3 @@
-// import IcOpenMenu from '@/assets/icons/ic_hambuger.svg';
-// import IcLogo from '@/assets/icons/logo.svg';
 import { CDN_URL } from '@/configs';
 import { ROUTE_PATH } from '@/constants/route-path';
 import { gsap } from 'gsap';
@@ -8,10 +6,12 @@ import { useEffect, useRef, useState } from 'react';
 import { Wrapper } from './Header.styled';
 import MenuMobile from './MenuMobile';
 import WalletHeader from './Wallet';
+import { useWindowSize } from '@trustless-computer/dapp-core';
 
 const Header = ({ height }: { height: number }) => {
   const refMenu = useRef<HTMLDivElement | null>(null);
   const [isOpenMenu, setIsOpenMenu] = useState<boolean>(false);
+  const { mobileScreen } = useWindowSize();
 
   useEffect(() => {
     if (refMenu.current) {
@@ -30,12 +30,22 @@ const Header = ({ height }: { height: number }) => {
   return (
     <Wrapper style={{ height }}>
       <Link className="logo" href={ROUTE_PATH.HOME}>
-        <img
-          src={`${CDN_URL}/icons/logo-tc-market.svg`}
-          alt="Trustless Market logo"
-          width={40}
-          height={40}
-        />
+        {!mobileScreen && (
+          <img
+            src={`${CDN_URL}/images/logo-market-2.svg`}
+            alt="Trustless Market logo"
+            width={183}
+            height={40}
+          />
+        )}
+        {mobileScreen && (
+          <img
+            src={`${CDN_URL}/icons/logo-tc-market.svg`}
+            alt="Trustless Market logo"
+            width={40}
+            height={40}
+          />
+        )}
       </Link>
       <MenuMobile ref={refMenu} onCloseMenu={() => setIsOpenMenu(false)} />
       <div className="rightContainer">
