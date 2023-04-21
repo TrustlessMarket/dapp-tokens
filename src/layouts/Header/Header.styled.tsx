@@ -145,7 +145,7 @@ const WalletBalance = styled.div`
   transition: all 0.2s ease;
 
   &:hover {
-    border-color: ${({ theme }: { theme: DefaultTheme }) => theme.white};
+    border-color: ${({ theme }: { theme: DefaultTheme }) => theme.primary['d9']};
   }
 
   .balance {

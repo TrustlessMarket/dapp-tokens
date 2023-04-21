@@ -1230,11 +1230,15 @@
   resolved "https://registry.yarnpkg.com/@tokenizer/token/-/token-0.3.0.tgz#fe98a93fe789247e998c75e74e9c7c63217aa276"
   integrity sha512-OvjF+z51L3ov0OyAU0duzsYuvO01PH7x4t6DJx+guahgTnBHkhJdG7soQeTSFLWN3efnHyibZ4Z8l2EuWwJN3A==
 
-"@trustless-computer/dapp-core@^0.0.1":
-  version "0.0.1"
-  resolved "https://registry.yarnpkg.com/@trustless-computer/dapp-core/-/dapp-core-0.0.1.tgz#43a0e32d8f733c86d65cd63ac87084a49f5a1751"
-  integrity sha512-WxrAjpGTFtt/ocJ4sGr63IBgO6L2z10ul3dJB4TN0iD/RohjmJRIdg4TOEyNqkP7x/dOt5xa/FDuP/Xsgn99FQ==
+"@trustless-computer/dapp-core@^0.0.6":
+  version "0.0.6"
+  resolved "https://registry.yarnpkg.com/@trustless-computer/dapp-core/-/dapp-core-0.0.6.tgz#4c49dd41a0c43da2abec94aa4e1fe8bf6a81c004"
+  integrity sha512-J1BOaB5KNsUbwtdSqmvdpEycIgs/4v40gB4at96vneBHfPf3IPOGkcFmnTaa4gH9KX+n9SQeRDuh8q2cpwO2Rg==
   dependencies:
+    "@ethersproject/address" "^5.7.0"
+    bignumber.js "^9.1.1"
+    bitcoin-address-validation "^2.2.1"
+    buffer "^6.0.3"
     lodash "^4.17.21"
     prop-types "^15.8.1"
 

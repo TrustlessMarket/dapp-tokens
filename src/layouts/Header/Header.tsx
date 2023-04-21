@@ -2,31 +2,17 @@
 // import IcLogo from '@/assets/icons/logo.svg';
 import { CDN_URL } from '@/configs';
 import { ROUTE_PATH } from '@/constants/route-path';
-import { AssetsContext } from '@/contexts/assets-context';
-import { getIsAuthenticatedSelector } from '@/state/user/selector';
-import { formatBTCPrice, formatEthPrice } from '@/utils/format';
-import { useWeb3React } from '@web3-react/core';
 import { gsap } from 'gsap';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
-import { useContext, useEffect, useRef, useState } from 'react';
-import Jazzicon, { jsNumberForAddress } from 'react-jazzicon';
-import { useSelector } from 'react-redux';
-import { ConnectWalletButton, WalletBalance, Wrapper } from './Header.styled';
+import { useEffect, useRef, useState } from 'react';
+import { Wrapper } from './Header.styled';
 import MenuMobile from './MenuMobile';
+import WalletHeader from './Wallet';
 
 const Header = ({ height }: { height: number }) => {
-  const { account } = useWeb3React();
-  const router = useRouter();
-  const isAuthenticated = useSelector(getIsAuthenticatedSelector);
-  const { btcBalance, juiceBalance } = useContext(AssetsContext);
   const refMenu = useRef<HTMLDivElement | null>(null);
   const [isOpenMenu, setIsOpenMenu] = useState<boolean>(false);
-
-  const goToConnectWalletPage = async () => {
-    router.push(`${ROUTE_PATH.CONNECT_WALLET}?next=${window.location.href}`);
-  };
 
   useEffect(() => {
     if (refMenu.current) {
@@ -54,26 +40,7 @@ const Header = ({ height }: { height: number }) => {
       </Link>
       <MenuMobile ref={refMenu} onCloseMenu={() => setIsOpenMenu(false)} />
       <div className="rightContainer">
-        {account && isAuthenticated ? (
-          <>
-            <div className="wallet" onClick={() => router.push(ROUTE_PATH.WALLET)}>
-              <WalletBalance>
-                <div className="balance">
-                  <p>{formatBTCPrice(btcBalance)} BTC</p>
-                  <span className="divider"></span>
-                  <p>{formatEthPrice(juiceBalance)} TC</p>
-                </div>
-                <div className="avatar">
-                  <Jazzicon diameter={32} seed={jsNumberForAddress(account)} />
-                </div>
-              </WalletBalance>
-            </div>
-          </>
-        ) : (
-          <ConnectWalletButton onClick={goToConnectWalletPage}>
-            Connect wallet
-          </ConnectWalletButton>
-        )}
+        <WalletHeader />
         <button className="btnMenuMobile" onClick={() => setIsOpenMenu(true)}>
           <img src={`${CDN_URL}/icons/ic_hambuger.svg`} />
         </button>
