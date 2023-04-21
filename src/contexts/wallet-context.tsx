@@ -99,9 +99,8 @@ export const WalletProvider: React.FC<PropsWithChildren> = ({ children }: PropsW
     await TC_SDK.actionRequest({
       method: TC_SDK.RequestMethod.account,
       redirectURL: window.location.origin + window.location.pathname,
-      target: 'parent',
+      target: '_self',
     })
-    // window.location.href = `${TC_WEB_URL}/?function=request&method=account&redirectURL=${window.location.origin + window.location.pathname}`;
   }
 
   useAsyncEffect(async () => {

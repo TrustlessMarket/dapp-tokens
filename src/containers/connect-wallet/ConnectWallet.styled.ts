@@ -26,6 +26,7 @@ export const Wrapper = styled.div`
 
     .logo {
       margin-bottom: ${px2rem(36)};
+      filter: invert(1);
     }
 
     .title {

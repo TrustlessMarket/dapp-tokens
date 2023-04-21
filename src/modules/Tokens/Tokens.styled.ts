@@ -67,6 +67,7 @@ export const UploadFileContainer = styled.div`
   color: ${({ theme }: { theme: DefaultTheme }) => theme.text1};
   text-align: center;
   border-radius: ${px2rem(12)};
+  box-shadow: 0px 0px 24px -6px rgba(0, 0, 0, 0.12);
 
   .upload_left {
     display: flex;

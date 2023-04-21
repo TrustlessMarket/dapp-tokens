@@ -52,7 +52,7 @@ const ConnectWallet: React.FC = (): React.ReactElement => {
             width={292}
             height={118}
             className="logo"
-            src={`${CDN_URL}/icons/logo-tc-market.svg`}
+            src={`${CDN_URL}/icons/logo.svg`}
             alt="trustless computer logo"
           />
           <h1 className="title">
