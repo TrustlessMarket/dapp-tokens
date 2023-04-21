@@ -80,7 +80,7 @@ const useContractOperation = <P, R>(
 
       if (unInscribedTxIDs.length > 0) {
         throw Error(
-          'You have some pending transactions. Please complete all of them before moving on.',
+          'pending',
         );
       }
 
