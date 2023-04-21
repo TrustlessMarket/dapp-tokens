@@ -3,7 +3,6 @@
 import { CDN_URL } from '@/configs';
 import { ROUTE_PATH } from '@/constants/route-path';
 import { gsap } from 'gsap';
-import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import { Wrapper } from './Header.styled';
@@ -31,7 +30,7 @@ const Header = ({ height }: { height: number }) => {
   return (
     <Wrapper style={{ height }}>
       <Link className="logo" href={ROUTE_PATH.HOME}>
-        <Image
+        <img
           src={`${CDN_URL}/icons/logo-tc-market.svg`}
           alt="Trustless Market logo"
           width={40}
