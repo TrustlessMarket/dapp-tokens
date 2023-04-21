@@ -11,8 +11,7 @@
     "lint:js": "eslint . --fix --ext .js,.jsx,.ts,.tsx",
     "lint:css": "stylelint --fix **/*.{scss,css}",
     "lint:json": "prettier --write \"./**/*.json\"",
-    "prepare": "husky install",
-    "postinstall": "patch-package"
+    "prepare": "husky install"
   },
   "dependencies": {
     "@bitcoinerlab/secp256k1": "^1.0.2",
@@ -96,6 +95,9 @@
     "stylelint-config-standard": "^33.0.0",
     "stylelint-config-styled-components": "^0.1.1",
     "stylelint-processor-styled-components": "^1.10.0"
+  },
+  "resolutions": {
+    "cipher-base": "https://github.com/TrustlessComputer/patched-cipher-base.git"
   },
   "lint-staged": {
     "*.{ts,tsx,js,jsx}": [
