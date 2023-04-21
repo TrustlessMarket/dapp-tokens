@@ -12,6 +12,10 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 import ModalCreateToken from './ModalCreateToken';
 import { StyledTokens, UploadFileContainer } from './Tokens.styled';
 import { IToken } from '@/interfaces/token';
+import { useSelector } from 'react-redux';
+import { getIsAuthenticatedSelector } from '@/state/user/selector';
+import { useRouter } from 'next/router';
+import { ROUTE_PATH } from '@/constants/route-path';
 
 const EXPLORER_URL = TRUSTLESS_COMPUTER_CHAIN_INFO.explorers[0].url;
 
@@ -20,8 +24,11 @@ const LIMIT_PAGE = 50;
 const Tokens = () => {
   const TABLE_HEADINGS = ['Token number', 'Name', 'Symbol', 'Supply', 'Creator'];
 
+  const router = useRouter();
   const [showModal, setShowModal] = useState(false);
   const [isFetching, setIsFetching] = useState(false);
+
+  const isAuthenticated = useSelector(getIsAuthenticatedSelector);
 
   // const { data, error, isLoading } = useSWR(getApiKey(getTokens), getTokens);
 
@@ -50,6 +57,14 @@ const Tokens = () => {
   };
 
   const debounceLoadMore = debounce(onLoadMoreTokens, 300);
+
+  const handleCreateToken = () => {
+    if (!isAuthenticated) {
+      router.push(ROUTE_PATH.CONNECT_WALLET);
+    } else {
+      setShowModal(true);
+    }
+  };
 
   useEffect(() => {
     fetchTokens();
@@ -109,11 +124,7 @@ const Tokens = () => {
           </div>
         </div>
         <div className="upload_right">
-          <Button
-            bg={'white'}
-            background={'#3385FF'}
-            onClick={() => setShowModal(true)}
-          >
+          <Button bg={'white'} background={'#3385FF'} onClick={handleCreateToken}>
             <Text
               size="medium"
               color="bg1"
