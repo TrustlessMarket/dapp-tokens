@@ -21,6 +21,10 @@ const nextConfig = {
         protocol: 'https',
         hostname: '**.trustless.computer',
       },
+      {
+        protocol: 'https',
+        hostname: '**.trustless.domains',
+      },
     ],
   },
 };

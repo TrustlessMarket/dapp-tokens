@@ -9,7 +9,7 @@ import { ROUTE_PATH } from '@/constants/route-path';
 import { useRouter } from 'next/router';
 
 const ConnectWallet: React.FC = (): React.ReactElement => {
-  const { onConnect, generateBitcoinKey, onDisconnect } = useContext(WalletContext);
+  const { onConnect, requestBtcAddress, onDisconnect } = useContext(WalletContext);
   const isAuthenticated = useSelector(getIsAuthenticatedSelector);
   const user = useSelector(getUserSelector);
   const router = useRouter();
@@ -18,8 +18,8 @@ const ConnectWallet: React.FC = (): React.ReactElement => {
   const handleConnectWallet = async () => {
     try {
       setIsConnecting(true);
-      const address = await onConnect();
-      await generateBitcoinKey(address || '');
+      await onConnect();
+      await requestBtcAddress();
     } catch (err) {
       console.log(err);
       onDisconnect();
@@ -52,7 +52,7 @@ const ConnectWallet: React.FC = (): React.ReactElement => {
             width={292}
             height={118}
             className="logo"
-            src={`${CDN_URL}/images/trustless-logo-1.svg`}
+            src={`${CDN_URL}/icons/logo-tc-market.svg`}
             alt="trustless computer logo"
           />
           <h1 className="title">

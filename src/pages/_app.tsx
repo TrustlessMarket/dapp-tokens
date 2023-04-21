@@ -10,6 +10,7 @@ import ThemeProvider, { ThemedGlobalStyle } from '@/theme/theme';
 import store from '@/state';
 import { Toaster } from 'react-hot-toast';
 import '@/styles/index.scss';
+import ClientOnly from '@/components/Utils/ClientOnly';
 
 export default function App({ Component, pageProps }: AppProps) {
   const { seoInfo = {} } = pageProps;
@@ -108,19 +109,21 @@ export default function App({ Component, pageProps }: AppProps) {
         <meta name="msapplication-config" content="/browserconfig.xml" />
       </Head>
 
-      <Provider store={store}>
-        <ThemeProvider>
-          <ThemedGlobalStyle />
-          <Web3Provider>
-            <WalletProvider>
-              <AssetsProvider>
-                <Component {...pageProps} />
-              </AssetsProvider>
-              <Toaster position="top-center" reverseOrder={false} />
-            </WalletProvider>
-          </Web3Provider>
-        </ThemeProvider>
-      </Provider>
+      <ClientOnly>
+        <Provider store={store}>
+          <ThemeProvider>
+            <ThemedGlobalStyle />
+            <Web3Provider>
+              <WalletProvider>
+                <AssetsProvider>
+                  <Component {...pageProps} />
+                </AssetsProvider>
+                <Toaster position="top-center" reverseOrder={false} />
+              </WalletProvider>
+            </Web3Provider>
+          </ThemeProvider>
+        </Provider>
+      </ClientOnly>
     </>
   );
 }
