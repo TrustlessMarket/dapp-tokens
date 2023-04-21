@@ -7,6 +7,7 @@ import { CDN_URL } from '@/configs';
 import { Container } from '@/layouts';
 import { ROUTE_PATH } from '@/constants/route-path';
 import { useRouter } from 'next/router';
+import { showError } from '@/utils/toast';
 
 const ConnectWallet: React.FC = (): React.ReactElement => {
   const { onConnect, requestBtcAddress, onDisconnect } = useContext(WalletContext);
@@ -21,6 +22,9 @@ const ConnectWallet: React.FC = (): React.ReactElement => {
       await onConnect();
       await requestBtcAddress();
     } catch (err) {
+      showError({
+        message: (err as Error).message
+      })
       console.log(err);
       onDisconnect();
     } finally {

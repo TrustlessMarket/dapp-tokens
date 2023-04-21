@@ -12,6 +12,8 @@ import React, { useState } from 'react';
 import { Modal } from 'react-bootstrap';
 import toast from 'react-hot-toast';
 import { StyledModalUpload, Title, WrapInput } from './ModalCreate.styled';
+import { showError } from '@/utils/toast';
+import { TC_WEB_URL } from '@/configs';
 
 type Props = {
   show: boolean;
@@ -64,7 +66,17 @@ const ModalCreateToken: React.FC<Props> = (props: Props) => {
       toast.success('Transaction has been created. Please wait for few minutes.');
       handleClose();
     } catch (err) {
-      toast.error((err as Error).message);
+      if ((err as Error).message === 'pending') {
+        showError({
+          message: 'You have some pending transactions. Please complete all of them before moving on.',
+          url: TC_WEB_URL,
+          linkText: 'Go to Wallet'
+        })
+      } else {
+        showError({
+          message: (err as Error).message || 'Something went wrong. Please try again later.'
+        })
+      }
       console.log(err);
     } finally {
       setIsProcessing(false);

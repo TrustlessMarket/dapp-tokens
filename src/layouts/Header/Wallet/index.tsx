@@ -1,5 +1,5 @@
 import IconSVG from '@/components/IconSVG';
-import { CDN_URL, TC_URL } from '@/configs';
+import { CDN_URL, TC_WEB_URL } from '@/configs';
 import { ROUTE_PATH } from '@/constants/route-path';
 import { AssetsContext } from '@/contexts/assets-context';
 import { getIsAuthenticatedSelector, getUserSelector } from '@/state/user/selector';
@@ -102,7 +102,7 @@ const WalletHeader = () => {
       </div>
       <div className="divider"></div>
       <div className="cta">
-        <div className="wallet-link" onClick={() => window.open(TC_URL)}>
+        <div className="wallet-link" onClick={() => window.open(TC_WEB_URL)}>
           <IconSVG
             src={`${CDN_URL}/icons/ic-wallet.svg`}
             maxWidth="20"
@@ -137,7 +137,7 @@ const WalletHeader = () => {
           >
             <div
               className="wallet"
-              onClick={() => window.open(TC_URL)}
+              onClick={() => window.open(TC_WEB_URL)}
               ref={ref}
               onMouseEnter={handleOnMouseEnter}
               onMouseLeave={handleOnMouseLeave}
