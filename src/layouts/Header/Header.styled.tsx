@@ -31,11 +31,20 @@ const Wrapper = styled.div`
   }
 
   .rightContainer {
+    color: #3385ff;
+
     display: flex;
     flex-direction: row;
     align-items: center;
     gap: ${px2rem(16)};
     position: relative;
+
+    .external-link {
+      display: flex;
+      align-items: center;
+      gap: ${px2rem(16)};
+      margin-right: ${px2rem(24)};
+    }
 
     @media screen and (min-width: 1024px) {
       :hover {
