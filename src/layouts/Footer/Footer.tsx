@@ -8,7 +8,7 @@ const Wrapper = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   margin-top: ${px2rem(140)};
   flex-wrap: wrap;
   gap: ${px2rem(32)};

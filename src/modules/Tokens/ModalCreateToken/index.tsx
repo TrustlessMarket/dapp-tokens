@@ -1,4 +1,3 @@
-import IcCloseModal from '@/assets/icons/ic-close.svg';
 import Button from '@/components/Button';
 import Text from '@/components/Text';
 import useCreateToken, {
@@ -7,14 +6,14 @@ import useCreateToken, {
 import useContractOperation from '@/hooks/contract-operations/useContractOperation';
 import { DeployContractResponse } from '@/interfaces/contract-operation';
 import { Formik } from 'formik';
-import Image from 'next/image';
 import React, { useState } from 'react';
 import { Modal } from 'react-bootstrap';
 import toast from 'react-hot-toast';
 import { StyledModalUpload, Title, WrapInput } from './ModalCreate.styled';
 import { showError } from '@/utils/toast';
-import { TC_WEB_URL } from '@/configs';
+import { CDN_URL, TC_WEB_URL } from '@/configs';
 import { DappsTabs } from '@/enums/tabs';
+import IconSVG from '@/components/IconSVG';
 
 type Props = {
   show: boolean;
@@ -90,13 +89,11 @@ const ModalCreateToken: React.FC<Props> = (props: Props) => {
   return (
     <StyledModalUpload show={show} onHide={handleClose} centered>
       <Modal.Header>
-        <Image
+        <IconSVG
           className="cursor-pointer"
           onClick={handleClose}
-          alt="close icon"
-          src={IcCloseModal}
-          width={15}
-          height={15}
+          src={`${CDN_URL}/icons/ic-close.svg`}
+          maxWidth={'22px'}
         />
       </Modal.Header>
       <Modal.Body>

@@ -14,7 +14,12 @@ export const Container = styled.div`
   margin-right: auto;
   display: flex;
   flex-direction: column;
-  padding: 0 ${px2rem(32)};
+
+  .container {
+    padding: 0 ${px2rem(32)};
+  }
+
+  /* padding: 0 ${px2rem(32)}; */
   /* padding-left: 6%;
   padding-right: 6%; */
 `;
@@ -33,9 +38,11 @@ const ContentWrapper = styled.div`
 const Layout: React.FC<PropsWithChildren> = ({ children }) => {
   return (
     <Container>
-      <Header height={HEADER_HEIGHT} />
-      <ContentWrapper>{children}</ContentWrapper>
-      <Footer height={FO0TER_HEIGHT} />
+      <div className="container">
+        <Header height={HEADER_HEIGHT} />
+        <ContentWrapper>{children}</ContentWrapper>
+        <Footer height={FO0TER_HEIGHT} />
+      </div>
     </Container>
   );
 };

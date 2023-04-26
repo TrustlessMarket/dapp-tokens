@@ -23,8 +23,8 @@ const ConnectWallet: React.FC = (): React.ReactElement => {
       await requestBtcAddress();
     } catch (err) {
       showError({
-        message: (err as Error).message
-      })
+        message: (err as Error).message,
+      });
       console.log(err);
       onDisconnect();
     } finally {
@@ -43,25 +43,27 @@ const ConnectWallet: React.FC = (): React.ReactElement => {
       <Wrapper>
         <div className="header">
           <div className="socialContainer">
-            <a href="https://discord.com/channels/1052411011036090458/1094649301210239086" target="_blank">
-              <img alt="icon" className="icon" src={`${CDN_URL}/icons/ic-discord-18x18.svg`} />
+            <a href="https://generative.xyz/discord" target="_blank">
+              <img
+                alt="icon"
+                className="icon"
+                src={`${CDN_URL}/icons/ic-discord-18x18.svg`}
+              />
             </a>
             <a href="https://twitter.com/DappsOnBitcoin" target="_blank">
-              <img alt="icon" className="icon" src={`${CDN_URL}/icons/ic-twitter-18x18.svg`} />
+              <img
+                alt="icon"
+                className="icon"
+                src={`${CDN_URL}/icons/ic-twitter-18x18.svg`}
+              />
             </a>
           </div>
         </div>
         <div className="mainContent">
-          <img
-            width={292}
-            height={118}
-            className="logo"
-            src={`${CDN_URL}/icons/logo.svg`}
-            alt="trustless computer logo"
-          />
-          <h1 className="title">
-            Trustless Computer is an open-source protocol that powers decentralized applications on Bitcoin.
-          </h1>
+          <h1 className="title">{`Connect Wallet`}</h1>
+          <p className="desc">
+            {`Connect your wallet to access Trustless Market on Trustless Computer.`}
+          </p>
           <ConnectWalletButton disabled={isConnecting} onClick={handleConnectWallet}>
             {isConnecting ? 'Connecting...' : 'Connect wallet'}
           </ConnectWalletButton>

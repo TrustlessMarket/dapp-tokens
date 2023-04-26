@@ -6,7 +6,7 @@ import { getTokens } from '@/services/token-explorer';
 import { shortenAddress } from '@/utils';
 import { decimalToExponential } from '@/utils/format';
 import { debounce } from 'lodash';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import Spinner from 'react-bootstrap/Spinner';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import ModalCreateToken from './ModalCreateToken';
@@ -14,8 +14,10 @@ import { StyledTokens, UploadFileContainer } from './Tokens.styled';
 import { IToken } from '@/interfaces/token';
 import { useSelector } from 'react-redux';
 import { getIsAuthenticatedSelector } from '@/state/user/selector';
-import { useRouter } from 'next/router';
-import { ROUTE_PATH } from '@/constants/route-path';
+// import { useRouter } from 'next/router';
+// import { ROUTE_PATH } from '@/constants/route-path';
+import { WalletContext } from '@/contexts/wallet-context';
+import { showError } from '@/utils/toast';
 
 const EXPLORER_URL = TRUSTLESS_COMPUTER_CHAIN_INFO.explorers[0].url;
 
@@ -24,15 +26,29 @@ const LIMIT_PAGE = 50;
 const Tokens = () => {
   const TABLE_HEADINGS = ['Token number', 'Name', 'Symbol', 'Supply', 'Creator'];
 
-  const router = useRouter();
+  // const router = useRouter();
   const [showModal, setShowModal] = useState(false);
   const [isFetching, setIsFetching] = useState(false);
 
   const isAuthenticated = useSelector(getIsAuthenticatedSelector);
+  const { onDisconnect, onConnect, requestBtcAddress } = useContext(WalletContext);
 
   // const { data, error, isLoading } = useSWR(getApiKey(getTokens), getTokens);
 
   const [tokensList, setTokensList] = useState<IToken[]>([]);
+
+  const handleConnectWallet = async () => {
+    try {
+      await onConnect();
+      await requestBtcAddress();
+    } catch (err) {
+      showError({
+        message: (err as Error).message,
+      });
+      console.log(err);
+      onDisconnect();
+    }
+  };
 
   const fetchTokens = async (page = 1, isFetchMore = false) => {
     try {
@@ -60,7 +76,8 @@ const Tokens = () => {
 
   const handleCreateToken = () => {
     if (!isAuthenticated) {
-      router.push(ROUTE_PATH.CONNECT_WALLET);
+      handleConnectWallet();
+      // router.push(ROUTE_PATH.CONNECT_WALLET);
     } else {
       setShowModal(true);
     }

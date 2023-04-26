@@ -1,12 +1,12 @@
 import IconSVG from '@/components/IconSVG';
 import { CDN_URL, TC_WEB_URL } from '@/configs';
-import { ROUTE_PATH } from '@/constants/route-path';
+// import { ROUTE_PATH } from '@/constants/route-path';
 import { AssetsContext } from '@/contexts/assets-context';
 import { getIsAuthenticatedSelector, getUserSelector } from '@/state/user/selector';
 import { formatBTCPrice, formatEthPrice } from '@/utils/format';
 import { useWeb3React } from '@web3-react/core';
 import copy from 'copy-to-clipboard';
-import { useRouter } from 'next/router';
+// import { useRouter } from 'next/router';
 import { useContext, useRef, useState } from 'react';
 import { OverlayTrigger } from 'react-bootstrap';
 import { toast } from 'react-hot-toast';
@@ -17,15 +17,34 @@ import { WalletPopover } from './Wallet.styled';
 import Text from '@/components/Text';
 import { WalletContext } from '@/contexts/wallet-context';
 import { formatLongAddress } from '@/utils';
+import { showError } from '@/utils/toast';
 
 const WalletHeader = () => {
-  const router = useRouter();
+  // const router = useRouter();
   const { account } = useWeb3React();
   const user = useSelector(getUserSelector);
-  const { onDisconnect } = useContext(WalletContext);
+  const { onDisconnect, onConnect, requestBtcAddress } = useContext(WalletContext);
 
   const isAuthenticated = useSelector(getIsAuthenticatedSelector);
   const { btcBalance, juiceBalance } = useContext(AssetsContext);
+
+  const [isConnecting, setIsConnecting] = useState(false);
+
+  const handleConnectWallet = async () => {
+    try {
+      setIsConnecting(true);
+      await onConnect();
+      await requestBtcAddress();
+    } catch (err) {
+      showError({
+        message: (err as Error).message,
+      });
+      console.log(err);
+      onDisconnect();
+    } finally {
+      setIsConnecting(false);
+    }
+  };
 
   const [show, setShow] = useState(false);
   const handleOnMouseEnter = () => {
@@ -36,9 +55,9 @@ const WalletHeader = () => {
   };
   const ref = useRef(null);
 
-  const goToConnectWalletPage = async () => {
-    router.push(`${ROUTE_PATH.CONNECT_WALLET}?next=${window.location.href}`);
-  };
+  // const goToConnectWalletPage = async () => {
+  //   router.push(`${ROUTE_PATH.CONNECT_WALLET}?next=${window.location.href}`);
+  // };
 
   const onClickCopy = (address: string) => {
     copy(address);
@@ -156,8 +175,8 @@ const WalletHeader = () => {
           </OverlayTrigger>
         </>
       ) : (
-        <ConnectWalletButton className="hideMobile" onClick={goToConnectWalletPage}>
-          Connect wallet
+        <ConnectWalletButton className="hideMobile" onClick={handleConnectWallet}>
+          {isConnecting ? 'Connecting...' : 'Connect wallet'}
         </ConnectWalletButton>
       )}
     </>
