@@ -24,7 +24,7 @@ const EXPLORER_URL = TRUSTLESS_COMPUTER_CHAIN_INFO.explorers[0].url;
 const LIMIT_PAGE = 50;
 
 const Tokens = () => {
-  const TABLE_HEADINGS = ['Token number', 'Name', 'Symbol', 'Supply', 'Creator'];
+  const TABLE_HEADINGS = ['Token #', 'Name', 'Symbol', 'Supply', 'Creator'];
 
   // const router = useRouter();
   const [showModal, setShowModal] = useState(false);
