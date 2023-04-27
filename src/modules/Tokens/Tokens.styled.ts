@@ -17,6 +17,7 @@ export const StyledTokens = styled.div`
   .table {
     th:first-of-type {
       max-width: ${px2rem(50)};
+      white-space: nowrap;
     }
 
     th:nth-child(4),
