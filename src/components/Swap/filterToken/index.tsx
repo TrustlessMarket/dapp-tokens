@@ -39,7 +39,7 @@ const FilterModal: React.FC<FilterModalProps> = ({
     () => [
       {
         id: "market",
-        label: "Market",
+        label: "Token",
         labelConfig: {
           fontSize: "12px",
           fontWeight: "500",
@@ -110,7 +110,7 @@ const FilterModal: React.FC<FilterModalProps> = ({
       {commonData?.length > 0 && (
         <Box mt={4}>
           <Text fontSize={"12px"} fontWeight="500">
-            Common markets
+            Common tokens
           </Text>
           <Box mt={1}>
             <Flex gap={4} maxW="100%" overflow="auto">
@@ -125,6 +125,8 @@ const FilterModal: React.FC<FilterModalProps> = ({
                   py={1}
                   onClick={() => onItemClick(row)}
                   cursor="pointer"
+                  minW={"50px"}
+                  justifyContent={"center"}
                 >
                   {/*<AvatarNFT tradingPair={row.extra_item} />*/}
                   <Box>
@@ -168,11 +170,11 @@ export const parseData = (data: any[]): DataRow[] => {
   return data.map((d: any) => {
     return {
       id: d.id,
-      name: d?.base_token?.name,
-      code: d?.code,
-      symbol: d?.base_token?.symbol,
-      img: d?.base_token?.image_url,
-      contract_address: d?.base_token?.contract_address,
+      name: d?.name,
+      code: d?.slug,
+      symbol: d?.symbol,
+      img: d?.thumbnail,
+      contract_address: d?.address,
       extra_item: d,
     };
   });
@@ -268,6 +270,8 @@ const FilterButton: React.FC<FilterButtonProps> = ({
 
   const imgNft = 40;
 
+  console.log('selectedToken', selectedToken);
+
   return (
     <Button btnSize={"m"} onClick={handleOpenModal}>
       <Flex gap={2} alignItems={"center"}>
@@ -290,7 +294,7 @@ const FilterButton: React.FC<FilterButtonProps> = ({
                   },
                 }}
               />
-              <Text>{selectedToken?.base_token?.symbol}</Text>
+              <Text>{selectedToken?.symbol}</Text>
             </>
           ) : <Text>Select token</Text>
         }
