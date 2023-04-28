@@ -5,10 +5,11 @@ export const StyledTokens = styled.div`
   margin-top: ${px2rem(48)};
 
   .background {
-    background: linear-gradient(90deg, #00c6ff 0%, #0072ff 100%);
+    background-image: url("imgs/banner5.png");
     min-height: ${px2rem(203)};
     position: absolute;
     width: 100%;
+    height: 202px;
     top: 80px;
     left: 0;
     z-index: 0;
@@ -24,7 +25,7 @@ export const StyledTokens = styled.div`
     td:nth-child(4),
     th:nth-child(5),
     td:nth-child(5) {
-      text-align: right;
+      //text-align: right;
     }
 
     td {
@@ -46,7 +47,7 @@ export const StyledTokens = styled.div`
     width: fit-content;
     z-index: 1;
     position: relative;
-    color: white;
+    color: #3385FF;
     font-size: ${px2rem(48)};
     line-height: 48 / 44;
   }
@@ -85,7 +86,21 @@ export const UploadFileContainer = styled.div`
 
   .button-text {
     font-family: var(--font-heading) !important;
-    padding: ${px2rem(11)} ${px2rem(36)};
+    padding-top: 0.4375rem;
+    padding-bottom: 1.65rem;
+    padding-right: ${px2rem(18)};
+    padding-left: ${px2rem(18)};
+
+  }
+  .brc20-text {
+    font-family: var(--font-heading) !important;
+    padding-top: ${px2rem(7)};
+    padding-right: ${px2rem(18)};
+    padding-left: ${px2rem(18)};
+  }
+  .comming-soon-text{
+    font-family: var(--font-heading) !important;
+    padding-bottom:${px2rem(7)};
   }
 
   .file-uploader {
@@ -94,4 +109,11 @@ export const UploadFileContainer = styled.div`
     width: ${px2rem(150)};
     top: 0;
   }
+  .token-table{
+    text-align: center;
+  }
+  .comming-soon-btn{
+    margin-left: 10px;
+  }
+
 `;
