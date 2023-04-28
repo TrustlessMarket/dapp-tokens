@@ -204,7 +204,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
                 value={quoteToken}
               />
             }
-            hideError={true}
+            // hideError={true}
             borderColor={"#F4F5F6"}
           />
         </Flex>
@@ -272,6 +272,8 @@ const TradingForm = ({ initValues }) => {
   const handleSubmit = async (values: any) => {
     try {
       setSubmitting(true);
+
+      console.log('handleSubmit', values);
 
     } catch (e) {
       // toastError(toast, e, { slippage, maxSlippage: 2 });

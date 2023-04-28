@@ -54,8 +54,8 @@ const FilterModal: React.FC<FilterModalProps> = ({
             <Flex gap={4} alignItems={"center"}>
               {/*<AvatarNFT tradingPair={row?.extra_item} />*/}
               <Box>
-                <Text fontSize={"sm"} fontWeight={"medium"}>
-                  {row?.code}
+                <Text fontSize={"md"} fontWeight={"normal"}>
+                  {row?.symbol}
                 </Text>
                 <Text fontSize={"sm"} fontWeight={"medium"}>
                   {shortCryptoAddress(row?.contract_address)}
