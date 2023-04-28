@@ -152,7 +152,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             // fieldChanged={onChangeValueBaseAmount}
             disabled={submitting}
             // placeholder={"Enter number of tokens"}
-            decimals={18}
+            decimals={baseToken?.decimals || 18}
             className={styles.inputAmount}
             prependComp={
               <FilterButton
@@ -193,7 +193,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             fieldChanged={onChangeValueQuoteAmount}
             disabled={submitting}
             // placeholder={"Enter number of tokens"}
-            decimals={18}
+            decimals={quoteToken?.decimals || 18}
             className={cx(styles.inputAmount, styles.collateralAmount)}
             prependComp={
               <FilterButton
