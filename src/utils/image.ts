@@ -31,3 +31,16 @@ export const isValidImage = (url: string): Promise<boolean> =>
     img.onload = () => resolve(true);
     img.onerror = () => resolve(false);
   });
+
+interface ImageThumb {
+  width?: number;
+  height?: number;
+  url: string;
+  showOriginal?: boolean;
+}
+
+export const getImageThumb = (params: ImageThumb) => {
+  const { width, height, url, showOriginal } = params;
+  if (!url) return "";
+  return url;
+};

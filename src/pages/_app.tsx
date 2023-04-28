@@ -14,6 +14,8 @@ import ClientOnly from '@/components/Utils/ClientOnly';
 import {ChakraProvider} from "@chakra-ui/react";
 import customTheme from '@/theme/theme-chakra';
 import ChakaDefaultProps from '@/theme/chakraDefaultProps';
+import ModalManager from "@/components/Swap/modal";
+import MyLoadingOverlay from "@/components/Swap/myLoadingOverlay";
 
 export default function App({ Component, pageProps }: AppProps) {
   const { seoInfo = {} } = pageProps;
@@ -123,6 +125,8 @@ export default function App({ Component, pageProps }: AppProps) {
                     <Component {...pageProps} />
                   </AssetsProvider>
                   <Toaster position="top-center" reverseOrder={false} />
+                  <ModalManager />
+                  <MyLoadingOverlay />
                 </WalletProvider>
               </Web3Provider>
             </ThemeProvider>

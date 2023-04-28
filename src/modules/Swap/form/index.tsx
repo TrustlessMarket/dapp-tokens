@@ -1,6 +1,6 @@
 import {Box, Divider, Flex, forwardRef, Text, useToast,} from "@chakra-ui/react";
 import {useRouter} from "next/router";
-import React, {useCallback, useRef, useState,} from "react";
+import React, {useCallback, useEffect, useRef, useState,} from "react";
 import {Field, Form, useForm, useFormState} from "react-final-form";
 import styles from "./styles.module.scss";
 import HorizontalItem from "@/components/Swap/horizontalItem";
@@ -8,8 +8,15 @@ import SlippageSettingButton from "@/components/Swap/slippageSetting/button";
 import cx from "classnames";
 import FieldAmount from "@/components/Swap/form/fieldAmount";
 import InputWrapper from "@/components/Swap/form/inputWrapper";
-import {BsArrowDownShort} from "react-icons/all";
+import {BsArrowDownShort} from "react-icons/bs";
 import {composeValidators, required} from "@/utils/formValidate";
+import BigNumber from "bignumber.js";
+import {formatCurrency} from "@/utils/format";
+import {getTokens} from "@/services/token-explorer";
+import {IToken} from "@/interfaces/token";
+import FilterButton from "@/components/Swap/filterToken";
+
+const LIMIT_PAGE = 50;
 
 export const MakeFormSwap = forwardRef((props, ref) => {
   const {
@@ -21,10 +28,29 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const [quoteToken, setQuoteToken] = useState(null);
   const [isApproveBaseToken, setIsApproveBaseToken] = useState(true);
   const [isApproveQuoteToken, setIsApproveQuoteToken] = useState(true);
+  const [tokensList, setTokensList] = useState<IToken[]>([]);
+
+  console.log('tokensList', tokensList);
 
   const { values, errors, touched } = useFormState();
   const { change, restart, focus } = useForm();
   const btnDisabled = loading;
+
+  useEffect(() => {
+    fetchTokens();
+  }, []);
+
+  const fetchTokens = async (page = 1, isFetchMore = false) => {
+    try {
+      setLoading(true);
+      const res = await getTokens({ limit: LIMIT_PAGE, page: page });
+      setTokensList(res);
+    } catch (err: unknown) {
+      console.log('Failed to fetch tokens owned');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleSelectBaseToken = (token) => {
     setBaseToken(token);
@@ -100,15 +126,15 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             // placeholder={"Enter number of tokens"}
             decimals={18}
             className={styles.inputAmount}
-            // prependComp={
-            //   <FilterButton
-            //     data={markets}
-            //     commonData={markets.slice(0, 3)}
-            //     handleSelectItem={handleSelectBaseToken}
-            //     parentClose={close}
-            //     value={baseToken}
-            //   />
-            // }
+            prependComp={
+              <FilterButton
+                data={tokensList}
+                commonData={tokensList.slice(0, 3)}
+                handleSelectItem={handleSelectBaseToken}
+                parentClose={close}
+                value={baseToken}
+              />
+            }
             borderColor={"#F4F5F6"}
           />
         </Flex>
@@ -155,6 +181,21 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           />
         </Flex>
       </InputWrapper>
+      {
+        baseToken && quoteToken && (
+          <HorizontalItem
+            label={
+              <Text fontSize={"xs"} fontWeight={"medium"} color={"#23262F"}>
+                1 {quoteToken?.base_token?.symbol} =&nbsp;
+                {
+                  formatCurrency(new BigNumber(quoteToken?.index_price).dividedBy(baseToken?.index_price).toNumber())
+                }
+                &nbsp;{baseToken?.base_token?.symbol}
+              </Text>
+            }
+          />
+        )
+      }
     </form>
   );
 });

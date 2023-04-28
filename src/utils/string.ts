@@ -25,3 +25,7 @@ export const capitalizeFirstLetter = (string: string) => {
 export const stringToBuffer = (str: string): Buffer => {
   return Buffer.from(str);
 };
+
+export const compareString = (a: any, b: any) => {
+  return a?.toString?.()?.toLowerCase?.() === b?.toString?.()?.toLowerCase?.();
+};
