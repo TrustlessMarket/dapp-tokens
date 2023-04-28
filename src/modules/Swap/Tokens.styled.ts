@@ -56,7 +56,7 @@ export const StyledTokens = styled.div`
 export const UploadFileContainer = styled.div`
   position: relative;
   z-index: 1;
-  max-width: ${px2rem(800)};
+  max-width: ${px2rem(500)};
   margin-left: auto;
   margin-right: auto;
   padding: ${px2rem(24)} ${px2rem(32)};
@@ -77,6 +77,7 @@ export const UploadFileContainer = styled.div`
     align-items: center;
     flex: 1;
     margin-bottom: ${px2rem(24)};
+    width: 100%;
   }
 
   .upload_right {
