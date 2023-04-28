@@ -1,0 +1,49 @@
+.wrapper {
+  .listButton {
+    button {
+      font-size: 14px;
+      font-weight: 500;
+      color: #B1B5C3;
+      border-radius: 8px;
+      max-width: 40px;
+
+      &.selected {
+        color: #000000;
+        background-color: #F4F5F6;
+
+      }
+    }
+  }
+
+  :global {
+    .chakra-input__group {
+      height: 40px;
+
+      .chakra-input {
+        height: inherit;
+        border-top-left-radius: 8px;
+        border-bottom-left-radius: 8px;
+        background: #F4F5F6;
+
+        &[disabled] {
+          opacity: 1;
+        }
+      }
+
+      .chakra-input__right-addon {
+        height: inherit;
+        border-top-right-radius: 8px;
+        border-bottom-right-radius: 8px;
+        background: #F4F5F6;
+      }
+    }
+  }
+}
+
+.buttonWrappper {
+  :global {
+    .chakra-popover__body {
+      padding: 24px;
+    }
+  }
+}

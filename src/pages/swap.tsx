@@ -1,6 +1,6 @@
 import { CDN_URL } from '@/configs';
 import Layout from '@/layouts';
-import Tokens from '@/modules/Tokens';
+import Swap from '@/modules/Swap';
 import Head from 'next/head';
 
 export default function Home() {
@@ -10,7 +10,7 @@ export default function Home() {
         <link rel="icon" href={`${CDN_URL}/icons/logo-tc-market.svg`} />
       </Head>
       <Layout>
-        <Tokens />
+        <Swap />
       </Layout>
     </>
   );

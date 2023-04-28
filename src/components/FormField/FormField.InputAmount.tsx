@@ -1,10 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react';
 import { FieldWrapper } from './FormField.styled';
-import { FieldProps } from 'formik';
 
 interface FormFieldInputAmountProps {
-  field: FieldProps | HTMLFormElement;
-  form: HTMLFormElement;
+  field: any;
+  form: any;
   bottomNote?: React.ReactNode | undefined;
 }
 

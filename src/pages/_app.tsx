@@ -11,6 +11,11 @@ import store from '@/state';
 import { Toaster } from 'react-hot-toast';
 import '@/styles/index.scss';
 import ClientOnly from '@/components/Utils/ClientOnly';
+import {ChakraProvider} from "@chakra-ui/react";
+import customTheme from '@/theme/theme-chakra';
+import ChakaDefaultProps from '@/theme/chakraDefaultProps';
+import ModalManager from "@/components/Swap/modal";
+import MyLoadingOverlay from "@/components/Swap/myLoadingOverlay";
 
 export default function App({ Component, pageProps }: AppProps) {
   const { seoInfo = {} } = pageProps;
@@ -111,17 +116,21 @@ export default function App({ Component, pageProps }: AppProps) {
 
       <ClientOnly>
         <Provider store={store}>
-          <ThemeProvider>
-            <ThemedGlobalStyle />
-            <Web3Provider>
-              <WalletProvider>
-                <AssetsProvider>
-                  <Component {...pageProps} />
-                </AssetsProvider>
-                <Toaster position="top-center" reverseOrder={false} />
-              </WalletProvider>
-            </Web3Provider>
-          </ThemeProvider>
+          <ChakraProvider {...ChakaDefaultProps} theme={customTheme}>
+            <ThemeProvider>
+              <ThemedGlobalStyle />
+              <Web3Provider>
+                <WalletProvider>
+                  <AssetsProvider>
+                    <Component {...pageProps} />
+                  </AssetsProvider>
+                  <Toaster position="top-center" reverseOrder={false} />
+                  <ModalManager />
+                  <MyLoadingOverlay />
+                </WalletProvider>
+              </Web3Provider>
+            </ThemeProvider>
+          </ChakraProvider>
         </Provider>
       </ClientOnly>
     </>

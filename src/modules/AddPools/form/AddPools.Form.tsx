@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import FormFieldInputAmount from '@/components/FormField/FormField.InputAmount';
 import FormFieldSelect from '@/components/FormField/FormField.Select';
 import HorizontalItem from '@/components/HorizontalItem';
@@ -14,7 +15,7 @@ interface AddPoolFormProps {
 }
 
 const AddPoolsForm: React.FC<AddPoolFormProps> = ({ handleSubmit }) => {
-  const { values } = useFormikContext();
+  const { values } = useFormikContext() as { values: any };
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [pairs, setPairs] = useState<IToken[]>(camelCaseKeys(pairsMock));

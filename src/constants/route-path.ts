@@ -10,4 +10,5 @@ export const ROUTE_PATH = {
   CONNECT_WALLET: '/connect-wallet',
   POOLS: '/pools',
   ADD_POOL: '/add-pool',
+  SWAP: '/swap',
 };
