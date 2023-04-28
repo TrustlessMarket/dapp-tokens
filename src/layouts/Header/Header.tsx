@@ -34,7 +34,7 @@ const Header = ({ height }: { height: number }) => {
           <img
             src={`${CDN_URL}/images/logo-market-2.svg`}
             alt="Trustless Market logo"
-            width={183}
+            style={{minWidth: '180px'}}
             height={40}
           />
         )}
@@ -50,6 +50,7 @@ const Header = ({ height }: { height: number }) => {
       <MenuMobile ref={refMenu} onCloseMenu={() => setIsOpenMenu(false)} />
       <div className="rightContainer">
         <div className="external-link">
+          <Link href={ROUTE_PATH.SWAP}>Swap</Link>
           <Link href={ROUTE_PATH.POOLS}>Pools</Link>
           <Link href={'https://trustless.computer/'} target="_blank">
             Trustless
