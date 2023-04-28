@@ -11,10 +11,10 @@ import InputWrapper from "@/components/Swap/form/inputWrapper";
 import {BsArrowDownShort} from "react-icons/bs";
 import {composeValidators, required} from "@/utils/formValidate";
 import BigNumber from "bignumber.js";
-import {formatCurrency} from "@/utils/format";
 import {getTokens} from "@/services/token-explorer";
 import {IToken} from "@/interfaces/token";
 import FilterButton from "@/components/Swap/filterToken";
+import {formatCurrency} from "@/utils";
 
 const LIMIT_PAGE = 50;
 
@@ -167,15 +167,15 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             // placeholder={"Enter number of tokens"}
             decimals={18}
             className={cx(styles.inputAmount, styles.collateralAmount)}
-            // prependComp={
-            //   <FilterButton
-            //     data={markets}
-            //     commonData={markets.slice(0, 3)}
-            //     handleSelectItem={handleSelectQuoteToken}
-            //     parentClose={close}
-            //     value={quoteToken}
-            //   />
-            // }
+            prependComp={
+              <FilterButton
+                data={tokensList}
+                commonData={tokensList.slice(0, 3)}
+                handleSelectItem={handleSelectQuoteToken}
+                parentClose={close}
+                value={quoteToken}
+              />
+            }
             hideError={true}
             borderColor={"#F4F5F6"}
           />

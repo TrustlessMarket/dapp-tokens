@@ -1,3 +1,5 @@
+import BigNumber from "bignumber.js";
+
 export const checkLines = (str: string) => str.split(/\r\n|\r|\n/).length;
 
 export const checkForHttpRegex = (str: string) => {
@@ -29,3 +31,11 @@ export const stringToBuffer = (str: string): Buffer => {
 export const compareString = (a: any, b: any) => {
   return a?.toString?.()?.toLowerCase?.() === b?.toString?.()?.toLowerCase?.();
 };
+
+export function formatCurrency(value: any = 0, decimalNumber = 6) {
+  if (isNaN(Number(value))) return 0;
+  return new BigNumber(value)
+    .decimalPlaces(decimalNumber)
+    .toFormat(decimalNumber)
+    .replace(/(\.[0-9]*[1-9])0+$|\.0*$/, "$1");
+}
