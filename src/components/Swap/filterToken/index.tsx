@@ -12,6 +12,7 @@ import FieldText from "@/components/Swap/form/fieldText";
 import {closeModal, openModal} from "@/state/modal";
 import {shortCryptoAddress} from "@/utils";
 import ListTable, {ColumnProp} from "@/components/Swap/listTable";
+import FiledButton from "@/components/Swap/button/filedButton";
 
 interface FilterButtonProps {
   data: any[];
@@ -193,10 +194,10 @@ const FilterButton: React.FC<FilterButtonProps> = ({
   const [selectedToken, setSelectedToken] = useState(null);
 
   useEffect(() => {
-    if(value?.code) {
+    if(value?.id) {
       setSelectedToken(value);
     }
-  }, [value?.code]);
+  }, [value?.id]);
 
   const handleSelectToken = (token) => {
     setSelectedToken(token);
@@ -270,10 +271,8 @@ const FilterButton: React.FC<FilterButtonProps> = ({
 
   const imgNft = 40;
 
-  console.log('selectedToken', selectedToken);
-
   return (
-    <Button btnSize={"m"} onClick={handleOpenModal}>
+    <FiledButton btnSize={"l"} onClick={handleOpenModal}>
       <Flex gap={2} alignItems={"center"}>
         {
           selectedToken ? (
@@ -300,7 +299,7 @@ const FilterButton: React.FC<FilterButtonProps> = ({
         }
         <BiChevronDown />
       </Flex>
-    </Button>
+    </FiledButton>
   );
 };
 

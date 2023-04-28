@@ -237,7 +237,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             type="submit"
             borderRadius={"100px !important"}
             // className="btn-submit"
-            btnSize={"l"}
+            btnSize={"m"}
             containerConfig={{ flex: 1, mt: 6 }}
             loadingText={submitting ? "Processing" : " "}
             // processInfo={{
