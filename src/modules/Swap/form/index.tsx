@@ -15,6 +15,8 @@ import {getTokens} from "@/services/token-explorer";
 import {IToken} from "@/interfaces/token";
 import FilterButton from "@/components/Swap/filterToken";
 import {formatCurrency} from "@/utils";
+import WrapButtonConnectWallet from "@/components/Swap/wrapButtonConnectWallet";
+import FiledButton from "@/components/Swap/button/filedButton";
 
 const LIMIT_PAGE = 50;
 
@@ -29,8 +31,6 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const [isApproveBaseToken, setIsApproveBaseToken] = useState(true);
   const [isApproveQuoteToken, setIsApproveQuoteToken] = useState(true);
   const [tokensList, setTokensList] = useState<IToken[]>([]);
-
-  console.log('tokensList', tokensList);
 
   const { values, errors, touched } = useFormState();
   const { change, restart, focus } = useForm();
@@ -98,6 +98,34 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     //   type: values.type,
     //   isConnected,
     // });
+  };
+
+  const onApprove = async () => {
+    const currentToken = !isApproveBaseToken ? baseToken : quoteToken;
+    // try {
+    //   setLoading(true);
+    //   const response = await ERC20Approve(currentToken?.contract_address);
+    //   setIsApproveBaseToken(true);
+    //   toast({
+    //     status: "success",
+    //     title: (
+    //       <>
+    //         Approved successfully.{" "}
+    //         <a
+    //           target="_blank"
+    //           href={getLinkEvmExplorer(response.tx_hash, "tx")}
+    //           style={{ textDecoration: "underline" }}
+    //         >
+    //           View Transaction
+    //         </a>
+    //       </>
+    //     ),
+    //   });
+    // } catch (e) {
+    //   toastError(toast, e, {});
+    // } finally {
+    //   setLoading(false);
+    // }
   };
 
   return (
@@ -196,6 +224,40 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           />
         )
       }
+      <WrapButtonConnectWallet
+        buttonConfig={{ btnSize: "l", mt: 6 }}
+        showBtnConnect={true}
+        showSwitchButton={true}
+        labelSwitchChain="Switch for approve"
+      >
+        {isApproveBaseToken && isApproveQuoteToken ? (
+          <FiledButton
+            isDisabled={submitting || btnDisabled}
+            isLoading={submitting}
+            type="submit"
+            borderRadius={"100px !important"}
+            // className="btn-submit"
+            btnSize={"l"}
+            containerConfig={{ flex: 1, mt: 6 }}
+            loadingText={submitting ? "Processing" : " "}
+            // processInfo={{
+            //   id: keyTransactionModule.proForm,
+            //   size: "sm",
+            // }}
+          >
+            Swap
+          </FiledButton>
+        ) : (
+          <FiledButton
+            isLoading={loading}
+            isDisabled={loading}
+            loadingText="Processing"
+            onClick={onApprove}
+          >
+            Approve use of {!isApproveBaseToken ? baseToken?.symbol : quoteToken?.symbol}
+          </FiledButton>
+        )}
+      </WrapButtonConnectWallet>
     </form>
   );
 });
