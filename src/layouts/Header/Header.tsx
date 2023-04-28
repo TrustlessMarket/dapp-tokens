@@ -50,6 +50,7 @@ const Header = ({ height }: { height: number }) => {
       <MenuMobile ref={refMenu} onCloseMenu={() => setIsOpenMenu(false)} />
       <div className="rightContainer">
         <div className="external-link">
+          <Link href={ROUTE_PATH.POOLS}>Pools</Link>
           <Link href={'https://trustless.computer/'} target="_blank">
             Trustless
           </Link>
