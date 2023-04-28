@@ -1,0 +1,145 @@
+.container {
+  height: 100%;
+}
+
+.tabContainer {
+  // height: 374px;
+  // max-height: 374px;
+  // overflow-y: auto;
+}
+
+.tabHeaderContainer {
+  background-color: #f4f5f6;
+  border-radius: 8px;
+
+  > button {
+  }
+
+  :global .chakra-tabs__tab {
+    font-weight: 500;
+    font-size: 14px;
+    gap: 4px;
+    border-radius: 6px;
+    height: 32px;
+    &[aria-selected="true"] {
+      border-bottom-width: 0 !important;
+      background-color: #ffffff;
+    }
+  }
+}
+
+.inputAmountWrap {
+  margin-bottom: 8px;
+
+  :global .chakra-input__left-element {
+    padding-left: 16px;
+    margin: 0;
+    width: unset;
+  }
+
+  :global .chakra-input__right-element {
+    padding-right: 16px;
+    margin: 0;
+  }
+
+  :global .chakra-form__error-message {
+    font-size: 12px;
+  }
+}
+
+.inputQuoteAmountWrap {
+  margin-top: 12px;
+  :global .field-note {
+    display: none;
+  }
+
+  //:global .chakra-input__group {
+  //  border-bottom-left-radius: 0;
+  //  border-bottom-right-radius: 0;
+  //}
+}
+
+.inputBaseAmountWrap {
+  margin-top: 16px;
+
+  :global .field-note {
+    display: none;
+  }
+
+  //:global .chakra-input__group {
+  //  border-top-left-radius: 0;
+  //  border-top-right-radius: 0;
+  //}
+}
+
+.leverageWrap {
+  margin-top: 8px;
+  :global .labelWrapper {
+    margin-bottom: 0;
+  }
+}
+
+.inputAmount {
+  background: #f4f5f6 !important;
+  //border-radius: 0px !important;
+  height: 40px !important;
+  font-size: 16px !important;
+
+  &:disabled {
+    cursor: not-allowed;
+  }
+
+  @media screen and (max-width: 768px) {
+    font-size: 18px !important;
+  }
+}
+
+.collateralAmount {
+  //padding-left: 50px !important;
+}
+
+.leverageSlider {
+  padding: 8px 8px 25px;
+
+  :global {
+    .rc-slider-step {
+      display: none;
+    }
+
+    .rc-slider-mark-text-active {
+      color: #23262f;
+    }
+  }
+}
+
+.topupButton {
+  height: unset !important;
+  background: unset !important;
+  color: #b1b5c3 !important;
+  min-width: unset !important;
+  padding: unset !important;
+}
+
+.btnIsolatedLeverage {
+  border: 1px solid #E6E8EC;
+  padding: 2px 2px 2px 8px;
+  font-weight: 500;
+  border-radius: 100px;
+  cursor: pointer;
+}
+
+.content {
+  box-shadow: 0px 0px 24px rgba(0, 0, 0, 0.08) !important;
+  border-radius: 8px;
+  // padding: 16px;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 140%;
+  color: #23262f;
+  white-space: break-spaces;
+  z-index: 999;
+  &:focus-visible {
+    outline: 0 !important;
+  }
+}

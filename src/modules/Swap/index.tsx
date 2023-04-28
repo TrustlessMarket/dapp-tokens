@@ -10,16 +10,13 @@ import {useSelector} from 'react-redux';
 import {getIsAuthenticatedSelector} from '@/state/user/selector';
 import {WalletContext} from '@/contexts/wallet-context';
 import {showError} from '@/utils/toast';
+import SwapForm from "@/modules/Swap/form";
 
 const EXPLORER_URL = TRUSTLESS_COMPUTER_CHAIN_INFO.explorers[0].url;
 
 const LIMIT_PAGE = 50;
 
-const Tokens = () => {
-  const TABLE_HEADINGS = ['Token #', 'Name', 'Symbol', 'Supply', 'Creator'];
-
-  // const router = useRouter();
-  const [showModal, setShowModal] = useState(false);
+const Swap = () => {
   const [isFetching, setIsFetching] = useState(false);
 
   const isAuthenticated = useSelector(getIsAuthenticatedSelector);
@@ -122,11 +119,11 @@ const Tokens = () => {
       </div>
       <UploadFileContainer>
         <div className="upload_left">
-
+          <SwapForm />
         </div>
       </UploadFileContainer>
     </StyledTokens>
   );
 };
 
-export default Tokens;
+export default Swap;
