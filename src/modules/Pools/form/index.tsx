@@ -24,6 +24,7 @@ import FiledButton from "@/components/Swap/button/filedButton";
 import {isEmpty} from "lodash";
 import toast from "react-hot-toast";
 import {showError} from "@/utils/toast";
+import useAddLiquidity from "@/hooks/contract-operations/pools/useAddLiquidity";
 
 const LIMIT_PAGE = 50;
 
@@ -119,12 +120,14 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     setIsApproveBaseToken(await checkTokenApprove(token));
     setBaseBalance(await getTokenBalance(token));
     setBaseToken(token);
+    change('baseToken', token);
   };
 
   const handleSelectQuoteToken = async (token: IToken) => {
     setIsApproveQuoteToken(await checkTokenApprove(token));
     setQuoteBalance(await getTokenBalance(token));
     setQuoteToken(token);
+    change('quoteToken', token);
   };
 
   const validateBaseAmount = useCallback(() => {
@@ -312,51 +315,43 @@ export const MakeFormSwap = forwardRef((props, ref) => {
 const CreateMarket = ({ }) => {
   const refForm = useRef();
   const [submitting, setSubmitting] = useState(false);
-  const toast = useToast();
   const dispatch = useAppDispatch();
+  const { call: addLiquidity } = useAddLiquidity();
 
   const handleSubmit = async (values) => {
-    console.log('handleSubmit', values)
+    console.log('handleSubmit', values);
+    const { baseToken, quoteToken, baseAmount, quoteAmount } = values;
     try {
       setSubmitting(true);
 
-      // const data = {
-      //   address: values?.nftInfo?.primary_asset_contracts[0]?.address,
-      //   symbol: onlyLettersAndNumbers(
-      //     values?.nftInfo?.primary_asset_contracts[0]?.symbol
-      //   )
-      //     ? values?.nftInfo?.primary_asset_contracts[0]?.symbol ||
-      //       values?.nftInfo?.name
-      //     : values?.nftInfo?.name,
-      //   floor_price: values?.nftInfo?.stats?.floor_price,
-      //   amount: min_insurance_fund_per_created,
-      //   decimals: 18,
-      // };
-      //
-      // const response = await createIsolatedPool(data);
-      // toast({
-      //   title: (
-      //     <>
-      //       {" "}
-      //       Create market {values?.symbol} successfully.{" "}
-      //       <a
-      //         target="_blank"
-      //         href={getLinkEvmExplorer(response.hash, "tx")}
-      //         style={{ textDecoration: "underline" }}
-      //       >
-      //         View transaction
-      //       </a>
-      //     </>
-      //   ),
-      //   status: "success",
-      //   //   position: 'top'
-      // });
+      let { token0, token1 } = (baseToken.address.toLowerCase() < quoteToken.address.toLowerCase()) ? { token0: baseToken, token1: quoteToken } : { token0: quoteToken, token1: baseToken }
+      let { amount0, amount1 } = (baseToken.address.toLowerCase() < quoteToken.address.toLowerCase()) ? { amount0: baseAmount, amount1: quoteAmount } : { amount0: quoteAmount, amount1: baseAmount }
 
+      const data = {
+        tokenA: token0?.address,
+        tokenB: token1?.address,
+        amountAMin: "0",
+        amountADesired: amount0,
+        amountBDesired: amount1,
+        amountBMin: "0",
+      };
+
+      console.log('data', data);
+
+      const response = await addLiquidity(data);
+
+      console.log('response', response);
+
+      toast.success('Transaction has been created. Please wait for few minutes.');
       refForm.current?.reset();
       dispatch(requestReload());
       dispatch(requestReloadRealtime());
-    } catch (e) {
-      // toastError(toast, e, {});
+    } catch (err) {
+      showError({
+        message:
+          (err as Error).message ||
+          'Something went wrong. Please try again later.',
+      });
     } finally {
       setSubmitting(false);
     }
