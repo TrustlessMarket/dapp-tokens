@@ -147,6 +147,14 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     // });
   };
 
+  const handleChangeMaxBaseAmount = () => {
+    change('baseAmount', baseBalance);
+  }
+
+  const handleChangeMaxQuoteAmount = () => {
+    change('quoteAmount', quoteBalance);
+  }
+
   const onApprove = async () => {
     try {
       setLoading(true);
@@ -177,10 +185,17 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         className={cx(styles.inputAmountWrap, styles.inputBaseAmountWrap)}
         theme="light"
         label={" "}
-        rightLabel={!isEmpty(baseToken) &&
-          <Text>
-            {formatCurrency(baseBalance)} {baseToken?.symbol}
-          </Text>
+        rightLabel={
+          !isEmpty(baseToken) && (
+            <Flex gap={1}>
+              <Text>
+                Balance: {formatCurrency(baseBalance)} {baseToken?.symbol}
+              </Text>
+              <Text cursor={"pointer"} color={"#3385FF"} onClick={handleChangeMaxBaseAmount}>
+                MAX
+              </Text>
+            </Flex>
+          )
         }
       >
         <Flex gap={4} direction={'column'}>
@@ -221,10 +236,17 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         className={cx(styles.inputAmountWrap, styles.inputQuoteAmountWrap)}
         theme="light"
         label={" "}
-        rightLabel={!isEmpty(quoteToken) &&
-          <Text>
-            {formatCurrency(quoteBalance)} {quoteToken?.symbol}
-          </Text>
+        rightLabel={
+          !isEmpty(quoteToken) && (
+            <Flex gap={1}>
+              <Text>
+                Balance: {formatCurrency(quoteBalance)} {quoteToken?.symbol}
+              </Text>
+              <Text cursor={"pointer"} color={"#3385FF"} onClick={handleChangeMaxQuoteAmount}>
+                MAX
+              </Text>
+            </Flex>
+          )
         }
       >
         <Flex gap={4} direction={'column'}>
