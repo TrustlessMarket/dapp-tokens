@@ -32,7 +32,7 @@ export const compareString = (a: unknown, b: unknown) => {
   return a?.toString?.()?.toLowerCase?.() === b?.toString?.()?.toLowerCase?.();
 };
 
-export function formatCurrency(value = 0, decimalNumber = 6) {
+export function formatCurrency(value: number | string = 0, decimalNumber = 6) {
   if (isNaN(Number(value))) return 0;
   return new BigNumber(value)
     .decimalPlaces(decimalNumber)

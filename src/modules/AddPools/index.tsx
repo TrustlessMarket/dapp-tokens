@@ -1,10 +1,10 @@
 import icBack from '@/assets/icons/ic-arrow-left.svg';
 import Text from '@/components/Text';
+import { ROUTE_PATH } from '@/constants/route-path';
 import Layout from '@/layouts';
 import Image from 'next/image';
-import { StyledPoolFormContainer } from '../Pools/Pools.styled';
+import { UploadFileContainer } from '../Pools/Pools.styled';
 import { StyledAddPool } from './AddPools.styled';
-import { ROUTE_PATH } from '@/constants/route-path';
 import FormAddPoolContainer from './form';
 
 const AddPoolIndex = () => {
@@ -13,7 +13,7 @@ const AddPoolIndex = () => {
       <Layout>
         <StyledAddPool>
           <div className="background" />
-          <StyledPoolFormContainer>
+          <UploadFileContainer>
             <div className="form-header">
               <a href={ROUTE_PATH.POOLS}>
                 <Image src={icBack} width={24} height={24} alt="icon" />
@@ -21,7 +21,7 @@ const AddPoolIndex = () => {
               <Text className="title">Add liquidity</Text>
             </div>
             <FormAddPoolContainer />
-          </StyledPoolFormContainer>
+          </UploadFileContainer>
         </StyledAddPool>
       </Layout>
     </>

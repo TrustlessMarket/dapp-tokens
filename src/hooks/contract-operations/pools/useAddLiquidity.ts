@@ -5,7 +5,7 @@ import { AssetsContext } from '@/contexts/assets-context';
 import { TransactionEventType } from '@/enums/transaction';
 import { ContractOperationHook, DAppType } from '@/interfaces/contract-operation';
 import { getContract } from '@/utils';
-import { formatEthPrice } from '@/utils/format';
+import { formatEthPriceSubmit } from '@/utils/format';
 import { useWeb3React } from '@web3-react/core';
 import { useCallback, useContext } from 'react';
 
@@ -36,6 +36,8 @@ const useAddLiquidity: ContractOperationHook<IGetReservesParams, boolean> = () =
         amountBMin,
         // to,
       } = params;
+      console.log('params', formatEthPriceSubmit(amountADesired));
+
       if (account && provider) {
         const contract = getContract(
           UNIV2_ROUTER_ADDRESS,
@@ -66,10 +68,10 @@ const useAddLiquidity: ContractOperationHook<IGetReservesParams, boolean> = () =
           .addLiquidity(
             tokenA,
             tokenB,
-            formatEthPrice(amountADesired),
-            formatEthPrice(amountBDesired),
-            formatEthPrice(amountAMin),
-            formatEthPrice(amountBMin),
+            formatEthPriceSubmit(amountADesired),
+            formatEthPriceSubmit(amountBDesired),
+            formatEthPriceSubmit(amountAMin),
+            formatEthPriceSubmit(amountBMin),
             account,
             MaxUint256,
           );

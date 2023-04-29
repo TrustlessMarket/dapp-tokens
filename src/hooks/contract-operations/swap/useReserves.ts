@@ -1,5 +1,4 @@
 import UniswapV2PairJson from '@/abis/UniswapV2Pair.json';
-import { TRANSFER_TX_SIZE } from '@/configs';
 import { AssetsContext } from '@/contexts/assets-context';
 import { TransactionEventType } from '@/enums/transaction';
 import { ContractOperationHook, DAppType } from '@/interfaces/contract-operation';
@@ -8,28 +7,34 @@ import { useWeb3React } from '@web3-react/core';
 import { useCallback, useContext } from 'react';
 
 export interface IGetReservesParams {
-  erc20TokenAddress: string;
+  address: string;
 }
 
-const useGetReserves: ContractOperationHook<IGetReservesParams, boolean> = () => {
+const useGetReserves: ContractOperationHook<
+  IGetReservesParams,
+  {
+    _reserve0: string;
+    _reserve1: string;
+  }
+> = () => {
   const { account, provider } = useWeb3React();
   const { btcBalance, feeRate } = useContext(AssetsContext);
 
   const call = useCallback(
-    async (params: IGetReservesParams): Promise<boolean> => {
-      const { erc20TokenAddress } = params;
-      if (account && provider && erc20TokenAddress) {
-        const contract = getContract(
-          erc20TokenAddress,
-          UniswapV2PairJson,
-          provider,
-          account,
-        );
-        console.log({
-          tcTxSizeByte: TRANSFER_TX_SIZE,
-          feeRatePerByte: feeRate.fastestFee,
-          erc20TokenAddress,
-        });
+    async (
+      params: IGetReservesParams,
+    ): Promise<{
+      _reserve0: string;
+      _reserve1: string;
+    }> => {
+      const { address } = params;
+      if (account && provider && address) {
+        const contract = getContract(address, UniswapV2PairJson, provider, account);
+        // console.log({
+        //   tcTxSizeByte: TRANSFER_TX_SIZE,
+        //   feeRatePerByte: feeRate.fastestFee,
+        //   erc20TokenAddress,
+        // });
         // const estimatedFee = TC_SDK.estimateInscribeFee({
         //   tcTxSizeByte: TRANSFER_TX_SIZE,
         //   feeRatePerByte: feeRate.fastestFee,
@@ -47,10 +52,16 @@ const useGetReserves: ContractOperationHook<IGetReservesParams, boolean> = () =>
           .connect(provider.getSigner())
           .getReserves();
 
-        return transaction;
+        return {
+          _reserve0: transaction[0].toString(),
+          _reserve1: transaction[1].toString(),
+        };
       }
 
-      return false;
+      return {
+        _reserve0: '0',
+        _reserve1: '0',
+      };
     },
     [account, provider, btcBalance, feeRate],
   );

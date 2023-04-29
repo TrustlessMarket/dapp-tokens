@@ -1,9 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Formik } from 'formik';
 import React from 'react';
 import AddPoolsForm from './AddPools.Form';
 
 const FormAddPoolContainer = () => {
-  const onSubmit = async (values) => {
+  const onSubmit = async (values: any) => {
     try {
       console.log('onSubmit', values);
     } catch (error) {}

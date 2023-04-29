@@ -1,8 +1,8 @@
-import styled from 'styled-components';
-import { StyledPools } from '../Pools/Pools.styled';
 import px2rem from '@/utils/px2rem';
+import styled from 'styled-components';
+import { StyledTokens } from '../Pools/Pools.styled';
 
-export const StyledAddPool = styled(StyledPools)`
+export const StyledAddPool = styled(StyledTokens)`
   .form-header {
     display: flex;
     align-items: center;
