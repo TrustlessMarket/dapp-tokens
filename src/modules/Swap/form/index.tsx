@@ -31,8 +31,8 @@ import useGetPair from "@/hooks/contract-operations/swap/useGetPair";
 import useGetReserves from "@/hooks/contract-operations/swap/useReserves";
 import {formatEthPrice} from "@/utils/format";
 import debounce from "lodash/debounce";
-import {requestReload, requestReloadRealtime} from "@/state/pnftExchange";
-import {useAppDispatch} from "@/state/hooks";
+import {requestReload, requestReloadRealtime, selectPnftExchange} from "@/state/pnftExchange";
+import {useAppDispatch, useAppSelector} from "@/state/hooks";
 import useSwapERC20Token from "@/hooks/contract-operations/swap/useSwapERC20Token";
 import {useSelector} from "react-redux";
 import {getUserSelector} from "@/state/user/selector";
@@ -466,18 +466,20 @@ const TradingForm = () => {
   const dispatch = useAppDispatch();
   const { call: swapToken } = useSwapERC20Token();
   const user = useSelector(getUserSelector);
+  const slippage = useAppSelector(selectPnftExchange).slippage;
 
   const handleSubmit = async (values: any) => {
-    console.log('handleSubmit', values);
     const { baseToken, quoteToken, baseAmount, quoteAmount } = values;
     try {
       setSubmitting(true);
+
+      const amountOutMin = new BigNumber(quoteAmount).multipliedBy(100 - slippage).dividedBy(100).decimalPlaces(18).toString();
 
       const data = {
         addresses: [baseToken.address, quoteToken.address],
         address: user?.walletAddress,
         amount: baseAmount,
-        amountOutMin: "0",
+        amountOutMin: amountOutMin,
       };
 
       const response = await swapToken(data);
