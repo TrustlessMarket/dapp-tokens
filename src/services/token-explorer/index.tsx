@@ -27,3 +27,12 @@ export const getTokensByWallet = async (
     error: 'Fail to get tokens data',
   });
 };
+
+export const getSwapTokens = async (params: IPagingParams): Promise<IToken[]> => {
+  const qs = '?' + queryString.stringify(params);
+
+  return swrFetcher(`${API_URL}/swap/token/list${qs}`, {
+    method: 'GET',
+    error: 'Fail to get tokens data',
+  });
+};

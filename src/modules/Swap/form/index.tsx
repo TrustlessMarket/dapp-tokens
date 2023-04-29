@@ -8,12 +8,14 @@ import InputWrapper from '@/components/Swap/form/inputWrapper';
 import HorizontalItem from '@/components/Swap/horizontalItem';
 import SlippageSettingButton from '@/components/Swap/slippageSetting/button';
 import WrapperConnected from '@/components/WrapperConnected';
-import dataMock from '@/dataMock/tokens.json';
+import { UNIV2_ROUTER_ADDRESS } from '@/configs';
+import useApproveERC20Token from '@/hooks/contract-operations/token/useApproveERC20Token';
 import useBalanceERC20Token from '@/hooks/contract-operations/token/useBalanceERC20Token';
 import useIsApproveERC20Token from '@/hooks/contract-operations/token/useIsApproveERC20Token';
 import { IToken } from '@/interfaces/token';
-import { getTokens } from '@/services/token-explorer';
-import { camelCaseKeys, formatCurrency } from '@/utils';
+import { getSwapTokens } from '@/services/token-explorer';
+import { formatCurrency } from '@/utils';
+import { isDevelop } from '@/utils/commons';
 import { composeValidators, required } from '@/utils/formValidate';
 import { Box, Flex, Text, forwardRef } from '@chakra-ui/react';
 import BigNumber from 'bignumber.js';
@@ -22,8 +24,6 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { Field, Form, useForm, useFormState } from 'react-final-form';
 import { BsArrowDownShort } from 'react-icons/bs';
 import styles from './styles.module.scss';
-import useApproveERC20Token from '@/hooks/contract-operations/token/useApproveERC20Token';
-import { UNIV2_ROUTER_ADDRESS } from '@/configs';
 
 const LIMIT_PAGE = 50;
 
@@ -50,8 +50,12 @@ export const MakeFormSwap = forwardRef((props) => {
   const fetchTokens = async (page = 1, isFetchMore = false) => {
     try {
       setLoading(true);
-      const res = await getTokens({ limit: LIMIT_PAGE, page: page });
-      setTokensList(camelCaseKeys(dataMock));
+      const res = await getSwapTokens({
+        limit: LIMIT_PAGE,
+        page: page,
+        is_test: isDevelop() ? '1' : '',
+      });
+      setTokensList(res);
     } catch (err: unknown) {
       console.log('Failed to fetch tokens owned');
     } finally {
