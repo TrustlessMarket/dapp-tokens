@@ -24,6 +24,8 @@ import BigNumber from "bignumber.js";
 import WrapperConnected from "@/components/WrapperConnected";
 import FiledButton from "@/components/Swap/button/filedButton";
 import {isEmpty} from "lodash";
+import toast from "react-hot-toast";
+import {showError} from "@/utils/toast";
 
 const LIMIT_PAGE = 50;
 
@@ -98,22 +100,18 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       const response = await tokenBalance({
         erc20TokenAddress: token.address,
       });
-      // await approveBaseToken(token);
-      // setIsApproveBaseToken(response);
-      // console.log('response', response);
       return response;
     } catch (error) {
       console.log('error', error);
     }
   };
 
-  const approveBaseToken = async (token: IToken) => {
+  const requestApproveToken = async (token: IToken) => {
     try {
       const response = await approveToken({
         erc20TokenAddress: token.address,
         address: UNIV2_ROUTER_ADDRESS,
       });
-      console.log('response', response);
     } catch (error) {
       console.log('error', error);
     }
@@ -164,30 +162,27 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   };
 
   const onApprove = async () => {
-    // try {
-    //   setLoading(true);
-    //   const response = await ERC20Approve(currentToken?.contract_address);
-    //   setIsApproveBaseToken(true);
-    //   toast({
-    //     status: "success",
-    //     title: (
-    //       <>
-    //         Approved successfully.{" "}
-    //         <a
-    //           target="_blank"
-    //           href={getLinkEvmExplorer(response.tx_hash, "tx")}
-    //           style={{ textDecoration: "underline" }}
-    //         >
-    //           View Transaction
-    //         </a>
-    //       </>
-    //     ),
-    //   });
-    // } catch (e) {
-    //   toastError(toast, e, {});
-    // } finally {
-    //   setLoading(false);
-    // }
+    try {
+      setLoading(true);
+
+      if(!isEmpty(baseToken) && !isApproveBaseToken) {
+        await requestApproveToken(baseToken);
+        setIsApproveBaseToken(true);
+      } else if(!isEmpty(quoteToken) && !isApproveQuoteToken) {
+        await requestApproveToken(quoteToken);
+        setIsApproveQuoteToken(true);
+      }
+
+      toast.success('Transaction has been created. Please wait for few minutes.');
+    } catch (err) {
+      showError({
+        message:
+          (err as Error).message ||
+          'Something went wrong. Please try again later.',
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
