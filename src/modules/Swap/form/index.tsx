@@ -8,17 +8,18 @@ import InputWrapper from '@/components/Swap/form/inputWrapper';
 import HorizontalItem from '@/components/Swap/horizontalItem';
 import SlippageSettingButton from '@/components/Swap/slippageSetting/button';
 import WrapperConnected from '@/components/WrapperConnected';
-import { IToken } from '@/interfaces/token';
-import { getTokens } from '@/services/token-explorer';
-import { formatCurrency } from '@/utils';
-import { composeValidators, required } from '@/utils/formValidate';
-import { Box, Flex, Text, forwardRef } from '@chakra-ui/react';
+import {IToken} from '@/interfaces/token';
+import {getSwapTokens} from '@/services/token-explorer';
+import {formatCurrency} from '@/utils';
+import {composeValidators, required} from '@/utils/formValidate';
+import {Box, Flex, forwardRef, Text} from '@chakra-ui/react';
 import BigNumber from 'bignumber.js';
 import cx from 'classnames';
-import { SetStateAction, useCallback, useEffect, useRef, useState } from 'react';
-import { Field, Form, useForm, useFormState } from 'react-final-form';
-import { BsArrowDownShort } from 'react-icons/bs';
+import {SetStateAction, useCallback, useEffect, useRef, useState} from 'react';
+import {Field, Form, useForm, useFormState} from 'react-final-form';
+import {BsArrowDownShort} from 'react-icons/bs';
 import styles from './styles.module.scss';
+import {isDevelop} from "@/utils/commons";
 
 const LIMIT_PAGE = 50;
 
@@ -42,7 +43,7 @@ export const MakeFormSwap = forwardRef((props) => {
   const fetchTokens = async (page = 1, isFetchMore = false) => {
     try {
       setLoading(true);
-      const res = await getTokens({ limit: LIMIT_PAGE, page: page });
+      const res = await getSwapTokens({ limit: LIMIT_PAGE, page: page, is_test: isDevelop() ? 1 : '' });
       setTokensList(res);
     } catch (err: unknown) {
       console.log('Failed to fetch tokens owned');
