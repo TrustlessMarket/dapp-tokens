@@ -115,7 +115,6 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     }
   };
 
-
   const handleSelectBaseToken = async (token: IToken) => {
     setIsApproveBaseToken(await checkTokenApprove(token));
     setBaseBalance(await getTokenBalance(token));

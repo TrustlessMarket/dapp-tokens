@@ -196,10 +196,10 @@ const FilterButton: React.FC<FilterButtonProps> = ({
   const [selectedToken, setSelectedToken] = useState<any>({});
 
   useEffect(() => {
-    if (value && value?.id) {
+    if (value && value?.address) {
       setSelectedToken(value);
     }
-  }, [value?.id]);
+  }, [value?.address]);
 
   const handleSelectToken = (token: React.SetStateAction<null>) => {
     setSelectedToken(token);

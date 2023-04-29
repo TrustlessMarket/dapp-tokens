@@ -1,11 +1,10 @@
 import UniswapV2PairJson from '@/abis/UniswapV2Pair.json';
-import { TRANSFER_TX_SIZE } from '@/configs';
-import { AssetsContext } from '@/contexts/assets-context';
-import { TransactionEventType } from '@/enums/transaction';
-import { ContractOperationHook, DAppType } from '@/interfaces/contract-operation';
-import { getContract } from '@/utils';
-import { useWeb3React } from '@web3-react/core';
-import { useCallback, useContext } from 'react';
+import {AssetsContext} from '@/contexts/assets-context';
+import {TransactionEventType} from '@/enums/transaction';
+import {ContractOperationHook, DAppType} from '@/interfaces/contract-operation';
+import {getContract} from '@/utils';
+import {useWeb3React} from '@web3-react/core';
+import {useCallback, useContext} from 'react';
 
 export interface IGetReservesParams {
   erc20TokenAddress: string;
@@ -25,11 +24,11 @@ const useGetReserves: ContractOperationHook<IGetReservesParams, boolean> = () =>
           provider,
           account,
         );
-        console.log({
-          tcTxSizeByte: TRANSFER_TX_SIZE,
-          feeRatePerByte: feeRate.fastestFee,
-          erc20TokenAddress,
-        });
+        // console.log({
+        //   tcTxSizeByte: TRANSFER_TX_SIZE,
+        //   feeRatePerByte: feeRate.fastestFee,
+        //   erc20TokenAddress,
+        // });
         // const estimatedFee = TC_SDK.estimateInscribeFee({
         //   tcTxSizeByte: TRANSFER_TX_SIZE,
         //   feeRatePerByte: feeRate.fastestFee,
