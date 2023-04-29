@@ -1,5 +1,5 @@
 import {ContractOperationHook, DAppType} from '@/interfaces/contract-operation';
-import UniswapV2RouterJson from '@/abis/UniswapV2Router.json';
+import UniswapV2PairJson from '@/abis/UniswapV2Pair.json';
 import {useWeb3React} from '@web3-react/core';
 import {useCallback, useContext} from 'react';
 import {AssetsContext} from '@/contexts/assets-context';
@@ -8,27 +8,21 @@ import BigNumber from 'bignumber.js';
 import {formatBTCPrice} from '@/utils/format';
 import {getContract} from '@/utils';
 import {TRANSFER_TX_SIZE} from '@/configs';
-import Web3 from 'web3';
 import {TransactionEventType} from '@/enums/transaction';
-import {ethers} from "ethers";
 
-export interface ISwapERC20TokenParams {
-  addresses: string[];
-  address: string;
-  amount: string;
-  amountOutMin: string;
+export interface IGetReservesParams {
   erc20TokenAddress: string;
 }
 
-const useEstimateSwapERC20Token: ContractOperationHook<ISwapERC20TokenParams, boolean> = () => {
+const useGetReserves: ContractOperationHook<IGetReservesParams, boolean> = () => {
   const { account, provider } = useWeb3React();
   const { btcBalance, feeRate } = useContext(AssetsContext);
 
   const call = useCallback(
-    async (params: ISwapERC20TokenParams): Promise<boolean> => {
-      const { addresses, address, amount, amountOutMin, erc20TokenAddress } = params;
+    async (params: IGetReservesParams): Promise<boolean> => {
+      const { erc20TokenAddress } = params;
       if (account && provider && erc20TokenAddress) {
-        const contract = getContract(erc20TokenAddress, UniswapV2RouterJson.abi, provider, account);
+        const contract = getContract(erc20TokenAddress, UniswapV2PairJson.abi, provider, account);
         console.log({
           tcTxSizeByte: TRANSFER_TX_SIZE,
           feeRatePerByte: feeRate.fastestFee,
@@ -49,13 +43,7 @@ const useEstimateSwapERC20Token: ContractOperationHook<ISwapERC20TokenParams, bo
 
         const transaction = await contract
           .connect(provider.getSigner())
-          .swapExactTokensForTokens(
-            Web3.utils.toWei(amount, 'ether'),
-            Web3.utils.toWei(amountOutMin, 'ether'),
-            addresses,
-            address,
-            ethers.constants.MaxUint256
-      );
+          .getReserves();
 
         return transaction;
       }
@@ -72,4 +60,4 @@ const useEstimateSwapERC20Token: ContractOperationHook<ISwapERC20TokenParams, bo
   };
 };
 
-export default useEstimateSwapERC20Token;
+export default useGetReserves;
