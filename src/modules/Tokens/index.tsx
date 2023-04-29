@@ -189,7 +189,7 @@ const Tokens = () => {
                   className="comming-soon-text"
                   fontWeight="light"
               >
-                comming soon
+                coming soon
               </Text>
             </Button>
           </div>
