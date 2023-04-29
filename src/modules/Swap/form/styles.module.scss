@@ -83,7 +83,7 @@
 .inputAmount {
   background: #f4f5f6 !important;
   //border-radius: 0px !important;
-  height: 40px !important;
+  height: 50px !important;
   font-size: 16px !important;
 
   &:disabled {
@@ -113,34 +113,7 @@
   }
 }
 
-.topupButton {
-  height: unset !important;
-  background: unset !important;
-  color: #b1b5c3 !important;
-  min-width: unset !important;
-  padding: unset !important;
-}
-
-.btnIsolatedLeverage {
-  border: 1px solid #E6E8EC;
-  padding: 2px 2px 2px 8px;
-  font-weight: 500;
-  border-radius: 100px;
-  cursor: pointer;
-}
-
-.content {
-  box-shadow: 0px 0px 24px rgba(0, 0, 0, 0.08) !important;
-  border-radius: 8px;
-  // padding: 16px;
-  font-style: normal;
-  font-weight: 500;
-  font-size: 12px;
-  line-height: 140%;
-  color: #23262f;
-  white-space: break-spaces;
-  z-index: 999;
-  &:focus-visible {
-    outline: 0 !important;
-  }
+.submitButton {
+  width: 100%;
+  margin-top: 16px;
 }

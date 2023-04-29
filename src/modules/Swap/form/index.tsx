@@ -213,20 +213,17 @@ export const MakeFormSwap = forwardRef((props) => {
         />
       )}
       <WrapperConnected
-      // buttonConfig={{ btnSize: 'l', mt: 6 }}
-      // showBtnConnect={true}
-      // showSwitchButton={true}
-      // labelSwitchChain="Switch for approve"
+      className={styles.submitButton}
       >
         {isApproveBaseToken && isApproveQuoteToken ? (
           <FiledButton
             isDisabled={submitting || btnDisabled}
             isLoading={submitting}
             type="submit"
-            borderRadius={'100px !important'}
+            // borderRadius={'100px !important'}
             // className="btn-submit"
             btnSize={'m'}
-            containerConfig={{ flex: 1, mt: 6 }}
+            containerConfig={{ flex: 1 }}
             loadingText={submitting ? 'Processing' : ' '}
             // processInfo={{
             //   id: keyTransactionModule.proForm,

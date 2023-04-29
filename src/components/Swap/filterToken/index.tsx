@@ -1,18 +1,17 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import FiledButton from '@/components/Swap/button/filedButton';
-import CardNftMedia from '@/components/Swap/cardNftMedia';
 import FieldText from '@/components/Swap/form/fieldText';
-import ListTable, { ColumnProp } from '@/components/Swap/listTable';
+import ListTable, {ColumnProp} from '@/components/Swap/listTable';
 import useDebounce from '@/hooks/useDebounce';
-import { closeModal, openModal } from '@/state/modal';
-import { shortCryptoAddress } from '@/utils';
-import { Box, Flex, Text } from '@chakra-ui/react';
-import { useWindowSize } from '@trustless-computer/dapp-core';
-import { clone } from 'lodash';
-import React, { useEffect, useMemo, useState } from 'react';
-import { Field, Form, useFormState } from 'react-final-form';
-import { BiChevronDown } from 'react-icons/bi';
-import { useDispatch } from 'react-redux';
+import {closeModal, openModal} from '@/state/modal';
+import {shortCryptoAddress} from '@/utils';
+import {Box, Flex, Text} from '@chakra-ui/react';
+import {useWindowSize} from '@trustless-computer/dapp-core';
+import {clone, isEmpty} from 'lodash';
+import React, {useEffect, useMemo, useState} from 'react';
+import {Field, Form, useFormState} from 'react-final-form';
+import {BiChevronDown} from 'react-icons/bi';
+import {useDispatch} from 'react-redux';
 import styles from './styles.module.scss';
 
 interface FilterButtonProps {
@@ -275,34 +274,16 @@ const FilterButton: React.FC<FilterButtonProps> = ({
     }
   };
 
-  const imgNft = 40;
-
   return (
     <FiledButton btnSize={'l'} onClick={handleOpenModal}>
       <Flex gap={2} alignItems={'center'}>
-        {selectedToken ? (
-          <>
-            <CardNftMedia
-              detail={{
-                image: selectedToken?.thumbnail,
-                name: selectedToken?.code,
-              }}
-              className={styles.imageFilter}
-              width={`${imgNft}px`}
-              height={`${imgNft}px`}
-              config={{
-                image: {
-                  width: `${imgNft}px`,
-                  height: `${imgNft}px`,
-                  objectFit: 'cover',
-                },
-              }}
-            />
+        {
+          isEmpty(selectedToken) ? (
+            <Text>Select token</Text>
+          ) : (
             <Text>{selectedToken?.symbol}</Text>
-          </>
-        ) : (
-          <Text>Select token</Text>
-        )}
+          )
+        }
         <BiChevronDown />
       </Flex>
     </FiledButton>
