@@ -3,8 +3,9 @@ import React from 'react';
 import AddPoolsForm from './AddPools.Form';
 
 const FormAddPoolContainer = () => {
-  const onSubmit = async () => {
+  const onSubmit = async (values) => {
     try {
+      console.log('onSubmit', values);
     } catch (error) {}
   };
 
