@@ -7,19 +7,19 @@ import { getContract } from '@/utils';
 import { useWeb3React } from '@web3-react/core';
 import { useCallback, useContext } from 'react';
 
-export interface IApproveERC20TokenParams {
+export interface IIsApproveERC20TokenParams {
   erc20TokenAddress: string;
 }
 
 const useIsApproveERC20Token: ContractOperationHook<
-  IApproveERC20TokenParams,
+  IIsApproveERC20TokenParams,
   boolean
 > = () => {
   const { account, provider } = useWeb3React();
   const { btcBalance, feeRate } = useContext(AssetsContext);
 
   const call = useCallback(
-    async (params: IApproveERC20TokenParams): Promise<boolean> => {
+    async (params: IIsApproveERC20TokenParams): Promise<boolean> => {
       const { erc20TokenAddress } = params;
       if (account && provider && erc20TokenAddress) {
         const contract = getContract(erc20TokenAddress, ERC20ABIJson.abi, provider);
