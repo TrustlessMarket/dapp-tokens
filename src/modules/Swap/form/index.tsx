@@ -164,7 +164,7 @@ export const MakeFormSwap = forwardRef((props) => {
           bgColor={'#B1B5C3'}
           borderRadius={'8px'}
         >
-          <BsArrowDownShort color="blue" />
+          <BsArrowDownShort color="black"/>
         </Box>
       </Flex>
 
