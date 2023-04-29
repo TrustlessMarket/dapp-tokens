@@ -4,7 +4,6 @@ import {Field, Form, useForm, useFormState} from "react-final-form";
 import styles from "./styles.module.scss";
 import {useAppDispatch} from "@/state/hooks";
 import {requestReload, requestReloadRealtime} from "@/state/pnftExchange";
-import HorizontalItem from "@/components/Swap/horizontalItem";
 import {IToken} from "@/interfaces/token";
 import useIsApproveERC20Token from "@/hooks/contract-operations/token/useIsApproveERC20Token";
 import useBalanceERC20Token from "@/hooks/contract-operations/token/useBalanceERC20Token";
@@ -20,7 +19,6 @@ import FieldAmount from "@/components/Swap/form/fieldAmount";
 import {composeValidators, required} from "@/utils/formValidate";
 import FilterButton from "@/components/Swap/filterToken";
 import {BsPlus} from "react-icons/bs";
-import BigNumber from "bignumber.js";
 import WrapperConnected from "@/components/WrapperConnected";
 import FiledButton from "@/components/Swap/button/filedButton";
 import {isEmpty} from "lodash";
@@ -40,8 +38,8 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const { call: isApproved } = useIsApproveERC20Token();
   const { call: tokenBalance } = useBalanceERC20Token();
   const { call: approveToken } = useApproveERC20Token();
-  const [baseBalance, setBaseBalance] = useState(0);
-  const [quoteBalance, setQuoteBalance] = useState(0);
+  const [baseBalance, setBaseBalance] = useState("0");
+  const [quoteBalance, setQuoteBalance] = useState("0");
 
   console.log('isApproveBaseToken', isApproveBaseToken);
   console.log('isApproveQuoteToken', isApproveQuoteToken);
@@ -83,13 +81,12 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     }
   };
 
-  const isCheckBaseTokenApprove = async (token: IToken) => {
+  const checkTokenApprove = async (token: IToken) => {
     try {
       const response = await isApproved({
         erc20TokenAddress: token.address,
       });
-      setIsApproveBaseToken(response);
-      // console.log('response', response);
+      return response;
     } catch (error) {
       console.log('error', error);
     }
@@ -117,26 +114,15 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     }
   };
 
-  const isCheckQuoteTokenApprove = async (token: IToken) => {
-    try {
-      const response = await isApproved({
-        erc20TokenAddress: token.address,
-      });
-      setIsApproveQuoteToken(response);
-      // console.log('response', response);
-    } catch (error) {
-      console.log('error', error);
-    }
-  };
 
   const handleSelectBaseToken = async (token: IToken) => {
-    isCheckBaseTokenApprove(token);
+    setIsApproveBaseToken(await checkTokenApprove(token));
     setBaseBalance(await getTokenBalance(token));
     setBaseToken(token);
   };
 
   const handleSelectQuoteToken = async (token: IToken) => {
-    isCheckQuoteTokenApprove(token);
+    setIsApproveQuoteToken(await checkTokenApprove(token));
     setQuoteBalance(await getTokenBalance(token));
     setQuoteToken(token);
   };
@@ -266,21 +252,6 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           />
         </Flex>
       </InputWrapper>
-      {baseToken && quoteToken && (
-        <HorizontalItem
-          label={
-            <Text fontSize={'xs'} fontWeight={'medium'} color={'#23262F'}>
-              1 {quoteToken?.base_token?.symbol} =&nbsp;
-              {formatCurrency(
-                new BigNumber(quoteToken?.index_price)
-                  .dividedBy(baseToken?.index_price)
-                  .toNumber(),
-              )}
-              &nbsp;{baseToken?.base_token?.symbol}
-            </Text>
-          }
-        />
-      )}
       <WrapperConnected className={styles.submitButton}>
         {isApproveBaseToken && isApproveQuoteToken ? (
           <FiledButton
