@@ -1,20 +1,16 @@
-import { ContractOperationHook, DAppType } from '@/interfaces/contract-operation';
+import {ContractOperationHook, DAppType} from '@/interfaces/contract-operation';
 import UniswapV2RouterJson from '@/abis/UniswapV2Router.json';
-import { useWeb3React } from '@web3-react/core';
-import { useCallback, useContext } from 'react';
-import { AssetsContext } from '@/contexts/assets-context';
-import * as TC_SDK from 'trustless-computer-sdk';
-import BigNumber from 'bignumber.js';
-import { formatBTCPrice } from '@/utils/format';
-import { getContract } from '@/utils';
-import { TRANSFER_TX_SIZE } from '@/configs';
+import {useWeb3React} from '@web3-react/core';
+import {useCallback, useContext} from 'react';
+import {AssetsContext} from '@/contexts/assets-context';
+import {getContract} from '@/utils';
+import {UNIV2_ROUTER_ADDRESS} from '@/configs';
 import Web3 from 'web3';
-import { TransactionEventType } from '@/enums/transaction';
+import {TransactionEventType} from '@/enums/transaction';
 
 export interface ISwapERC20TokenParams {
   addresses: string[];
   amount: string;
-  erc20TokenAddress: string;
 }
 
 const useEstimateSwapERC20Token: ContractOperationHook<
@@ -26,31 +22,31 @@ const useEstimateSwapERC20Token: ContractOperationHook<
 
   const call = useCallback(
     async (params: ISwapERC20TokenParams): Promise<boolean> => {
-      const { addresses, amount, erc20TokenAddress } = params;
-      if (account && provider && erc20TokenAddress) {
+      const { addresses, amount } = params;
+      if (account && provider) {
         const contract = getContract(
-          erc20TokenAddress,
+          UNIV2_ROUTER_ADDRESS,
           UniswapV2RouterJson,
           provider,
           account,
         );
-        console.log({
-          tcTxSizeByte: TRANSFER_TX_SIZE,
-          feeRatePerByte: feeRate.fastestFee,
-          erc20TokenAddress,
-        });
-        const estimatedFee = TC_SDK.estimateInscribeFee({
-          tcTxSizeByte: TRANSFER_TX_SIZE,
-          feeRatePerByte: feeRate.fastestFee,
-        });
-        const balanceInBN = new BigNumber(btcBalance);
-        if (balanceInBN.isLessThan(estimatedFee.totalFee)) {
-          throw Error(
-            `Your balance is insufficient. Please top up at least ${formatBTCPrice(
-              estimatedFee.totalFee.toString(),
-            )} BTC to pay network fee.`,
-          );
-        }
+        // console.log({
+        //   tcTxSizeByte: TRANSFER_TX_SIZE,
+        //   feeRatePerByte: feeRate.fastestFee,
+        //   erc20TokenAddress,
+        // });
+        // const estimatedFee = TC_SDK.estimateInscribeFee({
+        //   tcTxSizeByte: TRANSFER_TX_SIZE,
+        //   feeRatePerByte: feeRate.fastestFee,
+        // });
+        // const balanceInBN = new BigNumber(btcBalance);
+        // if (balanceInBN.isLessThan(estimatedFee.totalFee)) {
+        //   throw Error(
+        //     `Your balance is insufficient. Please top up at least ${formatBTCPrice(
+        //       estimatedFee.totalFee.toString(),
+        //     )} BTC to pay network fee.`,
+        //   );
+        // }
 
         const transaction = await contract
           .connect(provider.getSigner())

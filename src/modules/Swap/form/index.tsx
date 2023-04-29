@@ -30,8 +30,10 @@ import {showError} from "@/utils/toast";
 import useGetPair from "@/hooks/contract-operations/swap/useGetPair";
 import useGetReserves from "@/hooks/contract-operations/swap/useReserves";
 import {formatEthPrice} from "@/utils/format";
+import debounce from "lodash/debounce";
 
 const LIMIT_PAGE = 50;
+const FEE = 3;
 
 export const MakeFormSwap = forwardRef((props, ref) => {
   const { onSubmit, submitting } = props;
@@ -55,6 +57,16 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const { values } = useFormState();
   const { change, restart } = useForm();
   const btnDisabled = loading;
+
+  const onBaseAmountChange = useCallback(
+    debounce((p) => handleBaseAmountChange(p), 1000),
+    []
+  );
+
+  const onQuoteAmountChange = useCallback(
+    debounce((p) => handleQuoteAmountChange(p), 1000),
+    []
+  );
 
   useImperativeHandle(ref, () => {
     return {
@@ -205,16 +217,62 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     return undefined;
   }, [values.quoteAmount]);
 
-  const onChangeValueQuoteAmount = () => {
-    // onQuoteAmountChange({
-    //   amount,
-    //   exchangeRate,
-    //   buyingPower,
-    //   maxLeverage: max_leverage,
-    //   tradingPair,
-    //   type: values.type,
-    //   isConnected,
-    // });
+  const getAmountOut = (amountIn: BigNumber, reserveIn: BigNumber, reserveOut: BigNumber): BigNumber => {
+    let amountInWithFee = amountIn.multipliedBy(1000 - FEE * 10);
+    let numerator = amountInWithFee.multipliedBy(reserveOut);
+    let denominator = reserveIn.multipliedBy(1000).plus(amountInWithFee);
+    let amountOut = numerator.div(denominator);
+    return amountOut;
+  }
+
+  const onChangeValueBaseAmount = (amount) => {
+    onBaseAmountChange({
+      amount,
+      baseReserve,
+      quoteReserve
+    });
+  };
+
+  const handleBaseAmountChange = ({
+    amount,
+    baseReserve,
+    quoteReserve
+  }) => {
+    if (isNaN(Number(amount))) return;
+    const amountIn = new BigNumber(amount);
+    const reserveIn = new BigNumber(baseReserve);
+    const reserveOut = new BigNumber(quoteReserve);
+    if (amountIn.lte(0) || reserveIn.lte(0) || reserveOut.lte(0)) {
+      return;
+    }
+    const quoteAmount = getAmountOut(amountIn, reserveIn, reserveOut);
+
+    change("quoteAmount", quoteAmount.toString());
+  };
+
+  const onChangeValueQuoteAmount = (amount) => {
+    onQuoteAmountChange({
+      amount,
+      baseReserve,
+      quoteReserve
+    });
+  };
+
+  const handleQuoteAmountChange = ({
+   amount,
+   baseReserve,
+   quoteReserve
+  }) => {
+    if (isNaN(Number(amount))) return;
+    const amountIn = new BigNumber(amount);
+    const reserveIn = new BigNumber(quoteReserve);
+    const reserveOut = new BigNumber(baseReserve);
+    if (amountIn.lte(0) || reserveIn.lte(0) || reserveOut.lte(0)) {
+      return;
+    }
+    const baseAmount = getAmountOut(amountIn, reserveIn, reserveOut);
+
+    change("baseAmount", baseAmount.toString());
   };
 
   const handleChangeMaxBaseAmount = () => {
@@ -276,7 +334,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             name="baseAmount"
             children={FieldAmount}
             validate={composeValidators(required, validateBaseAmount)}
-            // fieldChanged={onChangeValueBaseAmount}
+            fieldChanged={onChangeValueBaseAmount}
             disabled={submitting}
             // placeholder={"Enter number of tokens"}
             decimals={baseToken?.decimals || 18}
