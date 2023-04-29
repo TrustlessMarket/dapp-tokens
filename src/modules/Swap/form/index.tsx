@@ -31,6 +31,11 @@ import useGetPair from "@/hooks/contract-operations/swap/useGetPair";
 import useGetReserves from "@/hooks/contract-operations/swap/useReserves";
 import {formatEthPrice} from "@/utils/format";
 import debounce from "lodash/debounce";
+import {requestReload, requestReloadRealtime} from "@/state/pnftExchange";
+import {useAppDispatch} from "@/state/hooks";
+import useSwapERC20Token from "@/hooks/contract-operations/swap/useSwapERC20Token";
+import {useSelector} from "react-redux";
+import {getUserSelector} from "@/state/user/selector";
 
 const LIMIT_PAGE = 50;
 const FEE = 3;
@@ -458,14 +463,35 @@ export const MakeFormSwap = forwardRef((props, ref) => {
 const TradingForm = () => {
   const refForm = useRef();
   const [submitting, setSubmitting] = useState(false);
+  const dispatch = useAppDispatch();
+  const { call: swapToken } = useSwapERC20Token();
+  const user = useSelector(getUserSelector);
 
   const handleSubmit = async (values: any) => {
+    console.log('handleSubmit', values);
+    const { baseToken, quoteToken, baseAmount, quoteAmount } = values;
     try {
       setSubmitting(true);
 
-      console.log('handleSubmit', values);
-    } catch (e) {
-      // toastError(toast, e, { slippage, maxSlippage: 2 });
+      const data = {
+        addresses: [baseToken.address, quoteToken.address],
+        address: user?.walletAddress,
+        amount: baseAmount,
+        amountOutMin: "0",
+      };
+
+      const response = await swapToken(data);
+
+      toast.success('Transaction has been created. Please wait for few minutes.');
+      refForm.current?.reset();
+      dispatch(requestReload());
+      dispatch(requestReloadRealtime());
+    } catch (err) {
+      showError({
+        message:
+          (err as Error).message ||
+          'Something went wrong. Please try again later.',
+      });
     } finally {
       setSubmitting(false);
     }
