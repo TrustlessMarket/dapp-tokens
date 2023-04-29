@@ -86,21 +86,20 @@ export const UploadFileContainer = styled.div`
 
   .button-text {
     font-family: var(--font-heading) !important;
-    padding-top: 0.4375rem;
-    padding-bottom: 1.65rem;
-    padding-right: ${px2rem(18)};
-    padding-left: ${px2rem(18)};
+    padding: ${px2rem(11)} ${px2rem(36)};
 
   }
   .brc20-text {
     font-family: var(--font-heading) !important;
-    padding-top: ${px2rem(7)};
-    padding-right: ${px2rem(18)};
-    padding-left: ${px2rem(18)};
+    padding-top: ${px2rem(2)};
+    padding-right: ${px2rem(36)};
+    padding-left: ${px2rem(36)};
+    padding-bottom: 0;
   }
   .comming-soon-text{
     font-family: var(--font-heading) !important;
     padding-bottom:${px2rem(7)};
+    line-height: 100%;
   }
 
   .file-uploader {
@@ -114,6 +113,7 @@ export const UploadFileContainer = styled.div`
   }
   .comming-soon-btn{
     margin-left: 10px;
+    vertical-align:top;
   }
 
 `;
