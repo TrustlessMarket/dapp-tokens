@@ -1,5 +1,5 @@
 import {Box, Flex, forwardRef, Text, useToast} from "@chakra-ui/react";
-import React, {useCallback, useEffect, useRef, useState,} from "react";
+import React, {useCallback, useEffect, useImperativeHandle, useRef, useState,} from "react";
 import {Field, Form, useForm, useFormState} from "react-final-form";
 import styles from "./styles.module.scss";
 import {useAppDispatch} from "@/state/hooks";
@@ -23,6 +23,7 @@ import {BsPlus} from "react-icons/bs";
 import BigNumber from "bignumber.js";
 import WrapperConnected from "@/components/WrapperConnected";
 import FiledButton from "@/components/Swap/button/filedButton";
+import {isEmpty} from "lodash";
 
 const LIMIT_PAGE = 50;
 
@@ -37,10 +38,28 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const { call: isApproved } = useIsApproveERC20Token();
   const { call: tokenBalance } = useBalanceERC20Token();
   const { call: approveToken } = useApproveERC20Token();
+  const [baseBalance, setBaseBalance] = useState(0);
+  const [quoteBalance, setQuoteBalance] = useState(0);
+
+  console.log('isApproveBaseToken', isApproveBaseToken);
+  console.log('isApproveQuoteToken', isApproveQuoteToken);
+  console.log('baseBalance', baseBalance);
+  console.log('quoteBalance', quoteBalance);
+  console.log('=======');
 
   const { values } = useFormState();
-  const { change } = useForm();
+  const { change, restart } = useForm();
   const btnDisabled = loading;
+
+  useImperativeHandle(ref, () => {
+    return {
+      reset: reset,
+    };
+  });
+
+  const reset = async () => {
+    restart({  });
+  };
 
   useEffect(() => {
     fetchTokens();
@@ -74,14 +93,15 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     }
   };
 
-  const balanceBaseToken = async (token: IToken) => {
+  const getTokenBalance = async (token: IToken) => {
     try {
       const response = await tokenBalance({
         erc20TokenAddress: token.address,
       });
-      await approveBaseToken(token);
+      // await approveBaseToken(token);
       // setIsApproveBaseToken(response);
-      console.log('response', response);
+      // console.log('response', response);
+      return response;
     } catch (error) {
       console.log('error', error);
     }
@@ -111,14 +131,15 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     }
   };
 
-  const handleSelectBaseToken = (token: IToken) => {
+  const handleSelectBaseToken = async (token: IToken) => {
     isCheckBaseTokenApprove(token);
-    balanceBaseToken(token);
+    setBaseBalance(await getTokenBalance(token));
     setBaseToken(token);
   };
 
-  const handleSelectQuoteToken = (token: IToken) => {
+  const handleSelectQuoteToken = async (token: IToken) => {
     isCheckQuoteTokenApprove(token);
+    setQuoteBalance(await getTokenBalance(token));
     setQuoteToken(token);
   };
 
@@ -174,6 +195,12 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       <InputWrapper
         className={cx(styles.inputAmountWrap, styles.inputBaseAmountWrap)}
         theme="light"
+        label={" "}
+        rightLabel={!isEmpty(baseToken) &&
+          <Text>
+            {formatCurrency(baseBalance)} {baseToken?.symbol}
+          </Text>
+        }
       >
         <Flex gap={4} direction={'column'}>
           <Field
@@ -212,6 +239,12 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       <InputWrapper
         className={cx(styles.inputAmountWrap, styles.inputQuoteAmountWrap)}
         theme="light"
+        label={" "}
+        rightLabel={!isEmpty(quoteToken) &&
+          <Text>
+            {formatCurrency(quoteBalance)} {quoteToken?.symbol}
+          </Text>
+        }
       >
         <Flex gap={4} direction={'column'}>
           <Field

@@ -88,7 +88,7 @@ const LiquidityContainer = () => {
                 </Box>
               ) : (
                 <Card mt={6}>
-                  <Markets />
+                  List Pools
                 </Card>
               )
             }
