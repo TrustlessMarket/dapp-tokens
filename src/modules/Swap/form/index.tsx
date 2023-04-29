@@ -8,17 +8,22 @@ import InputWrapper from '@/components/Swap/form/inputWrapper';
 import HorizontalItem from '@/components/Swap/horizontalItem';
 import SlippageSettingButton from '@/components/Swap/slippageSetting/button';
 import WrapperConnected from '@/components/WrapperConnected';
+import dataMock from '@/dataMock/tokens.json';
+import useBalanceERC20Token from '@/hooks/contract-operations/token/useBalanceERC20Token';
+import useIsApproveERC20Token from '@/hooks/contract-operations/token/useIsApproveERC20Token';
 import { IToken } from '@/interfaces/token';
 import { getTokens } from '@/services/token-explorer';
-import { formatCurrency } from '@/utils';
+import { camelCaseKeys, formatCurrency } from '@/utils';
 import { composeValidators, required } from '@/utils/formValidate';
 import { Box, Flex, Text, forwardRef } from '@chakra-ui/react';
 import BigNumber from 'bignumber.js';
 import cx from 'classnames';
-import { SetStateAction, useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Field, Form, useForm, useFormState } from 'react-final-form';
 import { BsArrowDownShort } from 'react-icons/bs';
 import styles from './styles.module.scss';
+import useApproveERC20Token from '@/hooks/contract-operations/token/useApproveERC20Token';
+import { UNIV2_ROUTER_ADDRESS } from '@/configs';
 
 const LIMIT_PAGE = 50;
 
@@ -30,6 +35,9 @@ export const MakeFormSwap = forwardRef((props) => {
   const [isApproveBaseToken, setIsApproveBaseToken] = useState(true);
   const [isApproveQuoteToken, setIsApproveQuoteToken] = useState(true);
   const [tokensList, setTokensList] = useState<IToken[]>([]);
+  const { call: isApproved } = useIsApproveERC20Token();
+  const { call: tokenBalance } = useBalanceERC20Token();
+  const { call: approveToken } = useApproveERC20Token();
 
   const { values } = useFormState();
   const { change } = useForm();
@@ -43,7 +51,7 @@ export const MakeFormSwap = forwardRef((props) => {
     try {
       setLoading(true);
       const res = await getTokens({ limit: LIMIT_PAGE, page: page });
-      setTokensList(res);
+      setTokensList(camelCaseKeys(dataMock));
     } catch (err: unknown) {
       console.log('Failed to fetch tokens owned');
     } finally {
@@ -51,11 +59,63 @@ export const MakeFormSwap = forwardRef((props) => {
     }
   };
 
-  const handleSelectBaseToken = (token: SetStateAction<null>) => {
+  const isCheckBaseTokenApprove = async (token: IToken) => {
+    try {
+      const response = await isApproved({
+        erc20TokenAddress: token.address,
+      });
+      setIsApproveBaseToken(response);
+      // console.log('response', response);
+    } catch (error) {
+      console.log('error', error);
+    }
+  };
+
+  const balanceBaseToken = async (token: IToken) => {
+    try {
+      const response = await tokenBalance({
+        erc20TokenAddress: token.address,
+      });
+      await approveBaseToken(token);
+      // setIsApproveBaseToken(response);
+      console.log('response', response);
+    } catch (error) {
+      console.log('error', error);
+    }
+  };
+
+  const approveBaseToken = async (token: IToken) => {
+    try {
+      const response = await approveToken({
+        erc20TokenAddress: token.address,
+        address: UNIV2_ROUTER_ADDRESS,
+      });
+      console.log('response', response);
+    } catch (error) {
+      console.log('error', error);
+    }
+  };
+
+  const isCheckQuoteTokenApprove = async (token: IToken) => {
+    try {
+      const response = await isApproved({
+        erc20TokenAddress: token.address,
+      });
+      setIsApproveQuoteToken(response);
+      // console.log('response', response);
+    } catch (error) {
+      console.log('error', error);
+    }
+  };
+
+  const handleSelectBaseToken = (token: IToken) => {
+    isCheckBaseTokenApprove(token);
+    balanceBaseToken(token);
     setBaseToken(token);
   };
 
-  const handleSelectQuoteToken = (token: SetStateAction<null>) => {
+  const handleSelectQuoteToken = (token: IToken) => {
+    isCheckQuoteTokenApprove(token);
     setQuoteToken(token);
   };
 
@@ -164,7 +224,7 @@ export const MakeFormSwap = forwardRef((props) => {
           bgColor={'#B1B5C3'}
           borderRadius={'8px'}
         >
-          <BsArrowDownShort color="black"/>
+          <BsArrowDownShort color="black" />
         </Box>
       </Flex>
 
@@ -212,9 +272,7 @@ export const MakeFormSwap = forwardRef((props) => {
           }
         />
       )}
-      <WrapperConnected
-      className={styles.submitButton}
-      >
+      <WrapperConnected className={styles.submitButton}>
         {isApproveBaseToken && isApproveQuoteToken ? (
           <FiledButton
             isDisabled={submitting || btnDisabled}

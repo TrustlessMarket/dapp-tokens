@@ -1,14 +1,14 @@
-import {ContractOperationHook, DAppType} from '@/interfaces/contract-operation';
+import { ContractOperationHook, DAppType } from '@/interfaces/contract-operation';
 import UniswapV2PairJson from '@/abis/UniswapV2Pair.json';
-import {useWeb3React} from '@web3-react/core';
-import {useCallback, useContext} from 'react';
-import {AssetsContext} from '@/contexts/assets-context';
+import { useWeb3React } from '@web3-react/core';
+import { useCallback, useContext } from 'react';
+import { AssetsContext } from '@/contexts/assets-context';
 import * as TC_SDK from 'trustless-computer-sdk';
 import BigNumber from 'bignumber.js';
-import {formatBTCPrice} from '@/utils/format';
-import {getContract} from '@/utils';
-import {TRANSFER_TX_SIZE} from '@/configs';
-import {TransactionEventType} from '@/enums/transaction';
+import { formatBTCPrice } from '@/utils/format';
+import { getContract } from '@/utils';
+import { TRANSFER_TX_SIZE } from '@/configs';
+import { TransactionEventType } from '@/enums/transaction';
 
 export interface IGetReservesParams {
   erc20TokenAddress: string;
@@ -22,7 +22,12 @@ const useGetReserves: ContractOperationHook<IGetReservesParams, boolean> = () =>
     async (params: IGetReservesParams): Promise<boolean> => {
       const { erc20TokenAddress } = params;
       if (account && provider && erc20TokenAddress) {
-        const contract = getContract(erc20TokenAddress, UniswapV2PairJson.abi, provider, account);
+        const contract = getContract(
+          erc20TokenAddress,
+          UniswapV2PairJson,
+          provider,
+          account,
+        );
         console.log({
           tcTxSizeByte: TRANSFER_TX_SIZE,
           feeRatePerByte: feeRate.fastestFee,
