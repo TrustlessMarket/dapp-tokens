@@ -14,21 +14,43 @@ import useBalanceERC20Token from '@/hooks/contract-operations/token/useBalanceER
 import useIsApproveERC20Token from '@/hooks/contract-operations/token/useIsApproveERC20Token';
 import { IToken } from '@/interfaces/token';
 import { getSwapTokens } from '@/services/token-explorer';
-import { camelCaseKeys, formatCurrency } from '@/utils';
+import { compareString, formatCurrency } from '@/utils';
 import { isDevelop } from '@/utils/commons';
 import { composeValidators, required } from '@/utils/formValidate';
-import { Box, Flex, Text, forwardRef } from '@chakra-ui/react';
+import { Box, Flex, forwardRef, Text } from '@chakra-ui/react';
 import BigNumber from 'bignumber.js';
 import cx from 'classnames';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from 'react';
 import { Field, Form, useForm, useFormState } from 'react-final-form';
 import { BsArrowDownShort } from 'react-icons/bs';
 import styles from './styles.module.scss';
-import pairsMock from '@/dataMock/tokens.json';
+import { isEmpty } from 'lodash';
+import toast from 'react-hot-toast';
+import { showError } from '@/utils/toast';
+import useGetPair from '@/hooks/contract-operations/swap/useGetPair';
+import useGetReserves from '@/hooks/contract-operations/swap/useReserves';
+import { formatEthPrice } from '@/utils/format';
+import debounce from 'lodash/debounce';
+import {
+  requestReload,
+  requestReloadRealtime,
+  selectPnftExchange,
+} from '@/state/pnftExchange';
+import { useAppDispatch, useAppSelector } from '@/state/hooks';
+import useSwapERC20Token from '@/hooks/contract-operations/swap/useSwapERC20Token';
+import { useSelector } from 'react-redux';
+import { getUserSelector } from '@/state/user/selector';
 
 const LIMIT_PAGE = 50;
+const FEE = 3;
 
-export const MakeFormSwap = forwardRef((props) => {
+export const MakeFormSwap = forwardRef((props, ref) => {
   const { onSubmit, submitting } = props;
   const [loading, setLoading] = useState(false);
   const [baseToken, setBaseToken] = useState<any>({});
@@ -39,14 +61,53 @@ export const MakeFormSwap = forwardRef((props) => {
   const { call: isApproved } = useIsApproveERC20Token();
   const { call: tokenBalance } = useBalanceERC20Token();
   const { call: approveToken } = useApproveERC20Token();
+  const { call: getPair } = useGetPair();
+  const { call: getReserves } = useGetReserves();
+  const [baseBalance, setBaseBalance] = useState('0');
+  const [quoteBalance, setQuoteBalance] = useState('0');
+  const [pairAddress, setPairAddress] = useState<string>('');
+  const [baseReserve, setBaseReserve] = useState('0');
+  const [quoteReserve, setQuoteReserve] = useState('0');
 
   const { values } = useFormState();
-  const { change } = useForm();
+  const { change, restart } = useForm();
   const btnDisabled = loading;
+
+  const onBaseAmountChange = useCallback(
+    debounce((p) => handleBaseAmountChange(p), 1000),
+    [],
+  );
+
+  const onQuoteAmountChange = useCallback(
+    debounce((p) => handleQuoteAmountChange(p), 1000),
+    [],
+  );
+
+  useImperativeHandle(ref, () => {
+    return {
+      reset: reset,
+    };
+  });
+
+  const reset = async () => {
+    restart({});
+  };
 
   useEffect(() => {
     fetchTokens();
   }, []);
+
+  useEffect(() => {
+    if (baseToken?.address && quoteToken?.address) {
+      getPairAddress();
+    }
+  }, [baseToken?.address, quoteToken?.address]);
+
+  useEffect(() => {
+    if (pairAddress) {
+      getReservesInfo();
+    }
+  }, [pairAddress]);
 
   const fetchTokens = async (page = 1, isFetchMore = false) => {
     try {
@@ -56,7 +117,7 @@ export const MakeFormSwap = forwardRef((props) => {
         page: page,
         is_test: isDevelop() ? '1' : '',
       });
-      setTokensList(camelCaseKeys(pairsMock));
+      setTokensList(res);
     } catch (err: unknown) {
       console.log('Failed to fetch tokens owned');
     } finally {
@@ -64,64 +125,94 @@ export const MakeFormSwap = forwardRef((props) => {
     }
   };
 
-  const isCheckBaseTokenApprove = async (token: IToken) => {
+  const getReservesInfo = async () => {
+    const { token0, token1 } =
+      baseToken.address.toLowerCase() < quoteToken.address.toLowerCase()
+        ? { token0: baseToken, token1: quoteToken }
+        : { token0: quoteToken, token1: baseToken };
+    try {
+      const response = await getReserves({
+        address: pairAddress,
+      });
+
+      const { _reserve0, _reserve1 } = response;
+
+      if (compareString(token0?.address, baseToken?.address)) {
+        setBaseReserve(formatEthPrice(_reserve0));
+        setQuoteReserve(formatEthPrice(_reserve1));
+      } else {
+        setQuoteReserve(formatEthPrice(_reserve0));
+        setBaseReserve(formatEthPrice(_reserve1));
+      }
+    } catch (error) {
+      console.log('error', error);
+    }
+  };
+
+  const getPairAddress = async () => {
+    const { token0, token1 } =
+      baseToken.address.toLowerCase() < quoteToken.address.toLowerCase()
+        ? { token0: baseToken, token1: quoteToken }
+        : { token0: quoteToken, token1: baseToken };
+    try {
+      const response = await getPair({
+        tokenA: token0,
+        tokenB: token1,
+      });
+      setPairAddress(response);
+    } catch (error) {
+      console.log('error', error);
+    }
+  };
+
+  const checkTokenApprove = async (token: IToken) => {
     try {
       const response = await isApproved({
         erc20TokenAddress: token.address,
       });
-      setIsApproveBaseToken(response);
-      // console.log('response', response);
+      return response;
     } catch (error) {
       console.log('error', error);
+      throw error;
     }
   };
 
-  const balanceBaseToken = async (token: IToken) => {
+  const getTokenBalance = async (token: IToken) => {
     try {
       const response = await tokenBalance({
         erc20TokenAddress: token.address,
       });
-      await approveBaseToken(token);
-      // setIsApproveBaseToken(response);
-      console.log('response', response);
+      console.log('getTokenBalance', token, response);
+      return response;
     } catch (error) {
       console.log('error', error);
+      throw error;
     }
   };
 
-  const approveBaseToken = async (token: IToken) => {
+  const requestApproveToken = async (token: IToken) => {
     try {
       const response = await approveToken({
         erc20TokenAddress: token.address,
         address: UNIV2_ROUTER_ADDRESS,
       });
-      console.log('response', response);
     } catch (error) {
       console.log('error', error);
     }
   };
 
-  const isCheckQuoteTokenApprove = async (token: IToken) => {
-    try {
-      const response = await isApproved({
-        erc20TokenAddress: token.address,
-      });
-      setIsApproveQuoteToken(response);
-      // console.log('response', response);
-    } catch (error) {
-      console.log('error', error);
-    }
-  };
-
-  const handleSelectBaseToken = (token: IToken) => {
-    isCheckBaseTokenApprove(token);
-    balanceBaseToken(token);
+  const handleSelectBaseToken = async (token: IToken) => {
+    setIsApproveBaseToken(await checkTokenApprove(token));
+    setBaseBalance(await getTokenBalance(token));
     setBaseToken(token);
+    change('baseToken', token);
   };
 
-  const handleSelectQuoteToken = (token: IToken) => {
-    isCheckQuoteTokenApprove(token);
+  const handleSelectQuoteToken = async (token: IToken) => {
+    setIsApproveQuoteToken(await checkTokenApprove(token));
+    setQuoteBalance(await getTokenBalance(token));
     setQuoteToken(token);
+    change('quoteToken', token);
   };
 
   const onChangeTransferType = () => {
@@ -131,9 +222,16 @@ export const MakeFormSwap = forwardRef((props) => {
     change('baseAmount', values?.quoteAmount);
     change('quoteAmount', values?.baseAmount);
 
-    const temp = baseToken;
     setBaseToken(quoteToken);
-    setQuoteToken(temp);
+    setQuoteToken(baseToken);
+    change('baseToken', quoteToken);
+    change('quoteToken', baseToken);
+    setBaseBalance(quoteBalance);
+    setQuoteBalance(baseBalance);
+    setIsApproveBaseToken(isApproveQuoteToken);
+    setIsApproveQuoteToken(isApproveBaseToken);
+    setBaseReserve(quoteReserve);
+    setQuoteReserve(baseReserve);
   };
 
   const validateBaseAmount = useCallback(() => {
@@ -144,43 +242,100 @@ export const MakeFormSwap = forwardRef((props) => {
     return undefined;
   }, [values.quoteAmount]);
 
-  const onChangeValueQuoteAmount = () => {
-    // onQuoteAmountChange({
-    //   amount,
-    //   exchangeRate,
-    //   buyingPower,
-    //   maxLeverage: max_leverage,
-    //   tradingPair,
-    //   type: values.type,
-    //   isConnected,
-    // });
+  const getAmountOut = (
+    amountIn: BigNumber,
+    reserveIn: BigNumber,
+    reserveOut: BigNumber,
+  ): BigNumber => {
+    const amountInWithFee = amountIn.multipliedBy(1000 - FEE * 10);
+    const numerator = amountInWithFee.multipliedBy(reserveOut);
+    const denominator = reserveIn.multipliedBy(1000).plus(amountInWithFee);
+    const amountOut = numerator.div(denominator);
+    return amountOut;
+  };
+
+  const onChangeValueBaseAmount = (amount: any) => {
+    onBaseAmountChange({
+      amount,
+      baseReserve,
+      quoteReserve,
+    });
+  };
+
+  const handleBaseAmountChange = ({
+    amount,
+    baseReserve,
+    quoteReserve,
+  }: {
+    amount: any;
+    baseReserve: any;
+    quoteReserve: any;
+  }) => {
+    if (isNaN(Number(amount))) return;
+    const amountIn = new BigNumber(amount);
+    const reserveIn = new BigNumber(baseReserve);
+    const reserveOut = new BigNumber(quoteReserve);
+    if (amountIn.lte(0) || reserveIn.lte(0) || reserveOut.lte(0)) {
+      return;
+    }
+    const quoteAmount = getAmountOut(amountIn, reserveIn, reserveOut);
+
+    change('quoteAmount', quoteAmount.toString());
+  };
+
+  const onChangeValueQuoteAmount = (amount: any) => {
+    onQuoteAmountChange({
+      amount,
+      baseReserve,
+      quoteReserve,
+    });
+  };
+
+  const handleQuoteAmountChange = ({
+    amount,
+    baseReserve,
+    quoteReserve,
+  }: {
+    amount: any;
+    baseReserve: any;
+    quoteReserve: any;
+  }) => {
+    if (isNaN(Number(amount))) return;
+    const amountIn = new BigNumber(amount);
+    const reserveIn = new BigNumber(quoteReserve);
+    const reserveOut = new BigNumber(baseReserve);
+    if (amountIn.lte(0) || reserveIn.lte(0) || reserveOut.lte(0)) {
+      return;
+    }
+    const baseAmount = getAmountOut(amountIn, reserveIn, reserveOut);
+
+    change('baseAmount', baseAmount.toString());
+  };
+
+  const handleChangeMaxBaseAmount = () => {
+    change('baseAmount', baseBalance);
+  };
+
+  const handleChangeMaxQuoteAmount = () => {
+    change('quoteAmount', quoteBalance);
   };
 
   const onApprove = async () => {
-    // try {
-    //   setLoading(true);
-    //   const response = await ERC20Approve(currentToken?.contract_address);
-    //   setIsApproveBaseToken(true);
-    //   toast({
-    //     status: "success",
-    //     title: (
-    //       <>
-    //         Approved successfully.{" "}
-    //         <a
-    //           target="_blank"
-    //           href={getLinkEvmExplorer(response.tx_hash, "tx")}
-    //           style={{ textDecoration: "underline" }}
-    //         >
-    //           View Transaction
-    //         </a>
-    //       </>
-    //     ),
-    //   });
-    // } catch (e) {
-    //   toastError(toast, e, {});
-    // } finally {
-    //   setLoading(false);
-    // }
+    try {
+      setLoading(true);
+
+      await requestApproveToken(baseToken);
+      setIsApproveBaseToken(true);
+
+      toast.success('Transaction has been created. Please wait for few minutes.');
+    } catch (err) {
+      showError({
+        message:
+          (err as Error).message || 'Something went wrong. Please try again later.',
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -196,13 +351,30 @@ export const MakeFormSwap = forwardRef((props) => {
       <InputWrapper
         className={cx(styles.inputAmountWrap, styles.inputBaseAmountWrap)}
         theme="light"
+        label={' '}
+        rightLabel={
+          !isEmpty(baseToken) && (
+            <Flex gap={1}>
+              <Text>
+                Balance: {formatCurrency(baseBalance)} {baseToken?.symbol}
+              </Text>
+              <Text
+                cursor={'pointer'}
+                color={'#3385FF'}
+                onClick={handleChangeMaxBaseAmount}
+              >
+                MAX
+              </Text>
+            </Flex>
+          )
+        }
       >
         <Flex gap={4} direction={'column'}>
           <Field
             name="baseAmount"
             children={FieldAmount}
             validate={composeValidators(required, validateBaseAmount)}
-            // fieldChanged={onChangeValueBaseAmount}
+            fieldChanged={onChangeValueBaseAmount}
             disabled={submitting}
             // placeholder={"Enter number of tokens"}
             decimals={baseToken?.decimals || 18}
@@ -236,6 +408,23 @@ export const MakeFormSwap = forwardRef((props) => {
       <InputWrapper
         className={cx(styles.inputAmountWrap, styles.inputQuoteAmountWrap)}
         theme="light"
+        label={' '}
+        rightLabel={
+          !isEmpty(quoteToken) && (
+            <Flex gap={1}>
+              <Text>
+                Balance: {formatCurrency(quoteBalance)} {quoteToken?.symbol}
+              </Text>
+              <Text
+                cursor={'pointer'}
+                color={'#3385FF'}
+                onClick={handleChangeMaxQuoteAmount}
+              >
+                MAX
+              </Text>
+            </Flex>
+          )
+        }
       >
         <Flex gap={4} direction={'column'}>
           <Field
@@ -262,23 +451,21 @@ export const MakeFormSwap = forwardRef((props) => {
           />
         </Flex>
       </InputWrapper>
-      {baseToken && quoteToken && (
+      {!isEmpty(baseToken) && !isEmpty(quoteToken) && (
         <HorizontalItem
           label={
             <Text fontSize={'xs'} fontWeight={'medium'} color={'#23262F'}>
-              1 {quoteToken?.base_token?.symbol} =&nbsp;
+              1 {quoteToken?.symbol} =&nbsp;
               {formatCurrency(
-                new BigNumber(quoteToken?.index_price)
-                  .dividedBy(baseToken?.index_price)
-                  .toNumber(),
+                new BigNumber(baseReserve).dividedBy(quoteReserve).toNumber(),
               )}
-              &nbsp;{baseToken?.base_token?.symbol}
+              &nbsp;{baseToken?.symbol}
             </Text>
           }
         />
       )}
       <WrapperConnected className={styles.submitButton}>
-        {isApproveBaseToken && isApproveQuoteToken ? (
+        {isApproveBaseToken ? (
           <FiledButton
             isDisabled={submitting || btnDisabled}
             isLoading={submitting}
@@ -302,8 +489,7 @@ export const MakeFormSwap = forwardRef((props) => {
             loadingText="Processing"
             onClick={onApprove}
           >
-            Approve use of{' '}
-            {!isApproveBaseToken ? baseToken?.symbol : quoteToken?.symbol}
+            Approve use of {baseToken?.symbol}
           </FiledButton>
         )}
       </WrapperConnected>
@@ -312,16 +498,42 @@ export const MakeFormSwap = forwardRef((props) => {
 });
 
 const TradingForm = () => {
-  const refForm = useRef();
+  const refForm = useRef<any>();
   const [submitting, setSubmitting] = useState(false);
+  const dispatch = useAppDispatch();
+  const { call: swapToken } = useSwapERC20Token();
+  const user = useSelector(getUserSelector);
+  const slippage = useAppSelector(selectPnftExchange).slippage;
 
   const handleSubmit = async (values: any) => {
+    const { baseToken, quoteToken, baseAmount, quoteAmount } = values;
     try {
       setSubmitting(true);
 
-      console.log('handleSubmit', values);
-    } catch (e) {
-      // toastError(toast, e, { slippage, maxSlippage: 2 });
+      const amountOutMin = new BigNumber(quoteAmount)
+        .multipliedBy(100 - slippage)
+        .dividedBy(100)
+        .decimalPlaces(18)
+        .toString();
+
+      const data = {
+        addresses: [baseToken.address, quoteToken.address],
+        address: user?.walletAddress,
+        amount: baseAmount,
+        amountOutMin: amountOutMin,
+      };
+
+      const response = await swapToken(data);
+
+      toast.success('Transaction has been created. Please wait for few minutes.');
+      refForm.current?.reset();
+      dispatch(requestReload());
+      dispatch(requestReloadRealtime());
+    } catch (err) {
+      showError({
+        message:
+          (err as Error).message || 'Something went wrong. Please try again later.',
+      });
     } finally {
       setSubmitting(false);
     }
