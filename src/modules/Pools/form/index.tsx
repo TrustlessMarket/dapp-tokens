@@ -144,7 +144,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         page: page,
         is_test: isDevelop() ? '1' : '',
       });
-      setTokensList(camelCaseKeys(pairsMock));
+      setTokensList(camelCaseKeys(res));
     } catch (err: unknown) {
       console.log('Failed to fetch tokens owned');
     } finally {
@@ -178,12 +178,12 @@ export const MakeFormSwap = forwardRef((props, ref) => {
 
   const requestApproveToken = async (token: IToken) => {
     try {
-      const response = await approveToken({
+      await approveToken({
         erc20TokenAddress: token.address,
         address: UNIV2_ROUTER_ADDRESS,
       });
     } catch (error) {
-      console.log('error', error);
+      throw error;
     }
   };
 
@@ -462,6 +462,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             isDisabled={loading}
             loadingText="Processing"
             onClick={onApprove}
+            type="button"
           >
             Approve use of{' '}
             {!isApproveBaseToken ? baseToken?.symbol : quoteToken?.symbol}
@@ -514,10 +515,10 @@ const CreateMarket = ({}) => {
     } catch (err) {
       console.log(err);
 
-      // showError({
-      //   message:
-      //     (err as Error).message || 'Something went wrong. Please try again later.',
-      // });
+      showError({
+        message:
+          (err as Error).message || 'Something went wrong. Please try again later.',
+      });
     } finally {
       setSubmitting(false);
     }

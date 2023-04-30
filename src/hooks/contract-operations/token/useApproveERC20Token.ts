@@ -5,8 +5,11 @@ import { AssetsContext } from '@/contexts/assets-context';
 import { TransactionEventType } from '@/enums/transaction';
 import { ContractOperationHook, DAppType } from '@/interfaces/contract-operation';
 import { getContract } from '@/utils';
+import { formatBTCPrice } from '@/utils/format';
 import { useWeb3React } from '@web3-react/core';
+import BigNumber from 'bignumber.js';
 import { useCallback, useContext } from 'react';
+import * as TC_SDK from 'trustless-computer-sdk';
 
 export interface IApproveERC20TokenParams {
   address: string;
@@ -35,22 +38,24 @@ const useApproveERC20Token: ContractOperationHook<
           feeRatePerByte: feeRate.fastestFee,
           erc20TokenAddress,
         });
-        // const estimatedFee = TC_SDK.estimateInscribeFee({
-        //   tcTxSizeByte: TRANSFER_TX_SIZE,
-        //   feeRatePerByte: feeRate.fastestFee,
-        // });
-        // const balanceInBN = new BigNumber(btcBalance);
-        // if (balanceInBN.isLessThan(estimatedFee.totalFee)) {
-        //   throw Error(
-        //     `Your balance is insufficient. Please top up at least ${formatBTCPrice(
-        //       estimatedFee.totalFee.toString(),
-        //     )} BTC to pay network fee.`,
-        //   );
-        // }
+        const estimatedFee = TC_SDK.estimateInscribeFee({
+          tcTxSizeByte: TRANSFER_TX_SIZE,
+          feeRatePerByte: feeRate.fastestFee,
+        });
+        const balanceInBN = new BigNumber(btcBalance);
+        if (balanceInBN.isLessThan(estimatedFee.totalFee)) {
+          throw Error(
+            `Your balance is insufficient. Please top up at least ${formatBTCPrice(
+              estimatedFee.totalFee.toString(),
+            )} BTC to pay network fee.`,
+          );
+        }
 
         const transaction = await contract
           .connect(provider.getSigner())
           .approve(address, MaxUint256);
+
+        await transaction.wait();
 
         return transaction;
       }

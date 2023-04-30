@@ -4,10 +4,13 @@ import { useWeb3React } from '@web3-react/core';
 import { useCallback, useContext } from 'react';
 import { AssetsContext } from '@/contexts/assets-context';
 import { getContract } from '@/utils';
-import { UNIV2_ROUTER_ADDRESS } from '@/configs';
+import { TRANSFER_TX_SIZE, UNIV2_ROUTER_ADDRESS } from '@/configs';
 import Web3 from 'web3';
 import { TransactionEventType } from '@/enums/transaction';
 import { MaxUint256 } from '@/constants/url';
+import BigNumber from 'bignumber.js';
+import { formatBTCPrice } from '@/utils/format';
+import * as TC_SDK from 'trustless-computer-sdk';
 
 export interface ISwapERC20TokenParams {
   addresses: string[];
@@ -33,23 +36,22 @@ const useSwapERC20Token: ContractOperationHook<
           provider,
           account,
         );
-        // console.log({
-        //   tcTxSizeByte: TRANSFER_TX_SIZE,
-        //   feeRatePerByte: feeRate.fastestFee,
-        //   erc20TokenAddress,
-        // });
-        // const estimatedFee = TC_SDK.estimateInscribeFee({
-        //   tcTxSizeByte: TRANSFER_TX_SIZE,
-        //   feeRatePerByte: feeRate.fastestFee,
-        // });
-        // const balanceInBN = new BigNumber(btcBalance);
-        // if (balanceInBN.isLessThan(estimatedFee.totalFee)) {
-        //   throw Error(
-        //     `Your balance is insufficient. Please top up at least ${formatBTCPrice(
-        //       estimatedFee.totalFee.toString(),
-        //     )} BTC to pay network fee.`,
-        //   );
-        // }
+        console.log({
+          tcTxSizeByte: TRANSFER_TX_SIZE,
+          feeRatePerByte: feeRate.fastestFee,
+        });
+        const estimatedFee = TC_SDK.estimateInscribeFee({
+          tcTxSizeByte: TRANSFER_TX_SIZE,
+          feeRatePerByte: feeRate.fastestFee,
+        });
+        const balanceInBN = new BigNumber(btcBalance);
+        if (balanceInBN.isLessThan(estimatedFee.totalFee)) {
+          throw Error(
+            `Your balance is insufficient. Please top up at least ${formatBTCPrice(
+              estimatedFee.totalFee.toString(),
+            )} BTC to pay network fee.`,
+          );
+        }
 
         const transaction = await contract
           .connect(provider.getSigner())
