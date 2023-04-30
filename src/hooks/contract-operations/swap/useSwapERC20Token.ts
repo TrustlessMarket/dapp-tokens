@@ -3,14 +3,15 @@ import UniswapV2RouterJson from '@/abis/UniswapV2Router.json';
 import { useWeb3React } from '@web3-react/core';
 import { useCallback, useContext } from 'react';
 import { AssetsContext } from '@/contexts/assets-context';
-import {compareString, getContract} from '@/utils';
-import {APP_ENV, TRANSFER_TX_SIZE, UNIV2_ROUTER_ADDRESS} from '@/configs';
+import { compareString, getContract } from '@/utils';
+import { APP_ENV, TRANSFER_TX_SIZE, UNIV2_ROUTER_ADDRESS } from '@/configs';
 import Web3 from 'web3';
 import { TransactionEventType } from '@/enums/transaction';
 import { MaxUint256 } from '@/constants/url';
 import BigNumber from 'bignumber.js';
 import { formatBTCPrice } from '@/utils/format';
 import * as TC_SDK from 'trustless-computer-sdk';
+import { scanTrx } from '@/services/token-explorer';
 
 export interface ISwapERC20TokenParams {
   addresses: string[];
@@ -67,6 +68,10 @@ const useSwapERC20Token: ContractOperationHook<
           );
 
         await transaction.wait();
+
+        await scanTrx({
+          tx_hash: transaction.hash,
+        });
 
         return transaction;
       }

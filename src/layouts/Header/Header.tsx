@@ -7,7 +7,7 @@ import { Wrapper } from './Header.styled';
 import MenuMobile from './MenuMobile';
 import WalletHeader from './Wallet';
 import { useWindowSize } from '@trustless-computer/dapp-core';
-import {useRouter} from "next/router";
+import { useRouter } from 'next/router';
 
 const Header = ({ height }: { height: number }) => {
   const refMenu = useRef<HTMLDivElement | null>(null);
@@ -31,13 +31,13 @@ const Header = ({ height }: { height: number }) => {
 
   return (
     <Wrapper style={{ height }}>
-      <div className={"leftWrapper"}>
+      <div className={'leftWrapper'}>
         <Link className="logo" href={ROUTE_PATH.HOME}>
           {!mobileScreen && (
             <img
               src={`${CDN_URL}/icons/logo-tc-market.svg`}
               alt="Trustless Market logo"
-              style={{height: '40px'}}
+              style={{ height: '40px' }}
               // height={40}
             />
           )}
@@ -50,10 +50,24 @@ const Header = ({ height }: { height: number }) => {
             />
           )}
         </Link>
-        <div className={"leftContainer"}>
+        <div className={'leftContainer'}>
           <div className="external-link">
-            <Link href={ROUTE_PATH.SWAP} className={router?.pathname?.includes(ROUTE_PATH.SWAP) ? 'isSelected' : null}>Swap</Link>
-            <Link href={ROUTE_PATH.POOLS} className={router?.pathname?.includes(ROUTE_PATH.POOLS) ? 'isSelected' : null}>Pools</Link>
+            <Link
+              href={ROUTE_PATH.SWAP}
+              className={
+                router?.pathname?.includes(ROUTE_PATH.SWAP) ? 'isSelected' : ''
+              }
+            >
+              Swap
+            </Link>
+            <Link
+              href={ROUTE_PATH.POOLS}
+              className={
+                router?.pathname?.includes(ROUTE_PATH.POOLS) ? 'isSelected' : ''
+              }
+            >
+              Pools
+            </Link>
             <Link href={'https://trustless.computer/'} target="_blank">
               Trustless
             </Link>

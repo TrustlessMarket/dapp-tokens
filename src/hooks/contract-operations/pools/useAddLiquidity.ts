@@ -6,6 +6,7 @@ import { AssetsContext } from '@/contexts/assets-context';
 import { TransactionEventType } from '@/enums/transaction';
 import { ContractOperationHook, DAppType } from '@/interfaces/contract-operation';
 import { TransactionStatus } from '@/interfaces/walletTransaction';
+import { scanTrx } from '@/services/token-explorer';
 import store from '@/state';
 import { updateCurrentTransaction } from '@/state/pnftExchange';
 import { compareString, getContract } from '@/utils';
@@ -94,6 +95,10 @@ const useAddLiquidity: ContractOperationHook<IGetReservesParams, boolean> = () =
         );
 
         await transaction.wait();
+
+        await scanTrx({
+          tx_hash: transaction.hash,
+        });
 
         return transaction;
       }

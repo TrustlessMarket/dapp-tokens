@@ -36,3 +36,11 @@ export const getSwapTokens = async (params: IPagingParams): Promise<IToken[]> =>
     error: 'Fail to get tokens data',
   });
 };
+
+export const scanTrx = async (params: { tx_hash: string }) => {
+  const qs = '?' + queryString.stringify(params);
+  return swrFetcher(`${API_URL}/swap/scan?tx_hash=${qs}`, {
+    method: 'GET',
+    error: 'Fail to scan tx',
+  });
+};

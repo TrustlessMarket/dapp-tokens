@@ -3,6 +3,9 @@ import styled, { DefaultTheme } from 'styled-components';
 
 export const StyledTokens = styled.div`
   margin-top: ${px2rem(48)};
+  max-width: 640px;
+  margin-left: auto;
+  margin-right: auto;
 
   .background {
     background: linear-gradient(90deg, #00c6ff 0%, #0072ff 100%);
@@ -12,7 +15,12 @@ export const StyledTokens = styled.div`
     top: 80px;
     left: 0;
     z-index: 0;
-    height: 86%;
+    min-height: calc(100vh - 80px);
+  }
+
+  h6 {
+    z-index: 2;
+    color: white;
   }
 
   .table {
@@ -56,10 +64,10 @@ export const StyledTokens = styled.div`
 export const UploadFileContainer = styled.div`
   position: relative;
   z-index: 1;
-  max-width: ${px2rem(500)};
+  margin-top: ${px2rem(10)};
   margin-left: auto;
   margin-right: auto;
-  padding: ${px2rem(24)} ${px2rem(32)};
+  padding: ${px2rem(12)} ${px2rem(24)};
   background-color: ${({ theme }: { theme: DefaultTheme }) => theme.bg2};
   display: flex;
   flex-direction: column;
@@ -76,7 +84,7 @@ export const UploadFileContainer = styled.div`
     gap: ${px2rem(20)};
     align-items: center;
     flex: 1;
-    margin-bottom: ${px2rem(24)};
+    /* margin-bottom: ${px2rem(24)}; */
     width: 100%;
   }
 
@@ -95,5 +103,14 @@ export const UploadFileContainer = styled.div`
     position: absolute;
     width: ${px2rem(150)};
     top: 0;
+  }
+
+  .notOnTdRow {
+    td {
+      border: none;
+      .chakra-accordion__item {
+        box-shadow: 0px 0px 10px 0px #0000000a;
+      }
+    }
   }
 `;
