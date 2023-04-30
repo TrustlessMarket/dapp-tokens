@@ -212,6 +212,8 @@
 .formContainer {
   background: #f4f5f6;
   align-items: center;
+  border-style: solid;
+  border-color: #000000;
 }
 
 .formControl {
@@ -226,7 +228,7 @@
     //line-height: 132%;
     font-size: 20px;
     color: #000000;
-    text-align: right;
+    text-align: left;
     @media screen and (max-width: 768px) {
       font-size: 14px;
     }

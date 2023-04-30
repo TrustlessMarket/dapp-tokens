@@ -408,7 +408,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
                 value={baseToken}
               />
             }
-            borderColor={'#F4F5F6'}
+            borderColor={'#5B5B5B'}
           />
         </Flex>
       </InputWrapper>
@@ -460,7 +460,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
               />
             }
             // hideError={true}
-            borderColor={'#F4F5F6'}
+            borderColor={'#5B5B5B'}
           />
         </Flex>
       </InputWrapper>

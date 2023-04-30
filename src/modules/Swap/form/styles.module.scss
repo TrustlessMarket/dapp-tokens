@@ -7,9 +7,9 @@
   margin-bottom: 8px;
 
   :global .chakra-input__left-element {
-    padding-left: 16px;
     margin: 0;
     width: unset;
+    border-right: 1px solid #5B5B5B;
   }
 
   :global .chakra-input__right-element {

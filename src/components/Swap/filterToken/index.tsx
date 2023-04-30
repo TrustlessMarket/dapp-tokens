@@ -10,9 +10,9 @@ import {useWindowSize} from '@trustless-computer/dapp-core';
 import {clone, isEmpty} from 'lodash';
 import React, {useEffect, useMemo, useState} from 'react';
 import {Field, Form, useFormState} from 'react-final-form';
-import {BiChevronDown} from 'react-icons/bi';
 import {useDispatch} from 'react-redux';
 import styles from './styles.module.scss';
+import {AiOutlineCaretDown} from "react-icons/ai";
 
 interface FilterButtonProps {
   data: any[];
@@ -275,8 +275,8 @@ const FilterButton: React.FC<FilterButtonProps> = ({
   };
 
   return (
-    <FiledButton btnSize={'l'} onClick={handleOpenModal}>
-      <Flex gap={2} alignItems={'center'}>
+    <FiledButton onClick={handleOpenModal} className={styles.filterButton}>
+      <Flex gap={2} alignItems={'center'} justifyContent={"space-between"} width={"100%"}>
         {
           isEmpty(selectedToken) ? (
             <Text>Select token</Text>
@@ -284,7 +284,7 @@ const FilterButton: React.FC<FilterButtonProps> = ({
             <Text>{selectedToken?.symbol}</Text>
           )
         }
-        <BiChevronDown />
+        <AiOutlineCaretDown color={"#686A6C"}/>
       </Flex>
     </FiledButton>
   );
