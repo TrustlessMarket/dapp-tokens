@@ -12,6 +12,8 @@ import {UNIV2_ROUTER_ADDRESS} from '@/configs';
 import {BRIDGE_SUPPORT_TOKEN, TRUSTLESS_BRIDGE, TRUSTLESS_FAUCET,} from '@/constants/common';
 import {AssetsContext} from '@/contexts/assets-context';
 import pairsMock from '@/dataMock/tokens.json';
+import pairsMock2 from '@/dataMock/tokens2.json';
+import pairsMock3 from '@/dataMock/tokens3.json';
 import useGetPair from '@/hooks/contract-operations/swap/useGetPair';
 import useGetReserves from '@/hooks/contract-operations/swap/useReserves';
 import useSwapERC20Token from '@/hooks/contract-operations/swap/useSwapERC20Token';
@@ -59,6 +61,8 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const [isApproveBaseToken, setIsApproveBaseToken] = useState(true);
   const [isApproveQuoteToken, setIsApproveQuoteToken] = useState(true);
   const [tokensList, setTokensList] = useState<IToken[]>([]);
+  const [baseTokensList, setBaseTokensList] = useState<IToken[]>([]);
+  const [quoteTokensList, setQuoteTokensList] = useState<IToken[]>([]);
   const { call: isApproved } = useIsApproveERC20Token();
   const { call: tokenBalance } = useBalanceERC20Token();
   const { call: approveToken } = useApproveERC20Token();
@@ -140,6 +144,21 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       console.log('Failed to fetch tokens owned');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchFromTokens = async (from_token?: string) => {
+    try {
+      const res = await getSwapTokens({
+        limit: LIMIT_PAGE,
+        page: 1,
+        is_test: isDevelop() ? '1' : '',
+        from_token: from_token,
+      });
+      return res;
+    } catch (err: unknown) {
+      console.log('Failed to fetch tokens owned');
+    } finally {
     }
   };
 
@@ -227,30 +246,36 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   };
 
   const handleSelectBaseToken = async (token: IToken) => {
+    console.log('handleSelectBaseToken', token);
     setBaseToken(token);
     change('baseToken', token);
     try {
-      const [_isApprove, _tokenBalance] = await Promise.all([
+      const [_isApprove, _tokenBalance, _fromTokens] = await Promise.all([
         checkTokenApprove(token),
         getTokenBalance(token),
+        fetchFromTokens(token?.address)
       ]);
       setIsApproveBaseToken(_isApprove);
       setBaseBalance(_tokenBalance);
+      setQuoteTokensList(_fromTokens);
     } catch (error) {
       throw error;
     }
   };
 
   const handleSelectQuoteToken = async (token: IToken) => {
+    console.log('handleSelectQuoteToken', token);
     setQuoteToken(token);
     change('quoteToken', token);
     try {
-      const [_isApprove, _tokenBalance] = await Promise.all([
+      const [_isApprove, _tokenBalance, _fromTokens] = await Promise.all([
         checkTokenApprove(token),
         getTokenBalance(token),
+        fetchFromTokens(token?.address)
       ]);
       setIsApproveQuoteToken(_isApprove);
       setQuoteBalance(_tokenBalance);
+      setBaseTokensList(_fromTokens);
     } catch (error) {
       throw error;
     }
@@ -273,6 +298,8 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     setIsApproveQuoteToken(isApproveBaseToken);
     setBaseReserve(quoteReserve);
     setQuoteReserve(baseReserve);
+    setBaseTokensList(quoteTokensList);
+    setQuoteTokensList(baseTokensList);
   };
 
   const validateBaseAmount = useCallback(
@@ -391,7 +418,6 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       <HorizontalItem
         label={
           <Text fontSize={'md'} color={'#B1B5C3'}>
-            Swap
           </Text>
         }
         value={<SlippageSettingButton></SlippageSettingButton>}

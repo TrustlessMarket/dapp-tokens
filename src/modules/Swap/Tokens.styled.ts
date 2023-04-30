@@ -76,7 +76,6 @@ export const UploadFileContainer = styled.div`
     gap: ${px2rem(20)};
     align-items: center;
     flex: 1;
-    margin-bottom: ${px2rem(24)};
     width: 100%;
   }
 
