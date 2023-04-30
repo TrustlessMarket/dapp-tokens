@@ -329,7 +329,11 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             <StatNumber>
               {!isPaired
                 ? '-'
-                : formatEthPrice(perPrice._reserve1 / perPrice._reserve0)}
+                : formatEthPrice(
+                    new BigNumber(perPrice._reserve1)
+                      .dividedBy(perPrice._reserve0)
+                      .toString(),
+                  )}
             </StatNumber>
             <StatHelpText>{`${token2.symbol} per ${token1.symbol}`}</StatHelpText>
           </Stat>
