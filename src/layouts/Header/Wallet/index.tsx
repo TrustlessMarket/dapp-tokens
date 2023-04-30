@@ -138,7 +138,6 @@ const WalletHeader = () => {
             src={`/faucet.svg`}
             maxWidth="20"
             color="black"
-            type="fill"
           />
           <Text size="medium">Faucet</Text>
         </div>
@@ -156,10 +155,10 @@ const WalletHeader = () => {
           <IconSVG
             src={`${CDN_URL}/icons/ic-logout.svg`}
             maxWidth="20"
-            color="black"
+            color="red"
             type="stroke"
           />
-          <Text size="medium">Disconnect</Text>
+          <Text size="medium" className={"disconnect-text"}>Disconnect</Text>
         </div>
       </div>
     </WalletPopover>
