@@ -137,7 +137,7 @@ const LiquidityContainer = () => {
                     onClick={() => setShowAction(false)}
                     aria-label={''}
                   />
-                  <Heading as={'h6'}>Create Pool</Heading>
+                  <Heading as={'h6'} color={'#000000 !important'}>Create Pool</Heading>
                 </Flex>
                 <Box mt={6}>
                   <CreateMarket />

@@ -3,7 +3,8 @@ import styled, { DefaultTheme } from 'styled-components';
 
 export const StyledTokens = styled.div`
   margin-top: ${px2rem(48)};
-  max-width: 640px;
+  max-width: ${px2rem(600)};
+  //max-width: 640px;
   margin-left: auto;
   margin-right: auto;
 

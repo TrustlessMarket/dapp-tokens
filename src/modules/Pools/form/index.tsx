@@ -60,6 +60,7 @@ import useSupplyERC20Liquid from '@/hooks/contract-operations/token/useSupplyERC
 import { TransactionStatus } from '@/interfaces/walletTransaction';
 import { transactionType } from '@/components/Swap/alertInfoProcessing/types';
 import { useDispatch } from 'react-redux';
+import px2rem from "@/utils/px2rem";
 
 const LIMIT_PAGE = 50;
 
@@ -374,7 +375,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         label={' '}
         rightLabel={
           !isEmpty(baseToken) && (
-            <Flex gap={1}>
+            <Flex gap={1} fontSize={px2rem(16)}>
               <Text>
                 Balance: {formatCurrency(baseBalance)} {baseToken?.symbol}
               </Text>
@@ -412,9 +413,9 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           />
         </Flex>
       </InputWrapper>
-      <Flex justifyContent={'center'}>
-        <Box className="btn-transfer" p={2} bgColor={'#B1B5C3'} borderRadius={'8px'}>
-          <BsPlus color="black" />
+      <Flex justifyContent={'center'} mt={6}>
+        <Box className="btn-transfer" p={2} border={'1px solid #3385FF'} borderRadius={'8px'}>
+          <BsPlus color="#3385FF" />
         </Box>
       </Flex>
 
@@ -424,7 +425,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         label={' '}
         rightLabel={
           !isEmpty(quoteToken) && (
-            <Flex gap={1}>
+            <Flex gap={1} fontSize={px2rem(16)}>
               <Text>
                 Balance: {formatCurrency(quoteBalance)} {quoteToken?.symbol}
               </Text>
@@ -487,7 +488,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
               id: transactionType.createPool,
             }}
           >
-            Create
+            CREATE
           </FiledButton>
         ) : (
           <FiledButton
@@ -501,7 +502,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
               id: transactionType.createPoolApprove,
             }}
           >
-            Approve use of{' '}
+            APPROVE USE OF{' '}
             {!isApproveBaseToken ? baseToken?.symbol : quoteToken?.symbol}
           </FiledButton>
         )}

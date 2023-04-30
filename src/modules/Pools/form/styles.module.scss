@@ -7,9 +7,9 @@
   margin-bottom: 8px;
 
   :global .chakra-input__left-element {
-    padding-left: 16px;
     margin: 0;
     width: unset;
+    border-right: 1px solid #5B5B5B;
   }
 
   :global .chakra-input__right-element {
@@ -58,7 +58,7 @@
   background: #f4f5f6 !important;
   //border-radius: 0px !important;
   height: 70px !important;
-  font-size: 16px !important;
+  font-size: 20px !important;
 
   &:disabled {
     cursor: not-allowed;
@@ -76,6 +76,10 @@
 .submitButton {
   width: 100%;
   margin-top: 16px;
+
+  button {
+    font-size: 16px !important;
+  }
 }
 
 .pricePoolContainer {

@@ -47,6 +47,7 @@ import styles from './styles.module.scss';
 import {transactionType} from "@/components/Swap/alertInfoProcessing/types";
 import {TransactionStatus} from "@/interfaces/walletTransaction";
 import {RiArrowUpDownLine} from "react-icons/ri";
+import px2rem from "@/utils/px2rem";
 
 const LIMIT_PAGE = 50;
 const FEE = 3;
@@ -423,10 +424,10 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       <InputWrapper
         className={cx(styles.inputAmountWrap, styles.inputBaseAmountWrap)}
         theme="light"
-        label={'Swap from'}
+        label={<Text fontSize={px2rem(16)}>Swap from</Text>}
         rightLabel={
           baseToken && (
-            <Flex gap={1}>
+            <Flex gap={1} fontSize={px2rem(16)}>
               <Text>
                 Balance: {formatCurrency(baseBalance)} {baseToken?.symbol}
               </Text>
@@ -480,10 +481,10 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       <InputWrapper
         className={cx(styles.inputAmountWrap, styles.inputQuoteAmountWrap)}
         theme="light"
-        label={'Swap to'}
+        label={<Text fontSize={px2rem(16)}>Swap to</Text>}
         rightLabel={
           quoteToken && (
-            <Flex gap={1}>
+            <Flex gap={1} fontSize={px2rem(16)}>
               <Text>
                 Balance: {formatCurrency(quoteBalance)} {quoteToken?.symbol}
               </Text>
@@ -588,7 +589,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
               id: transactionType.swapToken,
             }}
           >
-            Swap
+            SWAP
           </FiledButton>
         ) : (
           <FiledButton
@@ -601,7 +602,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
               id: transactionType.createPoolApprove,
             }}
           >
-            Approve use of {baseToken?.symbol}
+            APPROVE USE OF {baseToken?.symbol}
           </FiledButton>
         )}
       </WrapperConnected>
