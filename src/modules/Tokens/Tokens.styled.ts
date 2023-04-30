@@ -13,6 +13,8 @@ export const StyledTokens = styled.div`
     top: 80px;
     left: 0;
     z-index: 0;
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
   }
 
   .table {
