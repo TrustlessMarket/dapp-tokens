@@ -49,7 +49,7 @@ export const StyledTokens = styled.div`
     width: fit-content;
     z-index: 1;
     position: relative;
-    color: #3385FF;
+    color: #ffffff;
     font-size: ${px2rem(48)};
     line-height: 48 / 44;
   }
