@@ -42,11 +42,11 @@ import Link from 'next/link';
 import {useCallback, useContext, useEffect, useImperativeHandle, useRef, useState,} from 'react';
 import {Field, Form, useForm, useFormState} from 'react-final-form';
 import toast from 'react-hot-toast';
-import {BsArrowDownShort} from 'react-icons/bs';
 import {useDispatch, useSelector} from 'react-redux';
 import styles from './styles.module.scss';
 import {transactionType} from "@/components/Swap/alertInfoProcessing/types";
 import {TransactionStatus} from "@/interfaces/walletTransaction";
+import {RiArrowUpDownLine} from "react-icons/ri";
 
 const LIMIT_PAGE = 50;
 const FEE = 3;
@@ -423,7 +423,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       <InputWrapper
         className={cx(styles.inputAmountWrap, styles.inputBaseAmountWrap)}
         theme="light"
-        label={' '}
+        label={'Swap from'}
         rightLabel={
           baseToken && (
             <Flex gap={1}>
@@ -470,17 +470,17 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           className="btn-transfer"
           cursor={'pointer'}
           p={2}
-          bgColor={'#B1B5C3'}
+          // bgColor={'#B1B5C3'}
           borderRadius={'8px'}
         >
-          <BsArrowDownShort color="black" />
+          <RiArrowUpDownLine color="#3385FF" />
         </Box>
       </Flex>
 
       <InputWrapper
         className={cx(styles.inputAmountWrap, styles.inputQuoteAmountWrap)}
         theme="light"
-        label={' '}
+        label={'Swap to'}
         rightLabel={
           quoteToken && (
             <Flex gap={1}>
@@ -581,7 +581,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             type="submit"
             // borderRadius={'100px !important'}
             // className="btn-submit"
-            btnSize={'m'}
+            btnSize={'h'}
             containerConfig={{ flex: 1 }}
             loadingText={submitting ? 'Processing' : ' '}
             processInfo={{
@@ -595,6 +595,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             isLoading={loading}
             isDisabled={loading}
             loadingText="Processing"
+            btnSize={'h'}
             onClick={onApprove}
             processInfo={{
               id: transactionType.createPoolApprove,

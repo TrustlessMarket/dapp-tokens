@@ -480,7 +480,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             type="submit"
             // borderRadius={'100px !important'}
             // className="btn-submit"
-            btnSize={'m'}
+            btnSize={'h'}
             containerConfig={{ flex: 1 }}
             loadingText={submitting ? 'Processing' : ' '}
             processInfo={{
@@ -494,6 +494,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             isLoading={loading}
             isDisabled={loading}
             loadingText="Processing"
+            btnSize={'h'}
             onClick={onApprove}
             type="button"
             processInfo={{
