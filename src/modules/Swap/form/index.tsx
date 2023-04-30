@@ -94,7 +94,21 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   });
 
   const reset = async () => {
-    restart({});
+    restart({
+      baseToken: values?.baseToken,
+      quoteToken: values?.quoteToken,
+    });
+
+    try {
+      const [_baseBalance, _quoteBalance] = await Promise.all([
+        getTokenBalance(values?.baseToken),
+        getTokenBalance(values?.quoteToken),
+      ]);
+      setBaseBalance(_baseBalance);
+      setQuoteBalance(_quoteBalance);
+    } catch (error) {
+      throw error;
+    }
   };
 
   useEffect(() => {
