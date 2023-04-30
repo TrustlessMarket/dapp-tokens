@@ -144,7 +144,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         page: page,
         is_test: isDevelop() ? '1' : '',
       });
-      setTokensList(camelCaseKeys(res));
+      setTokensList(camelCaseKeys(pairsMock));
     } catch (err: unknown) {
       console.log('Failed to fetch tokens owned');
     } finally {
@@ -154,6 +154,8 @@ export const MakeFormSwap = forwardRef((props, ref) => {
 
   const checkTokenApprove = async (token: IToken) => {
     try {
+      console.log(token.address);
+
       const response = await isApproved({
         erc20TokenAddress: token.address,
       });

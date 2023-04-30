@@ -1,4 +1,4 @@
-import { TC_NETWORK_RPC } from '@/configs';
+import { TC_EXPLORER, TC_NETWORK_RPC } from '@/configs';
 
 export enum SupportedChainId {
   MAINNET = 1,
@@ -27,7 +27,7 @@ export const TRUSTLESS_COMPUTER_CHAIN_INFO = {
   explorers: [
     {
       name: 'Trustless computer explorer',
-      url: 'https://explorer.trustless.computer',
+      url: TC_EXPLORER,
       standard: 'EIP3091',
     },
   ],

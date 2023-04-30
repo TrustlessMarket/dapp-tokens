@@ -4,6 +4,7 @@
 export const APP_ENV: string = process.env.NEXT_PUBLIC_MODE!;
 export const API_URL: string = process.env.NEXT_PUBLIC_API_URL!;
 export const TC_NETWORK_RPC: string = process.env.NEXT_PUBLIC_TC_NETWORK_RPC!;
+export const TC_EXPLORER: string = process.env.NEXT_PUBLIC_TC_EXPLORER!;
 export const CDN_URL: string = process.env.NEXT_PUBLIC_CDN_URL!;
 export const API_FAUCET: string = process.env.NEXT_PUBLIC_API_FAUCET!;
 
