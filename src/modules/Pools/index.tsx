@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import FiledButton from '@/components/Swap/button/filedButton';
-import Card from '@/components/Swap/card';
 import {
   Accordion,
   AccordionButton,
@@ -14,16 +13,16 @@ import {
   Icon,
   IconButton,
 } from '@chakra-ui/react';
-import { useEffect, useMemo, useState } from 'react';
-import { IoArrowBackOutline } from 'react-icons/io5';
-import { StyledTokens, UploadFileContainer } from './Pools.styled';
+import {useEffect, useMemo, useState} from 'react';
+import {IoArrowBackOutline} from 'react-icons/io5';
+import {StyledTokens, UploadFileContainer} from './Pools.styled';
 import CreateMarket from './form';
 import styles from './styles.module.scss';
-import { transactionType } from '@/components/Swap/alertInfoProcessing/types';
 import ListTable from '@/components/Swap/listTable';
-import { camelCaseKeys } from '@/utils';
+import {camelCaseKeys} from '@/utils';
 import mockTokenPair from '@/dataMock/pairLiquid.json';
-import { IToken } from '@/interfaces/token';
+import {IToken} from '@/interfaces/token';
+import px2rem from "@/utils/px2rem";
 
 const LiquidityContainer = () => {
   const [showAction, setShowAction] = useState(false);
@@ -89,7 +88,7 @@ const LiquidityContainer = () => {
       <div className="background"></div>
 
       <div>
-        {!showAction && (
+        {!showAction ? (
           <>
             <Flex
               gap={4}
@@ -104,12 +103,36 @@ const LiquidityContainer = () => {
                 <FiledButton
                   style={{ background: 'orange' }}
                   onClick={() => handleChooseAction(true)}
+                  fontSize={`${px2rem(16)} !important`}
                 >
                   Create Pool
                 </FiledButton>
               </Flex>
             </Flex>
           </>
+        ) : (
+          <Flex
+            direction={'column'}
+            justifyContent={'center'}
+            alignItems={'center'}
+            position={'relative'}
+          >
+            <IconButton
+              position={'absolute'}
+              left={0}
+              top={'6px'}
+              size={'sm'}
+              borderColor={'#FFFFFF'}
+              borderWidth={1}
+              colorScheme="whiteAlpha"
+              isRound
+              variant="outline"
+              icon={<Icon as={IoArrowBackOutline} color={'#FFFFFF'}/>}
+              onClick={() => setShowAction(false)}
+              aria-label={''}
+            />
+            <Heading as={'h6'}>Create Pool</Heading>
+          </Flex>
         )}
       </div>
       <UploadFileContainer>
@@ -117,31 +140,7 @@ const LiquidityContainer = () => {
           <Box className={styles.wrapper}>
             {showAction ? (
               <Box>
-                <Flex
-                  direction={'column'}
-                  justifyContent={'center'}
-                  alignItems={'center'}
-                  position={'relative'}
-                >
-                  <IconButton
-                    position={'absolute'}
-                    left={0}
-                    top={'6px'}
-                    size={'sm'}
-                    borderColor={'#000'}
-                    borderWidth={1}
-                    colorScheme="whiteAlpha"
-                    isRound
-                    variant="outline"
-                    icon={<Icon as={IoArrowBackOutline} />}
-                    onClick={() => setShowAction(false)}
-                    aria-label={''}
-                  />
-                  <Heading as={'h6'} color={'#000000 !important'}>Create Pool</Heading>
-                </Flex>
-                <Box mt={6}>
-                  <CreateMarket />
-                </Box>
+                <CreateMarket />
               </Box>
             ) : (
               <ListTable data={data} columns={columns} noHeader />
