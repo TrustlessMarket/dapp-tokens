@@ -12,6 +12,10 @@ import BigNumber from 'bignumber.js';
 import { formatBTCPrice } from '@/utils/format';
 import * as TC_SDK from 'trustless-computer-sdk';
 import { scanTrx } from '@/services/token-explorer';
+import store from "@/state";
+import {updateCurrentTransaction} from "@/state/pnftExchange";
+import {TransactionStatus} from "@/interfaces/walletTransaction";
+import {transactionType} from "@/components/Swap/alertInfoProcessing/types";
 
 export interface ISwapERC20TokenParams {
   addresses: string[];
@@ -66,6 +70,16 @@ const useSwapERC20Token: ContractOperationHook<
             address,
             MaxUint256,
           );
+
+        store.dispatch(
+          updateCurrentTransaction({
+            status: TransactionStatus.pending,
+            id: transactionType.swapToken,
+            infoTexts: {
+              pending: `Transaction confirmed. Please wait for it to be processed on the Bitcoin. Note that it may take up to 10 minutes for a block confirmation on the Bitcoin blockchain.`,
+            },
+          }),
+        );
 
         await transaction.wait();
 
