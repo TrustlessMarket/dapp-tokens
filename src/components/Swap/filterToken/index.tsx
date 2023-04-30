@@ -136,7 +136,7 @@ const FilterModal: React.FC<FilterModalProps> = ({
                       fontWeight={'medium'}
                       whiteSpace={'nowrap'}
                     >
-                      {row?.code}
+                      {row?.symbol}
                     </Text>
                   </Box>
                 </Flex>
@@ -193,11 +193,13 @@ const FilterButton: React.FC<FilterButtonProps> = ({
     try {
     } catch (error) {}
   };
-  const [selectedToken, setSelectedToken] = useState<any>({});
+  const [selectedToken, setSelectedToken] = useState<any>();
 
   useEffect(() => {
     if (value && value?.address) {
       setSelectedToken(value);
+    } else {
+      setSelectedToken(null);
     }
   }, [value?.address]);
 
@@ -278,10 +280,10 @@ const FilterButton: React.FC<FilterButtonProps> = ({
     <FiledButton onClick={handleOpenModal} className={styles.filterButton}>
       <Flex gap={2} alignItems={'center'} justifyContent={"space-between"} width={"100%"}>
         {
-          isEmpty(selectedToken) ? (
-            <Text>Select token</Text>
-          ) : (
+          selectedToken ? (
             <Text>{selectedToken?.symbol}</Text>
+          ) : (
+            <Text>Select token</Text>
           )
         }
         <AiOutlineCaretDown color={"#686A6C"}/>

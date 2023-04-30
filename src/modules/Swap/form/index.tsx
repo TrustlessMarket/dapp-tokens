@@ -121,11 +121,13 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   useEffect(() => {
     if (baseToken?.address && quoteToken?.address) {
       getPairAddress();
+    } else {
+      setPairAddress('');
     }
   }, [baseToken?.address, quoteToken?.address]);
 
   useEffect(() => {
-    if (pairAddress) {
+    if (pairAddress && baseToken && quoteToken) {
       getReservesInfo();
     }
   }, [pairAddress]);
@@ -139,6 +141,8 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         is_test: isDevelop() ? '1' : '',
       });
       setTokensList(camelCaseKeys(pairsMock));
+      setBaseTokensList(camelCaseKeys(pairsMock));
+      setQuoteTokensList(camelCaseKeys(pairsMock));
     } catch (err: unknown) {
       console.log('Failed to fetch tokens owned');
     } finally {
@@ -245,7 +249,6 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   };
 
   const handleSelectBaseToken = async (token: IToken) => {
-    console.log('handleSelectBaseToken', token);
     setBaseToken(token);
     change('baseToken', token);
     try {
@@ -257,30 +260,38 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       setIsApproveBaseToken(_isApprove);
       setBaseBalance(_tokenBalance);
       setQuoteTokensList(_fromTokens);
+      if(quoteToken) {
+        const findIndex = _fromTokens.findIndex((v) =>
+          compareString(v.address, quoteToken.address),
+        );
+
+        if(findIndex < 0) {
+          setQuoteToken(null);
+          change('quoteToken', null);
+        }
+      }
     } catch (error) {
       throw error;
     }
   };
 
   const handleSelectQuoteToken = async (token: IToken) => {
-    console.log('handleSelectQuoteToken', token);
     setQuoteToken(token);
     change('quoteToken', token);
     try {
-      const [_isApprove, _tokenBalance, _fromTokens] = await Promise.all([
+      const [_isApprove, _tokenBalance] = await Promise.all([
         checkTokenApprove(token),
         getTokenBalance(token),
         fetchFromTokens(token?.address)
       ]);
       setIsApproveQuoteToken(_isApprove);
       setQuoteBalance(_tokenBalance);
-      setBaseTokensList(_fromTokens);
     } catch (error) {
       throw error;
     }
   };
 
-  const onChangeTransferType = () => {
+  const onChangeTransferType = async () => {
     if (loading) {
       return;
     }
@@ -297,8 +308,27 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     setIsApproveQuoteToken(isApproveBaseToken);
     setBaseReserve(quoteReserve);
     setQuoteReserve(baseReserve);
-    setBaseTokensList(quoteTokensList);
-    setQuoteTokensList(baseTokensList);
+
+    if(quoteToken) {
+      try {
+        const [_fromTokens] = await Promise.all([
+          fetchFromTokens(quoteToken?.address)
+        ]);
+        setQuoteTokensList(_fromTokens);
+        if(baseToken) {
+          const findIndex = _fromTokens.findIndex((v) =>
+            compareString(v.address, baseToken.address),
+          );
+
+          if(findIndex < 0) {
+            setQuoteToken(null);
+            change('quoteToken', null);
+          }
+        }
+      } catch (error) {
+        throw error;
+      }
+    }
   };
 
   const validateBaseAmount = useCallback(
@@ -454,8 +484,8 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             className={styles.inputAmount}
             prependComp={
               <FilterButton
-                data={tokensList}
-                commonData={tokensList.slice(0, 3)}
+                data={baseTokensList}
+                commonData={baseTokensList.slice(0, 3)}
                 handleSelectItem={handleSelectBaseToken}
                 parentClose={close}
                 value={baseToken}
@@ -512,8 +542,8 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             className={cx(styles.inputAmount, styles.collateralAmount)}
             prependComp={
               <FilterButton
-                data={tokensList}
-                commonData={tokensList.slice(0, 3)}
+                data={quoteTokensList}
+                commonData={quoteTokensList.slice(0, 3)}
                 handleSelectItem={handleSelectQuoteToken}
                 parentClose={close}
                 value={quoteToken}
