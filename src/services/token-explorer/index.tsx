@@ -28,7 +28,12 @@ export const getTokensByWallet = async (
   });
 };
 
-export const getSwapTokens = async (params: IPagingParams): Promise<IToken[]> => {
+export interface IListTokenParams {
+  is_test?: string;
+  from_token?: string;
+}
+
+export const getSwapTokens = async (params: IPagingParams & IListTokenParams): Promise<IToken[]> => {
   const qs = '?' + queryString.stringify(params);
 
   return swrFetcher(`${API_URL}/swap/token/list${qs}`, {
