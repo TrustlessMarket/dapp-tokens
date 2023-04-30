@@ -275,9 +275,16 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     setQuoteReserve(baseReserve);
   };
 
-  const validateBaseAmount = useCallback(() => {
-    return undefined;
-  }, [values.baseAmount]);
+  const validateBaseAmount = useCallback(
+    (_amount: any) => {
+      if (Number(_amount) > Number(baseBalance)) {
+        return `Max amount is ${formatCurrency(baseBalance)}`;
+      }
+
+      return undefined;
+    },
+    [values.baseAmount],
+  );
 
   const validateQuoteAmount = useCallback(() => {
     return undefined;
