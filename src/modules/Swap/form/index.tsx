@@ -202,17 +202,33 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   };
 
   const handleSelectBaseToken = async (token: IToken) => {
-    setIsApproveBaseToken(await checkTokenApprove(token));
-    setBaseBalance(await getTokenBalance(token));
     setBaseToken(token);
     change('baseToken', token);
+    try {
+      const [_isApprove, _tokenBalance] = await Promise.all([
+        checkTokenApprove(token),
+        getTokenBalance(token),
+      ]);
+      setIsApproveBaseToken(_isApprove);
+      setBaseBalance(_tokenBalance);
+    } catch (error) {
+      throw error;
+    }
   };
 
   const handleSelectQuoteToken = async (token: IToken) => {
-    setIsApproveQuoteToken(await checkTokenApprove(token));
-    setQuoteBalance(await getTokenBalance(token));
     setQuoteToken(token);
     change('quoteToken', token);
+    try {
+      const [_isApprove, _tokenBalance] = await Promise.all([
+        checkTokenApprove(token),
+        getTokenBalance(token),
+      ]);
+      setIsApproveQuoteToken(_isApprove);
+      setQuoteBalance(_tokenBalance);
+    } catch (error) {
+      throw error;
+    }
   };
 
   const onChangeTransferType = () => {
