@@ -52,6 +52,7 @@ import styles from './styles.module.scss';
 import useGetReserves from '@/hooks/contract-operations/swap/useReserves';
 import { formatEthPrice } from '@/utils/format';
 import BigNumber from 'bignumber.js';
+import useSupplyERC20Liquid from '@/hooks/contract-operations/token/useSupplyERC20Liquid';
 
 const LIMIT_PAGE = 50;
 
@@ -68,9 +69,11 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const { call: approveToken } = useApproveERC20Token();
   const { call: getPair } = useGetPair();
   const { call: getReserves } = useGetReserves();
+  const { call: getSupply } = useSupplyERC20Liquid();
   const [baseBalance, setBaseBalance] = useState('0');
   const [quoteBalance, setQuoteBalance] = useState('0');
   const [pairAddress, setPairAddress] = useState(NULL_ADDRESS);
+  const [percentPool, setPercentPool] = useState('0');
   const [perPrice, setPerPrice] = useState<{
     _reserve0: string;
     _reserve1: string;
@@ -80,12 +83,6 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   });
 
   const isPaired = !compareString(pairAddress, NULL_ADDRESS);
-
-  console.log('isApproveBaseToken', isApproveBaseToken);
-  console.log('isApproveQuoteToken', isApproveQuoteToken);
-  console.log('baseBalance', baseBalance);
-  console.log('quoteBalance', quoteBalance);
-  console.log('=======');
 
   const { values } = useFormState();
   const { change, restart } = useForm();
@@ -120,10 +117,27 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         tokenB: quoteToken,
       });
 
+      console.log(response);
+
       if (!compareString(response, NULL_ADDRESS)) {
-        const resReserve = await getReserves({
-          address: response,
-        });
+        const [resReserve, resSupply] = await Promise.all([
+          getReserves({
+            address: response,
+          }),
+          getSupply({
+            liquidAddress: response,
+          }),
+        ]);
+
+        if (Number(resSupply.totalSupply) !== 0) {
+          setPercentPool(
+            new BigNumber(resSupply.ownerSupply)
+              .dividedBy(resSupply.totalSupply)
+              .multipliedBy(100)
+              .toString(),
+          );
+        }
+
         setPerPrice(resReserve);
       } else {
         setPerPrice({
@@ -154,8 +168,6 @@ export const MakeFormSwap = forwardRef((props, ref) => {
 
   const checkTokenApprove = async (token: IToken) => {
     try {
-      console.log(token.address);
-
       const response = await isApproved({
         erc20TokenAddress: token.address,
       });
@@ -308,23 +320,23 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       <Flex className="price-pool-content">
         <Box>
           <Stat>
-            <StatNumber>
-              {!isPaired ? '-' : formatEthPrice(perPrice._reserve0)}
-            </StatNumber>
+            <StatNumber>{!isPaired ? '-' : 1}</StatNumber>
             <StatHelpText>{`${token1.symbol} per ${token2.symbol}`}</StatHelpText>
           </Stat>
         </Box>
         <Box>
           <Stat>
             <StatNumber>
-              {!isPaired ? '-' : formatEthPrice(perPrice._reserve1)}
+              {!isPaired
+                ? '-'
+                : formatEthPrice(perPrice._reserve1 / perPrice._reserve0)}
             </StatNumber>
             <StatHelpText>{`${token2.symbol} per ${token1.symbol}`}</StatHelpText>
           </Stat>
         </Box>
         <Box>
           <Stat>
-            <StatNumber>0%</StatNumber>
+            <StatNumber>{formatCurrency(percentPool)}%</StatNumber>
             <StatHelpText>Share of Pool</StatHelpText>
           </Stat>
         </Box>

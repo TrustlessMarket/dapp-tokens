@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import Web3 from 'web3';
 import BigNumber from 'bignumber.js';
 
@@ -80,7 +81,7 @@ export const formatPrice = (price: number | string, emptyStr?: string): string =
 };
 
 export const formatEthPrice = (
-  price: string | number | null,
+  price: string | number | any | null,
   emptyStr?: string,
   precision = 4,
 ): string => {

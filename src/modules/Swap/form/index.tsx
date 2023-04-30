@@ -14,7 +14,7 @@ import useBalanceERC20Token from '@/hooks/contract-operations/token/useBalanceER
 import useIsApproveERC20Token from '@/hooks/contract-operations/token/useIsApproveERC20Token';
 import { IToken } from '@/interfaces/token';
 import { getSwapTokens } from '@/services/token-explorer';
-import { compareString, formatCurrency } from '@/utils';
+import { camelCaseKeys, compareString, formatCurrency } from '@/utils';
 import { isDevelop } from '@/utils/commons';
 import { composeValidators, required } from '@/utils/formValidate';
 import { Box, Flex, forwardRef, Text } from '@chakra-ui/react';
@@ -46,6 +46,7 @@ import { useAppDispatch, useAppSelector } from '@/state/hooks';
 import useSwapERC20Token from '@/hooks/contract-operations/swap/useSwapERC20Token';
 import { useSelector } from 'react-redux';
 import { getUserSelector } from '@/state/user/selector';
+import pairLiquidMock from '@/dataMock/pairLiquid.json';
 
 const LIMIT_PAGE = 50;
 const FEE = 3;
@@ -117,7 +118,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         page: page,
         is_test: isDevelop() ? '1' : '',
       });
-      setTokensList(res);
+      setTokensList(camelCaseKeys(pairLiquidMock));
     } catch (err: unknown) {
       console.log('Failed to fetch tokens owned');
     } finally {
