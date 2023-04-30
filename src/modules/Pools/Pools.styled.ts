@@ -41,7 +41,7 @@ export const StyledTokens = styled.div`
   }
 
   .upload_title {
-    margin-bottom: ${px2rem(24)};
+    margin-bottom: ${px2rem(48)};
     margin-left: auto;
     margin-right: auto;
     width: fit-content;
