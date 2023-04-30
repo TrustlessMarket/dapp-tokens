@@ -13,7 +13,7 @@ import { getUserSelector } from '@/state/user/selector';
 import bitcoinStorage from '@/utils/bitcoin-storage';
 import { generateNonceMessage, verifyNonceMessage } from '@/services/auth';
 // import { getAccessToken, setAccessToken } from '@/utils/auth-storage';
-import { setAccessToken } from '@/utils/auth-storage';
+import { getAccessToken, setAccessToken } from '@/utils/auth-storage';
 import { clearAuthStorage } from '@/utils/auth-storage';
 import Web3 from 'web3';
 import { provider } from 'web3-core';
@@ -25,6 +25,7 @@ import { useRouter } from 'next/router';
 import { ROUTE_PATH } from '@/constants/route-path';
 import * as TC_SDK from 'trustless-computer-sdk';
 import { TEMP_ADDRESS_WALLET_EVM } from '@/constants/storage-key';
+import { getCurrentProfile } from '@/services/profile';
 
 export interface IWalletContext {
   onDisconnect: () => Promise<void>;
@@ -68,13 +69,12 @@ export const WalletProvider: React.FC<PropsWithChildren> = ({
       throw new Error('Get connection error.');
     }
     await connection.connector.activate();
-    if (chainId !== SupportedChainId.GOERLI) {
-      await switchChain(SupportedChainId.GOERLI);
+    if (chainId !== SupportedChainId.TRUSTLESS_COMPUTER) {
+      await switchChain(SupportedChainId.TRUSTLESS_COMPUTER);
     }
     const addresses = await connector.provider?.request({
       method: 'eth_accounts',
     });
-    console.log('addresses', addresses);
 
     if (addresses && Array.isArray(addresses)) {
       const evmWalletAddress = addresses[0];
@@ -123,11 +123,9 @@ export const WalletProvider: React.FC<PropsWithChildren> = ({
   };
 
   useAsyncEffect(async () => {
-    // const accessToken = getAccessToken();
+    const accessToken = getAccessToken();
 
-    // console.log('accessToken', accessToken);
-
-    if (connector) {
+    if (connector && accessToken) {
       try {
         const connection = getConnection(connector);
         if (!connection) {
@@ -140,14 +138,14 @@ export const WalletProvider: React.FC<PropsWithChildren> = ({
           console.log(err);
         }
 
-        if (chainId !== SupportedChainId.GOERLI) {
-          await switchChain(SupportedChainId.GOERLI);
+        if (chainId !== SupportedChainId.TRUSTLESS_COMPUTER) {
+          await switchChain(SupportedChainId.TRUSTLESS_COMPUTER);
         }
 
         //temp for test evm
-        const walletAddress = localStorage.getItem(TEMP_ADDRESS_WALLET_EVM);
+        // const walletAddress = localStorage.getItem(TEMP_ADDRESS_WALLET_EVM);
 
-        // const { walletAddress } = await getCurrentProfile();
+        const { walletAddress } = await getCurrentProfile();
         dispatch(updateEVMWallet(walletAddress));
         dispatch(updateSelectedWallet({ wallet: 'METAMASK' }));
       } catch (err: unknown) {
