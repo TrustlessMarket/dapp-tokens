@@ -1,23 +1,24 @@
 import IconSVG from '@/components/IconSVG';
-import { CDN_URL, TC_WEB_URL } from '@/configs';
+import {CDN_URL, TC_WEB_URL} from '@/configs';
 // import { ROUTE_PATH } from '@/constants/route-path';
-import { AssetsContext } from '@/contexts/assets-context';
-import { getIsAuthenticatedSelector, getUserSelector } from '@/state/user/selector';
-import { formatBTCPrice, formatEthPrice } from '@/utils/format';
-import { useWeb3React } from '@web3-react/core';
+import {AssetsContext} from '@/contexts/assets-context';
+import {getIsAuthenticatedSelector, getUserSelector} from '@/state/user/selector';
+import {formatBTCPrice, formatEthPrice} from '@/utils/format';
+import {useWeb3React} from '@web3-react/core';
 import copy from 'copy-to-clipboard';
 // import { useRouter } from 'next/router';
-import { useContext, useRef, useState } from 'react';
-import { OverlayTrigger } from 'react-bootstrap';
-import { toast } from 'react-hot-toast';
-import Jazzicon, { jsNumberForAddress } from 'react-jazzicon';
-import { useSelector } from 'react-redux';
-import { ConnectWalletButton, WalletBalance } from '../Header.styled';
-import { WalletPopover } from './Wallet.styled';
+import {useContext, useRef, useState} from 'react';
+import {OverlayTrigger} from 'react-bootstrap';
+import {toast} from 'react-hot-toast';
+import Jazzicon, {jsNumberForAddress} from 'react-jazzicon';
+import {useSelector} from 'react-redux';
+import {ConnectWalletButton, WalletBalance} from '../Header.styled';
+import {WalletPopover} from './Wallet.styled';
 import Text from '@/components/Text';
-import { WalletContext } from '@/contexts/wallet-context';
-import { formatLongAddress } from '@/utils';
-import { showError } from '@/utils/toast';
+import {WalletContext} from '@/contexts/wallet-context';
+import {formatLongAddress} from '@/utils';
+import {showError} from '@/utils/toast';
+import {TRUSTLESS_BRIDGE, TRUSTLESS_FAUCET} from "@/constants/common";
 
 const WalletHeader = () => {
   // const router = useRouter();
@@ -132,6 +133,25 @@ const WalletHeader = () => {
           />
           <Text size="medium">Wallet</Text>
         </div>
+        <div className="wallet-link" onClick={() => window.open(TRUSTLESS_FAUCET)}>
+          <IconSVG
+            src={`/faucet.svg`}
+            maxWidth="20"
+            color="black"
+            type="fill"
+          />
+          <Text size="medium">Faucet</Text>
+        </div>
+        <div className="wallet-link" onClick={() => window.open(TRUSTLESS_BRIDGE)}>
+          <IconSVG
+            src={`/wrapbtc.svg`}
+            maxWidth="20"
+            color="black"
+            type="fill"
+          />
+          <Text size="medium">Wrap BTC</Text>
+        </div>
+        <div className="divider"></div>
         <div className="wallet-disconnect" onClick={onDisconnect}>
           <IconSVG
             src={`${CDN_URL}/icons/ic-logout.svg`}
