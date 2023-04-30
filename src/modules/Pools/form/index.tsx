@@ -17,7 +17,11 @@ import useIsApproveERC20Token from '@/hooks/contract-operations/token/useIsAppro
 import { IToken } from '@/interfaces/token';
 import { getSwapTokens } from '@/services/token-explorer';
 import { useAppDispatch } from '@/state/hooks';
-import { requestReload, requestReloadRealtime } from '@/state/pnftExchange';
+import {
+  requestReload,
+  requestReloadRealtime,
+  updateCurrentTransaction,
+} from '@/state/pnftExchange';
 import {
   camelCaseKeys,
   compareString,
@@ -50,9 +54,12 @@ import toast from 'react-hot-toast';
 import { BsPlus } from 'react-icons/bs';
 import styles from './styles.module.scss';
 import useGetReserves from '@/hooks/contract-operations/swap/useReserves';
-import { formatEthPrice } from '@/utils/format';
+import { formatAmountBigNumber, formatEthPrice } from '@/utils/format';
 import BigNumber from 'bignumber.js';
 import useSupplyERC20Liquid from '@/hooks/contract-operations/token/useSupplyERC20Liquid';
+import { TransactionStatus } from '@/interfaces/walletTransaction';
+import { transactionType } from '@/components/Swap/alertInfoProcessing/types';
+import { useDispatch } from 'react-redux';
 
 const LIMIT_PAGE = 50;
 
@@ -84,6 +91,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
 
   const isPaired = !compareString(pairAddress, NULL_ADDRESS);
 
+  const dispatch = useDispatch();
   const { values } = useFormState();
   const { change, restart } = useForm();
   const btnDisabled = loading;
@@ -117,8 +125,6 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         tokenB: quoteToken,
       });
 
-      console.log(response);
-
       if (!compareString(response, NULL_ADDRESS)) {
         const [resReserve, resSupply] = await Promise.all([
           getReserves({
@@ -128,6 +134,8 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             liquidAddress: response,
           }),
         ]);
+
+        console.log('resReserve', resReserve);
 
         if (Number(resSupply.totalSupply) !== 0) {
           setPercentPool(
@@ -192,12 +200,20 @@ export const MakeFormSwap = forwardRef((props, ref) => {
 
   const requestApproveToken = async (token: IToken) => {
     try {
+      dispatch(
+        updateCurrentTransaction({
+          id: transactionType.createPoolApprove,
+          status: TransactionStatus.info,
+        }),
+      );
       await approveToken({
         erc20TokenAddress: token.address,
         address: UNIV2_ROUTER_ADDRESS,
       });
     } catch (error) {
       throw error;
+    } finally {
+      dispatch(updateCurrentTransaction(null));
     }
   };
 
@@ -329,9 +345,9 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             <StatNumber>
               {!isPaired
                 ? '-'
-                : formatEthPrice(
-                    new BigNumber(perPrice._reserve1)
-                      .dividedBy(perPrice._reserve0)
+                : formatCurrency(
+                    new BigNumber(formatAmountBigNumber(perPrice._reserve1))
+                      .dividedBy(formatAmountBigNumber(perPrice._reserve0))
                       .toString(),
                   )}
             </StatNumber>
@@ -467,10 +483,9 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             btnSize={'m'}
             containerConfig={{ flex: 1 }}
             loadingText={submitting ? 'Processing' : ' '}
-            // processInfo={{
-            //   id: keyTransactionModule.proForm,
-            //   size: "sm",
-            // }}
+            processInfo={{
+              id: transactionType.createPool,
+            }}
           >
             Create
           </FiledButton>
@@ -481,6 +496,9 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             loadingText="Processing"
             onClick={onApprove}
             type="button"
+            processInfo={{
+              id: transactionType.createPoolApprove,
+            }}
           >
             Approve use of{' '}
             {!isApproveBaseToken ? baseToken?.symbol : quoteToken?.symbol}
@@ -502,7 +520,12 @@ const CreateMarket = ({}) => {
     const { baseToken, quoteToken, baseAmount, quoteAmount } = values;
     try {
       setSubmitting(true);
-      console.log(baseToken, quoteToken);
+      dispatch(
+        updateCurrentTransaction({
+          status: TransactionStatus.info,
+          id: transactionType.createPool,
+        }),
+      );
 
       const [token0, token1] = sortAddressPair(baseToken, quoteToken);
 
@@ -520,11 +543,7 @@ const CreateMarket = ({}) => {
         amountBMin: '0',
       };
 
-      console.log('data', data);
-
       const response = await addLiquidity(data);
-
-      console.log('response', response);
 
       toast.success('Transaction has been created. Please wait for few minutes.');
       refForm.current?.reset();
@@ -539,6 +558,8 @@ const CreateMarket = ({}) => {
       });
     } finally {
       setSubmitting(false);
+
+      dispatch(updateCurrentTransaction(null));
     }
   };
 

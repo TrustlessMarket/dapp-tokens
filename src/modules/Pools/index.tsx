@@ -7,6 +7,7 @@ import { IoArrowBackOutline } from 'react-icons/io5';
 import { StyledTokens, UploadFileContainer } from './Pools.styled';
 import CreateMarket from './form';
 import styles from './styles.module.scss';
+import { transactionType } from '@/components/Swap/alertInfoProcessing/types';
 
 const LiquidityContainer = () => {
   const [showAction, setShowAction] = useState(false);

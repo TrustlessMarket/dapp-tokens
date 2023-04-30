@@ -111,6 +111,10 @@ export const formatEthPriceSubmit = (
   return priceNumb;
 };
 
+export const formatAmountBigNumber = (amount: number | string, decimals = 18) => {
+  return `${new BigNumber(amount).dividedBy(10 ** Number(decimals)).toString(10)}`;
+};
+
 export const ceilPrecised = (number: number | string, precision = 6) => {
   const power = Math.pow(10, precision);
   return Math.ceil(Number(number) * power) / power;

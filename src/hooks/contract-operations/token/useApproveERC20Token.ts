@@ -1,9 +1,13 @@
 import ERC20ABIJson from '@/abis/erc20.json';
+import { transactionType } from '@/components/Swap/alertInfoProcessing/types';
 import { APP_ENV, TRANSFER_TX_SIZE } from '@/configs';
 import { MaxUint256 } from '@/constants/url';
 import { AssetsContext } from '@/contexts/assets-context';
 import { TransactionEventType } from '@/enums/transaction';
 import { ContractOperationHook, DAppType } from '@/interfaces/contract-operation';
+import { TransactionStatus } from '@/interfaces/walletTransaction';
+import store from '@/state';
+import { updateCurrentTransaction } from '@/state/pnftExchange';
 import { compareString, getContract } from '@/utils';
 import { formatBTCPrice } from '@/utils/format';
 import { useWeb3React } from '@web3-react/core';
@@ -56,6 +60,16 @@ const useApproveERC20Token: ContractOperationHook<
         const transaction = await contract
           .connect(provider.getSigner())
           .approve(address, MaxUint256);
+
+        store.dispatch(
+          updateCurrentTransaction({
+            id: transactionType.createPoolApprove,
+            status: TransactionStatus.pending,
+            infoTexts: {
+              pending: `Approving for ${address}`,
+            },
+          }),
+        );
 
         await transaction.wait();
 

@@ -4,6 +4,7 @@ import cx from 'classnames';
 import React, { memo } from 'react';
 
 import styles from './styles.module.scss';
+import AlertInfoProcess from '../alertInfoProcessing';
 
 export interface FiledButtonProps extends ButtonProps {
   btnSize?: 'h' | 'm' | 'l';
@@ -22,6 +23,7 @@ const FiledButton: React.FC<FiledButtonProps> = (props) => {
     isLoading,
     containerConfig,
     loadingText,
+    processInfo,
     ...otherProps
   } = props;
 
@@ -34,6 +36,9 @@ const FiledButton: React.FC<FiledButtonProps> = (props) => {
         className={styles.container}
         {...containerConfig}
       >
+        {Boolean(processInfo) && (
+          <AlertInfoProcess loading={isLoading} processInfo={processInfo} />
+        )}
         {!isLoading && (
           <Button
             className={cx(styles[`${btnSize}`], className)}

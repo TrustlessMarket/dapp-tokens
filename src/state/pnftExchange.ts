@@ -1,24 +1,27 @@
-import { createSlice } from "@reduxjs/toolkit";
-import { RootState } from ".";
+import { createSlice } from '@reduxjs/toolkit';
+import { RootState } from '.';
 import localStorage from '@/utils/localstorage';
-import {SLIPPAGE_VALUE} from "@/constants/storage-key";
+import { SLIPPAGE_VALUE } from '@/constants/storage-key';
+import { WalletTransactionData } from '@/interfaces/walletTransaction';
 
 interface NftyLendState {
   needReload: number;
   reloadRealtime: number;
   slippage: number;
   loadingRealtime: boolean;
+  currentTransaction: WalletTransactionData | undefined;
 }
 
 const initialState: NftyLendState = {
   needReload: 0,
   reloadRealtime: 0,
   slippage: 1,
-  loadingRealtime: false
+  loadingRealtime: false,
+  currentTransaction: undefined,
 };
 
 const slice = createSlice({
-  name: "pnftExchange",
+  name: 'pnftExchange',
   initialState,
   reducers: {
     requestReload: (state) => {
@@ -34,6 +37,9 @@ const slice = createSlice({
     updateLoadingRealtime: (state, action) => {
       state.loadingRealtime = action.payload;
     },
+    updateCurrentTransaction: (state, action) => {
+      state.currentTransaction = action.payload;
+    },
   },
 });
 
@@ -42,8 +48,11 @@ export const {
   requestReloadRealtime,
   updateSlippage,
   updateLoadingRealtime,
+  updateCurrentTransaction,
 } = slice.actions;
 
 export const selectPnftExchange = (state: RootState) => state.pnftExchange;
+export const selectCurrentTransaction = (state: RootState) =>
+  state.pnftExchange.currentTransaction;
 
 export default slice.reducer;
