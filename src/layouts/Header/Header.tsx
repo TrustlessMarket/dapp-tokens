@@ -7,11 +7,13 @@ import { Wrapper } from './Header.styled';
 import MenuMobile from './MenuMobile';
 import WalletHeader from './Wallet';
 import { useWindowSize } from '@trustless-computer/dapp-core';
+import {useRouter} from "next/router";
 
 const Header = ({ height }: { height: number }) => {
   const refMenu = useRef<HTMLDivElement | null>(null);
   const [isOpenMenu, setIsOpenMenu] = useState<boolean>(false);
   const { mobileScreen } = useWindowSize();
+  const router = useRouter();
 
   useEffect(() => {
     if (refMenu.current) {
@@ -29,36 +31,37 @@ const Header = ({ height }: { height: number }) => {
 
   return (
     <Wrapper style={{ height }}>
-      <Link className="logo" href={ROUTE_PATH.HOME}>
-        {!mobileScreen && (
-          <img
-            src={`${CDN_URL}/images/logo-market-2.svg`}
-            alt="Trustless Market logo"
-            style={{minWidth: '180px'}}
-            height={40}
-          />
-        )}
-        {mobileScreen && (
-          <img
-            src={`${CDN_URL}/icons/logo-tc-market.svg`}
-            alt="Trustless Market logo"
-            width={40}
-            height={40}
-          />
-        )}
-      </Link>
+      <div className={"leftWrapper"}>
+        <Link className="logo" href={ROUTE_PATH.HOME}>
+          {!mobileScreen && (
+            <img
+              src={`${CDN_URL}/icons/logo-tc-market.svg`}
+              alt="Trustless Market logo"
+              style={{height: '40px'}}
+              // height={40}
+            />
+          )}
+          {mobileScreen && (
+            <img
+              src={`${CDN_URL}/icons/logo-tc-market.svg`}
+              alt="Trustless Market logo"
+              width={40}
+              height={40}
+            />
+          )}
+        </Link>
+        <div className={"leftContainer"}>
+          <div className="external-link">
+            <Link href={ROUTE_PATH.SWAP} className={router?.pathname?.includes(ROUTE_PATH.SWAP) ? 'isSelected' : null}>Swap</Link>
+            <Link href={ROUTE_PATH.POOLS} className={router?.pathname?.includes(ROUTE_PATH.POOLS) ? 'isSelected' : null}>Pools</Link>
+            <Link href={'https://trustless.computer/'} target="_blank">
+              Trustless
+            </Link>
+          </div>
+        </div>
+      </div>
       <MenuMobile ref={refMenu} onCloseMenu={() => setIsOpenMenu(false)} />
       <div className="rightContainer">
-        <div className="external-link">
-          <Link href={ROUTE_PATH.SWAP}>Swap</Link>
-          <Link href={ROUTE_PATH.POOLS}>Pools</Link>
-          <Link href={'https://trustless.computer/'} target="_blank">
-            Trustless
-          </Link>
-          <Link href={'https://trustlessfaucet.io/'} target="_blank">
-            Faucet
-          </Link>
-        </div>
         <WalletHeader />
         <button className="btnMenuMobile" onClick={() => setIsOpenMenu(true)}>
           <img src={`${CDN_URL}/icons/ic_hambuger.svg`} />

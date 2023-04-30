@@ -42,6 +42,10 @@ export const WalletPopover = styled(Popover)`
     :hover {
       opacity: 0.6;
     }
+    
+    .disconnect-text {
+      color: ${({ theme }) => theme.red} !important;;
+    }
   }
 
   .wallet-link {
