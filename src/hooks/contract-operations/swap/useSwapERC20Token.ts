@@ -3,8 +3,8 @@ import UniswapV2RouterJson from '@/abis/UniswapV2Router.json';
 import { useWeb3React } from '@web3-react/core';
 import { useCallback, useContext } from 'react';
 import { AssetsContext } from '@/contexts/assets-context';
-import { getContract } from '@/utils';
-import { TRANSFER_TX_SIZE, UNIV2_ROUTER_ADDRESS } from '@/configs';
+import {compareString, getContract} from '@/utils';
+import {APP_ENV, TRANSFER_TX_SIZE, UNIV2_ROUTER_ADDRESS} from '@/configs';
 import Web3 from 'web3';
 import { TransactionEventType } from '@/enums/transaction';
 import { MaxUint256 } from '@/constants/url';
@@ -40,17 +40,20 @@ const useSwapERC20Token: ContractOperationHook<
           tcTxSizeByte: TRANSFER_TX_SIZE,
           feeRatePerByte: feeRate.fastestFee,
         });
-        const estimatedFee = TC_SDK.estimateInscribeFee({
-          tcTxSizeByte: TRANSFER_TX_SIZE,
-          feeRatePerByte: feeRate.fastestFee,
-        });
-        const balanceInBN = new BigNumber(btcBalance);
-        if (balanceInBN.isLessThan(estimatedFee.totalFee)) {
-          throw Error(
-            `Your balance is insufficient. Please top up at least ${formatBTCPrice(
-              estimatedFee.totalFee.toString(),
-            )} BTC to pay network fee.`,
-          );
+
+        if (compareString(APP_ENV, 'production')) {
+          const estimatedFee = TC_SDK.estimateInscribeFee({
+            tcTxSizeByte: TRANSFER_TX_SIZE,
+            feeRatePerByte: feeRate.fastestFee,
+          });
+          const balanceInBN = new BigNumber(btcBalance);
+          if (balanceInBN.isLessThan(estimatedFee.totalFee)) {
+            throw Error(
+              `Your balance is insufficient. Please top up at least ${formatBTCPrice(
+                estimatedFee.totalFee.toString(),
+              )} BTC to pay network fee.`,
+            );
+          }
         }
 
         const transaction = await contract
@@ -62,6 +65,8 @@ const useSwapERC20Token: ContractOperationHook<
             address,
             MaxUint256,
           );
+
+        await transaction.wait();
 
         return transaction;
       }
