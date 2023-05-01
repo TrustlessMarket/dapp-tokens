@@ -13,8 +13,6 @@ import {UNIV2_ROUTER_ADDRESS} from '@/configs';
 import {BRIDGE_SUPPORT_TOKEN, TRUSTLESS_BRIDGE, TRUSTLESS_FAUCET,} from '@/constants/common';
 import {NULL_ADDRESS} from '@/constants/url';
 import {AssetsContext} from '@/contexts/assets-context';
-import tokensMock from '@/dataMock/tokens.json';
-import tokensMock2 from '@/dataMock/tokens3.json';
 import useGetPair from '@/hooks/contract-operations/swap/useGetPair';
 import useGetReserves from '@/hooks/contract-operations/swap/useReserves';
 import useSwapERC20Token from '@/hooks/contract-operations/swap/useSwapERC20Token';
@@ -158,11 +156,15 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         is_test: isDevelop() ? '1' : '',
       });
 
-      const list = res ? camelCaseKeys(tokensMock2) : [];
+      const list = res ? camelCaseKeys(res) : [];
+
+      console.log('list', list);
 
       setTokensList(list);
       setBaseTokensList(list);
       setQuoteTokensList(list);
+
+      // const token = list.find(t => )
     } catch (err: unknown) {
       console.log('Failed to fetch tokens owned');
     } finally {
@@ -305,9 +307,9 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       setIsApproveBaseToken(_isApprove);
       setBaseBalance(_tokenBalance);
       if (_fromTokens) {
-        setQuoteTokensList(camelCaseKeys(tokensMock));
+        setQuoteTokensList(camelCaseKeys(_fromTokens));
         if (quoteToken) {
-          const findIndex = tokensMock.findIndex((v) =>
+          const findIndex = _fromTokens.findIndex((v) =>
             compareString(v.address, quoteToken.address),
           );
 
