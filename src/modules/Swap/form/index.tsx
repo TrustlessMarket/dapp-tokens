@@ -165,9 +165,9 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         page: page,
         is_test: isDevelop() ? '1' : '',
       });
-      setTokensList(camelCaseKeys(res));
-      setBaseTokensList(camelCaseKeys(res));
-      setQuoteTokensList(camelCaseKeys(res));
+      setTokensList(res ? camelCaseKeys(res) : []);
+      setBaseTokensList(res ? camelCaseKeys(res) : []);
+      setQuoteTokensList(res ? camelCaseKeys(res) : []);
     } catch (err: unknown) {
       console.log('Failed to fetch tokens owned');
     } finally {
