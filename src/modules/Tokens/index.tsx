@@ -20,6 +20,8 @@ import {showError} from '@/utils/toast';
 import BigNumber from "bignumber.js";
 import Link from 'next/link';
 import {ROUTE_PATH} from "@/constants/route-path";
+import {useRouter} from "next/router";
+import {DEFAULT_BASE_TOKEN} from "@/modules/Swap/form";
 //const EXPLORER_URL = TRUSTLESS_COMPUTER_CHAIN_INFO.explorers[0].url;
 
 const LIMIT_PAGE = 100;
@@ -29,7 +31,7 @@ const Tokens = () => {
   const TABLE_HEADINGS = ['Token #','Name','Symbol', 'Price','Market Cap(BTC)','24h %', 'Supply', 'Creator'];
   /*'Price','24h %','Market Cap'*/
 
-  // const router = useRouter();
+  const router = useRouter();
   const [showModal, setShowModal] = useState(false);
   const [isFetching, setIsFetching] = useState(false);
 
@@ -155,6 +157,14 @@ const Tokens = () => {
         supply: formatCurrency(totalSupply.toString()),
         creator: shortenAddress(token?.owner, 4) || '-',
       },
+      config: {
+        onClick: () => {
+          router.push(`${ROUTE_PATH.SWAP}?from_token=${DEFAULT_BASE_TOKEN}&to_token=${token?.address}`)
+        },
+        style: {
+          cursor: 'pointer'
+        }
+      }
     };
   });
 

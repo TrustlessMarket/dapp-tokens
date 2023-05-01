@@ -262,13 +262,22 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           status: TransactionStatus.info,
         }),
       );
-      await approveToken({
+      const response: any = await approveToken({
         erc20TokenAddress: token.address,
         address: UNIV2_ROUTER_ADDRESS,
       });
+      dispatch(
+        updateCurrentTransaction({
+          status: TransactionStatus.success,
+          id: transactionType.createPoolApprove,
+          hash: response.hash,
+          infoTexts: {
+            success: `${token?.symbol} has been approved successfully.`,
+          },
+        }),
+      );
     } catch (error) {
     } finally {
-      dispatch(updateCurrentTransaction(null));
     }
   };
 
@@ -379,12 +388,23 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         setIsApproveQuoteToken(true);
       }
 
-      toast.success('Transaction has been created. Please wait for few minutes.');
+      // toast.success('Transaction has been created. Please wait for few minutes.');
     } catch (err) {
-      showError({
-        message:
-          (err as Error).message || 'Something went wrong. Please try again later.',
-      });
+      // showError({
+      //   message:
+      //     (err as Error).message || 'Something went wrong. Please try again later.',
+      // });
+      const message =
+        (err as Error).message || 'Something went wrong. Please try again later.';
+      dispatch(
+        updateCurrentTransaction({
+          status: TransactionStatus.error,
+          id: transactionType.createPoolApprove,
+          infoTexts: {
+            error: message,
+          },
+        }),
+      );
     } finally {
       setLoading(false);
     }
@@ -761,9 +781,9 @@ const CreateMarket = ({
           },
         }),
       );
-      showError({
-        message: message,
-      });
+      // showError({
+      //   message: message,
+      // });
     } finally {
       setSubmitting(false);
     }
