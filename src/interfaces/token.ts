@@ -13,6 +13,9 @@ export interface IToken {
   slug: string;
   symbol: string;
   name: string;
+  price: string;
+  change: string;
+  cap: string;
   thumbnail?: string;
   description?: string;
   fromAddress?: string;

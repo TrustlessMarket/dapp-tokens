@@ -24,7 +24,8 @@ const EXPLORER_URL = TRUSTLESS_COMPUTER_CHAIN_INFO.explorers[0].url;
 const LIMIT_PAGE = 50;
 
 const Tokens = () => {
-  const TABLE_HEADINGS = ['Token #', 'Name', 'Symbol', 'Supply', 'Creator'];
+  const TABLE_HEADINGS = ['Token #','Name','Symbol',  'Supply', 'Creator'];
+  /*'Price','24h %','Market Cap'*/
 
   // const router = useRouter();
   const [showModal, setShowModal] = useState(false);
@@ -54,6 +55,22 @@ const Tokens = () => {
     try {
       setIsFetching(true);
       const res = await getTokens({ limit: LIMIT_PAGE, page: page });
+      // res =[]
+      /*console.log(res.length);
+      for(let i = 0;i<res.length;i++)
+      {
+       console.log(res[i]);
+        res[i].price = "$54.96";
+        res[i].change = "6.80%";
+        res[i].cap = "21,000,000";
+
+        price: token?.symbol || '-',
+        change: token?.symbol || '-',
+        cap: token?.symbol || '-',
+
+      }
+       */
+
       if (isFetchMore) {
         setTokensList((prev) => [...prev, ...res]);
       } else {
@@ -89,7 +106,7 @@ const Tokens = () => {
 
   const tokenDatas = tokensList.map((token) => {
     const totalSupply =
-      parseInt(token?.totalSupply) / decimalToExponential(token.decimal);
+        parseInt(token?.totalSupply) / decimalToExponential(token.decimal);
     const linkTokenExplorer = `${EXPLORER_URL}/token/${token?.address}`;
     const linkToOwnerExplorer = `${EXPLORER_URL}/address/${token?.owner}`;
 
@@ -98,82 +115,106 @@ const Tokens = () => {
       render: {
         number: token?.index,
         name: (
-          <a
-            href={linkTokenExplorer}
-            rel="rel=”noopener noreferrer”"
-            target="_blank"
-          >
-            {token?.name || '-'}
-          </a>
+            <a
+                href={linkTokenExplorer}
+                rel="rel=”noopener noreferrer”"
+                target="_blank"
+            >
+              {token?.name || '-'}
+            </a>
         ),
 
         symbol: token?.symbol || '-',
+        /*
+        price: token?.price || '-',
+        change: token?.change || '-',
+        cap: token?.cap || '-',
+         */
         supply: totalSupply.toLocaleString(),
         creator: (
-          <a
-            href={linkToOwnerExplorer}
-            rel="rel=”noopener noreferrer”"
-            target="_blank"
-          >
-            {shortenAddress(token?.owner, 4) || '-'}
-          </a>
+            <a
+                href={linkToOwnerExplorer}
+                rel="rel=”noopener noreferrer”"
+                target="_blank"
+            >
+              {shortenAddress(token?.owner, 4) || '-'}
+            </a>
         ),
       },
     };
   });
 
   return (
-    <StyledTokens>
-      <div className="background"></div>
-      <div>
-        <h3 className="upload_title">BRC-20 on Bitcoin</h3>
-      </div>
-      <UploadFileContainer>
-        <div className="upload_left">
-          {/* <img src={IcBitcoinCloud} alt="upload file icon" /> */}
-          <div className="upload_content">
-            {/* <h3 className="upload_title">BRC-20 on Bitcoin</h3> */}
-            <Text size="medium" color="text1">
-              BRC-20 is the standard for fungible tokens on Bitcoin. You can use it
-              to represent virtually anything on Bitcoin: a cryptocurrency, a share
-              in a company, voting rights in a DAO, an ounce of gold, and more.
-            </Text>
-          </div>
+      <StyledTokens>
+        <div className="background"></div>
+        <div>
+          <h3 className="upload_title">BRC-20 on Bitcoin</h3>
         </div>
-        <div className="upload_right">
-          <Button bg={'white'} background={'#3385FF'} onClick={handleCreateToken}>
-            <Text
-              size="medium"
-              color="bg1"
-              className="button-text"
-              fontWeight="medium"
-            >
-              Create BRC-20
-            </Text>
-          </Button>
-        </div>
-      </UploadFileContainer>
-      <InfiniteScroll
-        className="tokens-list"
-        dataLength={tokensList?.length || 0}
-        hasMore={true}
-        loader={
-          isFetching && (
-            <div className="loading">
-              <Spinner animation="border" variant="primary" />
+        <UploadFileContainer>
+          <div className="upload_left">
+            {/* <img src={IcBitcoinCloud} alt="upload file icon" /> */}
+            <div className="upload_content">
+              {/* <h3 className="upload_title">BRC-20 on Bitcoin</h3> */}
+              <Text size="medium" color="text1">
+                BRC-20 is the standard for fungible tokens on Bitcoin. You can use it
+                to represent virtually anything on Bitcoin: a cryptocurrency, a share
+                in a company, voting rights in a DAO, an ounce of gold, and more.
+              </Text>
             </div>
-          )
-        }
-        next={debounceLoadMore}
-      >
-        <Table
-          tableHead={TABLE_HEADINGS}
-          data={tokenDatas}
-          className={'token-table'}
-        />
-      </InfiniteScroll>
-      <ModalCreateToken show={showModal} handleClose={() => setShowModal(false)} />
-    </StyledTokens>
+          </div>
+          <div className="upload_right">
+            <Button bg={'white'} background={'#3385FF'} onClick={handleCreateToken}>
+              <Text
+                  size="medium"
+                  color="bg1"
+                  className="button-text"
+                  fontWeight="medium"
+              >
+                Create BRC-20
+              </Text>
+            </Button>
+            <Button   className="comming-soon-btn"  bg={'white'} background={'gray'}  >
+              <Text
+                  size="medium"
+                  color="bg1"
+                  className="brc20-text"
+                  fontWeight="medium"
+              >
+                Swap BRC-20
+              </Text>
+
+              <Text
+                  size="small"
+                  color="bg1"
+                  className="comming-soon-text"
+                  fontWeight="light"
+              >
+                coming soon
+              </Text>
+            </Button>
+          </div>
+        </UploadFileContainer>
+        <InfiniteScroll
+            className="tokens-list"
+            dataLength={tokensList?.length || 0}
+            hasMore={true}
+            loader={
+                isFetching && (
+                    <div className="loading">
+                      <Spinner animation="border" variant="primary" />
+                    </div>
+                )
+            }
+            next={debounceLoadMore}
+        >
+          <Table
+              tableHead={TABLE_HEADINGS}
+              data={tokenDatas}
+              className={'token-table'}
+          />
+        </InfiniteScroll>
+        <ModalCreateToken show={showModal} handleClose={() => setShowModal(false)} />
+      </StyledTokens>
   );
 };
 
