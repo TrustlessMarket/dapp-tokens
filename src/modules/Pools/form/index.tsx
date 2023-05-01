@@ -201,7 +201,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     try {
       setLoading(true);
       const res = await getTokens({
-        limit: LIMIT_PAGE,
+        limit: LIMIT_PAGE * 10,
         page: page,
       });
       // setTokensList(camelCaseKeys(pairsMock));
