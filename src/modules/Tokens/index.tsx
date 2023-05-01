@@ -2,7 +2,7 @@ import Button from '@/components/Button';
 import Table from '@/components/Table';
 import Text from '@/components/Text';
 import { TRUSTLESS_COMPUTER_CHAIN_INFO } from '@/constants/chains';
-import { getTokens } from '@/services/token-explorer';
+import {getTokenRp, getTokens} from '@/services/token-explorer';
 import { shortenAddress } from '@/utils';
 import { decimalToExponential } from '@/utils/format';
 import { debounce } from 'lodash';
@@ -22,6 +22,7 @@ import { showError } from '@/utils/toast';
 const EXPLORER_URL = TRUSTLESS_COMPUTER_CHAIN_INFO.explorers[0].url;
 
 const LIMIT_PAGE = 50;
+const ALL_ONE_PAGE = 10000;
 
 const Tokens = () => {
   const TABLE_HEADINGS = ['Token #','Name','Symbol',  'Supply', 'Creator'];
@@ -55,21 +56,45 @@ const Tokens = () => {
     try {
       setIsFetching(true);
       const res = await getTokens({ limit: LIMIT_PAGE, page: page });
-      // res =[]
-      /*console.log(res.length);
+      const res1 = await getTokenRp({ limit: ALL_ONE_PAGE, page: 1 });
+      console.log("tuanabc");
+
       for(let i = 0;i<res.length;i++)
       {
-       console.log(res[i]);
-        res[i].price = "$54.96";
-        res[i].change = "6.80%";
-        res[i].cap = "21,000,000";
+        for(let j = 0;j<res1.length;j++)
+        {
+           if(res[i].address==res1[j].address)
+           {
+             res[i].volume = res1[j].volume;
+             res[i].price = res1[j].price;
+             res[i].percent = res1[j].percent;
 
-        price: token?.symbol || '-',
-        change: token?.symbol || '-',
-        cap: token?.symbol || '-',
-
+             break;
+           }
+        }
       }
-       */
+      for(let i = 0;i<res.length-1;i++)
+      {
+        for(let j = i+1;j<res.length;j++) {
+
+
+          let isswap = false;
+          if (!res[i].volume && res[j].volume) {
+             isswap =true;
+          }else if (res[i].volume && res[j].volume) {
+              if(res[j].volume>res[i].volume) {
+                isswap =true;
+              }
+          }
+          if (isswap)
+          {
+
+            const temp = res[i];
+            res[i] = res[j];
+            res[j] = temp;
+          }
+        }}
+
 
       if (isFetchMore) {
         setTokensList((prev) => [...prev, ...res]);
@@ -77,6 +102,7 @@ const Tokens = () => {
         setTokensList(res);
       }
     } catch (err: unknown) {
+      console.log(err);
       console.log('Failed to fetch tokens owned');
     } finally {
       setIsFetching(false);

@@ -101,6 +101,7 @@ export const WrapInput = styled.div`
     font-size: ${px2rem(16)};
     line-height: ${px2rem(26)};
     border: 1px solid ${({ theme }: { theme: DefaultTheme }) => theme.border3};
+    color:black;      
 
     :hover {
       border: 1px solid
