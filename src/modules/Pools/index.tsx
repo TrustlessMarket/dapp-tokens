@@ -4,7 +4,7 @@ import HorizontalItem from '@/components/HorizontalItem';
 import FiledButton from '@/components/Swap/button/filedButton';
 import ListTable from '@/components/Swap/listTable';
 import { ROUTE_PATH } from '@/constants/route-path';
-import mockTokenPair from '@/dataMock/pairLiquid.json';
+import { LIQUID_PAIRS } from '@/constants/storage-key';
 import useGetReserves from '@/hooks/contract-operations/swap/useReserves';
 import useSupplyERC20Liquid from '@/hooks/contract-operations/token/useSupplyERC20Liquid';
 import { IToken } from '@/interfaces/token';
@@ -30,7 +30,6 @@ import { IoArrowBackOutline } from 'react-icons/io5';
 import { StyledTokens, UploadFileContainer } from './Pools.styled';
 import CreateMarket from './form';
 import styles from './styles.module.scss';
-import { LIQUID_PAIRS } from '@/constants/storage-key';
 
 export enum ScreenType {
   default = 'default',
