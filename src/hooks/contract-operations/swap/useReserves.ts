@@ -52,6 +52,8 @@ const useGetReserves: ContractOperationHook<
           .connect(provider.getSigner())
           .getReserves();
 
+        console.log('transaction', transaction);
+
         return {
           _reserve0: transaction[0].toString(),
           _reserve1: transaction[1].toString(),

@@ -38,6 +38,8 @@ const useCreateToken: ContractOperationHook<
           tcTxSizeByte: Buffer.byteLength(byteCode),
           feeRatePerByte: selectFee,
         });
+        console.log('aaaaaa');
+
         // TC_SDK.signTransaction({
 
         // });

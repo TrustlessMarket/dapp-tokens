@@ -27,7 +27,7 @@ const LIMIT_PAGE = 200;
 const ALL_ONE_PAGE = 10000;
 
 const Tokens = () => {
-  const TABLE_HEADINGS = ['Token #','Name','Symbol', 'Price','Market Cap(BTC)','24h %', 'Supply', 'Creator'];
+  const TABLE_HEADINGS = ['Token #','Name','Symbol', 'Price','Market Cap','24h %', 'Supply', 'Creator'];
   /*'Price','24h %','Market Cap'*/
 
   // const router = useRouter();

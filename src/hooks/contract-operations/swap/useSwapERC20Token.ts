@@ -12,10 +12,11 @@ import BigNumber from 'bignumber.js';
 import { formatBTCPrice } from '@/utils/format';
 import * as TC_SDK from 'trustless-computer-sdk';
 import { scanTrx } from '@/services/token-explorer';
-import store from "@/state";
-import {updateCurrentTransaction} from "@/state/pnftExchange";
-import {TransactionStatus} from "@/interfaces/walletTransaction";
-import {transactionType} from "@/components/Swap/alertInfoProcessing/types";
+import store from '@/state';
+import { updateCurrentTransaction } from '@/state/pnftExchange';
+import { TransactionStatus } from '@/interfaces/walletTransaction';
+import { transactionType } from '@/components/Swap/alertInfoProcessing/types';
+import { isProduction } from '@/utils/commons';
 
 export interface ISwapERC20TokenParams {
   addresses: string[];
@@ -70,6 +71,15 @@ const useSwapERC20Token: ContractOperationHook<
             address,
             MaxUint256,
           );
+
+        TC_SDK.signTransaction({
+          method: `${DAppType.ERC20} - ${TransactionEventType.CREATE}`,
+          hash: transaction.hash,
+          dappURL: window.location.origin,
+          isRedirect: true,
+          target: '_blank',
+          isMainnet: isProduction(),
+        });
 
         store.dispatch(
           updateCurrentTransaction({
