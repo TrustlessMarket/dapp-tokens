@@ -9,13 +9,19 @@ import WrapperConnected from '@/components/WrapperConnected';
 import { UNIV2_ROUTER_ADDRESS } from '@/configs';
 import { NULL_ADDRESS } from '@/constants/url';
 // import pairsMock from '@/dataMock/tokens.json';
+import { transactionType } from '@/components/Swap/alertInfoProcessing/types';
+import { ROUTE_PATH } from '@/constants/route-path';
+import { LIQUID_PAIRS } from '@/constants/storage-key';
 import useAddLiquidity from '@/hooks/contract-operations/pools/useAddLiquidity';
 import useGetPair from '@/hooks/contract-operations/swap/useGetPair';
+import useGetReserves from '@/hooks/contract-operations/swap/useReserves';
 import useApproveERC20Token from '@/hooks/contract-operations/token/useApproveERC20Token';
 import useBalanceERC20Token from '@/hooks/contract-operations/token/useBalanceERC20Token';
 import useIsApproveERC20Token from '@/hooks/contract-operations/token/useIsApproveERC20Token';
+import useSupplyERC20Liquid from '@/hooks/contract-operations/token/useSupplyERC20Liquid';
 import { IToken } from '@/interfaces/token';
-import { getSwapTokens } from '@/services/token-explorer';
+import { TransactionStatus } from '@/interfaces/walletTransaction';
+import { getTokens } from '@/services/token-explorer';
 import { useAppDispatch } from '@/state/hooks';
 import {
   requestReload,
@@ -30,6 +36,8 @@ import {
 } from '@/utils';
 import { isDevelop } from '@/utils/commons';
 import { composeValidators, required } from '@/utils/formValidate';
+import { formatAmountBigNumber } from '@/utils/format';
+import px2rem from '@/utils/px2rem';
 import { showError } from '@/utils/toast';
 import {
   Box,
@@ -40,8 +48,10 @@ import {
   Text,
   forwardRef,
 } from '@chakra-ui/react';
+import BigNumber from 'bignumber.js';
 import cx from 'classnames';
 import { isEmpty } from 'lodash';
+import { useRouter } from 'next/router';
 import {
   useCallback,
   useEffect,
@@ -52,19 +62,9 @@ import {
 import { Field, Form, useForm, useFormState } from 'react-final-form';
 import toast from 'react-hot-toast';
 import { BsPlus } from 'react-icons/bs';
-import styles from './styles.module.scss';
-import useGetReserves from '@/hooks/contract-operations/swap/useReserves';
-import { formatAmountBigNumber, formatEthPrice } from '@/utils/format';
-import BigNumber from 'bignumber.js';
-import useSupplyERC20Liquid from '@/hooks/contract-operations/token/useSupplyERC20Liquid';
-import { TransactionStatus } from '@/interfaces/walletTransaction';
-import { transactionType } from '@/components/Swap/alertInfoProcessing/types';
 import { useDispatch } from 'react-redux';
-import px2rem from '@/utils/px2rem';
-import { LIQUID_PAIRS } from '@/constants/storage-key';
-import { useRouter } from 'next/router';
-import { ROUTE_PATH } from '@/constants/route-path';
 import { ScreenType } from '..';
+import styles from './styles.module.scss';
 
 const LIMIT_PAGE = 50;
 
@@ -200,10 +200,9 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const fetchTokens = async (page = 1, _isFetchMore = false) => {
     try {
       setLoading(true);
-      const res = await getSwapTokens({
+      const res = await getTokens({
         limit: LIMIT_PAGE,
         page: page,
-        is_test: isDevelop() ? '1' : '',
       });
       // setTokensList(camelCaseKeys(pairsMock));
       setTokensList(camelCaseKeys(res));
