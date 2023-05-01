@@ -1,7 +1,6 @@
 import Button from '@/components/Button';
 import Table from '@/components/Table';
 import Text from '@/components/Text';
-import {TRUSTLESS_COMPUTER_CHAIN_INFO} from '@/constants/chains';
 import {getTokenRp, getTokens} from '@/services/token-explorer';
 import {formatCurrency, shortenAddress} from '@/utils';
 import {decimalToExponential} from '@/utils/format';
@@ -21,13 +20,13 @@ import {showError} from '@/utils/toast';
 import BigNumber from "bignumber.js";
 import Link from 'next/link';
 import {ROUTE_PATH} from "@/constants/route-path";
-const EXPLORER_URL = TRUSTLESS_COMPUTER_CHAIN_INFO.explorers[0].url;
+//const EXPLORER_URL = TRUSTLESS_COMPUTER_CHAIN_INFO.explorers[0].url;
 
 const LIMIT_PAGE = 200;
 const ALL_ONE_PAGE = 10000;
 
 const Tokens = () => {
-  const TABLE_HEADINGS = ['Token #','Name','Symbol', 'Price','Market Cap','24h %', 'Supply', 'Creator'];
+  const TABLE_HEADINGS = ['Token #','Name','Symbol', 'Price','Market Cap(BTC)','24h %', 'Supply', 'Creator'];
   /*'Price','24h %','Market Cap'*/
 
   // const router = useRouter();
@@ -64,20 +63,20 @@ const Tokens = () => {
       {
         for(let j = 0;j<res1.length;j++)
         {
-           if(res[i].address==res1[j].address)
-           {
-             if( res1[j].volume!=0) {
-               res[i].volume = res1[j].volume;
-             }
-             if( res1[j].price!=0) {
-               res[i].price = res1[j].price;
-             }
-             if( res1[j].percent!=0) {
-               res[i].percent = res1[j].percent;
-             }
+          if(res[i].address==res1[j].address)
+          {
+            if( res1[j].volume!=0) {
+              res[i].volume = res1[j].volume;
+            }
+            if( res1[j].price!=0) {
+              res[i].price = res1[j].price;
+            }
+            if( res1[j].percent!=0) {
+              res[i].percent = res1[j].percent;
+            }
 
-             break;
-           }
+            break;
+          }
         }
       }
       for(let i = 0;i<res.length-1;i++)
@@ -87,11 +86,11 @@ const Tokens = () => {
 
           let isswap = false;
           if (!res[i].volume && res[j].volume) {
-             isswap =true;
+            isswap =true;
           }else if (res[i].volume && res[j].volume) {
-              if(res[j].volume>res[i].volume) {
-                isswap =true;
-              }
+            if(res[j].volume>res[i].volume) {
+              isswap =true;
+            }
           }
           if (isswap)
           {
@@ -142,7 +141,7 @@ const Tokens = () => {
     const tokenPrice = token?.price ? new BigNumber(token?.price).toFixed()  : 'n/a';
 
     //const linkTokenExplorer = `${EXPLORER_URL}/token/${token?.address}`;
-    const linkToOwnerExplorer = `${EXPLORER_URL}/address/${token?.owner}`;
+    //const linkToOwnerExplorer = `${EXPLORER_URL}/address/${token?.owner}`;
 
     return {
       id: `token-${token?.address}}`,
@@ -154,15 +153,7 @@ const Tokens = () => {
         volume: token?.volume || 'n/a',
         percent: token?.percent || 'n/a',
         supply: formatCurrency(totalSupply.toString()),
-        creator: (
-            <a
-                href={linkToOwnerExplorer}
-                rel="rel=”noopener noreferrer”"
-                target="_blank"
-            >
-              {shortenAddress(token?.owner, 4) || '-'}
-            </a>
-        ),
+        creator: shortenAddress(token?.owner, 4) || '-',
       },
     };
   });
@@ -171,44 +162,42 @@ const Tokens = () => {
       <StyledTokens>
         <div className="background"></div>
         <div>
-          <h3 className="upload_title">BRC-20 on Bitcoin</h3>
+          <h3 className="upload_title">Smart BRC-20</h3>
         </div>
         <UploadFileContainer>
           <div className="upload_left">
             {/* <img src={IcBitcoinCloud} alt="upload file icon" /> */}
             <div className="upload_content">
               {/* <h3 className="upload_title">BRC-20 on Bitcoin</h3> */}
-              <Text size="medium" color="text1">
-                BRC-20 is the standard for fungible tokens on Bitcoin. You can use it
-                to represent virtually anything on Bitcoin: a cryptocurrency, a share
-                in a company, voting rights in a DAO, an ounce of gold, and more.
+              <Text className="upload_text"  color="text1">
+                Smart BRC-20s are the first tokens deployed on Bitcoin as smart contracts. They are cryptographically secure, decentralized, and tamper-proof. They run exactly as programmed without any possibility of fraud, third-party interference, or censorship. As smart contracts, they can also be composed into decentralization applications on Bitcoin so you can use them in DEX, DAO, auctions, lending, and marketplaces.
               </Text>
             </div>
           </div>
           <div className="upload_right">
-            <Button bg={'white'}  background={'gray'} onClick={handleCreateToken}>
+            <Button className="button-create-box" bg={'white'}  background={'gray'} onClick={handleCreateToken}>
               <Text
                   size="medium"
                   color="bg1"
                   className="button-text"
                   fontWeight="medium"
               >
-                Create BRC-20
+                Create Smart BRC-20
               </Text>
             </Button>
             <Link href={ROUTE_PATH.SWAP} >
-            <Button   className="comming-soon-btn"  bg={'white'}  background={'#3385FF'}  >
-              <Text
-                  size="medium"
-                  color="bg1"
-                  className="brc20-text"
-                  fontWeight="medium"
-              >
-                Swap BRC-20
-              </Text>
+              <Button   className="comming-soon-btn"  bg={'white'}  background={'#3385FF'}  >
+                <Text
+                    size="medium"
+                    color="bg1"
+                    className="brc20-text"
+                    fontWeight="medium"
+                >
+                  Swap Smart BRC-20
+                </Text>
 
-            </Button>
-      </Link>
+              </Button>
+            </Link>
           </div>
         </UploadFileContainer>
         <InfiniteScroll

@@ -1,12 +1,13 @@
-import { CDN_URL } from '@/configs';
-import { SupportedChainId, TRUSTLESS_COMPUTER_CHAIN_INFO } from '@/constants/chains';
-import { WalletContext } from '@/contexts/wallet-context';
-import { compareString } from '@/utils';
-import { Button, Spinner, Text } from '@chakra-ui/react';
-import { useWeb3React } from '@web3-react/core';
-import { useContext, useState } from 'react';
-import { IoWarningSharp } from 'react-icons/io5';
+import {CDN_URL} from '@/configs';
+import {SupportedChainId, TRUSTLESS_COMPUTER_CHAIN_INFO} from '@/constants/chains';
+import {WalletContext} from '@/contexts/wallet-context';
+import {compareString} from '@/utils';
+import {Button, Spinner, Text} from '@chakra-ui/react';
+import {useWeb3React} from '@web3-react/core';
+import {useContext, useState} from 'react';
+import {IoWarningSharp} from 'react-icons/io5';
 import styles from './styles.module.scss';
+import {TRUSTLESS_COMPUTER} from "@/constants/common";
 
 const SelectedNetwork = ({}) => {
   const { chainId } = useWeb3React();
@@ -23,6 +24,10 @@ const SelectedNetwork = ({}) => {
       setLoading(false);
     }
   };
+
+  const goToTrustlessComputer = () => {
+    window.open(TRUSTLESS_COMPUTER, "_blank");
+  }
 
   if (!compareString(chainId, SupportedChainId.TRUSTLESS_COMPUTER)) {
     return (
@@ -43,7 +48,7 @@ const SelectedNetwork = ({}) => {
   }
 
   return (
-    <Button className={styles.btnButton} style={{ cursor: 'default' }}>
+    <Button className={styles.btnButton} style={{ cursor: 'pointer' }} onClick={goToTrustlessComputer}>
       <div className="img">
         <img
           src={`${CDN_URL}/icons/wallet_logo.svg`}

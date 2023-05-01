@@ -47,9 +47,12 @@ import toast from 'react-hot-toast';
 import {RiArrowUpDownLine} from 'react-icons/ri';
 import {useDispatch, useSelector} from 'react-redux';
 import styles from './styles.module.scss';
+import TokenBalance from "@/components/Swap/tokenBalance";
 
 const LIMIT_PAGE = 50;
 const FEE = 3;
+const DEFAULT_BASE_TOKEN = '0xfB83c18569fB43f1ABCbae09Baf7090bFFc8CBBD';
+const DEFAULT_QUOTE_TOKEN = '0xdd2863416081D0C10E57AaB4B3C5197183be4B34';
 
 export const MakeFormSwap = forwardRef((props, ref) => {
   const { onSubmit, submitting } = props;
@@ -79,6 +82,8 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const [isChangeQuoteToken, setIsChangeQuoteToken] = useState(false);
 
   // console.log('isSwitching', isSwitching);
+  // console.log('baseBalance', baseBalance);
+  // console.log('quoteBalance', quoteBalance);
   // console.log('baseToken', baseToken);
   // console.log('quoteToken', quoteToken);
   // console.log('baseReserve', baseReserve);
@@ -164,7 +169,10 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       setBaseTokensList(list);
       setQuoteTokensList(list);
 
-      // const token = list.find(t => )
+      const token = list.find(t => compareString(t.address, DEFAULT_BASE_TOKEN));
+      if(token) {
+        handleSelectBaseToken(token);
+      }
     } catch (err: unknown) {
       console.log('Failed to fetch tokens owned');
     } finally {
@@ -299,13 +307,11 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     setBaseToken(token);
     change('baseToken', token);
     try {
-      const [_isApprove, _tokenBalance, _fromTokens] = await Promise.all([
+      const [_isApprove,_fromTokens] = await Promise.all([
         checkTokenApprove(token),
-        getTokenBalance(token),
         fetchFromTokens(token?.address),
       ]);
       setIsApproveBaseToken(_isApprove);
-      setBaseBalance(_tokenBalance);
       if (_fromTokens) {
         setQuoteTokensList(camelCaseKeys(_fromTokens));
         if (quoteToken) {
@@ -316,6 +322,11 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           if (findIndex < 0) {
             setQuoteToken(null);
             change('quoteToken', null);
+          }
+        } else {
+          const token = _fromTokens.find(t => compareString(t.address, DEFAULT_QUOTE_TOKEN));
+          if(token) {
+            handleSelectQuoteToken(token);
           }
         }
       }
@@ -333,13 +344,10 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     setQuoteToken(token);
     change('quoteToken', token);
     try {
-      const [_isApprove, _tokenBalance] = await Promise.all([
+      const [_isApprove] = await Promise.all([
         checkTokenApprove(token),
-        getTokenBalance(token),
-        fetchFromTokens(token?.address),
       ]);
       setIsApproveQuoteToken(_isApprove);
-      setQuoteBalance(_tokenBalance);
     } catch (error) {
       throw error;
     }
@@ -516,8 +524,10 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           baseToken && (
             <Flex gap={1} fontSize={px2rem(16)}>
               <Text>
-                Balance: {formatCurrency(baseBalance)} {baseToken?.symbol}
+                Balance:
               </Text>
+              <TokenBalance token={baseToken} onBalanceChange={(_amount) => setBaseBalance(_amount)}/>
+              <Text>{baseToken?.symbol}</Text>
               <Text
                 cursor={'pointer'}
                 color={'#3385FF'}
@@ -573,8 +583,10 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           quoteToken && (
             <Flex gap={1} fontSize={px2rem(16)}>
               <Text>
-                Balance: {formatCurrency(quoteBalance)} {quoteToken?.symbol}
+                Balance:
               </Text>
+              <TokenBalance token={quoteToken} onBalanceChange={(_amount) => setQuoteBalance(_amount)}/>
+              <Text>{quoteToken?.symbol}</Text>
               <Text
                 cursor={'pointer'}
                 color={'#3385FF'}
