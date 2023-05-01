@@ -1,5 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { WALLET_URL } from '@/configs';
+// import { WALLET_URL } from '@/configs';
 import useInterval from '@/hooks/useInterval';
 import {
   TransactionStatus,
@@ -13,24 +14,15 @@ import {
   AlertDescription,
   AlertIcon,
   AlertTitle,
+  CloseButton,
   Flex,
+  useDisclosure,
 } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 const StyledWarningNote = styled(AlertDescription)`
-  background-color: #ff600038;
-  border-radius: 8px;
-  padding: 6px 12px;
-  margin-top: 10px;
-  text-align: left;
-  color: #ff6000;
-  font-size: 12px;
-  font-weight: 400;
-  line-height: 18px !important;
-  a {
-    font-weight: bold;
-  }
+  color: #bc1756;
 `;
 
 interface AlertInfoProcessProps {
@@ -54,6 +46,7 @@ const AlertInfoProcess: React.FC<AlertInfoProcessProps> = ({
   const currentTransaction: WalletTransactionData | undefined = useAppSelector(
     selectCurrentTransaction,
   );
+  const { isOpen: isVisible, onClose } = useDisclosure({ defaultIsOpen: true });
 
   const [count, setCount] = useState(1);
 
@@ -88,7 +81,8 @@ const AlertInfoProcess: React.FC<AlertInfoProcessProps> = ({
 
   if (
     !Boolean(currentTransaction?.status) ||
-    !compareString(currentTransaction?.id, processInfo?.id)
+    !compareString(currentTransaction?.id, processInfo?.id) ||
+    !isVisible
   ) {
     return null;
   }
@@ -150,20 +144,23 @@ const AlertInfoProcess: React.FC<AlertInfoProcessProps> = ({
           currentTransaction &&
           compareString(currentTransaction.status, TransactionStatus.pending) &&
           currentTransaction?.hash && (
-            <StyledWarningNote className="warning-note">
-              To process a transaction, please follow these steps:
-              <br />
-              1. Go to{' '}
-              <a href={WALLET_URL} target="_blank">
-                {WALLET_URL}
-              </a>
-              <br />
-              2. Click on the "Transaction" tab
-              <br />
-              3. Locate the pending transaction you wish to resume and click on it
+            <StyledWarningNote>
+              {`Transaction taking too long, please open "Metamask" and click "Speed up".`}
             </StyledWarningNote>
           )}
       </Flex>
+      {currentTransaction &&
+        [TransactionStatus.error, TransactionStatus.success].includes(
+          currentTransaction?.status,
+        ) && (
+          <CloseButton
+            position="absolute"
+            onClick={onClose}
+            top={'5px'}
+            right={'5px'}
+            backgroundColor={'transparent'}
+          />
+        )}
     </Alert>
   );
 };
