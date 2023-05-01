@@ -8,9 +8,13 @@ import InputWrapper from '@/components/Swap/form/inputWrapper';
 import HorizontalItem from '@/components/Swap/horizontalItem';
 import SlippageSettingButton from '@/components/Swap/slippageSetting/button';
 import WrapperConnected from '@/components/WrapperConnected';
-import {UNIV2_ROUTER_ADDRESS} from '@/configs';
-import {BRIDGE_SUPPORT_TOKEN, TRUSTLESS_BRIDGE, TRUSTLESS_FAUCET,} from '@/constants/common';
-import {AssetsContext} from '@/contexts/assets-context';
+import { UNIV2_ROUTER_ADDRESS } from '@/configs';
+import {
+  BRIDGE_SUPPORT_TOKEN,
+  TRUSTLESS_BRIDGE,
+  TRUSTLESS_FAUCET,
+} from '@/constants/common';
+import { AssetsContext } from '@/contexts/assets-context';
 import pairsMock from '@/dataMock/tokens.json';
 import useGetPair from '@/hooks/contract-operations/swap/useGetPair';
 import useGetReserves from '@/hooks/contract-operations/swap/useReserves';
@@ -18,36 +22,43 @@ import useSwapERC20Token from '@/hooks/contract-operations/swap/useSwapERC20Toke
 import useApproveERC20Token from '@/hooks/contract-operations/token/useApproveERC20Token';
 import useBalanceERC20Token from '@/hooks/contract-operations/token/useBalanceERC20Token';
 import useIsApproveERC20Token from '@/hooks/contract-operations/token/useIsApproveERC20Token';
-import {IToken} from '@/interfaces/token';
-import {getSwapTokens} from '@/services/token-explorer';
-import {useAppDispatch, useAppSelector} from '@/state/hooks';
+import { IToken } from '@/interfaces/token';
+import { getSwapTokens } from '@/services/token-explorer';
+import { useAppDispatch, useAppSelector } from '@/state/hooks';
 import {
   requestReload,
   requestReloadRealtime,
   selectPnftExchange,
   updateCurrentTransaction,
 } from '@/state/pnftExchange';
-import {getIsAuthenticatedSelector, getUserSelector} from '@/state/user/selector';
-import {camelCaseKeys, compareString, formatCurrency} from '@/utils';
-import {isDevelop} from '@/utils/commons';
-import {composeValidators, required} from '@/utils/formValidate';
-import {formatEthPrice} from '@/utils/format';
-import {showError} from '@/utils/toast';
-import {Box, Flex, forwardRef, Text} from '@chakra-ui/react';
+import { getIsAuthenticatedSelector, getUserSelector } from '@/state/user/selector';
+import { camelCaseKeys, compareString, formatCurrency } from '@/utils';
+import { isDevelop } from '@/utils/commons';
+import { composeValidators, required } from '@/utils/formValidate';
+import { formatEthPrice } from '@/utils/format';
+import { showError } from '@/utils/toast';
+import { Box, Flex, forwardRef, Text } from '@chakra-ui/react';
 import BigNumber from 'bignumber.js';
 import cx from 'classnames';
-import {isEmpty} from 'lodash';
+import { isEmpty } from 'lodash';
 import debounce from 'lodash/debounce';
 import Link from 'next/link';
-import {useCallback, useContext, useEffect, useImperativeHandle, useRef, useState,} from 'react';
-import {Field, Form, useForm, useFormState} from 'react-final-form';
+import {
+  useCallback,
+  useContext,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from 'react';
+import { Field, Form, useForm, useFormState } from 'react-final-form';
 import toast from 'react-hot-toast';
-import {useDispatch, useSelector} from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import styles from './styles.module.scss';
-import {transactionType} from "@/components/Swap/alertInfoProcessing/types";
-import {TransactionStatus} from "@/interfaces/walletTransaction";
-import {RiArrowUpDownLine} from "react-icons/ri";
-import px2rem from "@/utils/px2rem";
+import { transactionType } from '@/components/Swap/alertInfoProcessing/types';
+import { TransactionStatus } from '@/interfaces/walletTransaction';
+import { RiArrowUpDownLine } from 'react-icons/ri';
+import px2rem from '@/utils/px2rem';
 
 const LIMIT_PAGE = 50;
 const FEE = 3;
@@ -256,19 +267,21 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       const [_isApprove, _tokenBalance, _fromTokens] = await Promise.all([
         checkTokenApprove(token),
         getTokenBalance(token),
-        fetchFromTokens(token?.address)
+        fetchFromTokens(token?.address),
       ]);
       setIsApproveBaseToken(_isApprove);
       setBaseBalance(_tokenBalance);
-      setQuoteTokensList(_fromTokens);
-      if(quoteToken) {
-        const findIndex = _fromTokens.findIndex((v) =>
-          compareString(v.address, quoteToken.address),
-        );
+      if (_fromTokens) {
+        setQuoteTokensList(_fromTokens);
+        if (quoteToken) {
+          const findIndex = _fromTokens.findIndex((v) =>
+            compareString(v.address, quoteToken.address),
+          );
 
-        if(findIndex < 0) {
-          setQuoteToken(null);
-          change('quoteToken', null);
+          if (findIndex < 0) {
+            setQuoteToken(null);
+            change('quoteToken', null);
+          }
         }
       }
     } catch (error) {
@@ -283,7 +296,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       const [_isApprove, _tokenBalance] = await Promise.all([
         checkTokenApprove(token),
         getTokenBalance(token),
-        fetchFromTokens(token?.address)
+        fetchFromTokens(token?.address),
       ]);
       setIsApproveQuoteToken(_isApprove);
       setQuoteBalance(_tokenBalance);
@@ -312,19 +325,21 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     setQuoteReserve(baseReserve);
 
     try {
-      if(quoteToken) {
+      if (quoteToken) {
         const [_fromTokens] = await Promise.all([
-          fetchFromTokens(quoteToken?.address)
+          fetchFromTokens(quoteToken?.address),
         ]);
-        setQuoteTokensList(_fromTokens);
-        if(baseToken) {
-          const findIndex = _fromTokens.findIndex((v) =>
-            compareString(v.address, baseToken.address),
-          );
+        if (_fromTokens) {
+          setQuoteTokensList(_fromTokens);
+          if (baseToken) {
+            const findIndex = _fromTokens.findIndex((v) =>
+              compareString(v.address, baseToken.address),
+            );
 
-          if(findIndex < 0) {
-            setQuoteToken(null);
-            change('quoteToken', null);
+            if (findIndex < 0) {
+              setQuoteToken(null);
+              change('quoteToken', null);
+            }
           }
         }
       }
@@ -449,10 +464,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   return (
     <form onSubmit={onSubmit} style={{ height: '100%' }}>
       <HorizontalItem
-        label={
-          <Text fontSize={'md'} color={'#B1B5C3'}>
-          </Text>
-        }
+        label={<Text fontSize={'md'} color={'#B1B5C3'}></Text>}
         value={<SlippageSettingButton></SlippageSettingButton>}
       />
       <InputWrapper

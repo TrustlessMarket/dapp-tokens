@@ -60,12 +60,12 @@ import useSupplyERC20Liquid from '@/hooks/contract-operations/token/useSupplyERC
 import { TransactionStatus } from '@/interfaces/walletTransaction';
 import { transactionType } from '@/components/Swap/alertInfoProcessing/types';
 import { useDispatch } from 'react-redux';
-import px2rem from "@/utils/px2rem";
+import px2rem from '@/utils/px2rem';
 
 const LIMIT_PAGE = 50;
 
 export const MakeFormSwap = forwardRef((props, ref) => {
-  const { onSubmit, submitting } = props;
+  const { onSubmit, submitting, fromAddress, toAddress } = props;
   const [loading, setLoading] = useState(false);
   const [baseToken, setBaseToken] = useState<IToken>();
   const [quoteToken, setQuoteToken] = useState<IToken>();
@@ -159,6 +159,30 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     } catch (error) {}
   };
 
+  useEffect(() => {
+    if (fromAddress && tokensList.length > 0) {
+      const findFromToken = tokensList.find((v) =>
+        compareString(v.address, fromAddress),
+      );
+
+      if (findFromToken) {
+        handleSelectBaseToken(findFromToken);
+      }
+    }
+  }, [fromAddress, tokensList.length]);
+
+  useEffect(() => {
+    if (toAddress && tokensList.length > 0) {
+      const findFromToken = tokensList.find((v) =>
+        compareString(v.address, toAddress),
+      );
+
+      if (findFromToken) {
+        handleSelectQuoteToken(findFromToken);
+      }
+    }
+  }, [toAddress, tokensList.length]);
+
   const fetchTokens = async (page = 1, _isFetchMore = false) => {
     try {
       setLoading(true);
@@ -167,7 +191,8 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         page: page,
         is_test: isDevelop() ? '1' : '',
       });
-      setTokensList(camelCaseKeys(pairsMock));
+      // setTokensList(camelCaseKeys(pairsMock));
+      setTokensList(res);
     } catch (err: unknown) {
       console.log('Failed to fetch tokens owned');
     } finally {
@@ -414,7 +439,12 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         </Flex>
       </InputWrapper>
       <Flex justifyContent={'center'} mt={6}>
-        <Box className="btn-transfer" p={2} border={'1px solid #3385FF'} borderRadius={'8px'}>
+        <Box
+          className="btn-transfer"
+          p={2}
+          border={'1px solid #3385FF'}
+          borderRadius={'8px'}
+        >
           <BsPlus color="#3385FF" />
         </Box>
       </Flex>
@@ -511,7 +541,15 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   );
 });
 
-const CreateMarket = ({}) => {
+const CreateMarket = ({
+  fromAddress,
+  toAddress,
+  type,
+}: {
+  fromAddress?: any;
+  toAddress?: any;
+  type?: any;
+}) => {
   const refForm = useRef<any>();
   const [submitting, setSubmitting] = useState(false);
   const dispatch = useAppDispatch();
@@ -573,6 +611,8 @@ const CreateMarket = ({}) => {
             ref={refForm}
             onSubmit={handleSubmit}
             submitting={submitting}
+            fromAddress={fromAddress}
+            toAddress={toAddress}
           />
         )}
       </Form>

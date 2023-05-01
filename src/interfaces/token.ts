@@ -12,6 +12,8 @@ export interface IToken {
   name: string;
   thumbnail?: string;
   description?: string;
+  fromAddress?: string;
+  toAddress?: string;
   social?: {
     website?: string;
     discord?: string;

@@ -14,6 +14,8 @@
     "name": "WBTC-BTT",
     "thumbnail": "",
     "description": "",
+    "from_address": "0x435bdab1bcB2fcf80e5cF47dba209E28c340c3Bf",
+    "to_address": "0x5541D9dEB4EFE0C46C8B276D676E65A4985B5E7D",
     "social": {
       "website": "",
       "discord": "",
@@ -39,6 +41,8 @@
     "name": "WBTC-BTT2",
     "thumbnail": "",
     "description": "",
+    "from_address": "0x435bdab1bcB2fcf80e5cF47dba209E28c340c3Bf",
+    "to_address": "0x7C82Ce7503F3dd220B4d9be66e3f848148A581A0",
     "social": {
       "website": "",
       "discord": "",

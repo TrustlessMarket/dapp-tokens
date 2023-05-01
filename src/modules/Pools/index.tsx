@@ -1,6 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
+import HorizontalItem from '@/components/HorizontalItem';
 import FiledButton from '@/components/Swap/button/filedButton';
+import ListTable from '@/components/Swap/listTable';
+import mockTokenPair from '@/dataMock/pairLiquid.json';
+import useGetReserves from '@/hooks/contract-operations/swap/useReserves';
+import useSupplyERC20Liquid from '@/hooks/contract-operations/token/useSupplyERC20Liquid';
+import { IToken } from '@/interfaces/token';
+import { camelCaseKeys, formatCurrency } from '@/utils';
+import { formatAmountBigNumber } from '@/utils/format';
+import px2rem from '@/utils/px2rem';
 import {
   Accordion,
   AccordionButton,
@@ -13,25 +22,208 @@ import {
   Icon,
   IconButton,
 } from '@chakra-ui/react';
-import {useEffect, useMemo, useState} from 'react';
-import {IoArrowBackOutline} from 'react-icons/io5';
-import {StyledTokens, UploadFileContainer} from './Pools.styled';
+import BigNumber from 'bignumber.js';
+import { useEffect, useMemo, useState } from 'react';
+import { IoArrowBackOutline } from 'react-icons/io5';
+import { StyledTokens, UploadFileContainer } from './Pools.styled';
 import CreateMarket from './form';
 import styles from './styles.module.scss';
-import ListTable from '@/components/Swap/listTable';
-import {camelCaseKeys} from '@/utils';
-import mockTokenPair from '@/dataMock/pairLiquid.json';
-import {IToken} from '@/interfaces/token';
-import px2rem from "@/utils/px2rem";
+import { useRouter } from 'next/router';
+import queryString from 'query-string';
+import { ROUTE_PATH } from '@/constants/route-path';
+
+enum ScreenType {
+  default = 'default',
+  add = 'add',
+  remove = 'remove',
+}
+
+const ItemLiquid = ({ pool }: { pool: IToken }) => {
+  const { call: getSupply } = useSupplyERC20Liquid();
+  const { call: getReserves } = useGetReserves();
+  const [result, setResult] = useState<any>({});
+  const router = useRouter();
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const fetchData = async () => {
+    try {
+      const response = await Promise.all([
+        getSupply({
+          liquidAddress: pool.address,
+        }),
+        getReserves({
+          address: pool.address,
+        }),
+      ]);
+      setResult({ ...response[0], ...response[1] });
+    } catch (error) {}
+  };
+
+  return (
+    <Accordion allowMultiple allowToggle>
+      <AccordionItem>
+        <h2>
+          <AccordionButton>
+            <Box as="span" flex="1" textAlign="left">
+              {pool.name}
+            </Box>
+            <AccordionIcon />
+          </AccordionButton>
+        </h2>
+        <AccordionPanel>
+          <HorizontalItem label="Your pool total tokens:" value="0" />
+          <HorizontalItem
+            label={`Pooled ${pool.name.split('-')[0]}:`}
+            value={formatCurrency(
+              formatAmountBigNumber(result._reserve0, pool.decimal),
+            ).toString()}
+          />
+          <HorizontalItem
+            label={`Pooled ${pool.name.split('-')[1]}:`}
+            value={formatCurrency(
+              formatAmountBigNumber(result._reserve1, pool.decimal),
+            ).toString()}
+          />
+          <HorizontalItem
+            label="Your pool share:"
+            value={`${formatCurrency(
+              new BigNumber(result.ownerSupply)
+                .dividedBy(result.totalSupply)
+                .multipliedBy(100)
+                .toString(),
+              2,
+            ).toString()}%`}
+          />
+          <Flex gap={4} mt={4} justifyContent={'center'}>
+            <FiledButton
+              style={{
+                backgroundColor: 'gray',
+              }}
+              btnSize="l"
+              onClick={() =>
+                router.replace(
+                  `${ROUTE_PATH.POOLS}?type=${ScreenType.add}&f=${pool.fromAddress}&t=${pool.toAddress}`,
+                )
+              }
+            >
+              Add
+            </FiledButton>
+            <FiledButton
+              btnSize="l"
+              style={{
+                backgroundColor: 'red',
+              }}
+              onClick={() =>
+                router.replace(
+                  `${ROUTE_PATH.POOLS}?type=${ScreenType.remove}&f=${pool.fromAddress}&t=${pool.toAddress}`,
+                )
+              }
+            >
+              Remove
+            </FiledButton>
+          </Flex>
+        </AccordionPanel>
+      </AccordionItem>
+    </Accordion>
+  );
+};
 
 const LiquidityContainer = () => {
-  const [showAction, setShowAction] = useState(false);
   const [data, setData] = useState([]);
   // const [isCreate, setIsCreate] = useState(true);
 
-  const handleChooseAction = (_create: boolean) => {
-    setShowAction(true);
-    // setIsCreate(create);
+  const router = useRouter();
+  const routerQuery = router.query;
+
+  useEffect(() => {
+    renderScreen();
+  }, [routerQuery]);
+
+  const renderScreen = () => {
+    switch (routerQuery.type) {
+      case ScreenType.add:
+      case ScreenType.remove:
+        return (
+          <>
+            <Flex
+              direction={'column'}
+              justifyContent={'center'}
+              alignItems={'center'}
+              position={'relative'}
+            >
+              <IconButton
+                position={'absolute'}
+                left={0}
+                top={'6px'}
+                size={'sm'}
+                borderColor={'#FFFFFF'}
+                borderWidth={1}
+                colorScheme="whiteAlpha"
+                isRound
+                variant="outline"
+                icon={<Icon as={IoArrowBackOutline} color={'#FFFFFF'} />}
+                onClick={() =>
+                  router.replace(`${ROUTE_PATH.POOLS}?type=${ScreenType.default}`)
+                }
+                aria-label={''}
+              />
+              <Heading as={'h6'}>Create Pool</Heading>
+            </Flex>
+            <UploadFileContainer>
+              <div className="upload_left">
+                <Box className={styles.wrapper}>
+                  <Box>
+                    <CreateMarket
+                      type={routerQuery.type}
+                      fromAddress={routerQuery?.f}
+                      toAddress={routerQuery?.t}
+                    />
+                  </Box>
+                </Box>
+              </div>
+            </UploadFileContainer>
+          </>
+        );
+
+      default:
+        return (
+          <>
+            <Flex
+              gap={4}
+              alignItems={'center'}
+              justifyContent={'space-between'}
+              // maxW={['auto', '70%']}
+              marginX={'auto'}
+              direction={['column', 'row']}
+            >
+              <Heading as={'h6'}>Pools</Heading>
+              <Flex gap={4}>
+                <FiledButton
+                  style={{ background: 'orange' }}
+                  // onClick={() => handleChooseAction(true)}
+                  fontSize={`${px2rem(16)} !important`}
+                  onClick={() =>
+                    router.replace(`${ROUTE_PATH.POOLS}?type=${ScreenType.add}`)
+                  }
+                >
+                  Create Pool
+                </FiledButton>
+              </Flex>
+            </Flex>
+
+            <UploadFileContainer>
+              <div className="upload_left">
+                <Box className={styles.wrapper}>
+                  <ListTable data={data} columns={columns} noHeader />
+                </Box>
+              </div>
+            </UploadFileContainer>
+          </>
+        );
+    }
   };
 
   const columns = useMemo(() => {
@@ -48,26 +240,7 @@ const LiquidityContainer = () => {
           borderBottomWidth: '0',
         },
         render(row: IToken) {
-          return (
-            <Accordion allowMultiple allowToggle>
-              <AccordionItem>
-                <h2>
-                  <AccordionButton>
-                    <Box as="span" flex="1" textAlign="left">
-                      {row.name}
-                    </Box>
-                    <AccordionIcon />
-                  </AccordionButton>
-                </h2>
-                <AccordionPanel pb={4}>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                  eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
-                  ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-                  aliquip ex ea commodo consequat.
-                </AccordionPanel>
-              </AccordionItem>
-            </Accordion>
-          );
+          return <ItemLiquid pool={row} />;
         },
       },
     ];
@@ -86,68 +259,7 @@ const LiquidityContainer = () => {
   return (
     <StyledTokens>
       <div className="background"></div>
-
-      <div>
-        {!showAction ? (
-          <>
-            <Flex
-              gap={4}
-              alignItems={'center'}
-              justifyContent={'space-between'}
-              // maxW={['auto', '70%']}
-              marginX={'auto'}
-              direction={['column', 'row']}
-            >
-              <Heading as={'h6'}>Pools</Heading>
-              <Flex gap={4}>
-                <FiledButton
-                  style={{ background: 'orange' }}
-                  onClick={() => handleChooseAction(true)}
-                  fontSize={`${px2rem(16)} !important`}
-                >
-                  Create Pool
-                </FiledButton>
-              </Flex>
-            </Flex>
-          </>
-        ) : (
-          <Flex
-            direction={'column'}
-            justifyContent={'center'}
-            alignItems={'center'}
-            position={'relative'}
-          >
-            <IconButton
-              position={'absolute'}
-              left={0}
-              top={'6px'}
-              size={'sm'}
-              borderColor={'#FFFFFF'}
-              borderWidth={1}
-              colorScheme="whiteAlpha"
-              isRound
-              variant="outline"
-              icon={<Icon as={IoArrowBackOutline} color={'#FFFFFF'}/>}
-              onClick={() => setShowAction(false)}
-              aria-label={''}
-            />
-            <Heading as={'h6'}>Create Pool</Heading>
-          </Flex>
-        )}
-      </div>
-      <UploadFileContainer>
-        <div className="upload_left">
-          <Box className={styles.wrapper}>
-            {showAction ? (
-              <Box>
-                <CreateMarket />
-              </Box>
-            ) : (
-              <ListTable data={data} columns={columns} noHeader />
-            )}
-          </Box>
-        </div>
-      </UploadFileContainer>
+      {renderScreen()}
     </StyledTokens>
   );
 };
