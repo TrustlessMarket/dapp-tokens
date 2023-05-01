@@ -22,10 +22,11 @@ import useSupplyERC20Liquid from '@/hooks/contract-operations/token/useSupplyERC
 import { IToken } from '@/interfaces/token';
 import { TransactionStatus } from '@/interfaces/walletTransaction';
 import { getTokens } from '@/services/token-explorer';
-import { useAppDispatch } from '@/state/hooks';
+import { useAppDispatch, useAppSelector } from '@/state/hooks';
 import {
   requestReload,
   requestReloadRealtime,
+  selectPnftExchange,
   updateCurrentTransaction,
 } from '@/state/pnftExchange';
 import {
@@ -109,6 +110,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const isScreenAdd = compareString(type, ScreenType.add);
 
   const isPaired = !compareString(pairAddress, NULL_ADDRESS);
+  const needReload = useAppSelector(selectPnftExchange).needReload;
 
   const dispatch = useDispatch();
   const { values } = useFormState();
@@ -131,7 +133,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
 
   useEffect(() => {
     checkPair();
-  }, [baseToken, quoteToken]);
+  }, [baseToken, quoteToken, needReload]);
 
   const checkPair = async () => {
     if (!baseToken?.address || !quoteToken?.address) {
@@ -312,7 +314,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
 
       return undefined;
     },
-    [values.baseAmount],
+    [values.baseAmount, baseBalance],
   );
 
   const validateQuoteAmount = useCallback(
@@ -322,7 +324,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       }
       return undefined;
     },
-    [values.quoteAmount],
+    [values.quoteAmount, quoteBalance],
   );
 
   const onChangeValueQuoteAmount = (_amount: any) => {
@@ -342,6 +344,8 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const onChangeValueBaseAmount = (_amount: any) => {
     if (isPaired && baseToken && quoteToken) {
       const tokens = sortAddressPair(baseToken, quoteToken);
+      console.log('tokens', tokens);
+
       const findIndex = tokens.findIndex((v) =>
         compareString(v.address, baseToken.address),
       );
