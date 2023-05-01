@@ -8,7 +8,7 @@ import InputWrapper from '@/components/Swap/form/inputWrapper';
 import WrapperConnected from '@/components/WrapperConnected';
 import { UNIV2_ROUTER_ADDRESS } from '@/configs';
 import { NULL_ADDRESS } from '@/constants/url';
-import pairsMock from '@/dataMock/tokens.json';
+// import pairsMock from '@/dataMock/tokens.json';
 import useAddLiquidity from '@/hooks/contract-operations/pools/useAddLiquidity';
 import useGetPair from '@/hooks/contract-operations/swap/useGetPair';
 import useApproveERC20Token from '@/hooks/contract-operations/token/useApproveERC20Token';
@@ -64,6 +64,7 @@ import px2rem from '@/utils/px2rem';
 import { LIQUID_PAIRS } from '@/constants/storage-key';
 import { useRouter } from 'next/router';
 import { ROUTE_PATH } from '@/constants/route-path';
+import { ScreenType } from '..';
 
 const LIMIT_PAGE = 50;
 
@@ -93,6 +94,8 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     _reserve1: '-',
   });
   const router = useRouter();
+  const type = router.query.type;
+  const isScreenAdd = compareString(type, ScreenType.add);
 
   const isPaired = !compareString(pairAddress, NULL_ADDRESS);
 
@@ -140,14 +143,21 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           }),
         ]);
 
-        console.log('resReserve', resReserve);
-
         if (Number(resSupply.totalSupply) !== 0) {
           setPercentPool(
             new BigNumber(resSupply.ownerSupply)
               .dividedBy(resSupply.totalSupply)
               .multipliedBy(100)
               .toString(),
+          );
+        }
+
+        if (!isScreenAdd) {
+          setBaseBalance(
+            formatAmountBigNumber(resReserve._reserve0, baseToken.decimal),
+          );
+          setQuoteBalance(
+            formatAmountBigNumber(resReserve._reserve1, quoteToken.decimal),
           );
         }
 
@@ -195,8 +205,8 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         page: page,
         is_test: isDevelop() ? '1' : '',
       });
-      setTokensList(camelCaseKeys(pairsMock));
-      // setTokensList(res);
+      // setTokensList(camelCaseKeys(pairsMock));
+      setTokensList(camelCaseKeys(res));
     } catch (err: unknown) {
       console.log('Failed to fetch tokens owned');
     } finally {
@@ -256,7 +266,9 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         getTokenBalance(token),
       ]);
       setIsApproveBaseToken(_isApprove);
-      setBaseBalance(_tokenBalance);
+      if (isScreenAdd) {
+        setBaseBalance(_tokenBalance);
+      }
     } catch (error) {
       throw error;
     }
@@ -271,7 +283,9 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         getTokenBalance(token),
       ]);
       setIsApproveQuoteToken(_isApprove);
-      setQuoteBalance(_tokenBalance);
+      if (isScreenAdd) {
+        setQuoteBalance(_tokenBalance);
+      }
     } catch (error) {
       throw error;
     }
@@ -328,10 +342,12 @@ export const MakeFormSwap = forwardRef((props, ref) => {
 
   const handleChangeMaxBaseAmount = () => {
     change('baseAmount', baseBalance);
+    onChangeValueBaseAmount(baseBalance);
   };
 
   const handleChangeMaxQuoteAmount = () => {
     change('quoteAmount', quoteBalance);
+    onChangeValueQuoteAmount(quoteBalance);
   };
 
   const onApprove = async () => {
@@ -431,6 +447,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             className={styles.inputAmount}
             prependComp={
               <FilterButton
+                disabled={!isScreenAdd}
                 data={tokensList}
                 commonData={tokensList.slice(0, 3)}
                 handleSelectItem={(_token: IToken) =>
@@ -491,6 +508,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             className={cx(styles.inputAmount, styles.collateralAmount)}
             prependComp={
               <FilterButton
+                disabled={!isScreenAdd}
                 data={tokensList}
                 commonData={tokensList.slice(0, 3)}
                 handleSelectItem={(_token: IToken) =>
@@ -529,8 +547,9 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             processInfo={{
               id: transactionType.createPool,
             }}
+            style={{ backgroundColor: isScreenAdd ? '#3385FF' : '#BC1756' }}
           >
-            CREATE
+            {isScreenAdd ? 'CREATE' : 'REMOVE'}
           </FiledButton>
         ) : (
           <FiledButton
@@ -649,9 +668,7 @@ const CreateMarket = ({
         amountBMin: '0',
       };
 
-      const response = await addLiquidity(data);
-
-      console.log('response', response);
+      await addLiquidity(data);
 
       toast.success('Transaction has been created. Please wait for few minutes.');
 

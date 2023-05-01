@@ -1,19 +1,19 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import FiledButton from '@/components/Swap/button/filedButton';
 import FieldText from '@/components/Swap/form/fieldText';
-import ListTable, {ColumnProp} from '@/components/Swap/listTable';
+import ListTable, { ColumnProp } from '@/components/Swap/listTable';
 import useDebounce from '@/hooks/useDebounce';
-import {closeModal, openModal} from '@/state/modal';
-import {shortCryptoAddress} from '@/utils';
-import {Box, Flex, Text} from '@chakra-ui/react';
-import {useWindowSize} from '@trustless-computer/dapp-core';
-import {clone} from 'lodash';
-import React, {useEffect, useMemo, useState} from 'react';
-import {Field, Form, useFormState} from 'react-final-form';
-import {useDispatch} from 'react-redux';
+import { closeModal, openModal } from '@/state/modal';
+import { shortCryptoAddress } from '@/utils';
+import { Box, Flex, Text } from '@chakra-ui/react';
+import { useWindowSize } from '@trustless-computer/dapp-core';
+import { clone } from 'lodash';
+import React, { useEffect, useMemo, useState } from 'react';
+import { Field, Form, useFormState } from 'react-final-form';
+import { useDispatch } from 'react-redux';
 import styles from './styles.module.scss';
-import {AiOutlineCaretDown} from "react-icons/ai";
-import TokenBalance from "@/components/Swap/tokenBalance";
+import { AiOutlineCaretDown } from 'react-icons/ai';
+import TokenBalance from '@/components/Swap/tokenBalance';
 
 interface FilterButtonProps {
   data: any[];
@@ -21,6 +21,7 @@ interface FilterButtonProps {
   handleSelectItem: (_: any) => void;
   parentClose?: () => void;
   value: any;
+  disabled?: boolean;
 }
 
 interface FilterModalProps extends FilterButtonProps {
@@ -52,7 +53,7 @@ const FilterModal: React.FC<FilterModalProps> = ({
         },
         render(row: DataRow) {
           return (
-            <Flex gap={4} alignItems={'flex-start'} justifyContent={"space-between"}>
+            <Flex gap={4} alignItems={'flex-start'} justifyContent={'space-between'}>
               {/*<AvatarNFT tradingPair={row?.extra_item} />*/}
               <Box>
                 <Text fontSize={'md'} fontWeight={'normal'}>
@@ -62,7 +63,7 @@ const FilterModal: React.FC<FilterModalProps> = ({
                   {shortCryptoAddress(row?.address)}
                 </Text>
               </Box>
-              <TokenBalance token={row.extra_item}/>
+              <TokenBalance token={row.extra_item} />
             </Flex>
           );
         },
@@ -188,6 +189,7 @@ const FilterButton: React.FC<FilterButtonProps> = ({
   handleSelectItem,
   commonData = [],
   value,
+  disabled,
 }) => {
   const dispatch = useDispatch();
   const { mobileScreen } = useWindowSize();
@@ -279,16 +281,23 @@ const FilterButton: React.FC<FilterButtonProps> = ({
   };
 
   return (
-    <FiledButton onClick={handleOpenModal} className={styles.filterButton}>
-      <Flex gap={2} alignItems={'center'} justifyContent={"space-between"} width={"100%"}>
-        {
-          selectedToken ? (
-            <Text>{selectedToken?.symbol}</Text>
-          ) : (
-            <Text>Select token</Text>
-          )
-        }
-        <AiOutlineCaretDown color={"#686A6C"}/>
+    <FiledButton
+      isDisabled={disabled}
+      onClick={handleOpenModal}
+      className={styles.filterButton}
+    >
+      <Flex
+        gap={2}
+        alignItems={'center'}
+        justifyContent={'space-between'}
+        width={'100%'}
+      >
+        {selectedToken ? (
+          <Text>{selectedToken?.symbol}</Text>
+        ) : (
+          <Text>Select token</Text>
+        )}
+        <AiOutlineCaretDown color={'#686A6C'} />
       </Flex>
     </FiledButton>
   );

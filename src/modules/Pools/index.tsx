@@ -32,7 +32,7 @@ import CreateMarket from './form';
 import styles from './styles.module.scss';
 import { LIQUID_PAIRS } from '@/constants/storage-key';
 
-enum ScreenType {
+export enum ScreenType {
   default = 'default',
   add = 'add',
   remove = 'remove',
@@ -114,7 +114,7 @@ const ItemLiquid = ({ pool }: { pool: IToken }) => {
             >
               Add
             </FiledButton>
-            <FiledButton
+            {/* <FiledButton
               btnSize="l"
               style={{
                 backgroundColor: 'red',
@@ -126,7 +126,7 @@ const ItemLiquid = ({ pool }: { pool: IToken }) => {
               }
             >
               Remove
-            </FiledButton>
+            </FiledButton> */}
           </Flex>
         </AccordionPanel>
       </AccordionItem>
