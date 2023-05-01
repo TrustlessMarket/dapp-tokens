@@ -219,7 +219,12 @@ const LiquidityContainer = () => {
             <UploadFileContainer>
               <div className="upload_left">
                 <Box className={styles.wrapper}>
-                  <ListTable data={data} columns={columns} noHeader />
+                  <ListTable
+                    data={data}
+                    columns={columns}
+                    noHeader
+                    emptyLabel="No pool found."
+                  />
                 </Box>
               </div>
             </UploadFileContainer>

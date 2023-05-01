@@ -7,7 +7,10 @@ import {
   WalletTransactionData,
 } from '@/interfaces/walletTransaction';
 import { useAppSelector } from '@/state/hooks';
-import { selectCurrentTransaction } from '@/state/pnftExchange';
+import {
+  selectCurrentTransaction,
+  updateCurrentTransaction,
+} from '@/state/pnftExchange';
 import { compareString, shortCryptoAddress } from '@/utils';
 import {
   Alert,
@@ -19,10 +22,13 @@ import {
   useDisclosure,
 } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 
 const StyledWarningNote = styled(AlertDescription)`
   color: #bc1756;
+  font-size: 12px;
+  font-weight: 400;
 `;
 
 interface AlertInfoProcessProps {
@@ -47,7 +53,7 @@ const AlertInfoProcess: React.FC<AlertInfoProcessProps> = ({
     selectCurrentTransaction,
   );
   const { isOpen: isVisible, onClose } = useDisclosure({ defaultIsOpen: true });
-
+  const dispatch = useDispatch();
   const [count, setCount] = useState(1);
 
   useInterval(
@@ -68,15 +74,20 @@ const AlertInfoProcess: React.FC<AlertInfoProcessProps> = ({
     }
   }, [loading]);
 
-  useEffect(() => {
-    getTransactionInfo();
-  }, [JSON.stringify(currentTransaction)]);
+  // useEffect(() => {
+  //   getTransactionInfo();
+  // }, [JSON.stringify(currentTransaction)]);
 
-  const getTransactionInfo = async () => {
-    try {
-    } catch (error) {
-      console.log(error);
-    }
+  // const getTransactionInfo = async () => {
+  //   try {
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
+
+  const handleClose = () => {
+    dispatch(updateCurrentTransaction(null));
+    onClose();
   };
 
   if (
@@ -155,10 +166,12 @@ const AlertInfoProcess: React.FC<AlertInfoProcessProps> = ({
         ) && (
           <CloseButton
             position="absolute"
-            onClick={onClose}
+            onClick={handleClose}
             top={'5px'}
             right={'5px'}
-            backgroundColor={'transparent'}
+            style={{
+              backgroundColor: 'transparent',
+            }}
           />
         )}
     </Alert>
