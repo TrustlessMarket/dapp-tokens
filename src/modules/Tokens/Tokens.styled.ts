@@ -5,7 +5,7 @@ export const StyledTokens = styled.div`
   margin-top: ${px2rem(48)};
 
   .background {
-    background-image: url("imgs/banner5.png");
+    background: linear-gradient(90deg, #00c6ff 0%, #0072ff 100%);
     min-height: ${px2rem(203)};
     position: absolute;
     width: 100%;

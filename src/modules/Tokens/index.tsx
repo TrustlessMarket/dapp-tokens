@@ -27,7 +27,7 @@ const LIMIT_PAGE = 200;
 const ALL_ONE_PAGE = 10000;
 
 const Tokens = () => {
-  const TABLE_HEADINGS = ['Token #','Name','Symbol', 'Price','Market Cap','24h %', 'Supply', 'Creator'];
+  const TABLE_HEADINGS = ['Token #','Name','Symbol', 'Price','Market Cap(BTC)','24h %', 'Supply', 'Creator'];
   /*'Price','24h %','Market Cap'*/
 
   // const router = useRouter();
@@ -64,20 +64,20 @@ const Tokens = () => {
       {
         for(let j = 0;j<res1.length;j++)
         {
-           if(res[i].address==res1[j].address)
-           {
-             if( res1[j].volume!=0) {
-               res[i].volume = res1[j].volume;
-             }
-             if( res1[j].price!=0) {
-               res[i].price = res1[j].price;
-             }
-             if( res1[j].percent!=0) {
-               res[i].percent = res1[j].percent;
-             }
+          if(res[i].address==res1[j].address)
+          {
+            if( res1[j].volume!=0) {
+              res[i].volume = res1[j].volume;
+            }
+            if( res1[j].price!=0) {
+              res[i].price = res1[j].price;
+            }
+            if( res1[j].percent!=0) {
+              res[i].percent = res1[j].percent;
+            }
 
-             break;
-           }
+            break;
+          }
         }
       }
       for(let i = 0;i<res.length-1;i++)
@@ -87,11 +87,11 @@ const Tokens = () => {
 
           let isswap = false;
           if (!res[i].volume && res[j].volume) {
-             isswap =true;
+            isswap =true;
           }else if (res[i].volume && res[j].volume) {
-              if(res[j].volume>res[i].volume) {
-                isswap =true;
-              }
+            if(res[j].volume>res[i].volume) {
+              isswap =true;
+            }
           }
           if (isswap)
           {
@@ -179,9 +179,7 @@ const Tokens = () => {
             <div className="upload_content">
               {/* <h3 className="upload_title">BRC-20 on Bitcoin</h3> */}
               <Text size="medium" color="text1">
-                BRC-20 is the standard for fungible tokens on Bitcoin. You can use it
-                to represent virtually anything on Bitcoin: a cryptocurrency, a share
-                in a company, voting rights in a DAO, an ounce of gold, and more.
+                Smart BRC-20s are the first tokens deployed on Bitcoin as smart contracts. They are cryptographically secure, decentralized, and tamper-proof. They run exactly as programmed without any possibility of fraud, third-party interference, or censorship. As smart contracts, they can also be composed into decentralization applications on Bitcoin so you can use them in DEX, DAO, auctions, lending, and marketplaces.
               </Text>
             </div>
           </div>
@@ -197,18 +195,18 @@ const Tokens = () => {
               </Text>
             </Button>
             <Link href={ROUTE_PATH.SWAP} >
-            <Button   className="comming-soon-btn"  bg={'white'}  background={'#3385FF'}  >
-              <Text
-                  size="medium"
-                  color="bg1"
-                  className="brc20-text"
-                  fontWeight="medium"
-              >
-                Swap BRC-20
-              </Text>
+              <Button   className="comming-soon-btn"  bg={'white'}  background={'#3385FF'}  >
+                <Text
+                    size="medium"
+                    color="bg1"
+                    className="brc20-text"
+                    fontWeight="medium"
+                >
+                  Swap BRC-20
+                </Text>
 
-            </Button>
-      </Link>
+              </Button>
+            </Link>
           </div>
         </UploadFileContainer>
         <InfiniteScroll
