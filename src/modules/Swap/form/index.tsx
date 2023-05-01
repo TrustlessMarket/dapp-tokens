@@ -508,10 +508,12 @@ export const MakeFormSwap = forwardRef((props, ref) => {
 
   const handleChangeMaxBaseAmount = () => {
     change('baseAmount', baseBalance);
+    onChangeValueBaseAmount(baseBalance);
   };
 
   const handleChangeMaxQuoteAmount = () => {
     change('quoteAmount', quoteBalance);
+    onChangeValueQuoteAmount(quoteBalance);
   };
 
   const onApprove = async () => {
