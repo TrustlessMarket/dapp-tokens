@@ -1,4 +1,7 @@
 export interface IToken {
+  ownerSupply: string | number;
+  toBalance: string | number;
+  fromBalance: string | number;
   id: string;
   deletedAt?: string;
   createdAt: string;

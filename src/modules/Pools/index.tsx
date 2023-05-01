@@ -3,6 +3,7 @@
 import HorizontalItem from '@/components/HorizontalItem';
 import FiledButton from '@/components/Swap/button/filedButton';
 import ListTable from '@/components/Swap/listTable';
+import { ROUTE_PATH } from '@/constants/route-path';
 import mockTokenPair from '@/dataMock/pairLiquid.json';
 import useGetReserves from '@/hooks/contract-operations/swap/useReserves';
 import useSupplyERC20Liquid from '@/hooks/contract-operations/token/useSupplyERC20Liquid';
@@ -23,14 +24,13 @@ import {
   IconButton,
 } from '@chakra-ui/react';
 import BigNumber from 'bignumber.js';
+import { useRouter } from 'next/router';
 import { useEffect, useMemo, useState } from 'react';
 import { IoArrowBackOutline } from 'react-icons/io5';
 import { StyledTokens, UploadFileContainer } from './Pools.styled';
 import CreateMarket from './form';
 import styles from './styles.module.scss';
-import { useRouter } from 'next/router';
-import queryString from 'query-string';
-import { ROUTE_PATH } from '@/constants/route-path';
+import { LIQUID_PAIRS } from '@/constants/storage-key';
 
 enum ScreenType {
   default = 'default',
@@ -74,24 +74,27 @@ const ItemLiquid = ({ pool }: { pool: IToken }) => {
           </AccordionButton>
         </h2>
         <AccordionPanel>
-          <HorizontalItem label="Your pool total tokens:" value="0" />
+          <HorizontalItem
+            label="Your pool total tokens:"
+            value={pool.ownerSupply.toString()}
+          />
           <HorizontalItem
             label={`Pooled ${pool.name.split('-')[0]}:`}
             value={formatCurrency(
-              formatAmountBigNumber(result._reserve0, pool.decimal),
+              formatAmountBigNumber(pool.fromBalance, pool.decimal),
             ).toString()}
           />
           <HorizontalItem
             label={`Pooled ${pool.name.split('-')[1]}:`}
             value={formatCurrency(
-              formatAmountBigNumber(result._reserve1, pool.decimal),
+              formatAmountBigNumber(pool.toBalance, pool.decimal),
             ).toString()}
           />
           <HorizontalItem
             label="Your pool share:"
             value={`${formatCurrency(
-              new BigNumber(result.ownerSupply)
-                .dividedBy(result.totalSupply)
+              new BigNumber(pool.ownerSupply)
+                .dividedBy(pool.totalSupply)
                 .multipliedBy(100)
                 .toString(),
               2,
@@ -252,7 +255,12 @@ const LiquidityContainer = () => {
 
   const fetchLiquid = async () => {
     try {
-      setData(camelCaseKeys(mockTokenPair));
+      let pairLiquid = localStorage.getItem(LIQUID_PAIRS);
+
+      if (pairLiquid) {
+        pairLiquid = JSON.parse(pairLiquid) || [];
+        setData(camelCaseKeys(pairLiquid));
+      }
     } catch (error) {}
   };
 

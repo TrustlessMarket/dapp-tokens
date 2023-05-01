@@ -96,9 +96,11 @@ const useAddLiquidity: ContractOperationHook<IGetReservesParams, boolean> = () =
 
         await transaction.wait();
 
-        await scanTrx({
-          tx_hash: transaction.hash,
-        });
+        if (compareString(APP_ENV, 'production')) {
+          await scanTrx({
+            tx_hash: transaction.hash,
+          });
+        }
 
         return transaction;
       }
