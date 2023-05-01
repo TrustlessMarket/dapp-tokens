@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { WALLET_URL } from '@/configs';
 import useInterval from '@/hooks/useInterval';
 import {
   TransactionStatus,
@@ -15,6 +16,22 @@ import {
   Flex,
 } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
+import styled from 'styled-components';
+
+const StyledWarningNote = styled(AlertDescription)`
+  background-color: #ff600038;
+  border-radius: 8px;
+  padding: 6px 12px;
+  margin-top: 10px;
+  text-align: left;
+  color: #ff6000;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 18px !important;
+  a {
+    font-weight: bold;
+  }
+`;
 
 interface AlertInfoProcessProps {
   loading?: boolean;
@@ -28,7 +45,7 @@ const getTitle = {
   error: 'Transaction has failed. Try again',
 };
 
-export const MAXIMUM_TIME_REQUEST = 10; // 8s
+export const MAXIMUM_TIME_REQUEST = 10; // 10s
 
 const AlertInfoProcess: React.FC<AlertInfoProcessProps> = ({
   loading,
@@ -133,9 +150,18 @@ const AlertInfoProcess: React.FC<AlertInfoProcessProps> = ({
           currentTransaction &&
           compareString(currentTransaction.status, TransactionStatus.pending) &&
           currentTransaction?.hash && (
-            <AlertDescription fontSize={'xs'} color={'#BC1756'}>
-              {`Transaction taking too long, please open "Metamask" and click "Speed up".`}
-            </AlertDescription>
+            <StyledWarningNote className="warning-note">
+              To process a transaction, please follow these steps:
+              <br />
+              1. Go to{' '}
+              <a href={WALLET_URL} target="_blank">
+                {WALLET_URL}
+              </a>
+              <br />
+              2. Click on the "Transaction" tab
+              <br />
+              3. Locate the pending transaction you wish to resume and click on it
+            </StyledWarningNote>
           )}
       </Flex>
     </Alert>

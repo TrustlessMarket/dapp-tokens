@@ -8,7 +8,7 @@ import InputWrapper from '@/components/Swap/form/inputWrapper';
 import WrapperConnected from '@/components/WrapperConnected';
 import { UNIV2_ROUTER_ADDRESS } from '@/configs';
 import { NULL_ADDRESS } from '@/constants/url';
-// import pairsMock from '@/dataMock/tokens.json';
+import pairsMock from '@/dataMock/tokens.json';
 import { transactionType } from '@/components/Swap/alertInfoProcessing/types';
 import { ROUTE_PATH } from '@/constants/route-path';
 import { LIQUID_PAIRS } from '@/constants/storage-key';
@@ -203,9 +203,10 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       const res = await getTokens({
         limit: LIMIT_PAGE * 10,
         page: page,
+        is_test: isDevelop() ? '1' : '',
       });
-      // setTokensList(camelCaseKeys(pairsMock));
-      setTokensList(camelCaseKeys(res));
+      setTokensList(camelCaseKeys(pairsMock));
+      // setTokensList(camelCaseKeys(res));
     } catch (err: unknown) {
       console.log('Failed to fetch tokens owned');
     } finally {
@@ -250,6 +251,8 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         address: UNIV2_ROUTER_ADDRESS,
       });
     } catch (error) {
+      console.log('error', error);
+
       throw error;
     } finally {
       dispatch(updateCurrentTransaction(null));
