@@ -11,7 +11,6 @@ import WrapperConnected from '@/components/WrapperConnected';
 import {UNIV2_ROUTER_ADDRESS} from '@/configs';
 import {BRIDGE_SUPPORT_TOKEN, TRUSTLESS_BRIDGE, TRUSTLESS_FAUCET,} from '@/constants/common';
 import {AssetsContext} from '@/contexts/assets-context';
-import pairsMock from '@/dataMock/tokens.json';
 import useGetPair from '@/hooks/contract-operations/swap/useGetPair';
 import useGetReserves from '@/hooks/contract-operations/swap/useReserves';
 import useSwapERC20Token from '@/hooks/contract-operations/swap/useSwapERC20Token';
@@ -150,9 +149,9 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         page: page,
         is_test: isDevelop() ? '1' : '',
       });
-      setTokensList(camelCaseKeys(pairsMock));
-      setBaseTokensList(camelCaseKeys(pairsMock));
-      setQuoteTokensList(camelCaseKeys(pairsMock));
+      setTokensList(camelCaseKeys(res));
+      setBaseTokensList(camelCaseKeys(res));
+      setQuoteTokensList(camelCaseKeys(res));
     } catch (err: unknown) {
       console.log('Failed to fetch tokens owned');
     } finally {
@@ -294,7 +293,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       ]);
       setIsApproveBaseToken(_isApprove);
       setBaseBalance(_tokenBalance);
-      setQuoteTokensList(_fromTokens);
+      setQuoteTokensList(camelCaseKeys(_fromTokens));
       if(quoteToken) {
         const findIndex = _fromTokens.findIndex((v) =>
           compareString(v.address, quoteToken.address),
@@ -355,7 +354,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         const [_fromTokens] = await Promise.all([
           fetchFromTokens(quoteToken?.address)
         ]);
-        setQuoteTokensList(_fromTokens);
+        setQuoteTokensList(camelCaseKeys(_fromTokens));
         if(baseToken) {
           const findIndex = _fromTokens.findIndex((v) =>
             compareString(v.address, baseToken.address),
