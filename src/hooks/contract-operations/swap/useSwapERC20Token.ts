@@ -75,6 +75,7 @@ const useSwapERC20Token: ContractOperationHook<
           updateCurrentTransaction({
             status: TransactionStatus.pending,
             id: transactionType.swapToken,
+            hash: transaction.hash,
             infoTexts: {
               pending: `Transaction confirmed. Please wait for it to be processed on the Bitcoin. Note that it may take up to 10 minutes for a block confirmation on the Bitcoin blockchain.`,
             },
