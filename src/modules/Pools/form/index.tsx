@@ -6,12 +6,12 @@ import FilterButton from '@/components/Swap/filterToken';
 import FieldAmount from '@/components/Swap/form/fieldAmount';
 import InputWrapper from '@/components/Swap/form/inputWrapper';
 import WrapperConnected from '@/components/WrapperConnected';
-import { UNIV2_ROUTER_ADDRESS } from '@/configs';
-import { NULL_ADDRESS } from '@/constants/url';
+import {UNIV2_ROUTER_ADDRESS} from '@/configs';
+import {NULL_ADDRESS} from '@/constants/url';
 // import pairsMock from '@/dataMock/tokens.json';
-import { transactionType } from '@/components/Swap/alertInfoProcessing/types';
-import { ROUTE_PATH } from '@/constants/route-path';
-import { LIQUID_PAIRS } from '@/constants/storage-key';
+import {transactionType} from '@/components/Swap/alertInfoProcessing/types';
+import {ROUTE_PATH} from '@/constants/route-path';
+import {LIQUID_PAIRS} from '@/constants/storage-key';
 import useAddLiquidity from '@/hooks/contract-operations/pools/useAddLiquidity';
 import useGetPair from '@/hooks/contract-operations/swap/useGetPair';
 import useGetReserves from '@/hooks/contract-operations/swap/useReserves';
@@ -19,52 +19,32 @@ import useApproveERC20Token from '@/hooks/contract-operations/token/useApproveER
 import useBalanceERC20Token from '@/hooks/contract-operations/token/useBalanceERC20Token';
 import useIsApproveERC20Token from '@/hooks/contract-operations/token/useIsApproveERC20Token';
 import useSupplyERC20Liquid from '@/hooks/contract-operations/token/useSupplyERC20Liquid';
-import { IToken } from '@/interfaces/token';
-import { TransactionStatus } from '@/interfaces/walletTransaction';
-import { getTokens } from '@/services/token-explorer';
-import { useAppDispatch } from '@/state/hooks';
-import {
-  requestReload,
-  requestReloadRealtime,
-  updateCurrentTransaction,
-} from '@/state/pnftExchange';
-import {
-  camelCaseKeys,
-  compareString,
-  formatCurrency,
-  sortAddressPair,
-} from '@/utils';
-import { isDevelop } from '@/utils/commons';
-import { composeValidators, required } from '@/utils/formValidate';
-import { formatAmountBigNumber } from '@/utils/format';
+import {IToken} from '@/interfaces/token';
+import {TransactionStatus} from '@/interfaces/walletTransaction';
+import {getTokens} from '@/services/token-explorer';
+import {useAppDispatch} from '@/state/hooks';
+import {requestReload, requestReloadRealtime, updateCurrentTransaction,} from '@/state/pnftExchange';
+import {camelCaseKeys, compareString, formatCurrency, sortAddressPair,} from '@/utils';
+import {composeValidators, required} from '@/utils/formValidate';
+import {formatAmountBigNumber} from '@/utils/format';
 import px2rem from '@/utils/px2rem';
-import { showError } from '@/utils/toast';
-import {
-  Box,
-  Flex,
-  Stat,
-  StatHelpText,
-  StatNumber,
-  Text,
-  forwardRef,
-} from '@chakra-ui/react';
+import {showError} from '@/utils/toast';
+import {Box, Flex, forwardRef, Stat, StatHelpText, StatNumber, Text,} from '@chakra-ui/react';
 import BigNumber from 'bignumber.js';
 import cx from 'classnames';
-import { isEmpty } from 'lodash';
-import { useRouter } from 'next/router';
-import {
-  useCallback,
-  useEffect,
-  useImperativeHandle,
-  useRef,
-  useState,
-} from 'react';
-import { Field, Form, useForm, useFormState } from 'react-final-form';
+import {isEmpty} from 'lodash';
+import {useRouter} from 'next/router';
+import {useCallback, useContext, useEffect, useImperativeHandle, useRef, useState,} from 'react';
+import {Field, Form, useForm, useFormState} from 'react-final-form';
 import toast from 'react-hot-toast';
-import { BsPlus } from 'react-icons/bs';
-import { useDispatch } from 'react-redux';
-import { ScreenType } from '..';
+import {BsPlus} from 'react-icons/bs';
+import {useDispatch, useSelector} from 'react-redux';
+import {ScreenType} from '..';
 import styles from './styles.module.scss';
+import Link from "next/link";
+import {BRIDGE_SUPPORT_TOKEN, TRUSTLESS_BRIDGE, TRUSTLESS_FAUCET} from "@/constants/common";
+import {AssetsContext} from "@/contexts/assets-context";
+import {getIsAuthenticatedSelector} from "@/state/user/selector";
 
 const LIMIT_PAGE = 50;
 
@@ -93,6 +73,8 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     _reserve0: '-',
     _reserve1: '-',
   });
+  const { juiceBalance } = useContext(AssetsContext);
+  const isAuthenticated = useSelector(getIsAuthenticatedSelector);
   const router = useRouter();
   const type = router.query.type;
   const isScreenAdd = compareString(type, ScreenType.add);
@@ -531,7 +513,53 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           {renderPricePool()}
         </Box>
       )}
-
+      {isAuthenticated && new BigNumber(juiceBalance || 0).lte(0) && (
+        <Text fontSize="md" color="brand.warning.400" textAlign={'left'}>
+          Your TC balance is insufficient. You can receive free TC on our faucet site{' '}
+          <Link
+            href={TRUSTLESS_FAUCET}
+            target={'_blank'}
+            style={{ textDecoration: 'underline' }}
+          >
+            here
+          </Link>
+          .
+        </Text>
+      )}
+      {isAuthenticated &&
+        baseToken &&
+        BRIDGE_SUPPORT_TOKEN.includes(baseToken?.symbol) &&
+        new BigNumber(baseBalance || 0).lte(0) && (
+          <Text fontSize="md" color="brand.warning.400" textAlign={'left'}>
+            Insufficient {baseToken?.symbol} balance! Consider swapping your{' '}
+            {baseToken?.symbol?.replace('W', '')} to trustless network{' '}
+            <Link
+              href={TRUSTLESS_BRIDGE}
+              target={'_blank'}
+              style={{ textDecoration: 'underline' }}
+            >
+              here
+            </Link>
+            .
+          </Text>
+        )}
+      {isAuthenticated &&
+        quoteToken &&
+        BRIDGE_SUPPORT_TOKEN.includes(quoteToken?.symbol) &&
+        new BigNumber(quoteBalance || 0).lte(0) && (
+          <Text fontSize="md" color="brand.warning.400" textAlign={'left'}>
+            Insufficient {quoteToken?.symbol} balance! Consider swapping your{' '}
+            {quoteToken?.symbol?.replace('W', '')} to trustless network{' '}
+            <Link
+              href={TRUSTLESS_BRIDGE}
+              target={'_blank'}
+              style={{ textDecoration: 'underline' }}
+            >
+              here
+            </Link>
+            .
+          </Text>
+        )}
       <WrapperConnected className={styles.submitButton}>
         {isApproveBaseToken && isApproveQuoteToken ? (
           <FiledButton
