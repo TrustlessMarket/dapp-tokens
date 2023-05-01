@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 
 export interface ItemBalanceProps {
   token?: IToken | undefined;
-  onBalanceChange?: (_amount: string) => void;
+  onBalanceChange?: (_amount: string | undefined) => void;
 }
 
 const TokenBalance = (props: ItemBalanceProps) => {
@@ -54,9 +54,7 @@ const TokenBalance = (props: ItemBalanceProps) => {
 
   return (
     <Skeleton isLoaded={!loading}>
-      <Text>
-        {formatCurrency(balance)}
-      </Text>
+      <Text>{formatCurrency(balance)}</Text>
     </Skeleton>
   );
 };

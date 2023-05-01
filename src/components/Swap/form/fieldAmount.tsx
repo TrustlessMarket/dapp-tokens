@@ -42,7 +42,7 @@ const FieldAmount = (props: FieldAmountProps) => {
     onClickMax,
     placeholder = '0.0',
     decimals = 2,
-    maxLength = 12,
+    maxLength = 256,
     note,
     rightLabel,
     fieldChanged,
