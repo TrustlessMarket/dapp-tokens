@@ -23,11 +23,11 @@ import Link from 'next/link';
 import {ROUTE_PATH} from "@/constants/route-path";
 const EXPLORER_URL = TRUSTLESS_COMPUTER_CHAIN_INFO.explorers[0].url;
 
-const LIMIT_PAGE = 50;
+const LIMIT_PAGE = 200;
 const ALL_ONE_PAGE = 10000;
 
 const Tokens = () => {
-  const TABLE_HEADINGS = ['Token #','Name','Symbol',  'Supply', 'Creator'];
+  const TABLE_HEADINGS = ['Token #','Name','Symbol', 'Price','24h %','Market Cap', 'Supply', 'Creator'];
   /*'Price','24h %','Market Cap'*/
 
   // const router = useRouter();
@@ -66,9 +66,15 @@ const Tokens = () => {
         {
            if(res[i].address==res1[j].address)
            {
-             res[i].volume = res1[j].volume;
-             res[i].price = res1[j].price;
-             res[i].percent = res1[j].percent;
+             if( res1[j].volume!=0) {
+               res[i].volume = res1[j].volume;
+             }
+             if( res1[j].price!=0) {
+               res[i].price = res1[j].price;
+             }
+             if( res1[j].percent!=0) {
+               res[i].percent = res1[j].percent;
+             }
 
              break;
            }
@@ -133,6 +139,7 @@ const Tokens = () => {
 
   const tokenDatas = tokensList.map((token) => {
     const totalSupply = new BigNumber(token?.totalSupply).div(decimalToExponential(token.decimal));
+
     //const linkTokenExplorer = `${EXPLORER_URL}/token/${token?.address}`;
     const linkToOwnerExplorer = `${EXPLORER_URL}/address/${token?.owner}`;
 
@@ -143,11 +150,11 @@ const Tokens = () => {
         name: token?.name || '-',
 
         symbol: token?.symbol || '-',
-        /*
-        price: token?.price || '-',
-        change: token?.change || '-',
-        cap: token?.cap || '-',
-         */
+
+        price: token?.price || 'n/a',
+        volume: token?.volume || 'n/a',
+        percent: token?.percent || 'n/a',
+
         supply: formatCurrency(totalSupply.toString()),
         creator: (
             <a
