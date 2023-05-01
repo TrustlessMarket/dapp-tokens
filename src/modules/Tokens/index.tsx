@@ -1,23 +1,24 @@
 import Button from '@/components/Button';
 import Table from '@/components/Table';
 import Text from '@/components/Text';
-import { TRUSTLESS_COMPUTER_CHAIN_INFO } from '@/constants/chains';
+import {TRUSTLESS_COMPUTER_CHAIN_INFO} from '@/constants/chains';
 import {getTokenRp, getTokens} from '@/services/token-explorer';
-import { shortenAddress } from '@/utils';
-import { decimalToExponential } from '@/utils/format';
-import { debounce } from 'lodash';
-import { useContext, useEffect, useState } from 'react';
+import {formatCurrency, shortenAddress} from '@/utils';
+import {decimalToExponential} from '@/utils/format';
+import {debounce} from 'lodash';
+import {useContext, useEffect, useState} from 'react';
 import Spinner from 'react-bootstrap/Spinner';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import ModalCreateToken from './ModalCreateToken';
-import { StyledTokens, UploadFileContainer } from './Tokens.styled';
-import { IToken } from '@/interfaces/token';
-import { useSelector } from 'react-redux';
-import { getIsAuthenticatedSelector } from '@/state/user/selector';
+import {StyledTokens, UploadFileContainer} from './Tokens.styled';
+import {IToken} from '@/interfaces/token';
+import {useSelector} from 'react-redux';
+import {getIsAuthenticatedSelector} from '@/state/user/selector';
 // import { useRouter } from 'next/router';
 // import { ROUTE_PATH } from '@/constants/route-path';
-import { WalletContext } from '@/contexts/wallet-context';
-import { showError } from '@/utils/toast';
+import {WalletContext} from '@/contexts/wallet-context';
+import {showError} from '@/utils/toast';
+import BigNumber from "bignumber.js";
 
 const EXPLORER_URL = TRUSTLESS_COMPUTER_CHAIN_INFO.explorers[0].url;
 
@@ -131,8 +132,7 @@ const Tokens = () => {
   }, []);
 
   const tokenDatas = tokensList.map((token) => {
-    const totalSupply =
-        parseInt(token?.totalSupply) / decimalToExponential(token.decimal);
+    const totalSupply = new BigNumber(token?.totalSupply).div(decimalToExponential(token.decimal));
     const linkTokenExplorer = `${EXPLORER_URL}/token/${token?.address}`;
     const linkToOwnerExplorer = `${EXPLORER_URL}/address/${token?.owner}`;
 
@@ -156,7 +156,7 @@ const Tokens = () => {
         change: token?.change || '-',
         cap: token?.cap || '-',
          */
-        supply: totalSupply.toLocaleString(),
+        supply: formatCurrency(totalSupply.toString()),
         creator: (
             <a
                 href={linkToOwnerExplorer}
