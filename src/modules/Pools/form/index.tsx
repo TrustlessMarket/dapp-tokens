@@ -61,6 +61,9 @@ import { TransactionStatus } from '@/interfaces/walletTransaction';
 import { transactionType } from '@/components/Swap/alertInfoProcessing/types';
 import { useDispatch } from 'react-redux';
 import px2rem from '@/utils/px2rem';
+import { LIQUID_PAIRS } from '@/constants/storage-key';
+import { useRouter } from 'next/router';
+import { ROUTE_PATH } from '@/constants/route-path';
 
 const LIMIT_PAGE = 50;
 
@@ -89,6 +92,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     _reserve0: '-',
     _reserve1: '-',
   });
+  const router = useRouter();
 
   const isPaired = !compareString(pairAddress, NULL_ADDRESS);
 
@@ -191,8 +195,8 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         page: page,
         is_test: isDevelop() ? '1' : '',
       });
-      // setTokensList(camelCaseKeys(pairsMock));
-      setTokensList(res);
+      setTokensList(camelCaseKeys(pairsMock));
+      // setTokensList(res);
     } catch (err: unknown) {
       console.log('Failed to fetch tokens owned');
     } finally {
@@ -429,7 +433,11 @@ export const MakeFormSwap = forwardRef((props, ref) => {
               <FilterButton
                 data={tokensList}
                 commonData={tokensList.slice(0, 3)}
-                handleSelectItem={handleSelectBaseToken}
+                handleSelectItem={(_token: IToken) =>
+                  router.replace(
+                    `${ROUTE_PATH.POOLS}?type=${router?.query?.type}&f=${_token.address}&t=${router?.query?.t}`,
+                  )
+                }
                 parentClose={close}
                 value={baseToken}
               />
@@ -485,7 +493,11 @@ export const MakeFormSwap = forwardRef((props, ref) => {
               <FilterButton
                 data={tokensList}
                 commonData={tokensList.slice(0, 3)}
-                handleSelectItem={handleSelectQuoteToken}
+                handleSelectItem={(_token: IToken) =>
+                  router.replace(
+                    `${ROUTE_PATH.POOLS}?type=${router?.query?.type}&f=${router?.query?.f}&t=${_token.address}`,
+                  )
+                }
                 parentClose={close}
                 value={quoteToken}
               />
@@ -555,6 +567,60 @@ const CreateMarket = ({
   const dispatch = useAppDispatch();
   const { call: addLiquidity } = useAddLiquidity();
 
+  const { call: getPair } = useGetPair();
+  const { call: getReserves } = useGetReserves();
+  const { call: getSupply } = useSupplyERC20Liquid();
+
+  const checkPair = async (baseToken: IToken, quoteToken: IToken) => {
+    try {
+      const response = await getPair({
+        tokenA: baseToken,
+        tokenB: quoteToken,
+      });
+      const [resReserve, resSupply] = await Promise.all([
+        getReserves({
+          address: response,
+        }),
+        getSupply({
+          liquidAddress: response,
+        }),
+      ]);
+
+      const _pairs = localStorage.getItem(LIQUID_PAIRS);
+      let __pairs: IToken[] = [];
+
+      if (_pairs) {
+        __pairs = JSON.parse(_pairs) || ([] as IToken[]);
+      }
+      const findIndex = __pairs.findIndex((v: IToken) =>
+        compareString(v.address, response),
+      );
+      const extraInfo = {
+        name: `${baseToken.symbol}-${quoteToken.symbol}`,
+        symbol: `${baseToken.symbol}-${quoteToken.symbol}`,
+        address: response,
+        total_supply: resSupply.totalSupply,
+        owner_supply: resSupply.ownerSupply,
+        from_address: baseToken.address,
+        from_balance: resReserve._reserve0,
+        to_address: quoteToken.address,
+        to_balance: resReserve._reserve1,
+      };
+      if (findIndex > -1) {
+        __pairs[findIndex] = {
+          ...__pairs[findIndex],
+          ...extraInfo,
+        };
+      } else {
+        __pairs.push({
+          ...baseToken,
+          ...extraInfo,
+        });
+      }
+      localStorage.setItem(LIQUID_PAIRS, JSON.stringify(__pairs));
+    } catch (error) {}
+  };
+
   const handleSubmit = async (values: any) => {
     console.log('handleSubmit', values);
     const { baseToken, quoteToken, baseAmount, quoteAmount } = values;
@@ -585,12 +651,16 @@ const CreateMarket = ({
 
       const response = await addLiquidity(data);
 
+      console.log('response', response);
+
       toast.success('Transaction has been created. Please wait for few minutes.');
+
+      await checkPair(token0, token1);
       refForm.current?.reset();
       dispatch(requestReload());
       dispatch(requestReloadRealtime());
     } catch (err) {
-      console.log(err);
+      console.log('err', err);
 
       showError({
         message:
