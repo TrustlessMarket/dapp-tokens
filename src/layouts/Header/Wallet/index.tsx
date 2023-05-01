@@ -18,6 +18,8 @@ import Text from '@/components/Text';
 import { WalletContext } from '@/contexts/wallet-context';
 import { formatLongAddress } from '@/utils';
 import { showError } from '@/utils/toast';
+import { TRUSTLESS_BRIDGE, TRUSTLESS_FAUCET } from '@/constants/common';
+import SelectedNetwork from '@/components/Swap/selectNetwork';
 
 const WalletHeader = () => {
   // const router = useRouter();
@@ -130,14 +132,25 @@ const WalletHeader = () => {
           />
           <Text size="medium">Wallet</Text>
         </div>
+        <div className="wallet-link" onClick={() => window.open(TRUSTLESS_FAUCET)}>
+          <IconSVG src={`/faucet.svg`} maxWidth="20" color="black" />
+          <Text size="medium">Faucet</Text>
+        </div>
+        <div className="wallet-link" onClick={() => window.open(TRUSTLESS_BRIDGE)}>
+          <IconSVG src={`/wrapbtc.svg`} maxWidth="20" color="black" type="fill" />
+          <Text size="medium">Wrap BTC</Text>
+        </div>
+        <div className="divider"></div>
         <div className="wallet-disconnect" onClick={onDisconnect}>
           <IconSVG
             src={`${CDN_URL}/icons/ic-logout.svg`}
             maxWidth="20"
-            color="black"
+            color="red"
             type="stroke"
           />
-          <Text size="medium">Disconnect</Text>
+          <Text size="medium" className={'disconnect-text'}>
+            Disconnect
+          </Text>
         </div>
       </div>
     </WalletPopover>
@@ -147,6 +160,7 @@ const WalletHeader = () => {
     <>
       {account && isAuthenticated ? (
         <>
+          <SelectedNetwork />
           <OverlayTrigger
             trigger={['hover', 'focus']}
             placement="bottom"

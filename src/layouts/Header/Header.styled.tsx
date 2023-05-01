@@ -29,7 +29,15 @@ const Wrapper = styled.div`
     left: 50%;
     transform: translateX(-47%);
   }
+  
+  .leftWrapper {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: ${px2rem(32)};
+  }
 
+  .leftContainer,
   .rightContainer {
     color: #3385ff;
 
@@ -44,6 +52,17 @@ const Wrapper = styled.div`
       align-items: center;
       gap: ${px2rem(16)};
       margin-right: ${px2rem(24)};
+      text-transform: uppercase;
+      font-size: ${px2rem(16)};
+      font-weight: 500;
+      
+      a:hover {
+        text-decoration: none;
+      }
+      
+      .isSelected {
+        border-bottom: 2px solid #3385ff;
+      }
     }
 
     @media screen and (min-width: 1024px) {

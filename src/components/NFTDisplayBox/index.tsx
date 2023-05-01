@@ -138,7 +138,14 @@ const NFTDisplayBox = ({
     );
   };
 
-  const renderEmpty = () => <img alt="empty" className={contentClassName} loading={'lazy'} src={defaultImage} />;
+  const renderEmpty = () => (
+    <img
+      alt="empty"
+      className={contentClassName}
+      loading={'lazy'}
+      src={defaultImage}
+    />
+  );
 
   const isImage = (url: string) => {
     return /\.(jpg|jpeg|png|webp|avif|gif|svg)$/.test(url);
@@ -153,7 +160,10 @@ const NFTDisplayBox = ({
       const content = getImageURLContent(src);
       setHTMLContentRender(renderIframe(content));
     } else if (collectionID) {
-      const content = collectionID && tokenID ? getURLContent(collectionID, tokenID) : defaultImage;
+      const content =
+        collectionID && tokenID
+          ? getURLContent(collectionID, tokenID)
+          : defaultImage;
 
       if (isErrorLinkHttp) {
         setHTMLContentRender(renderIframe(content));
@@ -199,7 +209,11 @@ const NFTDisplayBox = ({
     }
   }, [collectionID, tokenID, src, isErrorLinkHttp]);
 
-  return <div className={cs(s.wrapper, className)}>{HTMLContentRender && HTMLContentRender}</div>;
+  return (
+    <div className={cs(s.wrapper, className)}>
+      {HTMLContentRender && HTMLContentRender}
+    </div>
+  );
 };
 
 export default React.memo(NFTDisplayBox);

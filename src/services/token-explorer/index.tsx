@@ -27,3 +27,25 @@ export const getTokensByWallet = async (
     error: 'Fail to get tokens data',
   });
 };
+
+export interface IListTokenParams {
+  is_test?: string;
+  from_token?: string;
+}
+
+export const getSwapTokens = async (params: IPagingParams & IListTokenParams): Promise<IToken[]> => {
+  const qs = '?' + queryString.stringify(params);
+
+  return swrFetcher(`${API_URL}/swap/token/list${qs}`, {
+    method: 'GET',
+    error: 'Fail to get tokens data',
+  });
+};
+
+export const scanTrx = async (params: { tx_hash: string }) => {
+  const qs = '?' + queryString.stringify(params);
+  return swrFetcher(`${API_URL}/swap/scan?tx_hash=${qs}`, {
+    method: 'GET',
+    error: 'Fail to scan tx',
+  });
+};

@@ -1,0 +1,11 @@
+.sectionContainer {
+
+}
+.inner {
+  max-width: 1278px;
+  margin: 0 auto;
+  padding: 0 40px;
+  @media screen and (max-width: 760px) {
+    padding: 0 16px;
+  }
+}

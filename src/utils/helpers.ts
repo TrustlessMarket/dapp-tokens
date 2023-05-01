@@ -1,3 +1,4 @@
+import { IToken } from '@/interfaces/token';
 import { getAddress } from '@ethersproject/address';
 import camelCase from 'lodash/camelCase';
 
@@ -22,7 +23,7 @@ export const shortCryptoAddress = (address = '', toLength?: number) => {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const camelCaseKeys = (obj: any): any => {
   if (Array.isArray(obj)) {
-    return obj.map(v => camelCaseKeys(v));
+    return obj.map((v) => camelCaseKeys(v));
   }
   if (obj !== null && obj.constructor === Object) {
     return Object.keys(obj).reduce(
@@ -34,4 +35,15 @@ export const camelCaseKeys = (obj: any): any => {
     );
   }
   return obj;
+};
+
+export const sortAddressPair = (
+  tokenA: IToken,
+  tokenB: IToken,
+): [IToken, IToken] => {
+  const { token0, token1 } =
+    tokenA.address.toLowerCase() < tokenB.address.toLowerCase()
+      ? { token0: tokenA, token1: tokenB }
+      : { token0: tokenB, token1: tokenA };
+  return [token0, token1];
 };

@@ -1,0 +1,100 @@
+.container {
+  height: 100%;
+  width: 100%;
+}
+
+.inputAmountWrap {
+  margin-bottom: 8px;
+
+  :global .chakra-input__left-element {
+    margin: 0;
+    width: unset;
+    border-right: 1px solid #5B5B5B;
+  }
+
+  :global .chakra-input__right-element {
+    padding-right: 16px;
+    margin: 0;
+  }
+
+  :global .chakra-form__error-message {
+    font-size: 12px;
+  }
+}
+
+.inputQuoteAmountWrap {
+  margin-top: 0px;
+  :global .field-note {
+    display: none;
+  }
+
+  //:global .chakra-input__group {
+  //  border-bottom-left-radius: 0;
+  //  border-bottom-right-radius: 0;
+  //}
+}
+
+.inputBaseAmountWrap {
+  margin-top: 0px;
+
+  :global .field-note {
+    display: none;
+  }
+
+  //:global .chakra-input__group {
+  //  border-top-left-radius: 0;
+  //  border-top-right-radius: 0;
+  //}
+}
+
+.leverageWrap {
+  margin-top: 8px;
+  :global .labelWrapper {
+    margin-bottom: 0;
+  }
+}
+
+.inputAmount {
+  background: #f4f5f6 !important;
+  //border-radius: 0px !important;
+  height: 70px !important;
+  font-size: 20px !important;
+
+  &:disabled {
+    cursor: not-allowed;
+  }
+
+  @media screen and (max-width: 768px) {
+    font-size: 18px !important;
+  }
+}
+
+.collateralAmount {
+  //padding-left: 50px !important;
+}
+
+.submitButton {
+  width: 100%;
+  margin-top: 16px;
+
+  button {
+    font-size: 16px !important;
+  }
+}
+
+.pricePoolContainer {
+  margin-top: 15px;
+  :global {
+    p {
+      text-align: left;
+      font-size: 14px;
+      font-weight: 500;
+    }
+    .price-pool-content {
+      > div {
+        flex: 1;
+        margin-top: 5px;
+      }
+    }
+  }
+}
