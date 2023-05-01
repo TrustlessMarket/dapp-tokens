@@ -10,7 +10,6 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@chakra-ui/react';
-import Image from 'next/image';
 import {useState} from 'react';
 import SlippageSetting from './index';
 import styles from './styles.module.scss';
@@ -50,7 +49,7 @@ const SlippageSettingButton = () => {
             p={0}
           >
             <Center>
-              <Image
+              <img
                 src={`${CDN_URL}/icons/gear.svg`}
                 alt={'gear'}
                 width={16}
