@@ -6,10 +6,11 @@ import { useEffect, useState } from 'react';
 
 export interface ItemBalanceProps {
   token?: IToken | undefined;
+  onBalanceChange?: (_amount: string) => void;
 }
 
 const TokenBalance = (props: ItemBalanceProps) => {
-  const { token } = props;
+  const { token, onBalanceChange } = props;
   const [loading, setLoading] = useState(false);
   const [balance, setBalance] = useState('0');
   const { call: tokenBalance } = useBalanceERC20Token();
@@ -27,6 +28,8 @@ const TokenBalance = (props: ItemBalanceProps) => {
       if (_tokenBalance) {
         setBalance(_tokenBalance);
       }
+
+      onBalanceChange && onBalanceChange(_tokenBalance);
     } catch (error) {
       throw error;
     } finally {
@@ -51,7 +54,7 @@ const TokenBalance = (props: ItemBalanceProps) => {
 
   return (
     <Skeleton isLoaded={!loading}>
-      <Text fontSize={'md'} fontWeight={'normal'}>
+      <Text>
         {formatCurrency(balance)}
       </Text>
     </Skeleton>
