@@ -7,12 +7,13 @@ import {closeModal, openModal} from '@/state/modal';
 import {shortCryptoAddress} from '@/utils';
 import {Box, Flex, Text} from '@chakra-ui/react';
 import {useWindowSize} from '@trustless-computer/dapp-core';
-import {clone, isEmpty} from 'lodash';
+import {clone} from 'lodash';
 import React, {useEffect, useMemo, useState} from 'react';
 import {Field, Form, useFormState} from 'react-final-form';
 import {useDispatch} from 'react-redux';
 import styles from './styles.module.scss';
 import {AiOutlineCaretDown} from "react-icons/ai";
+import TokenBalance from "@/components/Swap/tokenBalance";
 
 interface FilterButtonProps {
   data: any[];
@@ -51,16 +52,17 @@ const FilterModal: React.FC<FilterModalProps> = ({
         },
         render(row: DataRow) {
           return (
-            <Flex gap={4} alignItems={'center'}>
+            <Flex gap={4} alignItems={'flex-start'} justifyContent={"space-between"}>
               {/*<AvatarNFT tradingPair={row?.extra_item} />*/}
               <Box>
                 <Text fontSize={'md'} fontWeight={'normal'}>
                   {row?.symbol}
                 </Text>
                 <Text fontSize={'sm'} fontWeight={'medium'}>
-                  {shortCryptoAddress(row?.contract_address)}
+                  {shortCryptoAddress(row?.address)}
                 </Text>
               </Box>
+              <TokenBalance token={row.extra_item}/>
             </Flex>
           );
         },
@@ -80,7 +82,7 @@ const FilterModal: React.FC<FilterModalProps> = ({
           v.name.toLowerCase().includes(text.toLowerCase()) ||
           v.code.toLowerCase().includes(text.toLowerCase()) ||
           v.symbol?.toLowerCase().includes(text.toLowerCase()) ||
-          v.contract_address.toLowerCase().includes(text.toLowerCase()),
+          v.address.toLowerCase().includes(text.toLowerCase()),
       );
       setRows(__data);
     } else {
@@ -163,7 +165,7 @@ export interface DataRow {
   code: string;
   img: string;
   symbol?: string;
-  contract_address: string;
+  address: string;
   extra_item?: any;
 }
 
@@ -175,7 +177,7 @@ export const parseData = (data: any[]): DataRow[] => {
       code: d?.slug,
       symbol: d?.symbol,
       img: d?.thumbnail,
-      contract_address: d?.address,
+      address: d?.address,
       extra_item: d,
     };
   });

@@ -75,10 +75,11 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const { juiceBalance } = useContext(AssetsContext);
   const isAuthenticated = useSelector(getIsAuthenticatedSelector);
   const dispatch = useDispatch();
+  const [isSwitching, setIsSwitching] = useState(false);
 
   const { values } = useFormState();
   const { change, restart } = useForm();
-  const btnDisabled = loading;
+  const btnDisabled = loading || !baseToken || !quoteToken;
 
   const onBaseAmountChange = useCallback(
     debounce((p) => handleBaseAmountChange(p), 1000),
@@ -292,9 +293,10 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   };
 
   const onChangeTransferType = async () => {
-    if (loading) {
+    if (loading || isSwitching) {
       return;
     }
+    setIsSwitching(true);
     change('baseAmount', values?.quoteAmount);
     change('quoteAmount', values?.baseAmount);
 
@@ -309,8 +311,8 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     setBaseReserve(quoteReserve);
     setQuoteReserve(baseReserve);
 
-    if(quoteToken) {
-      try {
+    try {
+      if(quoteToken) {
         const [_fromTokens] = await Promise.all([
           fetchFromTokens(quoteToken?.address)
         ]);
@@ -325,9 +327,11 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             change('quoteToken', null);
           }
         }
-      } catch (error) {
-        throw error;
       }
+    } catch (error) {
+      throw error;
+    } finally {
+      setIsSwitching(false);
     }
   };
 
