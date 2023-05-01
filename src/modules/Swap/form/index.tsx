@@ -324,6 +324,9 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         checkTokenApprove(token),
         fetchFromTokens(token?.address),
       ]);
+      // console.log('token', token);
+      // console.log('_isApprove', _isApprove);
+      // console.log('=====');
       setIsApproveBaseToken(_isApprove);
       if (_fromTokens) {
         setQuoteTokensList(camelCaseKeys(_fromTokens));
@@ -759,17 +762,17 @@ const TradingForm = () => {
         }),
       );
 
-      const amountOutMin = new BigNumber(quoteAmount)
-        .multipliedBy(100 - slippage)
-        .dividedBy(100)
-        .decimalPlaces(18)
-        .toString();
+      // const amountOutMin = new BigNumber(quoteAmount)
+      //   .multipliedBy(100 - slippage)
+      //   .dividedBy(100)
+      //   .decimalPlaces(18)
+      //   .toString();
 
       const data = {
         addresses: [baseToken.address, quoteToken.address],
         address: user?.walletAddress,
         amount: baseAmount,
-        amountOutMin: amountOutMin,
+        amountOutMin: "0",
       };
 
       const response = await swapToken(data);
