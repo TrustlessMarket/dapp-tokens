@@ -11,4 +11,5 @@ export const ROUTE_PATH = {
   POOLS: '/pools',
   ADD_POOL: '/add-pool',
   SWAP: '/swap',
+  MARKETS: '/markets',
 };

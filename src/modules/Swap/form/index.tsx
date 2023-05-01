@@ -1,6 +1,7 @@
 /* eslint-disable react/no-children-prop */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
+import { transactionType } from '@/components/Swap/alertInfoProcessing/types';
 import FiledButton from '@/components/Swap/button/filedButton';
 import FilterButton from '@/components/Swap/filterToken';
 import FieldAmount from '@/components/Swap/form/fieldAmount';
@@ -14,8 +15,8 @@ import {
   TRUSTLESS_BRIDGE,
   TRUSTLESS_FAUCET,
 } from '@/constants/common';
+import { NULL_ADDRESS } from '@/constants/url';
 import { AssetsContext } from '@/contexts/assets-context';
-import pairsMock from '@/dataMock/tokens.json';
 import useGetPair from '@/hooks/contract-operations/swap/useGetPair';
 import useGetReserves from '@/hooks/contract-operations/swap/useReserves';
 import useSwapERC20Token from '@/hooks/contract-operations/swap/useSwapERC20Token';
@@ -23,6 +24,7 @@ import useApproveERC20Token from '@/hooks/contract-operations/token/useApproveER
 import useBalanceERC20Token from '@/hooks/contract-operations/token/useBalanceERC20Token';
 import useIsApproveERC20Token from '@/hooks/contract-operations/token/useIsApproveERC20Token';
 import { IToken } from '@/interfaces/token';
+import { TransactionStatus } from '@/interfaces/walletTransaction';
 import { getSwapTokens } from '@/services/token-explorer';
 import { useAppDispatch, useAppSelector } from '@/state/hooks';
 import {
@@ -36,8 +38,9 @@ import { camelCaseKeys, compareString, formatCurrency } from '@/utils';
 import { isDevelop } from '@/utils/commons';
 import { composeValidators, required } from '@/utils/formValidate';
 import { formatEthPrice } from '@/utils/format';
+import px2rem from '@/utils/px2rem';
 import { showError } from '@/utils/toast';
-import { Box, Flex, forwardRef, Text } from '@chakra-ui/react';
+import { Box, Flex, Text, forwardRef } from '@chakra-ui/react';
 import BigNumber from 'bignumber.js';
 import cx from 'classnames';
 import { isEmpty } from 'lodash';
@@ -53,12 +56,9 @@ import {
 } from 'react';
 import { Field, Form, useForm, useFormState } from 'react-final-form';
 import toast from 'react-hot-toast';
+import { RiArrowUpDownLine } from 'react-icons/ri';
 import { useDispatch, useSelector } from 'react-redux';
 import styles from './styles.module.scss';
-import { transactionType } from '@/components/Swap/alertInfoProcessing/types';
-import { TransactionStatus } from '@/interfaces/walletTransaction';
-import { RiArrowUpDownLine } from 'react-icons/ri';
-import px2rem from '@/utils/px2rem';
 
 const LIMIT_PAGE = 50;
 const FEE = 3;
@@ -80,13 +80,21 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const { call: getReserves } = useGetReserves();
   const [baseBalance, setBaseBalance] = useState('0');
   const [quoteBalance, setQuoteBalance] = useState('0');
-  const [pairAddress, setPairAddress] = useState<string>('');
+  const [pairAddress, setPairAddress] = useState<string>(NULL_ADDRESS);
   const [baseReserve, setBaseReserve] = useState('0');
   const [quoteReserve, setQuoteReserve] = useState('0');
   const { juiceBalance } = useContext(AssetsContext);
   const isAuthenticated = useSelector(getIsAuthenticatedSelector);
   const dispatch = useDispatch();
   const [isSwitching, setIsSwitching] = useState(false);
+  const [isChangeBaseToken, setIsChangeBaseToken] = useState(false);
+  const [isChangeQuoteToken, setIsChangeQuoteToken] = useState(false);
+
+  // console.log('isSwitching', isSwitching);
+  // console.log('baseReserve', baseReserve);
+  // console.log('quoteReserve', quoteReserve);
+  // console.log('quoteTokensList', quoteTokensList);
+  // console.log('======');
 
   const { values } = useFormState();
   const { change, restart } = useForm();
@@ -134,12 +142,17 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     if (baseToken?.address && quoteToken?.address) {
       getPairAddress();
     } else {
-      setPairAddress('');
+      setPairAddress(NULL_ADDRESS);
     }
   }, [baseToken?.address, quoteToken?.address]);
 
   useEffect(() => {
-    if (pairAddress && baseToken && quoteToken) {
+    if (
+      pairAddress &&
+      baseToken &&
+      quoteToken &&
+      !compareString(pairAddress, NULL_ADDRESS)
+    ) {
       getReservesInfo();
     }
   }, [pairAddress]);
@@ -152,9 +165,9 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         page: page,
         is_test: isDevelop() ? '1' : '',
       });
-      setTokensList(camelCaseKeys(pairsMock));
-      setBaseTokensList(camelCaseKeys(pairsMock));
-      setQuoteTokensList(camelCaseKeys(pairsMock));
+      setTokensList(camelCaseKeys(res));
+      setBaseTokensList(camelCaseKeys(res));
+      setQuoteTokensList(camelCaseKeys(res));
     } catch (err: unknown) {
       console.log('Failed to fetch tokens owned');
     } finally {
@@ -188,13 +201,34 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       });
 
       const { _reserve0, _reserve1 } = response;
+      let _baseReserve = '';
+      let _quoteReserve = '';
 
       if (compareString(token0?.address, baseToken?.address)) {
-        setBaseReserve(formatEthPrice(_reserve0));
-        setQuoteReserve(formatEthPrice(_reserve1));
+        _baseReserve = formatEthPrice(_reserve0);
+        _quoteReserve = formatEthPrice(_reserve1);
       } else {
-        setQuoteReserve(formatEthPrice(_reserve0));
-        setBaseReserve(formatEthPrice(_reserve1));
+        _quoteReserve = formatEthPrice(_reserve0);
+        _baseReserve = formatEthPrice(_reserve1);
+      }
+
+      setBaseReserve(_baseReserve);
+      setQuoteReserve(_quoteReserve);
+
+      if (isChangeBaseToken) {
+        setIsChangeBaseToken(false);
+        onBaseAmountChange({
+          amount: values?.baseAmount,
+          baseReserve: _baseReserve,
+          quoteReserve: _quoteReserve,
+        });
+      } else if (isChangeQuoteToken) {
+        setIsChangeQuoteToken(false);
+        onQuoteAmountChange({
+          amount: values?.quoteAmount,
+          baseReserve: _baseReserve,
+          quoteReserve: _quoteReserve,
+        });
       }
     } catch (error) {
       console.log('error', error);
@@ -261,6 +295,10 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   };
 
   const handleSelectBaseToken = async (token: IToken) => {
+    if (compareString(baseToken?.address, token?.address)) {
+      return;
+    }
+    setIsChangeBaseToken(true);
     setBaseToken(token);
     change('baseToken', token);
     try {
@@ -272,7 +310,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       setIsApproveBaseToken(_isApprove);
       setBaseBalance(_tokenBalance);
       if (_fromTokens) {
-        setQuoteTokensList(_fromTokens);
+        setQuoteTokensList(camelCaseKeys(_fromTokens));
         if (quoteToken) {
           const findIndex = _fromTokens.findIndex((v) =>
             compareString(v.address, quoteToken.address),
@@ -290,6 +328,11 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   };
 
   const handleSelectQuoteToken = async (token: IToken) => {
+    if (compareString(quoteToken?.address, token?.address)) {
+      return;
+    }
+    setIsChangeQuoteToken(true);
+
     setQuoteToken(token);
     change('quoteToken', token);
     try {
@@ -330,7 +373,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           fetchFromTokens(quoteToken?.address),
         ]);
         if (_fromTokens) {
-          setQuoteTokensList(_fromTokens);
+          setQuoteTokensList(camelCaseKeys(_fromTokens));
           if (baseToken) {
             const findIndex = _fromTokens.findIndex((v) =>
               compareString(v.address, baseToken.address),
