@@ -91,6 +91,8 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const [isChangeQuoteToken, setIsChangeQuoteToken] = useState(false);
 
   // console.log('isSwitching', isSwitching);
+  // console.log('baseToken', baseToken);
+  // console.log('quoteToken', quoteToken);
   // console.log('baseReserve', baseReserve);
   // console.log('quoteReserve', quoteReserve);
   // console.log('quoteTokensList', quoteTokensList);
@@ -613,14 +615,14 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           />
         </Flex>
       </InputWrapper>
-      {!isEmpty(baseToken) && !isEmpty(quoteToken) && (
+      {baseToken && quoteToken && (
         <HorizontalItem
           label={
             <Text fontSize={'xs'} fontWeight={'medium'} color={'#23262F'}>
               1 {quoteToken?.symbol} =&nbsp;
-              {formatCurrency(
-                new BigNumber(baseReserve).dividedBy(quoteReserve).toNumber(),
-              )}
+              {
+                formatCurrency(new BigNumber(baseReserve).dividedBy(quoteReserve).decimalPlaces(baseToken?.decimals || 18).toNumber(), baseToken?.decimals || 18)
+              }
               &nbsp;{baseToken?.symbol}
             </Text>
           }
