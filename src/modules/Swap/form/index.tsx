@@ -1,7 +1,7 @@
 /* eslint-disable react/no-children-prop */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import {transactionType} from '@/components/Swap/alertInfoProcessing/types';
+import { transactionType } from '@/components/Swap/alertInfoProcessing/types';
 import FiledButton from '@/components/Swap/button/filedButton';
 import FilterButton from '@/components/Swap/filterToken';
 import FieldAmount from '@/components/Swap/form/fieldAmount';
@@ -9,45 +9,56 @@ import InputWrapper from '@/components/Swap/form/inputWrapper';
 import HorizontalItem from '@/components/Swap/horizontalItem';
 import SlippageSettingButton from '@/components/Swap/slippageSetting/button';
 import WrapperConnected from '@/components/WrapperConnected';
-import {UNIV2_ROUTER_ADDRESS} from '@/configs';
-import {BRIDGE_SUPPORT_TOKEN, TRUSTLESS_BRIDGE, TRUSTLESS_FAUCET,} from '@/constants/common';
-import {NULL_ADDRESS} from '@/constants/url';
-import {AssetsContext} from '@/contexts/assets-context';
+import { UNIV2_ROUTER_ADDRESS } from '@/configs';
+import {
+  BRIDGE_SUPPORT_TOKEN,
+  TRUSTLESS_BRIDGE,
+  TRUSTLESS_FAUCET,
+} from '@/constants/common';
+import { NULL_ADDRESS } from '@/constants/url';
+import { AssetsContext } from '@/contexts/assets-context';
 import useGetPair from '@/hooks/contract-operations/swap/useGetPair';
 import useGetReserves from '@/hooks/contract-operations/swap/useReserves';
 import useSwapERC20Token from '@/hooks/contract-operations/swap/useSwapERC20Token';
 import useApproveERC20Token from '@/hooks/contract-operations/token/useApproveERC20Token';
 import useBalanceERC20Token from '@/hooks/contract-operations/token/useBalanceERC20Token';
 import useIsApproveERC20Token from '@/hooks/contract-operations/token/useIsApproveERC20Token';
-import {IToken} from '@/interfaces/token';
-import {TransactionStatus} from '@/interfaces/walletTransaction';
-import {getSwapTokens} from '@/services/token-explorer';
-import {useAppDispatch, useAppSelector} from '@/state/hooks';
+import { IToken } from '@/interfaces/token';
+import { TransactionStatus } from '@/interfaces/walletTransaction';
+import { getSwapTokens } from '@/services/token-explorer';
+import { useAppDispatch, useAppSelector } from '@/state/hooks';
 import {
   requestReload,
   requestReloadRealtime,
   selectPnftExchange,
   updateCurrentTransaction,
 } from '@/state/pnftExchange';
-import {getIsAuthenticatedSelector, getUserSelector} from '@/state/user/selector';
-import {camelCaseKeys, compareString, formatCurrency} from '@/utils';
-import {isDevelop} from '@/utils/commons';
-import {composeValidators, required} from '@/utils/formValidate';
-import {formatEthPrice} from '@/utils/format';
+import { getIsAuthenticatedSelector, getUserSelector } from '@/state/user/selector';
+import { camelCaseKeys, compareString, formatCurrency } from '@/utils';
+import { isDevelop } from '@/utils/commons';
+import { composeValidators, required } from '@/utils/formValidate';
+import { formatEthPrice } from '@/utils/format';
 import px2rem from '@/utils/px2rem';
-import {showError} from '@/utils/toast';
-import {Box, Flex, forwardRef, Text} from '@chakra-ui/react';
+import { showError } from '@/utils/toast';
+import { Box, Flex, forwardRef, Text } from '@chakra-ui/react';
 import BigNumber from 'bignumber.js';
 import cx from 'classnames';
 import debounce from 'lodash/debounce';
 import Link from 'next/link';
-import {useCallback, useContext, useEffect, useImperativeHandle, useRef, useState,} from 'react';
-import {Field, Form, useForm, useFormState} from 'react-final-form';
+import {
+  useCallback,
+  useContext,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from 'react';
+import { Field, Form, useForm, useFormState } from 'react-final-form';
 import toast from 'react-hot-toast';
-import {RiArrowUpDownLine} from 'react-icons/ri';
-import {useDispatch, useSelector} from 'react-redux';
+import { RiArrowUpDownLine } from 'react-icons/ri';
+import { useDispatch, useSelector } from 'react-redux';
 import styles from './styles.module.scss';
-import TokenBalance from "@/components/Swap/tokenBalance";
+import TokenBalance from '@/components/Swap/tokenBalance';
 
 const LIMIT_PAGE = 50;
 const FEE = 3;
@@ -69,8 +80,8 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const { call: approveToken } = useApproveERC20Token();
   const { call: getPair } = useGetPair();
   const { call: getReserves } = useGetReserves();
-  const [baseBalance, setBaseBalance] = useState('0');
-  const [quoteBalance, setQuoteBalance] = useState('0');
+  const [baseBalance, setBaseBalance] = useState<any>('0');
+  const [quoteBalance, setQuoteBalance] = useState<any>('0');
   const [pairAddress, setPairAddress] = useState<string>(NULL_ADDRESS);
   const [baseReserve, setBaseReserve] = useState('0');
   const [quoteReserve, setQuoteReserve] = useState('0');
@@ -169,8 +180,10 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       setBaseTokensList(list);
       setQuoteTokensList(list);
 
-      const token = list.find(t => compareString(t.address, DEFAULT_BASE_TOKEN));
-      if(token) {
+      const token = list.find((t: any) =>
+        compareString(t.address, DEFAULT_BASE_TOKEN),
+      );
+      if (token) {
         handleSelectBaseToken(token);
       }
     } catch (err: unknown) {
@@ -307,7 +320,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     setBaseToken(token);
     change('baseToken', token);
     try {
-      const [_isApprove,_fromTokens] = await Promise.all([
+      const [_isApprove, _fromTokens] = await Promise.all([
         checkTokenApprove(token),
         fetchFromTokens(token?.address),
       ]);
@@ -324,8 +337,10 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             change('quoteToken', null);
           }
         } else {
-          const token = _fromTokens.find(t => compareString(t.address, DEFAULT_QUOTE_TOKEN));
-          if(token) {
+          const token = _fromTokens.find((t) =>
+            compareString(t.address, DEFAULT_QUOTE_TOKEN),
+          );
+          if (token) {
             handleSelectQuoteToken(token);
           }
         }
@@ -344,9 +359,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     setQuoteToken(token);
     change('quoteToken', token);
     try {
-      const [_isApprove] = await Promise.all([
-        checkTokenApprove(token),
-      ]);
+      const [_isApprove] = await Promise.all([checkTokenApprove(token)]);
       setIsApproveQuoteToken(_isApprove);
     } catch (error) {
       throw error;
@@ -523,10 +536,11 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         rightLabel={
           baseToken && (
             <Flex gap={1} fontSize={px2rem(16)}>
-              <Text>
-                Balance:
-              </Text>
-              <TokenBalance token={baseToken} onBalanceChange={(_amount) => setBaseBalance(_amount)}/>
+              <Text>Balance:</Text>
+              <TokenBalance
+                token={baseToken}
+                onBalanceChange={(_amount) => setBaseBalance(_amount)}
+              />
               <Text>{baseToken?.symbol}</Text>
               <Text
                 cursor={'pointer'}
@@ -582,10 +596,11 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         rightLabel={
           quoteToken && (
             <Flex gap={1} fontSize={px2rem(16)}>
-              <Text>
-                Balance:
-              </Text>
-              <TokenBalance token={quoteToken} onBalanceChange={(_amount) => setQuoteBalance(_amount)}/>
+              <Text>Balance:</Text>
+              <TokenBalance
+                token={quoteToken}
+                onBalanceChange={(_amount) => setQuoteBalance(_amount)}
+              />
               <Text>{quoteToken?.symbol}</Text>
               <Text
                 cursor={'pointer'}
@@ -628,9 +643,13 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           label={
             <Text fontSize={'xs'} fontWeight={'medium'} color={'#23262F'}>
               1 {quoteToken?.symbol} =&nbsp;
-              {
-                formatCurrency(new BigNumber(baseReserve).dividedBy(quoteReserve).decimalPlaces(baseToken?.decimals || 18).toNumber(), baseToken?.decimals || 18)
-              }
+              {formatCurrency(
+                new BigNumber(baseReserve)
+                  .dividedBy(quoteReserve)
+                  .decimalPlaces(baseToken?.decimals || 18)
+                  .toNumber(),
+                baseToken?.decimals || 18,
+              )}
               &nbsp;{baseToken?.symbol}
             </Text>
           }
