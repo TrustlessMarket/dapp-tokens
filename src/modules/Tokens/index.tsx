@@ -139,6 +139,7 @@ const Tokens = () => {
 
   const tokenDatas = tokensList.map((token) => {
     const totalSupply = new BigNumber(token?.totalSupply).div(decimalToExponential(token.decimal));
+    const tokenPrice = token?.price ? new BigNumber(token?.price).toFixed()  : 'n/a';
 
     //const linkTokenExplorer = `${EXPLORER_URL}/token/${token?.address}`;
     const linkToOwnerExplorer = `${EXPLORER_URL}/address/${token?.owner}`;
@@ -151,7 +152,7 @@ const Tokens = () => {
 
         symbol: token?.symbol || '-',
 
-        price: token?.price || 'n/a',
+        price: formatCurrency(tokenPrice, 10),
         volume: token?.volume || 'n/a',
         percent: token?.percent || 'n/a',
 
