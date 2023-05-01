@@ -48,6 +48,7 @@ import {transactionType} from "@/components/Swap/alertInfoProcessing/types";
 import {TransactionStatus} from "@/interfaces/walletTransaction";
 import {RiArrowUpDownLine} from "react-icons/ri";
 import px2rem from "@/utils/px2rem";
+import {NULL_ADDRESS} from "@/constants/url";
 
 const LIMIT_PAGE = 50;
 const FEE = 3;
@@ -69,13 +70,21 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const { call: getReserves } = useGetReserves();
   const [baseBalance, setBaseBalance] = useState('0');
   const [quoteBalance, setQuoteBalance] = useState('0');
-  const [pairAddress, setPairAddress] = useState<string>('');
+  const [pairAddress, setPairAddress] = useState<string>(NULL_ADDRESS);
   const [baseReserve, setBaseReserve] = useState('0');
   const [quoteReserve, setQuoteReserve] = useState('0');
   const { juiceBalance } = useContext(AssetsContext);
   const isAuthenticated = useSelector(getIsAuthenticatedSelector);
   const dispatch = useDispatch();
   const [isSwitching, setIsSwitching] = useState(false);
+  const [isChangeBaseToken, setIsChangeBaseToken] = useState(false);
+  const [isChangeQuoteToken, setIsChangeQuoteToken] = useState(false);
+
+  // console.log('isSwitching', isSwitching);
+  // console.log('baseReserve', baseReserve);
+  // console.log('quoteReserve', quoteReserve);
+  // console.log('quoteTokensList', quoteTokensList);
+  // console.log('======');
 
   const { values } = useFormState();
   const { change, restart } = useForm();
@@ -123,12 +132,12 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     if (baseToken?.address && quoteToken?.address) {
       getPairAddress();
     } else {
-      setPairAddress('');
+      setPairAddress(NULL_ADDRESS);
     }
   }, [baseToken?.address, quoteToken?.address]);
 
   useEffect(() => {
-    if (pairAddress && baseToken && quoteToken) {
+    if (pairAddress && baseToken && quoteToken && !compareString(pairAddress, NULL_ADDRESS)) {
       getReservesInfo();
     }
   }, [pairAddress]);
@@ -177,13 +186,34 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       });
 
       const { _reserve0, _reserve1 } = response;
+      let _baseReserve = '';
+      let _quoteReserve = '';
 
       if (compareString(token0?.address, baseToken?.address)) {
-        setBaseReserve(formatEthPrice(_reserve0));
-        setQuoteReserve(formatEthPrice(_reserve1));
+        _baseReserve = formatEthPrice(_reserve0);
+        _quoteReserve = formatEthPrice(_reserve1);
       } else {
-        setQuoteReserve(formatEthPrice(_reserve0));
-        setBaseReserve(formatEthPrice(_reserve1));
+        _quoteReserve = formatEthPrice(_reserve0);
+        _baseReserve = formatEthPrice(_reserve1);
+      }
+
+      setBaseReserve(_baseReserve);
+      setQuoteReserve(_quoteReserve);
+
+      if(isChangeBaseToken) {
+        setIsChangeBaseToken(false);
+        onBaseAmountChange({
+          amount: values?.baseAmount,
+          baseReserve: _baseReserve,
+          quoteReserve: _quoteReserve,
+        });
+      } else if (isChangeQuoteToken) {
+        setIsChangeQuoteToken(false);
+        onQuoteAmountChange({
+          amount: values?.quoteAmount,
+          baseReserve: _baseReserve,
+          quoteReserve: _quoteReserve,
+        });
       }
     } catch (error) {
       console.log('error', error);
@@ -250,6 +280,10 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   };
 
   const handleSelectBaseToken = async (token: IToken) => {
+    if(compareString(baseToken?.address, token?.address)) {
+      return;
+    }
+    setIsChangeBaseToken(true);
     setBaseToken(token);
     change('baseToken', token);
     try {
@@ -277,6 +311,11 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   };
 
   const handleSelectQuoteToken = async (token: IToken) => {
+    if(compareString(quoteToken?.address, token?.address)) {
+      return;
+    }
+    setIsChangeQuoteToken(true);
+
     setQuoteToken(token);
     change('quoteToken', token);
     try {
