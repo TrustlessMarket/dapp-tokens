@@ -75,6 +75,7 @@ const useApproveERC20Token: ContractOperationHook<
           updateCurrentTransaction({
             id: transactionType.createPoolApprove,
             status: TransactionStatus.pending,
+            hash: transaction.hash,
             infoTexts: {
               pending: `Approving for ${address}`,
             },

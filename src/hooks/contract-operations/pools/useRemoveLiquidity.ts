@@ -101,8 +101,9 @@ const useRemoveLiquidity: ContractOperationHook<
           updateCurrentTransaction({
             status: TransactionStatus.pending,
             id: transactionType.createPool,
+            hash: transaction.hash,
             infoTexts: {
-              pending: `Adding liquidity...`,
+              pending: `Removing liquidity...`,
             },
           }),
         );
