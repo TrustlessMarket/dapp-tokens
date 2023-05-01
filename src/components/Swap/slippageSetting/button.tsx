@@ -15,6 +15,7 @@ import { useState } from 'react';
 import gear from './img/gear.svg';
 import SlippageSetting from './index';
 import styles from './styles.module.scss';
+import {CDN_URL} from "@/configs";
 
 const SlippageSettingButton = () => {
   const slippage = useAppSelector(selectPnftExchange).slippage;
@@ -50,7 +51,7 @@ const SlippageSettingButton = () => {
             p={0}
           >
             <Center>
-              <Image src={gear} alt={'gear'} />
+              <Image src={`${CDN_URL}/icons/gear.svg`} alt={'gear'} />
             </Center>
           </Button>
         </PopoverTrigger>
