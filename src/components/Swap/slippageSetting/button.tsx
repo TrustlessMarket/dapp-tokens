@@ -1,5 +1,5 @@
-import { useAppSelector } from '@/state/hooks';
-import { selectPnftExchange } from '@/state/pnftExchange';
+import {useAppSelector} from '@/state/hooks';
+import {selectPnftExchange} from '@/state/pnftExchange';
 import {
   Box,
   Button,
@@ -11,8 +11,7 @@ import {
   PopoverTrigger,
 } from '@chakra-ui/react';
 import Image from 'next/image';
-import { useState } from 'react';
-import gear from './img/gear.svg';
+import {useState} from 'react';
 import SlippageSetting from './index';
 import styles from './styles.module.scss';
 import {CDN_URL} from "@/configs";
@@ -51,7 +50,12 @@ const SlippageSettingButton = () => {
             p={0}
           >
             <Center>
-              <Image src={`${CDN_URL}/icons/gear.svg`} alt={'gear'} />
+              <Image
+                src={`${CDN_URL}/icons/gear.svg`}
+                alt={'gear'}
+                width={16}
+                height={16}
+              />
             </Center>
           </Button>
         </PopoverTrigger>
