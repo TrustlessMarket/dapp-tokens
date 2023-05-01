@@ -7,6 +7,7 @@ export const TC_NETWORK_RPC: string = process.env.NEXT_PUBLIC_TC_NETWORK_RPC!;
 export const TC_EXPLORER: string = process.env.NEXT_PUBLIC_TC_EXPLORER!;
 export const CDN_URL: string = process.env.NEXT_PUBLIC_CDN_URL!;
 export const API_FAUCET: string = process.env.NEXT_PUBLIC_API_FAUCET!;
+export const WALLET_URL: string = process.env.NEXT_PUBLIC_WALLET_URL!;
 
 // Contract configs
 export const ARTIFACT_CONTRACT: string = process.env.NEXT_PUBLIC_ARTIFACT_CONTRACT!;

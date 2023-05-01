@@ -84,10 +84,13 @@ const useAddLiquidity: ContractOperationHook<IGetReservesParams, boolean> = () =
             MaxUint256,
           );
 
+        console.log('transaction', transaction);
+
         store.dispatch(
           updateCurrentTransaction({
             status: TransactionStatus.pending,
             id: transactionType.createPool,
+            hash: transaction.hash,
             infoTexts: {
               pending: `Adding liquidity...`,
             },
