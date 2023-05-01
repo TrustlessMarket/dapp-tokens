@@ -1,7 +1,6 @@
 import Button from '@/components/Button';
 import Table from '@/components/Table';
 import Text from '@/components/Text';
-import {TRUSTLESS_COMPUTER_CHAIN_INFO} from '@/constants/chains';
 import {getTokenRp, getTokens} from '@/services/token-explorer';
 import {formatCurrency, shortenAddress} from '@/utils';
 import {decimalToExponential} from '@/utils/format';
@@ -21,13 +20,13 @@ import {showError} from '@/utils/toast';
 import BigNumber from "bignumber.js";
 import Link from 'next/link';
 import {ROUTE_PATH} from "@/constants/route-path";
-const EXPLORER_URL = TRUSTLESS_COMPUTER_CHAIN_INFO.explorers[0].url;
+//const EXPLORER_URL = TRUSTLESS_COMPUTER_CHAIN_INFO.explorers[0].url;
 
 const LIMIT_PAGE = 200;
 const ALL_ONE_PAGE = 10000;
 
 const Tokens = () => {
-  const TABLE_HEADINGS = ['Token #','Name','Symbol', 'Price','Market Cap','24h %', 'Supply', 'Creator'];
+  const TABLE_HEADINGS = ['Token #','Name','Symbol', 'Price','Market Cap(BTC)','24h %', 'Supply', 'Creator'];
   /*'Price','24h %','Market Cap'*/
 
   // const router = useRouter();
