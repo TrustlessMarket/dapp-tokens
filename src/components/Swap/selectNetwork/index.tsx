@@ -7,6 +7,7 @@ import styles from './styles.module.scss';
 import { useWeb3React } from '@web3-react/core';
 import { SupportedChainId, TRUSTLESS_COMPUTER_CHAIN_INFO } from '@/constants/chains';
 import { WalletContext } from '@/contexts/wallet-context';
+import imgLogo from '@/assets/img/wallet_logo.svg';
 
 const SelectedNetwork = ({}) => {
   const { chainId } = useWeb3React();
@@ -46,7 +47,7 @@ const SelectedNetwork = ({}) => {
     <Button className={styles.btnButton} style={{ cursor: 'default' }}>
       <div className="img">
         <Image
-          src={TRUSTLESS_COMPUTER_CHAIN_INFO.icon}
+          src={imgLogo}
           alt={TRUSTLESS_COMPUTER_CHAIN_INFO.name}
           width={32}
           height={32}
