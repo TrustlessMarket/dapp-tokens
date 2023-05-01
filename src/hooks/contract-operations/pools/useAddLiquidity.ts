@@ -10,6 +10,7 @@ import { scanTrx } from '@/services/token-explorer';
 import store from '@/state';
 import { updateCurrentTransaction } from '@/state/pnftExchange';
 import { compareString, getContract } from '@/utils';
+import { isProduction } from '@/utils/commons';
 import { formatBTCPrice, formatEthPriceSubmit } from '@/utils/format';
 import { useWeb3React } from '@web3-react/core';
 import BigNumber from 'bignumber.js';
@@ -84,7 +85,14 @@ const useAddLiquidity: ContractOperationHook<IGetReservesParams, boolean> = () =
             MaxUint256,
           );
 
-        console.log('transaction', transaction);
+        TC_SDK.signTransaction({
+          method: `${DAppType.ERC20} - ${TransactionEventType.CREATE}`,
+          hash: transaction.hash,
+          dappURL: window.location.origin,
+          isRedirect: true,
+          target: '_blank',
+          isMainnet: isProduction(),
+        });
 
         store.dispatch(
           updateCurrentTransaction({
@@ -92,7 +100,7 @@ const useAddLiquidity: ContractOperationHook<IGetReservesParams, boolean> = () =
             id: transactionType.createPool,
             hash: transaction.hash,
             infoTexts: {
-              pending: `Adding liquidity...`,
+              pending: `Adding pool...`,
             },
           }),
         );

@@ -11,6 +11,7 @@ import { useSelector } from 'react-redux';
 import * as TC_SDK from 'trustless-computer-sdk';
 import useBitcoin from '../useBitcoin';
 import { ERROR_CODE } from '@/constants/error';
+import { isProduction } from '@/utils/commons';
 
 interface IParams<P, R> {
   operation: ContractOperationHook<P, R>;
@@ -120,6 +121,7 @@ const useContractOperation = <P, R>(
         dappURL: window.location.origin,
         isRedirect: false,
         target: '_blank',
+        isMainnet: isProduction(),
       });
 
       return tx;

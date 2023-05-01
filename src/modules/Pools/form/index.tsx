@@ -265,9 +265,6 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         address: UNIV2_ROUTER_ADDRESS,
       });
     } catch (error) {
-      console.log('error', error);
-
-      throw error;
     } finally {
       dispatch(updateCurrentTransaction(null));
     }
@@ -703,7 +700,6 @@ const CreateMarket = ({
   };
 
   const handleSubmit = async (values: any) => {
-    console.log('handleSubmit', values);
     const { baseToken, quoteToken, baseAmount, quoteAmount } = values;
     try {
       setSubmitting(true);
@@ -730,7 +726,7 @@ const CreateMarket = ({
         amountBMin: '0',
       };
 
-      await addLiquidity(data);
+      const response: any = await addLiquidity(data);
 
       toast.success('Transaction has been created. Please wait for few minutes.');
 
@@ -738,17 +734,34 @@ const CreateMarket = ({
       refForm.current?.reset();
       dispatch(requestReload());
       dispatch(requestReloadRealtime());
+      dispatch(
+        updateCurrentTransaction({
+          status: TransactionStatus.success,
+          id: transactionType.createPool,
+          hash: response.hash,
+          infoTexts: {
+            success: 'Pool has been created successfully.',
+          },
+        }),
+      );
     } catch (err) {
       console.log('err', err);
-
+      const message =
+        (err as Error).message || 'Something went wrong. Please try again later.';
+      dispatch(
+        updateCurrentTransaction({
+          status: TransactionStatus.error,
+          id: transactionType.createPool,
+          infoTexts: {
+            error: message,
+          },
+        }),
+      );
       showError({
-        message:
-          (err as Error).message || 'Something went wrong. Please try again later.',
+        message: message,
       });
     } finally {
       setSubmitting(false);
-
-      dispatch(updateCurrentTransaction(null));
     }
   };
 

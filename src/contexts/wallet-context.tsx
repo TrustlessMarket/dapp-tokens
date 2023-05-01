@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { PropsWithChildren, useEffect, useMemo } from 'react';
 import { useWeb3React } from '@web3-react/core';
 import { useAppDispatch } from '@/state/hooks';
@@ -26,6 +27,7 @@ import { ROUTE_PATH } from '@/constants/route-path';
 import * as TC_SDK from 'trustless-computer-sdk';
 import { TEMP_ADDRESS_WALLET_EVM } from '@/constants/storage-key';
 import { getCurrentProfile } from '@/services/profile';
+import { isProduction } from '@/utils/commons';
 
 export interface IWalletContext {
   onDisconnect: () => Promise<void>;
@@ -119,6 +121,7 @@ export const WalletProvider: React.FC<PropsWithChildren> = ({
       method: TC_SDK.RequestMethod.account,
       redirectURL: window.location.origin + window.location.pathname,
       target: '_self',
+      isMainnet: isProduction(),
     });
   };
 
