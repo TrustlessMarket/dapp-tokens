@@ -34,7 +34,6 @@ import {
   formatCurrency,
   sortAddressPair,
 } from '@/utils';
-import { isDevelop } from '@/utils/commons';
 import { composeValidators, required } from '@/utils/formValidate';
 import { formatAmountBigNumber } from '@/utils/format';
 import px2rem from '@/utils/px2rem';
@@ -42,11 +41,11 @@ import { showError } from '@/utils/toast';
 import {
   Box,
   Flex,
+  forwardRef,
   Stat,
   StatHelpText,
   StatNumber,
   Text,
-  forwardRef,
 } from '@chakra-ui/react';
 import BigNumber from 'bignumber.js';
 import cx from 'classnames';
@@ -54,6 +53,7 @@ import { isEmpty } from 'lodash';
 import { useRouter } from 'next/router';
 import {
   useCallback,
+  useContext,
   useEffect,
   useImperativeHandle,
   useRef,
@@ -62,9 +62,18 @@ import {
 import { Field, Form, useForm, useFormState } from 'react-final-form';
 import toast from 'react-hot-toast';
 import { BsPlus } from 'react-icons/bs';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { ScreenType } from '..';
 import styles from './styles.module.scss';
+import Link from 'next/link';
+import {
+  BRIDGE_SUPPORT_TOKEN,
+  TRUSTLESS_BRIDGE,
+  TRUSTLESS_FAUCET,
+} from '@/constants/common';
+import { AssetsContext } from '@/contexts/assets-context';
+import { getIsAuthenticatedSelector } from '@/state/user/selector';
+import { isDevelop } from '@/utils/commons';
 
 const LIMIT_PAGE = 50;
 
@@ -93,6 +102,8 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     _reserve0: '-',
     _reserve1: '-',
   });
+  const { juiceBalance } = useContext(AssetsContext);
+  const isAuthenticated = useSelector(getIsAuthenticatedSelector);
   const router = useRouter();
   const type = router.query.type;
   const isScreenAdd = compareString(type, ScreenType.add);
@@ -205,8 +216,11 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         page: page,
         is_test: isDevelop() ? '1' : '',
       });
-      setTokensList(camelCaseKeys(pairsMock));
-      // setTokensList(camelCaseKeys(res));
+      if (isDevelop()) {
+        setTokensList(camelCaseKeys(pairsMock));
+      } else {
+        setTokensList(camelCaseKeys(res));
+      }
     } catch (err: unknown) {
       console.log('Failed to fetch tokens owned');
     } finally {
@@ -534,7 +548,53 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           {renderPricePool()}
         </Box>
       )}
-
+      {isAuthenticated && new BigNumber(juiceBalance || 0).lte(0) && (
+        <Text fontSize="md" color="brand.warning.400" textAlign={'left'}>
+          Your TC balance is insufficient. You can receive free TC on our faucet site{' '}
+          <Link
+            href={TRUSTLESS_FAUCET}
+            target={'_blank'}
+            style={{ textDecoration: 'underline' }}
+          >
+            here
+          </Link>
+          .
+        </Text>
+      )}
+      {isAuthenticated &&
+        baseToken &&
+        BRIDGE_SUPPORT_TOKEN.includes(baseToken?.symbol) &&
+        new BigNumber(baseBalance || 0).lte(0) && (
+          <Text fontSize="md" color="brand.warning.400" textAlign={'left'}>
+            Insufficient {baseToken?.symbol} balance! Consider swapping your{' '}
+            {baseToken?.symbol?.replace('W', '')} to trustless network{' '}
+            <Link
+              href={TRUSTLESS_BRIDGE}
+              target={'_blank'}
+              style={{ textDecoration: 'underline' }}
+            >
+              here
+            </Link>
+            .
+          </Text>
+        )}
+      {isAuthenticated &&
+        quoteToken &&
+        BRIDGE_SUPPORT_TOKEN.includes(quoteToken?.symbol) &&
+        new BigNumber(quoteBalance || 0).lte(0) && (
+          <Text fontSize="md" color="brand.warning.400" textAlign={'left'}>
+            Insufficient {quoteToken?.symbol} balance! Consider swapping your{' '}
+            {quoteToken?.symbol?.replace('W', '')} to trustless network{' '}
+            <Link
+              href={TRUSTLESS_BRIDGE}
+              target={'_blank'}
+              style={{ textDecoration: 'underline' }}
+            >
+              here
+            </Link>
+            .
+          </Text>
+        )}
       <WrapperConnected className={styles.submitButton}>
         {isApproveBaseToken && isApproveQuoteToken ? (
           <FiledButton

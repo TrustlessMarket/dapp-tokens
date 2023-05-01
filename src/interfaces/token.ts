@@ -13,9 +13,9 @@ export interface IToken {
   slug: string;
   symbol: string;
   name: string;
-  price: string;
-  change: string;
-  cap: string;
+  price: number;
+  percent: number;
+  volume: number;
   thumbnail?: string;
   description?: string;
   fromAddress?: string;
