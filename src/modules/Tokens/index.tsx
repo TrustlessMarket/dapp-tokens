@@ -27,7 +27,7 @@ const LIMIT_PAGE = 200;
 const ALL_ONE_PAGE = 10000;
 
 const Tokens = () => {
-  const TABLE_HEADINGS = ['Token #','Name','Symbol', 'Price','24h %','Market Cap', 'Supply', 'Creator'];
+  const TABLE_HEADINGS = ['Token #','Name','Symbol', 'Price','Market Cap','24h %', 'Supply', 'Creator'];
   /*'Price','24h %','Market Cap'*/
 
   // const router = useRouter();
@@ -149,13 +149,10 @@ const Tokens = () => {
       render: {
         number: token?.index,
         name: token?.name || '-',
-
         symbol: token?.symbol || '-',
-
         price: formatCurrency(tokenPrice, 10),
         volume: token?.volume || 'n/a',
         percent: token?.percent || 'n/a',
-
         supply: formatCurrency(totalSupply.toString()),
         creator: (
             <a
