@@ -11,7 +11,7 @@ export const TRUSTLESS_COMPUTER_CHAIN_INFO = {
   name: 'Trustless Computer',
   title: '',
   chain: 'TC',
-  icon: '',
+  icon: 'https://cdn.trustless.computer/icons/wallet_logo.svg',
   rpc: [TC_NETWORK_RPC],
   faucets: [],
   nativeCurrency: {
