@@ -53,6 +53,14 @@ const Header = ({ height }: { height: number }) => {
         <div className={'leftContainer'}>
           <div className="external-link">
             <Link
+              href={ROUTE_PATH.MARKETS}
+              className={
+                router?.pathname?.includes(ROUTE_PATH.MARKETS) ? 'isSelected' : ''
+              }
+            >
+              Markets
+            </Link>
+            <Link
               href={ROUTE_PATH.SWAP}
               className={
                 router?.pathname?.includes(ROUTE_PATH.SWAP) ? 'isSelected' : ''
@@ -67,9 +75,6 @@ const Header = ({ height }: { height: number }) => {
               }
             >
               Pools
-            </Link>
-            <Link href={'https://trustless.computer/'} target="_blank">
-              Trustless
             </Link>
           </div>
         </div>
