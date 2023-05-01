@@ -142,7 +142,7 @@ const Tokens = () => {
     const tokenPrice = token?.price ? new BigNumber(token?.price).toFixed()  : 'n/a';
 
     //const linkTokenExplorer = `${EXPLORER_URL}/token/${token?.address}`;
-    const linkToOwnerExplorer = `${EXPLORER_URL}/address/${token?.owner}`;
+    //const linkToOwnerExplorer = `${EXPLORER_URL}/address/${token?.owner}`;
 
     return {
       id: `token-${token?.address}}`,
@@ -154,15 +154,7 @@ const Tokens = () => {
         volume: token?.volume || 'n/a',
         percent: token?.percent || 'n/a',
         supply: formatCurrency(totalSupply.toString()),
-        creator: (
-            <a
-                href={linkToOwnerExplorer}
-                rel="rel=”noopener noreferrer”"
-                target="_blank"
-            >
-              {shortenAddress(token?.owner, 4) || '-'}
-            </a>
-        ),
+        creator: shortenAddress(token?.owner, 4) || '-',
       },
     };
   });
@@ -178,20 +170,20 @@ const Tokens = () => {
             {/* <img src={IcBitcoinCloud} alt="upload file icon" /> */}
             <div className="upload_content">
               {/* <h3 className="upload_title">BRC-20 on Bitcoin</h3> */}
-              <Text size="medium" color="text1">
+              <Text className="upload_text"  color="text1">
                 Smart BRC-20s are the first tokens deployed on Bitcoin as smart contracts. They are cryptographically secure, decentralized, and tamper-proof. They run exactly as programmed without any possibility of fraud, third-party interference, or censorship. As smart contracts, they can also be composed into decentralization applications on Bitcoin so you can use them in DEX, DAO, auctions, lending, and marketplaces.
               </Text>
             </div>
           </div>
           <div className="upload_right">
-            <Button bg={'white'}  background={'gray'} onClick={handleCreateToken}>
+            <Button className="button-create-box" bg={'white'}  background={'gray'} onClick={handleCreateToken}>
               <Text
                   size="medium"
                   color="bg1"
                   className="button-text"
                   fontWeight="medium"
               >
-                Create BRC-20
+                Create Smart BRC-20
               </Text>
             </Button>
             <Link href={ROUTE_PATH.SWAP} >
@@ -202,7 +194,7 @@ const Tokens = () => {
                     className="brc20-text"
                     fontWeight="medium"
                 >
-                  Swap BRC-20
+                  Swap Smart BRC-20
                 </Text>
 
               </Button>

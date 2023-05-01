@@ -5,7 +5,7 @@ export const StyledTokens = styled.div`
   margin-top: ${px2rem(48)};
 
   .background {
-    background: linear-gradient(90deg, #00c6ff 0%, #0072ff 100%);
+    background-color: white;
     min-height: ${px2rem(203)};
     position: absolute;
     width: 100%;
@@ -49,7 +49,7 @@ export const StyledTokens = styled.div`
     width: fit-content;
     z-index: 1;
     position: relative;
-    color: #ffffff;
+    color: black;
     font-size: ${px2rem(48)};
     line-height: 48 / 44;
   }
@@ -58,7 +58,7 @@ export const StyledTokens = styled.div`
 export const UploadFileContainer = styled.div`
   position: relative;
   z-index: 1;
-  max-width: ${px2rem(800)};
+ // max-width: ${px2rem(800)};
   margin-left: auto;
   margin-right: auto;
   padding: ${px2rem(24)} ${px2rem(32)};
@@ -70,8 +70,6 @@ export const UploadFileContainer = styled.div`
   margin-bottom: ${px2rem(40)};
   color: ${({ theme }: { theme: DefaultTheme }) => theme.text1};
   text-align: center;
-  border-radius: ${px2rem(12)};
-  box-shadow: 0px 0px 24px -6px rgba(0, 0, 0, 0.12);
 
   .upload_left {
     display: flex;
@@ -90,6 +88,9 @@ export const UploadFileContainer = styled.div`
     font-family: var(--font-heading) !important;
     padding: ${px2rem(11)} ${px2rem(36)};
 
+  }
+  .button-create-box{
+    margin-right: 30px;
   }
   .brc20-text {
     font-family: var(--font-heading) !important;
@@ -113,6 +114,9 @@ export const UploadFileContainer = styled.div`
   .comming-soon-btn{
     margin-left: 10px;
     vertical-align:top;
+  }
+  .upload_text{
+    font-size: 1.5rem;
   }
 
 `;
