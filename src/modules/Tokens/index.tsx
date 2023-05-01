@@ -19,7 +19,8 @@ import {getIsAuthenticatedSelector} from '@/state/user/selector';
 import {WalletContext} from '@/contexts/wallet-context';
 import {showError} from '@/utils/toast';
 import BigNumber from "bignumber.js";
-
+import Link from 'next/link';
+import {ROUTE_PATH} from "@/constants/route-path";
 const EXPLORER_URL = TRUSTLESS_COMPUTER_CHAIN_INFO.explorers[0].url;
 
 const LIMIT_PAGE = 50;
@@ -57,8 +58,7 @@ const Tokens = () => {
     try {
       setIsFetching(true);
       const res = await getTokens({ limit: LIMIT_PAGE, page: page });
-      const res1 = await getTokenRp({ limit: ALL_ONE_PAGE, page: 1 });
-      console.log("tuanabc");
+      const res1 = await getTokenRp({ limit: ALL_ONE_PAGE, page: 1 });;
 
       for(let i = 0;i<res.length;i++)
       {
@@ -133,22 +133,14 @@ const Tokens = () => {
 
   const tokenDatas = tokensList.map((token) => {
     const totalSupply = new BigNumber(token?.totalSupply).div(decimalToExponential(token.decimal));
-    const linkTokenExplorer = `${EXPLORER_URL}/token/${token?.address}`;
+    //const linkTokenExplorer = `${EXPLORER_URL}/token/${token?.address}`;
     const linkToOwnerExplorer = `${EXPLORER_URL}/address/${token?.owner}`;
 
     return {
       id: `token-${token?.address}}`,
       render: {
         number: token?.index,
-        name: (
-            <a
-                href={linkTokenExplorer}
-                rel="rel=”noopener noreferrer”"
-                target="_blank"
-            >
-              {token?.name || '-'}
-            </a>
-        ),
+        name: token?.name || '-',
 
         symbol: token?.symbol || '-',
         /*
@@ -189,7 +181,7 @@ const Tokens = () => {
             </div>
           </div>
           <div className="upload_right">
-            <Button bg={'white'} background={'#3385FF'} onClick={handleCreateToken}>
+            <Button bg={'white'}  background={'gray'} onClick={handleCreateToken}>
               <Text
                   size="medium"
                   color="bg1"
@@ -199,7 +191,8 @@ const Tokens = () => {
                 Create BRC-20
               </Text>
             </Button>
-            <Button   className="comming-soon-btn"  bg={'white'} background={'gray'}  >
+            <Link href={ROUTE_PATH.SWAP} >
+            <Button   className="comming-soon-btn"  bg={'white'}  background={'#3385FF'}  >
               <Text
                   size="medium"
                   color="bg1"
@@ -209,15 +202,8 @@ const Tokens = () => {
                 Swap BRC-20
               </Text>
 
-              <Text
-                  size="small"
-                  color="bg1"
-                  className="comming-soon-text"
-                  fontWeight="light"
-              >
-                coming soon
-              </Text>
             </Button>
+      </Link>
           </div>
         </UploadFileContainer>
         <InfiniteScroll

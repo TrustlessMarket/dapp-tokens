@@ -93,10 +93,7 @@ export const UploadFileContainer = styled.div`
   }
   .brc20-text {
     font-family: var(--font-heading) !important;
-    padding-top: ${px2rem(2)};
-    padding-right: ${px2rem(36)};
-    padding-left: ${px2rem(36)};
-    padding-bottom: 0;
+    padding: ${px2rem(11)} ${px2rem(36)};
   }
   .comming-soon-text{
     font-family: var(--font-heading) !important;
