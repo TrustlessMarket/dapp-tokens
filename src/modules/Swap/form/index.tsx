@@ -634,7 +634,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         }
       />
       {isAuthenticated && new BigNumber(juiceBalance || 0).lte(0) && (
-        <Text fontSize="xs" color="brand.warning.400" textAlign={'left'}>
+        <Text fontSize="md" color="brand.warning.400" textAlign={'left'}>
           Your TC balance is insufficient. You can receive free TC on our faucet site{' '}
           <Link
             href={TRUSTLESS_FAUCET}
@@ -650,7 +650,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         baseToken &&
         BRIDGE_SUPPORT_TOKEN.includes(baseToken?.symbol) &&
         new BigNumber(baseBalance || 0).lte(0) && (
-          <Text fontSize="xs" color="brand.warning.400" textAlign={'left'}>
+          <Text fontSize="md" color="brand.warning.400" textAlign={'left'}>
             Insufficient {baseToken?.symbol} balance! Consider swapping your{' '}
             {baseToken?.symbol?.replace('W', '')} to trustless network{' '}
             <Link
