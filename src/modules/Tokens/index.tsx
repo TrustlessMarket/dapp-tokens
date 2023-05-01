@@ -163,7 +163,7 @@ const Tokens = () => {
       <StyledTokens>
         <div className="background"></div>
         <div>
-          <h3 className="upload_title">BRC-20 on Bitcoin</h3>
+          <h3 className="upload_title">Smart BRC-20</h3>
         </div>
         <UploadFileContainer>
           <div className="upload_left">
