@@ -22,7 +22,7 @@ import Link from 'next/link';
 import {ROUTE_PATH} from "@/constants/route-path";
 //const EXPLORER_URL = TRUSTLESS_COMPUTER_CHAIN_INFO.explorers[0].url;
 
-const LIMIT_PAGE = 200;
+const LIMIT_PAGE = 100;
 const ALL_ONE_PAGE = 10000;
 
 const Tokens = () => {
