@@ -59,11 +59,12 @@ import { RiArrowUpDownLine } from 'react-icons/ri';
 import { useDispatch, useSelector } from 'react-redux';
 import styles from './styles.module.scss';
 import TokenBalance from '@/components/Swap/tokenBalance';
+import {useRouter} from "next/router";
 
 const LIMIT_PAGE = 50;
 const FEE = 3;
-const DEFAULT_BASE_TOKEN = '0xfB83c18569fB43f1ABCbae09Baf7090bFFc8CBBD';
-const DEFAULT_QUOTE_TOKEN = '0xdd2863416081D0C10E57AaB4B3C5197183be4B34';
+export const DEFAULT_BASE_TOKEN = '0xfB83c18569fB43f1ABCbae09Baf7090bFFc8CBBD';
+export const DEFAULT_QUOTE_TOKEN = '0xdd2863416081D0C10E57AaB4B3C5197183be4B34';
 
 export const MakeFormSwap = forwardRef((props, ref) => {
   const { onSubmit, submitting } = props;
@@ -91,6 +92,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const [isSwitching, setIsSwitching] = useState(false);
   const [isChangeBaseToken, setIsChangeBaseToken] = useState(false);
   const [isChangeQuoteToken, setIsChangeQuoteToken] = useState(false);
+  const router = useRouter();
 
   // console.log('isSwitching', isSwitching);
   // console.log('baseBalance', baseBalance);
@@ -173,8 +175,6 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       });
 
       const list = res ? camelCaseKeys(res) : [];
-
-      console.log('list', list);
 
       setTokensList(list);
       setBaseTokensList(list);
@@ -337,9 +337,18 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             change('quoteToken', null);
           }
         } else {
-          const token = _fromTokens.find((t) =>
-            compareString(t.address, DEFAULT_QUOTE_TOKEN),
-          );
+          let token = null;
+
+          if (router?.query?.to_token) {
+            token = _fromTokens.find((t) =>
+              compareString(t.address, router?.query?.to_token),
+            );
+          }
+          if (!token) {
+            token = _fromTokens.find((t) =>
+              compareString(t.address, DEFAULT_QUOTE_TOKEN),
+            );
+          }
           if (token) {
             handleSelectQuoteToken(token);
           }
