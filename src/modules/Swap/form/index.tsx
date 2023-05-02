@@ -763,7 +763,7 @@ const TradingForm = () => {
   const dispatch = useAppDispatch();
   const { call: swapToken } = useSwapERC20Token();
   const user = useSelector(getUserSelector);
-  const slippage = useAppSelector(selectPnftExchange).slippage;
+  // const slippage = useAppSelector(selectPnftExchange).slippage;
 
   const handleSubmit = async (values: any) => {
     const { baseToken, quoteToken, baseAmount, quoteAmount } = values;
@@ -777,17 +777,19 @@ const TradingForm = () => {
         }),
       );
 
-      // const amountOutMin = new BigNumber(quoteAmount)
-      //   .multipliedBy(100 - slippage)
-      //   .dividedBy(100)
-      //   .decimalPlaces(18)
-      //   .toString();
+      const slippage = 100;
+
+      const amountOutMin = new BigNumber(quoteAmount)
+        .multipliedBy(100 - slippage)
+        .dividedBy(100)
+        .decimalPlaces(quoteToken?.decimals || 18)
+        .toString();
 
       const data = {
         addresses: [baseToken.address, quoteToken.address],
         address: user?.walletAddress,
         amount: baseAmount,
-        amountOutMin: '0',
+        amountOutMin: amountOutMin,
       };
 
       const response = await swapToken(data);

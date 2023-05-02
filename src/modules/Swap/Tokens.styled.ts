@@ -65,7 +65,7 @@ export const UploadFileContainer = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: ${px2rem(40)};
+  margin-bottom: ${px2rem(30)};
   color: ${({ theme }: { theme: DefaultTheme }) => theme.text1};
   text-align: center;
   border-radius: ${px2rem(12)};
