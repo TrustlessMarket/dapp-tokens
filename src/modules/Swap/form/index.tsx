@@ -7,7 +7,7 @@ import FilterButton from '@/components/Swap/filterToken';
 import FieldAmount from '@/components/Swap/form/fieldAmount';
 import InputWrapper from '@/components/Swap/form/inputWrapper';
 import HorizontalItem from '@/components/Swap/horizontalItem';
-import SlippageSettingButton from '@/components/Swap/slippageSetting/button';
+import TokenBalance from '@/components/Swap/tokenBalance';
 import WrapperConnected from '@/components/WrapperConnected';
 import { UNIV2_ROUTER_ADDRESS } from '@/configs';
 import {
@@ -15,14 +15,20 @@ import {
   TRUSTLESS_BRIDGE,
   TRUSTLESS_FAUCET,
 } from '@/constants/common';
+import { toastError } from '@/constants/error';
 import { NULL_ADDRESS } from '@/constants/url';
 import { AssetsContext } from '@/contexts/assets-context';
 import useGetPair from '@/hooks/contract-operations/swap/useGetPair';
 import useGetReserves from '@/hooks/contract-operations/swap/useReserves';
-import useSwapERC20Token from '@/hooks/contract-operations/swap/useSwapERC20Token';
-import useApproveERC20Token from '@/hooks/contract-operations/token/useApproveERC20Token';
+import useSwapERC20Token, {
+  ISwapERC20TokenParams,
+} from '@/hooks/contract-operations/swap/useSwapERC20Token';
+import useApproveERC20Token, {
+  IApproveERC20TokenParams,
+} from '@/hooks/contract-operations/token/useApproveERC20Token';
 import useBalanceERC20Token from '@/hooks/contract-operations/token/useBalanceERC20Token';
 import useIsApproveERC20Token from '@/hooks/contract-operations/token/useIsApproveERC20Token';
+import useContractOperation from '@/hooks/contract-operations/useContractOperation';
 import { IToken } from '@/interfaces/token';
 import { TransactionStatus } from '@/interfaces/walletTransaction';
 import { getSwapTokens } from '@/services/token-explorer';
@@ -40,11 +46,13 @@ import { composeValidators, required } from '@/utils/formValidate';
 import { formatEthPrice } from '@/utils/format';
 import px2rem from '@/utils/px2rem';
 import { showError } from '@/utils/toast';
-import { Box, Flex, forwardRef, Text } from '@chakra-ui/react';
+import { Box, Flex, Text, forwardRef } from '@chakra-ui/react';
+import { useWeb3React } from '@web3-react/core';
 import BigNumber from 'bignumber.js';
 import cx from 'classnames';
 import debounce from 'lodash/debounce';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import {
   useCallback,
   useContext,
@@ -58,10 +66,6 @@ import toast from 'react-hot-toast';
 import { RiArrowUpDownLine } from 'react-icons/ri';
 import { useDispatch, useSelector } from 'react-redux';
 import styles from './styles.module.scss';
-import TokenBalance from '@/components/Swap/tokenBalance';
-import { useRouter } from 'next/router';
-import { toastError } from '@/constants/error';
-import { useWeb3React } from '@web3-react/core';
 
 const LIMIT_PAGE = 50;
 const FEE = 3;
@@ -80,7 +84,13 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const [quoteTokensList, setQuoteTokensList] = useState<IToken[]>([]);
   const { call: isApproved } = useIsApproveERC20Token();
   const { call: tokenBalance } = useBalanceERC20Token();
-  const { call: approveToken } = useApproveERC20Token();
+  // const { call: approveToken } = useApproveERC20Token();
+  const { run: approveToken } = useContractOperation<
+    IApproveERC20TokenParams,
+    boolean
+  >({
+    operation: useApproveERC20Token,
+  });
   const { call: getPair } = useGetPair();
   const { call: getReserves } = useGetReserves();
   const [baseBalance, setBaseBalance] = useState<any>('0');
@@ -761,7 +771,10 @@ const TradingForm = () => {
   const refForm = useRef<any>();
   const [submitting, setSubmitting] = useState(false);
   const dispatch = useAppDispatch();
-  const { call: swapToken } = useSwapERC20Token();
+  // const { call: swapToken } = useSwapERC20Token();
+  const { run: swapToken } = useContractOperation<ISwapERC20TokenParams, boolean>({
+    operation: useSwapERC20Token,
+  });
   const user = useSelector(getUserSelector);
   // const slippage = useAppSelector(selectPnftExchange).slippage;
 
@@ -773,7 +786,7 @@ const TradingForm = () => {
       dispatch(
         updateCurrentTransaction({
           status: TransactionStatus.info,
-          id: transactionType.createPool,
+          id: transactionType.swapToken,
         }),
       );
 
@@ -788,7 +801,9 @@ const TradingForm = () => {
       const data = {
         addresses: [baseToken.address, quoteToken.address],
         address: user?.walletAddress,
-        amount: new BigNumber(baseAmount).decimalPlaces(baseToken?.decimals || 18).toString(),
+        amount: new BigNumber(baseAmount)
+          .decimalPlaces(baseToken?.decimals || 18)
+          .toString(),
         amountOutMin: amountOutMin,
       };
 

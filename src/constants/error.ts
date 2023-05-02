@@ -16,6 +16,7 @@ export const ERRORS = {
   MAX_FEE_PER_GAS: 'Max fee per gas less than block base fee. Please try again.',
   HIGH_GAS_FEE: 'Gas fee is too high. Please try again later.',
   NOT_ENOUGH_COLLATERAL_BALANCE: `Not enough ETH in collateral balance to pay gas fee.`,
+  YOUR_BALANCE_BTN_INSUFFICIENT: `Your balance is insufficient`,
 };
 
 export const getMessageError = (e: any, option: any) => {
@@ -31,6 +32,8 @@ export const getMessageError = (e: any, option: any) => {
     e?.data?.code?.toString() === '-32000'
   ) {
     title = '';
+  } else if (e?.message?.includes(ERRORS.YOUR_BALANCE_BTN_INSUFFICIENT)) {
+    title = e?.message;
   } else {
     title = ERRORS[`COMMON`];
   }
