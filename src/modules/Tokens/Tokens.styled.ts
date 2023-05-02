@@ -38,6 +38,7 @@ export const StyledTokens = styled.div`
       &_item {
         color: #FFFFFF;
       }
+      border-bottom: 1px solid rgb(34,37,49);
     }
     
     .tableData {
