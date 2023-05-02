@@ -50,7 +50,7 @@ const GetStarted = () => {
             {
               STEPS.map(s => {
                 return (
-                  <Flex gap={6} color={"#FFFFFF"} bg={"#000000AA"} borderRadius={"8px"} p={6}>
+                  <Flex gap={6} color={"#FFFFFF"} bg={"#000000AA"} borderRadius={"8px"} p={6} key={s.step}>
                     <Center fontSize={"28px"} fontWeight={"700"} borderRadius={"50%"}
                             bg={"linear-gradient(90deg, #00c6ff 0%, #0072ff 100%)"}
                             w={"60px"} h={"60px"} minW={"60px"} minH={"60px"}
