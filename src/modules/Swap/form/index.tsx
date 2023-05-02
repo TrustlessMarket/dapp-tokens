@@ -59,7 +59,8 @@ import { RiArrowUpDownLine } from 'react-icons/ri';
 import { useDispatch, useSelector } from 'react-redux';
 import styles from './styles.module.scss';
 import TokenBalance from '@/components/Swap/tokenBalance';
-import {useRouter} from "next/router";
+import { useRouter } from 'next/router';
+import { toastError } from '@/constants/error';
 
 const LIMIT_PAGE = 50;
 const FEE = 3;
@@ -273,6 +274,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     try {
       const response = await isApproved({
         erc20TokenAddress: token.address,
+        address: UNIV2_ROUTER_ADDRESS,
       });
       return response;
     } catch (error) {
@@ -306,7 +308,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         address: UNIV2_ROUTER_ADDRESS,
       });
     } catch (error) {
-      console.log('error', error);
+      throw error;
     } finally {
       dispatch(updateCurrentTransaction(null));
     }
@@ -525,10 +527,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
 
       toast.success('Transaction has been created. Please wait for few minutes.');
     } catch (err) {
-      showError({
-        message:
-          (err as Error).message || 'Something went wrong. Please try again later.',
-      });
+      toastError(showError, err, {});
     } finally {
       setLoading(false);
     }
