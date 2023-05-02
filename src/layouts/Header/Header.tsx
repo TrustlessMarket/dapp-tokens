@@ -1,13 +1,14 @@
-import { CDN_URL } from '@/configs';
-import { ROUTE_PATH } from '@/constants/route-path';
-import { gsap } from 'gsap';
+import {CDN_URL} from '@/configs';
+import {ROUTE_PATH} from '@/constants/route-path';
+import {gsap} from 'gsap';
 import Link from 'next/link';
-import { useEffect, useRef, useState } from 'react';
-import { Wrapper } from './Header.styled';
+import {useEffect, useRef, useState} from 'react';
+import {Wrapper} from './Header.styled';
 import MenuMobile from './MenuMobile';
 import WalletHeader from './Wallet';
-import { useWindowSize } from '@trustless-computer/dapp-core';
-import { useRouter } from 'next/router';
+import {useWindowSize} from '@trustless-computer/dapp-core';
+import {useRouter} from 'next/router';
+import {GENERATIVE_DISCORD, TRUSTLESS_COMPUTER} from "@/constants/common";
 
 const Header = ({ height }: { height: number }) => {
   const refMenu = useRef<HTMLDivElement | null>(null);
@@ -75,6 +76,18 @@ const Header = ({ height }: { height: number }) => {
               }
             >
               Pools
+            </Link>
+            <Link
+              href={GENERATIVE_DISCORD}
+              target={"_blank"}
+            >
+              DISCORD
+            </Link>
+            <Link
+              href={TRUSTLESS_COMPUTER}
+              target={"_blank"}
+            >
+              TRUSTLESS
             </Link>
           </div>
         </div>
