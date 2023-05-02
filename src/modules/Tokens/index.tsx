@@ -149,7 +149,7 @@ const Tokens = () => {
     const totalSupply = new BigNumber(token?.totalSupply).div(decimalToExponential(token.decimal));
     const tokenPrice = token?.usdPrice ? new BigNumber(token?.usdPrice).toFixed()  : 'n/a';
     const tokenVolume = token?.usdVolume ? new BigNumber(token?.usdVolume).toFixed()  : 'n/a';
-    const marketCap = token?.usdPrice ? new BigNumber(token?.usdPrice*totalSupply).toFixed()  : 'n/a';
+    const marketCap = token?.usdPrice ? new BigNumber(token?.usdPrice).multipliedBy(totalSupply).toFixed()  : 'n/a';
 
     //const linkTokenExplorer = `${EXPLORER_URL}/token/${token?.address}`;
     //const linkToOwnerExplorer = `${EXPLORER_URL}/address/${token?.owner}`;
