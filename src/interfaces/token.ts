@@ -14,6 +14,8 @@ export interface IToken {
   symbol: string;
   name: string;
   price: number;
+  usdPrice: number;
+  usdVolume: number;
   percent: number;
   volume: number;
   thumbnail?: string;
