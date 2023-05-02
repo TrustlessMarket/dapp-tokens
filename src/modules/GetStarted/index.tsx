@@ -42,7 +42,7 @@ const GetStarted = () => {
     <StyledTokens>
       <div className="background"></div>
       <div>
-        <h3 className="upload_title">Trustless Market User Guide</h3>
+        <h3 className="upload_title">Let’s get you ready for Bitcoin DeFi.</h3>
       </div>
       <UploadFileContainer>
         <div className="upload_left">
