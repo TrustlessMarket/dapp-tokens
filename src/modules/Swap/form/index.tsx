@@ -788,7 +788,7 @@ const TradingForm = () => {
       const data = {
         addresses: [baseToken.address, quoteToken.address],
         address: user?.walletAddress,
-        amount: baseAmount,
+        amount: new BigNumber(baseAmount).decimalPlaces(baseToken?.decimals || 18).toString(),
         amountOutMin: amountOutMin,
       };
 
