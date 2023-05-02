@@ -180,7 +180,7 @@ const WalletHeader = () => {
           >
             <div
               className="wallet"
-              onClick={() => window.open(TC_WEB_URL)}
+              // onClick={() => window.open(TC_WEB_URL)}
               ref={ref}
               onMouseEnter={handleOnMouseEnter}
               onMouseLeave={handleOnMouseLeave}
