@@ -1,7 +1,7 @@
 import Button from '@/components/Button';
 import Table from '@/components/Table';
 import Text from '@/components/Text';
-import {getTokenRp, getTokens} from '@/services/token-explorer';
+import {getTokenRp} from '@/services/token-explorer';
 import {formatCurrency, shortenAddress} from '@/utils';
 import {decimalToExponential} from '@/utils/format';
 import {debounce} from 'lodash';
@@ -24,11 +24,11 @@ import {useRouter} from "next/router";
 import {DEFAULT_BASE_TOKEN} from "@/modules/Swap/form";
 //const EXPLORER_URL = TRUSTLESS_COMPUTER_CHAIN_INFO.explorers[0].url;
 
-const LIMIT_PAGE = 200;
-const ALL_ONE_PAGE = 10000;
+const LIMIT_PAGE = 500;
+//const ALL_ONE_PAGE = 10000;
 
 const Tokens = () => {
-  const TABLE_HEADINGS = ['Token #','Name','Symbol', 'Price','Market Cap(BTC)','24h %', 'Supply', 'Creator'];
+  const TABLE_HEADINGS = ['Token #','Name','Symbol', 'Price(USD)','Market Cap(USD)','24h %', 'Supply', 'Creator'];
   /*'Price','24h %','Market Cap'*/
 
   const router = useRouter();
@@ -58,8 +58,10 @@ const Tokens = () => {
   const fetchTokens = async (page = 1, isFetchMore = false) => {
     try {
       setIsFetching(true);
-      const res = await getTokens({ limit: LIMIT_PAGE, page: page });
-      const res1 = await getTokenRp({ limit: ALL_ONE_PAGE, page: 1 });;
+      const res = await getTokenRp({ limit: LIMIT_PAGE, page: page });
+      console.log(res.length);
+      console.log("tuanhm1");
+     /* const res1 = await getTokenRp({ limit: ALL_ONE_PAGE, page: 1 });;
 
       for(let i = 0;i<res.length;i++)
       {
@@ -75,6 +77,12 @@ const Tokens = () => {
             }
             if( res1[j].percent!=0) {
               res[i].percent = res1[j].percent;
+            }
+            if( res1[j].usd_price!=0) {
+              res[i].usd_price = res1[j].usd_price;
+            }
+            if( res1[j].usd_volume!=0) {
+              res[i].usd_volume = res1[j].usd_volume;
             }
 
             break;
@@ -102,7 +110,7 @@ const Tokens = () => {
             res[j] = temp;
           }
         }}
-
+      */
 
       if (isFetchMore) {
         setTokensList((prev) => [...prev, ...res]);
@@ -140,7 +148,8 @@ const Tokens = () => {
 
   const tokenDatas = tokensList.map((token) => {
     const totalSupply = new BigNumber(token?.totalSupply).div(decimalToExponential(token.decimal));
-    const tokenPrice = token?.price ? new BigNumber(token?.price).toFixed()  : 'n/a';
+    const tokenPrice = token?.usdPrice ? new BigNumber(token?.usdPrice).toFixed()  : 'n/a';
+    const tokenVolume = token?.usdVolume ? new BigNumber(token?.usdVolume).toFixed()  : 'n/a';
 
     //const linkTokenExplorer = `${EXPLORER_URL}/token/${token?.address}`;
     //const linkToOwnerExplorer = `${EXPLORER_URL}/address/${token?.owner}`;
@@ -152,7 +161,7 @@ const Tokens = () => {
         name: token?.name || '-',
         symbol: token?.symbol || '-',
         price: formatCurrency(tokenPrice, 10),
-        volume: token?.volume || 'n/a',
+        usdVolume: formatCurrency(tokenVolume, 2),
         percent: token?.percent || 'n/a',
         supply: formatCurrency(totalSupply.toString()),
         creator: shortenAddress(token?.owner, 4) || '-',

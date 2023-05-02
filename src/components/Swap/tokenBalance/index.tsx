@@ -3,6 +3,9 @@ import { IToken } from '@/interfaces/token';
 import { formatCurrency } from '@/utils';
 import { Skeleton, Text } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
+import {useWeb3React} from "@web3-react/core";
+import {useAppSelector} from "@/state/hooks";
+import {selectPnftExchange} from "@/state/pnftExchange";
 
 export interface ItemBalanceProps {
   token?: IToken | undefined;
@@ -14,12 +17,14 @@ const TokenBalance = (props: ItemBalanceProps) => {
   const [loading, setLoading] = useState(false);
   const [balance, setBalance] = useState('0');
   const { call: tokenBalance } = useBalanceERC20Token();
+  const { account } = useWeb3React();
+  const needReload = useAppSelector(selectPnftExchange).needReload;
 
   useEffect(() => {
-    if (token?.address) {
+    if (token?.address && account) {
       fetchBalance();
     }
-  }, [token?.address]);
+  }, [token?.address, account, needReload]);
 
   const fetchBalance = async () => {
     try {

@@ -234,6 +234,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     try {
       const response = await isApproved({
         erc20TokenAddress: token.address,
+        address: UNIV2_ROUTER_ADDRESS,
       });
       return response;
     } catch (error) {

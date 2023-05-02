@@ -61,6 +61,7 @@ import styles from './styles.module.scss';
 import TokenBalance from '@/components/Swap/tokenBalance';
 import { useRouter } from 'next/router';
 import { toastError } from '@/constants/error';
+import {useWeb3React} from "@web3-react/core";
 
 const LIMIT_PAGE = 50;
 const FEE = 3;
@@ -95,7 +96,11 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const [isChangeQuoteToken, setIsChangeQuoteToken] = useState(false);
   const router = useRouter();
 
+  const { account } = useWeb3React();
+  const needReload = useAppSelector(selectPnftExchange).needReload;
+
   // console.log('isSwitching', isSwitching);
+  // console.log('isApproveBaseToken', isApproveBaseToken);
   // console.log('baseBalance', baseBalance);
   // console.log('quoteBalance', quoteBalance);
   // console.log('baseToken', baseToken);
@@ -103,6 +108,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   // console.log('baseReserve', baseReserve);
   // console.log('quoteReserve', quoteReserve);
   // console.log('quoteTokensList', quoteTokensList);
+  // console.log('pairAddress', pairAddress);
   // console.log('======');
 
   const { values } = useFormState();
@@ -148,15 +154,16 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   }, []);
 
   useEffect(() => {
-    if (baseToken?.address && quoteToken?.address) {
+    if (account && baseToken?.address && quoteToken?.address) {
       getPairAddress();
     } else {
       setPairAddress(NULL_ADDRESS);
     }
-  }, [baseToken?.address, quoteToken?.address]);
+  }, [account, baseToken?.address, quoteToken?.address]);
 
   useEffect(() => {
     if (
+      account &&
       pairAddress &&
       baseToken &&
       quoteToken &&
@@ -164,7 +171,33 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     ) {
       getReservesInfo();
     }
-  }, [pairAddress]);
+  }, [account, pairAddress, needReload]);
+
+  useEffect(() => {
+    if(account && baseToken?.address) {
+      checkApproveBaseToken(baseToken);
+    }
+  }, [account, baseToken?.address]);
+
+  useEffect(() => {
+    if(account && quoteToken?.address) {
+      checkApproveQuoteToken(quoteToken);
+    }
+  }, [account, quoteToken?.address]);
+
+  const checkApproveBaseToken = async (token: any) => {
+    const [_isApprove] = await Promise.all([
+      checkTokenApprove(token),
+    ]);
+    setIsApproveBaseToken(_isApprove);
+  }
+
+  const checkApproveQuoteToken = async (token: any) => {
+    const [_isApprove] = await Promise.all([
+      checkTokenApprove(token),
+    ]);
+    setIsApproveQuoteToken(_isApprove);
+  }
 
   const fetchTokens = async (page = 1, isFetchMore = false) => {
     try {
@@ -322,11 +355,9 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     setBaseToken(token);
     change('baseToken', token);
     try {
-      const [_isApprove, _fromTokens] = await Promise.all([
-        checkTokenApprove(token),
+      const [_fromTokens] = await Promise.all([
         fetchFromTokens(token?.address),
       ]);
-      setIsApproveBaseToken(_isApprove);
       if (_fromTokens) {
         setQuoteTokensList(camelCaseKeys(_fromTokens));
         if (quoteToken) {
@@ -369,12 +400,6 @@ export const MakeFormSwap = forwardRef((props, ref) => {
 
     setQuoteToken(token);
     change('quoteToken', token);
-    try {
-      const [_isApprove] = await Promise.all([checkTokenApprove(token)]);
-      setIsApproveQuoteToken(_isApprove);
-    } catch (error) {
-      throw error;
-    }
   };
 
   const onChangeTransferType = async () => {
@@ -758,17 +783,17 @@ const TradingForm = () => {
         }),
       );
 
-      const amountOutMin = new BigNumber(quoteAmount)
-        .multipliedBy(100 - slippage)
-        .dividedBy(100)
-        .decimalPlaces(18)
-        .toString();
+      // const amountOutMin = new BigNumber(quoteAmount)
+      //   .multipliedBy(100 - slippage)
+      //   .dividedBy(100)
+      //   .decimalPlaces(18)
+      //   .toString();
 
       const data = {
         addresses: [baseToken.address, quoteToken.address],
         address: user?.walletAddress,
         amount: baseAmount,
-        amountOutMin: amountOutMin,
+        amountOutMin: "0",
       };
 
       const response = await swapToken(data);
