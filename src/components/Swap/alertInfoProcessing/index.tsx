@@ -56,23 +56,23 @@ const AlertInfoProcess: React.FC<AlertInfoProcessProps> = ({
   const dispatch = useDispatch();
   const [count, setCount] = useState(1);
 
-  useInterval(
-    () => {
-      setCount((c) => c + 1);
-    },
-    // Delay in milliseconds or null to stop it
-    loading &&
-      Boolean(processInfo) &&
-      compareString(currentTransaction?.status, TransactionStatus.pending)
-      ? 1000
-      : null,
-  );
+  // useInterval(
+  //   () => {
+  //     setCount((c) => c + 1);
+  //   },
+  //   // Delay in milliseconds or null to stop it
+  //   loading &&
+  //     Boolean(processInfo) &&
+  //     compareString(currentTransaction?.status, TransactionStatus.pending)
+  //     ? 1000
+  //     : null,
+  // );
 
-  useEffect(() => {
-    if (!loading) {
-      setCount(1);
-    }
-  }, [loading]);
+  // useEffect(() => {
+  //   if (!loading) {
+  //     setCount(1);
+  //   }
+  // }, [loading]);
 
   // useEffect(() => {
   //   getTransactionInfo();
@@ -150,7 +150,7 @@ const AlertInfoProcess: React.FC<AlertInfoProcessProps> = ({
             {shortCryptoAddress(currentTransaction.hash, 30)}
           </AlertDescription>
         )}
-        {count >= MAXIMUM_TIME_REQUEST &&
+        {/* {count >= MAXIMUM_TIME_REQUEST &&
           loading &&
           currentTransaction &&
           compareString(currentTransaction.status, TransactionStatus.pending) &&
@@ -158,7 +158,7 @@ const AlertInfoProcess: React.FC<AlertInfoProcessProps> = ({
             <StyledWarningNote>
               {`Transaction taking too long, please open "Metamask" and click "Speed up".`}
             </StyledWarningNote>
-          )}
+          )} */}
       </Flex>
       {currentTransaction &&
         [TransactionStatus.error, TransactionStatus.success].includes(
