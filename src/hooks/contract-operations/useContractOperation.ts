@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { SupportedChainId } from '@/constants/chains';
 import { ROUTE_PATH } from '@/constants/route-path';
 import { AssetsContext } from '@/contexts/assets-context';
@@ -87,7 +88,7 @@ const useContractOperation = <P, R>(
       console.log('unInscribedTxIDs', unInscribedTxIDs);
 
       console.time('____metamaskCreateTxTime');
-      const tx: R = await call({
+      const tx: any = await call({
         ...params,
       });
       console.timeEnd('____metamaskCreateTxTime');
@@ -123,6 +124,8 @@ const useContractOperation = <P, R>(
         target: '_blank',
         isMainnet: isProduction(),
       });
+
+      await tx.wait();
 
       return tx;
     } catch (err) {

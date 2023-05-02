@@ -255,7 +255,7 @@ const LiquidityContainer = () => {
 
   useEffect(() => {
     fetchLiquid();
-  }, []);
+  }, [JSON.stringify(router.query)]);
 
   const fetchLiquid = async () => {
     try {

@@ -10,14 +10,13 @@ import { scanTrx } from '@/services/token-explorer';
 import store from '@/state';
 import { updateCurrentTransaction } from '@/state/pnftExchange';
 import { compareString, getContract } from '@/utils';
-import { isProduction } from '@/utils/commons';
 import { formatBTCPrice, formatEthPriceSubmit } from '@/utils/format';
 import { useWeb3React } from '@web3-react/core';
 import BigNumber from 'bignumber.js';
 import { useCallback, useContext } from 'react';
 import * as TC_SDK from 'trustless-computer-sdk';
 
-export interface IGetReservesParams {
+export interface IAddLiquidityParams {
   tokenA: string;
   amountADesired: string;
   amountAMin: string;
@@ -29,12 +28,12 @@ export interface IGetReservesParams {
   //   to: string;
 }
 
-const useAddLiquidity: ContractOperationHook<IGetReservesParams, boolean> = () => {
+const useAddLiquidity: ContractOperationHook<IAddLiquidityParams, boolean> = () => {
   const { account, provider } = useWeb3React();
   const { btcBalance, feeRate } = useContext(AssetsContext);
 
   const call = useCallback(
-    async (params: IGetReservesParams): Promise<boolean> => {
+    async (params: IAddLiquidityParams): Promise<boolean> => {
       const {
         tokenA,
         tokenB,
@@ -85,14 +84,14 @@ const useAddLiquidity: ContractOperationHook<IGetReservesParams, boolean> = () =
             MaxUint256,
           );
 
-        TC_SDK.signTransaction({
-          method: `${DAppType.ERC20} - ${TransactionEventType.CREATE}`,
-          hash: transaction.hash,
-          dappURL: window.location.origin,
-          isRedirect: true,
-          target: '_blank',
-          isMainnet: isProduction(),
-        });
+        // TC_SDK.signTransaction({
+        //   method: `${DAppType.ERC20} - ${TransactionEventType.CREATE}`,
+        //   hash: transaction.hash,
+        //   dappURL: window.location.origin,
+        //   isRedirect: true,
+        //   target: '_blank',
+        //   isMainnet: isProduction(),
+        // });
 
         store.dispatch(
           updateCurrentTransaction({
@@ -100,12 +99,12 @@ const useAddLiquidity: ContractOperationHook<IGetReservesParams, boolean> = () =
             id: transactionType.createPool,
             hash: transaction.hash,
             infoTexts: {
-              pending: `Adding pool...`,
+              pending: `Transaction confirmed. Please wait for it to be processed on the Bitcoin. Note that it may take up to 10 minutes for a block confirmation on the Bitcoin blockchain.`,
             },
           }),
         );
 
-        await transaction.wait();
+        // await transaction.wait();
 
         if (compareString(APP_ENV, 'production')) {
           await scanTrx({
