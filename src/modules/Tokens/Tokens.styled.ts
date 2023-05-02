@@ -41,6 +41,7 @@ export const StyledTokens = styled.div`
     }
     
     .tableData {
+      border-bottom: 1px solid rgb(34,37,49);
       &_item {
         color: #FFFFFF;
         
@@ -51,6 +52,10 @@ export const StyledTokens = styled.div`
         .descrease {
           color: #ea3943;
         }
+      }
+      
+      &:hover {
+        background-color: rgb(23,25,36);
       }
     }
   }

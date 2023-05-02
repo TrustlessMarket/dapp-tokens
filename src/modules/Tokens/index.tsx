@@ -22,7 +22,9 @@ import Link from 'next/link';
 import {ROUTE_PATH} from "@/constants/route-path";
 import {useRouter} from "next/router";
 import {DEFAULT_BASE_TOKEN} from "@/modules/Swap/form";
+import {Flex} from "@chakra-ui/react";
 //const EXPLORER_URL = TRUSTLESS_COMPUTER_CHAIN_INFO.explorers[0].url;
+import {AiOutlineCaretDown, AiOutlineCaretUp} from "react-icons/ai";
 
 const LIMIT_PAGE = 500;
 //const ALL_ONE_PAGE = 10000;
@@ -160,9 +162,13 @@ const Tokens = () => {
         number: token?.index,
         name: `${token?.name || '-'} (${token?.symbol || '-'})`,
         price: `$${formatCurrency(tokenPrice, 10)}`,
-        percent: <span className={Number(token?.percent) > 0 ? 'increase' : Number(token?.percent) < 0 ? 'descrease' : ''}>{token?.percent}%</span> || 'n/a',
+        percent: <Flex alignItems={"center"} className={Number(token?.percent) > 0 ? 'increase' : Number(token?.percent) < 0 ? 'descrease' : ''}>
+                    {Number(token?.percent) > 0 && <AiOutlineCaretUp color={"#16c784"}/>}
+                    {Number(token?.percent) < 0 && <AiOutlineCaretDown color={"#ea3943"}/>}
+                    {formatCurrency(token?.percent, 2)}%
+                  </Flex> || 'n/a',
         usdVol: `$${formatCurrency(marketCap, 2)}`,
-        usdVolume: <span className={Number(tokenVolume) > 0 ? 'increase' : ''}>{formatCurrency(tokenVolume, 2)}</span>,
+        usdVolume: <span className={Number(tokenVolume) > 0 ? 'increase' : ''}>${formatCurrency(tokenVolume, 2)}</span>,
         supply: formatCurrency(totalSupply.toString()),
       },
       config: {
