@@ -1,22 +1,21 @@
-import { ContractOperationHook, DAppType } from '@/interfaces/contract-operation';
 import UniswapV2RouterJson from '@/abis/UniswapV2Router.json';
-import { useWeb3React } from '@web3-react/core';
-import { useCallback, useContext } from 'react';
-import { AssetsContext } from '@/contexts/assets-context';
-import { compareString, getContract } from '@/utils';
+import { transactionType } from '@/components/Swap/alertInfoProcessing/types';
 import { APP_ENV, TRANSFER_TX_SIZE, UNIV2_ROUTER_ADDRESS } from '@/configs';
-import Web3 from 'web3';
-import { TransactionEventType } from '@/enums/transaction';
 import { MaxUint256 } from '@/constants/url';
-import BigNumber from 'bignumber.js';
-import { formatBTCPrice } from '@/utils/format';
-import * as TC_SDK from 'trustless-computer-sdk';
+import { AssetsContext } from '@/contexts/assets-context';
+import { TransactionEventType } from '@/enums/transaction';
+import { ContractOperationHook, DAppType } from '@/interfaces/contract-operation';
+import { TransactionStatus } from '@/interfaces/walletTransaction';
 import { scanTrx } from '@/services/token-explorer';
 import store from '@/state';
 import { updateCurrentTransaction } from '@/state/pnftExchange';
-import { TransactionStatus } from '@/interfaces/walletTransaction';
-import { transactionType } from '@/components/Swap/alertInfoProcessing/types';
-import { isProduction } from '@/utils/commons';
+import { compareString, getContract } from '@/utils';
+import { formatBTCPrice } from '@/utils/format';
+import { useWeb3React } from '@web3-react/core';
+import BigNumber from 'bignumber.js';
+import { useCallback, useContext } from 'react';
+import * as TC_SDK from 'trustless-computer-sdk';
+import Web3 from 'web3';
 
 export interface ISwapERC20TokenParams {
   addresses: string[];
@@ -52,6 +51,8 @@ const useSwapERC20Token: ContractOperationHook<
             tcTxSizeByte: TRANSFER_TX_SIZE,
             feeRatePerByte: feeRate.fastestFee,
           });
+          console.log('estimatedFee', estimatedFee);
+
           const balanceInBN = new BigNumber(btcBalance);
           if (balanceInBN.isLessThan(estimatedFee.totalFee)) {
             throw Error(
@@ -72,14 +73,14 @@ const useSwapERC20Token: ContractOperationHook<
             MaxUint256,
           );
 
-        TC_SDK.signTransaction({
-          method: `${DAppType.ERC20} - ${TransactionEventType.CREATE}`,
-          hash: transaction.hash,
-          dappURL: window.location.origin,
-          isRedirect: true,
-          target: '_blank',
-          isMainnet: isProduction(),
-        });
+        // TC_SDK.signTransaction({
+        //   method: `${DAppType.ERC20} - ${TransactionEventType.CREATE}`,
+        //   hash: transaction.hash,
+        //   dappURL: window.location.origin,
+        //   isRedirect: true,
+        //   target: '_blank',
+        //   isMainnet: isProduction(),
+        // });
 
         store.dispatch(
           updateCurrentTransaction({
@@ -92,7 +93,7 @@ const useSwapERC20Token: ContractOperationHook<
           }),
         );
 
-        await transaction.wait();
+        // await transaction.wait();
 
         await scanTrx({
           tx_hash: transaction.hash,

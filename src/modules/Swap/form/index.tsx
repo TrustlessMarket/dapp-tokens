@@ -61,7 +61,7 @@ import styles from './styles.module.scss';
 import TokenBalance from '@/components/Swap/tokenBalance';
 import { useRouter } from 'next/router';
 import { toastError } from '@/constants/error';
-import {useWeb3React} from "@web3-react/core";
+import { useWeb3React } from '@web3-react/core';
 
 const LIMIT_PAGE = 50;
 const FEE = 3;
@@ -174,30 +174,26 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   }, [account, pairAddress, needReload]);
 
   useEffect(() => {
-    if(account && baseToken?.address) {
+    if (account && baseToken?.address) {
       checkApproveBaseToken(baseToken);
     }
   }, [account, baseToken?.address]);
 
   useEffect(() => {
-    if(account && quoteToken?.address) {
+    if (account && quoteToken?.address) {
       checkApproveQuoteToken(quoteToken);
     }
   }, [account, quoteToken?.address]);
 
   const checkApproveBaseToken = async (token: any) => {
-    const [_isApprove] = await Promise.all([
-      checkTokenApprove(token),
-    ]);
+    const [_isApprove] = await Promise.all([checkTokenApprove(token)]);
     setIsApproveBaseToken(_isApprove);
-  }
+  };
 
   const checkApproveQuoteToken = async (token: any) => {
-    const [_isApprove] = await Promise.all([
-      checkTokenApprove(token),
-    ]);
+    const [_isApprove] = await Promise.all([checkTokenApprove(token)]);
     setIsApproveQuoteToken(_isApprove);
-  }
+  };
 
   const fetchTokens = async (page = 1, isFetchMore = false) => {
     try {
@@ -355,9 +351,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     setBaseToken(token);
     change('baseToken', token);
     try {
-      const [_fromTokens] = await Promise.all([
-        fetchFromTokens(token?.address),
-      ]);
+      const [_fromTokens] = await Promise.all([fetchFromTokens(token?.address)]);
       if (_fromTokens) {
         setQuoteTokensList(camelCaseKeys(_fromTokens));
         if (quoteToken) {
@@ -793,7 +787,7 @@ const TradingForm = () => {
         addresses: [baseToken.address, quoteToken.address],
         address: user?.walletAddress,
         amount: baseAmount,
-        amountOutMin: "0",
+        amountOutMin: '0',
       };
 
       const response = await swapToken(data);
@@ -803,10 +797,11 @@ const TradingForm = () => {
       dispatch(requestReload());
       dispatch(requestReloadRealtime());
     } catch (err) {
-      showError({
-        message:
-          (err as Error).message || 'Something went wrong. Please try again later.',
-      });
+      toastError(showError, err, {});
+      // showError({
+      //   message:
+      //     (err as Error).message || 'Something went wrong. Please try again later.',
+      // });
     } finally {
       setSubmitting(false);
       dispatch(updateCurrentTransaction(null));

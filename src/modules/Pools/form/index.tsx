@@ -12,10 +12,14 @@ import pairsMock from '@/dataMock/tokens.json';
 import { transactionType } from '@/components/Swap/alertInfoProcessing/types';
 import { ROUTE_PATH } from '@/constants/route-path';
 import { LIQUID_PAIRS } from '@/constants/storage-key';
-import useAddLiquidity from '@/hooks/contract-operations/pools/useAddLiquidity';
+import useAddLiquidity, {
+  IAddLiquidityParams,
+} from '@/hooks/contract-operations/pools/useAddLiquidity';
 import useGetPair from '@/hooks/contract-operations/swap/useGetPair';
 import useGetReserves from '@/hooks/contract-operations/swap/useReserves';
-import useApproveERC20Token from '@/hooks/contract-operations/token/useApproveERC20Token';
+import useApproveERC20Token, {
+  IApproveERC20TokenParams,
+} from '@/hooks/contract-operations/token/useApproveERC20Token';
 import useBalanceERC20Token from '@/hooks/contract-operations/token/useBalanceERC20Token';
 import useIsApproveERC20Token from '@/hooks/contract-operations/token/useIsApproveERC20Token';
 import useSupplyERC20Liquid from '@/hooks/contract-operations/token/useSupplyERC20Liquid';
@@ -75,6 +79,7 @@ import {
 import { AssetsContext } from '@/contexts/assets-context';
 import { getIsAuthenticatedSelector } from '@/state/user/selector';
 import { isDevelop } from '@/utils/commons';
+import useContractOperation from '@/hooks/contract-operations/useContractOperation';
 
 const LIMIT_PAGE = 50;
 
@@ -88,7 +93,13 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const [tokensList, setTokensList] = useState<IToken[]>([]);
   const { call: isApproved } = useIsApproveERC20Token();
   const { call: tokenBalance } = useBalanceERC20Token();
-  const { call: approveToken } = useApproveERC20Token();
+  // const { call: approveToken } = useApproveERC20Token();
+  const { run: approveToken } = useContractOperation<
+    IApproveERC20TokenParams,
+    boolean
+  >({
+    operation: useApproveERC20Token,
+  });
   const { call: getPair } = useGetPair();
   const { call: getReserves } = useGetReserves();
   const { call: getSupply } = useSupplyERC20Liquid();
@@ -668,7 +679,13 @@ const CreateMarket = ({
   const refForm = useRef<any>();
   const [submitting, setSubmitting] = useState(false);
   const dispatch = useAppDispatch();
-  const { call: addLiquidity } = useAddLiquidity();
+
+  // const {run} = useContractOperation()
+  const { run: addLiquidity } = useContractOperation<IAddLiquidityParams, boolean>({
+    operation: useAddLiquidity,
+  });
+
+  // const { call: addLiquidity } = useAddLiquidity();
 
   const { call: getPair } = useGetPair();
   const { call: getReserves } = useGetReserves();

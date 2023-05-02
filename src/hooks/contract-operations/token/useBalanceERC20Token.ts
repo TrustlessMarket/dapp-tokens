@@ -7,19 +7,19 @@ import { formatEthPrice } from '@/utils/format';
 import { useWeb3React } from '@web3-react/core';
 import { useCallback, useContext } from 'react';
 
-export interface IApproveERC20TokenParams {
+export interface IBalanceERC20TokenParams {
   erc20TokenAddress: string;
 }
 
 const useBalanceERC20Token: ContractOperationHook<
-  IApproveERC20TokenParams,
+  IBalanceERC20TokenParams,
   string
 > = () => {
   const { account, provider } = useWeb3React();
   const { btcBalance, feeRate } = useContext(AssetsContext);
 
   const call = useCallback(
-    async (params: IApproveERC20TokenParams): Promise<string> => {
+    async (params: IBalanceERC20TokenParams): Promise<string> => {
       const { erc20TokenAddress } = params;
       if (account && provider && erc20TokenAddress) {
         const contract = getContract(erc20TokenAddress, ERC20ABIJson.abi, provider);
