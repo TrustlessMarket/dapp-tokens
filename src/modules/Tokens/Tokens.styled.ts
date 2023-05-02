@@ -78,6 +78,14 @@ export const StyledTokens = styled.div`
     font-size: ${px2rem(48)};
     line-height: 48 / 44;
   }
+  
+  @media screen and (max-width: 768px) {
+    margin-top: ${px2rem(24)};
+
+    .upload_title {
+      margin-bottom: ${px2rem(16)};
+    }
+  }
 `;
 
 export const UploadFileContainer = styled.div`
@@ -104,8 +112,10 @@ export const UploadFileContainer = styled.div`
   }
 
   .upload_right {
+    display: flex;
     position: relative;
     overflow: hidden;
+    gap: ${px2rem(32)};
   }
 
   .button-text {
@@ -114,7 +124,7 @@ export const UploadFileContainer = styled.div`
 
   }
   .button-create-box{
-    margin-right: 30px;
+    //margin-right: 30px;
   }
   .brc20-text {
     font-family: var(--font-heading) !important;
@@ -136,11 +146,24 @@ export const UploadFileContainer = styled.div`
     text-align: center;
   }
   .comming-soon-btn{
-    margin-left: 10px;
+    //margin-left: 10px;
     vertical-align:top;
   }
   .upload_text{
     font-size: 1.5rem;
   }
 
+  @media screen and (max-width: 768px) {
+    padding: ${px2rem(24)} ${px2rem(0)};
+    .upload_text{
+      font-size: 1rem;
+    }
+
+    .upload_right {
+      display: flex;
+      flex-direction: column;
+      gap: ${px2rem(16)};
+      align-items: center;
+    }
+  }
 `;
