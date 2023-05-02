@@ -12,4 +12,5 @@ export const ROUTE_PATH = {
   ADD_POOL: '/add-pool',
   SWAP: '/swap',
   MARKETS: '/markets',
+  HOW_TO_BUY: '/how-to-buy',
 };

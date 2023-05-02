@@ -76,6 +76,14 @@ const Header = ({ height }: { height: number }) => {
             >
               Pools
             </Link>
+            <Link
+              href={ROUTE_PATH.HOW_TO_BUY}
+              className={
+                router?.pathname?.includes(ROUTE_PATH.HOW_TO_BUY) ? 'isSelected' : ''
+              }
+            >
+              How to Buy
+            </Link>
           </div>
         </div>
       </div>

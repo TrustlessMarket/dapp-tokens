@@ -20,12 +20,14 @@ import { formatLongAddress } from '@/utils';
 import { showError } from '@/utils/toast';
 import { TRUSTLESS_BRIDGE, TRUSTLESS_FAUCET } from '@/constants/common';
 import SelectedNetwork from '@/components/Swap/selectNetwork';
+import { useColorMode } from '@chakra-ui/react';
 
 const WalletHeader = () => {
   // const router = useRouter();
   const { account } = useWeb3React();
   const user = useSelector(getUserSelector);
   const { onDisconnect, onConnect, requestBtcAddress } = useContext(WalletContext);
+  const { colorMode } = useColorMode();
 
   const isAuthenticated = useSelector(getIsAuthenticatedSelector);
   const { btcBalance, juiceBalance } = useContext(AssetsContext);
@@ -72,6 +74,7 @@ const WalletHeader = () => {
       onMouseEnter={handleOnMouseEnter}
       onMouseLeave={handleOnMouseLeave}
       show={show}
+      className={colorMode}
     >
       <div className="wallet-tc">
         <div className="wallet-item">
@@ -169,13 +172,13 @@ const WalletHeader = () => {
             show={show}
           >
             <div
-              className="wallet"
+              className={`wallet`}
               onClick={() => window.open(TC_WEB_URL)}
               ref={ref}
               onMouseEnter={handleOnMouseEnter}
               onMouseLeave={handleOnMouseLeave}
             >
-              <WalletBalance>
+              <WalletBalance className={colorMode}>
                 <div className="balance">
                   <p>{formatBTCPrice(btcBalance)} BTC</p>
                   <span className="divider"></span>

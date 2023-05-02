@@ -29,7 +29,7 @@ const Wrapper = styled.div`
     left: 50%;
     transform: translateX(-47%);
   }
-  
+
   .leftWrapper {
     display: flex;
     flex-direction: row;
@@ -55,11 +55,11 @@ const Wrapper = styled.div`
       text-transform: uppercase;
       font-size: ${px2rem(16)};
       font-weight: 500;
-      
+
       a:hover {
         text-decoration: none;
       }
-      
+
       .isSelected {
         border-bottom: 2px solid #3385ff;
       }
@@ -174,6 +174,14 @@ const WalletBalance = styled.div`
 
   &:hover {
     border-color: ${({ theme }: { theme: DefaultTheme }) => theme.primary['d9']};
+  }
+
+  &.dark {
+    .balance {
+      p {
+        color: white;
+      }
+    }
   }
 
   .balance {

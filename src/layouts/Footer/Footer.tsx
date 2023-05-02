@@ -1,4 +1,6 @@
+import { colors } from '@/theme/colors';
 import px2rem from '@/utils/px2rem';
+import { useColorMode } from '@chakra-ui/react';
 import styled, { DefaultTheme } from 'styled-components';
 // import IcDiscord from '@/assets/icons/ic_discord.svg';
 // import IcTwitter from '@/assets/icons/ic_twitter.svg';
@@ -86,9 +88,15 @@ const Wrapper = styled.div`
 `;
 
 const Footer = ({ height }: { height: number }) => {
+  const { colorMode } = useColorMode();
   return (
     <Wrapper style={{ height }}>
-      <p className="text">Open-source software. Made with ❤️ on Bitcoin.</p>
+      <p
+        className="text"
+        style={{ color: colorMode === 'dark' ? colors.white : colors.black }}
+      >
+        Open-source software. Made with ❤️ on Bitcoin.
+      </p>
       {/* <div className="footer-right">
         <StyledLink active={false} href={ROUTE_PATH.FAUCET}>
           Faucet

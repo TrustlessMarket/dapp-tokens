@@ -1,8 +1,11 @@
+/* eslint-disable @typescript-eslint/no-empty-interface */
+import { colors } from '@/theme/colors';
+import px2rem from '@/utils/px2rem';
+import { useColorMode } from '@chakra-ui/react';
 import React, { PropsWithChildren } from 'react';
+import styled from 'styled-components';
 import Footer from './Footer';
 import Header from './Header';
-import styled from 'styled-components';
-import px2rem from '@/utils/px2rem';
 
 const HEADER_HEIGHT = 80;
 const FO0TER_HEIGHT = 80;
@@ -35,9 +38,15 @@ const ContentWrapper = styled.div`
   }
 `;
 
-const Layout: React.FC<PropsWithChildren> = ({ children }) => {
+interface LayoutProps extends PropsWithChildren {}
+
+const Layout: React.FC<LayoutProps> = ({ children }) => {
+  const { colorMode } = useColorMode();
+
+  const bgColor = colorMode === 'dark' ? colors.dark : colors.white;
+
   return (
-    <Container>
+    <Container style={{ backgroundColor: bgColor }}>
       <div className="container">
         <Header height={HEADER_HEIGHT} />
         <ContentWrapper>{children}</ContentWrapper>
@@ -46,5 +55,7 @@ const Layout: React.FC<PropsWithChildren> = ({ children }) => {
     </Container>
   );
 };
+
+Layout.defaultProps = {};
 
 export default Layout;

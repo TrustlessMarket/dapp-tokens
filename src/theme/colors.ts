@@ -1,6 +1,7 @@
 export const colors = {
   white: '#FFFFFF',
   black: '#000000',
+  dark: '#393646',
 };
 
 export type ColorsTheme = typeof darkTheme;
