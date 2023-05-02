@@ -191,7 +191,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     setIsApproveBaseToken(_isApprove);
   }
 
-  const checkApproveQuoteToken = async (token) => {
+  const checkApproveQuoteToken = async (token: any) => {
     const [_isApprove] = await Promise.all([
       checkTokenApprove(token),
     ]);
