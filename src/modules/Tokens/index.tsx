@@ -188,7 +188,7 @@ const Tokens = () => {
             <div className="upload_content">
               {/* <h3 className="upload_title">BRC-20 on Bitcoin</h3> */}
               <Text className="upload_text"  color="text1">
-                Smart BRC-20s are the first tokens deployed on Bitcoin as smart contracts. They are cryptographically secure, decentralized, and tamper-proof. They run exactly as programmed without any possibility of fraud, third-party interference, or censorship. As smart contracts, they can also be composed into decentralization applications on Bitcoin so you can use them in DEX, DAO, auctions, lending, and marketplaces.
+                Smart BRC-20s are <span style={{color: '#3385FF'}}>the first smart contracts deployed on Bitcoin</span>. They run exactly as programmed without any possibility of fraud, third-party interference, or censorship. Issue your Smart BRC-20 on Bitcoin for virtually anything: a cryptocurrency, a share in a company, voting rights in a DAO, and more.
               </Text>
             </div>
           </div>
@@ -200,7 +200,7 @@ const Tokens = () => {
                   className="button-text"
                   fontWeight="medium"
               >
-                Create Smart BRC-20
+                Issue Smart BRC-20
               </Text>
             </Button>
             <Link href={ROUTE_PATH.SWAP} >
