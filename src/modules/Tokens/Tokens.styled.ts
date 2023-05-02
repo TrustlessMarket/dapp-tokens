@@ -1,5 +1,5 @@
 import px2rem from '@/utils/px2rem';
-import styled, { DefaultTheme } from 'styled-components';
+import styled from 'styled-components';
 
 export const StyledTokens = styled.div`
   margin-top: ${px2rem(48)};
