@@ -1,34 +1,44 @@
 import IconSVG from '@/components/IconSVG';
-import { CDN_URL, TC_WEB_URL } from '@/configs';
+import {CDN_URL, TC_WEB_URL} from '@/configs';
 // import { ROUTE_PATH } from '@/constants/route-path';
-import { AssetsContext } from '@/contexts/assets-context';
-import { getIsAuthenticatedSelector, getUserSelector } from '@/state/user/selector';
-import { formatBTCPrice, formatEthPrice } from '@/utils/format';
-import { useWeb3React } from '@web3-react/core';
+import {AssetsContext} from '@/contexts/assets-context';
+import {getIsAuthenticatedSelector, getUserSelector} from '@/state/user/selector';
+import {formatBTCPrice, formatEthPrice} from '@/utils/format';
+import {useWeb3React} from '@web3-react/core';
 import copy from 'copy-to-clipboard';
 // import { useRouter } from 'next/router';
-import { useContext, useRef, useState } from 'react';
-import { OverlayTrigger } from 'react-bootstrap';
-import { toast } from 'react-hot-toast';
-import Jazzicon, { jsNumberForAddress } from 'react-jazzicon';
-import { useSelector } from 'react-redux';
-import { ConnectWalletButton, WalletBalance } from '../Header.styled';
-import { WalletPopover } from './Wallet.styled';
+import {useContext, useMemo, useRef, useState} from 'react';
+import {OverlayTrigger} from 'react-bootstrap';
+import {toast} from 'react-hot-toast';
+import Jazzicon, {jsNumberForAddress} from 'react-jazzicon';
+import {useSelector} from 'react-redux';
+import {ConnectWalletButton, WalletBalance} from '../Header.styled';
+import {WalletPopover} from './Wallet.styled';
 import Text from '@/components/Text';
-import { WalletContext } from '@/contexts/wallet-context';
-import { formatLongAddress } from '@/utils';
-import { showError } from '@/utils/toast';
-import { TRUSTLESS_BRIDGE, TRUSTLESS_FAUCET } from '@/constants/common';
+import {WalletContext} from '@/contexts/wallet-context';
+import {compareString, formatLongAddress} from '@/utils';
+import {showError} from '@/utils/toast';
+import {TRUSTLESS_BRIDGE, TRUSTLESS_FAUCET} from '@/constants/common';
 import SelectedNetwork from '@/components/Swap/selectNetwork';
+import {useRouter} from "next/router";
+import {ROUTE_PATH} from "@/constants/route-path";
 
 const WalletHeader = () => {
-  // const router = useRouter();
+  const router = useRouter();
   const { account } = useWeb3React();
   const user = useSelector(getUserSelector);
   const { onDisconnect, onConnect, requestBtcAddress } = useContext(WalletContext);
 
   const isAuthenticated = useSelector(getIsAuthenticatedSelector);
   const { btcBalance, juiceBalance } = useContext(AssetsContext);
+
+  const isTokenPage = useMemo(() => {
+    if(compareString(router?.pathname, ROUTE_PATH.HOME) || compareString(router?.pathname, ROUTE_PATH.MARKETS)) {
+      return true;
+    }
+
+    return false;
+  }, [router?.pathname])
 
   const [isConnecting, setIsConnecting] = useState(false);
 
@@ -175,7 +185,7 @@ const WalletHeader = () => {
               onMouseEnter={handleOnMouseEnter}
               onMouseLeave={handleOnMouseLeave}
             >
-              <WalletBalance>
+              <WalletBalance className={isTokenPage ? 'isTokenPage' : ''}>
                 <div className="balance">
                   <p>{formatBTCPrice(btcBalance)} BTC</p>
                   <span className="divider"></span>

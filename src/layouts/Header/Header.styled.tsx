@@ -171,6 +171,12 @@ const WalletBalance = styled.div`
   border-radius: 40px;
   cursor: pointer;
   transition: all 0.2s ease;
+  
+  &.isTokenPage {
+    p {
+      color: #FFFFFF;
+    }
+  }
 
   &:hover {
     border-color: ${({ theme }: { theme: DefaultTheme }) => theme.primary['d9']};
