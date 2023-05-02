@@ -28,7 +28,7 @@ const LIMIT_PAGE = 500;
 //const ALL_ONE_PAGE = 10000;
 
 const Tokens = () => {
-  const TABLE_HEADINGS = ['Token #','Name','Symbol', 'Price(USD)','Market Cap(USD)','24h %', 'Supply', 'Creator'];
+  const TABLE_HEADINGS = ['Token #','Name','Price','24h %', 'Market Cap','Volume (24h)', 'Supply', 'Creator'];
   /*'Price','24h %','Market Cap'*/
 
   const router = useRouter();
@@ -60,7 +60,6 @@ const Tokens = () => {
       setIsFetching(true);
       const res = await getTokenRp({ limit: LIMIT_PAGE, page: page });
       console.log(res.length);
-      console.log("tuanhm1");
      /* const res1 = await getTokenRp({ limit: ALL_ONE_PAGE, page: 1 });;
 
       for(let i = 0;i<res.length;i++)
@@ -150,6 +149,7 @@ const Tokens = () => {
     const totalSupply = new BigNumber(token?.totalSupply).div(decimalToExponential(token.decimal));
     const tokenPrice = token?.usdPrice ? new BigNumber(token?.usdPrice).toFixed()  : 'n/a';
     const tokenVolume = token?.usdVolume ? new BigNumber(token?.usdVolume).toFixed()  : 'n/a';
+    const marketCap = token?.usdPrice ? new BigNumber(token?.usdPrice*totalSupply).toFixed()  : 'n/a';
 
     //const linkTokenExplorer = `${EXPLORER_URL}/token/${token?.address}`;
     //const linkToOwnerExplorer = `${EXPLORER_URL}/address/${token?.owner}`;
@@ -158,11 +158,11 @@ const Tokens = () => {
       id: `token-${token?.address}}`,
       render: {
         number: token?.index,
-        name: token?.name || '-',
-        symbol: token?.symbol || '-',
-        price: formatCurrency(tokenPrice, 10),
-        usdVolume: formatCurrency(tokenVolume, 2),
+        name: `${token?.name || '-'} (${token?.symbol || '-'})`,
+        price: `$${formatCurrency(tokenPrice, 10)}`,
         percent: token?.percent || 'n/a',
+        usdVol: `$${formatCurrency(marketCap, 2)}`,
+        usdVolume: `$${formatCurrency(tokenVolume, 2)}`,
         supply: formatCurrency(totalSupply.toString()),
         creator: shortenAddress(token?.owner, 4) || '-',
       },
