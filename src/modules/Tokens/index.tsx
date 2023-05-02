@@ -28,7 +28,7 @@ const LIMIT_PAGE = 500;
 //const ALL_ONE_PAGE = 10000;
 
 const Tokens = () => {
-  const TABLE_HEADINGS = ['Token #','Name','Price','24h %', 'Market Cap','Volume (24h)', 'Supply', 'Creator'];
+  const TABLE_HEADINGS = ['Token #','Name','Price','24h %', 'Market Cap','Volume (24h)', 'Supply'];
   /*'Price','24h %','Market Cap'*/
 
   const router = useRouter();
@@ -164,7 +164,6 @@ const Tokens = () => {
         usdVol: `$${formatCurrency(marketCap, 2)}`,
         usdVolume: `$${formatCurrency(tokenVolume, 2)}`,
         supply: formatCurrency(totalSupply.toString()),
-        creator: shortenAddress(token?.owner, 4) || '-',
       },
       config: {
         onClick: () => {
