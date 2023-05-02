@@ -89,6 +89,14 @@ const Header = ({ height }: { height: number }) => {
             >
               TRUSTLESS
             </Link>
+            <Link
+              href={ROUTE_PATH.GET_STARTED}
+              className={
+                router?.pathname?.includes(ROUTE_PATH.GET_STARTED) ? 'isSelected' : ''
+              }
+            >
+              GET STARTED
+            </Link>
           </div>
         </div>
       </div>
