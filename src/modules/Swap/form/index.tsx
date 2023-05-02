@@ -554,10 +554,10 @@ export const MakeFormSwap = forwardRef((props, ref) => {
 
   return (
     <form onSubmit={onSubmit} style={{ height: '100%' }}>
-      <HorizontalItem
+      {/*<HorizontalItem
         label={<Text fontSize={'md'} color={'#B1B5C3'}></Text>}
         value={<SlippageSettingButton></SlippageSettingButton>}
-      />
+      />*/}
       <InputWrapper
         className={cx(styles.inputAmountWrap, styles.inputBaseAmountWrap)}
         theme="light"
