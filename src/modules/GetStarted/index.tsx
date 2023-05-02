@@ -14,8 +14,8 @@ const STEPS = [
     step: '2',
     title: 'Get Some $TC and $BTC to cover network fees',
     desc: <Box>
-      <Text>Head to <Link href={"https://trustlessfaucet.io/"} target={"_blank"} style={{textDecoration: 'underline'}}>https://trustlessfaucet.io/</Link> to claim some $TC for free</Text>
-      <Text>Send some $BTC to your newly generated BTC wallet address for network fee</Text>
+      <Text>First, head to <Link href={"https://trustlessfaucet.io/"} target={"_blank"} style={{textDecoration: 'underline'}}>https://trustlessfaucet.io/</Link> to claim some $TC for free</Text>
+      <Text>Then, send some $BTC to your newly generated BTC wallet address for network fee</Text>
     </Box>
   },
   {
