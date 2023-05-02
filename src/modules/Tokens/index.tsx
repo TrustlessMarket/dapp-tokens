@@ -160,9 +160,9 @@ const Tokens = () => {
         number: token?.index,
         name: `${token?.name || '-'} (${token?.symbol || '-'})`,
         price: `$${formatCurrency(tokenPrice, 10)}`,
-        percent: token?.percent || 'n/a',
+        percent: <span className={Number(token?.percent) > 0 ? 'increase' : Number(token?.percent) < 0 ? 'descrease' : ''}>{token?.percent}%</span> || 'n/a',
         usdVol: `$${formatCurrency(marketCap, 2)}`,
-        usdVolume: `$${formatCurrency(tokenVolume, 2)}`,
+        usdVolume: <span className={Number(tokenVolume) > 0 ? 'increase' : ''}>{formatCurrency(tokenVolume, 2)}</span>,
         supply: formatCurrency(totalSupply.toString()),
       },
       config: {
@@ -187,16 +187,16 @@ const Tokens = () => {
             {/* <img src={IcBitcoinCloud} alt="upload file icon" /> */}
             <div className="upload_content">
               {/* <h3 className="upload_title">BRC-20 on Bitcoin</h3> */}
-              <Text className="upload_text"  color="text1">
+              <Text className="upload_text">
                 Smart BRC-20s are <span style={{color: '#3385FF'}}>the first smart contracts deployed on Bitcoin</span>. They run exactly as programmed without any possibility of fraud, third-party interference, or censorship. Issue your Smart BRC-20 on Bitcoin for virtually anything: a cryptocurrency, a share in a company, voting rights in a DAO, and more.
               </Text>
             </div>
           </div>
           <div className="upload_right">
-            <Button className="button-create-box" bg={'white'}  background={'gray'} onClick={handleCreateToken}>
+            <Button className="button-create-box" background={'white'} onClick={handleCreateToken}>
               <Text
                   size="medium"
-                  color="bg1"
+                  color={'black'}
                   className="button-text"
                   fontWeight="medium"
               >

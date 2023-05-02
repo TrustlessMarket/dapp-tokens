@@ -3,9 +3,8 @@ import styled, { DefaultTheme } from 'styled-components';
 
 export const StyledTokens = styled.div`
   margin-top: ${px2rem(48)};
-
   .background {
-    background-color: white;
+    background-color: rgb(28, 28, 28);
     min-height: ${px2rem(203)};
     position: absolute;
     width: 100%;
@@ -34,6 +33,26 @@ export const StyledTokens = styled.div`
       padding-top: ${px2rem(26)};
       padding-bottom: ${px2rem(26)};
     }
+    
+    .tableHead {
+      &_item {
+        color: #FFFFFF;
+      }
+    }
+    
+    .tableData {
+      &_item {
+        color: #FFFFFF;
+        
+        .increase {
+          color: #16c784;
+        }
+        
+        .descrease {
+          color: #ea3943;
+        }
+      }
+    }
   }
 
   .loading {
@@ -41,7 +60,7 @@ export const StyledTokens = styled.div`
     align-items: center;
     justify-content: center;
   }
-
+  
   .upload_title {
     margin-bottom: ${px2rem(24)};
     margin-left: auto;
@@ -49,7 +68,7 @@ export const StyledTokens = styled.div`
     width: fit-content;
     z-index: 1;
     position: relative;
-    color: black;
+    color: white;
     font-size: ${px2rem(48)};
     line-height: 48 / 44;
   }
@@ -62,13 +81,13 @@ export const UploadFileContainer = styled.div`
   margin-left: auto;
   margin-right: auto;
   padding: ${px2rem(24)} ${px2rem(32)};
-  background-color: ${({ theme }: { theme: DefaultTheme }) => theme.bg2};
+  background-color: rgb(50, 53, 70);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
   margin-bottom: ${px2rem(40)};
-  color: ${({ theme }: { theme: DefaultTheme }) => theme.text1};
+  color: white;
   text-align: center;
 
   .upload_left {
