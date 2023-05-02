@@ -2,7 +2,7 @@ import Button from '@/components/Button';
 import Table from '@/components/Table';
 import Text from '@/components/Text';
 import {getTokenRp} from '@/services/token-explorer';
-import {formatCurrency, shortenAddress} from '@/utils';
+import {formatCurrency} from '@/utils';
 import {decimalToExponential} from '@/utils/format';
 import {debounce} from 'lodash';
 import {useContext, useEffect, useState} from 'react';

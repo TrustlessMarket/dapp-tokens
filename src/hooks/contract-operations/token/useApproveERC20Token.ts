@@ -9,7 +9,6 @@ import { TransactionStatus } from '@/interfaces/walletTransaction';
 import store from '@/state';
 import { updateCurrentTransaction } from '@/state/pnftExchange';
 import { compareString, getContract } from '@/utils';
-import { isProduction } from '@/utils/commons';
 import { formatBTCPrice } from '@/utils/format';
 import { useWeb3React } from '@web3-react/core';
 import BigNumber from 'bignumber.js';
@@ -62,14 +61,14 @@ const useApproveERC20Token: ContractOperationHook<
           .connect(provider.getSigner())
           .approve(address, MaxUint256);
 
-        TC_SDK.signTransaction({
-          method: `${DAppType.ERC20} - ${TransactionEventType.CREATE}`,
-          hash: transaction.hash,
-          dappURL: window.location.origin,
-          isRedirect: true,
-          target: '_blank',
-          isMainnet: isProduction(),
-        });
+        // TC_SDK.signTransaction({
+        //   method: `${DAppType.ERC20} - ${TransactionEventType.CREATE}`,
+        //   hash: transaction.hash,
+        //   dappURL: window.location.origin,
+        //   isRedirect: true,
+        //   target: '_blank',
+        //   isMainnet: isProduction(),
+        // });
 
         store.dispatch(
           updateCurrentTransaction({
@@ -82,7 +81,7 @@ const useApproveERC20Token: ContractOperationHook<
           }),
         );
 
-        await transaction.wait();
+        // await transaction.wait();
 
         return transaction;
       }
