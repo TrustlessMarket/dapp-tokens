@@ -14,6 +14,7 @@ import { useDispatch } from 'react-redux';
 import styles from './styles.module.scss';
 import { AiOutlineCaretDown } from 'react-icons/ai';
 import TokenBalance from '@/components/Swap/tokenBalance';
+import {COMMON_TOKEN} from "@/constants/common";
 
 interface FilterButtonProps {
   data: any[];
@@ -35,13 +36,24 @@ const FilterModal: React.FC<FilterModalProps> = ({
   data,
   onClose,
   handleSelectItem,
-  commonData,
+  // commonData,
   onExtraSearch,
 }) => {
-  console.log('setDa2', data);
   const { mobileScreen } = useWindowSize();
   const { values } = useFormState();
   const [loading, setLoading] = useState(false);
+
+  const commonData = useMemo(() => {
+    let res = [];
+    for (let i = 0; i < data.length; i++) {
+      const e = data[i];
+      if(COMMON_TOKEN.includes(e.symbol)) {
+        res.push(e);
+      }
+    }
+    return res;
+  }, [data?.length]);
+
   const columns: ColumnProp[] = useMemo(
     () => [
       {
