@@ -1,5 +1,9 @@
 import px2rem from '@/utils/px2rem';
 import styled, { DefaultTheme } from 'styled-components';
+import {compareString} from "@/utils";
+import {ROUTE_PATH} from "@/constants/route-path";
+import {useRouter} from "next/router";
+import {useMemo} from "react";
 // import IcDiscord from '@/assets/icons/ic_discord.svg';
 // import IcTwitter from '@/assets/icons/ic_twitter.svg';
 // import IcGithub from '@/assets/icons/ic_github.svg';
@@ -23,7 +27,7 @@ const Wrapper = styled.div`
     font-size: ${px2rem(16)};
     line-height: ${px2rem(26)};
     margin-right: ${px2rem(16)};
-    color: ${({ theme }: { theme: DefaultTheme }) => theme.text1};
+    //color: ${({ theme }: { theme: DefaultTheme }) => theme.text1};
 
     @media screen and (max-width: ${({ theme }: { theme: DefaultTheme }) =>
         theme.breakpoint.md}) {
@@ -86,9 +90,14 @@ const Wrapper = styled.div`
 `;
 
 const Footer = ({ height }: { height: number }) => {
+  const router = useRouter();
+  const isTokensPage = useMemo(() => {
+    return compareString(router?.pathname, ROUTE_PATH.HOME) || compareString(router?.pathname, ROUTE_PATH.MARKETS);
+  }, [router?.pathname]);
+
   return (
     <Wrapper style={{ height }}>
-      <p className="text">Open-source software. Made with ❤️ on Bitcoin.</p>
+      <p className="text" style={{color: isTokensPage ? 'white' : 'black'}}>Open-source software. Made with ❤️ on Bitcoin.</p>
       {/* <div className="footer-right">
         <StyledLink active={false} href={ROUTE_PATH.FAUCET}>
           Faucet
