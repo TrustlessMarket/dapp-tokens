@@ -188,6 +188,10 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   }, [account, pairAddress, needReload]);
 
   useEffect(() => {
+    change('baseBalance', baseBalance);
+  }, [baseBalance]);
+
+  useEffect(() => {
     if (account && baseToken?.address) {
       checkApproveBaseToken(baseToken);
     }
@@ -801,10 +805,12 @@ const TradingForm = () => {
         .decimalPlaces(quoteToken?.decimals || 18)
         .toString();
 
+      const minAmount = Math.min(baseAmount, values?.baseBalance);
+
       const data = {
         addresses: [baseToken.address, quoteToken.address],
         address: user?.walletAddress,
-        amount: new BigNumber(baseAmount)
+        amount: new BigNumber(minAmount)
           .decimalPlaces(baseToken?.decimals || 18)
           .toString(),
         amountOutMin: amountOutMin,
