@@ -75,25 +75,25 @@ const ItemLiquid = ({ pool }: { pool: IToken }) => {
         <AccordionPanel>
           <HorizontalItem
             label="Your pool total tokens:"
-            value={pool.ownerSupply.toString()}
+            value={pool?.ownerSupply?.toString()}
           />
           <HorizontalItem
             label={`Pooled ${pool.name.split('-')[0]}:`}
             value={formatCurrency(
-              formatAmountBigNumber(pool.fromBalance, pool.decimal),
+              formatAmountBigNumber(pool?.fromBalance, pool.decimal),
             ).toString()}
           />
           <HorizontalItem
             label={`Pooled ${pool.name.split('-')[1]}:`}
             value={formatCurrency(
-              formatAmountBigNumber(pool.toBalance, pool.decimal),
+              formatAmountBigNumber(pool?.toBalance, pool.decimal),
             ).toString()}
           />
           <HorizontalItem
             label="Your pool share:"
             value={`${formatCurrency(
-              new BigNumber(pool.ownerSupply)
-                .dividedBy(pool.totalSupply)
+              new BigNumber(pool?.ownerSupply || 0)
+                .dividedBy(pool?.totalSupply || 1)
                 .multipliedBy(100)
                 .toString(),
               2,

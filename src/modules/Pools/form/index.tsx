@@ -11,7 +11,7 @@ import { NULL_ADDRESS } from '@/constants/url';
 import pairsMock from '@/dataMock/tokens.json';
 import { transactionType } from '@/components/Swap/alertInfoProcessing/types';
 import { ROUTE_PATH } from '@/constants/route-path';
-import { LIQUID_PAIRS } from '@/constants/storage-key';
+import { IMPORTED_TOKENS, LIQUID_PAIRS } from '@/constants/storage-key';
 import useAddLiquidity, {
   IAddLiquidityParams,
 } from '@/hooks/contract-operations/pools/useAddLiquidity';
@@ -54,7 +54,7 @@ import {
 } from '@chakra-ui/react';
 import BigNumber from 'bignumber.js';
 import cx from 'classnames';
-import { isEmpty } from 'lodash';
+import { clone, isEmpty } from 'lodash';
 import { useRouter } from 'next/router';
 import {
   useCallback,
@@ -80,6 +80,9 @@ import { AssetsContext } from '@/contexts/assets-context';
 import { getIsAuthenticatedSelector } from '@/state/user/selector';
 import { isDevelop } from '@/utils/commons';
 import useContractOperation from '@/hooks/contract-operations/useContractOperation';
+import useInfoERC20Token, {
+  IInfoERC20TokenResponse,
+} from '@/hooks/contract-operations/token/useInfoERC20Token';
 
 const LIMIT_PAGE = 50;
 
@@ -93,7 +96,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const [tokensList, setTokensList] = useState<IToken[]>([]);
   const { call: isApproved } = useIsApproveERC20Token();
   const { call: tokenBalance } = useBalanceERC20Token();
-  // const { call: approveToken } = useApproveERC20Token();
+  const { call: infoToken } = useInfoERC20Token();
   const { run: approveToken } = useContractOperation<
     IApproveERC20TokenParams,
     boolean
@@ -123,6 +126,8 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const isPaired = !compareString(pairAddress, NULL_ADDRESS);
   const needReload = useAppSelector(selectPnftExchange).needReload;
 
+  const refTokensList = useRef<IToken[]>([]);
+
   const dispatch = useDispatch();
   const { values } = useFormState();
   const { change, restart } = useForm();
@@ -145,6 +150,33 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   useEffect(() => {
     checkPair();
   }, [baseToken, quoteToken, needReload]);
+
+  const getImportTokens = () => {
+    const checkExistKey = localStorage.getItem(IMPORTED_TOKENS);
+    let currentImportedTokens: IToken[] = [];
+    if (checkExistKey) {
+      currentImportedTokens = JSON.parse(checkExistKey) || [];
+    }
+    return currentImportedTokens;
+  };
+
+  const updateImportTokens = (_item: IToken) => {
+    const currentImportedTokens: IToken[] = getImportTokens();
+    currentImportedTokens.push(_item);
+    localStorage.setItem(IMPORTED_TOKENS, JSON.stringify(currentImportedTokens));
+  };
+
+  const updateTokenList = (_item: IToken) => {
+    const findExist = refTokensList.current.findIndex((v) =>
+      compareString(v.address, _item.address),
+    );
+
+    if (findExist < 0) {
+      updateImportTokens(_item);
+      refTokensList.current = [_item, ...refTokensList.current];
+      setTokensList(refTokensList.current);
+    }
+  };
 
   const checkPair = async () => {
     if (!baseToken?.address || !quoteToken?.address) {
@@ -198,8 +230,8 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   };
 
   useEffect(() => {
-    if (fromAddress && tokensList.length > 0) {
-      const findFromToken = tokensList.find((v) =>
+    if (fromAddress && refTokensList.current.length > 0) {
+      const findFromToken = refTokensList.current.find((v) =>
         compareString(v.address, fromAddress),
       );
 
@@ -210,8 +242,8 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   }, [fromAddress, tokensList.length]);
 
   useEffect(() => {
-    if (toAddress && tokensList.length > 0) {
-      const findFromToken = tokensList.find((v) =>
+    if (toAddress && refTokensList.current.length > 0) {
+      const findFromToken = refTokensList.current.find((v) =>
         compareString(v.address, toAddress),
       );
 
@@ -229,11 +261,16 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         page: page,
         is_test: isDevelop() ? '1' : '',
       });
+      let _list: IToken[] = [];
       if (isDevelop()) {
-        setTokensList(camelCaseKeys(pairsMock));
+        _list = camelCaseKeys(pairsMock);
       } else {
-        setTokensList(camelCaseKeys(res));
+        _list = camelCaseKeys(res);
       }
+      const _getImportTokens = getImportTokens();
+      _list = _getImportTokens.concat(_list);
+      refTokensList.current = _list;
+      setTokensList(_list);
     } catch (err: unknown) {
       console.log('Failed to fetch tokens owned');
     } finally {
@@ -459,6 +496,36 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     );
   };
 
+  const onExtraSearch = async (txtSearch: any) => {
+    console.log('txtSearch', txtSearch);
+    try {
+      const response: IInfoERC20TokenResponse = await infoToken({
+        erc20TokenAddress: txtSearch,
+      });
+      console.log('response', response);
+
+      const _item: IToken = {
+        id: response.address,
+        address: response.address,
+        name: response.name,
+        symbol: response.symbol,
+        decimal: response.decimals,
+      };
+
+      updateTokenList(_item);
+
+      return [
+        {
+          ..._item,
+          extra_item: _item,
+        },
+      ];
+    } catch (error) {
+      console.log('error', error);
+      return [];
+    }
+  };
+
   const isDisabled = !baseToken && !quoteToken;
 
   return (
@@ -506,6 +573,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
                 }
                 parentClose={close}
                 value={baseToken}
+                onExtraSearch={onExtraSearch}
               />
             }
             borderColor={'#5B5B5B'}
@@ -567,6 +635,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
                 }
                 parentClose={close}
                 value={quoteToken}
+                onExtraSearch={onExtraSearch}
               />
             }
             // hideError={true}

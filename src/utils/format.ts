@@ -111,7 +111,10 @@ export const formatEthPriceSubmit = (
   return priceNumb;
 };
 
-export const formatAmountBigNumber = (amount: number | string, decimals = 18) => {
+export const formatAmountBigNumber = (
+  amount: number | string = 0,
+  decimals: any = 18,
+) => {
   return `${new BigNumber(amount).dividedBy(10 ** Number(decimals)).toString(10)}`;
 };
 

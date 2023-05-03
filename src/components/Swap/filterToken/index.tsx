@@ -22,6 +22,7 @@ interface FilterButtonProps {
   parentClose?: () => void;
   value: any;
   disabled?: boolean;
+  onExtraSearch?: (_: any) => any;
 }
 
 interface FilterModalProps extends FilterButtonProps {
@@ -35,9 +36,12 @@ const FilterModal: React.FC<FilterModalProps> = ({
   onClose,
   handleSelectItem,
   commonData,
+  onExtraSearch,
 }) => {
+  console.log('setDa2', data);
   const { mobileScreen } = useWindowSize();
   const { values } = useFormState();
+  const [loading, setLoading] = useState(false);
   const columns: ColumnProp[] = useMemo(
     () => [
       {
@@ -75,8 +79,11 @@ const FilterModal: React.FC<FilterModalProps> = ({
   const debounced = useDebounce(values?.search_text);
   const [rows, setRows] = useState(data);
 
-  const onSearch = (text: string) => {
+  const onSearch = async (text: string) => {
+    console.log('data', data);
+
     const _data = clone(data);
+    setLoading(true);
     if (text) {
       const __data = _data.filter(
         (v: DataRow) =>
@@ -85,10 +92,22 @@ const FilterModal: React.FC<FilterModalProps> = ({
           v.symbol?.toLowerCase().includes(text.toLowerCase()) ||
           v.address.toLowerCase().includes(text.toLowerCase()),
       );
-      setRows(__data);
+
+      if (__data.length === 0 && onExtraSearch) {
+        try {
+          const ___data = await onExtraSearch(text.toLowerCase());
+          setRows(___data);
+        } catch (error) {
+        } finally {
+          setLoading(false);
+        }
+      } else {
+        setRows(__data);
+      }
     } else {
       setRows(_data);
     }
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -154,7 +173,12 @@ const FilterModal: React.FC<FilterModalProps> = ({
         overflow="auto"
         mt={4}
       >
-        <ListTable data={rows} columns={columns} onItemClick={onItemClick} />
+        <ListTable
+          data={rows}
+          columns={columns}
+          onItemClick={onItemClick}
+          initialLoading={loading}
+        />
       </Box>
     </form>
   );
@@ -190,6 +214,7 @@ const FilterButton: React.FC<FilterButtonProps> = ({
   commonData = [],
   value,
   disabled,
+  onExtraSearch,
 }) => {
   const dispatch = useDispatch();
   const { mobileScreen } = useWindowSize();
@@ -200,6 +225,8 @@ const FilterButton: React.FC<FilterButtonProps> = ({
   const [selectedToken, setSelectedToken] = useState<any>();
 
   useEffect(() => {
+    console.log(value && value?.address);
+
     if (value && value?.address) {
       setSelectedToken(value);
     } else {
@@ -237,6 +264,7 @@ const FilterButton: React.FC<FilterButtonProps> = ({
                 handleSelectItem={handleSelectToken}
                 commonData={parseData(commonData)}
                 value={undefined}
+                onExtraSearch={onExtraSearch}
               />
             )}
           </Form>
