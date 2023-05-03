@@ -86,7 +86,7 @@ export const formatEthPrice = (
   precision = 10,
 ): string => {
   if (!price) return emptyStr || '-';
-  return ceilPrecised(parseFloat(Web3.utils.fromWei(`${price}`, 'ether')), precision)
+  return floorPrecised(parseFloat(Web3.utils.fromWei(`${price}`, 'ether')), precision)
     .toString()
     .replace(',', '.');
 };
@@ -121,6 +121,13 @@ export const formatAmountBigNumber = (
 export const ceilPrecised = (number: number | string, precision = 6) => {
   const power = Math.pow(10, precision);
   return Math.ceil(Number(number) * power) / power;
+};
+
+export const floorPrecised = (number: number | string, precision = 8) => {
+  if (!Boolean(number) || Number(number) === 0) {
+    return "0";
+  }
+  return new BigNumber(number).toString().slice(0, precision);
 };
 
 export const formatTCPrice = (price: string | null, emptyStr?: string): string => {

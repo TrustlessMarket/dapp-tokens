@@ -17,14 +17,14 @@ const TokenBalance = (props: ItemBalanceProps) => {
   const [loading, setLoading] = useState(false);
   const [balance, setBalance] = useState('0');
   const { call: tokenBalance } = useBalanceERC20Token();
-  const { account } = useWeb3React();
+  const { account, provider } = useWeb3React();
   const needReload = useAppSelector(selectPnftExchange).needReload;
 
   useEffect(() => {
     if (token?.address && account) {
       fetchBalance();
     }
-  }, [token?.address, account, needReload]);
+  }, [token?.address, account, provider, needReload]);
 
   const fetchBalance = async () => {
     try {

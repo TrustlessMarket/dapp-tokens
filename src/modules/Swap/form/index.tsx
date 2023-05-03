@@ -550,13 +550,12 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const onApprove = async () => {
     try {
       setLoading(true);
-
       await requestApproveToken(baseToken);
       setIsApproveBaseToken(true);
 
       toast.success('Transaction has been created. Please wait for few minutes.');
     } catch (err) {
-      toastError(showError, err, {});
+      toastError(showError, err, {address: account});
     } finally {
       setLoading(false);
     }
@@ -771,7 +770,7 @@ const TradingForm = () => {
   const refForm = useRef<any>();
   const [submitting, setSubmitting] = useState(false);
   const dispatch = useAppDispatch();
-  // const { call: swapToken } = useSwapERC20Token();
+  const { account } = useWeb3React();
   const { run: swapToken } = useContractOperation<ISwapERC20TokenParams, boolean>({
     operation: useSwapERC20Token,
   });
@@ -814,7 +813,7 @@ const TradingForm = () => {
       dispatch(requestReload());
       dispatch(requestReloadRealtime());
     } catch (err) {
-      toastError(showError, err, {});
+      toastError(showError, err, {address: account});
       // showError({
       //   message:
       //     (err as Error).message || 'Something went wrong. Please try again later.',
