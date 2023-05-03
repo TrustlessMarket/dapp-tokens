@@ -1,4 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+
+import { TC_WEB_URL } from '@/configs';
+import { DappsTabs } from '@/enums/tabs';
+import { compareString } from '@/utils';
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export const ERROR_CODE = {
   PENDING: '0',
@@ -17,10 +22,13 @@ export const ERRORS = {
   HIGH_GAS_FEE: 'Gas fee is too high. Please try again later.',
   NOT_ENOUGH_COLLATERAL_BALANCE: `Not enough ETH in collateral balance to pay gas fee.`,
   YOUR_BALANCE_BTN_INSUFFICIENT: `Your balance is insufficient`,
+  PENDING: '0',
 };
 
 export const getMessageError = (e: any, option: any) => {
   let title = '';
+  let url = null;
+  let linkText = null;
 
   if (
     e?.code === ERROR_CODE.ACTION_REJECTED ||
@@ -34,19 +42,26 @@ export const getMessageError = (e: any, option: any) => {
     title = '';
   } else if (e?.message?.includes(ERRORS.YOUR_BALANCE_BTN_INSUFFICIENT)) {
     title = e?.message;
+  } else if (compareString(e?.message, ERRORS.PENDING)) {
+    title =
+      'You have some pending transactions. Please complete all of them before moving on.';
+    url = `${TC_WEB_URL}/?tab=${DappsTabs.TRANSACTION}`;
+    linkText = 'Go to Wallet';
   } else {
     title = ERRORS[`COMMON`];
   }
-  return title;
+  return { title, url, linkText };
 };
 
 export function toastError(toast: any, e: any, option?: any) {
   console.log('toastError', e);
-  const title: string = getMessageError(e, option);
+  const { title, url, linkText } = getMessageError(e, option);
 
   if (title) {
     toast({
       message: title,
+      url,
+      linkText,
     });
   }
 
