@@ -3,6 +3,7 @@ export const PAGE_LOADING = 'PAGE_LOADING';
 export const PAGE_ENTER = 'PAGE_ENTER';
 
 export const BRIDGE_SUPPORT_TOKEN = ["WBTC", "WETH"];
+export const COMMON_TOKEN = ["BUTT", "NAKA", "DEV"];
 
 export const TRUSTLESS_FAUCET = 'https://trustlessfaucet.io/';
 export const TRUSTLESS_BRIDGE = 'https://trustlessbridge.io/';
