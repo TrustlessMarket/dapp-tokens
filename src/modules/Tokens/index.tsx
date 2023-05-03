@@ -1,36 +1,44 @@
 import Button from '@/components/Button';
 import Table from '@/components/Table';
 import Text from '@/components/Text';
-import {getTokenRp} from '@/services/token-explorer';
-import {formatCurrency} from '@/utils';
-import {decimalToExponential} from '@/utils/format';
-import {debounce} from 'lodash';
-import {useContext, useEffect, useState} from 'react';
+import { getTokenRp } from '@/services/token-explorer';
+import { formatCurrency } from '@/utils';
+import { decimalToExponential } from '@/utils/format';
+import { debounce } from 'lodash';
+import { useContext, useEffect, useState } from 'react';
 import Spinner from 'react-bootstrap/Spinner';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import ModalCreateToken from './ModalCreateToken';
-import {StyledTokens, UploadFileContainer} from './Tokens.styled';
-import {IToken} from '@/interfaces/token';
-import {useSelector} from 'react-redux';
-import {getIsAuthenticatedSelector} from '@/state/user/selector';
+import { StyledTokens, UploadFileContainer } from './Tokens.styled';
+import { IToken } from '@/interfaces/token';
+import { useSelector } from 'react-redux';
+import { getIsAuthenticatedSelector } from '@/state/user/selector';
 // import { useRouter } from 'next/router';
 // import { ROUTE_PATH } from '@/constants/route-path';
-import {WalletContext} from '@/contexts/wallet-context';
-import {showError} from '@/utils/toast';
-import BigNumber from "bignumber.js";
+import { WalletContext } from '@/contexts/wallet-context';
+import { showError } from '@/utils/toast';
+import BigNumber from 'bignumber.js';
 import Link from 'next/link';
-import {ROUTE_PATH} from "@/constants/route-path";
-import {useRouter} from "next/router";
-import {DEFAULT_BASE_TOKEN} from "@/modules/Swap/form";
-import {Flex} from "@chakra-ui/react";
+import { ROUTE_PATH } from '@/constants/route-path';
+import { useRouter } from 'next/router';
+import { DEFAULT_BASE_TOKEN } from '@/modules/Swap/form';
+import { Flex } from '@chakra-ui/react';
 //const EXPLORER_URL = TRUSTLESS_COMPUTER_CHAIN_INFO.explorers[0].url;
-import {AiOutlineCaretDown, AiOutlineCaretUp} from "react-icons/ai";
+import { AiOutlineCaretDown, AiOutlineCaretUp } from 'react-icons/ai';
 
 const LIMIT_PAGE = 500;
 //const ALL_ONE_PAGE = 10000;
 
 const Tokens = () => {
-  const TABLE_HEADINGS = ['Token #','Name','Price','24h %', 'Market Cap','Volume (24h)', 'Supply'];
+  const TABLE_HEADINGS = [
+    'Token #',
+    'Name',
+    'Price',
+    '24h %',
+    'Market Cap',
+    'Volume (24h)',
+    'Supply',
+  ];
   /*'Price','24h %','Market Cap'*/
 
   const router = useRouter();
@@ -62,7 +70,7 @@ const Tokens = () => {
       setIsFetching(true);
       const res = await getTokenRp({ limit: LIMIT_PAGE, page: page });
       console.log(res.length);
-     /* const res1 = await getTokenRp({ limit: ALL_ONE_PAGE, page: 1 });;
+      /* const res1 = await getTokenRp({ limit: ALL_ONE_PAGE, page: 1 });;
 
       for(let i = 0;i<res.length;i++)
       {
@@ -148,10 +156,18 @@ const Tokens = () => {
   }, []);
 
   const tokenDatas = tokensList.map((token) => {
-    const totalSupply = new BigNumber(token?.totalSupply).div(decimalToExponential(token.decimal));
-    const tokenPrice = token?.usdPrice ? new BigNumber(token?.usdPrice).toFixed()  : 'n/a';
-    const tokenVolume = token?.usdVolume ? new BigNumber(token?.usdVolume).toFixed()  : 'n/a';
-    const marketCap = token?.usdPrice ? new BigNumber(token?.usdPrice).multipliedBy(totalSupply).toFixed()  : 'n/a';
+    const totalSupply = new BigNumber(token?.totalSupply || 0).div(
+      decimalToExponential(Number(token?.decimal || 18)),
+    );
+    const tokenPrice = token?.usdPrice
+      ? new BigNumber(token?.usdPrice).toFixed()
+      : 'n/a';
+    const tokenVolume = token?.usdVolume
+      ? new BigNumber(token?.usdVolume).toFixed()
+      : 'n/a';
+    const marketCap = token?.usdPrice
+      ? new BigNumber(token?.usdPrice).multipliedBy(totalSupply).toFixed()
+      : 'n/a';
 
     //const linkTokenExplorer = `${EXPLORER_URL}/token/${token?.address}`;
     //const linkToOwnerExplorer = `${EXPLORER_URL}/address/${token?.owner}`;
@@ -162,89 +178,119 @@ const Tokens = () => {
         number: token?.index,
         name: `${token?.name || '-'} (${token?.symbol || '-'})`,
         price: `$${formatCurrency(tokenPrice, 10)}`,
-        percent: <Flex alignItems={"center"} className={Number(token?.percent) > 0 ? 'increase' : Number(token?.percent) < 0 ? 'descrease' : ''}>
-                    {Number(token?.percent) > 0 && <AiOutlineCaretUp color={"#16c784"}/>}
-                    {Number(token?.percent) < 0 && <AiOutlineCaretDown color={"#ea3943"}/>}
-                    {formatCurrency(token?.percent, 2)}%
-                  </Flex> || 'n/a',
+        percent:
+          (
+            <Flex
+              alignItems={'center'}
+              className={
+                Number(token?.percent) > 0
+                  ? 'increase'
+                  : Number(token?.percent) < 0
+                  ? 'descrease'
+                  : ''
+              }
+            >
+              {Number(token?.percent) > 0 && <AiOutlineCaretUp color={'#16c784'} />}
+              {Number(token?.percent) < 0 && (
+                <AiOutlineCaretDown color={'#ea3943'} />
+              )}
+              {formatCurrency(token?.percent, 2)}%
+            </Flex>
+          ) || 'n/a',
         usdVol: `$${formatCurrency(marketCap, 2)}`,
-        usdVolume: <span className={Number(tokenVolume) > 0 ? 'increase' : ''}>${formatCurrency(tokenVolume, 2)}</span>,
+        usdVolume: (
+          <span className={Number(tokenVolume) > 0 ? 'increase' : ''}>
+            ${formatCurrency(tokenVolume, 2)}
+          </span>
+        ),
         supply: formatCurrency(totalSupply.toString()),
       },
       config: {
         onClick: () => {
-          router.push(`${ROUTE_PATH.SWAP}?from_token=${DEFAULT_BASE_TOKEN}&to_token=${token?.address}`)
+          router.push(
+            `${ROUTE_PATH.SWAP}?from_token=${DEFAULT_BASE_TOKEN}&to_token=${token?.address}`,
+          );
         },
         style: {
-          cursor: 'pointer'
-        }
-      }
+          cursor: 'pointer',
+        },
+      },
     };
   });
 
   return (
-      <StyledTokens>
-        <div className="background"></div>
-        <div>
-          <h3 className="upload_title">Smart BRC-20</h3>
-        </div>
-        <UploadFileContainer>
-          <div className="upload_left">
-            {/* <img src={IcBitcoinCloud} alt="upload file icon" /> */}
-            <div className="upload_content">
-              {/* <h3 className="upload_title">BRC-20 on Bitcoin</h3> */}
-              <Text className="upload_text">
-                Smart BRC-20s are <span style={{color: '#3385FF'}}>the first smart contracts deployed on Bitcoin</span>. They run exactly as programmed without any possibility of fraud, third-party interference, or censorship. Issue your Smart BRC-20 on Bitcoin for virtually anything: a cryptocurrency, a share in a company, voting rights in a DAO, and more.
-              </Text>
-            </div>
+    <StyledTokens>
+      <div className="background"></div>
+      <div>
+        <h3 className="upload_title">Smart BRC-20</h3>
+      </div>
+      <UploadFileContainer>
+        <div className="upload_left">
+          {/* <img src={IcBitcoinCloud} alt="upload file icon" /> */}
+          <div className="upload_content">
+            {/* <h3 className="upload_title">BRC-20 on Bitcoin</h3> */}
+            <Text className="upload_text">
+              Smart BRC-20s are{' '}
+              <span style={{ color: '#3385FF' }}>
+                the first smart contracts deployed on Bitcoin
+              </span>
+              . They run exactly as programmed without any possibility of fraud,
+              third-party interference, or censorship. Issue your Smart BRC-20 on
+              Bitcoin for virtually anything: a cryptocurrency, a share in a company,
+              voting rights in a DAO, and more.
+            </Text>
           </div>
-          <div className="upload_right">
-            <Button className="button-create-box" background={'white'} onClick={handleCreateToken}>
+        </div>
+        <div className="upload_right">
+          <Button
+            className="button-create-box"
+            background={'white'}
+            onClick={handleCreateToken}
+          >
+            <Text
+              size="medium"
+              color={'black'}
+              className="button-text"
+              fontWeight="medium"
+            >
+              Issue Smart BRC-20
+            </Text>
+          </Button>
+          <Link href={ROUTE_PATH.SWAP}>
+            <Button className="comming-soon-btn" bg={'white'} background={'#3385FF'}>
               <Text
-                  size="medium"
-                  color={'black'}
-                  className="button-text"
-                  fontWeight="medium"
+                size="medium"
+                color="bg1"
+                className="brc20-text"
+                fontWeight="medium"
               >
-                Issue Smart BRC-20
+                Swap Smart BRC-20
               </Text>
             </Button>
-            <Link href={ROUTE_PATH.SWAP} >
-              <Button   className="comming-soon-btn"  bg={'white'}  background={'#3385FF'}  >
-                <Text
-                    size="medium"
-                    color="bg1"
-                    className="brc20-text"
-                    fontWeight="medium"
-                >
-                  Swap Smart BRC-20
-                </Text>
-
-              </Button>
-            </Link>
-          </div>
-        </UploadFileContainer>
-        <InfiniteScroll
-            className="tokens-list"
-            dataLength={tokensList?.length || 0}
-            hasMore={true}
-            loader={
-                isFetching && (
-                    <div className="loading">
-                      <Spinner animation="border" variant="primary" />
-                    </div>
-                )
-            }
-            next={debounceLoadMore}
-        >
-          <Table
-              tableHead={TABLE_HEADINGS}
-              data={tokenDatas}
-              className={'token-table'}
-          />
-        </InfiniteScroll>
-        <ModalCreateToken show={showModal} handleClose={() => setShowModal(false)} />
-      </StyledTokens>
+          </Link>
+        </div>
+      </UploadFileContainer>
+      <InfiniteScroll
+        className="tokens-list"
+        dataLength={tokensList?.length || 0}
+        hasMore={true}
+        loader={
+          isFetching && (
+            <div className="loading">
+              <Spinner animation="border" variant="primary" />
+            </div>
+          )
+        }
+        next={debounceLoadMore}
+      >
+        <Table
+          tableHead={TABLE_HEADINGS}
+          data={tokenDatas}
+          className={'token-table'}
+        />
+      </InfiniteScroll>
+      <ModalCreateToken show={showModal} handleClose={() => setShowModal(false)} />
+    </StyledTokens>
   );
 };
 
