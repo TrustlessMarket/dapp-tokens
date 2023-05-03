@@ -43,7 +43,7 @@ import { getIsAuthenticatedSelector, getUserSelector } from '@/state/user/select
 import { camelCaseKeys, compareString, formatCurrency } from '@/utils';
 import { isDevelop } from '@/utils/commons';
 import { composeValidators, required } from '@/utils/formValidate';
-import { formatEthPrice } from '@/utils/format';
+import {formatEthPrice, formatEthPriceSubmit} from '@/utils/format';
 import px2rem from '@/utils/px2rem';
 import { showError } from '@/utils/toast';
 import { Box, Flex, Text, forwardRef } from '@chakra-ui/react';
@@ -77,8 +77,8 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const [loading, setLoading] = useState(false);
   const [baseToken, setBaseToken] = useState<any>();
   const [quoteToken, setQuoteToken] = useState<any>();
-  const [isApproveBaseToken, setIsApproveBaseToken] = useState(true);
-  const [isApproveQuoteToken, setIsApproveQuoteToken] = useState(true);
+  const [amountBaseTokenApproved, setAmountBaseTokenApproved] = useState('0');
+  const [amountQuoteTokenApproved, setAmountQuoteTokenApproved] = useState('0');
   const [tokensList, setTokensList] = useState<IToken[]>([]);
   const [baseTokensList, setBaseTokensList] = useState<IToken[]>([]);
   const [quoteTokensList, setQuoteTokensList] = useState<IToken[]>([]);
@@ -110,7 +110,9 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const needReload = useAppSelector(selectPnftExchange).needReload;
 
   // console.log('isSwitching', isSwitching);
-  // console.log('isApproveBaseToken', isApproveBaseToken);
+  // console.log('amountBaseTokenApproved', amountBaseTokenApproved);
+  // console.log('formatEthPrice', formatEthPrice(amountBaseTokenApproved));
+  // console.log('amountQuoteTokenApproved', amountQuoteTokenApproved);
   // console.log('baseBalance', baseBalance);
   // console.log('quoteBalance', quoteBalance);
   // console.log('baseToken', baseToken);
@@ -124,6 +126,8 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const { values } = useFormState();
   const { change, restart } = useForm();
   const btnDisabled = loading || !baseToken || !quoteToken;
+  const isAllowSwap = new BigNumber(amountBaseTokenApproved).gt(0) &&
+    new BigNumber(amountBaseTokenApproved).gt(formatEthPriceSubmit(values?.baseAmount || 0));
 
   const onBaseAmountChange = useCallback(
     debounce((p) => handleBaseAmountChange(p), 1000),
@@ -197,12 +201,12 @@ export const MakeFormSwap = forwardRef((props, ref) => {
 
   const checkApproveBaseToken = async (token: any) => {
     const [_isApprove] = await Promise.all([checkTokenApprove(token)]);
-    // setIsApproveBaseToken(_isApprove);
+    setAmountBaseTokenApproved(_isApprove);
   };
 
   const checkApproveQuoteToken = async (token: any) => {
     const [_isApprove] = await Promise.all([checkTokenApprove(token)]);
-    // setIsApproveQuoteToken(_isApprove);
+    setAmountQuoteTokenApproved(_isApprove);
   };
 
   const fetchTokens = async (page = 1, isFetchMore = false) => {
@@ -420,8 +424,8 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     change('quoteToken', baseToken);
     setBaseBalance(quoteBalance);
     setQuoteBalance(baseBalance);
-    setIsApproveBaseToken(isApproveQuoteToken);
-    setIsApproveQuoteToken(isApproveBaseToken);
+    setAmountBaseTokenApproved(amountQuoteTokenApproved);
+    setAmountQuoteTokenApproved(amountBaseTokenApproved);
     setBaseReserve(quoteReserve);
     setQuoteReserve(baseReserve);
 
@@ -454,7 +458,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const validateBaseAmount = useCallback(
     (_amount: any) => {
       if (new BigNumber(_amount).gt(baseBalance)) {
-        return `Max amount is ${formatCurrency(baseBalance)}`;
+        return `Insufficient balance.`;
       }
 
       return undefined;
@@ -551,7 +555,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     try {
       setLoading(true);
       await requestApproveToken(baseToken);
-      setIsApproveBaseToken(true);
+      checkApproveBaseToken(baseToken);
 
       toast.success('Transaction has been created. Please wait for few minutes.');
     } catch (err) {
@@ -731,7 +735,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           </Text>
         )}
       <WrapperConnected className={styles.submitButton}>
-        {isApproveBaseToken ? (
+        {isAllowSwap ? (
           <FiledButton
             isDisabled={submitting || btnDisabled}
             isLoading={submitting}
