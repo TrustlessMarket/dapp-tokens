@@ -414,12 +414,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       change('baseAmount', new BigNumber(_amount).multipliedBy(rate).toString());
     }
 
-    if (
-      Number(_amount) > 0 &&
-      baseToken &&
-      quoteToken &&
-      Number(values?.baseAmount) > 0
-    ) {
+    if (Number(_amount) > 0 && baseToken && quoteToken) {
       setIsApproveQuoteToken(
         checkBalanceIsApprove(
           isApproveAmountQuoteToken,
@@ -442,12 +437,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           : new BigNumber(perPrice._reserve1).dividedBy(perPrice._reserve0);
       change('quoteAmount', new BigNumber(_amount).multipliedBy(rate).toString());
     }
-    if (
-      Number(_amount) > 0 &&
-      baseToken &&
-      quoteToken &&
-      Number(values?.quoteAmount) > 0
-    ) {
+    if (Number(_amount) > 0 && baseToken && quoteToken) {
       setIsApproveBaseToken(
         checkBalanceIsApprove(
           isApproveAmountBaseToken,
@@ -612,6 +602,9 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   };
 
   const isDisabled = !baseToken && !quoteToken;
+
+  console.log('isApproveBaseToken', isApproveBaseToken, isApproveAmountBaseToken);
+  console.log('isApproveQuoteToken', isApproveQuoteToken, isApproveAmountQuoteToken);
 
   return (
     <form onSubmit={onSubmit} style={{ height: '100%' }}>
@@ -783,7 +776,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           </Text>
         )}
       <WrapperConnected className={styles.submitButton}>
-        {isApproveBaseToken && isApproveQuoteToken ? (
+        {Boolean(isApproveBaseToken) && Boolean(isApproveQuoteToken) ? (
           <FiledButton
             isDisabled={submitting || btnDisabled}
             isLoading={submitting}
