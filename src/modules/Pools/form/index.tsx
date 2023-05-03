@@ -441,20 +441,19 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           ? new BigNumber(perPrice._reserve0).dividedBy(perPrice._reserve1)
           : new BigNumber(perPrice._reserve1).dividedBy(perPrice._reserve0);
       change('quoteAmount', new BigNumber(_amount).multipliedBy(rate).toString());
-
-      if (
-        Number(_amount) > 0 &&
-        baseToken &&
-        quoteToken &&
-        Number(values?.quoteAmount) > 0
-      ) {
-        setIsApproveBaseToken(
-          checkBalanceIsApprove(
-            isApproveAmountBaseToken,
-            formatAmountSigning(_amount, baseToken?.decimal),
-          ),
-        );
-      }
+    }
+    if (
+      Number(_amount) > 0 &&
+      baseToken &&
+      quoteToken &&
+      Number(values?.quoteAmount) > 0
+    ) {
+      setIsApproveBaseToken(
+        checkBalanceIsApprove(
+          isApproveAmountBaseToken,
+          formatAmountSigning(_amount, baseToken?.decimal),
+        ),
+      );
     }
   };
 
