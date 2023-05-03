@@ -26,7 +26,7 @@ export const ERRORS = {
 };
 
 export const getMessageError = (e: any, option: any) => {
-  let title = '';
+  let title = e?.message;
   let url = null;
   let linkText = null;
 
@@ -47,8 +47,6 @@ export const getMessageError = (e: any, option: any) => {
       'You have some pending transactions. Please complete all of them before moving on.';
     url = `${TC_WEB_URL}/?tab=${DappsTabs.TRANSACTION}`;
     linkText = 'Go to Wallet';
-  } else {
-    title = ERRORS[`COMMON`];
   }
   return { title, url, linkText };
 };
