@@ -44,7 +44,7 @@ const FilterModal: React.FC<FilterModalProps> = ({
   const [loading, setLoading] = useState(false);
 
   const commonData = useMemo(() => {
-    let res = [];
+    const res = [];
     for (let i = 0; i < data.length; i++) {
       const e = data[i];
       if(COMMON_TOKEN.includes(e.symbol)) {
