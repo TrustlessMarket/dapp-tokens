@@ -127,7 +127,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const { change, restart } = useForm();
   const btnDisabled = loading || !baseToken || !quoteToken;
   const isAllowSwap = new BigNumber(amountBaseTokenApproved).gt(0) &&
-    new BigNumber(amountBaseTokenApproved).gt(formatEthPriceSubmit(values?.baseAmount || 0));
+    (!values?.baseAmount || new BigNumber(amountBaseTokenApproved).gt(formatEthPriceSubmit(values?.baseAmount || 0)));
 
   const onBaseAmountChange = useCallback(
     debounce((p) => handleBaseAmountChange(p), 1000),
