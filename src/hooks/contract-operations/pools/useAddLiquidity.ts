@@ -126,7 +126,7 @@ const useAddLiquidity: ContractOperationHook<IAddLiquidityParams, boolean> = () 
   return {
     call: call,
     dAppType: DAppType.ERC20,
-    transactionType: TransactionEventType.CREATE,
+    transactionType: TransactionEventType.ADD_POOL,
   };
 };
 

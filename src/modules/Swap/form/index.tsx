@@ -43,7 +43,11 @@ import { getIsAuthenticatedSelector, getUserSelector } from '@/state/user/select
 import { camelCaseKeys, compareString, formatCurrency } from '@/utils';
 import { isDevelop } from '@/utils/commons';
 import { composeValidators, required } from '@/utils/formValidate';
-import {formatEthPrice, formatEthPriceSubmit} from '@/utils/format';
+import {
+  formatEthPrice,
+  formatEthPriceFloor,
+  formatEthPriceSubmit,
+} from '@/utils/format';
 import px2rem from '@/utils/px2rem';
 import { showError } from '@/utils/toast';
 import { Box, Flex, Text, forwardRef } from '@chakra-ui/react';
@@ -126,8 +130,12 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const { values } = useFormState();
   const { change, restart } = useForm();
   const btnDisabled = loading || !baseToken || !quoteToken;
-  const isAllowSwap = new BigNumber(amountBaseTokenApproved).gt(0) &&
-    (!values?.baseAmount || new BigNumber(amountBaseTokenApproved).gt(formatEthPriceSubmit(values?.baseAmount || 0)));
+  const isAllowSwap =
+    new BigNumber(amountBaseTokenApproved).gt(0) &&
+    (!values?.baseAmount ||
+      new BigNumber(amountBaseTokenApproved).gt(
+        formatEthPriceSubmit(values?.baseAmount || 0),
+      ));
 
   const onBaseAmountChange = useCallback(
     debounce((p) => handleBaseAmountChange(p), 1000),
@@ -271,11 +279,11 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       let _quoteReserve = '';
 
       if (compareString(token0?.address, baseToken?.address)) {
-        _baseReserve = formatEthPrice(_reserve0);
-        _quoteReserve = formatEthPrice(_reserve1);
+        _baseReserve = formatEthPriceFloor(_reserve0);
+        _quoteReserve = formatEthPriceFloor(_reserve1);
       } else {
-        _quoteReserve = formatEthPrice(_reserve0);
-        _baseReserve = formatEthPrice(_reserve1);
+        _quoteReserve = formatEthPriceFloor(_reserve0);
+        _baseReserve = formatEthPriceFloor(_reserve1);
       }
 
       setBaseReserve(_baseReserve);

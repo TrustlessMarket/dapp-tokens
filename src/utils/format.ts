@@ -91,6 +91,30 @@ export const formatEthPrice = (
     .replace(',', '.');
 };
 
+export const formatEthPriceFloor = (
+  price: string | number | any | null,
+  emptyStr?: string,
+  precision = 10,
+): string => {
+  if (!price) return emptyStr || '-';
+  console.log(
+    'aaaaa',
+    floorPrecised(
+      parseFloat(Web3.utils.fromWei(`${price}`, 'ether')).toString(),
+      precision,
+    )
+      .toString()
+      .replace(',', '.'),
+  );
+
+  return floorPrecised(
+    parseFloat(Web3.utils.fromWei(`${price}`, 'ether')).toString(),
+    precision,
+  )
+    .toString()
+    .replace(',', '.');
+};
+
 export const formatEthPriceInput = (
   price: string | null,
   emptyStr?: string,

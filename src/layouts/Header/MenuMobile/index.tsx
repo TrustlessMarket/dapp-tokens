@@ -4,7 +4,7 @@ import { CDN_URL } from '@/configs';
 import { ROUTE_PATH } from '@/constants/route-path';
 import { AssetsContext } from '@/contexts/assets-context';
 import { getIsAuthenticatedSelector } from '@/state/user/selector';
-import { formatBTCPrice, formatEthPrice } from '@/utils/format';
+import { formatBTCPrice, formatEthPriceFloor } from '@/utils/format';
 import { useRouter } from 'next/router';
 import React, { ForwardedRef, useContext } from 'react';
 import { useSelector } from 'react-redux';
@@ -51,7 +51,7 @@ const MenuMobile = React.forwardRef(
                 <div className="balance">
                   <p>{formatBTCPrice(btcBalance)} BTC</p>
                   <span className="divider"></span>
-                  <p>{formatEthPrice(juiceBalance)} TC</p>
+                  <p>{formatEthPriceFloor(juiceBalance)} TC</p>
                 </div>
                 <div className="avatar">
                   <img src={`${CDN_URL}/icons/ic-avatar.svg`} alt="default avatar" />

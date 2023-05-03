@@ -3,7 +3,7 @@ import { AssetsContext } from '@/contexts/assets-context';
 import { TransactionEventType } from '@/enums/transaction';
 import { ContractOperationHook, DAppType } from '@/interfaces/contract-operation';
 import { getContract } from '@/utils';
-import { formatEthPrice } from '@/utils/format';
+import { formatEthPriceFloor } from '@/utils/format';
 import { useWeb3React } from '@web3-react/core';
 import { useCallback, useContext } from 'react';
 
@@ -28,7 +28,7 @@ const useBalanceERC20Token: ContractOperationHook<
           .connect(provider.getSigner())
           .balanceOf(account);
 
-        return formatEthPrice(transaction.toString());
+        return formatEthPriceFloor(transaction.toString());
       }
       return '0';
     },

@@ -222,14 +222,14 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           );
         }
 
-        if (!isScreenAdd) {
-          setBaseBalance(
-            formatAmountBigNumber(resReserve._reserve0, baseToken.decimal),
-          );
-          setQuoteBalance(
-            formatAmountBigNumber(resReserve._reserve1, quoteToken.decimal),
-          );
-        }
+        // if (!isScreenAdd) {
+        //   setBaseBalance(
+        //     formatAmountBigNumber(resReserve._reserve0, baseToken.decimal),
+        //   );
+        //   setQuoteBalance(
+        //     formatAmountBigNumber(resReserve._reserve1, quoteToken.decimal),
+        //   );
+        // }
 
         setPerPrice(resReserve);
       } else {
@@ -354,9 +354,9 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         getTokenBalance(token),
       ]);
       setIsApproveAmountBaseToken(_isApprove);
-      if (isScreenAdd) {
-        setBaseBalance(_tokenBalance);
-      }
+      // if (isScreenAdd) {
+      setBaseBalance(_tokenBalance);
+      // }
     } catch (error) {
       throw error;
     }
@@ -372,9 +372,9 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       ]);
 
       setIsApproveAmountQuoteToken(_isApprove);
-      if (isScreenAdd) {
-        setQuoteBalance(_tokenBalance);
-      }
+      // if (isScreenAdd) {
+      setQuoteBalance(_tokenBalance);
+      // }
     } catch (error) {
       throw error;
     }

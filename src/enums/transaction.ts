@@ -6,6 +6,7 @@ export enum TransactionStatus {
 
 export enum TransactionEventType {
   CREATE = 'create',
+  ADD_POOL = 'add pool',
   TRANSFER = 'transfer',
   MINT = 'mint',
   NONE = 'none',
