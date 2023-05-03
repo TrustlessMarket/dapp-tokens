@@ -1,10 +1,7 @@
 import React from 'react';
 
-import IconSadGray from './img_sad_gray.svg';
-import IconSmileGray from './img_smile_gray.svg';
-
 import { Center, Text } from '@chakra-ui/react';
-import Image from 'next/image';
+import { CDN_URL } from '@/configs';
 
 interface EmptyListProps {
   className?: string;
@@ -23,15 +20,15 @@ const EmptyList = (props: EmptyListProps) => {
     className,
     labelText = 'No result found',
     imageSize = 80,
-    positive = false,
+    // positive = false,
   } = props;
 
   return (
     <Center flexDirection="column" className={className} p={8} gap={4}>
       {!props.hideIcon && (
-        <Image
+        <img
           width={imageSize}
-          src={positive ? IconSmileGray : IconSadGray}
+          src={`${CDN_URL}/icons/img_sad_gray.svg`}
           alt={'icon'}
         />
       )}
