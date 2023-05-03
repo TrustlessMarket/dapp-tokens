@@ -22,14 +22,16 @@ import {
   Heading,
   Icon,
   IconButton,
+  Text,
 } from '@chakra-ui/react';
 import BigNumber from 'bignumber.js';
 import { useRouter } from 'next/router';
 import { useEffect, useMemo, useState } from 'react';
 import { IoArrowBackOutline } from 'react-icons/io5';
-import { StyledTokens, UploadFileContainer } from './Pools.styled';
+import { StyledLiquidNote, StyledTokens, UploadFileContainer } from './Pools.styled';
 import CreateMarket from './form';
 import styles from './styles.module.scss';
+import ImportPool from './form/importPool';
 
 export enum ScreenType {
   default = 'default',
@@ -109,7 +111,7 @@ const ItemLiquid = ({ pool }: { pool: IToken }) => {
               btnSize="l"
               onClick={() =>
                 router.replace(
-                  `${ROUTE_PATH.POOLS}?type=${ScreenType.add}&f=${pool.fromAddress}&t=${pool.toAddress}`,
+                  `${ROUTE_PATH.POOLS}?type=${ScreenType.add_liquid}&f=${pool.fromAddress}&t=${pool.toAddress}`,
                 )
               }
             >
@@ -165,7 +167,6 @@ const LiquidityContainer = () => {
       case ScreenType.add:
       case ScreenType.remove:
       case ScreenType.add_liquid:
-      case ScreenType.add_pool:
         return (
           <>
             <Flex
@@ -207,6 +208,44 @@ const LiquidityContainer = () => {
             </UploadFileContainer>
           </>
         );
+      case ScreenType.add_pool:
+        return (
+          <>
+            <Flex
+              direction={'column'}
+              justifyContent={'center'}
+              alignItems={'center'}
+              position={'relative'}
+            >
+              <IconButton
+                position={'absolute'}
+                left={0}
+                top={'6px'}
+                size={'sm'}
+                borderColor={'#FFFFFF'}
+                borderWidth={1}
+                colorScheme="whiteAlpha"
+                isRound
+                variant="outline"
+                icon={<Icon as={IoArrowBackOutline} color={'#FFFFFF'} />}
+                onClick={() =>
+                  router.replace(`${ROUTE_PATH.POOLS}?type=${ScreenType.default}`)
+                }
+                aria-label={''}
+              />
+              <Heading as={'h6'}>{renderTitle()}</Heading>
+            </Flex>
+            <UploadFileContainer>
+              <div className="upload_left">
+                <Box className={styles.wrapper}>
+                  <Box>
+                    <ImportPool />
+                  </Box>
+                </Box>
+              </div>
+            </UploadFileContainer>
+          </>
+        );
 
       default:
         return (
@@ -234,6 +273,16 @@ const LiquidityContainer = () => {
                   }
                 >
                   Create a Pool
+                </FiledButton>
+                <FiledButton
+                  style={{ background: 'orange' }}
+                  // onClick={() => handleChooseAction(true)}
+                  fontSize={`${px2rem(16)} !important`}
+                  onClick={() =>
+                    router.replace(`${ROUTE_PATH.POOLS}?type=${ScreenType.add_pool}`)
+                  }
+                >
+                  Import Pool
                 </FiledButton>
                 <FiledButton
                   style={{ background: 'orange' }}
@@ -305,6 +354,14 @@ const LiquidityContainer = () => {
   return (
     <StyledTokens>
       <div className="background"></div>
+      <StyledLiquidNote>
+        <Text className="title">Liquidity provider rewards</Text>
+        <Text className="desc">
+          Liquidity providers earn a 2% fee on all trades proportional to their share
+          of the pool. Fees are added to the pool, accrue in real time and can be
+          claimed by withdrawing your liquidity.
+        </Text>
+      </StyledLiquidNote>
       {renderScreen()}
     </StyledTokens>
   );

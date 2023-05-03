@@ -14,6 +14,7 @@ import { useDispatch } from 'react-redux';
 import styles from './styles.module.scss';
 import { AiOutlineCaretDown } from 'react-icons/ai';
 import TokenBalance from '@/components/Swap/tokenBalance';
+import cx from 'classnames';
 
 interface FilterButtonProps {
   data: any[];
@@ -312,7 +313,10 @@ const FilterButton: React.FC<FilterButtonProps> = ({
     <FiledButton
       isDisabled={disabled}
       onClick={handleOpenModal}
-      className={styles.filterButton}
+      className={cx(styles.filterButton, 'filterButton')}
+      containerConfig={{
+        className: 'filterContainer',
+      }}
     >
       <Flex
         gap={2}

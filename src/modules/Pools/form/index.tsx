@@ -128,6 +128,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const type = router.query.type;
   const isScreenAdd = compareString(type, ScreenType.add);
   const isScreenRemove = compareString(type, ScreenType.remove);
+  const isScreenAddPool = compareString(type, ScreenType.add_pool);
 
   const isPaired = !compareString(pairAddress, NULL_ADDRESS);
   const needReload = useAppSelector(selectPnftExchange).needReload;
@@ -593,6 +594,13 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           title: 'Remove liquidity',
           btnTitle: 'Remove',
           btnBgColor: '#BC1756',
+        };
+
+      case ScreenType.add_pool:
+        return {
+          title: 'Import pool',
+          btnTitle: 'Import',
+          btnBgColor: '#3385FF',
         };
 
       default:

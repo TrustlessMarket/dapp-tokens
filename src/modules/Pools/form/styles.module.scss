@@ -3,13 +3,36 @@
   width: 100%;
 }
 
+.importPoolContainer {
+  :global {
+    .filterContainer {
+      flex: 1;
+    }
+    .filterButton {
+      border-radius: 8px;
+      border: 1px solid #5b5b5b;
+    }
+    .box-info-pair {
+      border: 1px solid rgb(232, 236, 251);
+      background-color: rgb(245, 246, 252);
+      padding: 20px 10px;
+      border-radius: 16px;
+      margin-bottom: 20px;
+      a {
+        color: blue;
+        cursor: pointer;
+      }
+    }
+  }
+}
+
 .inputAmountWrap {
   margin-bottom: 8px;
 
   :global .chakra-input__left-element {
     margin: 0;
     width: unset;
-    border-right: 1px solid #5B5B5B;
+    border-right: 1px solid #5b5b5b;
   }
 
   :global .chakra-input__right-element {

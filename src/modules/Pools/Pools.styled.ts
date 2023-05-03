@@ -1,9 +1,10 @@
 import px2rem from '@/utils/px2rem';
+import { Box } from '@chakra-ui/react';
 import styled, { DefaultTheme } from 'styled-components';
 
 export const StyledTokens = styled.div`
   margin-top: ${px2rem(48)};
-  max-width: ${px2rem(600)};
+  width: 720px !important;
   //max-width: 640px;
   margin-left: auto;
   margin-right: auto;
@@ -113,5 +114,21 @@ export const UploadFileContainer = styled.div`
         box-shadow: 0px 0px 10px 0px #0000000a;
       }
     }
+  }
+`;
+
+export const StyledLiquidNote = styled(Box)`
+  background-color: #f5f5f5c9;
+  z-index: 1;
+  padding: 15px 20px;
+  border-radius: 8px;
+  position: relative;
+  margin-bottom: ${px2rem(30)};
+  .title {
+    font-weight: bold;
+    margin-bottom: 5px;
+  }
+  .desc {
+    font-size: ${px2rem(13)};
   }
 `;
