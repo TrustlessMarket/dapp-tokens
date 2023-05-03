@@ -200,7 +200,7 @@ const ListTable: React.FC<ListTableProps> = ({
         <Tbody className={styles.item}>
           <Tr className="notOnTdRow">
             <Td colSpan={columns.length} textAlign="center">
-              <EmptyList labelText={emptyLabel} hideIcon={true} />
+              <EmptyList labelText={emptyLabel} />
             </Td>
           </Tr>
         </Tbody>
