@@ -82,6 +82,9 @@ const useAddLiquidity: ContractOperationHook<IAddLiquidityParams, boolean> = () 
             formatEthPriceSubmit(amountBMin),
             account,
             MaxUint256,
+            {
+              gasLimit: '1000000',
+            },
           );
 
         // TC_SDK.signTransaction({

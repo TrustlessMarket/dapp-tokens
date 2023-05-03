@@ -86,6 +86,9 @@ const useRemoveLiquidity: ContractOperationHook<
             formatEthPriceSubmit(amountBMin),
             account,
             MaxUint256,
+            {
+              gasLimit: '500000',
+            },
           );
 
         TC_SDK.signTransaction({

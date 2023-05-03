@@ -71,6 +71,9 @@ const useSwapERC20Token: ContractOperationHook<
             addresses,
             address,
             MaxUint256,
+            {
+              gasLimit: '500000',
+            },
           );
 
         // TC_SDK.signTransaction({

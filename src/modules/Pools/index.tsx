@@ -33,7 +33,9 @@ import styles from './styles.module.scss';
 
 export enum ScreenType {
   default = 'default',
-  add = 'add',
+  add = 'create',
+  add_liquid = 'add-liquidity',
+  add_pool = 'add-pool',
   remove = 'remove',
 }
 
@@ -144,10 +146,26 @@ const LiquidityContainer = () => {
     renderScreen();
   }, [routerQuery]);
 
+  const renderTitle = () => {
+    switch (routerQuery.type) {
+      case ScreenType.remove:
+        return 'Remove Liquidity';
+      case ScreenType.add_liquid:
+        return 'Add Liquidity';
+      case ScreenType.add_pool:
+        return 'Import Pool';
+
+      default:
+        return 'Create a Pool';
+    }
+  };
+
   const renderScreen = () => {
     switch (routerQuery.type) {
       case ScreenType.add:
       case ScreenType.remove:
+      case ScreenType.add_liquid:
+      case ScreenType.add_pool:
         return (
           <>
             <Flex
@@ -172,7 +190,7 @@ const LiquidityContainer = () => {
                 }
                 aria-label={''}
               />
-              <Heading as={'h6'}>Create Pool</Heading>
+              <Heading as={'h6'}>{renderTitle()}</Heading>
             </Flex>
             <UploadFileContainer>
               <div className="upload_left">
@@ -204,14 +222,30 @@ const LiquidityContainer = () => {
               <Heading as={'h6'}>Pools</Heading>
               <Flex gap={4}>
                 <FiledButton
-                  style={{ background: 'orange' }}
+                  style={{ borderColor: 'white', color: 'white' }}
+                  _hover={{
+                    backgroundColor: 'orange',
+                  }}
+                  variant={'outline'}
                   // onClick={() => handleChooseAction(true)}
                   fontSize={`${px2rem(16)} !important`}
                   onClick={() =>
                     router.replace(`${ROUTE_PATH.POOLS}?type=${ScreenType.add}`)
                   }
                 >
-                  Create Pool
+                  Create a Pool
+                </FiledButton>
+                <FiledButton
+                  style={{ background: 'orange' }}
+                  // onClick={() => handleChooseAction(true)}
+                  fontSize={`${px2rem(16)} !important`}
+                  onClick={() =>
+                    router.replace(
+                      `${ROUTE_PATH.POOLS}?type=${ScreenType.add_liquid}`,
+                    )
+                  }
+                >
+                  Add liquidity
                 </FiledButton>
               </Flex>
             </Flex>

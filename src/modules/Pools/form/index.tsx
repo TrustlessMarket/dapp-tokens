@@ -122,6 +122,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const router = useRouter();
   const type = router.query.type;
   const isScreenAdd = compareString(type, ScreenType.add);
+  const isScreenRemove = compareString(type, ScreenType.remove);
 
   const isPaired = !compareString(pairAddress, NULL_ADDRESS);
   const needReload = useAppSelector(selectPnftExchange).needReload;
@@ -526,6 +527,31 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     }
   };
 
+  const renderContentTitle = () => {
+    switch (type) {
+      case ScreenType.add_liquid:
+        return {
+          title: 'Add liquidity',
+          btnTitle: isPaired ? 'Supply' : 'Create & Supply',
+          btnBgColor: '#3385FF',
+        };
+
+      case ScreenType.add_liquid:
+        return {
+          title: 'Remove liquidity',
+          btnTitle: 'Remove',
+          btnBgColor: '#BC1756',
+        };
+
+      default:
+        return {
+          title: 'Create a Pool',
+          btnTitle: 'Create',
+          btnBgColor: '#3385FF',
+        };
+    }
+  };
+
   const isDisabled = !baseToken && !quoteToken;
 
   return (
@@ -563,7 +589,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             className={styles.inputAmount}
             prependComp={
               <FilterButton
-                disabled={!isScreenAdd}
+                disabled={isScreenRemove}
                 data={tokensList}
                 commonData={tokensList.slice(0, 3)}
                 handleSelectItem={(_token: IToken) =>
@@ -625,7 +651,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             className={cx(styles.inputAmount, styles.collateralAmount)}
             prependComp={
               <FilterButton
-                disabled={!isScreenAdd}
+                disabled={isScreenRemove}
                 data={tokensList}
                 commonData={tokensList.slice(0, 3)}
                 handleSelectItem={(_token: IToken) =>
@@ -711,9 +737,9 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             processInfo={{
               id: transactionType.createPool,
             }}
-            style={{ backgroundColor: isScreenAdd ? '#3385FF' : '#BC1756' }}
+            style={{ backgroundColor: renderContentTitle().btnBgColor }}
           >
-            {isScreenAdd ? 'CREATE' : 'REMOVE'}
+            {renderContentTitle().btnTitle}
           </FiledButton>
         ) : (
           <FiledButton
