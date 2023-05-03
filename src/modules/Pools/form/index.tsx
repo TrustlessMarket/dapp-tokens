@@ -339,7 +339,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         checkTokenApprove(token),
         getTokenBalance(token),
       ]);
-      setIsApproveBaseToken(_isApprove);
+      // setIsApproveBaseToken();
       if (isScreenAdd) {
         setBaseBalance(_tokenBalance);
       }
@@ -356,7 +356,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         checkTokenApprove(token),
         getTokenBalance(token),
       ]);
-      setIsApproveQuoteToken(_isApprove);
+      // setIsApproveQuoteToken(_isApprove);
       if (isScreenAdd) {
         setQuoteBalance(_tokenBalance);
       }

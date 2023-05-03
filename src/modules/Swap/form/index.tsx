@@ -197,12 +197,12 @@ export const MakeFormSwap = forwardRef((props, ref) => {
 
   const checkApproveBaseToken = async (token: any) => {
     const [_isApprove] = await Promise.all([checkTokenApprove(token)]);
-    setIsApproveBaseToken(_isApprove);
+    // setIsApproveBaseToken(_isApprove);
   };
 
   const checkApproveQuoteToken = async (token: any) => {
     const [_isApprove] = await Promise.all([checkTokenApprove(token)]);
-    setIsApproveQuoteToken(_isApprove);
+    // setIsApproveQuoteToken(_isApprove);
   };
 
   const fetchTokens = async (page = 1, isFetchMore = false) => {
@@ -555,7 +555,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
 
       toast.success('Transaction has been created. Please wait for few minutes.');
     } catch (err) {
-      toastError(showError, err, {address: account});
+      toastError(showError, err, { address: account });
     } finally {
       setLoading(false);
     }
@@ -813,7 +813,7 @@ const TradingForm = () => {
       dispatch(requestReload());
       dispatch(requestReloadRealtime());
     } catch (err) {
-      toastError(showError, err, {address: account});
+      toastError(showError, err, { address: account });
       // showError({
       //   message:
       //     (err as Error).message || 'Something went wrong. Please try again later.',

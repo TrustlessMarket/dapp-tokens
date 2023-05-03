@@ -123,11 +123,9 @@ export const ceilPrecised = (number: number | string, precision = 6) => {
   return Math.ceil(Number(number) * power) / power;
 };
 
-export const floorPrecised = (number: number | string, precision = 8) => {
-  if (!Boolean(number) || Number(number) === 0) {
-    return "0";
-  }
-  return new BigNumber(number).toString().slice(0, precision);
+export const floorPrecised = (number: string, precision = 8) => {
+  const power = Math.pow(10, precision);
+  return Math.floor(Number(number) * power) / power;
 };
 
 export const formatTCPrice = (price: string | null, emptyStr?: string): string => {
