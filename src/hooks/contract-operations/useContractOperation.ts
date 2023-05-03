@@ -125,7 +125,9 @@ const useContractOperation = <P, R>(
         isMainnet: isProduction(),
       });
 
-      await tx.wait();
+      if (tx.wait) {
+        await tx.wait();
+      }
 
       return tx;
     } catch (err) {

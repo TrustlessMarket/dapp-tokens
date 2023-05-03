@@ -2,6 +2,8 @@
 import BigNumber from 'bignumber.js';
 
 export const required = (value: unknown) => (value ? undefined : 'Required');
+export const requiredAmount = (value: unknown) =>
+  value && Number(value) !== 0 ? undefined : 'Required';
 
 export const isEmail = (message?: string) => (value: string) =>
   value &&

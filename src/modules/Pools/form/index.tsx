@@ -39,12 +39,13 @@ import {
   formatCurrency,
   sortAddressPair,
 } from '@/utils';
-import { composeValidators, required } from '@/utils/formValidate';
-import { formatAmountBigNumber } from '@/utils/format';
+import { composeValidators, required, requiredAmount } from '@/utils/formValidate';
+import { formatAmountBigNumber, formatAmountSigning } from '@/utils/format';
 import px2rem from '@/utils/px2rem';
 import { showError } from '@/utils/toast';
 import {
   Box,
+  Button,
   Flex,
   forwardRef,
   Stat,
@@ -92,7 +93,11 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const [baseToken, setBaseToken] = useState<IToken>();
   const [quoteToken, setQuoteToken] = useState<IToken>();
   const [isApproveBaseToken, setIsApproveBaseToken] = useState<boolean>(true);
-  const [isApproveQuoteToken, setIsApproveQuoteToken] = useState(true);
+  const [isApproveQuoteToken, setIsApproveQuoteToken] = useState<boolean>(true);
+  const [isApproveAmountBaseToken, setIsApproveAmountBaseToken] =
+    useState<string>('0');
+  const [isApproveAmountQuoteToken, setIsApproveAmountQuoteToken] =
+    useState<string>('0');
   const [tokensList, setTokensList] = useState<IToken[]>([]);
   const { call: isApproved } = useIsApproveERC20Token();
   const { call: tokenBalance } = useBalanceERC20Token();
@@ -151,6 +156,13 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   useEffect(() => {
     checkPair();
   }, [baseToken, quoteToken, needReload]);
+
+  useEffect(() => {
+    change('isApproveBaseToken', isApproveBaseToken);
+  }, [isApproveBaseToken]);
+  useEffect(() => {
+    change('isApproveQuoteToken', isApproveQuoteToken);
+  }, [isApproveQuoteToken]);
 
   const getImportTokens = () => {
     const checkExistKey = localStorage.getItem(IMPORTED_TOKENS);
@@ -327,6 +339,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         }),
       );
     } catch (error) {
+      throw error;
     } finally {
     }
   };
@@ -339,7 +352,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         checkTokenApprove(token),
         getTokenBalance(token),
       ]);
-      // setIsApproveBaseToken();
+      setIsApproveAmountBaseToken(_isApprove);
       if (isScreenAdd) {
         setBaseBalance(_tokenBalance);
       }
@@ -356,7 +369,8 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         checkTokenApprove(token),
         getTokenBalance(token),
       ]);
-      // setIsApproveQuoteToken(_isApprove);
+
+      setIsApproveAmountQuoteToken(_isApprove);
       if (isScreenAdd) {
         setQuoteBalance(_tokenBalance);
       }
@@ -386,7 +400,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     [values.quoteAmount, quoteBalance],
   );
 
-  const onChangeValueQuoteAmount = (_amount: any) => {
+  const onChangeValueQuoteAmount = (_amount: any = 0) => {
     if (isPaired && baseToken && quoteToken) {
       const tokens = sortAddressPair(quoteToken, quoteToken);
       const findIndex = tokens.findIndex((v) =>
@@ -398,12 +412,25 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           : new BigNumber(perPrice._reserve1).dividedBy(perPrice._reserve0);
       change('baseAmount', new BigNumber(_amount).multipliedBy(rate).toString());
     }
+
+    if (
+      Number(_amount) > 0 &&
+      baseToken &&
+      quoteToken &&
+      Number(values?.baseAmount) > 0
+    ) {
+      setIsApproveQuoteToken(
+        checkBalanceIsApprove(
+          isApproveAmountQuoteToken,
+          formatAmountSigning(_amount, quoteToken?.decimal),
+        ),
+      );
+    }
   };
 
   const onChangeValueBaseAmount = (_amount: any) => {
     if (isPaired && baseToken && quoteToken) {
       const tokens = sortAddressPair(baseToken, quoteToken);
-      console.log('tokens', tokens);
 
       const findIndex = tokens.findIndex((v) =>
         compareString(v.address, baseToken.address),
@@ -413,6 +440,20 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           ? new BigNumber(perPrice._reserve0).dividedBy(perPrice._reserve1)
           : new BigNumber(perPrice._reserve1).dividedBy(perPrice._reserve0);
       change('quoteAmount', new BigNumber(_amount).multipliedBy(rate).toString());
+
+      if (
+        Number(_amount) > 0 &&
+        baseToken &&
+        quoteToken &&
+        Number(values?.quoteAmount) > 0
+      ) {
+        setIsApproveBaseToken(
+          checkBalanceIsApprove(
+            isApproveAmountBaseToken,
+            formatAmountSigning(_amount, baseToken?.decimal),
+          ),
+        );
+      }
     }
   };
 
@@ -426,16 +467,26 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     onChangeValueQuoteAmount(quoteBalance);
   };
 
+  const checkBalanceIsApprove = (required: any = 0, amount: any = 0) => {
+    return required > 0 && new BigNumber(required).minus(amount).toNumber() >= 0;
+  };
+
   const onApprove = async () => {
     try {
       setLoading(true);
 
       if (!isEmpty(baseToken) && !isApproveBaseToken) {
         await requestApproveToken(baseToken);
-        setIsApproveBaseToken(true);
+        const [_isApprove] = await Promise.all([checkTokenApprove(baseToken)]);
+        setIsApproveAmountBaseToken(_isApprove);
+        setIsApproveBaseToken(checkBalanceIsApprove(_isApprove, values?.baseAmount));
       } else if (!isEmpty(quoteToken) && !isApproveQuoteToken) {
         await requestApproveToken(quoteToken);
-        setIsApproveQuoteToken(true);
+        const [_isApprove] = await Promise.all([checkTokenApprove(quoteToken)]);
+        setIsApproveAmountQuoteToken(_isApprove);
+        setIsApproveQuoteToken(
+          checkBalanceIsApprove(_isApprove, values?.quoteAmount),
+        );
       }
 
       // toast.success('Transaction has been created. Please wait for few minutes.');
@@ -518,6 +569,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       return [
         {
           ..._item,
+          code: response.symbol,
           extra_item: _item,
         },
       ];
@@ -581,7 +633,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           <Field
             name="baseAmount"
             children={FieldAmount}
-            validate={composeValidators(required, validateBaseAmount)}
+            validate={composeValidators(requiredAmount, validateBaseAmount)}
             fieldChanged={onChangeValueBaseAmount}
             disabled={submitting || isDisabled}
             // placeholder={"Enter number of tokens"}
@@ -643,7 +695,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             name="quoteAmount"
             // placeholder={`0 ${revertCoin[1].symbol}`}
             children={FieldAmount}
-            validate={composeValidators(required, validateQuoteAmount)}
+            validate={composeValidators(requiredAmount, validateQuoteAmount)}
             fieldChanged={onChangeValueQuoteAmount}
             disabled={submitting || isDisabled}
             // placeholder={"Enter number of tokens"}
@@ -836,8 +888,18 @@ const CreateMarket = ({
     } catch (error) {}
   };
 
-  const handleSubmit = async (values: any) => {
-    const { baseToken, quoteToken, baseAmount, quoteAmount } = values;
+  const handleSubmit = async (values: any, e: any) => {
+    const {
+      baseToken,
+      quoteToken,
+      baseAmount,
+      quoteAmount,
+      isApproveQuoteToken,
+      isApproveBaseToken,
+    } = values;
+    if (!isApproveQuoteToken || !isApproveBaseToken) {
+      return;
+    }
     try {
       setSubmitting(true);
       dispatch(

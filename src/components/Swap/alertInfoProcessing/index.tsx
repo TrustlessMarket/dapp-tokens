@@ -92,8 +92,7 @@ const AlertInfoProcess: React.FC<AlertInfoProcessProps> = ({
 
   if (
     !Boolean(currentTransaction?.status) ||
-    !compareString(currentTransaction?.id, processInfo?.id) ||
-    !isVisible
+    !compareString(currentTransaction?.id, processInfo?.id)
   ) {
     return null;
   }

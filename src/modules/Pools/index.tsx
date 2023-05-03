@@ -257,7 +257,7 @@ const LiquidityContainer = () => {
                     data={data}
                     columns={columns}
                     noHeader
-                    emptyLabel="No pool found."
+                    emptyLabel="Your active liquidity positions will appear here."
                   />
                 </Box>
               </div>

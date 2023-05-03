@@ -88,7 +88,7 @@ const FilterModal: React.FC<FilterModalProps> = ({
       const __data = _data.filter(
         (v: DataRow) =>
           v.name.toLowerCase().includes(text.toLowerCase()) ||
-          v.code.toLowerCase().includes(text.toLowerCase()) ||
+          v.code?.toLowerCase().includes(text.toLowerCase()) ||
           v.symbol?.toLowerCase().includes(text.toLowerCase()) ||
           v.address.toLowerCase().includes(text.toLowerCase()),
       );
