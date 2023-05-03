@@ -453,7 +453,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
 
   const validateBaseAmount = useCallback(
     (_amount: any) => {
-      if (Number(_amount) > Number(baseBalance)) {
+      if (new BigNumber(_amount).gt(baseBalance)) {
         return `Max amount is ${formatCurrency(baseBalance)}`;
       }
 
