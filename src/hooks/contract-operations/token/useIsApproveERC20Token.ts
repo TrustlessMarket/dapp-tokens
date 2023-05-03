@@ -29,7 +29,7 @@ const useIsApproveERC20Token: ContractOperationHook<
           .connect(provider.getSigner())
           .allowance(account, address);
 
-        return transaction;
+        return transaction.toString();
       }
       return '';
     },
