@@ -43,7 +43,6 @@ const GetStarted = () => {
   return (
     <BodyContainer className={styles.wrapper}>
       <StyledTokens>
-        <div className="background"></div>
         <div>
           <h3 className="upload_title">Let’s get you ready for Bitcoin DeFi.</h3>
         </div>
