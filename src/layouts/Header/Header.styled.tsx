@@ -8,7 +8,7 @@ const Wrapper = styled.div`
   max-width: 1920px;
 
   .container {
-    padding: 0 ${px2rem(32)};
+    padding: 0;
     //height: 100%;
     display: flex;
     flex-direction: row;
