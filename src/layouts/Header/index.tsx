@@ -2,7 +2,7 @@ import {CDN_URL} from '@/configs';
 import {ROUTE_PATH} from '@/constants/route-path';
 import {gsap} from 'gsap';
 import Link from 'next/link';
-import {useEffect, useRef, useState} from 'react';
+import {useEffect, useMemo, useRef, useState} from 'react';
 import {Wrapper} from './Header.styled';
 import MenuMobile from './MenuMobile';
 import WalletHeader from './Wallet';
@@ -12,6 +12,7 @@ import {GENERATIVE_DISCORD, TRUSTLESS_COMPUTER} from "@/constants/common";
 import {useScreenLayout} from "@/hooks/useScreenLayout";
 import {Flex, Text, Link as LinkText} from "@chakra-ui/react";
 import {defaultProvider} from "@/contexts/screen-context";
+import {compareString} from "@/utils";
 
 const Header = () => {
   const refMenu = useRef<HTMLDivElement | null>(null);
@@ -19,6 +20,10 @@ const Header = () => {
   const { mobileScreen } = useWindowSize();
   const router = useRouter();
   const { headerHeight, showGetStarted } = useScreenLayout();
+
+  const isTokensPage = useMemo(() => {
+    return compareString(router?.pathname, ROUTE_PATH.HOME) || compareString(router?.pathname, ROUTE_PATH.MARKETS);
+  }, [router?.pathname]);
 
   useEffect(() => {
     if (refMenu.current) {
@@ -33,8 +38,6 @@ const Header = () => {
       }
     }
   }, [isOpenMenu]);
-
-  console.log('headerHeight', headerHeight);
 
   return (
     <Wrapper style={{ height: headerHeight }}>
@@ -122,9 +125,8 @@ const Header = () => {
           height={10}
           alignItems="center"
           justifyContent="center"
-          bgColor="#ebebeb"
+          bgColor={`#ebebeb${isTokensPage ? '33' : ''}`}
         >
-
           <Text fontWeight="medium" fontSize="sm">
             New to Bitcoin DeFi?{" "}
             <LinkText fontWeight="bold" color="brand.info.400" href={ROUTE_PATH.GET_STARTED}>
