@@ -20,7 +20,7 @@ const useGetReserves: ContractOperationHook<
   const { account, provider: defaultProvider } = useWeb3React();
 
   let provider = defaultProvider;
-  if(!provider) {
+  if(!provider && window.ethereum) {
     provider = new ethers.providers.Web3Provider(window.ethereum as ethers.providers.ExternalProvider);
   }
 
