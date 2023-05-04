@@ -3,18 +3,7 @@ import styled from 'styled-components';
 
 export const StyledTokens = styled.div`
   margin-top: ${px2rem(48)};
-  .background {
-    background-color: rgb(28, 28, 28);
-    min-height: ${px2rem(203)};
-    position: absolute;
-    width: 100%;
-    height: 202px;
-    top: 80px;
-    left: 0;
-    z-index: 0;
-    background-repeat: no-repeat;
-    background-position: 50% 50%;
-  }
+  margin-bottom: ${px2rem(48)};
 
   .table {
     th:first-of-type {

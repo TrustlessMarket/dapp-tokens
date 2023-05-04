@@ -32,6 +32,7 @@ import { StyledLiquidNote, StyledTokens, UploadFileContainer } from './Pools.sty
 import CreateMarket from './form';
 import styles from './styles.module.scss';
 import ImportPool from './form/importPool';
+import BodyContainer from "@/components/Swap/bodyContainer";
 
 export enum ScreenType {
   default = 'default',
@@ -362,18 +363,19 @@ const LiquidityContainer = () => {
   };
 
   return (
-    <StyledTokens>
-      <div className="background"></div>
-      <StyledLiquidNote>
-        <Text className="title">Liquidity provider rewards</Text>
-        <Text className="desc">
-          Liquidity providers earn a 2% fee on all trades proportional to their share
-          of the pool. Fees are added to the pool, accrue in real time and can be
-          claimed by withdrawing your liquidity.
-        </Text>
-      </StyledLiquidNote>
-      {renderScreen()}
-    </StyledTokens>
+    <BodyContainer className={styles.containerWrapper}>
+      <StyledTokens>
+        <StyledLiquidNote>
+          <Text className="title">Liquidity provider rewards</Text>
+          <Text className="desc">
+            Liquidity providers earn a 2% fee on all trades proportional to their share
+            of the pool. Fees are added to the pool, accrue in real time and can be
+            claimed by withdrawing your liquidity.
+          </Text>
+        </StyledLiquidNote>
+        {renderScreen()}
+      </StyledTokens>
+    </BodyContainer>
   );
 };
 

@@ -3,22 +3,12 @@ import { Box } from '@chakra-ui/react';
 import styled, { DefaultTheme } from 'styled-components';
 
 export const StyledTokens = styled.div`
-  margin-top: ${px2rem(48)};
+  padding-top: ${px2rem(48)};
+  padding-bottom: ${px2rem(48)};
   width: 720px !important;
   //max-width: 640px;
   margin-left: auto;
   margin-right: auto;
-
-  .background {
-    background: linear-gradient(90deg, #00c6ff 0%, #0072ff 100%);
-    min-height: ${px2rem(203)};
-    position: absolute;
-    width: 100%;
-    top: 80px;
-    left: 0;
-    z-index: 0;
-    min-height: calc(100vh - 80px);
-  }
 
   h6 {
     z-index: 2;

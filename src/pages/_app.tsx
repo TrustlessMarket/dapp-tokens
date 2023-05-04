@@ -16,6 +16,7 @@ import customTheme from '@/theme/theme-chakra';
 import ChakaDefaultProps from '@/theme/chakraDefaultProps';
 import ModalManager from "@/components/Swap/modal";
 import MyLoadingOverlay from "@/components/Swap/myLoadingOverlay";
+import {ScreenLayoutProvider} from "@/contexts/screen-context";
 
 export default function App({ Component, pageProps }: AppProps) {
   const { seoInfo = {} } = pageProps;
@@ -121,12 +122,14 @@ export default function App({ Component, pageProps }: AppProps) {
               <ThemedGlobalStyle />
               <Web3Provider>
                 <WalletProvider>
-                  <AssetsProvider>
-                    <Component {...pageProps} />
-                  </AssetsProvider>
-                  <Toaster position="top-center" reverseOrder={false} />
-                  <ModalManager />
-                  <MyLoadingOverlay />
+                  <ScreenLayoutProvider>
+                    <AssetsProvider>
+                      <Component {...pageProps} />
+                    </AssetsProvider>
+                    <Toaster position="top-center" reverseOrder={false} />
+                    <ModalManager />
+                    <MyLoadingOverlay />
+                  </ScreenLayoutProvider>
                 </WalletProvider>
               </Web3Provider>
             </ThemeProvider>

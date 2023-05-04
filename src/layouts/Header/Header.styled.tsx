@@ -5,11 +5,17 @@ import styled, { DefaultTheme } from 'styled-components';
 import Link from 'next/link';
 
 const Wrapper = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-  position: relative;
+  max-width: 1920px;
+
+  .container {
+    padding: 0 ${px2rem(32)};
+    //height: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+  }
 
   .logo {
     z-index: 999;

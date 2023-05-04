@@ -1,0 +1,9 @@
+.bodyContainer {
+  // background-color: #f4f5f6;
+  flex: 1;
+  > div {
+    max-width: 1366px;
+    margin:  auto;
+    height: 100%;
+  }
+}

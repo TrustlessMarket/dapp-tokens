@@ -4,7 +4,6 @@ import Header from './Header';
 import styled from 'styled-components';
 import px2rem from '@/utils/px2rem';
 
-const HEADER_HEIGHT = 80;
 const FO0TER_HEIGHT = 80;
 
 export const Container = styled.div`
@@ -24,26 +23,13 @@ export const Container = styled.div`
   padding-right: 6%; */
 `;
 
-const ContentWrapper = styled.div`
-  min-height: calc(100vh - 140px);
-  display: flex;
-  align-self: center;
-  width: 100%;
-
-  > div {
-    width: 100%;
-  }
-`;
-
 const Layout: React.FC<PropsWithChildren> = ({ children }) => {
   return (
-    <Container>
-      <div className="container">
-        <Header height={HEADER_HEIGHT} />
-        <ContentWrapper>{children}</ContentWrapper>
-        <Footer height={FO0TER_HEIGHT} />
-      </div>
-    </Container>
+    <>
+      <Header />
+      {children}
+      <Footer height={FO0TER_HEIGHT} />
+    </>
   );
 };
 

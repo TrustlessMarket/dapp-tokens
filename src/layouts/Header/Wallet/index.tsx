@@ -22,10 +22,11 @@ import Jazzicon, { jsNumberForAddress } from 'react-jazzicon';
 import { useSelector } from 'react-redux';
 import { ConnectWalletButton, WalletBalance } from '../Header.styled';
 import { WalletPopover } from './Wallet.styled';
+import {SupportedChainId} from "@/constants/chains";
 
 const WalletHeader = () => {
   const router = useRouter();
-  const { account } = useWeb3React();
+  const { account, chainId } = useWeb3React();
   const user = useSelector(getUserSelector);
   const { onDisconnect, onConnect, requestBtcAddress } = useContext(WalletContext);
 
@@ -173,33 +174,38 @@ const WalletHeader = () => {
     <>
       {account && isAuthenticated ? (
         <>
-          <SelectedNetwork />
-          <OverlayTrigger
-            trigger={['hover', 'focus']}
-            placement="bottom"
-            overlay={walletPopover}
-            container={ref}
-            show={show}
-          >
-            <div
-              className="wallet"
-              // onClick={() => window.open(TC_WEB_URL)}
-              ref={ref}
-              onMouseEnter={handleOnMouseEnter}
-              onMouseLeave={handleOnMouseLeave}
-            >
-              <WalletBalance className={isTokenPage ? 'isTokenPage' : ''}>
-                <div className="balance">
-                  <p>{formatBTCPrice(btcBalance)} BTC</p>
-                  <span className="divider"></span>
-                  <p>{formatEthPriceFloor(juiceBalance)} TC</p>
+          {
+            !compareString(chainId, SupportedChainId.TRUSTLESS_COMPUTER) ? (
+              <SelectedNetwork />
+            ) : (
+              <OverlayTrigger
+                trigger={['hover', 'focus']}
+                placement="bottom"
+                overlay={walletPopover}
+                container={ref}
+                show={show}
+              >
+                <div
+                  className="wallet"
+                  // onClick={() => window.open(TC_WEB_URL)}
+                  ref={ref}
+                  onMouseEnter={handleOnMouseEnter}
+                  onMouseLeave={handleOnMouseLeave}
+                >
+                  <WalletBalance className={isTokenPage ? 'isTokenPage' : ''}>
+                    <div className="balance">
+                      <p>{formatBTCPrice(btcBalance)} BTC</p>
+                      <span className="divider"></span>
+                      <p>{formatEthPriceFloor(juiceBalance)} TC</p>
+                    </div>
+                    <div className="avatar">
+                      <Jazzicon diameter={32} seed={jsNumberForAddress(account)} />
+                    </div>
+                  </WalletBalance>
                 </div>
-                <div className="avatar">
-                  <Jazzicon diameter={32} seed={jsNumberForAddress(account)} />
-                </div>
-              </WalletBalance>
-            </div>
-          </OverlayTrigger>
+              </OverlayTrigger>
+            )
+          }
         </>
       ) : (
         <ConnectWalletButton className="hideMobile" onClick={handleConnectWallet}>

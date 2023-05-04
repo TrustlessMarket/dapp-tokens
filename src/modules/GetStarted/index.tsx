@@ -1,5 +1,7 @@
 import {StyledTokens, UploadFileContainer} from './GetStarted.styled';
 import {Box, Center, Flex, Link, Text} from "@chakra-ui/react";
+import styles from "@/modules/Swap/styles.module.scss";
+import BodyContainer from "@/components/Swap/bodyContainer";
 
 const STEPS = [
   {
@@ -39,38 +41,40 @@ const STEPS = [
 
 const GetStarted = () => {
   return (
-    <StyledTokens>
-      <div className="background"></div>
-      <div>
-        <h3 className="upload_title">Let’s get you ready for Bitcoin DeFi.</h3>
-      </div>
-      <UploadFileContainer>
-        <div className="upload_left">
-          <Flex direction={"column"} gap={6}>
-            {
-              STEPS.map(s => {
-                return (
-                  <Flex gap={6} color={"#FFFFFF"} bg={"#000000AA"} borderRadius={"8px"} p={6} key={s.step}>
-                    <Center fontSize={"28px"} fontWeight={"700"} borderRadius={"50%"}
-                            bg={"linear-gradient(90deg, #00c6ff 0%, #0072ff 100%)"}
-                            w={"60px"} h={"60px"} minW={"60px"} minH={"60px"}
-                    >
-                      {s.step}
-                    </Center>
-                    <Flex direction={"column"} alignItems={"flex-start"} textAlign={"left"}>
-                      <Text fontSize={"28px"} fontWeight={"700"}>{s.title}</Text>
-                      <Box fontSize={"md"}>
-                        {s.desc}
-                      </Box>
-                    </Flex>
-                  </Flex>
-                )
-              })
-            }
-          </Flex>
+    <BodyContainer className={styles.wrapper}>
+      <StyledTokens>
+        <div className="background"></div>
+        <div>
+          <h3 className="upload_title">Let’s get you ready for Bitcoin DeFi.</h3>
         </div>
-      </UploadFileContainer>
-    </StyledTokens>
+        <UploadFileContainer>
+          <div className="upload_left">
+            <Flex direction={"column"} gap={6}>
+              {
+                STEPS.map(s => {
+                  return (
+                    <Flex gap={6} color={"#FFFFFF"} bg={"#000000AA"} borderRadius={"8px"} p={6} key={s.step}>
+                      <Center fontSize={"28px"} fontWeight={"700"} borderRadius={"50%"}
+                              bg={"linear-gradient(90deg, #00c6ff 0%, #0072ff 100%)"}
+                              w={"60px"} h={"60px"} minW={"60px"} minH={"60px"}
+                      >
+                        {s.step}
+                      </Center>
+                      <Flex direction={"column"} alignItems={"flex-start"} textAlign={"left"}>
+                        <Text fontSize={"28px"} fontWeight={"700"}>{s.title}</Text>
+                        <Box fontSize={"md"}>
+                          {s.desc}
+                        </Box>
+                      </Flex>
+                    </Flex>
+                  )
+                })
+              }
+            </Flex>
+          </div>
+        </UploadFileContainer>
+      </StyledTokens>
+    </BodyContainer>
   );
 };
 

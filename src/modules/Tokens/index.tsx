@@ -5,7 +5,7 @@ import { getTokenRp } from '@/services/token-explorer';
 import { formatCurrency } from '@/utils';
 import { decimalToExponential } from '@/utils/format';
 import { debounce } from 'lodash';
-import { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import Spinner from 'react-bootstrap/Spinner';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import ModalCreateToken from './ModalCreateToken';
@@ -25,6 +25,7 @@ import { DEFAULT_BASE_TOKEN } from '@/modules/Swap/form';
 import { Flex } from '@chakra-ui/react';
 //const EXPLORER_URL = TRUSTLESS_COMPUTER_CHAIN_INFO.explorers[0].url;
 import { AiOutlineCaretDown, AiOutlineCaretUp } from 'react-icons/ai';
+import BodyContainer from "@/components/Swap/bodyContainer";
 
 const LIMIT_PAGE = 500;
 //const ALL_ONE_PAGE = 10000;
@@ -219,78 +220,79 @@ const Tokens = () => {
   });
 
   return (
-    <StyledTokens>
-      <div className="background"></div>
-      <div>
-        <h3 className="upload_title">Smart BRC-20</h3>
-      </div>
-      <UploadFileContainer>
-        <div className="upload_left">
-          {/* <img src={IcBitcoinCloud} alt="upload file icon" /> */}
-          <div className="upload_content">
-            {/* <h3 className="upload_title">BRC-20 on Bitcoin</h3> */}
-            <Text className="upload_text">
-              Smart BRC-20s are{' '}
-              <span style={{ color: '#3385FF' }}>
+    <BodyContainer>
+      <StyledTokens>
+        <div>
+          <h3 className="upload_title">Smart BRC-20</h3>
+        </div>
+        <UploadFileContainer>
+          <div className="upload_left">
+            {/* <img src={IcBitcoinCloud} alt="upload file icon" /> */}
+            <div className="upload_content">
+              {/* <h3 className="upload_title">BRC-20 on Bitcoin</h3> */}
+              <Text className="upload_text">
+                Smart BRC-20s are{' '}
+                <span style={{ color: '#3385FF' }}>
                 the first smart contracts deployed on Bitcoin
               </span>
-              . They run exactly as programmed without any possibility of fraud,
-              third-party interference, or censorship. Issue your Smart BRC-20 on
-              Bitcoin for virtually anything: a cryptocurrency, a share in a company,
-              voting rights in a DAO, and more.
-            </Text>
+                . They run exactly as programmed without any possibility of fraud,
+                third-party interference, or censorship. Issue your Smart BRC-20 on
+                Bitcoin for virtually anything: a cryptocurrency, a share in a company,
+                voting rights in a DAO, and more.
+              </Text>
+            </div>
           </div>
-        </div>
-        <div className="upload_right">
-          <Button
-            className="button-create-box"
-            background={'white'}
-            onClick={handleCreateToken}
-          >
-            <Text
-              size="medium"
-              color={'black'}
-              className="button-text"
-              fontWeight="medium"
+          <div className="upload_right">
+            <Button
+              className="button-create-box"
+              background={'white'}
+              onClick={handleCreateToken}
             >
-              Issue Smart BRC-20
-            </Text>
-          </Button>
-          <Link href={ROUTE_PATH.SWAP}>
-            <Button className="comming-soon-btn" bg={'white'} background={'#3385FF'}>
               <Text
                 size="medium"
-                color="bg1"
-                className="brc20-text"
+                color={'black'}
+                className="button-text"
                 fontWeight="medium"
               >
-                Swap Smart BRC-20
+                Issue Smart BRC-20
               </Text>
             </Button>
-          </Link>
-        </div>
-      </UploadFileContainer>
-      <InfiniteScroll
-        className="tokens-list"
-        dataLength={tokensList?.length || 0}
-        hasMore={true}
-        loader={
-          isFetching && (
-            <div className="loading">
-              <Spinner animation="border" variant="primary" />
-            </div>
-          )
-        }
-        next={debounceLoadMore}
-      >
-        <Table
-          tableHead={TABLE_HEADINGS}
-          data={tokenDatas}
-          className={'token-table'}
-        />
-      </InfiniteScroll>
-      <ModalCreateToken show={showModal} handleClose={() => setShowModal(false)} />
-    </StyledTokens>
+            <Link href={ROUTE_PATH.SWAP}>
+              <Button className="comming-soon-btn" bg={'white'} background={'#3385FF'}>
+                <Text
+                  size="medium"
+                  color="bg1"
+                  className="brc20-text"
+                  fontWeight="medium"
+                >
+                  Swap Smart BRC-20
+                </Text>
+              </Button>
+            </Link>
+          </div>
+        </UploadFileContainer>
+        <InfiniteScroll
+          className="tokens-list"
+          dataLength={tokensList?.length || 0}
+          hasMore={true}
+          loader={
+            isFetching && (
+              <div className="loading">
+                <Spinner animation="border" variant="primary" />
+              </div>
+            )
+          }
+          next={debounceLoadMore}
+        >
+          <Table
+            tableHead={TABLE_HEADINGS}
+            data={tokenDatas}
+            className={'token-table'}
+          />
+        </InfiniteScroll>
+        <ModalCreateToken show={showModal} handleClose={() => setShowModal(false)} />
+      </StyledTokens>
+    </BodyContainer>
   );
 };
 
