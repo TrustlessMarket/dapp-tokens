@@ -221,7 +221,7 @@ const Tokens = () => {
           ) || 'n/a',
         usdVol: `$${formatCurrency(marketCap, 2)}`,
         usdVolume: (
-          <span className={Number(tokenVolume) > 0 ? 'increase' : ''}>
+          <span>
             ${formatCurrency(tokenVolume, 2)}
           </span>
         ),
