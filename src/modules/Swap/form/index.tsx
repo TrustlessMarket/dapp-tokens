@@ -176,16 +176,15 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   }, []);
 
   useEffect(() => {
-    if (account && baseToken?.address && quoteToken?.address) {
+    if (baseToken?.address && quoteToken?.address) {
       getPairAddress();
     } else {
       setPairAddress(NULL_ADDRESS);
     }
-  }, [account, baseToken?.address, quoteToken?.address]);
+  }, [baseToken?.address, quoteToken?.address]);
 
   useEffect(() => {
     if (
-      account &&
       pairAddress &&
       baseToken &&
       quoteToken &&
@@ -193,7 +192,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     ) {
       getReservesInfo();
     }
-  }, [account, pairAddress, needReload]);
+  }, [pairAddress, needReload]);
 
   useEffect(() => {
     change('baseBalance', baseBalance);

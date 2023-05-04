@@ -16,7 +16,6 @@ const useBalanceERC20Token: ContractOperationHook<
   string
 > = () => {
   const { account, provider } = useWeb3React();
-  const { btcBalance, feeRate } = useContext(AssetsContext);
 
   const call = useCallback(
     async (params: IBalanceERC20TokenParams): Promise<string> => {
@@ -28,11 +27,13 @@ const useBalanceERC20Token: ContractOperationHook<
           .connect(provider.getSigner())
           .balanceOf(account);
 
+        console.log('useBalanceERC20Token', transaction.toString());
+
         return formatAmountBigNumber(transaction.toString(), 18).toString();
       }
       return '0';
     },
-    [account, provider, btcBalance, feeRate],
+    [account, provider],
   );
 
   return {
