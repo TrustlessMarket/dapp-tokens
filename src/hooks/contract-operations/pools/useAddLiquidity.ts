@@ -10,7 +10,7 @@ import { logErrorToServer, scanTrx } from '@/services/token-explorer';
 import store from '@/state';
 import { updateCurrentTransaction } from '@/state/pnftExchange';
 import { compareString, getContract } from '@/utils';
-import { formatBTCPrice, formatEthPriceSubmit } from '@/utils/format';
+import { formatAmountSigning, formatBTCPrice } from '@/utils/format';
 import { useWeb3React } from '@web3-react/core';
 import BigNumber from 'bignumber.js';
 import { useCallback, useContext } from 'react';
@@ -76,10 +76,10 @@ const useAddLiquidity: ContractOperationHook<IAddLiquidityParams, boolean> = () 
           .addLiquidity(
             tokenA,
             tokenB,
-            formatEthPriceSubmit(amountADesired),
-            formatEthPriceSubmit(amountBDesired),
-            formatEthPriceSubmit(amountAMin),
-            formatEthPriceSubmit(amountBMin),
+            formatAmountSigning(amountADesired, 18),
+            formatAmountSigning(amountBDesired, 18),
+            formatAmountSigning(amountAMin),
+            formatAmountSigning(amountBMin),
             account,
             MaxUint256,
             {

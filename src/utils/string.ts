@@ -35,7 +35,7 @@ export const compareString = (a: unknown, b: unknown) => {
 export function formatCurrency(value: number | string = 0, decimalNumber = 6) {
   if (isNaN(Number(value))) return 0;
   return new BigNumber(value)
-    .decimalPlaces(decimalNumber)
+    .decimalPlaces(decimalNumber, 1)
     .toFormat(decimalNumber)
     .replace(/(\.[0-9]*[1-9])0+$|\.0*$/, '$1');
 }

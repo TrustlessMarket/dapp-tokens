@@ -10,12 +10,11 @@ import { logErrorToServer, scanTrx } from '@/services/token-explorer';
 import store from '@/state';
 import { updateCurrentTransaction } from '@/state/pnftExchange';
 import { compareString, getContract } from '@/utils';
-import { formatBTCPrice } from '@/utils/format';
+import { formatAmountSigning, formatBTCPrice } from '@/utils/format';
 import { useWeb3React } from '@web3-react/core';
 import BigNumber from 'bignumber.js';
 import { useCallback, useContext } from 'react';
 import * as TC_SDK from 'trustless-computer-sdk';
-import Web3 from 'web3';
 
 export interface ISwapERC20TokenParams {
   addresses: string[];
@@ -66,8 +65,8 @@ const useSwapERC20Token: ContractOperationHook<
         const transaction = await contract
           .connect(provider.getSigner())
           .swapExactTokensForTokens(
-            Web3.utils.toWei(amount, 'ether'),
-            Web3.utils.toWei(amountOutMin, 'ether'),
+            formatAmountSigning(amount, 18),
+            formatAmountSigning(amountOutMin, 18),
             addresses,
             address,
             MaxUint256,

@@ -99,10 +99,7 @@ export const formatEthPriceFloor = (
   if (!price) return emptyStr || '-';
   console.log(
     'aaaaa',
-    floorPrecised(
-      parseFloat(Web3.utils.fromWei(`${price}`, 'ether')).toString(),
-      precision,
-    )
+    floorPrecised(Web3.utils.fromWei(`${price}`, 'ether'), precision)
       .toString()
       .replace(',', '.'),
   );
