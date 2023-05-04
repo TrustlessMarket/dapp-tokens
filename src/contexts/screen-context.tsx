@@ -7,7 +7,7 @@ import {useWeb3React} from "@web3-react/core";
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export const defaultProvider = {
   headerHeight: 80,
-  headerHeightMobile: 56,
+  headerHeightMobile: 80,
   headerTradingHeight: 48,
   footerHeight: 80,
   footerHeightMobile: 80,
@@ -50,11 +50,11 @@ const ScreenLayoutProvider: React.FC<any> = ({ children }) => {
     //   height = defaultProvider.headerTradingHeight;
     // }
 
-    if (!_isMobile) {
+    // if (!_isMobile) {
       height +=
         (showGetStarted ? 40 : 0)
       ;
-    }
+    // }
 
     setHeaderHeight(height);
   }, [

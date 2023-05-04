@@ -15,11 +15,17 @@ const Wrapper = styled.div`
     align-items: center;
     justify-content: space-between;
     position: relative;
+    
+    @media screen and (max-width: 767px) {
+      overflow-x: auto;
+      padding: 0 ${px2rem(16)};
+    }
   }
 
   .logo {
     z-index: 999;
     max-width: ${px2rem(40)};
+    min-width: ${px2rem(40)};
   }
 
   a {

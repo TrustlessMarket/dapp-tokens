@@ -92,20 +92,24 @@ const Header = () => {
         </div>
         <MenuMobile ref={refMenu} onCloseMenu={() => setIsOpenMenu(false)} />
         <div className="rightContainer">
-          <div className="external-link">
-            <Link
-              href={GENERATIVE_DISCORD}
-              target={"_blank"}
-            >
-              DISCORD
-            </Link>
-            <Link
-              href={TRUSTLESS_COMPUTER}
-              target={"_blank"}
-            >
-              TRUSTLESS
-            </Link>
-          </div>
+          {
+            !mobileScreen && (
+              <div className="external-link">
+                <Link
+                  href={GENERATIVE_DISCORD}
+                  target={"_blank"}
+                >
+                  DISCORD
+                </Link>
+                <Link
+                  href={TRUSTLESS_COMPUTER}
+                  target={"_blank"}
+                >
+                  TRUSTLESS
+                </Link>
+              </div>
+            )
+          }
           <WalletHeader />
           <button className="btnMenuMobile" onClick={() => setIsOpenMenu(true)}>
             <img src={`${CDN_URL}/icons/ic_hambuger.svg`} />
