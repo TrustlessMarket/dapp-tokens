@@ -36,8 +36,9 @@ const Tokens = () => {
     'Name',
     'Price',
     '24h %',
+    '7d %',
     'Market Cap',
-    'Volume (24h)',
+    'Volume',
     'Supply',
   ];
   /*'Price','24h %','Market Cap'*/
@@ -157,14 +158,15 @@ const Tokens = () => {
   }, []);
 
   const tokenDatas = tokensList.map((token) => {
+    console.log('token', token);
     const totalSupply = new BigNumber(token?.totalSupply || 0).div(
       decimalToExponential(Number(token?.decimal || 18)),
     );
     const tokenPrice = token?.usdPrice
       ? new BigNumber(token?.usdPrice).toFixed()
       : 'n/a';
-    const tokenVolume = token?.usdVolume
-      ? new BigNumber(token?.usdVolume).toFixed()
+    const tokenVolume = token?.usdTotalVolume
+      ? new BigNumber(token?.usdTotalVolume).toFixed()
       : 'n/a';
     const marketCap = token?.usdPrice
       ? new BigNumber(token?.usdPrice).multipliedBy(totalSupply).toFixed()
@@ -196,6 +198,25 @@ const Tokens = () => {
                 <AiOutlineCaretDown color={'#ea3943'} />
               )}
               {formatCurrency(token?.percent, 2)}%
+            </Flex>
+          ) || 'n/a',
+        percent7Day:
+          (
+            <Flex
+              alignItems={'center'}
+              className={
+                Number(token?.percent7Day) > 0
+                  ? 'increase'
+                  : Number(token?.percent7Day) < 0
+                  ? 'descrease'
+                  : ''
+              }
+            >
+              {Number(token?.percent7Day) > 0 && <AiOutlineCaretUp color={'#16c784'} />}
+              {Number(token?.percent7Day) < 0 && (
+                <AiOutlineCaretDown color={'#ea3943'} />
+              )}
+              {formatCurrency(token?.percent7Day, 2)}%
             </Flex>
           ) || 'n/a',
         usdVol: `$${formatCurrency(marketCap, 2)}`,
