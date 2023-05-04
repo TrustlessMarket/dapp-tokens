@@ -1,11 +1,10 @@
 import ERC20ABIJson from '@/abis/erc20.json';
-import { AssetsContext } from '@/contexts/assets-context';
-import { TransactionEventType } from '@/enums/transaction';
-import { ContractOperationHook, DAppType } from '@/interfaces/contract-operation';
-import { getContract } from '@/utils';
-import { formatAmountBigNumber } from '@/utils/format';
-import { useWeb3React } from '@web3-react/core';
-import { useCallback, useContext } from 'react';
+import {TransactionEventType} from '@/enums/transaction';
+import {ContractOperationHook, DAppType} from '@/interfaces/contract-operation';
+import {getContract} from '@/utils';
+import {formatAmountBigNumber} from '@/utils/format';
+import {useWeb3React} from '@web3-react/core';
+import {useCallback} from 'react';
 
 export interface IBalanceERC20TokenParams {
   erc20TokenAddress: string;
