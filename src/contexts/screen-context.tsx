@@ -58,6 +58,7 @@ const ScreenLayoutProvider: React.FC<any> = ({ children }) => {
 
     setHeaderHeight(height);
   }, [
+    _isMobile,
     account,
     router?.pathname,
   ]);
