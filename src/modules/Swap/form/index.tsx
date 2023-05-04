@@ -805,7 +805,7 @@ const TradingForm = () => {
       const data = {
         addresses: [baseToken.address, quoteToken.address],
         address: user?.walletAddress,
-        amount: formatAmountSigning(baseToken?.decimals || 18),
+        amount: baseAmount,
         amountOutMin: amountOutMin,
       };
 
