@@ -28,7 +28,7 @@ const EmptyList = (props: EmptyListProps) => {
       {!props.hideIcon && (
         <img
           width={imageSize}
-          src={`${CDN_URL}/icons/img_sad_gray.svg`}
+          src={`${CDN_URL}/icons/ic-empty-list.svg`}
           alt={'icon'}
         />
       )}

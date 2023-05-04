@@ -775,7 +775,14 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             .
           </Text>
         )}
-      <WrapperConnected className={styles.submitButton}>
+      <WrapperConnected
+        type={
+          Boolean(isApproveBaseToken) && Boolean(isApproveQuoteToken)
+            ? 'submit'
+            : 'button'
+        }
+        className={styles.submitButton}
+      >
         {Boolean(isApproveBaseToken) && Boolean(isApproveQuoteToken) ? (
           <FiledButton
             isDisabled={submitting || btnDisabled}

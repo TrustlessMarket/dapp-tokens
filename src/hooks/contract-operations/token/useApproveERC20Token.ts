@@ -60,7 +60,7 @@ const useApproveERC20Token: ContractOperationHook<
         const transaction = await contract
           .connect(provider.getSigner())
           .approve(address, MaxUint256, {
-            gasLimit: '500000',
+            gasLimit: '80000',
           });
 
         // TC_SDK.signTransaction({

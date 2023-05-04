@@ -16,6 +16,7 @@ const WrapperConnected: React.FC<WrapperConnectedProps> = ({
   children,
   onClick,
   className,
+  type = 'button',
 }) => {
   const isAuthenticated = useSelector(getIsAuthenticatedSelector);
   const { onDisconnect, onConnect, requestBtcAddress } = useContext(WalletContext);
@@ -42,7 +43,7 @@ const WrapperConnected: React.FC<WrapperConnectedProps> = ({
   };
 
   return (
-    <StyledWrapperConnected onClick={handleClick} className={className}>
+    <StyledWrapperConnected type={type} onClick={handleClick} className={className}>
       {children}
     </StyledWrapperConnected>
   );

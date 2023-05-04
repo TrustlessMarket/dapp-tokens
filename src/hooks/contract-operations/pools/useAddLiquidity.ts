@@ -87,6 +87,8 @@ const useAddLiquidity: ContractOperationHook<IAddLiquidityParams, boolean> = () 
             },
           );
 
+        console.log('gasLimit', transaction);
+
         // TC_SDK.signTransaction({
         //   method: `${DAppType.ERC20} - ${TransactionEventType.CREATE}`,
         //   hash: transaction.hash,

@@ -199,8 +199,14 @@ const LiquidityContainer = () => {
                   <Box>
                     <CreateMarket
                       type={routerQuery.type}
-                      fromAddress={routerQuery?.f}
-                      toAddress={routerQuery?.t}
+                      fromAddress={
+                        routerQuery?.f ||
+                        '0xfB83c18569fB43f1ABCbae09Baf7090bFFc8CBBD'
+                      }
+                      toAddress={
+                        routerQuery?.t ||
+                        '0x749D093C43BcC544172B95Df4c4e8E4B8d984133'
+                      }
                     />
                   </Box>
                 </Box>
@@ -275,7 +281,11 @@ const LiquidityContainer = () => {
                   Create a Pool
                 </FiledButton>
                 <FiledButton
-                  style={{ background: 'orange' }}
+                  style={{ borderColor: 'white', color: 'white' }}
+                  _hover={{
+                    backgroundColor: 'orange',
+                  }}
+                  variant={'outline'}
                   // onClick={() => handleChooseAction(true)}
                   fontSize={`${px2rem(16)} !important`}
                   onClick={() =>
