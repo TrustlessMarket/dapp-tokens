@@ -127,7 +127,7 @@ const Header = () => {
           justifyContent="center"
           bgColor={`#ebebeb${isTokensPage ? '33' : ''}`}
         >
-          <Text fontWeight="medium" fontSize="sm">
+          <Text fontWeight="medium" fontSize="sm" color={isTokensPage ? 'white' : 'black'}>
             New to Bitcoin DeFi?{" "}
             <LinkText fontWeight="bold" color="brand.info.400" href={ROUTE_PATH.GET_STARTED}>
               Start here.
