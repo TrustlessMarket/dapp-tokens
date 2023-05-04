@@ -28,6 +28,7 @@ const useSupplyERC20Liquid: ContractOperationHook<
       params: ISupplyERC20LiquidParams,
     ): Promise<ISupplyERC20LiquidResponse> => {
       const { liquidAddress } = params;
+
       if (provider && liquidAddress) {
         const contract = getContract(liquidAddress, ERC20ABIJson.abi, provider);
 

@@ -1,10 +1,10 @@
 import ERC20ABIJson from '@/abis/erc20.json';
-import {TransactionEventType} from '@/enums/transaction';
-import {ContractOperationHook, DAppType} from '@/interfaces/contract-operation';
-import {getContract} from '@/utils';
-import {formatAmountBigNumber} from '@/utils/format';
-import {useWeb3React} from '@web3-react/core';
-import {useCallback} from 'react';
+import { TransactionEventType } from '@/enums/transaction';
+import { ContractOperationHook, DAppType } from '@/interfaces/contract-operation';
+import { getContract } from '@/utils';
+import { formatAmountBigNumber } from '@/utils/format';
+import { useWeb3React } from '@web3-react/core';
+import { useCallback } from 'react';
 
 export interface IBalanceERC20TokenParams {
   erc20TokenAddress: string;
@@ -25,8 +25,6 @@ const useBalanceERC20Token: ContractOperationHook<
         const transaction = await contract
           .connect(provider.getSigner())
           .balanceOf(account);
-
-        console.log('useBalanceERC20Token', transaction.toString());
 
         return formatAmountBigNumber(transaction.toString(), 18).toString();
       }

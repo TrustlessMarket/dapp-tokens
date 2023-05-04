@@ -27,8 +27,6 @@ const FiledButton: React.FC<FiledButtonProps> = (props) => {
     ...otherProps
   } = props;
 
-  console.log('type', otherProps.type);
-
   return (
     <>
       <Flex

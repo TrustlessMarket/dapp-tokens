@@ -6,45 +6,39 @@ import { AssetsContext } from '@/contexts/assets-context';
 import { TransactionEventType } from '@/enums/transaction';
 import { ContractOperationHook, DAppType } from '@/interfaces/contract-operation';
 import { TransactionStatus } from '@/interfaces/walletTransaction';
-import { scanTrx } from '@/services/token-explorer';
+import { logErrorToServer, scanTrx } from '@/services/token-explorer';
 import store from '@/state';
 import { updateCurrentTransaction } from '@/state/pnftExchange';
 import { compareString, getContract } from '@/utils';
-import { isProduction } from '@/utils/commons';
-import { formatBTCPrice, formatEthPriceSubmit } from '@/utils/format';
+import { formatAmountSigning, formatBTCPrice } from '@/utils/format';
 import { useWeb3React } from '@web3-react/core';
 import BigNumber from 'bignumber.js';
 import { useCallback, useContext } from 'react';
 import * as TC_SDK from 'trustless-computer-sdk';
 
-export interface IGetReservesParams {
+export interface IRemoveLiquidParams {
   tokenA: string;
-  amountADesired: string;
-  amountAMin: string;
-  decimalA?: string;
   tokenB: string;
-  amountBDesired: string;
+  amountAMin: string;
   amountBMin: string;
-  decimalB?: string;
-  //   to: string;
+  liquidValue: string;
 }
 
 const useRemoveLiquidity: ContractOperationHook<
-  IGetReservesParams,
+  IRemoveLiquidParams,
   boolean
 > = () => {
   const { account, provider } = useWeb3React();
   const { btcBalance, feeRate } = useContext(AssetsContext);
 
   const call = useCallback(
-    async (params: IGetReservesParams): Promise<boolean> => {
+    async (params: IRemoveLiquidParams): Promise<boolean> => {
       const {
         tokenA,
         tokenB,
         amountAMin,
-        amountADesired,
-        amountBDesired,
         amountBMin,
+        liquidValue,
         // to,
       } = params;
 
@@ -80,10 +74,9 @@ const useRemoveLiquidity: ContractOperationHook<
           .removeLiquidity(
             tokenA,
             tokenB,
-            formatEthPriceSubmit(amountADesired),
-            formatEthPriceSubmit(amountBDesired),
-            formatEthPriceSubmit(amountAMin),
-            formatEthPriceSubmit(amountBMin),
+            formatAmountSigning(liquidValue, 18),
+            formatAmountSigning(amountAMin, 18),
+            formatAmountSigning(amountBMin, 18),
             account,
             MaxUint256,
             {
@@ -91,13 +84,11 @@ const useRemoveLiquidity: ContractOperationHook<
             },
           );
 
-        TC_SDK.signTransaction({
-          method: `${DAppType.ERC20} - ${TransactionEventType.CREATE}`,
-          hash: transaction.hash,
-          dappURL: window.location.origin,
-          isRedirect: true,
-          target: '_blank',
-          isMainnet: isProduction(),
+        logErrorToServer({
+          type: 'logs',
+          address: account,
+          error: JSON.stringify(transaction),
+          message: "gasLimit: '500000'",
         });
 
         store.dispatch(
@@ -106,12 +97,10 @@ const useRemoveLiquidity: ContractOperationHook<
             id: transactionType.createPool,
             hash: transaction.hash,
             infoTexts: {
-              pending: `Removing liquidity...`,
+              pending: `Transaction confirmed. Please wait for it to be processed on the Bitcoin. Note that it may take up to 10 minutes for a block confirmation on the Bitcoin blockchain.`,
             },
           }),
         );
-
-        await transaction.wait();
 
         if (compareString(APP_ENV, 'production')) {
           await scanTrx({

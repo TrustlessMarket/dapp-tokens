@@ -5,7 +5,7 @@ import styled, { DefaultTheme } from 'styled-components';
 import Link from 'next/link';
 
 const Wrapper = styled.div`
-  max-width: 1920px;
+  /* max-width: 1920px; */
 
   .container {
     padding: 0;
@@ -15,7 +15,7 @@ const Wrapper = styled.div`
     align-items: center;
     justify-content: space-between;
     position: relative;
-    
+
     @media screen and (max-width: 767px) {
       overflow-x: auto;
       padding: 0 ${px2rem(16)};
@@ -41,7 +41,7 @@ const Wrapper = styled.div`
     left: 50%;
     transform: translateX(-47%);
   }
-  
+
   .leftWrapper {
     display: flex;
     flex-direction: row;
@@ -67,11 +67,11 @@ const Wrapper = styled.div`
       text-transform: uppercase;
       font-size: ${px2rem(16)};
       font-weight: 500;
-      
+
       a:hover {
         text-decoration: none;
       }
-      
+
       .isSelected {
         border-bottom: 2px solid #3385ff;
       }
@@ -183,10 +183,10 @@ const WalletBalance = styled.div`
   border-radius: 40px;
   cursor: pointer;
   transition: all 0.2s ease;
-  
+
   &.isTokenPage {
     p {
-      color: #FFFFFF;
+      color: #ffffff;
     }
   }
 

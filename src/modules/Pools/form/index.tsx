@@ -1,28 +1,41 @@
 /* eslint-disable react/no-children-prop */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { transactionType } from '@/components/Swap/alertInfoProcessing/types';
 import FiledButton from '@/components/Swap/button/filedButton';
 import FilterButton from '@/components/Swap/filterToken';
 import FieldAmount from '@/components/Swap/form/fieldAmount';
 import InputWrapper from '@/components/Swap/form/inputWrapper';
 import WrapperConnected from '@/components/WrapperConnected';
 import { UNIV2_ROUTER_ADDRESS } from '@/configs';
-import { NULL_ADDRESS } from '@/constants/url';
-import pairsMock from '@/dataMock/tokens.json';
-import { transactionType } from '@/components/Swap/alertInfoProcessing/types';
+import {
+  BRIDGE_SUPPORT_TOKEN,
+  TRUSTLESS_BRIDGE,
+  TRUSTLESS_FAUCET,
+} from '@/constants/common';
 import { ROUTE_PATH } from '@/constants/route-path';
 import { IMPORTED_TOKENS, LIQUID_PAIRS } from '@/constants/storage-key';
+import { NULL_ADDRESS } from '@/constants/url';
+import { AssetsContext } from '@/contexts/assets-context';
+import pairsMock from '@/dataMock/tokens.json';
 import useAddLiquidity, {
   IAddLiquidityParams,
 } from '@/hooks/contract-operations/pools/useAddLiquidity';
+import useRemoveLiquidity, {
+  IRemoveLiquidParams,
+} from '@/hooks/contract-operations/pools/useRemoveLiquidity';
 import useGetPair from '@/hooks/contract-operations/swap/useGetPair';
 import useGetReserves from '@/hooks/contract-operations/swap/useReserves';
 import useApproveERC20Token, {
   IApproveERC20TokenParams,
 } from '@/hooks/contract-operations/token/useApproveERC20Token';
 import useBalanceERC20Token from '@/hooks/contract-operations/token/useBalanceERC20Token';
+import useInfoERC20Token, {
+  IInfoERC20TokenResponse,
+} from '@/hooks/contract-operations/token/useInfoERC20Token';
 import useIsApproveERC20Token from '@/hooks/contract-operations/token/useIsApproveERC20Token';
 import useSupplyERC20Liquid from '@/hooks/contract-operations/token/useSupplyERC20Liquid';
+import useContractOperation from '@/hooks/contract-operations/useContractOperation';
 import { IToken } from '@/interfaces/token';
 import { TransactionStatus } from '@/interfaces/walletTransaction';
 import { getTokens, logErrorToServer } from '@/services/token-explorer';
@@ -33,30 +46,34 @@ import {
   selectPnftExchange,
   updateCurrentTransaction,
 } from '@/state/pnftExchange';
+import { getIsAuthenticatedSelector } from '@/state/user/selector';
 import {
   camelCaseKeys,
   compareString,
   formatCurrency,
   sortAddressPair,
 } from '@/utils';
-import { composeValidators, required, requiredAmount } from '@/utils/formValidate';
+import { isDevelop } from '@/utils/commons';
+import { composeValidators, requiredAmount } from '@/utils/formValidate';
 import { formatAmountBigNumber, formatAmountSigning } from '@/utils/format';
 import px2rem from '@/utils/px2rem';
-import { showError } from '@/utils/toast';
 import {
   Box,
-  Button,
   Flex,
-  forwardRef,
   Stat,
   StatHelpText,
   StatNumber,
   Text,
+  forwardRef,
 } from '@chakra-ui/react';
+import { useWeb3React } from '@web3-react/core';
 import BigNumber from 'bignumber.js';
 import cx from 'classnames';
-import { clone, isEmpty } from 'lodash';
+import { isEmpty } from 'lodash';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
+import Slider from 'rc-slider';
+import 'rc-slider/assets/index.css';
 import {
   useCallback,
   useContext,
@@ -71,20 +88,6 @@ import { BsPlus } from 'react-icons/bs';
 import { useDispatch, useSelector } from 'react-redux';
 import { ScreenType } from '..';
 import styles from './styles.module.scss';
-import Link from 'next/link';
-import {
-  BRIDGE_SUPPORT_TOKEN,
-  TRUSTLESS_BRIDGE,
-  TRUSTLESS_FAUCET,
-} from '@/constants/common';
-import { AssetsContext } from '@/contexts/assets-context';
-import { getIsAuthenticatedSelector } from '@/state/user/selector';
-import { isDevelop } from '@/utils/commons';
-import useContractOperation from '@/hooks/contract-operations/useContractOperation';
-import useInfoERC20Token, {
-  IInfoERC20TokenResponse,
-} from '@/hooks/contract-operations/token/useInfoERC20Token';
-import { useWeb3React } from '@web3-react/core';
 
 const LIMIT_PAGE = 50;
 
@@ -98,6 +101,9 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const [isApproveAmountBaseToken, setIsApproveAmountBaseToken] =
     useState<string>('0');
   const [isApproveAmountQuoteToken, setIsApproveAmountQuoteToken] =
+    useState<string>('0');
+  const [isApprovePoolToken, setIsApprovePoolToken] = useState<boolean>(true);
+  const [isApproveAmountPoolToken, setIsApproveAmountPoolToken] =
     useState<string>('0');
   const [tokensList, setTokensList] = useState<IToken[]>([]);
   const { call: isApproved } = useIsApproveERC20Token();
@@ -123,13 +129,22 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     _reserve0: '-',
     _reserve1: '-',
   });
+  const [supply, setSupply] = useState<{
+    ownerSupply: string;
+    totalSupply: string;
+  }>({
+    ownerSupply: '0',
+    totalSupply: '0',
+  });
+
+  const [sliderPercent, setSliderPercent] = useState(0);
+
   const { juiceBalance } = useContext(AssetsContext);
   const isAuthenticated = useSelector(getIsAuthenticatedSelector);
+
   const router = useRouter();
   const type = router.query.type;
-  const isScreenAdd = compareString(type, ScreenType.add);
   const isScreenRemove = compareString(type, ScreenType.remove);
-  const isScreenAddPool = compareString(type, ScreenType.add_pool);
 
   const isPaired = !compareString(pairAddress, NULL_ADDRESS);
   const needReload = useAppSelector(selectPnftExchange).needReload;
@@ -163,9 +178,49 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   useEffect(() => {
     change('isApproveBaseToken', isApproveBaseToken);
   }, [isApproveBaseToken]);
+
   useEffect(() => {
     change('isApproveQuoteToken', isApproveQuoteToken);
   }, [isApproveQuoteToken]);
+
+  useEffect(() => {
+    change('isApprovePoolToken', isApprovePoolToken);
+  }, [isApprovePoolToken]);
+
+  useEffect(() => {
+    if (fromAddress && refTokensList.current.length > 0) {
+      const findFromToken = refTokensList.current.find((v) =>
+        compareString(v.address, fromAddress),
+      );
+
+      if (findFromToken) {
+        handleSelectBaseToken(findFromToken);
+      }
+    }
+  }, [fromAddress, tokensList.length, needReload]);
+
+  useEffect(() => {
+    if (toAddress && refTokensList.current.length > 0) {
+      const findFromToken = refTokensList.current.find((v) =>
+        compareString(v.address, toAddress),
+      );
+
+      if (findFromToken) {
+        handleSelectQuoteToken(findFromToken);
+      }
+    }
+  }, [toAddress, tokensList.length, needReload]);
+
+  useEffect(() => {
+    if (isScreenRemove) {
+      setIsApprovePoolToken(
+        checkBalanceIsApprove(
+          isApproveAmountPoolToken,
+          formatAmountSigning(values?.liquidValue, quoteToken?.decimal),
+        ),
+      );
+    }
+  }, [needReload, values?.liquidValue]);
 
   const getImportTokens = () => {
     const checkExistKey = localStorage.getItem(IMPORTED_TOKENS);
@@ -206,12 +261,15 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       });
 
       if (!compareString(response, NULL_ADDRESS)) {
-        const [resReserve, resSupply] = await Promise.all([
+        const [resReserve, resSupply, resAmountApprovePool] = await Promise.all([
           getReserves({
             address: response,
           }),
           getSupply({
             liquidAddress: response,
+          }),
+          checkTokenApprove({
+            address: response,
           }),
         ]);
 
@@ -222,16 +280,18 @@ export const MakeFormSwap = forwardRef((props, ref) => {
               .multipliedBy(100)
               .toString(),
           );
+          setSupply(resSupply);
         }
 
-        // if (!isScreenAdd) {
-        //   setBaseBalance(
-        //     formatAmountBigNumber(resReserve._reserve0, baseToken.decimal),
-        //   );
-        //   setQuoteBalance(
-        //     formatAmountBigNumber(resReserve._reserve1, quoteToken.decimal),
-        //   );
-        // }
+        if (isScreenRemove) {
+          setBaseBalance(
+            formatAmountBigNumber(resReserve._reserve0, baseToken.decimal),
+          );
+          setQuoteBalance(
+            formatAmountBigNumber(resReserve._reserve1, quoteToken.decimal),
+          );
+          setIsApproveAmountPoolToken(resAmountApprovePool);
+        }
 
         setPerPrice(resReserve);
       } else {
@@ -244,30 +304,6 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       setPairAddress(response);
     } catch (error) {}
   };
-
-  useEffect(() => {
-    if (fromAddress && refTokensList.current.length > 0) {
-      const findFromToken = refTokensList.current.find((v) =>
-        compareString(v.address, fromAddress),
-      );
-
-      if (findFromToken) {
-        handleSelectBaseToken(findFromToken);
-      }
-    }
-  }, [fromAddress, tokensList.length, needReload]);
-
-  useEffect(() => {
-    if (toAddress && refTokensList.current.length > 0) {
-      const findFromToken = refTokensList.current.find((v) =>
-        compareString(v.address, toAddress),
-      );
-
-      if (findFromToken) {
-        handleSelectQuoteToken(findFromToken);
-      }
-    }
-  }, [toAddress, tokensList.length, needReload]);
 
   const fetchTokens = async (page = 1, _isFetchMore = false) => {
     try {
@@ -294,7 +330,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     }
   };
 
-  const checkTokenApprove = async (token: IToken) => {
+  const checkTokenApprove = async (token: IToken | any) => {
     try {
       const response = await isApproved({
         erc20TokenAddress: token.address,
@@ -307,7 +343,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     }
   };
 
-  const getTokenBalance = async (token: IToken) => {
+  const getTokenBalance = async (token: IToken | any) => {
     try {
       const response = await tokenBalance({
         erc20TokenAddress: token.address,
@@ -319,7 +355,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     }
   };
 
-  const requestApproveToken = async (token: IToken) => {
+  const requestApproveToken = async (token: IToken | any) => {
     try {
       dispatch(
         updateCurrentTransaction({
@@ -337,11 +373,15 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           id: transactionType.createPoolApprove,
           hash: response.hash,
           infoTexts: {
-            success: `${token?.symbol} has been approved successfully.`,
+            success: `${
+              isScreenRemove ? 'This liquidity' : token?.symbol
+            } has been approved successfully.`,
           },
         }),
       );
     } catch (error) {
+      console.log('error', error);
+
       throw error;
     } finally {
     }
@@ -464,6 +504,8 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   };
 
   const onApprove = async () => {
+    console.log('aaaa', pairAddress, UNIV2_ROUTER_ADDRESS);
+
     try {
       setLoading(true);
 
@@ -479,10 +521,21 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         setIsApproveQuoteToken(
           checkBalanceIsApprove(_isApprove, values?.quoteAmount),
         );
+      } else if (isScreenRemove && !isApprovePoolToken && pairAddress) {
+        await requestApproveToken({
+          address: UNIV2_ROUTER_ADDRESS,
+        });
+        const [_isApprove] = await Promise.all([checkTokenApprove(pairAddress)]);
+        setIsApproveAmountPoolToken(_isApprove);
+        setIsApprovePoolToken(
+          checkBalanceIsApprove(_isApprove, values?.liquidValue),
+        );
       }
 
       // toast.success('Transaction has been created. Please wait for few minutes.');
     } catch (err) {
+      console.log(err);
+
       // showError({
       //   message:
       //     (err as Error).message || 'Something went wrong. Please try again later.',
@@ -585,7 +638,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           btnBgColor: '#3385FF',
         };
 
-      case ScreenType.add_liquid:
+      case ScreenType.remove:
         return {
           title: 'Remove liquidity',
           btnTitle: 'Remove',
@@ -608,10 +661,68 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     }
   };
 
-  const isDisabled = !baseToken && !quoteToken;
+  const onChangeSlider = (v: any) => {
+    if (baseToken && quoteToken) {
+      const [token1, token2] = sortAddressPair(baseToken, quoteToken);
+      const { _reserve0, _reserve1 } = perPrice;
+
+      const cPercent = Number(v) / 100;
+      const _percentPool = Number(percentPool) / 100;
+
+      const __reserve0 = new BigNumber(_percentPool)
+        .multipliedBy(_reserve0)
+        .toString();
+      const __reserve1 = new BigNumber(_percentPool)
+        .multipliedBy(_reserve1)
+        .toString();
+
+      const _baseBalance = new BigNumber(cPercent)
+        .multipliedBy(formatAmountBigNumber(__reserve0, token1.decimal))
+        .toString();
+      const _quoteBalance = new BigNumber(cPercent)
+        .multipliedBy(formatAmountBigNumber(__reserve1, token2.decimal))
+        .toString();
+
+      const liquidValue = new BigNumber(cPercent)
+        .multipliedBy(_percentPool)
+        .multipliedBy(supply.ownerSupply)
+        .toString();
+
+      console.log('liquidValue', liquidValue, supply.ownerSupply);
+
+      change('baseAmount', _baseBalance);
+      change('quoteAmount', _quoteBalance);
+      change('liquidValue', liquidValue);
+      change('sliderPercent', v);
+    }
+  };
+
+  const isDisabled = (!baseToken && !quoteToken) || isScreenRemove;
 
   return (
     <form onSubmit={onSubmit} style={{ height: '100%' }}>
+      {isScreenRemove && (
+        <Flex alignItems={'flex-end'} gap={10} className="remove-amount-container">
+          <Box flex={1}>
+            <Text className="title">Remove Amount</Text>
+            <Text className="percent">{values?.sliderPercent || 0}%</Text>
+          </Box>
+          <Box flex={3}>
+            <div>
+              <Slider
+                step={1}
+                defaultValue={0}
+                value={values?.sliderPercent || 0}
+                min={0}
+                max={100}
+                onChange={onChangeSlider}
+                disabled={!baseToken || !quoteToken}
+              />
+            </div>
+          </Box>
+        </Flex>
+      )}
+
       <InputWrapper
         className={cx(styles.inputAmountWrap, styles.inputBaseAmountWrap)}
         theme="light"
@@ -781,13 +892,35 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         )}
       <WrapperConnected
         type={
-          Boolean(isApproveBaseToken) && Boolean(isApproveQuoteToken)
-            ? 'submit'
-            : 'button'
+          !Boolean(isApproveBaseToken) ||
+          !Boolean(isApproveQuoteToken) ||
+          (isScreenRemove && !isApprovePoolToken && Boolean(values?.liquidValue))
+            ? 'button'
+            : 'submit'
         }
         className={styles.submitButton}
       >
-        {Boolean(isApproveBaseToken) && Boolean(isApproveQuoteToken) ? (
+        {!Boolean(isApproveBaseToken) ||
+        !Boolean(isApproveQuoteToken) ||
+        (isScreenRemove && !isApprovePoolToken && Boolean(values?.liquidValue)) ? (
+          <FiledButton
+            isLoading={loading}
+            isDisabled={loading}
+            loadingText="Processing"
+            btnSize={'h'}
+            onClick={onApprove}
+            type="button"
+            processInfo={{
+              id: transactionType.createPoolApprove,
+            }}
+          >
+            {!isScreenRemove
+              ? `APPROVE USE OF ${
+                  !isApproveBaseToken ? baseToken?.symbol : quoteToken?.symbol
+                }`
+              : `APPROVE USE OF THIS LIQUIDITY`}
+          </FiledButton>
+        ) : (
           <FiledButton
             isDisabled={submitting || btnDisabled}
             isLoading={submitting}
@@ -803,21 +936,6 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             style={{ backgroundColor: renderContentTitle().btnBgColor }}
           >
             {renderContentTitle().btnTitle}
-          </FiledButton>
-        ) : (
-          <FiledButton
-            isLoading={loading}
-            isDisabled={loading}
-            loadingText="Processing"
-            btnSize={'h'}
-            onClick={onApprove}
-            type="button"
-            processInfo={{
-              id: transactionType.createPoolApprove,
-            }}
-          >
-            APPROVE USE OF{' '}
-            {!isApproveBaseToken ? baseToken?.symbol : quoteToken?.symbol}
           </FiledButton>
         )}
       </WrapperConnected>
@@ -844,11 +962,20 @@ const CreateMarket = ({
     operation: useAddLiquidity,
   });
 
+  const { run: removeLiquidity } = useContractOperation<
+    IRemoveLiquidParams,
+    boolean
+  >({
+    operation: useRemoveLiquidity,
+  });
+
   // const { call: addLiquidity } = useAddLiquidity();
 
   const { call: getPair } = useGetPair();
   const { call: getReserves } = useGetReserves();
   const { call: getSupply } = useSupplyERC20Liquid();
+
+  const isRemove = compareString(type, ScreenType.remove);
 
   const checkPair = async (baseToken: IToken, quoteToken: IToken) => {
     try {
@@ -928,16 +1055,30 @@ const CreateMarket = ({
           ? { amount0: baseAmount, amount1: quoteAmount }
           : { amount0: quoteAmount, amount1: baseAmount };
 
-      const data = {
-        tokenA: token0?.address,
-        tokenB: token1?.address,
-        amountAMin: '0',
-        amountADesired: amount0,
-        amountBDesired: amount1,
-        amountBMin: '0',
-      };
+      let response: any;
 
-      const response: any = await addLiquidity(data);
+      if (isRemove) {
+        const data = {
+          tokenA: token0?.address,
+          tokenB: token1?.address,
+          amountAMin: '0',
+          amountBMin: '0',
+          liquidValue: values?.liquidValue,
+        };
+
+        response = await removeLiquidity(data);
+      } else {
+        const data = {
+          tokenA: token0?.address,
+          tokenB: token1?.address,
+          amountAMin: '0',
+          amountADesired: amount0,
+          amountBDesired: amount1,
+          amountBMin: '0',
+        };
+
+        response = await addLiquidity(data);
+      }
 
       toast.success('Transaction has been created. Please wait for few minutes.');
 
