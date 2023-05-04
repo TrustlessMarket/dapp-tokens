@@ -31,7 +31,7 @@ import useIsApproveERC20Token from '@/hooks/contract-operations/token/useIsAppro
 import useContractOperation from '@/hooks/contract-operations/useContractOperation';
 import { IToken } from '@/interfaces/token';
 import { TransactionStatus } from '@/interfaces/walletTransaction';
-import { getSwapTokens } from '@/services/token-explorer';
+import { getSwapTokens, logErrorToServer } from '@/services/token-explorer';
 import { useAppDispatch, useAppSelector } from '@/state/hooks';
 import {
   requestReload,
@@ -570,7 +570,13 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       checkApproveBaseToken(baseToken);
 
       toast.success('Transaction has been created. Please wait for few minutes.');
-    } catch (err) {
+    } catch (err: any) {
+      logErrorToServer({
+        type: 'error',
+        address: account,
+        error: JSON.stringify(err),
+        message: err?.message,
+      });
       toastError(showError, err, { address: account });
     } finally {
       setLoading(false);
@@ -833,8 +839,14 @@ const TradingForm = () => {
       refForm.current?.reset();
       dispatch(requestReload());
       dispatch(requestReloadRealtime());
-    } catch (err) {
+    } catch (err: any) {
       toastError(showError, err, { address: account });
+      logErrorToServer({
+        type: 'error',
+        address: account,
+        error: JSON.stringify(err),
+        message: err?.message,
+      });
       // showError({
       //   message:
       //     (err as Error).message || 'Something went wrong. Please try again later.',

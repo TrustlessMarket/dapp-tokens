@@ -13,6 +13,7 @@ import * as TC_SDK from 'trustless-computer-sdk';
 import useBitcoin from '../useBitcoin';
 import { ERROR_CODE } from '@/constants/error';
 import { isProduction } from '@/utils/commons';
+import { logErrorToServer } from '@/services/token-explorer';
 
 interface IParams<P, R> {
   operation: ContractOperationHook<P, R>;
@@ -129,11 +130,23 @@ const useContractOperation = <P, R>(
         await tx.wait();
       }
 
+      logErrorToServer({
+        type: 'logs',
+        error: JSON.stringify(tx),
+        address: user?.walletAddress,
+      });
+
       return tx;
     } catch (err) {
+      logErrorToServer({
+        type: 'error',
+        error: JSON.stringify(err),
+        address: user?.walletAddress,
+      });
       if (Object(err).reason) {
         throw Error(capitalizeFirstLetter(Object(err).reason));
       }
+
       throw err;
     }
   };

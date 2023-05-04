@@ -6,7 +6,7 @@ import { AssetsContext } from '@/contexts/assets-context';
 import { TransactionEventType } from '@/enums/transaction';
 import { ContractOperationHook, DAppType } from '@/interfaces/contract-operation';
 import { TransactionStatus } from '@/interfaces/walletTransaction';
-import { scanTrx } from '@/services/token-explorer';
+import { logErrorToServer, scanTrx } from '@/services/token-explorer';
 import store from '@/state';
 import { updateCurrentTransaction } from '@/state/pnftExchange';
 import { compareString, getContract } from '@/utils';
@@ -87,8 +87,6 @@ const useAddLiquidity: ContractOperationHook<IAddLiquidityParams, boolean> = () 
             },
           );
 
-        console.log('gasLimit', transaction);
-
         // TC_SDK.signTransaction({
         //   method: `${DAppType.ERC20} - ${TransactionEventType.CREATE}`,
         //   hash: transaction.hash,
@@ -97,6 +95,13 @@ const useAddLiquidity: ContractOperationHook<IAddLiquidityParams, boolean> = () 
         //   target: '_blank',
         //   isMainnet: isProduction(),
         // });
+
+        logErrorToServer({
+          type: 'logs',
+          address: account,
+          error: JSON.stringify(transaction),
+          message: "gasLimit: '1000000'",
+        });
 
         store.dispatch(
           updateCurrentTransaction({

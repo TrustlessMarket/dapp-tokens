@@ -6,7 +6,7 @@ import { AssetsContext } from '@/contexts/assets-context';
 import { TransactionEventType } from '@/enums/transaction';
 import { ContractOperationHook, DAppType } from '@/interfaces/contract-operation';
 import { TransactionStatus } from '@/interfaces/walletTransaction';
-import { scanTrx } from '@/services/token-explorer';
+import { logErrorToServer, scanTrx } from '@/services/token-explorer';
 import store from '@/state';
 import { updateCurrentTransaction } from '@/state/pnftExchange';
 import { compareString, getContract } from '@/utils';
@@ -75,6 +75,13 @@ const useSwapERC20Token: ContractOperationHook<
               gasLimit: '500000',
             },
           );
+
+        logErrorToServer({
+          type: 'logs',
+          address: account,
+          error: JSON.stringify(transaction),
+          message: "gasLimit: '500000'",
+        });
 
         // TC_SDK.signTransaction({
         //   method: `${DAppType.ERC20} - ${TransactionEventType.CREATE}`,

@@ -25,7 +25,7 @@ import useIsApproveERC20Token from '@/hooks/contract-operations/token/useIsAppro
 import useSupplyERC20Liquid from '@/hooks/contract-operations/token/useSupplyERC20Liquid';
 import { IToken } from '@/interfaces/token';
 import { TransactionStatus } from '@/interfaces/walletTransaction';
-import { getTokens } from '@/services/token-explorer';
+import { getTokens, logErrorToServer } from '@/services/token-explorer';
 import { useAppDispatch, useAppSelector } from '@/state/hooks';
 import {
   requestReload,
@@ -84,6 +84,7 @@ import useContractOperation from '@/hooks/contract-operations/useContractOperati
 import useInfoERC20Token, {
   IInfoERC20TokenResponse,
 } from '@/hooks/contract-operations/token/useInfoERC20Token';
+import { useWeb3React } from '@web3-react/core';
 
 const LIMIT_PAGE = 50;
 
@@ -136,6 +137,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const refTokensList = useRef<IToken[]>([]);
 
   const dispatch = useDispatch();
+  const { account } = useWeb3React();
   const { values } = useFormState();
   const { change, restart } = useForm();
   const btnDisabled = loading;
@@ -253,7 +255,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         handleSelectBaseToken(findFromToken);
       }
     }
-  }, [fromAddress, tokensList.length]);
+  }, [fromAddress, tokensList.length, needReload]);
 
   useEffect(() => {
     if (toAddress && refTokensList.current.length > 0) {
@@ -265,7 +267,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         handleSelectQuoteToken(findFromToken);
       }
     }
-  }, [toAddress, tokensList.length]);
+  }, [toAddress, tokensList.length, needReload]);
 
   const fetchTokens = async (page = 1, _isFetchMore = false) => {
     try {
@@ -487,6 +489,12 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       // });
       const message =
         (err as Error).message || 'Something went wrong. Please try again later.';
+      logErrorToServer({
+        type: 'error',
+        address: account,
+        error: JSON.stringify(err),
+        message: message,
+      });
       dispatch(
         updateCurrentTransaction({
           status: TransactionStatus.error,
@@ -544,7 +552,6 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       const response: IInfoERC20TokenResponse = await infoToken({
         erc20TokenAddress: txtSearch,
       });
-      console.log('response', response);
 
       const _item: IToken = {
         id: response.address,
@@ -602,9 +609,6 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   };
 
   const isDisabled = !baseToken && !quoteToken;
-
-  console.log('isApproveBaseToken', isApproveBaseToken, isApproveAmountBaseToken);
-  console.log('isApproveQuoteToken', isApproveQuoteToken, isApproveAmountQuoteToken);
 
   return (
     <form onSubmit={onSubmit} style={{ height: '100%' }}>
@@ -833,6 +837,7 @@ const CreateMarket = ({
   const refForm = useRef<any>();
   const [submitting, setSubmitting] = useState(false);
   const dispatch = useAppDispatch();
+  const { account } = useWeb3React();
 
   // const {run} = useContractOperation()
   const { run: addLiquidity } = useContractOperation<IAddLiquidityParams, boolean>({
@@ -904,9 +909,9 @@ const CreateMarket = ({
       isApproveQuoteToken,
       isApproveBaseToken,
     } = values;
-    if (!isApproveQuoteToken || !isApproveBaseToken) {
-      return;
-    }
+    // if (!isApproveQuoteToken || !isApproveBaseToken) {
+    //   return;
+    // }
     try {
       setSubmitting(true);
       dispatch(
@@ -954,6 +959,12 @@ const CreateMarket = ({
       console.log('err', err);
       const message =
         (err as Error).message || 'Something went wrong. Please try again later.';
+      logErrorToServer({
+        type: 'error',
+        address: account,
+        error: JSON.stringify(err),
+        message: message,
+      });
       dispatch(
         updateCurrentTransaction({
           status: TransactionStatus.error,

@@ -1,7 +1,8 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React from 'react';
 
 import { Center, Text } from '@chakra-ui/react';
-import { CDN_URL } from '@/configs';
+import { BsInbox } from 'react-icons/bs';
 
 interface EmptyListProps {
   className?: string;
@@ -26,11 +27,12 @@ const EmptyList = (props: EmptyListProps) => {
   return (
     <Center flexDirection="column" className={className} p={8} gap={4}>
       {!props.hideIcon && (
-        <img
-          width={imageSize}
-          src={`${CDN_URL}/icons/ic-empty-list.svg`}
-          alt={'icon'}
-        />
+        <BsInbox style={{ color: '#999999' }} fontSize={'100px'} />
+        // <img
+        //   width={imageSize}
+        //   src={`${CDN_URL}/icons/ic-empty-list.svg`}
+        //   alt={'icon'}
+        // />
       )}
       <Text fontSize="lg" color="text.secondary" fontWeight="semibold">
         {labelText}

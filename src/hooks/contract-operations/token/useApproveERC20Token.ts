@@ -6,6 +6,7 @@ import { AssetsContext } from '@/contexts/assets-context';
 import { TransactionEventType } from '@/enums/transaction';
 import { ContractOperationHook, DAppType } from '@/interfaces/contract-operation';
 import { TransactionStatus } from '@/interfaces/walletTransaction';
+import { logErrorToServer } from '@/services/token-explorer';
 import store from '@/state';
 import { updateCurrentTransaction } from '@/state/pnftExchange';
 import { compareString, getContract } from '@/utils';
@@ -60,8 +61,15 @@ const useApproveERC20Token: ContractOperationHook<
         const transaction = await contract
           .connect(provider.getSigner())
           .approve(address, MaxUint256, {
-            gasLimit: '80000',
+            gasLimit: '100000',
           });
+
+        logErrorToServer({
+          type: 'logs',
+          address: account,
+          error: JSON.stringify(transaction),
+          message: "gasLimit: '100000'",
+        });
 
         // TC_SDK.signTransaction({
         //   method: `${DAppType.ERC20} - ${TransactionEventType.CREATE}`,

@@ -41,7 +41,9 @@ export interface IListTokenParams {
   from_token?: string;
 }
 
-export const getSwapTokens = async (params: IPagingParams & IListTokenParams): Promise<IToken[]> => {
+export const getSwapTokens = async (
+  params: IPagingParams & IListTokenParams,
+): Promise<IToken[]> => {
   const qs = '?' + queryString.stringify(params);
 
   return swrFetcher(`${API_URL}/swap/token/list${qs}`, {
@@ -54,6 +56,22 @@ export const scanTrx = async (params: { tx_hash: string }) => {
   const qs = '?' + queryString.stringify(params);
   return swrFetcher(`${API_URL}/swap/scan?tx_hash=${qs}`, {
     method: 'GET',
+    error: 'Fail to scan tx',
+  });
+};
+
+interface LogErrorToServerPayload {
+  type: 'error' | 'logs';
+  address?: string;
+  error: string;
+  tx_hash?: string;
+  message?: string;
+}
+
+export const logErrorToServer = async (payload: LogErrorToServerPayload) => {
+  return swrFetcher(`${API_URL}/swap/fe-log`, {
+    method: 'POST',
+    data: payload,
     error: 'Fail to scan tx',
   });
 };
