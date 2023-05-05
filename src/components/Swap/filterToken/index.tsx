@@ -15,7 +15,7 @@ import styles from './styles.module.scss';
 import { AiOutlineCaretDown } from 'react-icons/ai';
 import TokenBalance from '@/components/Swap/tokenBalance';
 import cx from 'classnames';
-import {COMMON_TOKEN} from "@/constants/common";
+import { COMMON_TOKEN } from '@/constants/common';
 
 interface FilterButtonProps {
   data: any[];
@@ -48,7 +48,7 @@ const FilterModal: React.FC<FilterModalProps> = ({
     const res = [];
     for (let i = 0; i < data.length; i++) {
       const e = data[i];
-      if(COMMON_TOKEN.includes(e.symbol)) {
+      if (COMMON_TOKEN.includes(e.symbol)) {
         res.push(e);
       }
     }
@@ -93,8 +93,6 @@ const FilterModal: React.FC<FilterModalProps> = ({
   const [rows, setRows] = useState(data);
 
   const onSearch = async (text: string) => {
-    console.log('data', data);
-
     const _data = clone(data);
     setLoading(true);
     if (text) {
@@ -238,8 +236,6 @@ const FilterButton: React.FC<FilterButtonProps> = ({
   const [selectedToken, setSelectedToken] = useState<any>();
 
   useEffect(() => {
-    console.log(value && value?.address);
-
     if (value && value?.address) {
       setSelectedToken(value);
     } else {
