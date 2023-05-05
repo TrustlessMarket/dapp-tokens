@@ -1,7 +1,7 @@
 import Button from '@/components/Button';
 import Table from '@/components/Table';
 import Text from '@/components/Text';
-import { getTokenRp } from '@/services/token-explorer';
+import { getTokenRp } from '@/services/swap';
 import { formatCurrency } from '@/utils';
 import { decimalToExponential } from '@/utils/format';
 import { debounce } from 'lodash';

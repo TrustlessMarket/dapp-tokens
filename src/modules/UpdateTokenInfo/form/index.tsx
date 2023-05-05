@@ -1,30 +1,20 @@
 /* eslint-disable react/no-children-prop */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import {transactionType} from '@/components/Swap/alertInfoProcessing/types';
 import FiledButton from '@/components/Swap/button/filedButton';
 import FieldAmount from '@/components/Swap/form/fieldAmount';
 import InputWrapper from '@/components/Swap/form/inputWrapper';
 import WrapperConnected from '@/components/WrapperConnected';
 import {toastError} from '@/constants/error';
-import useSwapERC20Token, {ISwapERC20TokenParams,} from '@/hooks/contract-operations/swap/useSwapERC20Token';
-import useContractOperation from '@/hooks/contract-operations/useContractOperation';
 import {IToken} from '@/interfaces/token';
-import {TransactionStatus} from '@/interfaces/walletTransaction';
 import {logErrorToServer} from '@/services/swap';
 import {useAppDispatch, useAppSelector} from '@/state/hooks';
-import {
-  requestReload,
-  requestReloadRealtime,
-  selectPnftExchange,
-  updateCurrentTransaction,
-} from '@/state/pnftExchange';
-import {getIsAuthenticatedSelector, getUserSelector} from '@/state/user/selector';
+import {requestReload, requestReloadRealtime, selectPnftExchange,} from '@/state/pnftExchange';
+import {getIsAuthenticatedSelector} from '@/state/user/selector';
 import px2rem from '@/utils/px2rem';
 import {showError} from '@/utils/toast';
 import {Box, Flex, forwardRef, Text} from '@chakra-ui/react';
 import {useWeb3React} from '@web3-react/core';
-import BigNumber from 'bignumber.js';
 import cx from 'classnames';
 import {useRouter} from 'next/router';
 import {useEffect, useImperativeHandle, useRef, useState,} from 'react';
@@ -32,10 +22,11 @@ import {Field, Form, useForm, useFormState} from 'react-final-form';
 import toast from 'react-hot-toast';
 import {useSelector} from 'react-redux';
 import styles from './styles.module.scss';
-import {getTokenDetail} from "@/services/token-explorer";
+import {getTokenDetail, IUpdateTokenPayload, updateTokenInfo} from "@/services/token-explorer";
 import FieldText from "@/components/Swap/form/fieldText";
 import FileDropzoneUpload from "@/components/Swap/form/fileDropzoneUpload";
 import {uploadFile} from "@/services/file";
+import {compareString} from "@/utils";
 
 const LIMIT_PAGE = 50;
 const FEE = 3;
@@ -54,16 +45,17 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const { account } = useWeb3React();
   const needReload = useAppSelector(selectPnftExchange).needReload;
 
+  const { values } = useFormState();
+  const { change, restart } = useForm();
+  const btnDisabled = loading || !compareString(tokenInfo?.owner, account);
+
+  console.log('values', values);
   console.log('file', file);
   console.log('account', account);
   console.log('isAuthenticated', isAuthenticated);
   console.log('router', router);
   console.log('tokenInfo', tokenInfo);
   console.log('=====');
-
-  const { values } = useFormState();
-  const { change, restart } = useForm();
-  const btnDisabled = loading;
 
   useImperativeHandle(ref, () => {
     return {
@@ -87,6 +79,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       setLoading(true);
       const res = await getTokenDetail(address);
       setTokenInfo(res);
+      change('tokenInfo', res);
     } catch (err: unknown) {
       console.log('Failed to fetch tokens owned');
     } finally {
@@ -107,7 +100,9 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     setFile(file);
 
     if(file) {
-      await uploadFile({file: file});
+      const res = await uploadFile({file: file});
+      console.log('onFileChange', res);
+      change('thumbnail', res?.url);
     }
   };
 
@@ -221,41 +216,22 @@ const TradingForm = () => {
   const [submitting, setSubmitting] = useState(false);
   const dispatch = useAppDispatch();
   const { account } = useWeb3React();
-  const { run: swapToken } = useContractOperation<ISwapERC20TokenParams, boolean>({
-    operation: useSwapERC20Token,
-  });
-  const user = useSelector(getUserSelector);
 
   const handleSubmit = async (values: any) => {
-    const { baseToken, quoteToken, baseAmount, quoteAmount } = values;
+    const { thumbnail, tokenInfo } = values;
     console.log('handleSubmit', values);
     try {
       setSubmitting(true);
-      dispatch(
-        updateCurrentTransaction({
-          status: TransactionStatus.info,
-          id: transactionType.swapToken,
-        }),
-      );
 
-      const slippage = 100;
-
-      const amountOutMin = new BigNumber(quoteAmount)
-        .multipliedBy(100 - slippage)
-        .dividedBy(100)
-        .decimalPlaces(quoteToken?.decimals || 18)
-        .toString();
-
-      const data = {
-        addresses: [baseToken.address, quoteToken.address],
-        address: user?.walletAddress,
-        amount: baseAmount,
-        amountOutMin: amountOutMin,
+      const data: IUpdateTokenPayload = {
+        thumbnail: thumbnail,
       };
 
-      const response = await swapToken(data);
+      const response = await updateTokenInfo(tokenInfo?.address, data);
 
-      toast.success('Transaction has been created. Please wait for few minutes.');
+      console.log('response', response);
+
+      toast.success('Update token info successfully!');
       refForm.current?.reset();
       dispatch(requestReload());
       dispatch(requestReloadRealtime());
@@ -273,7 +249,6 @@ const TradingForm = () => {
       // });
     } finally {
       setSubmitting(false);
-      dispatch(updateCurrentTransaction(null));
     }
   };
 
