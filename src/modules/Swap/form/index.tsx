@@ -35,7 +35,7 @@ import {getIsAuthenticatedSelector, getUserSelector} from '@/state/user/selector
 import {camelCaseKeys, compareString, formatCurrency} from '@/utils';
 import {isDevelop} from '@/utils/commons';
 import {composeValidators, required} from '@/utils/formValidate';
-import {formatAmountSigning, formatEthPriceFloor, formatEthPriceSubmit,} from '@/utils/format';
+import {formatAmountSigning, formatEthPriceFloor,} from '@/utils/format';
 import px2rem from '@/utils/px2rem';
 import {showError} from '@/utils/toast';
 import {Box, Flex, forwardRef, Text} from '@chakra-ui/react';
@@ -69,7 +69,6 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const [quoteTokensList, setQuoteTokensList] = useState<IToken[]>([]);
   const { call: isApproved } = useIsApproveERC20Token();
   const { call: tokenBalance } = useBalanceERC20Token();
-  // const { call: approveToken } = useApproveERC20Token();
   const { run: approveToken } = useContractOperation<
     IApproveERC20TokenParams,
     boolean
@@ -115,7 +114,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     new BigNumber(amountBaseTokenApproved).gt(0) &&
     (!values?.baseAmount ||
       new BigNumber(amountBaseTokenApproved).gt(
-        formatEthPriceSubmit(values?.baseAmount || 0),
+        formatAmountSigning(values?.baseAmount || 0),
       ));
 
   const onBaseAmountChange = useCallback(
