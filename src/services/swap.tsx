@@ -1,12 +1,14 @@
-import {API_URL} from '@/configs';
-import {IPagingParams} from '@/interfaces/api/query';
-import {IToken} from '@/interfaces/token';
-import {swrFetcher} from '@/utils/swr';
+import { API_URL } from '@/configs';
+import { IPagingParams } from '@/interfaces/api/query';
+import { IToken } from '@/interfaces/token';
+import { swrFetcher } from '@/utils/swr';
 import queryString from 'query-string';
 
 const API_PATH = '/swap';
 
-export const getTokenRp = async (params: IPagingParams): Promise<IToken[]> => {
+export const getTokenRp = async (
+  params: IPagingParams & { address?: string },
+): Promise<IToken[]> => {
   const qs = '?is_test=1&' + queryString.stringify(params);
 
   return swrFetcher(`${API_URL}${API_PATH}/token/report${qs}`, {

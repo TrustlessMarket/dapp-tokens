@@ -39,7 +39,10 @@ const Table = ({
         <tr>
           {tableHead?.length > 0 &&
             tableHead.map((label, index) => (
-              <th key={`thead-${index}`} className={cs('tableHead_item', _camelCase(label?.toString()))}>
+              <th
+                key={`thead-${index}`}
+                className={cs('tableHead_item', _camelCase(label?.toString()))}
+              >
                 {label}
               </th>
             ))}
@@ -50,10 +53,20 @@ const Table = ({
 
   const TableData = ({ rowData }: { rowData: TColumn }) => {
     return (
-      <tr {...rowData.config} className={cs('tableData', classTableData)}>
+      <tr
+        {...rowData.config}
+        onClick={() => null}
+        className={cs('tableData', classTableData)}
+      >
         {rowData.render &&
           Object.entries(rowData.render).map(([key, value]) => (
-            <td key={`tdata-${key}}`} className={'tableData_item'}>
+            <td
+              onClick={
+                key === 'action' ? () => null : () => rowData.config?.onClick()
+              }
+              key={`tdata-${key}}`}
+              className={'tableData_item'}
+            >
               {value}
             </td>
           ))}
@@ -74,7 +87,11 @@ const Table = ({
               </tbody>
             ) : (
               <tbody>
-                {data && data?.length > 0 && data.map(row => <TableData rowData={row} key={`trowData-${row.id}`} />)}
+                {data &&
+                  data?.length > 0 &&
+                  data.map((row) => (
+                    <TableData rowData={row} key={`trowData-${row.id}`} />
+                  ))}
               </tbody>
             )}
           </BSTable>

@@ -1,0 +1,132 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { memo, useEffect, useRef } from 'react';
+
+import {
+  createChart,
+  CrosshairMode,
+  TrackingModeExitMode,
+} from 'lightweight-charts';
+import useAsyncEffect from 'use-async-effect';
+import { StyledTokenChartContainer } from './Token.styled';
+
+interface TokenChartProps {
+  chartData: any[];
+}
+
+const TokenChart: React.FC<TokenChartProps> = ({ chartData }) => {
+  const chartContainerRef = useRef<any>();
+  const chart = useRef<any>();
+  const resizeObserver = useRef<any>();
+  const candleSeries = useRef<any>();
+
+  const refCandles = useRef(chartData);
+
+  useAsyncEffect(() => {
+    console.log('load char 2 lanxxx');
+    if (!chart.current) {
+      chart.current = createChart(chartContainerRef.current, {
+        width: chartContainerRef.current.clientWidth,
+        height: chartContainerRef.current.clientHeight,
+        //   localization: {
+        //     priceFormatter: (p) => {
+        //       return abbreviateNumber(p);
+        //     },
+        //     timeFormatter: (t) => {
+        //       return moment.unix(t).format('lll');
+        //     },
+        //   },
+        layout: {
+          textColor: '#B1B5C3',
+          background: { type: 'solid', color: 'white' } as any,
+        },
+        rightPriceScale: {
+          borderColor: '#E6E8EC',
+          entireTextOnly: true,
+        },
+        timeScale: {
+          borderColor: '#E6E8EC',
+          // timeVisible: [CHART_TYPE.H1, CHART_TYPE.H4, CHART_TYPE.M15].includes(
+          //   dateSelected,
+          // ),
+          secondsVisible: false,
+          barSpacing: 32,
+          rightOffset: 6,
+        },
+        crosshair: {
+          mode: CrosshairMode.Normal,
+          vertLine: {},
+        },
+        grid: {
+          vertLines: {
+            visible: false,
+          },
+          horzLines: {
+            visible: false,
+          },
+        },
+        watermark: {
+          text: 'trustless.market',
+          fontSize: 50,
+          color: 'rgba(0,0,0,0.04)',
+          visible: true,
+        },
+        trackingMode: {
+          exitMode: TrackingModeExitMode.OnTouchEnd,
+        },
+        handleScroll: {
+          // vertTouchDrag: !isMobile,
+        },
+      });
+
+      candleSeries.current = chart.current.addAreaSeries({
+        lineColor: '#2862ff',
+        lineWidth: 2,
+        lastValueVisible: true,
+        priceLineVisible: false,
+        // lastPriceAnimation: LastPriceAnimationMode.Continuous,
+        // lineType: LineType.Curved,
+      });
+
+      candleSeries.current.priceScale().applyOptions({
+        scaleMargins: {
+          top: 0.3, // highest point of the series will be 10% away from the top
+          bottom: 0.4, // lowest point will be 40% away from the bottom
+        },
+      });
+    }
+  }, []);
+
+  useEffect(() => {
+    console.log('load char 2 lan');
+
+    resizeObserver.current = new ResizeObserver((entries) => {
+      const { width, height } = entries[0].contentRect;
+      chart.current.applyOptions({ width, height });
+      setTimeout(() => {
+        // chart.current.timeScale().fitContent();
+        chart.current.timeScale().scrollToRealTime();
+      }, 0);
+    });
+
+    resizeObserver.current.observe(chartContainerRef.current);
+
+    return () => resizeObserver.current.disconnect();
+  }, []);
+
+  useEffect(() => {
+    if (
+      candleSeries.current &&
+      candleSeries.current?.setData &&
+      chartData.length > 0
+    ) {
+      refCandles.current = chartData;
+      candleSeries.current?.setData(chartData);
+    }
+  }, [chartData]);
+
+  return (
+    <StyledTokenChartContainer ref={chartContainerRef} style={{ height: '100%' }} />
+  );
+};
+
+export default memo(TokenChart);

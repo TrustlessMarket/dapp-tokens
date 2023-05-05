@@ -18,3 +18,8 @@ export const StyledTokenDetailContainer = styled(BodyContainer)`
     }
   }
 `;
+
+export const StyledTokenChartContainer = styled.div`
+  height: 100%;
+  position: relative;
+`;

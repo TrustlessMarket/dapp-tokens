@@ -13,4 +13,5 @@ export const ROUTE_PATH = {
   SWAP: '/swap',
   MARKETS: '/markets',
   GET_STARTED: '/get-started',
+  TOKEN: '/token',
 };

@@ -25,24 +25,29 @@ export const StyledTable = styled.div`
         color: #b6b6b6;
         position: sticky;
         top: 0;
-        /* background-color: ${({ theme }: { theme: DefaultTheme }) => theme.white}; */
+        /* background-color: ${({ theme }: { theme: DefaultTheme }) =>
+          theme.white}; */
         z-index: 10;
         font-size: 14px;
 
-        @media screen and (max-width: ${({ theme }: { theme: DefaultTheme }) => theme.breakpoint.lg}) {
+        @media screen and (max-width: ${({ theme }: { theme: DefaultTheme }) =>
+            theme.breakpoint.lg}) {
           font-size: ${px2rem(14)};
         }
 
-        @media screen and (max-width: ${({ theme }: { theme: DefaultTheme }) => theme.breakpoint.sm}) {
+        @media screen and (max-width: ${({ theme }: { theme: DefaultTheme }) =>
+            theme.breakpoint.sm}) {
           white-space: nowrap;
         }
       }
 
       .tableData {
-        border-bottom: 1px solid ${({ theme }: { theme: DefaultTheme }) => theme.primary.light};
+        border-bottom: 1px solid
+          ${({ theme }: { theme: DefaultTheme }) => theme.primary.light};
 
         &:hover {
-          background-color: ${({ theme }: { theme: DefaultTheme }) => theme.primary.light};
+          background-color: ${({ theme }: { theme: DefaultTheme }) =>
+            theme.primary.light};
         }
 
         &_item {
@@ -71,6 +76,10 @@ export const StyledTable = styled.div`
         position: absolute;
         top: 80px;
       }
+    }
+
+    .tableData_item {
+      position: relative;
     }
   }
 `;
