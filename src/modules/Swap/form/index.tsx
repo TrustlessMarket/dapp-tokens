@@ -35,7 +35,7 @@ import {getIsAuthenticatedSelector, getUserSelector} from '@/state/user/selector
 import {camelCaseKeys, compareString, formatCurrency} from '@/utils';
 import {isDevelop} from '@/utils/commons';
 import {composeValidators, required} from '@/utils/formValidate';
-import {formatAmountSigning, formatEthPriceFloor, formatEthPriceSubmit,} from '@/utils/format';
+import {formatAmountSigning, formatEthPriceFloor,} from '@/utils/format';
 import px2rem from '@/utils/px2rem';
 import {showError} from '@/utils/toast';
 import {Box, Flex, forwardRef, Text} from '@chakra-ui/react';
