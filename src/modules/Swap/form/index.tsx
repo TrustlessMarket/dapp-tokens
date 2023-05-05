@@ -69,7 +69,6 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const [quoteTokensList, setQuoteTokensList] = useState<IToken[]>([]);
   const { call: isApproved } = useIsApproveERC20Token();
   const { call: tokenBalance } = useBalanceERC20Token();
-  // const { call: approveToken } = useApproveERC20Token();
   const { run: approveToken } = useContractOperation<
     IApproveERC20TokenParams,
     boolean
@@ -115,7 +114,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     new BigNumber(amountBaseTokenApproved).gt(0) &&
     (!values?.baseAmount ||
       new BigNumber(amountBaseTokenApproved).gt(
-        formatEthPriceSubmit(values?.baseAmount || 0),
+        formatAmountSigning(values?.baseAmount || 0),
       ));
 
   const onBaseAmountChange = useCallback(
