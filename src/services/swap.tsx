@@ -9,7 +9,7 @@ const API_PATH = '/swap';
 export const getTokenRp = async (
   params: IPagingParams & { address?: string },
 ): Promise<IToken[]> => {
-  const qs = '?is_test=1&' + queryString.stringify(params);
+  const qs = '?' + queryString.stringify(params);
 
   return swrFetcher(`${API_URL}${API_PATH}/token/report${qs}`, {
     method: 'GET',

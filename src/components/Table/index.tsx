@@ -78,7 +78,7 @@ const Table = ({
     <StyledTable>
       <div className={cs('wrapper', classWrapper)}>
         {!isLoading && (
-          <BSTable bordered className={cs('table', className)} {...delegatedProps}>
+          <BSTable className={cs('table', className)} {...delegatedProps}>
             {TableHeads}
 
             {!data || data.length === 0 ? (
