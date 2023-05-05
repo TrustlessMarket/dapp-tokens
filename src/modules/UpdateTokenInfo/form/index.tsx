@@ -156,7 +156,11 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     <form onSubmit={onSubmit} style={{ height: '100%' }}>
       <Grid templateColumns={['1.25fr 1fr']} gap={[16]}>
         <GridItem>
-          <div className={styles.submitVideo}>
+          <InputWrapper
+            className={cx(styles.submitVideo)}
+            theme="light"
+            label={<Text fontSize={px2rem(16)}>Token icon</Text>}
+          >
             <FileDropzoneUpload
               className={styles.uploader}
               accept="image/*,audio/*,video/*"
@@ -165,7 +169,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
               url={values?.thumbnail || tokenInfo?.thumbnail}
               loading={uploading}
             />
-          </div>
+          </InputWrapper>
           <InputWrapper
             className={cx(styles.inputAmountWrap, styles.inputBaseAmountWrap)}
             theme="light"
