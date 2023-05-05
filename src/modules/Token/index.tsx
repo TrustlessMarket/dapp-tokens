@@ -71,7 +71,7 @@ const TokenDetail = () => {
 
       const _data = sortedData?.map((v: any) => ({
         // ...v,
-        value: Number(v.close || '0'),
+        value: Number(v.usd_price || '0'),
         time: Number(v.timestamp),
         open: Number(v.open),
         high: Number(v.high),
