@@ -2,7 +2,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import FiledButton from '@/components/Swap/button/filedButton';
 import { ROUTE_PATH } from '@/constants/route-path';
-import useBalanceERC20Token from '@/hooks/contract-operations/token/useBalanceERC20Token';
 import { camelCaseKeys, compareString, formatCurrency } from '@/utils';
 import { formatAmountBigNumber } from '@/utils/format';
 import {
@@ -36,8 +35,6 @@ const TokenDetail = () => {
   const address: any = router.query?.address;
   const [loading, setLoading] = useState(true);
 
-  const { call: tokenBalance } = useBalanceERC20Token();
-
   const [data, setData] = useState<any>({});
   const [chartData, setChartData] = useState<any[]>([]);
   const { account } = useWeb3React();
@@ -69,16 +66,18 @@ const TokenDetail = () => {
 
       const sortedData = sortBy(resChart, 'timestamp');
 
-      const _data = sortedData?.map((v: any) => ({
-        // ...v,
-        value: Number(v.usd_price || '0'),
-        time: Number(v.timestamp),
-        open: Number(v.open),
-        high: Number(v.high),
-        close: Number(v.close),
-        low: Number(v.low),
-        // volume: Number(v.volume || 0),
-      }));
+      const _data = sortedData?.map((v: any) => {
+        return {
+          // ...v,
+          value: new BigNumber(v.closeUsd).toNumber(),
+          time: Number(v.timestamp),
+          open: new BigNumber(v.openUsd).toNumber(),
+          high: new BigNumber(v.highUsd).toNumber(),
+          close: new BigNumber(v.closeUsd).toNumber(),
+          low: new BigNumber(v.lowUsd).toNumber(),
+          // volume: Number(v.volume || 0),
+        };
+      });
 
       setChartData(_data);
 
