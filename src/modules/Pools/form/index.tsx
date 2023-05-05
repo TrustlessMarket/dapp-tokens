@@ -504,8 +504,6 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   };
 
   const onApprove = async () => {
-    console.log('aaaa', pairAddress, UNIV2_ROUTER_ADDRESS);
-
     try {
       setLoading(true);
 
@@ -600,7 +598,6 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   };
 
   const onExtraSearch = async (txtSearch: any) => {
-    console.log('txtSearch', txtSearch);
     try {
       const response: IInfoERC20TokenResponse = await infoToken({
         erc20TokenAddress: txtSearch,

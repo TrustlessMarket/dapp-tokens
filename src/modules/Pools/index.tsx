@@ -118,7 +118,7 @@ const ItemLiquid = ({ pool }: { pool: IToken }) => {
             >
               Add
             </FiledButton>
-            {/* <FiledButton
+            <FiledButton
               btnSize="l"
               style={{
                 backgroundColor: 'red',
@@ -130,7 +130,7 @@ const ItemLiquid = ({ pool }: { pool: IToken }) => {
               }
             >
               Remove
-            </FiledButton> */}
+            </FiledButton>
           </Flex>
         </AccordionPanel>
       </AccordionItem>
