@@ -97,12 +97,12 @@ export const formatEthPriceFloor = (
   precision = 10,
 ): string => {
   if (!price) return emptyStr || '-';
-  console.log(
-    'aaaaa',
-    floorPrecised(Web3.utils.fromWei(`${price}`, 'ether'), precision)
-      .toString()
-      .replace(',', '.'),
-  );
+  // console.log(
+  //   'aaaaa',
+  //   floorPrecised(Web3.utils.fromWei(`${price}`, 'ether'), precision)
+  //     .toString()
+  //     .replace(',', '.'),
+  // );
 
   return floorPrecised(
     parseFloat(Web3.utils.fromWei(`${price}`, 'ether')).toString(),

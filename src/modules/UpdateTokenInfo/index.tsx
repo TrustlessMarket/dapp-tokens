@@ -8,7 +8,7 @@ const UpdateTokenInfo = () => {
     <BodyContainer className={styles.wrapper}>
       <StyledTokens>
         <div>
-          <h3 className="upload_title">Update token info</h3>
+          <h3 className="upload_title">Token informations</h3>
         </div>
         <UploadFileContainer>
           <div className="upload_left">
