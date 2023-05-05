@@ -37,7 +37,7 @@ const FileDropzoneUpload = (props) => {
               <div {...getRootProps()}>
                 <input {...getInputProps()} />
                 <div className={styles.dropzone}>
-                  <img className={styles.iconFile} alt="" src={IconFile} />
+                  <img className={styles.iconFile} alt="" src={url || IconFile} />
                   <div>Drag files here<br />or click to upload</div>
                 </div>
               </div>

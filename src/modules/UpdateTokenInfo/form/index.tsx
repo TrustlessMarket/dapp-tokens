@@ -32,7 +32,7 @@ import {ROUTE_PATH} from "@/constants/route-path";
 
 const MAX_FILE_SIZE = 393216000; // 375 MB
 
-const Avatar = ({img, alt}) => {
+const Avatar = ({img, alt}: {img: string | any, alt: string | undefined}) => {
   return (
     <Center w={50} h={50} bg={"#FFFFFF10"} borderRadius={"50%"}>
       <img
@@ -45,7 +45,7 @@ const Avatar = ({img, alt}) => {
   )
 };
 
-const HorizontalItem = ({label, value}) => {
+const HorizontalItem = ({label, value} : {label: string | any, value: string | any}) => {
   return (
     <Flex gap={2} alignItems={"center"} justifyContent={"space-between"}>
       {label}
@@ -70,13 +70,13 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const { change, restart } = useForm();
   const btnDisabled = loading || !compareString(tokenInfo?.owner, account);
 
-  console.log('values', values);
-  console.log('file', file);
-  console.log('account', account);
-  console.log('isAuthenticated', isAuthenticated);
-  console.log('router', router);
-  console.log('tokenInfo', tokenInfo);
-  console.log('=====');
+  // console.log('values', values);
+  // console.log('file', file);
+  // console.log('account', account);
+  // console.log('isAuthenticated', isAuthenticated);
+  // console.log('router', router);
+  // console.log('tokenInfo', tokenInfo);
+  // console.log('=====');
 
   useImperativeHandle(ref, () => {
     return {
@@ -119,17 +119,23 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       change('telegram', tokenInfo?.social?.telegram);
       change('telegram', tokenInfo?.social?.telegram);
       change('twitter', tokenInfo?.social?.twitter);
+      change('thumbnail', tokenInfo?.thumbnail);
     }
   }, [JSON.stringify(tokenInfo)]);
 
   const onFileChange = async (file: File) => {
+    console.log('onFileChange', file);
+
     setFile(file);
+
+    if(!file) {
+      change('thumbnail', file);
+    }
 
     try {
       setUploading(true);
       if(file) {
         const res = await uploadFile({file: file});
-        console.log('onFileChange', res);
         change('thumbnail', res?.url);
       }
     } catch (err) {
@@ -156,7 +162,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
               accept="image/*,audio/*,video/*"
               maxSize={MAX_FILE_SIZE}
               onChange={onFileChange}
-              url={values?.thumbnail}
+              url={values?.thumbnail || tokenInfo?.thumbnail}
               loading={uploading}
             />
           </div>
@@ -173,10 +179,11 @@ export const MakeFormSwap = forwardRef((props, ref) => {
                 // fieldChanged={onChangeValueQuoteAmount}
                 disabled={submitting}
                 placeholder={"Enter description"}
-                className={cx(styles.inputAmount, styles.collateralAmount)}
+                className={cx(styles.collateralAmount)}
                 // hideError={true}
                 inputType={'textarea'}
                 borderColor={'#5B5B5B'}
+                rows="4"
               />
             </Flex>
           </InputWrapper>
@@ -288,7 +295,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
               value={
                 <Text fontSize={px2rem(16)} color={"#FFFFFFAA"}>
                   {formatCurrency(new BigNumber(tokenInfo?.totalSupply || 0).div(
-                    decimalToExponential(Number(tokenInfo?.decimal || 18))))}
+                    decimalToExponential(Number(tokenInfo?.decimal || 18))).toString())}
                 </Text>
               }
             />
@@ -300,7 +307,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
                 </Flex>
               }
               value={
-                <Text fontSize={px2rem(16)} color={"#FFFFFFAA"}>{shortenAddress(tokenInfo?.owner)}</Text>
+                <Text fontSize={px2rem(16)} color={"#FFFFFFAA"}>{shortenAddress(tokenInfo?.owner || '')}</Text>
               }
             />
           </Flex>
@@ -340,7 +347,6 @@ const TradingForm = () => {
 
       const response = await updateTokenInfo(tokenInfo?.address, data);
 
-      console.log('response', response);
       router.push(`${ROUTE_PATH.TOKEN}?address=${tokenInfo?.address}`)
       toast.success('Update token info successfully!');
       refForm.current?.reset();
