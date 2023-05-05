@@ -1,17 +1,16 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { memo, useEffect, useRef } from 'react';
 
+import { formatCurrency } from '@/utils';
 import {
   createChart,
   CrosshairMode,
   LastPriceAnimationMode,
   LineType,
-  PriceScaleMode,
   TrackingModeExitMode,
 } from 'lightweight-charts';
 import useAsyncEffect from 'use-async-effect';
 import { StyledTokenChartContainer } from './Token.styled';
-import { formatCurrency } from '@/utils';
 
 interface TokenChartProps {
   chartData: any[];
@@ -45,7 +44,7 @@ const TokenChart: React.FC<TokenChartProps> = ({ chartData }) => {
         rightPriceScale: {
           borderColor: '#E6E8EC',
           entireTextOnly: true,
-          mode: PriceScaleMode.Logarithmic,
+          // mode: PriceScaleMode.IndexedTo100,
         },
         timeScale: {
           borderColor: '#E6E8EC',
@@ -83,8 +82,8 @@ const TokenChart: React.FC<TokenChartProps> = ({ chartData }) => {
       candleSeries.current = chart.current.addAreaSeries({
         lineColor: '#2862ff',
         lineWidth: 2,
-        // lastValueVisible: true,
-        // priceLineVisible: false,
+        lastValueVisible: true,
+        priceLineVisible: true,
         lastPriceAnimation: LastPriceAnimationMode.Continuous,
         lineType: LineType.Curved,
         topColor: 'rgba(41, 98, 255, 0.28)',
@@ -95,11 +94,11 @@ const TokenChart: React.FC<TokenChartProps> = ({ chartData }) => {
           top: 0.3, // highest point of the series will be 10% away from the top
           bottom: 0.4, // lowest point will be 40% away from the bottom
         },
-        priceFormat: {
-          type: 'price',
-          precision: 18,
-          minMove: 0.000000000000000001,
-        },
+        // priceFormat: {
+        //   type: 'price',
+        //   precision: 18,
+        //   minMove: 0.000000000000000001,
+        // },
       });
     }
   }, []);

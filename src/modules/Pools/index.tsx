@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import HorizontalItem from '@/components/HorizontalItem';
+import BodyContainer from '@/components/Swap/bodyContainer';
 import FiledButton from '@/components/Swap/button/filedButton';
 import ListTable from '@/components/Swap/listTable';
 import { ROUTE_PATH } from '@/constants/route-path';
@@ -27,12 +28,12 @@ import {
 import BigNumber from 'bignumber.js';
 import { useRouter } from 'next/router';
 import { useEffect, useMemo, useState } from 'react';
+import { FiPlus } from 'react-icons/fi';
 import { IoArrowBackOutline } from 'react-icons/io5';
 import { StyledLiquidNote, StyledTokens, UploadFileContainer } from './Pools.styled';
 import CreateMarket from './form';
-import styles from './styles.module.scss';
 import ImportPool from './form/importPool';
-import BodyContainer from '@/components/Swap/bodyContainer';
+import styles from './styles.module.scss';
 
 export enum ScreenType {
   default = 'default',
@@ -267,7 +268,7 @@ const LiquidityContainer = () => {
             >
               <Heading as={'h6'}>Pools</Heading>
               <Flex gap={4}>
-                <FiledButton
+                {/* <FiledButton
                   style={{ borderColor: 'white', color: 'white' }}
                   _hover={{
                     backgroundColor: 'orange',
@@ -280,7 +281,7 @@ const LiquidityContainer = () => {
                   }
                 >
                   Create a Pool
-                </FiledButton>
+                </FiledButton> */}
                 <FiledButton
                   style={{ borderColor: 'white', color: 'white' }}
                   _hover={{
@@ -305,6 +306,7 @@ const LiquidityContainer = () => {
                     )
                   }
                 >
+                  <FiPlus fontWeight={'bold'} fontSize={'20px'} />
                   Add liquidity
                 </FiledButton>
               </Flex>
