@@ -88,7 +88,7 @@ import { BsPlus } from 'react-icons/bs';
 import { useDispatch, useSelector } from 'react-redux';
 import { ScreenType } from '..';
 import styles from './styles.module.scss';
-import {logErrorToServer} from "@/services/swap";
+import { logErrorToServer } from '@/services/swap';
 
 const LIMIT_PAGE = 50;
 
@@ -446,7 +446,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
 
   const onChangeValueQuoteAmount = (_amount: any = 0) => {
     if (isPaired && baseToken && quoteToken) {
-      const tokens = sortAddressPair(quoteToken, quoteToken);
+      const tokens = sortAddressPair(baseToken, quoteToken);
       const findIndex = tokens.findIndex((v) =>
         compareString(v.address, baseToken.address),
       );
@@ -474,8 +474,9 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       const findIndex = tokens.findIndex((v) =>
         compareString(v.address, baseToken.address),
       );
+
       const rate =
-        findIndex === 0
+        findIndex === 1
           ? new BigNumber(perPrice._reserve0).dividedBy(perPrice._reserve1)
           : new BigNumber(perPrice._reserve1).dividedBy(perPrice._reserve0);
       change('quoteAmount', new BigNumber(_amount).multipliedBy(rate).toString());
@@ -685,8 +686,6 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         .multipliedBy(_percentPool)
         .multipliedBy(supply.ownerSupply)
         .toString();
-
-      console.log('liquidValue', liquidValue, supply.ownerSupply);
 
       change('baseAmount', _baseBalance);
       change('quoteAmount', _quoteBalance);

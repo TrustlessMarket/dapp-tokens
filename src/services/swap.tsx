@@ -56,3 +56,14 @@ export const logErrorToServer = async (payload: LogErrorToServerPayload) => {
     error: 'Fail to scan tx',
   });
 };
+
+export const getChartToken = async (params: {
+  contract_address: string;
+  chart_type: string;
+}) => {
+  const qs = '?' + queryString.stringify(params);
+  return swrFetcher(`${API_URL}${API_PATH}/token/price${qs}`, {
+    method: 'GET',
+    error: 'Fail to scan tx',
+  });
+};

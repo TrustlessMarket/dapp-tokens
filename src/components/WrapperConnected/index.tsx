@@ -29,7 +29,6 @@ const WrapperConnected: React.FC<WrapperConnectedProps> = ({
       showError({
         message: (err as Error).message,
       });
-      console.log(err);
       onDisconnect();
     }
   };

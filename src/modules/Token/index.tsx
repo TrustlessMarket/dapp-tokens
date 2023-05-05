@@ -20,12 +20,12 @@ import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { StyledTokenDetailContainer } from './Token.styled';
 // import TokenChart from './Token.Chart';
-import axios from 'axios';
-import dynamic from 'next/dynamic';
-import { getTokenRp } from '@/services/swap';
 import SocialToken from '@/components/Social';
-import { DEFAULT_BASE_TOKEN } from '../Swap/form';
+import { getChartToken, getTokenRp } from '@/services/swap';
 import { useWeb3React } from '@web3-react/core';
+import { sortBy } from 'lodash';
+import dynamic from 'next/dynamic';
+import { DEFAULT_BASE_TOKEN } from '../Swap/form';
 
 const TokenChart = dynamic(() => import('./Token.Chart'), {
   ssr: false,
@@ -50,8 +50,6 @@ const TokenDetail = () => {
 
   const getData = async () => {
     try {
-      console.log('load 2 lan');
-
       //   setLoading(true);
       if (!address) {
         throw 'Token not found';
@@ -60,19 +58,21 @@ const TokenDetail = () => {
         getTokenRp({
           address,
         }),
-        axios.request({
-          url: 'https://min-api.cryptocompare.com/data/v2/histohour?fsym=BTC&tsym=USD&limit=100',
-          method: 'GET',
+        getChartToken({
+          contract_address: address,
+          chart_type: 'hour',
         }),
       ]);
       if (resToken.length === 0) {
         throw 'Token not found';
       }
 
-      const _data = resChart?.data?.Data?.Data?.map((v: any) => ({
+      const sortedData = sortBy(resChart, 'timestamp');
+
+      const _data = sortedData?.map((v: any) => ({
         // ...v,
         value: Number(v.close || '0'),
-        time: Number(v.time),
+        time: Number(v.timestamp),
         open: Number(v.open),
         high: Number(v.high),
         close: Number(v.close),
@@ -120,7 +120,7 @@ const TokenDetail = () => {
           Supply:{' '}
           {formatCurrency(formatAmountBigNumber(data.totalSupply, data.decimal))}
         </Text>
-        <Flex justifyContent={'center'} gap={8}>
+        <Flex justifyContent={'center'} gap={8} mt={6}>
           <FiledButton
             style={{}}
             onClick={() =>
@@ -180,7 +180,7 @@ const TokenDetail = () => {
           <StatNumber>${formatCurrency(data.usdTotalVolume, 2)}</StatNumber>
         </Stat>
       </Box>
-      <Text>Chart Price</Text>
+      {/* <Text>Chart Price</Text> */}
       <Box
         style={{
           height: 300,
