@@ -12,7 +12,7 @@ import {requestReload, requestReloadRealtime, selectPnftExchange,} from '@/state
 import {getIsAuthenticatedSelector} from '@/state/user/selector';
 import px2rem from '@/utils/px2rem';
 import {showError} from '@/utils/toast';
-import {Box, Flex, forwardRef, Grid, GridItem, Text} from '@chakra-ui/react';
+import {Box, Center, Flex, forwardRef, Grid, GridItem, Text} from '@chakra-ui/react';
 import {useWeb3React} from '@web3-react/core';
 import cx from 'classnames';
 import {useRouter} from 'next/router';
@@ -26,11 +26,33 @@ import FieldText from "@/components/Swap/form/fieldText";
 import FileDropzoneUpload from "@/components/Swap/form/fileDropzoneUpload";
 import {uploadFile} from "@/services/file";
 import {compareString, formatCurrency, shortenAddress} from "@/utils";
-import HorizontalItem from "@/components/Swap/horizontalItem";
 import BigNumber from "bignumber.js";
 import {decimalToExponential} from "@/utils/format";
+import {ROUTE_PATH} from "@/constants/route-path";
 
 const MAX_FILE_SIZE = 393216000; // 375 MB
+
+const Avatar = ({img, alt}) => {
+  return (
+    <Center w={50} h={50} bg={"#FFFFFF10"} borderRadius={"50%"}>
+      <img
+        width={30}
+        height={30}
+        src={img}
+        alt={alt}
+      />
+    </Center>
+  )
+};
+
+const HorizontalItem = ({label, value}) => {
+  return (
+    <Flex gap={2} alignItems={"center"} justifyContent={"space-between"}>
+      {label}
+      {value}
+    </Flex>
+  )
+};
 
 export const MakeFormSwap = forwardRef((props, ref) => {
   const { onSubmit, submitting } = props;
@@ -233,29 +255,55 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           </WrapperConnected>
         </GridItem>
         <GridItem>
-          <Box className={styles.staticInfo} p={6} borderRadius={px2rem(12)}>
+          <Flex direction={"column"} className={styles.staticInfo} p={6} borderRadius={px2rem(12)} gap={8}>
             <HorizontalItem
-              label={<Text fontSize={px2rem(16)} color={"#FFFFFF"} whiteSpace={"nowrap"}>Name</Text>}
-              value={<Text fontSize={px2rem(14)} color={"#FFFFFFAA"}>{tokenInfo?.name}</Text>}
-            />
-            <HorizontalItem
-              label={<Text fontSize={px2rem(16)} color={"#FFFFFF"} whiteSpace={"nowrap"}>Symbol</Text>}
-              value={<Text fontSize={px2rem(14)} color={"#FFFFFFAA"}>{tokenInfo?.symbol}</Text>}
-            />
-            <HorizontalItem
-              label={<Text fontSize={px2rem(16)} color={"#FFFFFF"} whiteSpace={"nowrap"}>Total supply</Text>}
-              value={<Text fontSize={px2rem(14)} color={"#FFFFFFAA"}>
-                {formatCurrency(new BigNumber(tokenInfo?.totalSupply || 0).div(
-                  decimalToExponential(Number(tokenInfo?.decimal || 18))))}
-              </Text>
+              label={
+                <Flex gap={2} alignItems={"center"}>
+                  <Avatar img={"https://cdn.trustless.computer/upload/1683279635705685769-1683279635-name.png"} alt={"Name"} />
+                  <Text fontSize={px2rem(16)} color={"#FFFFFF"} whiteSpace={"nowrap"}>Name</Text>
+                </Flex>
+              }
+              value={
+                <Text fontSize={px2rem(16)} color={"#FFFFFFAA"}>{tokenInfo?.name}</Text>
               }
             />
             <HorizontalItem
-              label="Owner"
-              label={<Text fontSize={px2rem(16)} color={"#FFFFFF"} whiteSpace={"nowrap"}>Owner</Text>}
-              value={<Text fontSize={px2rem(14)} color={"#FFFFFFAA"}>{shortenAddress(tokenInfo?.owner)}</Text>}
+              label={
+                <Flex gap={2} alignItems={"center"}>
+                  <Avatar img={"https://cdn.trustless.computer/upload/1683280318769782896-1683280318-symbol.png"} alt={"Symbol"} />
+                  <Text fontSize={px2rem(16)} color={"#FFFFFF"} whiteSpace={"nowrap"}>Symbol</Text>
+                </Flex>
+              }
+              value={
+                <Text fontSize={px2rem(16)} color={"#FFFFFFAA"}>{tokenInfo?.symbol}</Text>
+              }
             />
-          </Box>
+            <HorizontalItem
+              label={
+                <Flex gap={2} alignItems={"center"}>
+                  <Avatar img={"https://cdn.trustless.computer/upload/1683280358912483737-1683280358-total-supply.png"} alt={"Total supply"} />
+                  <Text fontSize={px2rem(16)} color={"#FFFFFF"} whiteSpace={"nowrap"}>Total supply</Text>
+                </Flex>
+              }
+              value={
+                <Text fontSize={px2rem(16)} color={"#FFFFFFAA"}>
+                  {formatCurrency(new BigNumber(tokenInfo?.totalSupply || 0).div(
+                    decimalToExponential(Number(tokenInfo?.decimal || 18))))}
+                </Text>
+              }
+            />
+            <HorizontalItem
+              label={
+                <Flex gap={2} alignItems={"center"}>
+                  <Avatar img={"https://cdn.trustless.computer/upload/1683280338812466905-1683280338-owner.png"} alt={"Owner"} />
+                  <Text fontSize={px2rem(16)} color={"#FFFFFF"} whiteSpace={"nowrap"}>Owner</Text>
+                </Flex>
+              }
+              value={
+                <Text fontSize={px2rem(16)} color={"#FFFFFFAA"}>{shortenAddress(tokenInfo?.owner)}</Text>
+              }
+            />
+          </Flex>
         </GridItem>
       </Grid>
     </form>
@@ -267,6 +315,7 @@ const TradingForm = () => {
   const [submitting, setSubmitting] = useState(false);
   const dispatch = useAppDispatch();
   const { account } = useWeb3React();
+  const router = useRouter();
 
   const handleSubmit = async (values: any) => {
     const { tokenInfo } = values;
@@ -292,7 +341,7 @@ const TradingForm = () => {
       const response = await updateTokenInfo(tokenInfo?.address, data);
 
       console.log('response', response);
-
+      router.push(`${ROUTE_PATH.TOKEN}?address=${tokenInfo?.address}`)
       toast.success('Update token info successfully!');
       refForm.current?.reset();
       dispatch(requestReload());
