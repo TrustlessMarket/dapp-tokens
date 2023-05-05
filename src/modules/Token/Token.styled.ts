@@ -17,4 +17,15 @@ export const StyledTokenDetailContainer = styled(BodyContainer)`
       gap: 20px;
     }
   }
+
+  .avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 100%;
+  }
+`;
+
+export const StyledTokenChartContainer = styled.div`
+  height: 100%;
+  position: relative;
 `;

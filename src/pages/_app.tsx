@@ -1,22 +1,24 @@
-import Head from 'next/head';
-import type { AppProps } from 'next/app';
-import { SEO_TITLE, SEO_DESCRIPTION, SEO_IMAGE } from '@/constants/seo';
-import Web3Provider from '@/components/Web3Provider';
-import { Provider } from 'react-redux';
-import { WalletProvider } from '@/contexts/wallet-context';
-import { AssetsProvider } from '@/contexts/assets-context';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import ThemeProvider, { ThemedGlobalStyle } from '@/theme/theme';
-import store from '@/state';
-import { Toaster } from 'react-hot-toast';
-import '@/styles/index.scss';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import ModalManager from '@/components/Swap/modal';
+import MyLoadingOverlay from '@/components/Swap/myLoadingOverlay';
 import ClientOnly from '@/components/Utils/ClientOnly';
-import {ChakraProvider} from "@chakra-ui/react";
-import customTheme from '@/theme/theme-chakra';
+import Web3Provider from '@/components/Web3Provider';
+import { SEO_DESCRIPTION, SEO_IMAGE, SEO_TITLE } from '@/constants/seo';
+import { AssetsProvider } from '@/contexts/assets-context';
+import { ScreenLayoutProvider } from '@/contexts/screen-context';
+import { WalletProvider } from '@/contexts/wallet-context';
+import store from '@/state';
+import '@/styles/index.scss';
 import ChakaDefaultProps from '@/theme/chakraDefaultProps';
-import ModalManager from "@/components/Swap/modal";
-import MyLoadingOverlay from "@/components/Swap/myLoadingOverlay";
-import {ScreenLayoutProvider} from "@/contexts/screen-context";
+import ThemeProvider, { ThemedGlobalStyle } from '@/theme/theme';
+import customTheme from '@/theme/theme-chakra';
+import { ChakraProvider } from '@chakra-ui/react';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import type { AppProps } from 'next/app';
+import Head from 'next/head';
+import { useEffect, useState } from 'react';
+import { Toaster } from 'react-hot-toast';
+import { Provider } from 'react-redux';
 
 export default function App({ Component, pageProps }: AppProps) {
   const { seoInfo = {} } = pageProps;
@@ -124,7 +126,9 @@ export default function App({ Component, pageProps }: AppProps) {
                 <WalletProvider>
                   <ScreenLayoutProvider>
                     <AssetsProvider>
-                      <Component {...pageProps} />
+                      <Hydrated>
+                        <Component {...pageProps} />
+                      </Hydrated>
                     </AssetsProvider>
                     <Toaster position="top-center" reverseOrder={false} />
                     <ModalManager />
@@ -139,3 +143,14 @@ export default function App({ Component, pageProps }: AppProps) {
     </>
   );
 }
+
+const Hydrated = ({ children }: { children?: any }) => {
+  const [hydration, setHydration] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setHydration(true);
+    }
+  }, []);
+  return hydration ? children : null;
+};
