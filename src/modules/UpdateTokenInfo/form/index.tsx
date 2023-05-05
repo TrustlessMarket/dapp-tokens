@@ -12,7 +12,7 @@ import {requestReload, requestReloadRealtime, selectPnftExchange,} from '@/state
 import {getIsAuthenticatedSelector} from '@/state/user/selector';
 import px2rem from '@/utils/px2rem';
 import {showError} from '@/utils/toast';
-import {Box, Flex, forwardRef, Text} from '@chakra-ui/react';
+import {Box, Flex, forwardRef, Grid, GridItem, Text} from '@chakra-ui/react';
 import {useWeb3React} from '@web3-react/core';
 import cx from 'classnames';
 import {useRouter} from 'next/router';
@@ -65,6 +65,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const reset = async () => {
     restart({
     });
+    setFile(null);
   };
 
   useEffect(() => {
@@ -125,8 +126,8 @@ export const MakeFormSwap = forwardRef((props, ref) => {
 
   return (
     <form onSubmit={onSubmit} style={{ height: '100%' }}>
-      <Flex gap={6}>
-        <Box flex={2}>
+      <Grid templateColumns={['1.25fr 1fr']} gap={[16]}>
+        <GridItem>
           <div className={styles.submitVideo}>
             <FileDropzoneUpload
               className={styles.uploader}
@@ -230,31 +231,33 @@ export const MakeFormSwap = forwardRef((props, ref) => {
               UPDATE
             </FiledButton>
           </WrapperConnected>
-        </Box>
-        <Box flex={1} className={styles.staticInfo} p={6} borderRadius={px2rem(12)}>
-          <HorizontalItem
-            label={<Text fontSize={px2rem(16)} color={"#FFFFFF"} whiteSpace={"nowrap"}>Name</Text>}
-            value={<Text fontSize={px2rem(14)} color={"#FFFFFFAA"}>{tokenInfo?.name}</Text>}
-          />
-          <HorizontalItem
-            label={<Text fontSize={px2rem(16)} color={"#FFFFFF"} whiteSpace={"nowrap"}>Symbol</Text>}
-            value={<Text fontSize={px2rem(14)} color={"#FFFFFFAA"}>{tokenInfo?.symbol}</Text>}
-          />
-          <HorizontalItem
-            label={<Text fontSize={px2rem(16)} color={"#FFFFFF"} whiteSpace={"nowrap"}>Total supply</Text>}
-            value={<Text fontSize={px2rem(14)} color={"#FFFFFFAA"}>
-                      {formatCurrency(new BigNumber(tokenInfo?.totalSupply || 0).div(
-                      decimalToExponential(Number(tokenInfo?.decimal || 18))))}
-                  </Text>
-            }
-          />
-          <HorizontalItem
-            label="Owner"
-            label={<Text fontSize={px2rem(16)} color={"#FFFFFF"} whiteSpace={"nowrap"}>Owner</Text>}
-            value={<Text fontSize={px2rem(14)} color={"#FFFFFFAA"}>{shortenAddress(tokenInfo?.owner)}</Text>}
-          />
-        </Box>
-      </Flex>
+        </GridItem>
+        <GridItem>
+          <Box className={styles.staticInfo} p={6} borderRadius={px2rem(12)}>
+            <HorizontalItem
+              label={<Text fontSize={px2rem(16)} color={"#FFFFFF"} whiteSpace={"nowrap"}>Name</Text>}
+              value={<Text fontSize={px2rem(14)} color={"#FFFFFFAA"}>{tokenInfo?.name}</Text>}
+            />
+            <HorizontalItem
+              label={<Text fontSize={px2rem(16)} color={"#FFFFFF"} whiteSpace={"nowrap"}>Symbol</Text>}
+              value={<Text fontSize={px2rem(14)} color={"#FFFFFFAA"}>{tokenInfo?.symbol}</Text>}
+            />
+            <HorizontalItem
+              label={<Text fontSize={px2rem(16)} color={"#FFFFFF"} whiteSpace={"nowrap"}>Total supply</Text>}
+              value={<Text fontSize={px2rem(14)} color={"#FFFFFFAA"}>
+                {formatCurrency(new BigNumber(tokenInfo?.totalSupply || 0).div(
+                  decimalToExponential(Number(tokenInfo?.decimal || 18))))}
+              </Text>
+              }
+            />
+            <HorizontalItem
+              label="Owner"
+              label={<Text fontSize={px2rem(16)} color={"#FFFFFF"} whiteSpace={"nowrap"}>Owner</Text>}
+              value={<Text fontSize={px2rem(14)} color={"#FFFFFFAA"}>{shortenAddress(tokenInfo?.owner)}</Text>}
+            />
+          </Box>
+        </GridItem>
+      </Grid>
     </form>
   );
 });
@@ -272,6 +275,8 @@ const TradingForm = () => {
       setSubmitting(true);
 
       const data: IUpdateTokenPayload = {
+        name: tokenInfo?.name,
+        symbol: tokenInfo?.symbol,
         thumbnail: values?.thumbnail || tokenInfo.thumbnail,
         description: values?.description,
         social: {
@@ -289,7 +294,7 @@ const TradingForm = () => {
       console.log('response', response);
 
       toast.success('Update token info successfully!');
-      // refForm.current?.reset();
+      refForm.current?.reset();
       dispatch(requestReload());
       dispatch(requestReloadRealtime());
     } catch (err: any) {
