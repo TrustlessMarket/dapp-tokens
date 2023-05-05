@@ -2,7 +2,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import FiledButton from '@/components/Swap/button/filedButton';
-import FieldAmount from '@/components/Swap/form/fieldAmount';
 import InputWrapper from '@/components/Swap/form/inputWrapper';
 import WrapperConnected from '@/components/WrapperConnected';
 import {toastError} from '@/constants/error';
@@ -31,10 +30,6 @@ import HorizontalItem from "@/components/Swap/horizontalItem";
 import BigNumber from "bignumber.js";
 import {decimalToExponential} from "@/utils/format";
 
-const LIMIT_PAGE = 50;
-const FEE = 3;
-export const DEFAULT_BASE_TOKEN = '0xfB83c18569fB43f1ABCbae09Baf7090bFFc8CBBD';
-export const DEFAULT_QUOTE_TOKEN = '0xdd2863416081D0C10E57AaB4B3C5197183be4B34';
 const MAX_FILE_SIZE = 393216000; // 375 MB
 
 export const MakeFormSwap = forwardRef((props, ref) => {
@@ -44,6 +39,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const isAuthenticated = useSelector(getIsAuthenticatedSelector);
   const router = useRouter();
   const [file, setFile] = useState<any>();
+  const [uploading, setUploading] = useState(false);
 
   const { account } = useWeb3React();
   const needReload = useAppSelector(selectPnftExchange).needReload;
@@ -92,20 +88,38 @@ export const MakeFormSwap = forwardRef((props, ref) => {
 
   useEffect(() => {
     if(tokenInfo) {
-      change('totalSupply', tokenInfo?.totalSupply);
-      change('name', tokenInfo?.name);
-      change('symbol', tokenInfo?.symbol);
-      change('owner', tokenInfo?.owner);
+      change('description', tokenInfo?.description);
+      change('website', tokenInfo?.social?.website);
+      change('discord', tokenInfo?.social?.discord);
+      change('instagram', tokenInfo?.social?.instagram);
+      change('medium', tokenInfo?.social?.medium);
+      change('telegram', tokenInfo?.social?.telegram);
+      change('telegram', tokenInfo?.social?.telegram);
+      change('twitter', tokenInfo?.social?.twitter);
     }
   }, [JSON.stringify(tokenInfo)]);
 
   const onFileChange = async (file: File) => {
     setFile(file);
 
-    if(file) {
-      const res = await uploadFile({file: file});
-      console.log('onFileChange', res);
-      change('thumbnail', res?.url);
+    try {
+      setUploading(true);
+      if(file) {
+        const res = await uploadFile({file: file});
+        console.log('onFileChange', res);
+        change('thumbnail', res?.url);
+      }
+    } catch (err) {
+      const message =
+        (err as Error).message || 'Something went wrong. Please try again later.';
+      logErrorToServer({
+        type: 'error',
+        address: account,
+        error: JSON.stringify(err),
+        message: message,
+      });
+    } finally {
+      setUploading(false);
     }
   };
 
@@ -114,10 +128,17 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       <Flex gap={6}>
         <Box flex={2}>
           <div className={styles.submitVideo}>
-            <FileDropzoneUpload className={styles.uploader} accept="image/*,audio/*,video/*" maxSize={MAX_FILE_SIZE} onChange={onFileChange} />
+            <FileDropzoneUpload
+              className={styles.uploader}
+              accept="image/*,audio/*,video/*"
+              maxSize={MAX_FILE_SIZE}
+              onChange={onFileChange}
+              url={values?.thumbnail}
+              loading={uploading}
+            />
           </div>
           <InputWrapper
-            className={cx(styles.inputAmountWrap, styles.inputQuoteAmountWrap)}
+            className={cx(styles.inputAmountWrap, styles.inputBaseAmountWrap)}
             theme="light"
             label={<Text fontSize={px2rem(16)}>Description</Text>}
           >
@@ -252,6 +273,7 @@ const TradingForm = () => {
 
       const data: IUpdateTokenPayload = {
         thumbnail: values?.thumbnail || tokenInfo.thumbnail,
+        description: values?.description,
         social: {
           discord: values?.discord,
           instagram: values?.instagram,
@@ -267,7 +289,7 @@ const TradingForm = () => {
       console.log('response', response);
 
       toast.success('Update token info successfully!');
-      refForm.current?.reset();
+      // refForm.current?.reset();
       dispatch(requestReload());
       dispatch(requestReloadRealtime());
     } catch (err: any) {
