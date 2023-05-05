@@ -42,7 +42,7 @@ const Tokens = () => {
     'Market Cap',
     'Volume',
     'Supply',
-    '',
+    // '',
   ];
   /*'Price','24h %','Market Cap'*/
 
@@ -227,16 +227,16 @@ const Tokens = () => {
         usdVol: `$${formatCurrency(marketCap, 2)}`,
         usdVolume: <span>${formatCurrency(tokenVolume, 2)}</span>,
         supply: formatCurrency(totalSupply.toString()),
-        action: (
-          <Box
-            onClick={() =>
-              router.push(`${ROUTE_PATH.TOKEN}?address=${token?.address}`)
-            }
-            aria-label={''}
-          >
-            <FaChartLine />
-          </Box>
-        ),
+        // action: (
+        //   <Box
+        //     onClick={() =>
+        //       router.push(`${ROUTE_PATH.TOKEN}?address=${token?.address}`)
+        //     }
+        //     aria-label={''}
+        //   >
+        //     <FaChartLine />
+        //   </Box>
+        // ),
       },
       config: {
         onClick: () => {
