@@ -20,14 +20,14 @@ import { ROUTE_PATH } from '@/constants/route-path';
 import { WalletContext } from '@/contexts/wallet-context';
 import { DEFAULT_BASE_TOKEN } from '@/modules/Swap/form';
 import { showError } from '@/utils/toast';
-import { Box, Flex } from '@chakra-ui/react';
+import { Flex } from '@chakra-ui/react';
 import BigNumber from 'bignumber.js';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 //const EXPLORER_URL = TRUSTLESS_COMPUTER_CHAIN_INFO.explorers[0].url;
 import BodyContainer from '@/components/Swap/bodyContainer';
 import { AiOutlineCaretDown, AiOutlineCaretUp } from 'react-icons/ai';
-import { FaChartLine } from 'react-icons/fa';
+import TokenChartLast7Day from './Token.ChartLast7Day';
 
 const LIMIT_PAGE = 500;
 //const ALL_ONE_PAGE = 10000;
@@ -42,7 +42,7 @@ const Tokens = () => {
     'Market Cap',
     'Volume',
     'Supply',
-    '',
+    'Last 24h',
   ];
   /*'Price','24h %','Market Cap'*/
 
@@ -243,16 +243,7 @@ const Tokens = () => {
         usdVol: `$${formatCurrency(marketCap, 2)}`,
         usdVolume: <span>${formatCurrency(tokenVolume, 2)}</span>,
         supply: formatCurrency(totalSupply.toString()),
-        action: (
-          <Box
-            onClick={() =>
-              router.push(`${ROUTE_PATH.TOKEN}?address=${token?.address}`)
-            }
-            aria-label={''}
-          >
-            <FaChartLine />
-          </Box>
-        ),
+        action: <TokenChartLast7Day token={token} />,
       },
       config: {
         onClick: () => {

@@ -57,10 +57,12 @@ export const logErrorToServer = async (payload: LogErrorToServerPayload) => {
   });
 };
 
-export const getChartToken = async (params: {
-  contract_address: string;
-  chart_type: string;
-}) => {
+export const getChartToken = async (
+  params: {
+    contract_address: string;
+    chart_type: string;
+  } & IPagingParams,
+) => {
   const qs = '?' + queryString.stringify(params);
   return swrFetcher(`${API_URL}${API_PATH}/token/price${qs}`, {
     method: 'GET',
