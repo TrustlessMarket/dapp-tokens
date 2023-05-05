@@ -13,7 +13,7 @@ import * as TC_SDK from 'trustless-computer-sdk';
 import useBitcoin from '../useBitcoin';
 import { ERROR_CODE } from '@/constants/error';
 import { isProduction } from '@/utils/commons';
-import { logErrorToServer } from '@/services/token-explorer';
+import { logErrorToServer } from '@/services/swap';
 
 interface IParams<P, R> {
   operation: ContractOperationHook<P, R>;

@@ -38,7 +38,7 @@ import useSupplyERC20Liquid from '@/hooks/contract-operations/token/useSupplyERC
 import useContractOperation from '@/hooks/contract-operations/useContractOperation';
 import { IToken } from '@/interfaces/token';
 import { TransactionStatus } from '@/interfaces/walletTransaction';
-import { getTokens, logErrorToServer } from '@/services/token-explorer';
+import { getTokens } from '@/services/token-explorer';
 import { useAppDispatch, useAppSelector } from '@/state/hooks';
 import {
   requestReload,
@@ -88,6 +88,7 @@ import { BsPlus } from 'react-icons/bs';
 import { useDispatch, useSelector } from 'react-redux';
 import { ScreenType } from '..';
 import styles from './styles.module.scss';
+import {logErrorToServer} from "@/services/swap";
 
 const LIMIT_PAGE = 50;
 

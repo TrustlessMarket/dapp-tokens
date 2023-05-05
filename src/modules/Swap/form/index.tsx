@@ -23,7 +23,7 @@ import useIsApproveERC20Token from '@/hooks/contract-operations/token/useIsAppro
 import useContractOperation from '@/hooks/contract-operations/useContractOperation';
 import {IToken} from '@/interfaces/token';
 import {TransactionStatus} from '@/interfaces/walletTransaction';
-import {getSwapTokens, logErrorToServer} from '@/services/token-explorer';
+import {getSwapTokens, logErrorToServer} from '@/services/swap';
 import {useAppDispatch, useAppSelector} from '@/state/hooks';
 import {
   requestReload,
