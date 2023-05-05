@@ -113,7 +113,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const isAllowSwap =
     new BigNumber(amountBaseTokenApproved).gt(0) &&
     (!values?.baseAmount ||
-      new BigNumber(amountBaseTokenApproved).gt(
+      new BigNumber(amountBaseTokenApproved).gte(
         formatAmountSigning(values?.baseAmount || 0),
       ));
 
