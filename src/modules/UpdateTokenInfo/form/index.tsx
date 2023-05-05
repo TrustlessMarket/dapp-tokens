@@ -26,7 +26,10 @@ import {getTokenDetail, IUpdateTokenPayload, updateTokenInfo} from "@/services/t
 import FieldText from "@/components/Swap/form/fieldText";
 import FileDropzoneUpload from "@/components/Swap/form/fileDropzoneUpload";
 import {uploadFile} from "@/services/file";
-import {compareString} from "@/utils";
+import {compareString, formatCurrency, shortenAddress} from "@/utils";
+import HorizontalItem from "@/components/Swap/horizontalItem";
+import BigNumber from "bignumber.js";
+import {decimalToExponential} from "@/utils/format";
 
 const LIMIT_PAGE = 50;
 const FEE = 3;
@@ -108,105 +111,129 @@ export const MakeFormSwap = forwardRef((props, ref) => {
 
   return (
     <form onSubmit={onSubmit} style={{ height: '100%' }}>
-      <Flex>
-        <Box flex={1}>
+      <Flex gap={6}>
+        <Box flex={2}>
           <div className={styles.submitVideo}>
             <FileDropzoneUpload className={styles.uploader} accept="image/*,audio/*,video/*" maxSize={MAX_FILE_SIZE} onChange={onFileChange} />
           </div>
+          <InputWrapper
+            className={cx(styles.inputAmountWrap, styles.inputQuoteAmountWrap)}
+            theme="light"
+            label={<Text fontSize={px2rem(16)}>Description</Text>}
+          >
+            <Flex gap={4} direction={'column'}>
+              <Field
+                name="description"
+                children={FieldText}
+                // validate={composeValidators(required, validateQuoteAmount)}
+                // fieldChanged={onChangeValueQuoteAmount}
+                disabled={submitting}
+                placeholder={"Enter description"}
+                className={cx(styles.inputAmount, styles.collateralAmount)}
+                // hideError={true}
+                inputType={'textarea'}
+                borderColor={'#5B5B5B'}
+              />
+            </Flex>
+          </InputWrapper>
+          <InputWrapper
+            className={cx(styles.inputAmountWrap, styles.inputQuoteAmountWrap)}
+            theme="light"
+            label={<Text fontSize={px2rem(16)}>Social</Text>}
+          >
+            <Flex gap={4} direction={'column'}>
+              <Field
+                name="website"
+                children={FieldText}
+                disabled={submitting}
+                placeholder={"Enter Website"}
+                className={cx(styles.inputAmount, styles.collateralAmount)}
+                borderColor={'#5B5B5B'}
+              />
+              <Field
+                name="discord"
+                children={FieldText}
+                disabled={submitting}
+                placeholder={"Enter Discord"}
+                className={cx(styles.inputAmount, styles.collateralAmount)}
+                borderColor={'#5B5B5B'}
+              />
+              <Field
+                name="instagram"
+                children={FieldText}
+                disabled={submitting}
+                placeholder={"Enter Instagram"}
+                className={cx(styles.inputAmount, styles.collateralAmount)}
+                borderColor={'#5B5B5B'}
+              />
+              <Field
+                name="medium"
+                children={FieldText}
+                disabled={submitting}
+                placeholder={"Enter Medium"}
+                className={cx(styles.inputAmount, styles.collateralAmount)}
+                borderColor={'#5B5B5B'}
+              />
+              <Field
+                name="telegram"
+                children={FieldText}
+                disabled={submitting}
+                placeholder={"Enter Telegram"}
+                className={cx(styles.inputAmount, styles.collateralAmount)}
+                borderColor={'#5B5B5B'}
+              />
+              <Field
+                name="twitter"
+                children={FieldText}
+                disabled={submitting}
+                placeholder={"Enter Twitter"}
+                className={cx(styles.inputAmount, styles.collateralAmount)}
+                borderColor={'#5B5B5B'}
+              />
+            </Flex>
+          </InputWrapper>
+          <WrapperConnected
+            type={'submit'}
+            className={styles.submitButton}
+          >
+            <FiledButton
+              isDisabled={submitting || btnDisabled}
+              isLoading={submitting}
+              type="submit"
+              // borderRadius={'100px !important'}
+              // className="btn-submit"
+              btnSize={'h'}
+              containerConfig={{ flex: 1 }}
+              loadingText={submitting ? 'Processing' : ' '}
+            >
+              UPDATE
+            </FiledButton>
+          </WrapperConnected>
         </Box>
-        <Box flex={2}>
-          <InputWrapper
-            className={cx(styles.inputAmountWrap, styles.inputBaseAmountWrap)}
-            theme="light"
-            label={<Text fontSize={px2rem(16)}>Name</Text>}
-          >
-            <Field
-              name="name"
-              children={FieldText}
-              disabled={true}
-              className={styles.inputAmount}
-              borderColor={'#5B5B5B'}
-            />
-          </InputWrapper>
-          <InputWrapper
-            className={cx(styles.inputAmountWrap, styles.inputBaseAmountWrap)}
-            theme="light"
-            label={<Text fontSize={px2rem(16)}>Symbol</Text>}
-          >
-            <Field
-              name="symbol"
-              children={FieldText}
-              disabled={true}
-              className={styles.inputAmount}
-              borderColor={'#5B5B5B'}
-            />
-          </InputWrapper>
-          <InputWrapper
-            className={cx(styles.inputAmountWrap, styles.inputBaseAmountWrap)}
-            theme="light"
-            label={<Text fontSize={px2rem(16)}>Total supply</Text>}
-          >
-            <Field
-              name="totalSupply"
-              children={FieldAmount}
-              disabled={true}
-              decimals={tokenInfo?.decimal || 18}
-              className={styles.inputAmount}
-              borderColor={'#5B5B5B'}
-            />
-          </InputWrapper>
-          <InputWrapper
-            className={cx(styles.inputAmountWrap, styles.inputBaseAmountWrap)}
-            theme="light"
-            label={<Text fontSize={px2rem(16)}>Owner</Text>}
-          >
-            <Field
-              name="owner"
-              children={FieldText}
-              disabled={true}
-              className={styles.inputAmount}
-              borderColor={'#5B5B5B'}
-            />
-          </InputWrapper>
+        <Box flex={1} className={styles.staticInfo} p={6} borderRadius={px2rem(12)}>
+          <HorizontalItem
+            label={<Text fontSize={px2rem(16)} color={"#FFFFFF"} whiteSpace={"nowrap"}>Name</Text>}
+            value={<Text fontSize={px2rem(14)} color={"#FFFFFFAA"}>{tokenInfo?.name}</Text>}
+          />
+          <HorizontalItem
+            label={<Text fontSize={px2rem(16)} color={"#FFFFFF"} whiteSpace={"nowrap"}>Symbol</Text>}
+            value={<Text fontSize={px2rem(14)} color={"#FFFFFFAA"}>{tokenInfo?.symbol}</Text>}
+          />
+          <HorizontalItem
+            label={<Text fontSize={px2rem(16)} color={"#FFFFFF"} whiteSpace={"nowrap"}>Total supply</Text>}
+            value={<Text fontSize={px2rem(14)} color={"#FFFFFFAA"}>
+                      {formatCurrency(new BigNumber(tokenInfo?.totalSupply || 0).div(
+                      decimalToExponential(Number(tokenInfo?.decimal || 18))))}
+                  </Text>
+            }
+          />
+          <HorizontalItem
+            label="Owner"
+            label={<Text fontSize={px2rem(16)} color={"#FFFFFF"} whiteSpace={"nowrap"}>Owner</Text>}
+            value={<Text fontSize={px2rem(14)} color={"#FFFFFFAA"}>{shortenAddress(tokenInfo?.owner)}</Text>}
+          />
         </Box>
       </Flex>
-      <InputWrapper
-        className={cx(styles.inputAmountWrap, styles.inputQuoteAmountWrap)}
-        theme="light"
-        label={<Text fontSize={px2rem(16)}>Description</Text>}
-      >
-        <Flex gap={4} direction={'column'}>
-          <Field
-            name="description"
-            children={FieldText}
-            // validate={composeValidators(required, validateQuoteAmount)}
-            // fieldChanged={onChangeValueQuoteAmount}
-            disabled={submitting}
-            placeholder={"Enter description"}
-            className={cx(styles.inputAmount, styles.collateralAmount)}
-            // hideError={true}
-            inputType={'textarea'}
-            borderColor={'#5B5B5B'}
-          />
-        </Flex>
-      </InputWrapper>
-      <WrapperConnected
-        type={'submit'}
-        className={styles.submitButton}
-      >
-        <FiledButton
-          isDisabled={submitting || btnDisabled}
-          isLoading={submitting}
-          type="submit"
-          // borderRadius={'100px !important'}
-          // className="btn-submit"
-          btnSize={'h'}
-          containerConfig={{ flex: 1 }}
-          loadingText={submitting ? 'Processing' : ' '}
-        >
-          UPDATE
-        </FiledButton>
-      </WrapperConnected>
     </form>
   );
 });
@@ -218,13 +245,21 @@ const TradingForm = () => {
   const { account } = useWeb3React();
 
   const handleSubmit = async (values: any) => {
-    const { thumbnail, tokenInfo } = values;
+    const { tokenInfo } = values;
     console.log('handleSubmit', values);
     try {
       setSubmitting(true);
 
       const data: IUpdateTokenPayload = {
-        thumbnail: thumbnail,
+        thumbnail: values?.thumbnail || tokenInfo.thumbnail,
+        social: {
+          discord: values?.discord,
+          instagram: values?.instagram,
+          medium: values?.medium,
+          telegram: values?.telegram,
+          twitter: values?.twitter,
+          website: values?.website,
+        }
       };
 
       const response = await updateTokenInfo(tokenInfo?.address, data);

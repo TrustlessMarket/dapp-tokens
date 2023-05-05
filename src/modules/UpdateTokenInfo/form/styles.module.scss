@@ -47,12 +47,6 @@
   //}
 }
 
-.leverageWrap {
-  margin-top: 8px;
-  :global .labelWrapper {
-    margin-bottom: 0;
-  }
-}
 
 .inputAmount {
   background: #f4f5f6 !important;
@@ -93,4 +87,9 @@
       width: 100px;
     }
   }
+}
+
+.staticInfo {
+  background: #0072ff;
+  height: fit-content;
 }

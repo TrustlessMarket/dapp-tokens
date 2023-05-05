@@ -2,19 +2,8 @@ import px2rem from '@/utils/px2rem';
 import styled, { DefaultTheme } from 'styled-components';
 
 export const StyledTokens = styled.div`
-  padding-top: ${px2rem(48)};
-  padding-bottom: ${px2rem(48)};
-
-  // .background {
-  //   background: linear-gradient(90deg, #00c6ff 0%, #0072ff 100%);
-    //   min-height: ${px2rem(203)};
-  //   position: absolute;
-  //   width: 100%;
-  //   top: 80px;
-  //   left: 0;
-  //   z-index: 0;
-  //   height: 86%;
-  // }
+  padding-top: ${px2rem(68)};
+  padding-bottom: ${px2rem(68)};
 
   .table {
     th:first-of-type {
@@ -42,22 +31,23 @@ export const StyledTokens = styled.div`
   }
 
   .upload_title {
-    margin-bottom: ${px2rem(48)};
+    margin-bottom: ${px2rem(24)};
     margin-left: auto;
     margin-right: auto;
     width: fit-content;
     z-index: 1;
     position: relative;
     color: white;
-    font-size: ${px2rem(48)};
-    line-height: 48 / 44;
+    font-size: ${px2rem(32)};
+    font-weight: 500;
+    //line-height: 48 / 44;
   }
 `;
 
 export const UploadFileContainer = styled.div`
   position: relative;
   z-index: 1;
-  max-width: ${px2rem(600)};
+  max-width: ${px2rem(800)};
   margin-left: auto;
   margin-right: auto;
   padding: ${px2rem(24)} ${px2rem(32)};

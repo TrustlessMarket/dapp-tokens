@@ -23,6 +23,7 @@ const HorizontalItem: React.FC<HorizonalItemProps> = ({
       alignItems={'flex-end'}
       justifyContent={'space-between'}
       color={color}
+      gap={1}
     >
       <Flex alignItems={'center'} gap={1}>
         {label}
