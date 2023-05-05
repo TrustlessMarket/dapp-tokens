@@ -60,6 +60,7 @@
     "react-bootstrap": "^2.7.2",
     "react-dom": "18.2.0",
     "react-drag-drop-files": "^2.3.9",
+    "react-dropzone": "^14.2.3",
     "react-final-form": "^6.5.9",
     "react-helmet": "^6.1.0",
     "react-hot-toast": "^2.4.0",

@@ -1,0 +1,51 @@
+.wrapper {
+  width: 100%;
+  min-height: 40px;
+  border: 2px dashed #E0E0E0;
+  border-radius: 10px;
+  font-size: 14px;
+  cursor: pointer;
+  > div {
+    height: 100%;
+  }
+  .dropzone {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    width: 100%;
+    height: 100%;
+    background: white;
+    color: #B1C2DE;
+    font-weight: 500;
+  }
+  .iconFile {
+    width: 40px;
+    margin-right: 20px;
+  }
+  .file {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    img {
+      height: 100%;
+      margin-right: 10px;
+    }
+    > div {
+      display: flex;
+      flex-direction: column;
+    }
+    span {
+      max-width: 200px;
+      margin-bottom: 10px;
+    }
+    button {
+      width: 120px;
+      height: 40px;
+      border-radius: 20px;
+      background: #E64759;
+      color: white;
+    }
+  }
+}
