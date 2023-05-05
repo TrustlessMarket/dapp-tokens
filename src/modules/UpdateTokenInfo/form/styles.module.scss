@@ -47,18 +47,12 @@
   //}
 }
 
-.leverageWrap {
-  margin-top: 8px;
-  :global .labelWrapper {
-    margin-bottom: 0;
-  }
-}
 
 .inputAmount {
   background: #f4f5f6 !important;
   //border-radius: 0px !important;
-  height: 70px !important;
-  font-size: 20px !important;
+  height: 60px !important;
+  font-size: 16px !important;
 
   &:disabled {
     cursor: not-allowed;
@@ -93,4 +87,9 @@
       width: 100px;
     }
   }
+}
+
+.staticInfo {
+  background: #0072ff;
+  height: fit-content;
 }

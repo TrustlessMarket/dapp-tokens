@@ -1,13 +1,12 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import Dropzone from 'react-dropzone';
 import cx from 'classnames';
 
 import IconFile from './img/ic_file.svg';
-import ImgFile from './img/file.svg';
 import styles from './styles.module.scss';
 
 const FileDropzoneUpload = (props) => {
-  const { className, accept, onChange } = props;
+  const { className, accept, onChange, url, loading } = props;
   const [file, setFile] = useState(null);
 
   const handleOnDrop = (files) => {
@@ -25,7 +24,7 @@ const FileDropzoneUpload = (props) => {
       {file
         ? <>
           <div className={styles.file}>
-            <img alt="" src={ImgFile} />
+            {!loading && <img alt="img-upload" src={url} />}
             <div>
               <span>{file?.name}</span>
               <button type="button" onClick={handleRemove}>Remove</button>
@@ -38,7 +37,7 @@ const FileDropzoneUpload = (props) => {
               <div {...getRootProps()}>
                 <input {...getInputProps()} />
                 <div className={styles.dropzone}>
-                  <img className={styles.iconFile} alt="" src={IconFile} />
+                  <img className={styles.iconFile} alt="" src={url || IconFile} />
                   <div>Drag files here<br />or click to upload</div>
                 </div>
               </div>
