@@ -3,7 +3,7 @@
 import FiledButton from '@/components/Swap/button/filedButton';
 import { ROUTE_PATH } from '@/constants/route-path';
 import useBalanceERC20Token from '@/hooks/contract-operations/token/useBalanceERC20Token';
-import { camelCaseKeys, formatCurrency } from '@/utils';
+import { camelCaseKeys, compareString, formatCurrency } from '@/utils';
 import { formatAmountBigNumber } from '@/utils/format';
 import {
   Box,
@@ -23,6 +23,9 @@ import { StyledTokenDetailContainer } from './Token.styled';
 import axios from 'axios';
 import dynamic from 'next/dynamic';
 import { getTokenRp } from '@/services/swap';
+import SocialToken from '@/components/Social';
+import { DEFAULT_BASE_TOKEN } from '../Swap/form';
+import { useWeb3React } from '@web3-react/core';
 
 const TokenChart = dynamic(() => import('./Token.Chart'), {
   ssr: false,
@@ -37,6 +40,7 @@ const TokenDetail = () => {
 
   const [data, setData] = useState<any>({});
   const [chartData, setChartData] = useState<any[]>([]);
+  const { account } = useWeb3React();
 
   useEffect(() => {
     if (address) {
@@ -109,16 +113,47 @@ const TokenDetail = () => {
   return (
     <StyledTokenDetailContainer>
       <Box style={{ textAlign: 'center' }}>
+        {data.thumbnail && <img src={data.thumbnail} alt="img" className="avatar" />}
         <Text>{data.name}</Text>
         <Text>#{data.index}</Text>
         <Text>
           Supply:{' '}
           {formatCurrency(formatAmountBigNumber(data.totalSupply, data.decimal))}
         </Text>
-        <Flex justifyContent={'center'}>
-          <FiledButton style={{}} onClick={() => router.replace(ROUTE_PATH.HOME)}>
+        <Flex justifyContent={'center'} gap={8}>
+          <FiledButton
+            style={{}}
+            onClick={() =>
+              router.replace(
+                `${ROUTE_PATH.SWAP}?from_token=${DEFAULT_BASE_TOKEN}&to_token=${data?.address}`,
+              )
+            }
+          >
             Buy now
           </FiledButton>
+          {compareString(data.owner, account) && (
+            <FiledButton
+              variant={'outline'}
+              style={{
+                backgroundColor: 'transparent',
+                borderColor: 'gray',
+              }}
+              _hover={{
+                color: '#000',
+                opacity: 0.7,
+              }}
+              onClick={() =>
+                router.replace(
+                  `${ROUTE_PATH.UPDATE_TOKEN_INFO}?address=${data?.address}`,
+                )
+              }
+            >
+              Update token info
+            </FiledButton>
+          )}
+        </Flex>
+        <Flex mt={6} justifyContent={'center'}>
+          <SocialToken socials={data.social} />
         </Flex>
       </Box>
       <Divider />
