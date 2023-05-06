@@ -284,6 +284,8 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           setSupply(resSupply);
         }
 
+        console.log('resReserve', resReserve);
+
         if (isScreenRemove) {
           setBaseBalance(
             formatAmountBigNumber(resReserve._reserve0, baseToken.decimal),
@@ -590,6 +592,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
                     new BigNumber(formatAmountBigNumber(perPrice._reserve1))
                       .dividedBy(formatAmountBigNumber(perPrice._reserve0))
                       .toString(),
+                    18,
                   )}
             </StatNumber>
             <StatHelpText>{`${token2.symbol} per ${token1.symbol}`}</StatHelpText>
