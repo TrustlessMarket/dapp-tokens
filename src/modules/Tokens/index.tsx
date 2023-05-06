@@ -261,10 +261,10 @@ const Tokens = () => {
   return (
     <BodyContainer>
       <StyledTokens>
-        <div>
+        <div className="max-content">
           <h3 className="upload_title">Smart BRC-20</h3>
         </div>
-        <UploadFileContainer>
+        <UploadFileContainer className="max-content">
           <div className="upload_left">
             {/* <img src={IcBitcoinCloud} alt="upload file icon" /> */}
             <div className="upload_content">

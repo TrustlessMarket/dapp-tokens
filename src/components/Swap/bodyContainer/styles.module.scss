@@ -2,8 +2,16 @@
   // background-color: #f4f5f6;
   flex: 1;
   > div {
-    max-width: 1366px;
-    margin:  auto;
+    padding-left: 25px;
+    padding-right: 25px;
+    // max-width: 1366px;
+    margin: auto;
     height: 100%;
+    :global {
+      .max-content {
+        max-width: 1366px;
+        margin: 0 auto;
+      }
+    }
   }
 }
