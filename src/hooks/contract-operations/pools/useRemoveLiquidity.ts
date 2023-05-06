@@ -10,7 +10,7 @@ import { logErrorToServer, scanTrx } from '@/services/swap';
 import store from '@/state';
 import { updateCurrentTransaction } from '@/state/pnftExchange';
 import { compareString, getContract } from '@/utils';
-import { formatAmountSigning, formatBTCPrice } from '@/utils/format';
+import { floorPrecised, formatAmountSigning, formatBTCPrice } from '@/utils/format';
 import { useWeb3React } from '@web3-react/core';
 import BigNumber from 'bignumber.js';
 import { useCallback, useContext } from 'react';
@@ -69,12 +69,18 @@ const useRemoveLiquidity: ContractOperationHook<
           }
         }
 
+        console.log(
+          'formatAmountSigning(amountAMin, 18)',
+          formatAmountSigning(amountAMin, 18),
+          formatAmountSigning(liquidValue, 18),
+        );
+
         const transaction = await contract
           .connect(provider.getSigner())
           .removeLiquidity(
             tokenA,
             tokenB,
-            formatAmountSigning(liquidValue, 18),
+            formatAmountSigning(floorPrecised(liquidValue), 18),
             formatAmountSigning(amountAMin, 18),
             formatAmountSigning(amountBMin, 18),
             account,

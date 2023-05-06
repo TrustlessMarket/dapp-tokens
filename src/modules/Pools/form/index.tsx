@@ -38,6 +38,7 @@ import useSupplyERC20Liquid from '@/hooks/contract-operations/token/useSupplyERC
 import useContractOperation from '@/hooks/contract-operations/useContractOperation';
 import { IToken } from '@/interfaces/token';
 import { TransactionStatus } from '@/interfaces/walletTransaction';
+import { logErrorToServer } from '@/services/swap';
 import { getTokens } from '@/services/token-explorer';
 import { useAppDispatch, useAppSelector } from '@/state/hooks';
 import {
@@ -88,7 +89,6 @@ import { BsPlus } from 'react-icons/bs';
 import { useDispatch, useSelector } from 'react-redux';
 import { ScreenType } from '..';
 import styles from './styles.module.scss';
-import { logErrorToServer } from '@/services/swap';
 
 const LIMIT_PAGE = 50;
 
@@ -356,7 +356,10 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     }
   };
 
-  const requestApproveToken = async (token: IToken | any) => {
+  const requestApproveToken = async (
+    token: IToken | any,
+    approveContract: string = UNIV2_ROUTER_ADDRESS,
+  ) => {
     try {
       dispatch(
         updateCurrentTransaction({
@@ -364,9 +367,11 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           status: TransactionStatus.info,
         }),
       );
+      console.log(pairAddress, approveContract, token.address, UNIV2_ROUTER_ADDRESS);
+
       const response: any = await approveToken({
         erc20TokenAddress: token.address,
-        address: UNIV2_ROUTER_ADDRESS,
+        address: approveContract,
       });
       dispatch(
         updateCurrentTransaction({
@@ -523,9 +528,10 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         );
       } else if (isScreenRemove && !isApprovePoolToken && pairAddress) {
         await requestApproveToken({
-          address: UNIV2_ROUTER_ADDRESS,
+          address: pairAddress,
         });
-        const [_isApprove] = await Promise.all([checkTokenApprove(pairAddress)]);
+        const _isApprove = await checkTokenApprove({ address: pairAddress });
+
         setIsApproveAmountPoolToken(_isApprove);
         setIsApprovePoolToken(
           checkBalanceIsApprove(_isApprove, values?.liquidValue),

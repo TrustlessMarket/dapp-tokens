@@ -31,7 +31,6 @@ const useApproveERC20Token: ContractOperationHook<
   const call = useCallback(
     async (params: IApproveERC20TokenParams): Promise<boolean> => {
       const { address, erc20TokenAddress } = params;
-      console.log('xaxaxa', erc20TokenAddress, address);
 
       if (account && provider && erc20TokenAddress) {
         const contract = getContract(
