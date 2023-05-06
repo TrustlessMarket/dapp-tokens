@@ -148,7 +148,7 @@ export const formatAmountSigning = (
     .toString(10)}`;
 };
 
-export const ceilPrecised = (number: number | string, precision = 6) => {
+export const ceilPrecised = (number: number | string, precision = 18) => {
   const power = Math.pow(10, precision);
   return Math.ceil(Number(number) * power) / power;
 };

@@ -10,7 +10,7 @@ import { logErrorToServer, scanTrx } from '@/services/swap';
 import store from '@/state';
 import { updateCurrentTransaction } from '@/state/pnftExchange';
 import { compareString, getContract } from '@/utils';
-import { formatAmountSigning, formatBTCPrice } from '@/utils/format';
+import { ceilPrecised, formatAmountSigning, formatBTCPrice } from '@/utils/format';
 import { useWeb3React } from '@web3-react/core';
 import BigNumber from 'bignumber.js';
 import { useCallback, useContext } from 'react';
@@ -76,8 +76,8 @@ const useAddLiquidity: ContractOperationHook<IAddLiquidityParams, boolean> = () 
           .addLiquidity(
             tokenA,
             tokenB,
-            formatAmountSigning(amountADesired, 18),
-            formatAmountSigning(amountBDesired, 18),
+            formatAmountSigning(ceilPrecised(amountADesired), 18),
+            formatAmountSigning(ceilPrecised(amountBDesired), 18),
             formatAmountSigning(amountAMin),
             formatAmountSigning(amountBMin),
             account,

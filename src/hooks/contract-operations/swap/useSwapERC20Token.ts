@@ -10,7 +10,7 @@ import { logErrorToServer, scanTrx } from '@/services/swap';
 import store from '@/state';
 import { updateCurrentTransaction } from '@/state/pnftExchange';
 import { compareString, getContract } from '@/utils';
-import { formatAmountSigning, formatBTCPrice } from '@/utils/format';
+import { ceilPrecised, formatAmountSigning, formatBTCPrice } from '@/utils/format';
 import { useWeb3React } from '@web3-react/core';
 import BigNumber from 'bignumber.js';
 import { useCallback, useContext } from 'react';
@@ -65,8 +65,8 @@ const useSwapERC20Token: ContractOperationHook<
         const transaction = await contract
           .connect(provider.getSigner())
           .swapExactTokensForTokens(
-            formatAmountSigning(amount, 18),
-            formatAmountSigning(amountOutMin, 18),
+            formatAmountSigning(ceilPrecised(amount), 18),
+            formatAmountSigning(ceilPrecised(amountOutMin), 18),
             addresses,
             address,
             MaxUint256,

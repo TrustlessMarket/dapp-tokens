@@ -69,12 +69,6 @@ const useRemoveLiquidity: ContractOperationHook<
           }
         }
 
-        console.log(
-          'formatAmountSigning(amountAMin, 18)',
-          formatAmountSigning(amountAMin, 18),
-          formatAmountSigning(liquidValue, 18),
-        );
-
         const transaction = await contract
           .connect(provider.getSigner())
           .removeLiquidity(
