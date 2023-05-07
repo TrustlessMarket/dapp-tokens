@@ -4,6 +4,12 @@ import styled from 'styled-components';
 export const StyledTokens = styled.div`
   margin-top: ${px2rem(48)};
   margin-bottom: ${px2rem(48)};
+  
+  .avatar {
+    object-fit: contain;
+    width: ${px2rem(30)};
+    height: ${px2rem(30)};
+  }
 
   .table {
     th:first-of-type {
