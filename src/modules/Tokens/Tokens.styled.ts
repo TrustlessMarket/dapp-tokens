@@ -6,9 +6,10 @@ export const StyledTokens = styled.div`
   margin-bottom: ${px2rem(48)};
   
   .avatar {
-    object-fit: contain;
+    object-fit: cover;
     width: ${px2rem(30)};
     height: ${px2rem(30)};
+    border-radius: 50%;
   }
 
   .table {

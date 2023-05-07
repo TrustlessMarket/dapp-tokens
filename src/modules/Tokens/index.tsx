@@ -190,7 +190,7 @@ const Tokens = () => {
             <img
               // width={25}
               // height={25}
-              src={token?.thumbnail || 'https://cdn.trustless.computer/upload/1683433358523233213-1683433358-default-crypto-icon.png'}
+              src={token?.thumbnail || 'https://cdn.trustless.computer/upload/1683452740772860776-1683452740-generic-cryptocurrency-icon.png'}
               alt={token?.thumbnail || 'default-icon'}
               className={'avatar'}
             />
