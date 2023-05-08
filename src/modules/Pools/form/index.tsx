@@ -185,7 +185,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       setIsApprovePoolToken(
         checkBalanceIsApprove(
           isApproveAmountPoolToken,
-          Web3.utils.toWei(values?.liquidValue, 'ether')
+          Web3.utils.toWei(values?.liquidValue || '0', 'ether')
         ),
       );
     }
