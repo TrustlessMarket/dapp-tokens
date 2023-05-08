@@ -60,7 +60,7 @@ const ChartThumb = ({ chartData }: { chartData: any[] }) => {
 
       candleSeries.current = chart.current.addLineSeries({
         // lineColor: '#2862ff',
-        lineWidth: 2,
+        lineWidth: 1,
         lastValueVisible: false,
         priceLineVisible: false,
         // lastPriceAnimation: LastPriceAnimationMode.Continuous,
@@ -120,16 +120,19 @@ const TokenChartLast7Day = ({ token }: { token: IToken }) => {
         contract_address: token.address,
         chart_type: 'day',
       });
-      if (response && response?.length >= 7) {
-        const sortedData = sortBy(
-          response.slice(response?.length - 7, response?.length),
-          'timestamp',
-        );
-        const color =
-          Number(last(sortedData).closeUsd) <
-          Number(sortedData[sortedData.length - 2].closeUsd)
-            ? '#EF466F'
-            : '#45B26B';
+      if (response && response?.length > 0) {
+        const sortedData = sortBy(response, 'timestamp');
+
+        let color = '#45B26B';
+
+        if (sortedData.length >= 7) {
+          color =
+            Number(last(sortedData).close) <
+            Number(sortedData[sortedData.length - 8].close)
+              ? '#EF466F'
+              : '#45B26B';
+        }
+
         const _data = sortedData?.map((v: any) => {
           return {
             // ...v,
