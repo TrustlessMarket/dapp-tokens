@@ -1037,7 +1037,7 @@ const CreateMarket = ({
           tokenB: token1?.address,
           amountAMin: '0',
           amountBMin: '0',
-          liquidValue: values?.liquidValue,
+          liquidValue: values?.liquidValue || '0',
         };
 
         response = await removeLiquidity(data);
