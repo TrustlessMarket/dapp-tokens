@@ -120,12 +120,9 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const { values } = useFormState();
   const { change, restart } = useForm();
   const btnDisabled = loading || !baseToken || !quoteToken;
-  const isAllowSwap =
-    new BigNumber(amountBaseTokenApproved).gt(0) &&
-    (!values?.baseAmount ||
-      new BigNumber(amountBaseTokenApproved).gte(
-        Web3.utils.toWei(`${values?.baseAmount || 0}`, 'ether'),
-      ));
+  const isRequireApprove = isAuthenticated && new BigNumber(amountBaseTokenApproved).lt(
+    Web3.utils.toWei(`${values?.baseAmount || 0}`, 'ether'),
+  );
 
   const onBaseAmountChange = useCallback(
     debounce((p) => handleBaseAmountChange(p), 1000),
@@ -754,10 +751,23 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           </Text>
         )}
       <WrapperConnected
-        type={isAllowSwap ? 'submit' : 'button'}
+        type={isRequireApprove ? 'button' : 'submit'}
         className={styles.submitButton}
       >
-        {isAllowSwap ? (
+        {isRequireApprove ? (
+          <FiledButton
+            isLoading={loading}
+            isDisabled={loading}
+            loadingText="Processing"
+            btnSize={'h'}
+            onClick={onApprove}
+            processInfo={{
+              id: transactionType.createPoolApprove,
+            }}
+          >
+            APPROVE USE OF {baseToken?.symbol}
+          </FiledButton>
+        ) : (
           <FiledButton
             isDisabled={submitting || btnDisabled}
             isLoading={submitting}
@@ -772,19 +782,6 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             }}
           >
             SWAP
-          </FiledButton>
-        ) : (
-          <FiledButton
-            isLoading={loading}
-            isDisabled={loading}
-            loadingText="Processing"
-            btnSize={'h'}
-            onClick={onApprove}
-            processInfo={{
-              id: transactionType.createPoolApprove,
-            }}
-          >
-            APPROVE USE OF {baseToken?.symbol}
           </FiledButton>
         )}
       </WrapperConnected>
