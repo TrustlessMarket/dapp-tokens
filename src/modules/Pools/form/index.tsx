@@ -455,22 +455,15 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       );
       const rate =
         findIndex === 0
-          ? new BigNumber(web3.utils.fromWei(perPrice._reserve0)).dividedBy(
-              web3.utils.fromWei(perPrice._reserve1),
-            )
-          : new BigNumber(web3.utils.fromWei(perPrice._reserve1)).dividedBy(
-              web3.utils.fromWei(perPrice._reserve0),
-            );
+          ? new BigNumber(perPrice._reserve0).dividedBy(perPrice._reserve1)
+          : new BigNumber(perPrice._reserve1).dividedBy(perPrice._reserve0);
 
-      console.log(rate.toFixed(18));
+      const _baseAmount = formatCurrency(
+        new BigNumber(_amount).multipliedBy(rate).toFixed(18),
+        18,
+      );
 
-      const _baseAmount = new BigNumber(_amount)
-        .multipliedBy(rate.toFixed(18))
-        .toFixed(18);
-
-      console.log('_baseAmount', _baseAmount);
-
-      change('baseAmount', Number(_baseAmount));
+      change('baseAmount', _baseAmount);
       setIsApproveBaseToken(
         checkBalanceIsApprove(isApproveAmountBaseToken, _baseAmount),
       );
@@ -498,7 +491,10 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         findIndex === 1
           ? new BigNumber(perPrice._reserve0).dividedBy(perPrice._reserve1)
           : new BigNumber(perPrice._reserve1).dividedBy(perPrice._reserve0);
-      const _quoteAmount = new BigNumber(_amount).multipliedBy(rate).toString();
+      const _quoteAmount = formatCurrency(
+        new BigNumber(_amount).multipliedBy(rate).toFixed(18),
+        18,
+      );
       change('quoteAmount', _quoteAmount);
       setIsApproveQuoteToken(
         checkBalanceIsApprove(isApproveAmountQuoteToken, _quoteAmount),
