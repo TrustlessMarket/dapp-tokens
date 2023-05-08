@@ -24,7 +24,9 @@ const Header = () => {
   const isTokensPage = useMemo(() => {
     return (
       compareString(router?.pathname, ROUTE_PATH.HOME) ||
-      compareString(router?.pathname, ROUTE_PATH.MARKETS)
+      compareString(router?.pathname, ROUTE_PATH.MARKETS) ||
+      compareString(router?.pathname, ROUTE_PATH.IDO_MANAGE) ||
+      compareString(router?.pathname, ROUTE_PATH.IDO)
     );
   }, [router?.pathname]);
 
@@ -89,6 +91,14 @@ const Header = () => {
                 }
               >
                 Pools
+              </Link>
+              <Link
+                href={ROUTE_PATH.IDO}
+                className={
+                  router?.pathname?.includes(ROUTE_PATH.IDO) ? 'isSelected' : ''
+                }
+              >
+                Ido
               </Link>
             </div>
           </div>

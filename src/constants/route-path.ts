@@ -15,4 +15,6 @@ export const ROUTE_PATH = {
   GET_STARTED: '/get-started',
   TOKEN: '/token',
   UPDATE_TOKEN_INFO: '/update-token-info',
+  IDO: '/ido',
+  IDO_MANAGE: '/ido/manage',
 };
