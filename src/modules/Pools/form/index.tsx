@@ -690,7 +690,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
 
   const onChangeSlider = (v: any) => {
     if (baseToken && quoteToken) {
-      const [token1, token2] = sortAddressPair(baseToken, quoteToken);
+      const [token0, token1] = sortAddressPair(baseToken, quoteToken);
       const { _reserve0, _reserve1 } = perPrice;
 
       const cPercent = Number(v) / 100;
@@ -704,10 +704,10 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         .toString();
 
       const _baseBalance = new BigNumber(cPercent)
-        .multipliedBy(Web3.utils.fromWei(__reserve0, 'ether'))
+        .multipliedBy(formatAmountBigNumber(__reserve0, token0.decimal))
         .toString();
       const _quoteBalance = new BigNumber(cPercent)
-        .multipliedBy(Web3.utils.fromWei(__reserve1, 'ether'))
+        .multipliedBy(formatAmountBigNumber(__reserve1, token1.decimal))
         .toString();
 
       const liquidValue = new BigNumber(cPercent)
@@ -868,19 +868,22 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           {renderPricePool()}
         </Box>
       )}
-      {isAuthenticated && isLoadedAssets && new BigNumber(juiceBalance || 0).lte(0) && (
-        <Text fontSize="md" color="brand.warning.400" textAlign={'left'}>
-          Your TC balance is insufficient. You can receive free TC on our faucet site{' '}
-          <Link
-            href={TRUSTLESS_FAUCET}
-            target={'_blank'}
-            style={{ textDecoration: 'underline' }}
-          >
-            here
-          </Link>
-          .
-        </Text>
-      )}
+      {isAuthenticated &&
+        isLoadedAssets &&
+        new BigNumber(juiceBalance || 0).lte(0) && (
+          <Text fontSize="md" color="brand.warning.400" textAlign={'left'}>
+            Your TC balance is insufficient. You can receive free TC on our faucet
+            site{' '}
+            <Link
+              href={TRUSTLESS_FAUCET}
+              target={'_blank'}
+              style={{ textDecoration: 'underline' }}
+            >
+              here
+            </Link>
+            .
+          </Text>
+        )}
       {isAuthenticated &&
         baseToken &&
         BRIDGE_SUPPORT_TOKEN.includes(baseToken?.symbol) &&
