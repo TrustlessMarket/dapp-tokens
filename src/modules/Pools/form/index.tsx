@@ -135,7 +135,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
 
   const [sliderPercent, setSliderPercent] = useState(0);
 
-  const { juiceBalance } = useContext(AssetsContext);
+  const { juiceBalance, isLoadedAssets } = useContext(AssetsContext);
   const isAuthenticated = useSelector(getIsAuthenticatedSelector);
 
   const router = useRouter();
@@ -868,7 +868,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           {renderPricePool()}
         </Box>
       )}
-      {isAuthenticated && new BigNumber(juiceBalance || 0).lte(0) && (
+      {isAuthenticated && isLoadedAssets && new BigNumber(juiceBalance || 0).lte(0) && (
         <Text fontSize="md" color="brand.warning.400" textAlign={'left'}>
           Your TC balance is insufficient. You can receive free TC on our faucet site{' '}
           <Link
