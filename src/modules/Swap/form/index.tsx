@@ -92,7 +92,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const [pairAddress, setPairAddress] = useState<string>(NULL_ADDRESS);
   const [baseReserve, setBaseReserve] = useState('0');
   const [quoteReserve, setQuoteReserve] = useState('0');
-  const { juiceBalance } = useContext(AssetsContext);
+  const { juiceBalance, isLoadedAssets } = useContext(AssetsContext);
   const isAuthenticated = useSelector(getIsAuthenticatedSelector);
   const dispatch = useDispatch();
   const [isSwitching, setIsSwitching] = useState(false);
@@ -249,7 +249,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         is_test: isDevelop() ? '1' : '',
         from_token: from_token,
       });
-      return isProduction() ? res : tokensMocks2;
+      return isProduction() ? res : tokensMocks;
     } catch (err: unknown) {
       console.log('Failed to fetch tokens owned');
     } finally {
@@ -720,7 +720,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           </Text>
         }
       />
-      {isAuthenticated && new BigNumber(juiceBalance || 0).lte(0) && (
+      {isAuthenticated && isLoadedAssets && new BigNumber(juiceBalance || 0).lte(0) && (
         <Text fontSize="md" color="brand.warning.400" textAlign={'left'}>
           Your TC balance is insufficient. You can receive free TC on our faucet site{' '}
           <Link
