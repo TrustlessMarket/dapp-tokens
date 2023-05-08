@@ -39,7 +39,6 @@ import {getIsAuthenticatedSelector} from '@/state/user/selector';
 import {camelCaseKeys, compareString, formatCurrency, sortAddressPair,} from '@/utils';
 import {isDevelop} from '@/utils/commons';
 import {composeValidators, requiredAmount} from '@/utils/formValidate';
-import {formatAmountBigNumber} from '@/utils/format';
 import px2rem from '@/utils/px2rem';
 import {Box, Flex, forwardRef, Stat, StatHelpText, StatNumber, Text,} from '@chakra-ui/react';
 import {useWeb3React} from '@web3-react/core';
@@ -257,10 +256,10 @@ export const MakeFormSwap = forwardRef((props, ref) => {
 
         if (isScreenRemove) {
           setBaseBalance(
-            formatAmountBigNumber(resReserve._reserve0, baseToken.decimal),
+            Web3.utils.fromWei(resReserve._reserve0, 'ether')
           );
           setQuoteBalance(
-            formatAmountBigNumber(resReserve._reserve1, quoteToken.decimal),
+            Web3.utils.fromWei(resReserve._reserve1, 'ether')
           );
           setIsApproveAmountPoolToken(resAmountApprovePool);
         }
@@ -558,8 +557,8 @@ export const MakeFormSwap = forwardRef((props, ref) => {
               {!isPaired
                 ? '-'
                 : formatCurrency(
-                    new BigNumber(formatAmountBigNumber(perPrice._reserve1))
-                      .dividedBy(formatAmountBigNumber(perPrice._reserve0))
+                    new BigNumber(Web3.utils.fromWei(perPrice._reserve1, 'ether'))
+                      .dividedBy(Web3.utils.fromWei(perPrice._reserve0, 'ether'))
                       .toString(),
                     18,
                   )}
@@ -654,10 +653,10 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         .toString();
 
       const _baseBalance = new BigNumber(cPercent)
-        .multipliedBy(formatAmountBigNumber(__reserve0, token1.decimal))
+        .multipliedBy(Web3.utils.fromWei(__reserve0, 'ether'))
         .toString();
       const _quoteBalance = new BigNumber(cPercent)
-        .multipliedBy(formatAmountBigNumber(__reserve1, token2.decimal))
+        .multipliedBy(Web3.utils.fromWei(__reserve1, 'ether'))
         .toString();
 
       const liquidValue = new BigNumber(cPercent)
