@@ -455,16 +455,22 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       );
       const rate =
         findIndex === 0
-          ? new BigNumber(perPrice._reserve0).dividedBy(perPrice._reserve1)
-          : new BigNumber(perPrice._reserve1).dividedBy(perPrice._reserve0);
-      console.log('_amount', _amount, rate.toString());
+          ? new BigNumber(web3.utils.fromWei(perPrice._reserve0)).dividedBy(
+              web3.utils.fromWei(perPrice._reserve1),
+            )
+          : new BigNumber(web3.utils.fromWei(perPrice._reserve1)).dividedBy(
+              web3.utils.fromWei(perPrice._reserve0),
+            );
+
+      console.log(rate.toFixed(18));
 
       const _baseAmount = new BigNumber(_amount)
-        .multipliedBy(rate.toString())
-        .toString();
+        .multipliedBy(rate.toFixed(18))
+        .toFixed(18);
+
       console.log('_baseAmount', _baseAmount);
 
-      change('baseAmount', _baseAmount);
+      change('baseAmount', Number(_baseAmount));
       setIsApproveBaseToken(
         checkBalanceIsApprove(isApproveAmountBaseToken, _baseAmount),
       );
@@ -581,6 +587,8 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     }
     const [token1, token2] = sortAddressPair(baseToken, quoteToken);
 
+    console.log('perPrice', perPrice);
+
     return (
       <Flex className="price-pool-content">
         <Box>
@@ -589,10 +597,10 @@ export const MakeFormSwap = forwardRef((props, ref) => {
               {!isPaired
                 ? '-'
                 : formatCurrency(
-                    new BigNumber(formatAmountBigNumber(perPrice._reserve0))
-                      .dividedBy(formatAmountBigNumber(perPrice._reserve1))
+                    new BigNumber(Web3.utils.fromWei(perPrice._reserve0))
+                      .dividedBy(Web3.utils.fromWei(perPrice._reserve1))
                       .toString(),
-                    18,
+                    10,
                   )}
             </StatNumber>
             <StatHelpText>{`${token1.symbol} per ${token2.symbol}`}</StatHelpText>
@@ -607,7 +615,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
                     new BigNumber(Web3.utils.fromWei(perPrice._reserve1, 'ether'))
                       .dividedBy(Web3.utils.fromWei(perPrice._reserve0, 'ether'))
                       .toString(),
-                    18,
+                    10,
                   )}
             </StatNumber>
             <StatHelpText>{`${token2.symbol} per ${token1.symbol}`}</StatHelpText>

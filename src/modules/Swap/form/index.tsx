@@ -39,7 +39,7 @@ import {
 } from '@/state/pnftExchange';
 import { getIsAuthenticatedSelector, getUserSelector } from '@/state/user/selector';
 import { camelCaseKeys, compareString, formatCurrency } from '@/utils';
-import {isDevelop, isProduction} from '@/utils/commons';
+import { isDevelop, isProduction } from '@/utils/commons';
 import { composeValidators, required } from '@/utils/formValidate';
 import px2rem from '@/utils/px2rem';
 import { showError } from '@/utils/toast';
@@ -65,7 +65,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import Web3 from 'web3';
 import styles from './styles.module.scss';
 import tokensMocks from '@/dataMock/tokens.json';
-import tokensMocks2 from '@/dataMock/tokens2.json';
+import tokensMocks2 from '@/dataMock/tokens3.json';
 
 const LIMIT_PAGE = 50;
 const FEE = 3;
@@ -207,6 +207,8 @@ export const MakeFormSwap = forwardRef((props, ref) => {
 
   const checkApproveQuoteToken = async (token: any) => {
     const [_isApprove] = await Promise.all([checkTokenApprove(token)]);
+    console.log('_isApprove', _isApprove);
+
     setAmountQuoteTokenApproved(_isApprove);
   };
 
@@ -219,7 +221,11 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         is_test: isDevelop() ? '1' : '',
       });
 
-      const list = isProduction() ? res ? camelCaseKeys(res) : [] : camelCaseKeys(tokensMocks);
+      const list = isProduction()
+        ? res
+          ? camelCaseKeys(res)
+          : []
+        : camelCaseKeys(tokensMocks);
 
       setTokensList(list);
       setBaseTokensList(list);
@@ -370,11 +376,11 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     setBaseToken(token);
     change('baseToken', token);
     try {
-      const [_fromTokens] = await Promise.all([fetchFromTokens(token?.address)]);
+      const _fromTokens: any = await fetchFromTokens(token?.address);
       if (_fromTokens) {
         setQuoteTokensList(camelCaseKeys(_fromTokens));
         if (quoteToken) {
-          const findIndex = _fromTokens.findIndex((v) =>
+          const findIndex = _fromTokens.findIndex((v: { address: unknown }) =>
             compareString(v.address, quoteToken.address),
           );
 
@@ -386,12 +392,12 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           let token = null;
 
           if (router?.query?.to_token) {
-            token = _fromTokens.find((t) =>
+            token = _fromTokens.find((t: { address: unknown }) =>
               compareString(t.address, router?.query?.to_token),
             );
           }
           if (!token) {
-            token = _fromTokens.find((t) =>
+            token = _fromTokens.find((t: { address: unknown }) =>
               compareString(t.address, DEFAULT_QUOTE_TOKEN),
             );
           }
