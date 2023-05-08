@@ -13,6 +13,7 @@ import {
   TRUSTLESS_BRIDGE,
   TRUSTLESS_FAUCET,
 } from '@/constants/common';
+import { getMessageError } from '@/constants/error';
 import { ROUTE_PATH } from '@/constants/route-path';
 import { IMPORTED_TOKENS, LIQUID_PAIRS } from '@/constants/storage-key';
 import { NULL_ADDRESS } from '@/constants/url';
@@ -26,9 +27,7 @@ import useRemoveLiquidity, {
 } from '@/hooks/contract-operations/pools/useRemoveLiquidity';
 import useGetPair from '@/hooks/contract-operations/swap/useGetPair';
 import useGetReserves from '@/hooks/contract-operations/swap/useReserves';
-import useApproveERC20Token, {
-  IApproveERC20TokenParams,
-} from '@/hooks/contract-operations/token/useApproveERC20Token';
+import useApproveERC20Token from '@/hooks/contract-operations/token/useApproveERC20Token';
 import useBalanceERC20Token from '@/hooks/contract-operations/token/useBalanceERC20Token';
 import useInfoERC20Token, {
   IInfoERC20TokenResponse,
@@ -87,6 +86,7 @@ import { Field, Form, useForm, useFormState } from 'react-final-form';
 import toast from 'react-hot-toast';
 import { BsPlus } from 'react-icons/bs';
 import { useDispatch, useSelector } from 'react-redux';
+import web3 from 'web3';
 import { ScreenType } from '..';
 import styles from './styles.module.scss';
 
@@ -110,12 +110,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const { call: isApproved } = useIsApproveERC20Token();
   const { call: tokenBalance } = useBalanceERC20Token();
   const { call: infoToken } = useInfoERC20Token();
-  const { run: approveToken } = useContractOperation<
-    IApproveERC20TokenParams,
-    boolean
-  >({
-    operation: useApproveERC20Token,
-  });
+  const { call: approveToken } = useApproveERC20Token();
   const { call: getPair } = useGetPair();
   const { call: getReserves } = useGetReserves();
   const { call: getSupply } = useSupplyERC20Liquid();
@@ -284,7 +279,11 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           setSupply(resSupply);
         }
 
-        console.log('resReserve', resReserve);
+        console.log(
+          resSupply?.totalSupply?.toString(),
+          formatAmountBigNumber(resReserve._reserve0, baseToken.decimal),
+          formatAmountBigNumber(resReserve._reserve1, baseToken.decimal),
+        );
 
         if (isScreenRemove) {
           setBaseBalance(
@@ -305,7 +304,9 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       }
 
       setPairAddress(response);
-    } catch (error) {}
+    } catch (error) {
+      console.log('error', error);
+    }
   };
 
   const fetchTokens = async (page = 1, _isFetchMore = false) => {
@@ -369,7 +370,6 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           status: TransactionStatus.info,
         }),
       );
-      console.log(pairAddress, approveContract, token.address, UNIV2_ROUTER_ADDRESS);
 
       const response: any = await approveToken({
         erc20TokenAddress: token.address,
@@ -403,7 +403,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         checkTokenApprove(token),
         getTokenBalance(token),
       ]);
-      setIsApproveAmountBaseToken(_isApprove);
+      setIsApproveAmountBaseToken(web3.utils.fromWei(_isApprove));
       // if (isScreenAdd) {
       setBaseBalance(_tokenBalance);
       // }
@@ -421,7 +421,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         getTokenBalance(token),
       ]);
 
-      setIsApproveAmountQuoteToken(_isApprove);
+      setIsApproveAmountQuoteToken(web3.utils.fromWei(_isApprove));
       // if (isScreenAdd) {
       setQuoteBalance(_tokenBalance);
       // }
@@ -461,15 +461,22 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         findIndex === 0
           ? new BigNumber(perPrice._reserve0).dividedBy(perPrice._reserve1)
           : new BigNumber(perPrice._reserve1).dividedBy(perPrice._reserve0);
-      change('baseAmount', new BigNumber(_amount).multipliedBy(rate).toString());
+      console.log('_amount', _amount, rate.toString());
+
+      const _baseAmount = new BigNumber(_amount)
+        .multipliedBy(rate.toString())
+        .toString();
+      console.log('_baseAmount', _baseAmount);
+
+      change('baseAmount', _baseAmount);
+      setIsApproveBaseToken(
+        checkBalanceIsApprove(isApproveAmountBaseToken, _baseAmount),
+      );
     }
 
     if (Number(_amount) > 0 && baseToken && quoteToken) {
       setIsApproveQuoteToken(
-        checkBalanceIsApprove(
-          isApproveAmountQuoteToken,
-          formatAmountSigning(_amount, quoteToken?.decimal),
-        ),
+        checkBalanceIsApprove(isApproveAmountQuoteToken, _amount),
       );
     }
   };
@@ -486,14 +493,15 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         findIndex === 1
           ? new BigNumber(perPrice._reserve0).dividedBy(perPrice._reserve1)
           : new BigNumber(perPrice._reserve1).dividedBy(perPrice._reserve0);
-      change('quoteAmount', new BigNumber(_amount).multipliedBy(rate).toString());
+      const _quoteAmount = new BigNumber(_amount).multipliedBy(rate).toString();
+      change('quoteAmount', _quoteAmount);
+      setIsApproveQuoteToken(
+        checkBalanceIsApprove(isApproveAmountQuoteToken, _quoteAmount),
+      );
     }
     if (Number(_amount) > 0 && baseToken && quoteToken) {
       setIsApproveBaseToken(
-        checkBalanceIsApprove(
-          isApproveAmountBaseToken,
-          formatAmountSigning(_amount, baseToken?.decimal),
-        ),
+        checkBalanceIsApprove(isApproveAmountBaseToken, _amount),
       );
     }
   };
@@ -519,35 +527,30 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       if (!isEmpty(baseToken) && !isApproveBaseToken) {
         await requestApproveToken(baseToken);
         const [_isApprove] = await Promise.all([checkTokenApprove(baseToken)]);
-        setIsApproveAmountBaseToken(_isApprove);
-        setIsApproveBaseToken(checkBalanceIsApprove(_isApprove, values?.baseAmount));
+        setIsApproveAmountBaseToken(web3.utils.fromWei(_isApprove));
+        setIsApproveBaseToken(
+          checkBalanceIsApprove(web3.utils.fromWei(_isApprove), values?.baseAmount),
+        );
       } else if (!isEmpty(quoteToken) && !isApproveQuoteToken) {
         await requestApproveToken(quoteToken);
         const [_isApprove] = await Promise.all([checkTokenApprove(quoteToken)]);
-        setIsApproveAmountQuoteToken(_isApprove);
+        setIsApproveAmountQuoteToken(web3.utils.fromWei(_isApprove));
         setIsApproveQuoteToken(
-          checkBalanceIsApprove(_isApprove, values?.quoteAmount),
+          checkBalanceIsApprove(web3.utils.fromWei(_isApprove), values?.quoteAmount),
         );
       } else if (isScreenRemove && !isApprovePoolToken && pairAddress) {
         await requestApproveToken({
           address: pairAddress,
         });
         const _isApprove = await checkTokenApprove({ address: pairAddress });
-
-        setIsApproveAmountPoolToken(_isApprove);
+        setIsApproveAmountPoolToken(web3.utils.fromWei(_isApprove));
         setIsApprovePoolToken(
-          checkBalanceIsApprove(_isApprove, values?.liquidValue),
+          checkBalanceIsApprove(web3.utils.fromWei(_isApprove), values?.liquidValue),
         );
       }
 
       // toast.success('Transaction has been created. Please wait for few minutes.');
     } catch (err) {
-      console.log(err);
-
-      // showError({
-      //   message:
-      //     (err as Error).message || 'Something went wrong. Please try again later.',
-      // });
       const message =
         (err as Error).message || 'Something went wrong. Please try again later.';
       logErrorToServer({
@@ -561,7 +564,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           status: TransactionStatus.error,
           id: transactionType.createPoolApprove,
           infoTexts: {
-            error: message,
+            error: getMessageError(err, {}).title,
           },
         }),
       );
@@ -575,11 +578,21 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       return;
     }
     const [token1, token2] = sortAddressPair(baseToken, quoteToken);
+
     return (
       <Flex className="price-pool-content">
         <Box>
           <Stat>
-            <StatNumber>{!isPaired ? '-' : 1}</StatNumber>
+            <StatNumber>
+              {!isPaired
+                ? '-'
+                : formatCurrency(
+                    new BigNumber(formatAmountBigNumber(perPrice._reserve0))
+                      .dividedBy(formatAmountBigNumber(perPrice._reserve1))
+                      .toString(),
+                    18,
+                  )}
+            </StatNumber>
             <StatHelpText>{`${token1.symbol} per ${token2.symbol}`}</StatHelpText>
           </Stat>
         </Box>

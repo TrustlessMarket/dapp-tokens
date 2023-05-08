@@ -1,10 +1,9 @@
 import UniswapV2PairJson from '@/abis/UniswapV2Pair.json';
-import {TransactionEventType} from '@/enums/transaction';
-import {ContractOperationHook, DAppType} from '@/interfaces/contract-operation';
-import {getContract} from '@/utils';
-import {useWeb3React} from '@web3-react/core';
-import {useCallback} from 'react';
-import {ethers} from "ethers";
+import { TransactionEventType } from '@/enums/transaction';
+import { ContractOperationHook, DAppType } from '@/interfaces/contract-operation';
+import { getContract, getProviderProvider } from '@/utils';
+import { useWeb3React } from '@web3-react/core';
+import { useCallback } from 'react';
 
 export interface IGetReservesParams {
   address: string;
@@ -17,12 +16,9 @@ const useGetReserves: ContractOperationHook<
     _reserve1: string;
   }
 > = () => {
-  const { account, provider: defaultProvider } = useWeb3React();
+  const { account } = useWeb3React();
 
-  let provider = defaultProvider;
-  if(!provider && window.ethereum) {
-    provider = new ethers.providers.Web3Provider(window.ethereum as ethers.providers.ExternalProvider);
-  }
+  const provider = getProviderProvider();
 
   const call = useCallback(
     async (
@@ -38,8 +34,6 @@ const useGetReserves: ContractOperationHook<
         const transaction = await contract
           .connect(provider.getSigner())
           .getReserves();
-
-        console.log('useGetReserves', transaction);
 
         return {
           _reserve0: transaction[0].toString(),

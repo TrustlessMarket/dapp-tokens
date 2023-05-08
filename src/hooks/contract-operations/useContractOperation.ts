@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { SupportedChainId } from '@/constants/chains';
 import { ROUTE_PATH } from '@/constants/route-path';
@@ -82,9 +83,9 @@ const useContractOperation = <P, R>(
       );
       console.timeEnd('____unInscribedTxIDsLoadTime');
 
-      if (unInscribedTxIDs.length > 0) {
-        throw Error(ERROR_CODE.PENDING);
-      }
+      // if (unInscribedTxIDs.length > 0) {
+      //   throw Error(ERROR_CODE.PENDING);
+      // }
 
       console.log('unInscribedTxIDs', unInscribedTxIDs);
 
