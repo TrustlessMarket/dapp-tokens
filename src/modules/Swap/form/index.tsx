@@ -23,9 +23,7 @@ import useGetReserves from '@/hooks/contract-operations/swap/useReserves';
 import useSwapERC20Token, {
   ISwapERC20TokenParams,
 } from '@/hooks/contract-operations/swap/useSwapERC20Token';
-import useApproveERC20Token, {
-  IApproveERC20TokenParams,
-} from '@/hooks/contract-operations/token/useApproveERC20Token';
+import useApproveERC20Token from '@/hooks/contract-operations/token/useApproveERC20Token';
 import useBalanceERC20Token from '@/hooks/contract-operations/token/useBalanceERC20Token';
 import useIsApproveERC20Token from '@/hooks/contract-operations/token/useIsApproveERC20Token';
 import useContractOperation from '@/hooks/contract-operations/useContractOperation';
@@ -43,10 +41,9 @@ import { getIsAuthenticatedSelector, getUserSelector } from '@/state/user/select
 import { camelCaseKeys, compareString, formatCurrency } from '@/utils';
 import { isDevelop } from '@/utils/commons';
 import { composeValidators, required } from '@/utils/formValidate';
-import { formatAmountSigning, formatEthPriceFloor } from '@/utils/format';
 import px2rem from '@/utils/px2rem';
 import { showError } from '@/utils/toast';
-import { Box, Flex, forwardRef, Text } from '@chakra-ui/react';
+import { Box, Flex, Text, forwardRef } from '@chakra-ui/react';
 import { useWeb3React } from '@web3-react/core';
 import BigNumber from 'bignumber.js';
 import cx from 'classnames';
@@ -65,6 +62,7 @@ import { Field, Form, useForm, useFormState } from 'react-final-form';
 import toast from 'react-hot-toast';
 import { RiArrowUpDownLine } from 'react-icons/ri';
 import { useDispatch, useSelector } from 'react-redux';
+import Web3 from 'web3';
 import styles from './styles.module.scss';
 
 const LIMIT_PAGE = 50;
@@ -124,7 +122,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     new BigNumber(amountBaseTokenApproved).gt(0) &&
     (!values?.baseAmount ||
       new BigNumber(amountBaseTokenApproved).gte(
-        formatAmountSigning(values?.baseAmount || 0),
+        Web3.utils.toWei(`${values?.baseAmount || 0}`, 'ether'),
       ));
 
   const onBaseAmountChange = useCallback(
@@ -268,11 +266,15 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       let _quoteReserve = '';
 
       if (compareString(token0?.address, baseToken?.address)) {
-        _baseReserve = formatEthPriceFloor(_reserve0);
-        _quoteReserve = formatEthPriceFloor(_reserve1);
+        _baseReserve = Web3.utils.fromWei(_reserve0, 'ether');
+        _quoteReserve = Web3.utils.fromWei(_reserve1, 'ether');
+        // _baseReserve = formatEthPriceFloor(_reserve0);
+        // _quoteReserve = formatEthPriceFloor(_reserve1);
       } else {
-        _quoteReserve = formatEthPriceFloor(_reserve0);
-        _baseReserve = formatEthPriceFloor(_reserve1);
+        _quoteReserve = Web3.utils.fromWei(_reserve0, 'ether');
+        _baseReserve = Web3.utils.fromWei(_reserve1, 'ether');
+        // _quoteReserve = formatEthPriceFloor(_reserve0);
+        // _baseReserve = formatEthPriceFloor(_reserve1);
       }
 
       setBaseReserve(_baseReserve);
@@ -287,8 +289,8 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         });
       } else if (isChangeQuoteToken) {
         setIsChangeQuoteToken(false);
-        onQuoteAmountChange({
-          amount: values?.quoteAmount,
+        onBaseAmountChange({
+          amount: values?.baseAmount,
           baseReserve: _baseReserve,
           quoteReserve: _quoteReserve,
         });
@@ -479,7 +481,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     const amountInWithFee = amountIn.multipliedBy(1000 - FEE * 10);
     const numerator = amountInWithFee.multipliedBy(reserveOut);
     const denominator = reserveIn.multipliedBy(1000).plus(amountInWithFee);
-    const amountOut = numerator.div(denominator);
+    const amountOut = numerator.div(denominator).decimalPlaces(18);
 
     return amountOut;
   };
@@ -510,7 +512,8 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     }
     const quoteAmount = getAmountOut(amountIn, reserveIn, reserveOut);
 
-    change('quoteAmount', quoteAmount.toFixed());
+    // console.log('handleBaseAmountChange', quoteAmount.toString());
+    change('quoteAmount', quoteAmount.toString());
   };
 
   const onChangeValueQuoteAmount = (amount: any) => {
@@ -539,7 +542,8 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     }
     const baseAmount = getAmountOut(amountIn, reserveIn, reserveOut);
 
-    change('baseAmount', baseAmount.toFixed());
+    // console.log('handleQuoteAmountChange', baseAmount.toString());
+    change('baseAmount', baseAmount.toString());
   };
 
   const handleChangeMaxBaseAmount = () => {
@@ -610,7 +614,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             fieldChanged={onChangeValueBaseAmount}
             disabled={submitting}
             // placeholder={"Enter number of tokens"}
-            decimals={baseToken?.decimals || 18}
+            decimals={baseToken?.decimal || 18}
             className={styles.inputAmount}
             prependComp={
               <FilterButton
@@ -671,7 +675,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             fieldChanged={onChangeValueQuoteAmount}
             disabled={submitting}
             // placeholder={"Enter number of tokens"}
-            decimals={quoteToken?.decimals || 18}
+            decimals={quoteToken?.decimal || 18}
             className={cx(styles.inputAmount, styles.collateralAmount)}
             prependComp={
               <FilterButton
@@ -695,9 +699,9 @@ export const MakeFormSwap = forwardRef((props, ref) => {
               {formatCurrency(
                 new BigNumber(baseReserve)
                   .dividedBy(quoteReserve)
-                  .decimalPlaces(baseToken?.decimals || 18)
+                  .decimalPlaces(baseToken?.decimal || 18)
                   .toNumber(),
-                baseToken?.decimals || 18,
+                baseToken?.decimal || 18,
               )}
               &nbsp;{baseToken?.symbol}
             </Text>
@@ -808,7 +812,7 @@ const TradingForm = () => {
       const amountOutMin = new BigNumber(quoteAmount)
         .multipliedBy(100 - slippage)
         .dividedBy(100)
-        .decimalPlaces(quoteToken?.decimals || 18)
+        .decimalPlaces(quoteToken?.decimal || 18)
         .toString();
 
       const data = {

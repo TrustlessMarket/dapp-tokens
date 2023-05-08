@@ -35,7 +35,7 @@ const LIMIT_PAGE = 500;
 
 const Tokens = () => {
   const TABLE_HEADINGS = [
-    'Token #',
+    '#',
     'Name',
     'Price',
     '24h %',
@@ -190,7 +190,7 @@ const Tokens = () => {
             <img
               // width={25}
               // height={25}
-              src={token?.thumbnail || 'https://cdn.trustless.computer/upload/1683452740772860776-1683452740-generic-cryptocurrency-icon.png'}
+              src={token?.thumbnail || 'https://cdn.trustless.computer/upload/1683530065704444020-1683530065-default-coin.svg'}
               alt={token?.thumbnail || 'default-icon'}
               className={'avatar'}
             />

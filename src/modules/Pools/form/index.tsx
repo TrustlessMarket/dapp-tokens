@@ -55,7 +55,7 @@ import {
 } from '@/utils';
 import { isDevelop } from '@/utils/commons';
 import { composeValidators, requiredAmount } from '@/utils/formValidate';
-import { formatAmountBigNumber, formatAmountSigning } from '@/utils/format';
+import { formatAmountBigNumber } from '@/utils/format';
 import px2rem from '@/utils/px2rem';
 import {
   Box,
@@ -86,7 +86,7 @@ import { Field, Form, useForm, useFormState } from 'react-final-form';
 import toast from 'react-hot-toast';
 import { BsPlus } from 'react-icons/bs';
 import { useDispatch, useSelector } from 'react-redux';
-import web3 from 'web3';
+import { default as Web3, default as web3 } from 'web3';
 import { ScreenType } from '..';
 import styles from './styles.module.scss';
 
@@ -212,7 +212,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       setIsApprovePoolToken(
         checkBalanceIsApprove(
           isApproveAmountPoolToken,
-          formatAmountSigning(values?.liquidValue, quoteToken?.decimal),
+          Web3.utils.toWei(values?.liquidValue || '0', 'ether'),
         ),
       );
     }
@@ -286,12 +286,8 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         );
 
         if (isScreenRemove) {
-          setBaseBalance(
-            formatAmountBigNumber(resReserve._reserve0, baseToken.decimal),
-          );
-          setQuoteBalance(
-            formatAmountBigNumber(resReserve._reserve1, quoteToken.decimal),
-          );
+          setBaseBalance(Web3.utils.fromWei(resReserve._reserve0, 'ether'));
+          setQuoteBalance(Web3.utils.fromWei(resReserve._reserve1, 'ether'));
           setIsApproveAmountPoolToken(resAmountApprovePool);
         }
 
@@ -476,7 +472,10 @@ export const MakeFormSwap = forwardRef((props, ref) => {
 
     if (Number(_amount) > 0 && baseToken && quoteToken) {
       setIsApproveQuoteToken(
-        checkBalanceIsApprove(isApproveAmountQuoteToken, _amount),
+        checkBalanceIsApprove(
+          isApproveAmountQuoteToken,
+          Web3.utils.toWei(_amount, 'ether'),
+        ),
       );
     }
   };
@@ -501,7 +500,10 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     }
     if (Number(_amount) > 0 && baseToken && quoteToken) {
       setIsApproveBaseToken(
-        checkBalanceIsApprove(isApproveAmountBaseToken, _amount),
+        checkBalanceIsApprove(
+          isApproveAmountBaseToken,
+          Web3.utils.toWei(_amount, 'ether'),
+        ),
       );
     }
   };
@@ -602,8 +604,8 @@ export const MakeFormSwap = forwardRef((props, ref) => {
               {!isPaired
                 ? '-'
                 : formatCurrency(
-                    new BigNumber(formatAmountBigNumber(perPrice._reserve1))
-                      .dividedBy(formatAmountBigNumber(perPrice._reserve0))
+                    new BigNumber(Web3.utils.fromWei(perPrice._reserve1, 'ether'))
+                      .dividedBy(Web3.utils.fromWei(perPrice._reserve0, 'ether'))
                       .toString(),
                     18,
                   )}
@@ -698,10 +700,10 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         .toString();
 
       const _baseBalance = new BigNumber(cPercent)
-        .multipliedBy(formatAmountBigNumber(__reserve0, token1.decimal))
+        .multipliedBy(Web3.utils.fromWei(__reserve0, 'ether'))
         .toString();
       const _quoteBalance = new BigNumber(cPercent)
-        .multipliedBy(formatAmountBigNumber(__reserve1, token2.decimal))
+        .multipliedBy(Web3.utils.fromWei(__reserve1, 'ether'))
         .toString();
 
       const liquidValue = new BigNumber(cPercent)
@@ -1082,7 +1084,7 @@ const CreateMarket = ({
           tokenB: token1?.address,
           amountAMin: '0',
           amountBMin: '0',
-          liquidValue: values?.liquidValue,
+          liquidValue: values?.liquidValue || '0',
         };
 
         response = await removeLiquidity(data);
