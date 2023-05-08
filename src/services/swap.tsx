@@ -3,6 +3,7 @@ import { IPagingParams } from '@/interfaces/api/query';
 import { IToken } from '@/interfaces/token';
 import { swrFetcher } from '@/utils/swr';
 import queryString from 'query-string';
+import {isProduction} from "@/utils/commons";
 
 const API_PATH = '/swap';
 
@@ -50,11 +51,13 @@ interface LogErrorToServerPayload {
 }
 
 export const logErrorToServer = async (payload: LogErrorToServerPayload) => {
-  return swrFetcher(`${API_URL}${API_PATH}/fe-log`, {
-    method: 'POST',
-    data: payload,
-    error: 'Fail to scan tx',
-  });
+  if(isProduction()) {
+    return swrFetcher(`${API_URL}${API_PATH}/fe-log`, {
+      method: 'POST',
+      data: payload,
+      error: 'Fail to log error',
+    });
+  }
 };
 
 export const getChartToken = async (
