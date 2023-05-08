@@ -7,8 +7,8 @@ export const StyledTokens = styled.div`
   
   .avatar {
     object-fit: cover;
-    width: ${px2rem(30)};
-    height: ${px2rem(30)};
+    width: ${px2rem(50)};
+    height: ${px2rem(50)};
     border-radius: 50%;
   }
 
