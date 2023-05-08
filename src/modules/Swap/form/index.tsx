@@ -114,7 +114,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     new BigNumber(amountBaseTokenApproved).gt(0) &&
     (!values?.baseAmount ||
       new BigNumber(amountBaseTokenApproved).gte(
-        Web3.utils.toWei(`${values?.baseAmount || 0}`, 'ether').toString()
+        Web3.utils.toWei(`${values?.baseAmount || 0}`, 'ether')
       ));
 
   const onBaseAmountChange = useCallback(
@@ -281,8 +281,8 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         });
       } else if (isChangeQuoteToken) {
         setIsChangeQuoteToken(false);
-        onQuoteAmountChange({
-          amount: values?.quoteAmount,
+        onBaseAmountChange({
+          amount: values?.baseAmount,
           baseReserve: _baseReserve,
           quoteReserve: _quoteReserve,
         });
@@ -504,6 +504,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     }
     const quoteAmount = getAmountOut(amountIn, reserveIn, reserveOut);
 
+    // console.log('handleBaseAmountChange', quoteAmount.toString());
     change('quoteAmount', quoteAmount.toString());
   };
 
@@ -533,6 +534,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     }
     const baseAmount = getAmountOut(amountIn, reserveIn, reserveOut);
 
+    // console.log('handleQuoteAmountChange', baseAmount.toString());
     change('baseAmount', baseAmount.toString());
   };
 
