@@ -4,7 +4,7 @@ import { IToken } from '@/interfaces/token';
 import { getChartToken } from '@/services/swap';
 import { Box } from '@chakra-ui/react';
 import BigNumber from 'bignumber.js';
-import { LineType, createChart } from 'lightweight-charts';
+import { createChart } from 'lightweight-charts';
 import { last, sortBy } from 'lodash';
 import { useRouter } from 'next/router';
 import { useEffect, useRef, useState } from 'react';
@@ -54,18 +54,17 @@ const ChartThumb = ({ chartData }: { chartData: any[] }) => {
         trackingMode: {
           //   exitMode: TrackingModeExitMode.OnTouchEnd,
         },
-        handleScroll: {
-          // vertTouchDrag: !isMobile,
-        },
+        handleScroll: false,
+        handleScale: false,
       });
 
       candleSeries.current = chart.current.addLineSeries({
         // lineColor: '#2862ff',
-        lineWidth: 1,
+        lineWidth: 2,
         lastValueVisible: false,
         priceLineVisible: false,
         // lastPriceAnimation: LastPriceAnimationMode.Continuous,
-        lineType: LineType.Curved,
+        // lineType: LineType.Curved,
         crosshairMarkerVisible: false,
       });
 
@@ -92,6 +91,7 @@ const ChartThumb = ({ chartData }: { chartData: any[] }) => {
     ) {
       refCandles.current = chartData;
       candleSeries.current?.setData(chartData);
+      chart.current.timeScale().fitContent();
     }
   }, [chartData]);
 
@@ -116,13 +116,13 @@ const TokenChartLast7Day = ({ token }: { token: IToken }) => {
   const getData = async () => {
     try {
       const response: any[] = await getChartToken({
-        limit: 24,
+        limit: 7,
         contract_address: token.address,
-        chart_type: 'hour',
+        chart_type: 'day',
       });
-      if (response && response?.length >= 24) {
+      if (response && response?.length >= 7) {
         const sortedData = sortBy(
-          response.slice(response?.length - 24, response?.length),
+          response.slice(response?.length - 7, response?.length),
           'timestamp',
         );
         const color =
@@ -133,12 +133,12 @@ const TokenChartLast7Day = ({ token }: { token: IToken }) => {
         const _data = sortedData?.map((v: any) => {
           return {
             // ...v,
-            value: new BigNumber(v.closeUsd).toNumber(),
+            value: new BigNumber(v.close).toNumber(),
             time: Number(v.timestamp),
-            open: new BigNumber(v.openUsd).toNumber(),
-            high: new BigNumber(v.highUsd).toNumber(),
-            close: new BigNumber(v.closeUsd).toNumber(),
-            low: new BigNumber(v.lowUsd).toNumber(),
+            open: new BigNumber(v.open).toNumber(),
+            high: new BigNumber(v.high).toNumber(),
+            close: new BigNumber(v.close).toNumber(),
+            low: new BigNumber(v.low).toNumber(),
             color,
             // volume: Number(v.volume || 0),
           };

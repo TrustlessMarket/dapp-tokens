@@ -2,33 +2,33 @@
 import Button from '@/components/Button';
 import Table from '@/components/Table';
 import Text from '@/components/Text';
-import {IToken} from '@/interfaces/token';
-import {getTokenRp} from '@/services/swap';
-import {getIsAuthenticatedSelector} from '@/state/user/selector';
-import {formatCurrency} from '@/utils';
-import {decimalToExponential} from '@/utils/format';
-import {debounce} from 'lodash';
-import {useContext, useEffect, useState} from 'react';
+import { IToken } from '@/interfaces/token';
+import { getTokenRp } from '@/services/swap';
+import { getIsAuthenticatedSelector } from '@/state/user/selector';
+import { formatCurrency } from '@/utils';
+import { decimalToExponential } from '@/utils/format';
+import { debounce } from 'lodash';
+import { useContext, useEffect, useState } from 'react';
 import Spinner from 'react-bootstrap/Spinner';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import {useSelector} from 'react-redux';
+import { useSelector } from 'react-redux';
 import ModalCreateToken from './ModalCreateToken';
-import {StyledTokens, UploadFileContainer} from './Tokens.styled';
+import { StyledTokens, UploadFileContainer } from './Tokens.styled';
 // import { useRouter } from 'next/router';
 // import { ROUTE_PATH } from '@/constants/route-path';
-import {ROUTE_PATH} from '@/constants/route-path';
-import {WalletContext} from '@/contexts/wallet-context';
-import {DEFAULT_BASE_TOKEN} from '@/modules/Swap/form';
-import {showError} from '@/utils/toast';
-import {Box, Flex} from '@chakra-ui/react';
+import { ROUTE_PATH } from '@/constants/route-path';
+import { WalletContext } from '@/contexts/wallet-context';
+import { DEFAULT_BASE_TOKEN } from '@/modules/Swap/form';
+import { showError } from '@/utils/toast';
+import { Box, Flex } from '@chakra-ui/react';
 import BigNumber from 'bignumber.js';
 import Link from 'next/link';
-import {useRouter} from 'next/router';
+import { useRouter } from 'next/router';
 //const EXPLORER_URL = TRUSTLESS_COMPUTER_CHAIN_INFO.explorers[0].url;
 import BodyContainer from '@/components/Swap/bodyContainer';
-import {AiOutlineCaretDown, AiOutlineCaretUp} from 'react-icons/ai';
+import { AiOutlineCaretDown, AiOutlineCaretUp } from 'react-icons/ai';
 import TokenChartLast7Day from './Token.ChartLast7Day';
-import px2rem from "@/utils/px2rem";
+import px2rem from '@/utils/px2rem';
 
 const LIMIT_PAGE = 500;
 //const ALL_ONE_PAGE = 10000;
@@ -43,7 +43,7 @@ const Tokens = () => {
     'Market Cap',
     'Volume',
     'Supply',
-    'Last 24h',
+    'Last 7d',
   ];
   /*'Price','24h %','Market Cap'*/
 
@@ -186,17 +186,22 @@ const Tokens = () => {
       render: {
         number: token?.index,
         name: (
-          <Flex gap={2} minW={px2rem(200)} alignItems={"center"}>
+          <Flex gap={2} minW={px2rem(200)} alignItems={'center'}>
             <img
               // width={25}
               // height={25}
-              src={token?.thumbnail || 'https://cdn.trustless.computer/upload/1683530065704444020-1683530065-default-coin.svg'}
+              src={
+                token?.thumbnail ||
+                'https://cdn.trustless.computer/upload/1683530065704444020-1683530065-default-coin.svg'
+              }
               alt={token?.thumbnail || 'default-icon'}
               className={'avatar'}
             />
-            <Flex direction={"column"}>
+            <Flex direction={'column'}>
               <Box>{token?.name}</Box>
-              <Box fontSize={px2rem(14)} color={"#FFFFFFAA"}>({token?.symbol})</Box>
+              <Box fontSize={px2rem(14)} color={'#FFFFFFAA'}>
+                ({token?.symbol})
+              </Box>
             </Flex>
           </Flex>
         ),
