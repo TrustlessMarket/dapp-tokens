@@ -65,6 +65,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import Web3 from 'web3';
 import styles from './styles.module.scss';
 import tokensMocks from '@/dataMock/tokens.json';
+import tokensMocks2 from '@/dataMock/tokens2.json';
 
 const LIMIT_PAGE = 50;
 const FEE = 3;
@@ -245,7 +246,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         is_test: isDevelop() ? '1' : '',
         from_token: from_token,
       });
-      return res;
+      return isProduction() ? res : tokensMocks2;
     } catch (err: unknown) {
       console.log('Failed to fetch tokens owned');
     } finally {
