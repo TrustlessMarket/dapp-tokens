@@ -39,7 +39,7 @@ import {
 } from '@/state/pnftExchange';
 import { getIsAuthenticatedSelector, getUserSelector } from '@/state/user/selector';
 import { camelCaseKeys, compareString, formatCurrency } from '@/utils';
-import { isDevelop } from '@/utils/commons';
+import {isDevelop, isProduction} from '@/utils/commons';
 import { composeValidators, required } from '@/utils/formValidate';
 import px2rem from '@/utils/px2rem';
 import { showError } from '@/utils/toast';
@@ -64,6 +64,7 @@ import { RiArrowUpDownLine } from 'react-icons/ri';
 import { useDispatch, useSelector } from 'react-redux';
 import Web3 from 'web3';
 import styles from './styles.module.scss';
+import tokensMocks from '@/dataMock/tokens.json';
 
 const LIMIT_PAGE = 50;
 const FEE = 3;
@@ -217,7 +218,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         is_test: isDevelop() ? '1' : '',
       });
 
-      const list = res ? camelCaseKeys(res) : [];
+      const list = isProduction() ? res ? camelCaseKeys(res) : [] : camelCaseKeys(tokensMocks);
 
       setTokensList(list);
       setBaseTokensList(list);
