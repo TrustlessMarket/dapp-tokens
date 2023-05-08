@@ -1,20 +1,21 @@
 import UniswapV2Router from '@/abis/UniswapV2Router.json';
-import { transactionType } from '@/components/Swap/alertInfoProcessing/types';
-import { APP_ENV, TRANSFER_TX_SIZE, UNIV2_ROUTER_ADDRESS } from '@/configs';
-import { MaxUint256 } from '@/constants/url';
-import { AssetsContext } from '@/contexts/assets-context';
-import { TransactionEventType } from '@/enums/transaction';
-import { ContractOperationHook, DAppType } from '@/interfaces/contract-operation';
-import { TransactionStatus } from '@/interfaces/walletTransaction';
-import { logErrorToServer, scanTrx } from '@/services/swap';
+import {transactionType} from '@/components/Swap/alertInfoProcessing/types';
+import {APP_ENV, TRANSFER_TX_SIZE, UNIV2_ROUTER_ADDRESS} from '@/configs';
+import {MaxUint256} from '@/constants/url';
+import {AssetsContext} from '@/contexts/assets-context';
+import {TransactionEventType} from '@/enums/transaction';
+import {ContractOperationHook, DAppType} from '@/interfaces/contract-operation';
+import {TransactionStatus} from '@/interfaces/walletTransaction';
+import {logErrorToServer, scanTrx} from '@/services/swap';
 import store from '@/state';
-import { updateCurrentTransaction } from '@/state/pnftExchange';
-import { compareString, getContract } from '@/utils';
-import { ceilPrecised, formatAmountSigning, formatBTCPrice } from '@/utils/format';
-import { useWeb3React } from '@web3-react/core';
+import {updateCurrentTransaction} from '@/state/pnftExchange';
+import {compareString, getContract} from '@/utils';
+import {formatBTCPrice} from '@/utils/format';
+import {useWeb3React} from '@web3-react/core';
 import BigNumber from 'bignumber.js';
-import { useCallback, useContext } from 'react';
+import {useCallback, useContext} from 'react';
 import * as TC_SDK from 'trustless-computer-sdk';
+import Web3 from "web3";
 
 export interface IAddLiquidityParams {
   tokenA: string;
@@ -76,10 +77,10 @@ const useAddLiquidity: ContractOperationHook<IAddLiquidityParams, boolean> = () 
           .addLiquidity(
             tokenA,
             tokenB,
-            formatAmountSigning(ceilPrecised(amountADesired), 18),
-            formatAmountSigning(ceilPrecised(amountBDesired), 18),
-            formatAmountSigning(amountAMin),
-            formatAmountSigning(amountBMin),
+            Web3.utils.toWei(amountADesired, 'ether'),
+            Web3.utils.toWei(amountBDesired, 'ether'),
+            Web3.utils.toWei(amountAMin, 'ether'),
+            Web3.utils.toWei(amountBMin, 'ether'),
             account,
             MaxUint256,
             {

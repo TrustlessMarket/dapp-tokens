@@ -1,94 +1,63 @@
 /* eslint-disable react/no-children-prop */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { transactionType } from '@/components/Swap/alertInfoProcessing/types';
+import {transactionType} from '@/components/Swap/alertInfoProcessing/types';
 import FiledButton from '@/components/Swap/button/filedButton';
 import FilterButton from '@/components/Swap/filterToken';
 import FieldAmount from '@/components/Swap/form/fieldAmount';
 import InputWrapper from '@/components/Swap/form/inputWrapper';
 import WrapperConnected from '@/components/WrapperConnected';
-import { UNIV2_ROUTER_ADDRESS } from '@/configs';
-import {
-  BRIDGE_SUPPORT_TOKEN,
-  TRUSTLESS_BRIDGE,
-  TRUSTLESS_FAUCET,
-} from '@/constants/common';
-import { ROUTE_PATH } from '@/constants/route-path';
-import { IMPORTED_TOKENS, LIQUID_PAIRS } from '@/constants/storage-key';
-import { NULL_ADDRESS } from '@/constants/url';
-import { AssetsContext } from '@/contexts/assets-context';
+import {UNIV2_ROUTER_ADDRESS} from '@/configs';
+import {BRIDGE_SUPPORT_TOKEN, TRUSTLESS_BRIDGE, TRUSTLESS_FAUCET,} from '@/constants/common';
+import {ROUTE_PATH} from '@/constants/route-path';
+import {IMPORTED_TOKENS, LIQUID_PAIRS} from '@/constants/storage-key';
+import {NULL_ADDRESS} from '@/constants/url';
+import {AssetsContext} from '@/contexts/assets-context';
 import pairsMock from '@/dataMock/tokens.json';
-import useAddLiquidity, {
-  IAddLiquidityParams,
-} from '@/hooks/contract-operations/pools/useAddLiquidity';
-import useRemoveLiquidity, {
-  IRemoveLiquidParams,
-} from '@/hooks/contract-operations/pools/useRemoveLiquidity';
+import useAddLiquidity, {IAddLiquidityParams,} from '@/hooks/contract-operations/pools/useAddLiquidity';
+import useRemoveLiquidity, {IRemoveLiquidParams,} from '@/hooks/contract-operations/pools/useRemoveLiquidity';
 import useGetPair from '@/hooks/contract-operations/swap/useGetPair';
 import useGetReserves from '@/hooks/contract-operations/swap/useReserves';
-import useApproveERC20Token, {
-  IApproveERC20TokenParams,
-} from '@/hooks/contract-operations/token/useApproveERC20Token';
+import useApproveERC20Token, {IApproveERC20TokenParams,} from '@/hooks/contract-operations/token/useApproveERC20Token';
 import useBalanceERC20Token from '@/hooks/contract-operations/token/useBalanceERC20Token';
-import useInfoERC20Token, {
-  IInfoERC20TokenResponse,
-} from '@/hooks/contract-operations/token/useInfoERC20Token';
+import useInfoERC20Token, {IInfoERC20TokenResponse,} from '@/hooks/contract-operations/token/useInfoERC20Token';
 import useIsApproveERC20Token from '@/hooks/contract-operations/token/useIsApproveERC20Token';
 import useSupplyERC20Liquid from '@/hooks/contract-operations/token/useSupplyERC20Liquid';
 import useContractOperation from '@/hooks/contract-operations/useContractOperation';
-import { IToken } from '@/interfaces/token';
-import { TransactionStatus } from '@/interfaces/walletTransaction';
-import { logErrorToServer } from '@/services/swap';
-import { getTokens } from '@/services/token-explorer';
-import { useAppDispatch, useAppSelector } from '@/state/hooks';
+import {IToken} from '@/interfaces/token';
+import {TransactionStatus} from '@/interfaces/walletTransaction';
+import {logErrorToServer} from '@/services/swap';
+import {getTokens} from '@/services/token-explorer';
+import {useAppDispatch, useAppSelector} from '@/state/hooks';
 import {
   requestReload,
   requestReloadRealtime,
   selectPnftExchange,
   updateCurrentTransaction,
 } from '@/state/pnftExchange';
-import { getIsAuthenticatedSelector } from '@/state/user/selector';
-import {
-  camelCaseKeys,
-  compareString,
-  formatCurrency,
-  sortAddressPair,
-} from '@/utils';
-import { isDevelop } from '@/utils/commons';
-import { composeValidators, requiredAmount } from '@/utils/formValidate';
-import { formatAmountBigNumber, formatAmountSigning } from '@/utils/format';
+import {getIsAuthenticatedSelector} from '@/state/user/selector';
+import {camelCaseKeys, compareString, formatCurrency, sortAddressPair,} from '@/utils';
+import {isDevelop} from '@/utils/commons';
+import {composeValidators, requiredAmount} from '@/utils/formValidate';
+import {formatAmountBigNumber} from '@/utils/format';
 import px2rem from '@/utils/px2rem';
-import {
-  Box,
-  Flex,
-  Stat,
-  StatHelpText,
-  StatNumber,
-  Text,
-  forwardRef,
-} from '@chakra-ui/react';
-import { useWeb3React } from '@web3-react/core';
+import {Box, Flex, forwardRef, Stat, StatHelpText, StatNumber, Text,} from '@chakra-ui/react';
+import {useWeb3React} from '@web3-react/core';
 import BigNumber from 'bignumber.js';
 import cx from 'classnames';
-import { isEmpty } from 'lodash';
+import {isEmpty} from 'lodash';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
+import {useRouter} from 'next/router';
 import Slider from 'rc-slider';
 import 'rc-slider/assets/index.css';
-import {
-  useCallback,
-  useContext,
-  useEffect,
-  useImperativeHandle,
-  useRef,
-  useState,
-} from 'react';
-import { Field, Form, useForm, useFormState } from 'react-final-form';
+import {useCallback, useContext, useEffect, useImperativeHandle, useRef, useState,} from 'react';
+import {Field, Form, useForm, useFormState} from 'react-final-form';
 import toast from 'react-hot-toast';
-import { BsPlus } from 'react-icons/bs';
-import { useDispatch, useSelector } from 'react-redux';
-import { ScreenType } from '..';
+import {BsPlus} from 'react-icons/bs';
+import {useDispatch, useSelector} from 'react-redux';
+import {ScreenType} from '..';
 import styles from './styles.module.scss';
+import Web3 from "web3";
 
 const LIMIT_PAGE = 50;
 
@@ -217,7 +186,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       setIsApprovePoolToken(
         checkBalanceIsApprove(
           isApproveAmountPoolToken,
-          formatAmountSigning(values?.liquidValue, quoteToken?.decimal),
+          Web3.utils.toWei(values?.liquidValue, 'ether')
         ),
       );
     }
@@ -468,7 +437,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       setIsApproveQuoteToken(
         checkBalanceIsApprove(
           isApproveAmountQuoteToken,
-          formatAmountSigning(_amount, quoteToken?.decimal),
+          Web3.utils.toWei(_amount, 'ether')
         ),
       );
     }
@@ -492,7 +461,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       setIsApproveBaseToken(
         checkBalanceIsApprove(
           isApproveAmountBaseToken,
-          formatAmountSigning(_amount, baseToken?.decimal),
+          Web3.utils.toWei(_amount, 'ether')
         ),
       );
     }

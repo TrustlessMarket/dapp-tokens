@@ -35,7 +35,6 @@ import {getIsAuthenticatedSelector, getUserSelector} from '@/state/user/selector
 import {camelCaseKeys, compareString, formatCurrency} from '@/utils';
 import {isDevelop} from '@/utils/commons';
 import {composeValidators, required} from '@/utils/formValidate';
-import {formatAmountSigning, formatEthPriceFloor,} from '@/utils/format';
 import px2rem from '@/utils/px2rem';
 import {showError} from '@/utils/toast';
 import {Box, Flex, forwardRef, Text} from '@chakra-ui/react';
@@ -51,6 +50,7 @@ import toast from 'react-hot-toast';
 import {RiArrowUpDownLine} from 'react-icons/ri';
 import {useDispatch, useSelector} from 'react-redux';
 import styles from './styles.module.scss';
+import Web3 from "web3";
 
 const LIMIT_PAGE = 50;
 const FEE = 3;
@@ -114,7 +114,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     new BigNumber(amountBaseTokenApproved).gt(0) &&
     (!values?.baseAmount ||
       new BigNumber(amountBaseTokenApproved).gte(
-        formatAmountSigning(values?.baseAmount || 0),
+        Web3.utils.toWei(values?.baseAmount || 0, 'ether')
       ));
 
   const onBaseAmountChange = useCallback(
@@ -258,11 +258,15 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       let _quoteReserve = '';
 
       if (compareString(token0?.address, baseToken?.address)) {
-        _baseReserve = formatEthPriceFloor(_reserve0);
-        _quoteReserve = formatEthPriceFloor(_reserve1);
+        _baseReserve = Web3.utils.fromWei(_reserve0, 'ether');
+        _quoteReserve = Web3.utils.fromWei(_reserve1, 'ether');
+        // _baseReserve = formatEthPriceFloor(_reserve0);
+        // _quoteReserve = formatEthPriceFloor(_reserve1);
       } else {
-        _quoteReserve = formatEthPriceFloor(_reserve0);
-        _baseReserve = formatEthPriceFloor(_reserve1);
+        _quoteReserve = Web3.utils.fromWei(_reserve0, 'ether');
+        _baseReserve = Web3.utils.fromWei(_reserve1, 'ether');
+        // _quoteReserve = formatEthPriceFloor(_reserve0);
+        // _baseReserve = formatEthPriceFloor(_reserve1);
       }
 
       setBaseReserve(_baseReserve);

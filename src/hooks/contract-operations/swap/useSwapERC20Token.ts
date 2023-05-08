@@ -1,20 +1,21 @@
 import UniswapV2RouterJson from '@/abis/UniswapV2Router.json';
-import { transactionType } from '@/components/Swap/alertInfoProcessing/types';
-import { APP_ENV, TRANSFER_TX_SIZE, UNIV2_ROUTER_ADDRESS } from '@/configs';
-import { MaxUint256 } from '@/constants/url';
-import { AssetsContext } from '@/contexts/assets-context';
-import { TransactionEventType } from '@/enums/transaction';
-import { ContractOperationHook, DAppType } from '@/interfaces/contract-operation';
-import { TransactionStatus } from '@/interfaces/walletTransaction';
-import { logErrorToServer, scanTrx } from '@/services/swap';
+import {transactionType} from '@/components/Swap/alertInfoProcessing/types';
+import {APP_ENV, TRANSFER_TX_SIZE, UNIV2_ROUTER_ADDRESS} from '@/configs';
+import {MaxUint256} from '@/constants/url';
+import {AssetsContext} from '@/contexts/assets-context';
+import {TransactionEventType} from '@/enums/transaction';
+import {ContractOperationHook, DAppType} from '@/interfaces/contract-operation';
+import {TransactionStatus} from '@/interfaces/walletTransaction';
+import {logErrorToServer, scanTrx} from '@/services/swap';
 import store from '@/state';
-import { updateCurrentTransaction } from '@/state/pnftExchange';
-import { compareString, getContract } from '@/utils';
-import { ceilPrecised, formatAmountSigning, formatBTCPrice } from '@/utils/format';
-import { useWeb3React } from '@web3-react/core';
+import {updateCurrentTransaction} from '@/state/pnftExchange';
+import {compareString, getContract} from '@/utils';
+import {formatBTCPrice} from '@/utils/format';
+import {useWeb3React} from '@web3-react/core';
 import BigNumber from 'bignumber.js';
-import { useCallback, useContext } from 'react';
+import {useCallback, useContext} from 'react';
 import * as TC_SDK from 'trustless-computer-sdk';
+import Web3 from "web3";
 
 export interface ISwapERC20TokenParams {
   addresses: string[];
@@ -65,8 +66,8 @@ const useSwapERC20Token: ContractOperationHook<
         const transaction = await contract
           .connect(provider.getSigner())
           .swapExactTokensForTokens(
-            formatAmountSigning(ceilPrecised(amount), 18),
-            formatAmountSigning(ceilPrecised(amountOutMin), 18),
+            Web3.utils.toWei(amount, 'ether'),
+            Web3.utils.toWei(amountOutMin, 'ether'),
             addresses,
             address,
             MaxUint256,
