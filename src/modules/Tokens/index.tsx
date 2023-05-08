@@ -35,7 +35,7 @@ const LIMIT_PAGE = 500;
 
 const Tokens = () => {
   const TABLE_HEADINGS = [
-    'Token #',
+    '#',
     'Name',
     'Price',
     '24h %',
