@@ -206,7 +206,7 @@ const Tokens = () => {
                   {token?.symbol}
                 </Box>
               </Flex>
-              <Box fontSize={px2rem(14)} color={'#FFFFFFAA'}>
+              <Box fontSize={px2rem(14)} color={'rgba(255, 255, 255, 0.7)'}>
                 {token?.network || 'TC'}
               </Box>
             </Flex>
