@@ -77,6 +77,18 @@ export const StyledTokenDetailContainer = styled(BodyContainer)`
         height: 100%;
       }
     }
+    .chakra-tabs__tablist {
+      border-bottom: 1px solid ${colors.darkBorderColor};
+      button {
+        font-size: 16px;
+      }
+    }
+    .chakra-tabs__tab {
+      &[aria-selected='true'] {
+        background-color: transparent;
+        color: white;
+      }
+    }
     .chakra-table {
       thead {
         td {
@@ -112,14 +124,17 @@ export const StyledTokenTopInfo = styled(Flex)`
   border-bottom: 1px solid ${colors.darkBorderColor};
   padding: ${px2rem(20)};
   width: 100%;
+  align-items: center;
+  justify-content: space-between;
   .avatar {
     width: 50px;
     height: 50px;
   }
   .block-info {
-    height: 100%;
+    height: 70px;
     flex-direction: column;
     justify-content: space-around;
+    padding-left: 25px;
     .title {
       color: white;
       font-weight: 600;
@@ -127,14 +142,14 @@ export const StyledTokenTopInfo = styled(Flex)`
     }
     .desc {
       font-weight: 500;
-      font-size: ${px2rem(16)};
+      font-size: 16px;
       color: ${colors.white500};
     }
   }
 
   .diver-right {
     border-right: 1px solid ${colors.darkBorderColor};
-    padding-right: ${px2rem(15)};
+    padding-right: 30px;
   }
 `;
 

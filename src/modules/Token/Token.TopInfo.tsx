@@ -17,7 +17,7 @@ const TokenTopInfo = ({ data }: { data: IToken }) => {
 
   return (
     <StyledTokenTopInfo>
-      <Flex gap={4} alignItems={'center'}>
+      <Flex alignItems={'center'}>
         <img
           src={
             data?.thumbnail ||
@@ -100,50 +100,48 @@ const TokenTopInfo = ({ data }: { data: IToken }) => {
           <Text className="desc">SOCIALS</Text>
           <SocialToken socials={data.social} />
         </Flex>
-        <Flex
-          className="block-info"
-          ml={10}
-          gap={4}
+      </Flex>
+      <Flex
+        className="block-info"
+        ml={10}
+        gap={4}
+        style={{
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <FiledButton
+          btnSize="h"
           style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'center',
+            color: colors.white,
+            fontSize: '16px',
           }}
+          onClick={() =>
+            router.push(
+              `${ROUTE_PATH.SWAP}?from_token=${DEFAULT_BASE_TOKEN}&to_token=${data?.address}`,
+            )
+          }
         >
+          Buy Now
+        </FiledButton>
+        {compareString(data.owner, account) && (
           <FiledButton
             btnSize="h"
+            variant={'outline'}
             style={{
               color: colors.white,
               fontSize: '16px',
+              backgroundColor: 'transparent',
+              borderColor: 'white',
             }}
             onClick={() =>
-              router.push(
-                `${ROUTE_PATH.SWAP}?from_token=${DEFAULT_BASE_TOKEN}&to_token=${data?.address}`,
-              )
+              router.push(`${ROUTE_PATH.UPDATE_TOKEN_INFO}?address=${data?.address}`)
             }
           >
-            Buy Now
+            Update token info
           </FiledButton>
-          {compareString(data.owner, account) && (
-            <FiledButton
-              btnSize="h"
-              variant={'outline'}
-              style={{
-                color: colors.white,
-                fontSize: '16px',
-                backgroundColor: 'transparent',
-                borderColor: 'white',
-              }}
-              onClick={() =>
-                router.push(
-                  `${ROUTE_PATH.UPDATE_TOKEN_INFO}?address=${data?.address}`,
-                )
-              }
-            >
-              Update token info
-            </FiledButton>
-          )}
-        </Flex>
+        )}
       </Flex>
     </StyledTokenTopInfo>
   );
