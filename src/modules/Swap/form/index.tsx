@@ -667,16 +667,23 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       <Flex direction={"column"} alignItems={"flex-start"} fontSize={"xs"}>
         <Text>Auto Router</Text>
         <Flex justifyContent={"space-between"} w={"100%"}>
-          <img
-            // width={25}
-            // height={25}
-            src={
-              baseToken?.thumbnail ||
-              'https://cdn.trustless.computer/upload/1683530065704444020-1683530065-default-coin.svg'
+          <Flex alignItems={"center"}>
+            <img
+              // width={25}
+              // height={25}
+              src={
+                baseToken?.thumbnail ||
+                'https://cdn.trustless.computer/upload/1683530065704444020-1683530065-default-coin.svg'
+              }
+              alt={baseToken?.thumbnail || 'default-icon'}
+              className={'avatar'}
+            />
+            {
+              !baseToken?.thumbnail && (
+                <Text>{baseToken?.symbol}</Text>
+              )
             }
-            alt={baseToken?.thumbnail || 'default-icon'}
-            className={'avatar'}
-          />
+          </Flex>
           <Flex flex={1} alignItems={"center"}>
             <Box className={"dot-line"}></Box>
           </Flex>
@@ -698,16 +705,23 @@ export const MakeFormSwap = forwardRef((props, ref) => {
               </>
             )
           }
-          <img
-            // width={25}
-            // height={25}
-            src={
-              quoteToken?.thumbnail ||
-              'https://cdn.trustless.computer/upload/1683530065704444020-1683530065-default-coin.svg'
+          <Flex alignItems={"center"}>
+            <img
+              // width={25}
+              // height={25}
+              src={
+                quoteToken?.thumbnail ||
+                'https://cdn.trustless.computer/upload/1683530065704444020-1683530065-default-coin.svg'
+              }
+              alt={quoteToken?.thumbnail || 'default-icon'}
+              className={'avatar'}
+            />
+            {
+              !quoteToken?.thumbnail && (
+                <Text>{quoteToken?.symbol}</Text>
+              )
             }
-            alt={quoteToken?.thumbnail || 'default-icon'}
-            className={'avatar'}
-          />
+          </Flex>
         </Flex>
       </Flex>
     )
