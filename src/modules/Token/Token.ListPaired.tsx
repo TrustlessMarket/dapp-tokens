@@ -24,7 +24,7 @@ import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import web3 from 'web3';
 import { DEFAULT_FROM_TOKEN_ADDRESS, ScreenType } from '../Pools';
-import { DEFAULT_BASE_TOKEN } from '../Swap/form';
+import { WBTC_ADDRESS } from '../Swap/form';
 
 const TokenPoolDetail = ({ paired }: { paired: any }) => {
   const router = useRouter();
@@ -123,7 +123,7 @@ const TokenPoolDetail = ({ paired }: { paired: any }) => {
             style={{ color: 'white' }}
             onClick={() =>
               router.push(
-                `${ROUTE_PATH.SWAP}?from_token=${DEFAULT_BASE_TOKEN}&to_token=${toToken.address}`,
+                `${ROUTE_PATH.SWAP}?from_token=${WBTC_ADDRESS}&to_token=${toToken.address}`,
               )
             }
           >
