@@ -661,22 +661,55 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     }
   };
 
-  const getRouteText = () => {
-    let res = `(`;
-
-    if(swapRoutes?.length > 1) {
-      res += baseToken?.symbol;
-      res += ' > WBTC > ';
-      res += quoteToken?.symbol;
-    } else {
-      res += baseToken?.symbol;
-      res += ' > ';
-      res += quoteToken?.symbol;
-    }
-
-    res += `)`;
-
-    return res;
+  const renderRoutePath = () => {
+    return (
+      <Flex direction={"column"} alignItems={"flex-start"} fontSize={"xs"}>
+        <Text>Auto Router</Text>
+        <Flex justifyContent={"space-between"} w={"100%"}>
+          <img
+            // width={25}
+            // height={25}
+            src={
+              baseToken?.thumbnail ||
+              'https://cdn.trustless.computer/upload/1683530065704444020-1683530065-default-coin.svg'
+            }
+            alt={baseToken?.thumbnail || 'default-icon'}
+            className={'avatar'}
+          />
+          <Flex flex={1} alignItems={"center"}>
+            <Box className={"dot-line"}></Box>
+          </Flex>
+          {
+            swapRoutes?.length > 1 && (
+              <>
+                <img
+                  // width={25}
+                  // height={25}
+                  src={
+                    'https://cdn.trustless.computer/upload/1683638149328694935-1683638149-wbtc.png'
+                  }
+                  alt={'wbtc-icon'}
+                  className={'avatar'}
+                />
+                <Flex flex={1} alignItems={"center"}>
+                  <Box className={"dot-line"}></Box>
+                </Flex>
+              </>
+            )
+          }
+          <img
+            // width={25}
+            // height={25}
+            src={
+              quoteToken?.thumbnail ||
+              'https://cdn.trustless.computer/upload/1683530065704444020-1683530065-default-coin.svg'
+            }
+            alt={quoteToken?.thumbnail || 'default-icon'}
+            className={'avatar'}
+          />
+        </Flex>
+      </Flex>
+    )
   }
 
   return (
@@ -799,8 +832,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             <Text fontSize={'xs'} fontWeight={'medium'} color={'#23262F'}>
               1 {quoteToken?.symbol} =&nbsp;
               {formatCurrency(exchangeRate.toString(), baseToken?.decimal || 18)}
-              &nbsp;{baseToken?.symbol}&nbsp;
-              {getRouteText()}
+              &nbsp;{baseToken?.symbol}
             </Text>
           }
         />
@@ -812,6 +844,11 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           </Text>
         }
       />
+      {baseToken && quoteToken && values?.baseAmount && Number(exchangeRate) > 0 && (
+        <>
+          {renderRoutePath()}
+        </>
+      )}
       {isAuthenticated && isLoadedAssets && new BigNumber(juiceBalance || 0).lte(0) && (
         <Text fontSize="md" color="brand.warning.400" textAlign={'left'}>
           Your TC balance is insufficient. You can receive free TC on our faucet site{' '}
