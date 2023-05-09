@@ -1,9 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import IconSVG from '@/components/IconSVG';
-import { CDN_URL, TC_WEB_URL } from '@/configs';
+import { CDN_URL, TC_EXPLORER, TC_WEB_URL } from '@/configs';
 // import { ROUTE_PATH } from '@/constants/route-path';
 import { AssetsContext } from '@/contexts/assets-context';
 import { getIsAuthenticatedSelector, getUserSelector } from '@/state/user/selector';
-import { formatBTCPrice, formatEthPriceFloor } from '@/utils/format';
+import { formatBTCPrice } from '@/utils/format';
 import { useWeb3React } from '@web3-react/core';
 import copy from 'copy-to-clipboard';
 // import { useRouter } from 'next/router';
@@ -12,10 +13,10 @@ import Text from '@/components/Text';
 import { SupportedChainId } from '@/constants/chains';
 import { TRUSTLESS_BRIDGE, TRUSTLESS_FAUCET } from '@/constants/common';
 import { WalletContext } from '@/contexts/wallet-context';
-import { compareString, formatLongAddress } from '@/utils';
+import { compareString, formatCurrency, formatLongAddress } from '@/utils';
 import { showError } from '@/utils/toast';
 import { useRouter } from 'next/router';
-import { useContext, useMemo, useRef, useState } from 'react';
+import { useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { OverlayTrigger } from 'react-bootstrap';
 import { toast } from 'react-hot-toast';
 import Jazzicon, { jsNumberForAddress } from 'react-jazzicon';
@@ -23,15 +24,22 @@ import { useSelector } from 'react-redux';
 import { isScreenDarkMode } from '..';
 import { ConnectWalletButton, WalletBalance } from '../Header.styled';
 import { WalletPopover } from './Wallet.styled';
+import { GrMoney } from 'react-icons/gr';
+import useBalanceERC20Token from '@/hooks/contract-operations/token/useBalanceERC20Token';
+import { TM_ADDRESS } from '@/configs';
+import web3 from 'web3';
 
 const WalletHeader = () => {
   const router = useRouter();
-  const { account, chainId } = useWeb3React();
+  const { account, chainId, isActive } = useWeb3React();
   const user = useSelector(getUserSelector);
   const { onDisconnect, onConnect, requestBtcAddress } = useContext(WalletContext);
 
   const isAuthenticated = useSelector(getIsAuthenticatedSelector);
   const { btcBalance, juiceBalance } = useContext(AssetsContext);
+
+  const { call: getBalanceErc20 } = useBalanceERC20Token();
+  const [balanceTM, setBalanceTM] = useState('0');
 
   const isTokenPage = useMemo(() => {
     return isScreenDarkMode();
@@ -53,6 +61,23 @@ const WalletHeader = () => {
     } finally {
       setIsConnecting(false);
     }
+  };
+
+  useEffect(() => {
+    getBalanceTM();
+  }, [user?.walletAddress, isActive]);
+
+  const getBalanceTM = async () => {
+    if (!user?.walletAddress || !isActive) {
+      return;
+    }
+
+    try {
+      const response: any = await getBalanceErc20({
+        erc20TokenAddress: TM_ADDRESS,
+      });
+      setBalanceTM(response);
+    } catch (error) {}
   };
 
   const [show, setShow] = useState(false);
@@ -147,6 +172,20 @@ const WalletHeader = () => {
           <IconSVG src={`/wrapbtc.svg`} maxWidth="20" color="black" type="fill" />
           <Text size="medium">Wrap BTC</Text>
         </div>
+        {user?.walletAddress && (
+          <div
+            className="wallet-link"
+            onClick={() =>
+              window.open(
+                `${TC_EXPLORER}/address/${user?.walletAddress}/tokens#address-tabs`,
+              )
+            }
+          >
+            <GrMoney />
+            <Text size="medium">{formatCurrency(balanceTM, 5)} TM</Text>
+          </div>
+        )}
+
         <div className="divider"></div>
         <div className="wallet-disconnect" onClick={onDisconnect}>
           <IconSVG
@@ -188,7 +227,7 @@ const WalletHeader = () => {
                   <div className="balance">
                     <p>{formatBTCPrice(btcBalance)} BTC</p>
                     <span className="divider"></span>
-                    <p>{formatEthPriceFloor(juiceBalance)} TC</p>
+                    <p>{formatCurrency(web3.utils.fromWei(juiceBalance), 5)} TC</p>
                   </div>
                   <div className="avatar">
                     <Jazzicon diameter={32} seed={jsNumberForAddress(account)} />

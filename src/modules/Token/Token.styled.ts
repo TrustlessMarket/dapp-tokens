@@ -1,15 +1,15 @@
 import BodyContainer from '@/components/Swap/bodyContainer';
 import { colors } from '@/theme/colors';
 import px2rem from '@/utils/px2rem';
-import { Flex } from '@chakra-ui/react';
+import { Box, Flex } from '@chakra-ui/react';
 import styled from 'styled-components';
 
 export const StyledTokenDetailContainer = styled(BodyContainer)`
   /* max-width: 1366px; */
   margin: 0 auto;
-  border-left: 1px solid #353945;
-  border-right: 1px solid #353945;
-  border-bottom: 1px solid #353945;
+  border-left: 1px solid ${colors.darkBorderColor};
+  border-right: 1px solid ${colors.darkBorderColor};
+  border-bottom: 1px solid ${colors.darkBorderColor};
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -46,6 +46,49 @@ export const StyledTokenDetailContainer = styled(BodyContainer)`
     width: 40px;
     height: 40px;
     border-radius: 100%;
+  }
+
+  .tab-container {
+    border-top: 1px solid ${colors.darkBorderColor};
+    max-height: 300px;
+    .chakra-tabs,
+    .chakra-tabs__tab-panels,
+    .chakra-tabs__tab-panel,
+    .chakra-tabs__tab-panel > div,
+    .chakra-table__container,
+    .chakra-table {
+      max-height: inherit;
+    }
+    .chakra-tabs,
+    .chakra-table__container {
+      height: 100%;
+    }
+    .chakra-table__container {
+      overflow: auto;
+    }
+    .chakra-tabs__tab-panels {
+      height: calc(100% - 53px);
+    }
+    .chakra-tabs__tab-panel {
+      padding: 10px;
+      padding-bottom: 0px;
+      height: 100%;
+      > div {
+        height: 100%;
+      }
+    }
+    .chakra-table {
+      thead {
+        td {
+          color: ${colors.white500};
+        }
+      }
+      tbody {
+        td {
+          color: ${colors.white};
+        }
+      }
+    }
   }
 `;
 
@@ -145,3 +188,5 @@ export const StyledTokenLeftInfo = styled(Flex)`
     }
   }
 `;
+
+export const StyledTokenTrading = styled(Box)``;

@@ -3,7 +3,17 @@
 import FiledButton from '@/components/Swap/button/filedButton';
 import { ROUTE_PATH } from '@/constants/route-path';
 import { camelCaseKeys } from '@/utils';
-import { Box, Flex, Spinner, Text } from '@chakra-ui/react';
+import {
+  Box,
+  Flex,
+  Spinner,
+  Tab,
+  TabList,
+  TabPanel,
+  TabPanels,
+  Tabs,
+  Text,
+} from '@chakra-ui/react';
 import BigNumber from 'bignumber.js';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
@@ -118,12 +128,23 @@ const TokenDetail = () => {
             <TokenChart chartData={chartData} />
           </Box>
           <Box
-            style={{
-              borderTop: `1px solid ${colors.darkBorderColor}`,
-            }}
+            className="tab-container"
+            // style={{
+            //   borderTop: `1px solid ${colors.darkBorderColor}`,
+            //   maxHeight: '300px',
+            // }}
             flex={1}
           >
-            <TokenHistory data={data} />
+            <Tabs>
+              <TabList>
+                <Tab>Trade History</Tab>
+              </TabList>
+              <TabPanels>
+                <TabPanel>
+                  <TokenHistory data={data} />
+                </TabPanel>
+              </TabPanels>
+            </Tabs>
           </Box>
         </Flex>
       </Flex>

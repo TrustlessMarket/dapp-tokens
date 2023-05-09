@@ -84,7 +84,7 @@ const TokenPoolDetail = ({ paired }: { paired: any }) => {
   };
 
   return (
-    <AccordionItem isFocusable={true} className="accordion-container">
+    <AccordionItem mb={4} isFocusable={true} className="accordion-container">
       <Text>
         <AccordionButton>
           <Box as="span" flex="1" textAlign="left">
