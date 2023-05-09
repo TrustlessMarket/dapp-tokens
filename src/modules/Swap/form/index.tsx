@@ -465,6 +465,9 @@ export const MakeFormSwap = forwardRef((props, ref) => {
 
   const validateBaseAmount = useCallback(
     (_amount: any) => {
+      if (new BigNumber(_amount).lte(0)) {
+        return `Required`;
+      }
       if (new BigNumber(_amount).gt(baseBalance)) {
         return `Insufficient balance.`;
       }
