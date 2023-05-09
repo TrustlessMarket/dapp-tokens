@@ -508,7 +508,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     baseReserve: any;
     quoteReserve: any;
   }) => {
-    if (isNaN(Number(amount))) return;
+    if (!amount || isNaN(Number(amount))) return;
     const amountIn = new BigNumber(amount);
     const reserveIn = new BigNumber(baseReserve);
     const reserveOut = new BigNumber(quoteReserve);
@@ -538,7 +538,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     baseReserve: any;
     quoteReserve: any;
   }) => {
-    if (isNaN(Number(amount))) return;
+    if (!amount || isNaN(Number(amount))) return;
     const amountIn = new BigNumber(amount);
     const reserveIn = new BigNumber(quoteReserve);
     const reserveOut = new BigNumber(baseReserve);
