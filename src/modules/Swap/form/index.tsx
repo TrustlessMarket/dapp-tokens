@@ -53,7 +53,7 @@ import tokensMocks from '@/dataMock/tokens.json';
 import routesMocks from '@/dataMock/routes.json';
 
 const LIMIT_PAGE = 50;
-const FEE = 3;
+const FEE = 2;
 export const WBTC_ADDRESS = isProduction() ? '0xfB83c18569fB43f1ABCbae09Baf7090bFFc8CBBD' : '0x435bdab1bcB2fcf80e5cF47dba209E28c340c3Bf';
 export const DEV_ADDRESS = '0xdd2863416081D0C10E57AaB4B3C5197183be4B34';
 
@@ -313,7 +313,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
 
         setSwapRoutes(response);
       } else {
-        setSwapRoutes( camelCaseKeys(routesMocks));
+        setSwapRoutes(camelCaseKeys(routesMocks));
       }
     } catch (error) {
       console.log('error', error);
