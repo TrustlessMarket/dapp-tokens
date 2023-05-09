@@ -32,7 +32,7 @@ const SocialToken: React.FC<SocialTokenProps> = ({ socials }) => {
           onClick={() => window.open(socials?.discord, '_blank')}
           className="item-social"
         >
-          <FaDiscord style={{ color: colors.white }} />
+          <FaDiscord fontSize={'20px'} style={{ color: colors.white }} />
         </Flex>
       )}
       {socials?.telegram && (
@@ -40,7 +40,7 @@ const SocialToken: React.FC<SocialTokenProps> = ({ socials }) => {
           onClick={() => window.open(socials?.telegram, '_blank')}
           className="item-social"
         >
-          <FaTelegram style={{ color: colors.white }} />
+          <FaTelegram fontSize={'20px'} style={{ color: colors.white }} />
         </Flex>
       )}
       {socials?.medium && (
@@ -48,7 +48,7 @@ const SocialToken: React.FC<SocialTokenProps> = ({ socials }) => {
           onClick={() => window.open(socials?.medium, '_blank')}
           className="item-social"
         >
-          <FaMedium style={{ color: colors.white }} />
+          <FaMedium fontSize={'20px'} style={{ color: colors.white }} />
         </Flex>
       )}
       {socials?.website && (
@@ -64,7 +64,7 @@ const SocialToken: React.FC<SocialTokenProps> = ({ socials }) => {
           onClick={() => window.open(socials?.instagram, '_blank')}
           className="item-social"
         >
-          <FaInstagram style={{ color: colors.white }} />
+          <FaInstagram fontSize={'20px'} style={{ color: colors.white }} />
         </Flex>
       )}
     </StyledSocial>
