@@ -73,11 +73,16 @@ const FilterModal: React.FC<FilterModalProps> = ({
             <Flex gap={4} alignItems={'flex-start'} justifyContent={'space-between'}>
               {/*<AvatarNFT tradingPair={row?.extra_item} />*/}
               <Box>
-                <Text fontSize={'md'} fontWeight={'normal'}>
-                  {row?.symbol}
-                </Text>
-                <Text fontSize={'sm'} fontWeight={'medium'}>
-                  {shortCryptoAddress(row?.address)}
+                <Flex gap={1}>
+                  <Text fontSize={'md'} fontWeight={'600'}>
+                    {row?.name}
+                  </Text>
+                  <Text fontSize={'md'} fontWeight={'normal'} color={'rgba(0, 0, 0, 0.7)'}>
+                    {row?.symbol}
+                  </Text>
+                </Flex>
+                <Text fontSize={'xs'} fontWeight={'normal'} color={'rgba(0, 0, 0, 0.7)'}>
+                  {row?.network}
                 </Text>
               </Box>
               <TokenBalance token={row.extra_item} />
@@ -214,6 +219,7 @@ export const parseData = (data: any[]): DataRow[] => {
       symbol: d?.symbol,
       img: d?.thumbnail,
       address: d?.address,
+      network: d?.network,
       extra_item: d,
     };
   });
@@ -333,7 +339,10 @@ const FilterButton: React.FC<FilterButtonProps> = ({
         width={'100%'}
       >
         {selectedToken ? (
-          <Text>{selectedToken?.symbol}</Text>
+          <Flex direction={"column"} alignItems={"flex-start"}>
+            <Text fontWeight={"600"} fontSize={"md"}>{selectedToken?.symbol}</Text>
+            <Text fontSize={"xs"}>{selectedToken?.network}</Text>
+          </Flex>
         ) : (
           <Text>Select token</Text>
         )}

@@ -35,4 +35,5 @@ export interface IToken {
   index?: number;
   balance?: string;
   decimal?: number | string;
+  network?: string;
 }
