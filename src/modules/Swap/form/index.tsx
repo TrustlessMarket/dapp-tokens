@@ -554,6 +554,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       const rate = new BigNumber(amount).div(quoteAmount).decimalPlaces(tokenIn?.decimal || 18);
       setExchangeRate(rate.toString());
 
+      // console.log('handleBaseAmountChange', quoteAmount.toString());
       change('quoteAmount', quoteAmount.toFixed());
     }
   };
