@@ -302,15 +302,19 @@ export const MakeFormSwap = forwardRef((props, ref) => {
 
   const getSwapRoutesInfo = async (from_token: string, to_token: string) => {
     try {
-      const params = {
-        // from_token: '0xF545f1D9AAA0c648B545948E6C972688f3064148',
-        // to_token: '0xe8B88A8188cD7025AaE3719c0F845915E1f3B5c0',
-        from_token: from_token,
-        to_token: to_token,
-      };
-      const response = await getSwapRoutes(params);
+      if(isProduction()) {
+        const params = {
+          // from_token: '0xF545f1D9AAA0c648B545948E6C972688f3064148',
+          // to_token: '0xe8B88A8188cD7025AaE3719c0F845915E1f3B5c0',
+          from_token: from_token,
+          to_token: to_token,
+        };
+        const response = await getSwapRoutes(params);
 
-      setSwapRoutes(isProduction() ? response : camelCaseKeys(routesMocks));
+        setSwapRoutes(response);
+      } else {
+        setSwapRoutes( camelCaseKeys(routesMocks));
+      }
     } catch (error) {
       console.log('error', error);
     }
