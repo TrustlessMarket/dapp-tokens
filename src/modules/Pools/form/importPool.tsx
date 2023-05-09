@@ -1,36 +1,29 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import FiledButton from '@/components/Swap/button/filedButton';
 import FilterButton from '@/components/Swap/filterToken';
-import { ROUTE_PATH } from '@/constants/route-path';
-import { IToken } from '@/interfaces/token';
-import { Box, Flex, Stat, StatHelpText, StatNumber, Text } from '@chakra-ui/react';
-import { useRouter } from 'next/router';
-import { useEffect, useRef, useState } from 'react';
-import { Form, useForm } from 'react-final-form';
+import {ROUTE_PATH} from '@/constants/route-path';
+import {IToken} from '@/interfaces/token';
+import {Box, Flex, Stat, StatHelpText, StatNumber, Text} from '@chakra-ui/react';
+import {useRouter} from 'next/router';
+import {useEffect, useRef, useState} from 'react';
+import {Form, useForm} from 'react-final-form';
 import styles from './styles.module.scss';
-import { getTokens } from '@/services/token-explorer';
-import { isDevelop } from '@/utils/commons';
-import {
-  camelCaseKeys,
-  compareString,
-  formatCurrency,
-  sortAddressPair,
-} from '@/utils';
+import {getTokens} from '@/services/token-explorer';
+import {isDevelop} from '@/utils/commons';
+import {camelCaseKeys, compareString, formatCurrency, sortAddressPair,} from '@/utils';
 import pairsMock from '@/dataMock/tokens.json';
-import { IMPORTED_TOKENS, LIQUID_PAIRS } from '@/constants/storage-key';
-import useInfoERC20Token, {
-  IInfoERC20TokenResponse,
-} from '@/hooks/contract-operations/token/useInfoERC20Token';
-import { BsPlus } from 'react-icons/bs';
+import {IMPORTED_TOKENS, LIQUID_PAIRS} from '@/constants/storage-key';
+import useInfoERC20Token, {IInfoERC20TokenResponse,} from '@/hooks/contract-operations/token/useInfoERC20Token';
+import {BsPlus} from 'react-icons/bs';
 import cx from 'classnames';
 import useGetPair from '@/hooks/contract-operations/swap/useGetPair';
 import useGetReserves from '@/hooks/contract-operations/swap/useReserves';
 import useSupplyERC20Liquid from '@/hooks/contract-operations/token/useSupplyERC20Liquid';
-import { NULL_ADDRESS } from '@/constants/url';
+import {NULL_ADDRESS} from '@/constants/url';
 import BigNumber from 'bignumber.js';
-import { formatAmountBigNumber } from '@/utils/format';
-import { ScreenType } from '..';
-import { toast } from 'react-hot-toast';
+import {ScreenType} from '..';
+import {toast} from 'react-hot-toast';
+import Web3 from "web3";
 
 interface MakeFormImportPoolProps {
   onSubmit: (_: any) => void;
@@ -280,8 +273,8 @@ const MakeFormImportPool: React.FC<MakeFormImportPoolProps> = ({
               {!isPaired
                 ? '-'
                 : formatCurrency(
-                    new BigNumber(formatAmountBigNumber(perPrice._reserve1))
-                      .dividedBy(formatAmountBigNumber(perPrice._reserve0))
+                    new BigNumber(Web3.utils.fromWei(perPrice._reserve1, 'ether'))
+                      .dividedBy(Web3.utils.fromWei(perPrice._reserve0, 'ether'))
                       .toString(),
                   )}
             </StatNumber>

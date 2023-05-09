@@ -14,7 +14,7 @@ export const ERROR_CODE = {
 };
 
 export const ERRORS = {
-  ACTION_REJECTED: 'user rejected transaction',
+  ACTION_REJECTED: 'User rejected transaction',
   COMMON: `There's something wrong! Try again!`,
   NOT_ENOUGH_GAS: `Not enough ETH to pay gas fee.`,
   TOO_MANY_REQUEST: `Too many requests. Please wait some minutes, refresh and try again.`,
@@ -34,7 +34,7 @@ export const getMessageError = (e: any, option: any) => {
     e?.code === ERROR_CODE.ACTION_REJECTED ||
     (e?.code === 4001 && e?.message?.includes('denied message'))
   ) {
-    title = '';
+    title = ERRORS.ACTION_REJECTED;
   } else if (
     e?.code?.toString() === ERROR_CODE.ERROR_MINUS_32603 &&
     e?.data?.code?.toString() === '-32000'

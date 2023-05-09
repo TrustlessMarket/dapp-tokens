@@ -9,7 +9,7 @@ import { LIQUID_PAIRS } from '@/constants/storage-key';
 import useGetReserves from '@/hooks/contract-operations/swap/useReserves';
 import useSupplyERC20Liquid from '@/hooks/contract-operations/token/useSupplyERC20Liquid';
 import { IToken } from '@/interfaces/token';
-import { camelCaseKeys, formatCurrency } from '@/utils';
+import { camelCaseKeys, compareString, formatCurrency } from '@/utils';
 import { formatAmountBigNumber } from '@/utils/format';
 import px2rem from '@/utils/px2rem';
 import {
@@ -42,6 +42,10 @@ export enum ScreenType {
   add_pool = 'add-pool',
   remove = 'remove',
 }
+
+export const DEFAULT_FROM_TOKEN_ADDRESS =
+  '0xfB83c18569fB43f1ABCbae09Baf7090bFFc8CBBD';
+export const DEFAULT_TO_TOKEN_ADDRESS = '0xdd2863416081D0C10E57AaB4B3C5197183be4B34';
 
 const ItemLiquid = ({ pool }: { pool: IToken }) => {
   const { call: getSupply } = useSupplyERC20Liquid();
@@ -148,6 +152,14 @@ const LiquidityContainer = () => {
 
   useEffect(() => {
     renderScreen();
+    if (
+      (!routerQuery?.f || !routerQuery?.t) &&
+      compareString(routerQuery.type, ScreenType.add_liquid)
+    ) {
+      router.replace(
+        `${ROUTE_PATH.POOLS}?type=${ScreenType.add_liquid}&f=${DEFAULT_FROM_TOKEN_ADDRESS}&t=${DEFAULT_TO_TOKEN_ADDRESS}`,
+      );
+    }
   }, [routerQuery]);
 
   const renderTitle = () => {
@@ -201,14 +213,8 @@ const LiquidityContainer = () => {
                   <Box>
                     <CreateMarket
                       type={routerQuery.type}
-                      fromAddress={
-                        routerQuery?.f ||
-                        '0xfB83c18569fB43f1ABCbae09Baf7090bFFc8CBBD'
-                      }
-                      toAddress={
-                        routerQuery?.t ||
-                        '0x749D093C43BcC544172B95Df4c4e8E4B8d984133'
-                      }
+                      fromAddress={routerQuery?.f || DEFAULT_FROM_TOKEN_ADDRESS}
+                      toAddress={routerQuery?.t || DEFAULT_TO_TOKEN_ADDRESS}
                     />
                   </Box>
                 </Box>
@@ -302,7 +308,7 @@ const LiquidityContainer = () => {
                   fontSize={`${px2rem(16)} !important`}
                   onClick={() =>
                     router.replace(
-                      `${ROUTE_PATH.POOLS}?type=${ScreenType.add_liquid}`,
+                      `${ROUTE_PATH.POOLS}?type=${ScreenType.add_liquid}&f=${DEFAULT_FROM_TOKEN_ADDRESS}&t=${DEFAULT_TO_TOKEN_ADDRESS}`,
                     )
                   }
                 >

@@ -142,7 +142,7 @@ const TokenDetail = () => {
                 opacity: 0.7,
               }}
               onClick={() =>
-                router.replace(
+                router.push(
                   `${ROUTE_PATH.UPDATE_TOKEN_INFO}?address=${data?.address}`,
                 )
               }
