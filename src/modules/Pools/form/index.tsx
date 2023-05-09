@@ -89,6 +89,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { default as Web3, default as web3 } from 'web3';
 import { ScreenType } from '..';
 import styles from './styles.module.scss';
+import { getPairAPR } from '@/services/pool';
 
 const LIMIT_PAGE = 50;
 
@@ -133,7 +134,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     totalSupply: '0',
   });
 
-  const [sliderPercent, setSliderPercent] = useState(0);
+  const [apr, setApr] = useState(0);
 
   const { juiceBalance, isLoadedAssets } = useContext(AssetsContext);
   const isAuthenticated = useSelector(getIsAuthenticatedSelector);
@@ -257,17 +258,21 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       });
 
       if (!compareString(response, NULL_ADDRESS)) {
-        const [resReserve, resSupply, resAmountApprovePool] = await Promise.all([
-          getReserves({
-            address: response,
-          }),
-          getSupply({
-            liquidAddress: response,
-          }),
-          checkTokenApprove({
-            address: response,
-          }),
-        ]);
+        const [resReserve, resSupply, resAmountApprovePool, resAPR] =
+          await Promise.all([
+            getReserves({
+              address: response,
+            }),
+            getSupply({
+              liquidAddress: response,
+            }),
+            checkTokenApprove({
+              address: response,
+            }),
+            getPairAPR({
+              pair: response,
+            }),
+          ]);
 
         if (Number(resSupply.totalSupply) !== 0) {
           setPercentPool(
@@ -292,6 +297,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         }
 
         setPerPrice(resReserve);
+        setApr(resAPR);
       } else {
         setPerPrice({
           _reserve0: '-',
@@ -583,21 +589,22 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     }
     const [token1, token2] = sortAddressPair(baseToken, quoteToken);
 
-    console.log('perPrice', perPrice);
+    const pair1 = new BigNumber(Web3.utils.fromWei(perPrice._reserve0))
+      .dividedBy(Web3.utils.fromWei(perPrice._reserve1))
+      .toFixed(18);
+
+    const pair2 = new BigNumber(Web3.utils.fromWei(perPrice._reserve1, 'ether'))
+      .dividedBy(Web3.utils.fromWei(perPrice._reserve0, 'ether'))
+      .toFixed(18);
 
     return (
-      <Flex className="price-pool-content">
+      <Flex gap={4} flexWrap={'wrap'} className="price-pool-content">
         <Box>
           <Stat>
             <StatNumber>
               {!isPaired
                 ? '-'
-                : formatCurrency(
-                    new BigNumber(Web3.utils.fromWei(perPrice._reserve0))
-                      .dividedBy(Web3.utils.fromWei(perPrice._reserve1))
-                      .toString(),
-                    10,
-                  )}
+                : formatCurrency(pair1, Number(pair1) > 1000000 ? 4 : 18)}
             </StatNumber>
             <StatHelpText>{`${token1.symbol} per ${token2.symbol}`}</StatHelpText>
           </Stat>
@@ -607,12 +614,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             <StatNumber>
               {!isPaired
                 ? '-'
-                : formatCurrency(
-                    new BigNumber(Web3.utils.fromWei(perPrice._reserve1, 'ether'))
-                      .dividedBy(Web3.utils.fromWei(perPrice._reserve0, 'ether'))
-                      .toString(),
-                    10,
-                  )}
+                : formatCurrency(pair2, Number(pair2) > 1000000 ? 4 : 18)}
             </StatNumber>
             <StatHelpText>{`${token2.symbol} per ${token1.symbol}`}</StatHelpText>
           </Stat>
@@ -861,6 +863,12 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           />
         </Flex>
       </InputWrapper>
+
+      {isPaired && Boolean(apr) && (
+        <Text className="label-apr">
+          APR: <b>{formatCurrency(apr, 2)}%</b>
+        </Text>
+      )}
 
       {baseToken && quoteToken && (
         <Box className={styles.pricePoolContainer}>
