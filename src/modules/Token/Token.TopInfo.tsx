@@ -2,16 +2,18 @@ import SocialToken from '@/components/Social';
 import FiledButton from '@/components/Swap/button/filedButton';
 import { IToken } from '@/interfaces/token';
 import { colors } from '@/theme/colors';
-import { formatCurrency } from '@/utils';
+import { compareString, formatCurrency } from '@/utils';
 import { Box, Flex, Text } from '@chakra-ui/react';
 import { AiOutlineCaretDown, AiOutlineCaretUp } from 'react-icons/ai';
 import { StyledTokenTopInfo } from './Token.styled';
 import { useRouter } from 'next/router';
 import { ROUTE_PATH } from '@/constants/route-path';
 import { DEFAULT_BASE_TOKEN } from '../Swap/form';
+import { useWeb3React } from '@web3-react/core';
 
 const TokenTopInfo = ({ data }: { data: IToken }) => {
   const router = useRouter();
+  const { account } = useWeb3React();
 
   return (
     <StyledTokenTopInfo>
@@ -98,7 +100,12 @@ const TokenTopInfo = ({ data }: { data: IToken }) => {
           <Text className="desc">SOCIALS</Text>
           <SocialToken socials={data.social} />
         </Flex>
-        <Flex className="block-info" ml={10}>
+        <Flex
+          className="block-info"
+          ml={10}
+          gap={4}
+          style={{ flexDirection: 'row' }}
+        >
           <FiledButton
             btnSize="h"
             style={{
@@ -113,6 +120,25 @@ const TokenTopInfo = ({ data }: { data: IToken }) => {
           >
             Buy Now
           </FiledButton>
+          {compareString(data.owner, account) && (
+            <FiledButton
+              btnSize="h"
+              variant={'outline'}
+              style={{
+                color: colors.white,
+                fontSize: '16px',
+                backgroundColor: 'transparent',
+                borderColor: 'white',
+              }}
+              onClick={() =>
+                router.push(
+                  `${ROUTE_PATH.UPDATE_TOKEN_INFO}?address=${data?.address}`,
+                )
+              }
+            >
+              Update token info
+            </FiledButton>
+          )}
         </Flex>
       </Flex>
     </StyledTokenTopInfo>
