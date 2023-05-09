@@ -1,17 +1,32 @@
 import React from 'react';
 import { StyledHorizontalItem } from './HorizontalItem.styled';
-import Text from '../Text';
+import { Text } from '@chakra-ui/react';
 
 interface HorizontalItemProps {
   value?: string;
+  valueTitle?: string;
   label?: string;
+  className?: string;
 }
 
-const HorizontalItem: React.FC<HorizontalItemProps> = ({ value, label }) => {
+const HorizontalItem: React.FC<HorizontalItemProps> = ({
+  className,
+  value,
+  label,
+  valueTitle,
+}) => {
   return (
-    <StyledHorizontalItem>
+    <StyledHorizontalItem className={className}>
       <Text className="label">{label}</Text>
-      <Text className="value">{value}</Text>
+      <Text
+        className="value"
+        title={valueTitle}
+        _hover={{
+          cursor: valueTitle ? 'help' : 'auto',
+        }}
+      >
+        {value}
+      </Text>
     </StyledHorizontalItem>
   );
 };

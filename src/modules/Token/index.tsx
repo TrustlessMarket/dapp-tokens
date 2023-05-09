@@ -3,7 +3,7 @@
 import FiledButton from '@/components/Swap/button/filedButton';
 import { ROUTE_PATH } from '@/constants/route-path';
 import { camelCaseKeys } from '@/utils';
-import { Spinner, Text } from '@chakra-ui/react';
+import { Box, Flex, Spinner, Text } from '@chakra-ui/react';
 import BigNumber from 'bignumber.js';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
@@ -15,6 +15,9 @@ import { useWeb3React } from '@web3-react/core';
 import { sortBy } from 'lodash';
 import dynamic from 'next/dynamic';
 import TokenTopInfo from './Token.TopInfo';
+import TokenLeftInfo from './Token.LeftInfo';
+import TokenHistory from './Token.History';
+import { colors } from '@/theme/colors';
 
 const TokenChart = dynamic(() => import('./Token.Chart'), {
   ssr: false,
@@ -59,13 +62,13 @@ const TokenDetail = () => {
       const _data = sortedData?.map((v: any) => {
         return {
           // ...v,
-          value: new BigNumber(v.closeUsd).toNumber(),
+          value: new BigNumber(v.btcPrice).toNumber(),
           time: Number(v.timestamp),
-          open: new BigNumber(v.openUsd).toNumber(),
-          high: new BigNumber(v.highUsd).toNumber(),
-          close: new BigNumber(v.closeUsd).toNumber(),
-          low: new BigNumber(v.lowUsd).toNumber(),
-          // volume: Number(v.volume || 0),
+          open: new BigNumber(v.open).toNumber(),
+          high: new BigNumber(v.high).toNumber(),
+          close: new BigNumber(v.close).toNumber(),
+          low: new BigNumber(v.low).toNumber(),
+          volume: new BigNumber(v.totalVolume).toNumber(),
         };
       });
 
@@ -80,8 +83,8 @@ const TokenDetail = () => {
 
   if (loading) {
     return (
-      <StyledTokenDetailContainer>
-        <Spinner />
+      <StyledTokenDetailContainer className="loading-container">
+        <Spinner size={'lg'} color="#FFFFFF" style={{ margin: '0 auto' }} />
       </StyledTokenDetailContainer>
     );
   }
@@ -102,6 +105,28 @@ const TokenDetail = () => {
   return (
     <StyledTokenDetailContainer>
       <TokenTopInfo data={data} />
+      <Flex width={'100%'} height={'100%'} flex={1}>
+        <TokenLeftInfo data={data} />
+        <Flex
+          flexDirection={'column'}
+          flex={4}
+          style={{
+            borderLeft: `1px solid ${colors.darkBorderColor}`,
+          }}
+        >
+          <Box flex={2}>
+            <TokenChart chartData={chartData} />
+          </Box>
+          <Box
+            style={{
+              borderTop: `1px solid ${colors.darkBorderColor}`,
+            }}
+            flex={1}
+          >
+            <TokenHistory data={data} />
+          </Box>
+        </Flex>
+      </Flex>
     </StyledTokenDetailContainer>
   );
 };

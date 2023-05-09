@@ -3,7 +3,6 @@ import { AssetsContext } from '@/contexts/assets-context';
 import { TransactionEventType } from '@/enums/transaction';
 import { ContractOperationHook, DAppType } from '@/interfaces/contract-operation';
 import { getContract, getProviderProvider } from '@/utils';
-import { formatEthPriceFloor } from '@/utils/format';
 import { useWeb3React } from '@web3-react/core';
 import { useCallback, useContext } from 'react';
 
@@ -49,8 +48,8 @@ const useSupplyERC20Liquid: ContractOperationHook<
         }
 
         return {
-          totalSupply: formatEthPriceFloor(totalSupply.toString()),
-          ownerSupply: formatEthPriceFloor(ownerSupply.toString()),
+          totalSupply: totalSupply.toString(),
+          ownerSupply: ownerSupply.toString(),
         };
       }
       return {

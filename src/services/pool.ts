@@ -16,3 +16,11 @@ export const getPairAPR = async (params: { pair: string }) => {
     error: 'Fail to scan tx',
   });
 };
+
+export const getListPaired = async (params: { from_token: string }) => {
+  const qs = '?' + queryString.stringify(params);
+  return swrFetcher(`${API_URL}${API_PATH}/pair/list${qs}`, {
+    method: 'GET',
+    error: 'Fail to scan tx',
+  });
+};
