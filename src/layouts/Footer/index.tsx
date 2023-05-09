@@ -1,9 +1,8 @@
 import px2rem from '@/utils/px2rem';
+import { useRouter } from 'next/router';
+import { useMemo } from 'react';
 import styled, { DefaultTheme } from 'styled-components';
-import {compareString} from "@/utils";
-import {ROUTE_PATH} from "@/constants/route-path";
-import {useRouter} from "next/router";
-import {useMemo} from "react";
+import { isScreenDarkMode } from '../Header';
 // import IcDiscord from '@/assets/icons/ic_discord.svg';
 // import IcTwitter from '@/assets/icons/ic_twitter.svg';
 // import IcGithub from '@/assets/icons/ic_github.svg';
@@ -17,7 +16,7 @@ const Wrapper = styled.div`
   flex-wrap: wrap;
   gap: ${px2rem(32)};
   @media screen and (max-width: ${({ theme }: { theme: DefaultTheme }) =>
-  theme.breakpoint.md}) {
+      theme.breakpoint.md}) {
     gap: ${px2rem(16)};
   }
 
@@ -30,7 +29,7 @@ const Wrapper = styled.div`
     //color: ${({ theme }: { theme: DefaultTheme }) => theme.text1};
 
     @media screen and (max-width: ${({ theme }: { theme: DefaultTheme }) =>
-  theme.breakpoint.md}) {
+        theme.breakpoint.md}) {
       order: 2;
       padding-bottom: ${px2rem(32)};
     }
@@ -43,7 +42,7 @@ const Wrapper = styled.div`
     gap: ${px2rem(32)};
 
     @media screen and (max-width: ${({ theme }: { theme: DefaultTheme }) =>
-  theme.breakpoint.md}) {
+        theme.breakpoint.md}) {
       order: 1;
     }
 
@@ -92,12 +91,14 @@ const Wrapper = styled.div`
 const Footer = ({ height }: { height: number }) => {
   const router = useRouter();
   const isTokensPage = useMemo(() => {
-    return compareString(router?.pathname, ROUTE_PATH.HOME) || compareString(router?.pathname, ROUTE_PATH.MARKETS);
+    return isScreenDarkMode();
   }, [router?.pathname]);
 
   return (
     <Wrapper style={{ height }}>
-      <p className="text" style={{color: isTokensPage ? 'white' : 'black'}}>Open-source software. Made with ❤️ on Bitcoin.</p>
+      <p className="text" style={{ color: isTokensPage ? 'white' : 'black' }}>
+        Open-source software. Made with ❤️ on Bitcoin.
+      </p>
       {/* <div className="footer-right">
         <StyledLink active={false} href={ROUTE_PATH.FAUCET}>
           Faucet

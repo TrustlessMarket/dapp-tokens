@@ -9,8 +9,8 @@ import copy from 'copy-to-clipboard';
 // import { useRouter } from 'next/router';
 import SelectedNetwork from '@/components/Swap/selectNetwork';
 import Text from '@/components/Text';
+import { SupportedChainId } from '@/constants/chains';
 import { TRUSTLESS_BRIDGE, TRUSTLESS_FAUCET } from '@/constants/common';
-import { ROUTE_PATH } from '@/constants/route-path';
 import { WalletContext } from '@/contexts/wallet-context';
 import { compareString, formatLongAddress } from '@/utils';
 import { showError } from '@/utils/toast';
@@ -20,9 +20,9 @@ import { OverlayTrigger } from 'react-bootstrap';
 import { toast } from 'react-hot-toast';
 import Jazzicon, { jsNumberForAddress } from 'react-jazzicon';
 import { useSelector } from 'react-redux';
+import { isScreenDarkMode } from '..';
 import { ConnectWalletButton, WalletBalance } from '../Header.styled';
 import { WalletPopover } from './Wallet.styled';
-import {SupportedChainId} from "@/constants/chains";
 
 const WalletHeader = () => {
   const router = useRouter();
@@ -34,14 +34,7 @@ const WalletHeader = () => {
   const { btcBalance, juiceBalance } = useContext(AssetsContext);
 
   const isTokenPage = useMemo(() => {
-    if (
-      compareString(router?.pathname, ROUTE_PATH.HOME) ||
-      compareString(router?.pathname, ROUTE_PATH.MARKETS)
-    ) {
-      return true;
-    }
-
-    return false;
+    return isScreenDarkMode();
   }, [router?.pathname]);
 
   const [isConnecting, setIsConnecting] = useState(false);
@@ -174,38 +167,36 @@ const WalletHeader = () => {
     <>
       {account && isAuthenticated ? (
         <>
-          {
-            !compareString(chainId, SupportedChainId.TRUSTLESS_COMPUTER) ? (
-              <SelectedNetwork />
-            ) : (
-              <OverlayTrigger
-                trigger={['hover', 'focus']}
-                placement="bottom"
-                overlay={walletPopover}
-                container={ref}
-                show={show}
+          {!compareString(chainId, SupportedChainId.TRUSTLESS_COMPUTER) ? (
+            <SelectedNetwork />
+          ) : (
+            <OverlayTrigger
+              trigger={['hover', 'focus']}
+              placement="bottom"
+              overlay={walletPopover}
+              container={ref}
+              show={show}
+            >
+              <div
+                className="wallet"
+                // onClick={() => window.open(TC_WEB_URL)}
+                ref={ref}
+                onMouseEnter={handleOnMouseEnter}
+                onMouseLeave={handleOnMouseLeave}
               >
-                <div
-                  className="wallet"
-                  // onClick={() => window.open(TC_WEB_URL)}
-                  ref={ref}
-                  onMouseEnter={handleOnMouseEnter}
-                  onMouseLeave={handleOnMouseLeave}
-                >
-                  <WalletBalance className={isTokenPage ? 'isTokenPage' : ''}>
-                    <div className="balance">
-                      <p>{formatBTCPrice(btcBalance)} BTC</p>
-                      <span className="divider"></span>
-                      <p>{formatEthPriceFloor(juiceBalance)} TC</p>
-                    </div>
-                    <div className="avatar">
-                      <Jazzicon diameter={32} seed={jsNumberForAddress(account)} />
-                    </div>
-                  </WalletBalance>
-                </div>
-              </OverlayTrigger>
-            )
-          }
+                <WalletBalance className={isTokenPage ? 'isTokenPage' : ''}>
+                  <div className="balance">
+                    <p>{formatBTCPrice(btcBalance)} BTC</p>
+                    <span className="divider"></span>
+                    <p>{formatEthPriceFloor(juiceBalance)} TC</p>
+                  </div>
+                  <div className="avatar">
+                    <Jazzicon diameter={32} seed={jsNumberForAddress(account)} />
+                  </div>
+                </WalletBalance>
+              </div>
+            </OverlayTrigger>
+          )}
         </>
       ) : (
         <ConnectWalletButton className="hideMobile" onClick={handleConnectWallet}>
