@@ -577,16 +577,17 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     if (!amount || isNaN(Number(amount)) || !tokenIn?.address || !tokenOut?.address) return;
 
     if(!compareString(tokenIn?.address, WBTC_ADDRESS) && !compareString(tokenOut?.address, WBTC_ADDRESS)) {
-      const listPair = [{baseToken: {address: WBTC_ADDRESS}, quoteToken: tokenOut}, {baseToken: tokenIn, quoteToken: {address: WBTC_ADDRESS}},];
+      const listPair = [{baseToken: tokenOut, quoteToken: {address: WBTC_ADDRESS}}, {baseToken: {address: WBTC_ADDRESS}, quoteToken: tokenIn}];
+      const reserveInfosRevert = [...reserveInfos].reverse();
 
       let _amount = amount;
       for (let index = 0; index < listPair?.length; index++) {
         const { baseToken, quoteToken } = listPair[index];
         const [token0, token1] = sortAddressPair(baseToken, quoteToken);
 
-        const { _reserveIn, _reserveOut } = compareString(token0?.address, quoteToken?.address) ?
-          {_reserveIn: reserveInfos[index]?._reserve0, _reserveOut: reserveInfos[index]?._reserve1} :
-          {_reserveIn: reserveInfos[index]?._reserve1, _reserveOut: reserveInfos[index]?._reserve0};
+        const { _reserveIn, _reserveOut } = compareString(token0?.address, baseToken?.address) ?
+          {_reserveIn: reserveInfosRevert[index]?._reserve0, _reserveOut: reserveInfosRevert[index]?._reserve1} :
+          {_reserveIn: reserveInfosRevert[index]?._reserve1, _reserveOut: reserveInfosRevert[index]?._reserve0};
 
         const amountIn = new BigNumber(_amount);
         const reserveIn = new BigNumber(_reserveIn);
