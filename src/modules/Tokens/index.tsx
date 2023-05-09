@@ -200,9 +200,14 @@ const Tokens = () => {
               className={'avatar'}
             />
             <Flex direction={'column'}>
-              <Box>{token?.name}</Box>
+              <Flex gap={1} alignItems={"flex-end"}>
+                <Box fontWeight={"500"}>{token?.name}</Box>
+                <Box fontSize={px2rem(16)} color={'rgba(255, 255, 255, 0.7)'}>
+                  {token?.symbol}
+                </Box>
+              </Flex>
               <Box fontSize={px2rem(14)} color={'#FFFFFFAA'}>
-                ({token?.symbol})
+                {token?.network || 'TC'}
               </Box>
             </Flex>
           </Flex>
