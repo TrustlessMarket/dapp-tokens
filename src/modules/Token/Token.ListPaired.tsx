@@ -185,7 +185,7 @@ const TokenListPaired = ({ data }: { data: IToken }) => {
         </Box>
       );
     }
-    if (list.length === 0) {
+    if (list?.length === 0) {
       return (
         <Box>
           <Empty isTable={false} />
@@ -205,8 +205,8 @@ const TokenListPaired = ({ data }: { data: IToken }) => {
       );
     }
     return (
-      <Accordion defaultIndex={list.map((_, i) => i)} allowMultiple>
-        {list.map((l: any) => (
+      <Accordion defaultIndex={list?.map((_, i) => i)} allowMultiple>
+        {list?.map((l: any) => (
           <TokenPoolDetail paired={l} key={l.id} />
         ))}
       </Accordion>
