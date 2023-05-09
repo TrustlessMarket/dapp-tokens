@@ -3,7 +3,7 @@ import { IPagingParams } from '@/interfaces/api/query';
 import { IToken } from '@/interfaces/token';
 import { swrFetcher } from '@/utils/swr';
 import queryString from 'query-string';
-import {isProduction} from "@/utils/commons";
+import { isProduction } from '@/utils/commons';
 
 const API_PATH = '/swap';
 
@@ -51,7 +51,7 @@ interface LogErrorToServerPayload {
 }
 
 export const logErrorToServer = async (payload: LogErrorToServerPayload) => {
-  if(isProduction()) {
+  if (isProduction()) {
     return swrFetcher(`${API_URL}${API_PATH}/fe-log`, {
       method: 'POST',
       data: payload,
@@ -68,6 +68,18 @@ export const getChartToken = async (
 ) => {
   const qs = '?' + queryString.stringify(params);
   return swrFetcher(`${API_URL}${API_PATH}/token/price${qs}`, {
+    method: 'GET',
+    error: 'Fail to scan tx',
+  });
+};
+
+export const getTradeHistory = async (
+  params: {
+    contract_address: string;
+  } & IPagingParams,
+) => {
+  const qs = '?' + queryString.stringify(params);
+  return swrFetcher(`${API_URL}${API_PATH}/pair/trade-histories${qs}`, {
     method: 'GET',
     error: 'Fail to scan tx',
   });

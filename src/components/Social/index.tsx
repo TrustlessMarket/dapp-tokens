@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Flex, Text } from '@chakra-ui/react';
+import { colors } from '@/theme/colors';
+import { Flex } from '@chakra-ui/react';
 import React from 'react';
 import {
   FaDiscord,
@@ -7,8 +8,8 @@ import {
   FaMedium,
   FaTelegram,
   FaTwitter,
-  FaUser,
 } from 'react-icons/fa';
+import { RiEarthFill } from 'react-icons/ri';
 import { StyledSocial } from './Social.styled';
 
 interface SocialTokenProps {
@@ -17,14 +18,13 @@ interface SocialTokenProps {
 
 const SocialToken: React.FC<SocialTokenProps> = ({ socials }) => {
   return (
-    <StyledSocial columns={3} gap={2}>
+    <StyledSocial columns={3} gap={4}>
       {socials?.twitter && (
         <Flex
           onClick={() => window.open(socials?.twitter, '_blank')}
           className="item-social"
         >
-          <FaTwitter fontSize={'16px'} />
-          <Text>Twitter</Text>
+          <FaTwitter fontSize={'20px'} style={{ color: colors.white }} />
         </Flex>
       )}
       {socials?.discord && (
@@ -32,8 +32,7 @@ const SocialToken: React.FC<SocialTokenProps> = ({ socials }) => {
           onClick={() => window.open(socials?.discord, '_blank')}
           className="item-social"
         >
-          <FaDiscord />
-          <Text>Discord</Text>
+          <FaDiscord style={{ color: colors.white }} />
         </Flex>
       )}
       {socials?.telegram && (
@@ -41,8 +40,7 @@ const SocialToken: React.FC<SocialTokenProps> = ({ socials }) => {
           onClick={() => window.open(socials?.telegram, '_blank')}
           className="item-social"
         >
-          <FaTelegram />
-          <Text>Telegram</Text>
+          <FaTelegram style={{ color: colors.white }} />
         </Flex>
       )}
       {socials?.medium && (
@@ -50,8 +48,7 @@ const SocialToken: React.FC<SocialTokenProps> = ({ socials }) => {
           onClick={() => window.open(socials?.medium, '_blank')}
           className="item-social"
         >
-          <FaMedium />
-          <Text>Medium</Text>
+          <FaMedium style={{ color: colors.white }} />
         </Flex>
       )}
       {socials?.website && (
@@ -59,8 +56,7 @@ const SocialToken: React.FC<SocialTokenProps> = ({ socials }) => {
           onClick={() => window.open(socials?.website, '_blank')}
           className="item-social"
         >
-          <FaUser fontSize={'14px'} />
-          <Text>Website</Text>
+          <RiEarthFill fontSize={'20px'} style={{ color: colors.white }} />
         </Flex>
       )}
       {socials?.instagram && (
@@ -68,8 +64,7 @@ const SocialToken: React.FC<SocialTokenProps> = ({ socials }) => {
           onClick={() => window.open(socials?.instagram, '_blank')}
           className="item-social"
         >
-          <FaInstagram />
-          <Text>Instagram</Text>
+          <FaInstagram style={{ color: colors.white }} />
         </Flex>
       )}
     </StyledSocial>

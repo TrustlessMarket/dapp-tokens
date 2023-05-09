@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 import { CDN_URL } from '@/configs';
 import { ROUTE_PATH } from '@/constants/route-path';
 import { gsap } from 'gsap';
@@ -14,6 +15,15 @@ import { Flex, Text, Link as LinkText } from '@chakra-ui/react';
 import { defaultProvider } from '@/contexts/screen-context';
 import { compareString } from '@/utils';
 
+export const isScreenDarkMode = () => {
+  const router = useRouter();
+  return (
+    compareString(router?.pathname, ROUTE_PATH.HOME) ||
+    compareString(router?.pathname, ROUTE_PATH.MARKETS) ||
+    compareString(router?.pathname, ROUTE_PATH.TOKEN)
+  );
+};
+
 const Header = () => {
   const refMenu = useRef<HTMLDivElement | null>(null);
   const [isOpenMenu, setIsOpenMenu] = useState<boolean>(false);
@@ -22,10 +32,7 @@ const Header = () => {
   const { headerHeight, showGetStarted } = useScreenLayout();
 
   const isTokensPage = useMemo(() => {
-    return (
-      compareString(router?.pathname, ROUTE_PATH.HOME) ||
-      compareString(router?.pathname, ROUTE_PATH.MARKETS)
-    );
+    return isScreenDarkMode();
   }, [router?.pathname]);
 
   useEffect(() => {

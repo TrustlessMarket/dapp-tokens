@@ -12,7 +12,6 @@ import SelectedNetwork from '@/components/Swap/selectNetwork';
 import Text from '@/components/Text';
 import { SupportedChainId } from '@/constants/chains';
 import { TRUSTLESS_BRIDGE, TRUSTLESS_FAUCET } from '@/constants/common';
-import { ROUTE_PATH } from '@/constants/route-path';
 import { WalletContext } from '@/contexts/wallet-context';
 import { compareString, formatCurrency, formatLongAddress } from '@/utils';
 import { showError } from '@/utils/toast';
@@ -22,12 +21,13 @@ import { OverlayTrigger } from 'react-bootstrap';
 import { toast } from 'react-hot-toast';
 import Jazzicon, { jsNumberForAddress } from 'react-jazzicon';
 import { useSelector } from 'react-redux';
-import web3 from 'web3';
+import { isScreenDarkMode } from '..';
 import { ConnectWalletButton, WalletBalance } from '../Header.styled';
 import { WalletPopover } from './Wallet.styled';
 import { GrMoney } from 'react-icons/gr';
 import useBalanceERC20Token from '@/hooks/contract-operations/token/useBalanceERC20Token';
 import { TM_ADDRESS } from '@/configs';
+import web3 from 'web3';
 
 const WalletHeader = () => {
   const router = useRouter();
@@ -42,14 +42,7 @@ const WalletHeader = () => {
   const [balanceTM, setBalanceTM] = useState('0');
 
   const isTokenPage = useMemo(() => {
-    if (
-      compareString(router?.pathname, ROUTE_PATH.HOME) ||
-      compareString(router?.pathname, ROUTE_PATH.MARKETS)
-    ) {
-      return true;
-    }
-
-    return false;
+    return isScreenDarkMode();
   }, [router?.pathname]);
 
   const [isConnecting, setIsConnecting] = useState(false);

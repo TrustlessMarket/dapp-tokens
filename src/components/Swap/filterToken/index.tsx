@@ -1,20 +1,20 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import FiledButton from '@/components/Swap/button/filedButton';
 import FieldText from '@/components/Swap/form/fieldText';
-import ListTable, {ColumnProp} from '@/components/Swap/listTable';
-import useDebounce from '@/hooks/useDebounce';
-import {closeModal, openModal} from '@/state/modal';
-import {Box, Flex, Text} from '@chakra-ui/react';
-import {useWindowSize} from '@trustless-computer/dapp-core';
-import {clone} from 'lodash';
-import React, {useEffect, useMemo, useState} from 'react';
-import {Field, Form, useFormState} from 'react-final-form';
-import {useDispatch} from 'react-redux';
-import styles from './styles.module.scss';
-import {AiOutlineCaretDown} from 'react-icons/ai';
+import ListTable, { ColumnProp } from '@/components/Swap/listTable';
 import TokenBalance from '@/components/Swap/tokenBalance';
+import { COMMON_TOKEN } from '@/constants/common';
+import useDebounce from '@/hooks/useDebounce';
+import { closeModal, openModal } from '@/state/modal';
+import { Box, Flex, Text } from '@chakra-ui/react';
+import { useWindowSize } from '@trustless-computer/dapp-core';
 import cx from 'classnames';
-import {COMMON_TOKEN} from '@/constants/common';
+import { clone } from 'lodash';
+import React, { useEffect, useMemo, useState } from 'react';
+import { Field, Form, useFormState } from 'react-final-form';
+import { AiOutlineCaretDown } from 'react-icons/ai';
+import { useDispatch } from 'react-redux';
+import styles from './styles.module.scss';
 
 interface FilterButtonProps {
   data: any[];
@@ -76,11 +76,19 @@ const FilterModal: React.FC<FilterModalProps> = ({
                   <Text fontSize={'md'} fontWeight={'600'}>
                     {row?.name}
                   </Text>
-                  <Text fontSize={'md'} fontWeight={'normal'} color={'rgba(0, 0, 0, 0.7)'}>
+                  <Text
+                    fontSize={'md'}
+                    fontWeight={'normal'}
+                    color={'rgba(0, 0, 0, 0.7)'}
+                  >
                     {row?.symbol}
                   </Text>
                 </Flex>
-                <Text fontSize={'xs'} fontWeight={'normal'} color={'rgba(0, 0, 0, 0.7)'}>
+                <Text
+                  fontSize={'xs'}
+                  fontWeight={'normal'}
+                  color={'rgba(0, 0, 0, 0.7)'}
+                >
                   {row?.network}
                 </Text>
               </Box>
@@ -339,9 +347,11 @@ const FilterButton: React.FC<FilterButtonProps> = ({
         width={'100%'}
       >
         {selectedToken ? (
-          <Flex direction={"column"} alignItems={"flex-start"}>
-            <Text fontWeight={"600"} fontSize={"md"}>{selectedToken?.symbol}</Text>
-            <Text fontSize={"xs"}>{selectedToken?.network}</Text>
+          <Flex direction={'column'} alignItems={'flex-start'}>
+            <Text fontWeight={'600'} fontSize={'md'}>
+              {selectedToken?.symbol}
+            </Text>
+            <Text fontSize={'xs'}>{selectedToken?.network}</Text>
           </Flex>
         ) : (
           <Text>Select token</Text>
