@@ -1,21 +1,20 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import FiledButton from '@/components/Swap/button/filedButton';
 import FieldText from '@/components/Swap/form/fieldText';
-import ListTable, { ColumnProp } from '@/components/Swap/listTable';
+import ListTable, {ColumnProp} from '@/components/Swap/listTable';
 import useDebounce from '@/hooks/useDebounce';
-import { closeModal, openModal } from '@/state/modal';
-import { shortCryptoAddress } from '@/utils';
-import { Box, Flex, Text } from '@chakra-ui/react';
-import { useWindowSize } from '@trustless-computer/dapp-core';
-import { clone } from 'lodash';
-import React, { useEffect, useMemo, useState } from 'react';
-import { Field, Form, useFormState } from 'react-final-form';
-import { useDispatch } from 'react-redux';
+import {closeModal, openModal} from '@/state/modal';
+import {Box, Flex, Text} from '@chakra-ui/react';
+import {useWindowSize} from '@trustless-computer/dapp-core';
+import {clone} from 'lodash';
+import React, {useEffect, useMemo, useState} from 'react';
+import {Field, Form, useFormState} from 'react-final-form';
+import {useDispatch} from 'react-redux';
 import styles from './styles.module.scss';
-import { AiOutlineCaretDown } from 'react-icons/ai';
+import {AiOutlineCaretDown} from 'react-icons/ai';
 import TokenBalance from '@/components/Swap/tokenBalance';
 import cx from 'classnames';
-import { COMMON_TOKEN } from '@/constants/common';
+import {COMMON_TOKEN} from '@/constants/common';
 
 interface FilterButtonProps {
   data: any[];
@@ -207,6 +206,7 @@ export interface DataRow {
   img: string;
   symbol?: string;
   address: string;
+  network?: string;
   extra_item?: any;
 }
 
