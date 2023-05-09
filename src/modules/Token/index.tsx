@@ -24,7 +24,7 @@ import { getChartToken, getTokenRp } from '@/services/swap';
 import { useWeb3React } from '@web3-react/core';
 import { sortBy } from 'lodash';
 import dynamic from 'next/dynamic';
-import { DEFAULT_BASE_TOKEN } from '../Swap/form';
+import { WBTC_ADDRESS } from '../Swap/form';
 
 const TokenChart = dynamic(() => import('./Token.Chart'), {
   ssr: false,
@@ -124,7 +124,7 @@ const TokenDetail = () => {
             style={{}}
             onClick={() =>
               router.replace(
-                `${ROUTE_PATH.SWAP}?from_token=${DEFAULT_BASE_TOKEN}&to_token=${data?.address}`,
+                `${ROUTE_PATH.SWAP}?from_token=${WBTC_ADDRESS}&to_token=${data?.address}`,
               )
             }
           >

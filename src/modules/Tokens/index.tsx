@@ -18,7 +18,7 @@ import { StyledTokens, UploadFileContainer } from './Tokens.styled';
 // import { ROUTE_PATH } from '@/constants/route-path';
 import { ROUTE_PATH } from '@/constants/route-path';
 import { WalletContext } from '@/contexts/wallet-context';
-import { DEFAULT_BASE_TOKEN } from '@/modules/Swap/form';
+import { WBTC_ADDRESS } from '@/modules/Swap/form';
 import { showError } from '@/utils/toast';
 import { Box, Flex } from '@chakra-ui/react';
 import BigNumber from 'bignumber.js';
@@ -269,7 +269,7 @@ const Tokens = () => {
       config: {
         onClick: () => {
           router.push(
-            `${ROUTE_PATH.SWAP}?from_token=${DEFAULT_BASE_TOKEN}&to_token=${token?.address}`,
+            `${ROUTE_PATH.SWAP}?from_token=${WBTC_ADDRESS}&to_token=${token?.address}`,
           );
         },
         style: {
