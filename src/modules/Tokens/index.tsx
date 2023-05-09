@@ -255,7 +255,7 @@ const Tokens = () => {
           ) || 'n/a',
         usdVol: `$${formatCurrency(marketCap, 2)}`,
         usdVolume: <span>${formatCurrency(tokenVolume, 2)}</span>,
-        supply: formatCurrency(totalSupply.toString()),
+        supply: formatCurrency(totalSupply.toString(), 0),
         chart: <TokenChartLast7Day token={token} />,
         action: (
           <Flex justifyContent={'center'}>

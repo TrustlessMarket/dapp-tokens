@@ -551,7 +551,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     const baseAmount = getAmountOut(amountIn, reserveIn, reserveOut);
 
     // console.log('handleQuoteAmountChange', baseAmount.toString());
-    change('baseAmount', baseAmount.toString());
+    change('baseAmount', baseAmount.toFixed());
   };
 
   const handleChangeMaxBaseAmount = () => {
