@@ -908,8 +908,12 @@ const TradingForm = () => {
         .decimalPlaces(quoteToken?.decimal || 18)
         .toString();
 
+      const addresses = !compareString(baseToken?.address, WBTC_ADDRESS) && !compareString(quoteToken?.address, WBTC_ADDRESS) ?
+        [baseToken.address, WBTC_ADDRESS, quoteToken.address] :
+        [baseToken.address, quoteToken.address];
+
       const data = {
-        addresses: [baseToken.address, quoteToken.address],
+        addresses: addresses,
         address: user?.walletAddress,
         amount: baseAmount,
         amountOutMin: amountOutMin,
