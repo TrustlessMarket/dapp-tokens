@@ -104,7 +104,11 @@ const TokenTopInfo = ({ data }: { data: IToken }) => {
           className="block-info"
           ml={10}
           gap={4}
-          style={{ flexDirection: 'row' }}
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
         >
           <FiledButton
             btnSize="h"
