@@ -533,8 +533,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       const rate = new BigNumber(amount).div(_amount).decimalPlaces(tokenIn?.decimal || 18);
 
       setExchangeRate(rate.toString());
-      change('quoteAmount', _amount.toString());
-
+      change('quoteAmount', _amount.toFixed());
     } else {
       const [token0, token1] = sortAddressPair(tokenIn, tokenOut);
 
@@ -554,7 +553,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       const rate = new BigNumber(amount).div(quoteAmount).decimalPlaces(tokenIn?.decimal || 18);
       setExchangeRate(rate.toString());
 
-      // console.log('handleBaseAmountChange', quoteAmount.toString());
+      // console.log('handleBaseAmountChange', quoteAmount.toFixed());
       change('quoteAmount', quoteAmount.toFixed());
     }
   };
@@ -607,8 +606,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       const rate = new BigNumber(_amount).div(amount).decimalPlaces(tokenIn?.decimal || 18);
 
       setExchangeRate(rate.toString());
-      change('baseAmount', _amount.toString());
-
+      change('baseAmount', _amount.toFixed());
     } else {
       const [token0, token1] = sortAddressPair(tokenIn, tokenOut);
 
@@ -628,7 +626,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       const rate = new BigNumber(baseAmount).div(amount).decimalPlaces(tokenIn?.decimal || 18);
       setExchangeRate(rate.toString());
 
-      // console.log('handleQuoteAmountChange', baseAmount.toString());
+      // console.log('handleQuoteAmountChange', baseAmount.toFixed());
       change('baseAmount', baseAmount.toFixed());
     }
   };
