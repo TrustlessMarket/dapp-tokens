@@ -43,4 +43,23 @@ export const UploadFileContainer = styled.div`
     flex: 1;
     width: 100%;
   }
+
+  .avatar {
+    object-fit: cover;
+    width: ${px2rem(30)};
+    height: ${px2rem(30)};
+    border-radius: 50%;
+  }
+  .dot-line {
+    border: none;
+    border-top: 2px dotted rgba(0, 0, 0, 0.2);
+    height: 2px;
+    width: 100%;
+  }
+  .router-text {
+    background-image: linear-gradient(90deg, rgb(33, 114, 229) 0%, rgb(84, 229, 33) 163.16%);
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    -webkit-background-clip:text;
+  }
 `;

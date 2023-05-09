@@ -1,7 +1,7 @@
 /* eslint-disable react/no-children-prop */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { transactionType } from '@/components/Swap/alertInfoProcessing/types';
+import {transactionType} from '@/components/Swap/alertInfoProcessing/types';
 import FiledButton from '@/components/Swap/button/filedButton';
 import FilterButton from '@/components/Swap/filterToken';
 import FieldAmount from '@/components/Swap/form/fieldAmount';
@@ -9,68 +9,58 @@ import InputWrapper from '@/components/Swap/form/inputWrapper';
 import HorizontalItem from '@/components/Swap/horizontalItem';
 import TokenBalance from '@/components/Swap/tokenBalance';
 import WrapperConnected from '@/components/WrapperConnected';
-import { UNIV2_ROUTER_ADDRESS } from '@/configs';
-import {
-  BRIDGE_SUPPORT_TOKEN,
-  TRUSTLESS_BRIDGE,
-  TRUSTLESS_FAUCET,
-} from '@/constants/common';
-import { toastError } from '@/constants/error';
-import { NULL_ADDRESS } from '@/constants/url';
-import { AssetsContext } from '@/contexts/assets-context';
-import useGetPair from '@/hooks/contract-operations/swap/useGetPair';
+import {UNIV2_ROUTER_ADDRESS} from '@/configs';
+import {BRIDGE_SUPPORT_TOKEN, TRUSTLESS_BRIDGE, TRUSTLESS_FAUCET,} from '@/constants/common';
+import {toastError} from '@/constants/error';
+import {AssetsContext} from '@/contexts/assets-context';
 import useGetReserves from '@/hooks/contract-operations/swap/useReserves';
-import useSwapERC20Token, {
-  ISwapERC20TokenParams,
-} from '@/hooks/contract-operations/swap/useSwapERC20Token';
+import useSwapERC20Token, {ISwapERC20TokenParams,} from '@/hooks/contract-operations/swap/useSwapERC20Token';
 import useApproveERC20Token from '@/hooks/contract-operations/token/useApproveERC20Token';
 import useBalanceERC20Token from '@/hooks/contract-operations/token/useBalanceERC20Token';
 import useIsApproveERC20Token from '@/hooks/contract-operations/token/useIsApproveERC20Token';
 import useContractOperation from '@/hooks/contract-operations/useContractOperation';
-import { IToken } from '@/interfaces/token';
-import { TransactionStatus } from '@/interfaces/walletTransaction';
-import { getSwapTokens, logErrorToServer } from '@/services/swap';
-import { useAppDispatch, useAppSelector } from '@/state/hooks';
+import {IToken} from '@/interfaces/token';
+import {TransactionStatus} from '@/interfaces/walletTransaction';
+import {getSwapRoutes, getSwapTokens, logErrorToServer} from '@/services/swap';
+import {useAppDispatch, useAppSelector} from '@/state/hooks';
 import {
   requestReload,
   requestReloadRealtime,
   selectPnftExchange,
   updateCurrentTransaction,
 } from '@/state/pnftExchange';
-import { getIsAuthenticatedSelector, getUserSelector } from '@/state/user/selector';
-import { camelCaseKeys, compareString, formatCurrency } from '@/utils';
-import { isDevelop, isProduction } from '@/utils/commons';
-import { composeValidators, required } from '@/utils/formValidate';
+import {getIsAuthenticatedSelector, getUserSelector} from '@/state/user/selector';
+import {camelCaseKeys, compareString, formatCurrency, sortAddressPair} from '@/utils';
+import {isDevelop, isProduction} from '@/utils/commons';
+import {composeValidators, required} from '@/utils/formValidate';
 import px2rem from '@/utils/px2rem';
-import { showError } from '@/utils/toast';
-import { Box, Flex, Text, forwardRef } from '@chakra-ui/react';
-import { useWeb3React } from '@web3-react/core';
+import {showError} from '@/utils/toast';
+import {Box, Flex, forwardRef, Text} from '@chakra-ui/react';
+import {useWeb3React} from '@web3-react/core';
 import BigNumber from 'bignumber.js';
 import cx from 'classnames';
 import debounce from 'lodash/debounce';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
-import {
-  useCallback,
-  useContext,
-  useEffect,
-  useImperativeHandle,
-  useRef,
-  useState,
-} from 'react';
-import { Field, Form, useForm, useFormState } from 'react-final-form';
+import {useRouter} from 'next/router';
+import {useCallback, useContext, useEffect, useImperativeHandle, useRef, useState,} from 'react';
+import {Field, Form, useForm, useFormState} from 'react-final-form';
 import toast from 'react-hot-toast';
-import { RiArrowUpDownLine } from 'react-icons/ri';
-import { useDispatch, useSelector } from 'react-redux';
+import {RiArrowUpDownLine} from 'react-icons/ri';
+import {useDispatch, useSelector} from 'react-redux';
 import Web3 from 'web3';
 import styles from './styles.module.scss';
 import tokensMocks from '@/dataMock/tokens.json';
-import tokensMocks2 from '@/dataMock/tokens3.json';
+import routesMocks from '@/dataMock/routes.json';
 
 const LIMIT_PAGE = 50;
-const FEE = 3;
-export const DEFAULT_BASE_TOKEN = '0xfB83c18569fB43f1ABCbae09Baf7090bFFc8CBBD';
-export const DEFAULT_QUOTE_TOKEN = '0xdd2863416081D0C10E57AaB4B3C5197183be4B34';
+const FEE = 2;
+export const WBTC_ADDRESS = isProduction() ? '0xfB83c18569fB43f1ABCbae09Baf7090bFFc8CBBD' : '0x435bdab1bcB2fcf80e5cF47dba209E28c340c3Bf';
+export const DEV_ADDRESS = '0xdd2863416081D0C10E57AaB4B3C5197183be4B34';
+
+interface IPairReserve {
+  reserve0: string;
+  reserve1: string;
+}
 
 export const MakeFormSwap = forwardRef((props, ref) => {
   const { onSubmit, submitting } = props;
@@ -85,13 +75,10 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const { call: isApproved } = useIsApproveERC20Token();
   const { call: tokenBalance } = useBalanceERC20Token();
   const { call: approveToken } = useApproveERC20Token();
-  const { call: getPair } = useGetPair();
   const { call: getReserves } = useGetReserves();
   const [baseBalance, setBaseBalance] = useState<any>('0');
   const [quoteBalance, setQuoteBalance] = useState<any>('0');
-  const [pairAddress, setPairAddress] = useState<string>(NULL_ADDRESS);
-  const [baseReserve, setBaseReserve] = useState('0');
-  const [quoteReserve, setQuoteReserve] = useState('0');
+  const [reserveInfos, setReserveInfos] = useState<any[]>([]);
   const { juiceBalance, isLoadedAssets } = useContext(AssetsContext);
   const isAuthenticated = useSelector(getIsAuthenticatedSelector);
   const dispatch = useDispatch();
@@ -99,9 +86,11 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const [isChangeBaseToken, setIsChangeBaseToken] = useState(false);
   const [isChangeQuoteToken, setIsChangeQuoteToken] = useState(false);
   const router = useRouter();
+  const [swapRoutes, setSwapRoutes] = useState<any[]>([]);
 
   const { account } = useWeb3React();
   const needReload = useAppSelector(selectPnftExchange).needReload;
+  const [exchangeRate, setExchangeRate] = useState('0');
 
   // console.log('isSwitching', isSwitching);
   // console.log('amountBaseTokenApproved', amountBaseTokenApproved);
@@ -164,22 +153,44 @@ export const MakeFormSwap = forwardRef((props, ref) => {
 
   useEffect(() => {
     if (baseToken?.address && quoteToken?.address) {
-      getPairAddress();
-    } else {
-      setPairAddress(NULL_ADDRESS);
+      getSwapRoutesInfo(baseToken?.address, quoteToken?.address);
     }
   }, [baseToken?.address, quoteToken?.address]);
 
   useEffect(() => {
     if (
-      pairAddress &&
-      baseToken &&
-      quoteToken &&
-      !compareString(pairAddress, NULL_ADDRESS)
+      baseToken && quoteToken &&
+      swapRoutes?.length > 0
     ) {
-      getReservesInfo();
+      getReserveInfos();
     }
-  }, [pairAddress, needReload]);
+  }, [JSON.stringify(swapRoutes), needReload]);
+
+  const getQuoteAmountOut = (
+    amountIn: BigNumber,
+    reserveIn: BigNumber,
+    reserveOut: BigNumber,
+  ): BigNumber => {
+    const amountInWithFee = amountIn.multipliedBy(1000 - FEE * 10);
+    const numerator = amountInWithFee.multipliedBy(reserveOut);
+    const denominator = reserveIn.multipliedBy(1000).plus(amountInWithFee);
+    const amountOut = numerator.div(denominator).decimalPlaces(18);
+
+    return amountOut;
+  };
+
+  const getBaseAmountOut = (
+    amountIn: BigNumber,
+    reserveIn: BigNumber,
+    reserveOut: BigNumber,
+  ): BigNumber => {
+    const amountInWithFee = amountIn.multipliedBy(1000 + FEE * 10);
+    const numerator = amountInWithFee.multipliedBy(reserveOut);
+    const denominator = reserveIn.multipliedBy(1000).plus(amountInWithFee);
+    const amountOut = numerator.div(denominator).decimalPlaces(18);
+
+    return amountOut;
+  };
 
   useEffect(() => {
     change('baseBalance', baseBalance);
@@ -204,8 +215,6 @@ export const MakeFormSwap = forwardRef((props, ref) => {
 
   const checkApproveQuoteToken = async (token: any) => {
     const [_isApprove] = await Promise.all([checkTokenApprove(token)]);
-    console.log('_isApprove', _isApprove);
-
     setAmountQuoteTokenApproved(_isApprove);
   };
 
@@ -229,7 +238,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       setQuoteTokensList(list);
 
       const token = list.find((t: any) =>
-        compareString(t.address, DEFAULT_BASE_TOKEN),
+        compareString(t.address, WBTC_ADDRESS),
       );
       if (token) {
         handleSelectBaseToken(token);
@@ -256,48 +265,34 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     }
   };
 
-  const getReservesInfo = async () => {
-    const { token0, token1 } =
-      baseToken.address.toLowerCase() < quoteToken.address.toLowerCase()
-        ? { token0: baseToken, token1: quoteToken }
-        : { token0: quoteToken, token1: baseToken };
+  const getReserveInfos = async () => {
     try {
-      const response = await getReserves({
-        address: pairAddress,
-      });
-
-      const { _reserve0, _reserve1 } = response;
-      let _baseReserve = '';
-      let _quoteReserve = '';
-
-      if (compareString(token0?.address, baseToken?.address)) {
-        _baseReserve = Web3.utils.fromWei(_reserve0, 'ether');
-        _quoteReserve = Web3.utils.fromWei(_reserve1, 'ether');
-        // _baseReserve = formatEthPriceFloor(_reserve0);
-        // _quoteReserve = formatEthPriceFloor(_reserve1);
-      } else {
-        _quoteReserve = Web3.utils.fromWei(_reserve0, 'ether');
-        _baseReserve = Web3.utils.fromWei(_reserve1, 'ether');
-        // _quoteReserve = formatEthPriceFloor(_reserve0);
-        // _baseReserve = formatEthPriceFloor(_reserve1);
+      const reserves = [];
+      for (let index = 0; index < swapRoutes.length; index++) {
+        const swapRoute = swapRoutes[index];
+        const response = await getReserves({
+          address: swapRoute?.pair,
+        });
+        reserves.push(response);
       }
 
-      setBaseReserve(_baseReserve);
-      setQuoteReserve(_quoteReserve);
+      setReserveInfos(reserves);
 
       if (isChangeBaseToken) {
         setIsChangeBaseToken(false);
         onBaseAmountChange({
           amount: values?.baseAmount,
-          baseReserve: _baseReserve,
-          quoteReserve: _quoteReserve,
+          reserveInfos: reserves,
+          tokenIn: baseToken,
+          tokenOut: quoteToken,
         });
       } else if (isChangeQuoteToken) {
         setIsChangeQuoteToken(false);
         onBaseAmountChange({
           amount: values?.baseAmount,
-          baseReserve: _baseReserve,
-          quoteReserve: _quoteReserve,
+          reserveInfos: reserves,
+          tokenIn: baseToken,
+          tokenOut: quoteToken,
         });
       }
     } catch (error) {
@@ -305,21 +300,25 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     }
   };
 
-  const getPairAddress = async () => {
-    const { token0, token1 } =
-      baseToken.address.toLowerCase() < quoteToken.address.toLowerCase()
-        ? { token0: baseToken, token1: quoteToken }
-        : { token0: quoteToken, token1: baseToken };
+  const getSwapRoutesInfo = async (from_token: string, to_token: string) => {
     try {
-      const response = await getPair({
-        tokenA: token0,
-        tokenB: token1,
-      });
-      setPairAddress(response);
+      if(isProduction()) {
+        const params = {
+          // from_token: '0xF545f1D9AAA0c648B545948E6C972688f3064148',
+          // to_token: '0xe8B88A8188cD7025AaE3719c0F845915E1f3B5c0',
+          from_token: from_token,
+          to_token: to_token,
+        };
+        const response = await getSwapRoutes(params);
+
+        setSwapRoutes(response);
+      } else {
+        setSwapRoutes(camelCaseKeys(routesMocks));
+      }
     } catch (error) {
       console.log('error', error);
     }
-  };
+  }
 
   const checkTokenApprove = async (token: IToken) => {
     try {
@@ -395,7 +394,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           }
           if (!token) {
             token = _fromTokens.find((t: { address: unknown }) =>
-              compareString(t.address, DEFAULT_QUOTE_TOKEN),
+              compareString(t.address, DEV_ADDRESS),
             );
           }
           if (token) {
@@ -434,10 +433,16 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     setQuoteBalance(baseBalance);
     setAmountBaseTokenApproved(amountQuoteTokenApproved);
     setAmountQuoteTokenApproved(amountBaseTokenApproved);
-    setBaseReserve(quoteReserve);
-    setQuoteReserve(baseReserve);
 
     try {
+      if (baseToken?.address && quoteToken?.address) {
+        if(Number(exchangeRate)) {
+          setExchangeRate(new BigNumber(1).div(exchangeRate).toString());
+        }
+
+        getSwapRoutesInfo(quoteToken?.address, baseToken?.address);
+      }
+
       if (quoteToken) {
         const [_fromTokens] = await Promise.all([
           fetchFromTokens(quoteToken?.address),
@@ -481,77 +486,149 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     return undefined;
   }, [values.quoteAmount]);
 
-  const getAmountOut = (
-    amountIn: BigNumber,
-    reserveIn: BigNumber,
-    reserveOut: BigNumber,
-  ): BigNumber => {
-    const amountInWithFee = amountIn.multipliedBy(1000 - FEE * 10);
-    const numerator = amountInWithFee.multipliedBy(reserveOut);
-    const denominator = reserveIn.multipliedBy(1000).plus(amountInWithFee);
-    const amountOut = numerator.div(denominator).decimalPlaces(18);
-
-    return amountOut;
-  };
-
   const onChangeValueBaseAmount = (amount: any) => {
     onBaseAmountChange({
       amount,
-      baseReserve,
-      quoteReserve,
+      reserveInfos,
+      tokenIn: baseToken,
+      tokenOut: quoteToken,
     });
   };
 
   const handleBaseAmountChange = ({
     amount,
-    baseReserve,
-    quoteReserve,
+    reserveInfos,
+    tokenIn,
+    tokenOut,
   }: {
     amount: any;
-    baseReserve: any;
-    quoteReserve: any;
+    reserveInfos: any
+    tokenIn: any;
+    tokenOut: any;
   }) => {
-    if (!amount || isNaN(Number(amount))) return;
-    const amountIn = new BigNumber(amount);
-    const reserveIn = new BigNumber(baseReserve);
-    const reserveOut = new BigNumber(quoteReserve);
-    if (amountIn.lte(0) || reserveIn.lte(0) || reserveOut.lte(0)) {
-      return;
-    }
-    const quoteAmount = getAmountOut(amountIn, reserveIn, reserveOut);
+    if (!amount || isNaN(Number(amount)) || !tokenIn?.address || !tokenOut?.address) return;
 
-    // console.log('handleBaseAmountChange', quoteAmount.toString());
-    change('quoteAmount', quoteAmount.toFixed());
+    if(!compareString(tokenIn?.address, WBTC_ADDRESS) && !compareString(tokenOut?.address, WBTC_ADDRESS)) {
+      const listPair = [{baseToken: tokenIn, quoteToken: {address: WBTC_ADDRESS}}, {baseToken: {address: WBTC_ADDRESS}, quoteToken: tokenOut}];
+
+      let _amount = amount;
+      for (let index = 0; index < listPair?.length; index++) {
+        const { baseToken, quoteToken } = listPair[index];
+        const [token0, token1] = sortAddressPair(baseToken, quoteToken);
+
+        const { _reserveIn, _reserveOut } = compareString(token0?.address, baseToken?.address) ?
+          {_reserveIn: reserveInfos[index]?._reserve0, _reserveOut: reserveInfos[index]?._reserve1} :
+          {_reserveIn: reserveInfos[index]?._reserve1, _reserveOut: reserveInfos[index]?._reserve0};
+
+        const amountIn = new BigNumber(_amount);
+        const reserveIn = new BigNumber(_reserveIn);
+        const reserveOut = new BigNumber(_reserveOut);
+        if (amountIn.lte(0) || reserveIn.lte(0) || reserveOut.lte(0)) {
+          return;
+        }
+
+        _amount = getQuoteAmountOut(amountIn, reserveIn, reserveOut);
+      }
+
+      const rate = new BigNumber(amount).div(_amount).decimalPlaces(tokenIn?.decimal || 18);
+
+      setExchangeRate(rate.toString());
+      change('quoteAmount', _amount.toFixed());
+    } else {
+      const [token0, token1] = sortAddressPair(tokenIn, tokenOut);
+
+      const { _reserveIn, _reserveOut } = compareString(token0?.address, tokenIn?.address) ?
+        {_reserveIn: reserveInfos[0]?._reserve0, _reserveOut: reserveInfos[0]?._reserve1} :
+        {_reserveIn: reserveInfos[0]?._reserve1, _reserveOut: reserveInfos[0]?._reserve0};
+
+      const amountIn = new BigNumber(amount);
+      const reserveIn = new BigNumber(_reserveIn);
+      const reserveOut = new BigNumber(_reserveOut);
+      if (amountIn.lte(0) || reserveIn.lte(0) || reserveOut.lte(0)) {
+        return;
+      }
+
+      const quoteAmount = getQuoteAmountOut(amountIn, reserveIn, reserveOut);
+
+      const rate = new BigNumber(amount).div(quoteAmount).decimalPlaces(tokenIn?.decimal || 18);
+      setExchangeRate(rate.toString());
+
+      // console.log('handleBaseAmountChange', quoteAmount.toFixed());
+      change('quoteAmount', quoteAmount.toFixed());
+    }
   };
 
   const onChangeValueQuoteAmount = (amount: any) => {
     onQuoteAmountChange({
       amount,
-      baseReserve,
-      quoteReserve,
+      reserveInfos,
+      tokenIn: baseToken,
+      tokenOut: quoteToken,
     });
   };
 
   const handleQuoteAmountChange = ({
-    amount,
-    baseReserve,
-    quoteReserve,
+     amount,
+     reserveInfos,
+     tokenIn,
+     tokenOut,
   }: {
     amount: any;
-    baseReserve: any;
-    quoteReserve: any;
+    reserveInfos: any
+    tokenIn: any;
+    tokenOut: any;
   }) => {
-    if (!amount || isNaN(Number(amount))) return;
-    const amountIn = new BigNumber(amount);
-    const reserveIn = new BigNumber(quoteReserve);
-    const reserveOut = new BigNumber(baseReserve);
-    if (amountIn.lte(0) || reserveIn.lte(0) || reserveOut.lte(0)) {
-      return;
-    }
-    const baseAmount = getAmountOut(amountIn, reserveIn, reserveOut);
+    if (!amount || isNaN(Number(amount)) || !tokenIn?.address || !tokenOut?.address) return;
 
-    // console.log('handleQuoteAmountChange', baseAmount.toString());
-    change('baseAmount', baseAmount.toFixed());
+    if(!compareString(tokenIn?.address, WBTC_ADDRESS) && !compareString(tokenOut?.address, WBTC_ADDRESS)) {
+      const listPair = [{baseToken: tokenOut, quoteToken: {address: WBTC_ADDRESS}}, {baseToken: {address: WBTC_ADDRESS}, quoteToken: tokenIn}];
+      const reserveInfosRevert = [...reserveInfos].reverse();
+
+      let _amount = amount;
+      for (let index = 0; index < listPair?.length; index++) {
+        const { baseToken, quoteToken } = listPair[index];
+        const [token0, token1] = sortAddressPair(baseToken, quoteToken);
+
+        const { _reserveIn, _reserveOut } = compareString(token0?.address, baseToken?.address) ?
+          {_reserveIn: reserveInfosRevert[index]?._reserve0, _reserveOut: reserveInfosRevert[index]?._reserve1} :
+          {_reserveIn: reserveInfosRevert[index]?._reserve1, _reserveOut: reserveInfosRevert[index]?._reserve0};
+
+        const amountIn = new BigNumber(_amount);
+        const reserveIn = new BigNumber(_reserveIn);
+        const reserveOut = new BigNumber(_reserveOut);
+        if (amountIn.lte(0) || reserveIn.lte(0) || reserveOut.lte(0)) {
+          return;
+        }
+
+        _amount = getBaseAmountOut(amountIn, reserveIn, reserveOut);
+      }
+
+      const rate = new BigNumber(_amount).div(amount).decimalPlaces(tokenIn?.decimal || 18);
+
+      setExchangeRate(rate.toString());
+      change('baseAmount', _amount.toFixed());
+    } else {
+      const [token0, token1] = sortAddressPair(tokenIn, tokenOut);
+
+      const { _reserveIn, _reserveOut } = compareString(token0?.address, tokenOut?.address) ?
+        {_reserveIn: reserveInfos[0]?._reserve0, _reserveOut: reserveInfos[0]?._reserve1} :
+        {_reserveIn: reserveInfos[0]?._reserve1, _reserveOut: reserveInfos[0]?._reserve0};
+
+      const amountIn = new BigNumber(amount);
+      const reserveIn = new BigNumber(_reserveIn);
+      const reserveOut = new BigNumber(_reserveOut);
+      if (amountIn.lte(0) || reserveIn.lte(0) || reserveOut.lte(0)) {
+        return;
+      }
+
+      const baseAmount = getBaseAmountOut(amountIn, reserveIn, reserveOut);
+
+      const rate = new BigNumber(baseAmount).div(amount).decimalPlaces(tokenIn?.decimal || 18);
+      setExchangeRate(rate.toString());
+
+      // console.log('handleQuoteAmountChange', baseAmount.toFixed());
+      change('baseAmount', baseAmount.toFixed());
+    }
   };
 
   const handleChangeMaxBaseAmount = () => {
@@ -583,6 +660,77 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       setLoading(false);
     }
   };
+
+  const renderRoutePath = () => {
+    return (
+      <Flex direction={"column"} alignItems={"flex-start"} fontSize={"xs"} gap={2} mt={2}>
+        <Flex gap={1} alignItems={"center"}>
+          <img
+            src={'https://cdn.trustless.computer/upload/1683642593326956421-1683642593-route.svg'}
+            alt={'router-icon'}
+          />
+          <Text className={"router-text"}>Auto Router</Text>
+        </Flex>
+        <Flex justifyContent={"space-between"} w={"100%"}>
+          <Flex alignItems={"center"}>
+            <img
+              // width={25}
+              // height={25}
+              src={
+                baseToken?.thumbnail ||
+                'https://cdn.trustless.computer/upload/1683530065704444020-1683530065-default-coin.svg'
+              }
+              alt={baseToken?.thumbnail || 'default-icon'}
+              className={'avatar'}
+            />
+            {
+              !baseToken?.thumbnail && (
+                <Text>{baseToken?.symbol}</Text>
+              )
+            }
+          </Flex>
+          <Flex flex={1} alignItems={"center"}>
+            <Box className={"dot-line"}></Box>
+          </Flex>
+          {
+            swapRoutes?.length > 1 && (
+              <>
+                <img
+                  // width={25}
+                  // height={25}
+                  src={
+                    'https://cdn.trustless.computer/upload/1683638149328694935-1683638149-wbtc.png'
+                  }
+                  alt={'wbtc-icon'}
+                  className={'avatar'}
+                />
+                <Flex flex={1} alignItems={"center"}>
+                  <Box className={"dot-line"}></Box>
+                </Flex>
+              </>
+            )
+          }
+          <Flex alignItems={"center"}>
+            <img
+              // width={25}
+              // height={25}
+              src={
+                quoteToken?.thumbnail ||
+                'https://cdn.trustless.computer/upload/1683530065704444020-1683530065-default-coin.svg'
+              }
+              alt={quoteToken?.thumbnail || 'default-icon'}
+              className={'avatar'}
+            />
+            {
+              !quoteToken?.thumbnail && (
+                <Text>{quoteToken?.symbol}</Text>
+              )
+            }
+          </Flex>
+        </Flex>
+      </Flex>
+    )
+  }
 
   return (
     <form onSubmit={onSubmit} style={{ height: '100%' }}>
@@ -649,7 +797,6 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           <RiArrowUpDownLine color="#3385FF" />
         </Box>
       </Flex>
-
       <InputWrapper
         className={cx(styles.inputAmountWrap, styles.inputQuoteAmountWrap)}
         theme="light"
@@ -699,30 +846,33 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           />
         </Flex>
       </InputWrapper>
-      {baseToken && quoteToken && (
+      <Box mt={1}>
         <HorizontalItem
           label={
             <Text fontSize={'xs'} fontWeight={'medium'} color={'#23262F'}>
-              1 {quoteToken?.symbol} =&nbsp;
-              {formatCurrency(
-                new BigNumber(baseReserve)
-                  .dividedBy(quoteReserve)
-                  .decimalPlaces(baseToken?.decimal || 18)
-                  .toNumber(),
-                baseToken?.decimal || 18,
-              )}
-              &nbsp;{baseToken?.symbol}
+              Fee: {FEE * (swapRoutes?.length || 1)}%
             </Text>
           }
         />
+      </Box>
+      {baseToken && quoteToken && values?.baseAmount && Number(exchangeRate) > 0 && (
+        <Box mt={1}>
+          <HorizontalItem
+            label={
+              <Text fontSize={'xs'} fontWeight={'medium'} color={'#23262F'}>
+                1 {quoteToken?.symbol} =&nbsp;
+                {formatCurrency(exchangeRate.toString(), baseToken?.decimal || 18)}
+                &nbsp;{baseToken?.symbol}
+              </Text>
+            }
+          />
+        </Box>
       )}
-      <HorizontalItem
-        label={
-          <Text fontSize={'xs'} fontWeight={'medium'} color={'#23262F'}>
-            Fee: {FEE}%
-          </Text>
-        }
-      />
+      {baseToken && quoteToken && values?.baseAmount && Number(exchangeRate) > 0 && (
+        <>
+          {renderRoutePath()}
+        </>
+      )}
       {isAuthenticated && isLoadedAssets && new BigNumber(juiceBalance || 0).lte(0) && (
         <Text fontSize="md" color="brand.warning.400" textAlign={'left'}>
           Your TC balance is insufficient. You can receive free TC on our faucet site{' '}
@@ -823,8 +973,12 @@ const TradingForm = () => {
         .decimalPlaces(quoteToken?.decimal || 18)
         .toString();
 
+      const addresses = !compareString(baseToken?.address, WBTC_ADDRESS) && !compareString(quoteToken?.address, WBTC_ADDRESS) ?
+        [baseToken.address, WBTC_ADDRESS, quoteToken.address] :
+        [baseToken.address, quoteToken.address];
+
       const data = {
-        addresses: [baseToken.address, quoteToken.address],
+        addresses: addresses,
         address: user?.walletAddress,
         amount: baseAmount,
         amountOutMin: amountOutMin,

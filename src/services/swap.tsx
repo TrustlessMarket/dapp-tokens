@@ -84,3 +84,16 @@ export const getTradeHistory = async (
     error: 'Fail to scan tx',
   });
 };
+
+export const getSwapRoutes = async (
+  params: {
+    from_token: string;
+    to_token: string;
+  }
+) => {
+  const qs = '?' + queryString.stringify(params);
+  return swrFetcher(`${API_URL}${API_PATH}/token/route${qs}`, {
+    method: 'GET',
+    error: 'Fail to get route',
+  });
+};

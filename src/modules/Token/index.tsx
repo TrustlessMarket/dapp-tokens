@@ -28,6 +28,7 @@ import TokenTopInfo from './Token.TopInfo';
 import TokenLeftInfo from './Token.LeftInfo';
 import TokenHistory from './Token.History';
 import { colors } from '@/theme/colors';
+import { WBTC_ADDRESS } from '../Swap/form';
 
 const TokenChart = dynamic(() => import('./Token.Chart'), {
   ssr: false,
