@@ -206,6 +206,7 @@ export interface DataRow {
   img: string;
   symbol?: string;
   address: string;
+  network?: string;
   extra_item?: any;
 }
 
