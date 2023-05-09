@@ -868,7 +868,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           />
         </Box>
       )}
-      {baseToken && quoteToken && values?.baseAmount && Number(exchangeRate) > 0 && (
+      {baseToken && quoteToken && (
         <>
           {renderRoutePath()}
         </>
