@@ -1,14 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { ROUTE_PATH } from '@/constants/route-path';
 import { IToken } from '@/interfaces/token';
 import { getChartToken } from '@/services/swap';
 import { Box } from '@chakra-ui/react';
 import BigNumber from 'bignumber.js';
 import { createChart } from 'lightweight-charts';
 import { last, sortBy } from 'lodash';
-import { useRouter } from 'next/router';
 import { useEffect, useRef, useState } from 'react';
-import { FaChartLine } from 'react-icons/fa';
 
 const ChartThumb = ({ chartData }: { chartData: any[] }) => {
   const chartContainerRef = useRef<any>();
@@ -60,7 +57,7 @@ const ChartThumb = ({ chartData }: { chartData: any[] }) => {
 
       candleSeries.current = chart.current.addLineSeries({
         // lineColor: '#2862ff',
-        lineWidth: 2,
+        lineWidth: 1,
         lastValueVisible: false,
         priceLineVisible: false,
         // lastPriceAnimation: LastPriceAnimationMode.Continuous,
@@ -99,8 +96,6 @@ const ChartThumb = ({ chartData }: { chartData: any[] }) => {
 };
 
 const TokenChartLast7Day = ({ token }: { token: IToken }) => {
-  const router = useRouter();
-
   const dataCached = localStorage.getItem(`cache_chart_${token.address}`);
   let _data = [];
   if (dataCached) {
@@ -120,16 +115,19 @@ const TokenChartLast7Day = ({ token }: { token: IToken }) => {
         contract_address: token.address,
         chart_type: 'day',
       });
-      if (response && response?.length >= 7) {
-        const sortedData = sortBy(
-          response.slice(response?.length - 7, response?.length),
-          'timestamp',
-        );
-        const color =
-          Number(last(sortedData).closeUsd) <
-          Number(sortedData[sortedData.length - 2].closeUsd)
-            ? '#EF466F'
-            : '#45B26B';
+      if (response && response?.length > 0) {
+        const sortedData = sortBy(response, 'timestamp');
+
+        let color = '#45B26B';
+
+        if (sortedData.length >= 7) {
+          color =
+            Number(last(sortedData).close) <
+            Number(sortedData[sortedData.length - 8].close)
+              ? '#EF466F'
+              : '#45B26B';
+        }
+
         const _data = sortedData?.map((v: any) => {
           return {
             // ...v,
@@ -151,7 +149,6 @@ const TokenChartLast7Day = ({ token }: { token: IToken }) => {
 
   return (
     <Box
-      onClick={() => router.push(`${ROUTE_PATH.TOKEN}?address=${token?.address}`)}
       aria-label={''}
       style={{
         width: '146px',
@@ -159,7 +156,7 @@ const TokenChartLast7Day = ({ token }: { token: IToken }) => {
         position: 'relative',
       }}
     >
-      {data.length > 0 ? <ChartThumb chartData={data} /> : <FaChartLine />}
+      {data.length > 0 ? <ChartThumb chartData={data} /> : null}
     </Box>
   );
 };

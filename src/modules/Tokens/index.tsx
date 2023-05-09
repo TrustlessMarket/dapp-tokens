@@ -29,6 +29,7 @@ import BodyContainer from '@/components/Swap/bodyContainer';
 import { AiOutlineCaretDown, AiOutlineCaretUp } from 'react-icons/ai';
 import TokenChartLast7Day from './Token.ChartLast7Day';
 import px2rem from '@/utils/px2rem';
+import { FaChartBar, FaChartLine } from 'react-icons/fa';
 
 const LIMIT_PAGE = 500;
 //const ALL_ONE_PAGE = 10000;
@@ -44,6 +45,7 @@ const Tokens = () => {
     'Volume',
     'Supply',
     'Last 7d',
+    'Actions',
   ];
   /*'Price','24h %','Market Cap'*/
 
@@ -249,7 +251,20 @@ const Tokens = () => {
         usdVol: `$${formatCurrency(marketCap, 2)}`,
         usdVolume: <span>${formatCurrency(tokenVolume, 2)}</span>,
         supply: formatCurrency(totalSupply.toString()),
-        action: <TokenChartLast7Day token={token} />,
+        chart: <TokenChartLast7Day token={token} />,
+        action: (
+          <Flex justifyContent={'center'}>
+            <Box
+              cursor={'pointer'}
+              onClick={() =>
+                router.push(`${ROUTE_PATH.TOKEN}?address=${token?.address}`)
+              }
+              title="View detail"
+            >
+              <FaChartBar />
+            </Box>
+          </Flex>
+        ),
       },
       config: {
         onClick: () => {

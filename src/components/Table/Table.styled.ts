@@ -7,6 +7,10 @@ export const StyledTable = styled.div`
     overflow: scroll;
     color: ${({ theme }: { theme: DefaultTheme }) => theme.text1};
 
+    td {
+      vertical-align: middle;
+    }
+
     & > :not(caption) > * > * {
       padding: {
         top: ${px2rem(26)};

@@ -45,7 +45,7 @@ export enum ScreenType {
 
 export const DEFAULT_FROM_TOKEN_ADDRESS =
   '0xfB83c18569fB43f1ABCbae09Baf7090bFFc8CBBD';
-export const DEFAULT_TO_TOKEN_ADDRESS = '0x749D093C43BcC544172B95Df4c4e8E4B8d984133';
+export const DEFAULT_TO_TOKEN_ADDRESS = '0xdd2863416081D0C10E57AaB4B3C5197183be4B34';
 
 const ItemLiquid = ({ pool }: { pool: IToken }) => {
   const { call: getSupply } = useSupplyERC20Liquid();
@@ -154,8 +154,7 @@ const LiquidityContainer = () => {
     renderScreen();
     if (
       (!routerQuery?.f || !routerQuery?.t) &&
-      (compareString(routerQuery.type, ScreenType.add_liquid) ||
-        compareString(routerQuery.type, ScreenType.add_pool))
+      compareString(routerQuery.type, ScreenType.add_liquid)
     ) {
       router.replace(
         `${ROUTE_PATH.POOLS}?type=${ScreenType.add_liquid}&f=${DEFAULT_FROM_TOKEN_ADDRESS}&t=${DEFAULT_TO_TOKEN_ADDRESS}`,
