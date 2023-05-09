@@ -663,8 +663,14 @@ export const MakeFormSwap = forwardRef((props, ref) => {
 
   const renderRoutePath = () => {
     return (
-      <Flex direction={"column"} alignItems={"flex-start"} fontSize={"xs"}>
-        <Text>Auto Router</Text>
+      <Flex direction={"column"} alignItems={"flex-start"} fontSize={"xs"} gap={2} mt={2}>
+        <Flex gap={1} alignItems={"center"}>
+          <img
+            src={'https://cdn.trustless.computer/upload/1683642593326956421-1683642593-route.svg'}
+            alt={'router-icon'}
+          />
+          <Text className={"router-text"}>Auto Router</Text>
+        </Flex>
         <Flex justifyContent={"space-between"} w={"100%"}>
           <Flex alignItems={"center"}>
             <img
@@ -841,23 +847,27 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         </Flex>
       </InputWrapper>
       {baseToken && quoteToken && values?.baseAmount && Number(exchangeRate) > 0 && (
+        <Box mt={1}>
+          <HorizontalItem
+            label={
+              <Text fontSize={'xs'} fontWeight={'medium'} color={'#23262F'}>
+                1 {quoteToken?.symbol} =&nbsp;
+                {formatCurrency(exchangeRate.toString(), baseToken?.decimal || 18)}
+                &nbsp;{baseToken?.symbol}
+              </Text>
+            }
+          />
+        </Box>
+      )}
+      <Box mt={1}>
         <HorizontalItem
           label={
             <Text fontSize={'xs'} fontWeight={'medium'} color={'#23262F'}>
-              1 {quoteToken?.symbol} =&nbsp;
-              {formatCurrency(exchangeRate.toString(), baseToken?.decimal || 18)}
-              &nbsp;{baseToken?.symbol}
+              Fee: {FEE * (swapRoutes?.length || 1)}%
             </Text>
           }
         />
-      )}
-      <HorizontalItem
-        label={
-          <Text fontSize={'xs'} fontWeight={'medium'} color={'#23262F'}>
-            Fee: {FEE * (swapRoutes?.length || 1)}%
-          </Text>
-        }
-      />
+      </Box>
       {baseToken && quoteToken && values?.baseAmount && Number(exchangeRate) > 0 && (
         <>
           {renderRoutePath()}

@@ -56,4 +56,10 @@ export const UploadFileContainer = styled.div`
     height: 2px;
     width: 100%;
   }
+  .router-text {
+    background-image: linear-gradient(90deg, rgb(33, 114, 229) 0%, rgb(84, 229, 33) 163.16%);
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    -webkit-background-clip:text;
+  }
 `;
