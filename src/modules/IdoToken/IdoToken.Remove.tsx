@@ -7,6 +7,7 @@ import { requestReload } from '@/state/pnftExchange';
 import { colors } from '@/theme/colors';
 import { showError } from '@/utils/toast';
 import { Flex } from '@chakra-ui/react';
+import { useWeb3React } from '@web3-react/core';
 import { useContext, useState } from 'react';
 import { toast } from 'react-hot-toast';
 import { useDispatch } from 'react-redux';
@@ -15,6 +16,7 @@ const IdoTokenRemove = ({ ido, onClose }: { ido: any; onClose: any }) => {
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
   const { getSignature } = useContext(WalletContext);
+  const { account } = useWeb3React();
 
   const onRemove = async () => {
     try {
@@ -23,7 +25,7 @@ const IdoTokenRemove = ({ ido, onClose }: { ido: any; onClose: any }) => {
       await removeIdo({
         id: ido.id,
         signature: signature,
-        address: ido.token.address,
+        address: account,
       });
       toast.success(`Removed IDO successfully.`);
       dispatch(requestReload());
