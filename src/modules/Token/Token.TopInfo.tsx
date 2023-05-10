@@ -124,7 +124,7 @@ const TokenTopInfo = ({ data }: { data: IToken }) => {
             )
           }
         >
-          Buy Now
+          Swap Now
         </FiledButton>
         {compareString(data.owner, account) && (
           <FiledButton

@@ -127,7 +127,7 @@ const TokenPoolDetail = ({ paired }: { paired: any }) => {
               )
             }
           >
-            Buy now
+            Swap now
           </FiledButton>
           <FiledButton
             btnSize="l"
@@ -169,7 +169,7 @@ const TokenListPaired = ({ data }: { data: IToken }) => {
     try {
       const response: any = await getListPaired({ from_token: data.address });
 
-      setList(response);
+      setList(response || []);
     } catch (error) {
     } finally {
       setLoading(false);
