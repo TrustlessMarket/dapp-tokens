@@ -43,14 +43,14 @@ const TMTransferHistory = () => {
       <SectionContainer>
         <Text fontSize={px2rem(24)} color={"#FFFFFF"} textAlign={"center"} paddingX={[0, 0]}>TM is <Text as="span" color={"#3385FF"}>both the governance and utility token for our Swap dApp</Text>. Early users who participate in swap activities or adding liquidity receive 5% of TM's total supply. The more you active in these activities, the more tokens earned.</Text>
         <Flex gap={8} mt={6} mb={12} justifyContent={"center"} w={"100%"}>
-          <Link href={ROUTE_PATH.SWAP} flex={1}>
+          <Link href={ROUTE_PATH.SWAP}>
             <Button
               className={styles.swapButton}
             >
               Swap now
             </Button>
           </Link>
-          <Link href={ROUTE_PATH.POOLS} flex={1}>
+          <Link href={ROUTE_PATH.POOLS}>
             <Button
               className={styles.addLiquidityButton}
               bg={'white'}
