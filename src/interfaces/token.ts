@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export interface IToken {
   btcPrice?: number | string;
   ownerSupply?: string | number;
@@ -8,7 +9,7 @@ export interface IToken {
   createdAt?: string;
   updatedAt?: string;
   address: string;
-  totalSupply?: string;
+  totalSupply?: any;
   owner?: string;
   deployedAtBlock?: number;
   slug?: string;

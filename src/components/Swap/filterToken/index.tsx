@@ -15,9 +15,10 @@ import { Field, Form, useFormState } from 'react-final-form';
 import { AiOutlineCaretDown } from 'react-icons/ai';
 import { useDispatch } from 'react-redux';
 import styles from './styles.module.scss';
+import { colors } from '@/theme/colors';
 
 interface FilterButtonProps {
-  data: any[];
+  data: any[] | undefined;
   commonData?: any[];
   handleSelectItem: (_: any) => void;
   parentClose?: () => void;
@@ -33,7 +34,7 @@ interface FilterModalProps extends FilterButtonProps {
 
 const FilterModal: React.FC<FilterModalProps> = ({
   handleSubmit,
-  data,
+  data = [],
   onClose,
   handleSelectItem,
   // commonData,
@@ -105,7 +106,7 @@ const FilterModal: React.FC<FilterModalProps> = ({
   const [rows, setRows] = useState(data);
 
   const onSearch = async (text: string) => {
-    const _data = clone(data);
+    const _data = clone(data) || [];
     setLoading(true);
     if (text) {
       const __data = _data.filter(
@@ -234,7 +235,7 @@ export const parseData = (data: any[]): DataRow[] => {
 };
 
 const FilterButton: React.FC<FilterButtonProps> = ({
-  data,
+  data = [],
   handleSelectItem,
   commonData = [],
   value,
@@ -354,9 +355,9 @@ const FilterButton: React.FC<FilterButtonProps> = ({
             <Text fontSize={'xs'}>{selectedToken?.network}</Text>
           </Flex>
         ) : (
-          <Text>Select token</Text>
+          <Text className="select-placeholder">Select a token</Text>
         )}
-        <AiOutlineCaretDown color={'#686A6C'} />
+        <AiOutlineCaretDown color={colors.white500} />
       </Flex>
     </FiledButton>
   );

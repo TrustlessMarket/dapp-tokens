@@ -39,7 +39,7 @@ const FiledButton: React.FC<FiledButtonProps> = (props) => {
         {Boolean(processInfo) && (
           <AlertInfoProcess loading={isLoading} processInfo={processInfo} />
         )}
-        {!isLoading && (
+        {(!isLoading || !Boolean(processInfo)) && (
           <Button
             className={cx(styles[`${btnSize}`], className)}
             isLoading={isLoading}

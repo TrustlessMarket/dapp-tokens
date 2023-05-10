@@ -33,11 +33,13 @@ export interface IWalletContext {
   onDisconnect: () => Promise<void>;
   onConnect: () => Promise<string | null>;
   requestBtcAddress: () => Promise<void>;
+  getSignature: (_message: string) => Promise<string>;
 }
 
 const initialValue: IWalletContext = {
   onDisconnect: () => new Promise<void>((r) => r()),
   onConnect: () => new Promise<null>((r) => r(null)),
+  getSignature: (_message: string) => new Promise<string>((r) => r('')),
   requestBtcAddress: () => new Promise<void>((r) => r()),
 };
 
@@ -105,6 +107,37 @@ export const WalletProvider: React.FC<PropsWithChildren> = ({
     }
     return null;
   }, [dispatch, connector, provider]);
+
+  const getSignature = React.useCallback(
+    async (message: string): Promise<string> => {
+      const connection = getConnection(connector);
+      if (!connection) {
+        throw new Error('Get connection error.');
+      }
+      await connection.connector.activate();
+      if (chainId !== SupportedChainId.TRUSTLESS_COMPUTER) {
+        await switchChain(SupportedChainId.TRUSTLESS_COMPUTER);
+      }
+      const addresses = await connector.provider?.request({
+        method: 'eth_accounts',
+      });
+
+      if (addresses && Array.isArray(addresses)) {
+        const evmWalletAddress = addresses[0];
+
+        const web3Provider = new Web3(window.ethereum as provider);
+        const signature = await web3Provider.eth.personal.sign(
+          Web3.utils.fromUtf8(message),
+          evmWalletAddress,
+          '',
+        );
+
+        return signature;
+      }
+      return '';
+    },
+    [dispatch, connector, provider],
+  );
 
   useEffect(() => {
     if (user?.walletAddress && !user.walletAddressBtcTaproot) {
@@ -187,6 +220,7 @@ export const WalletProvider: React.FC<PropsWithChildren> = ({
       onDisconnect: disconnect,
       onConnect: connect,
       requestBtcAddress,
+      getSignature,
     };
   }, [disconnect, connect, requestBtcAddress]);
 

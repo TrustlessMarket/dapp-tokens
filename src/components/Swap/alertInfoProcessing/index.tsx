@@ -105,6 +105,8 @@ const AlertInfoProcess: React.FC<AlertInfoProcessProps> = ({
     _title = currentTransaction?.infoTexts?.error;
   } else if (currentTransaction?.infoTexts?.pending) {
     _title = currentTransaction?.infoTexts?.pending;
+  } else if (currentTransaction?.infoTexts?.info) {
+    _title = currentTransaction?.infoTexts?.info;
   }
 
   return (

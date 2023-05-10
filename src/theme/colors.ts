@@ -1,5 +1,7 @@
 export const colors = {
   white: '#FFFFFF',
+  white50: 'rgba(255, 255, 255, 0.05)',
+  white100: 'rgba(255, 255, 255, 0.1)',
   white500: 'rgba(255, 255, 255, 0.5)',
   black: '#000000',
   greenPrimary: '#16c784',

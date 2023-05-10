@@ -316,3 +316,21 @@
     color: #353945;
   }
 }
+
+.formCalendar {
+  display: flex;
+  height: 50px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  padding: 15px 16px;
+  input {
+    width: 100%;
+  }
+}
+
+.formSelect {
+  input {
+    display: none;
+  }
+}

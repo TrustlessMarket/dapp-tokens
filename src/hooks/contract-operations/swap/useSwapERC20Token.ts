@@ -58,6 +58,8 @@ const useSwapERC20Token: ContractOperationHook<
           console.log('unInscribedTxID', unInscribedTxID);
 
           const _getTxDetail = await getTCTxByHash(unInscribedTxID.Hash);
+          console.log('_getTxDetail', _getTxDetail);
+
           const _inputStart = _getTxDetail.input.slice(0, 10);
 
           if (compareString(funcSwapHash, _inputStart)) {
