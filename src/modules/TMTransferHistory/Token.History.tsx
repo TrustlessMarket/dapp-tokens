@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import ListTable, {ColumnProp} from '@/components/Swap/listTable';
-import {TC_EXPLORER} from '@/configs';
+import {CDN_URL, TC_EXPLORER} from '@/configs';
 import {getTMTransferHistory} from '@/services/swap';
 import {compareString, formatCurrency} from '@/utils';
 import {Flex, Text} from '@chakra-ui/react';
@@ -70,6 +70,30 @@ const TokenHistory = () => {
         },
         render(row: any, extraData: any, index: any) {
           return <Text color={"#FFFFFF"}>{index + 1}</Text>;
+        },
+      },
+      {
+        id: 'token',
+        label: 'Token',
+        labelConfig: {
+          fontSize: '12px',
+          fontWeight: '500',
+          color: '#B1B5C3',
+        },
+        config: {
+          borderBottom: 'none',
+        },
+        render() {
+          return (
+            <Flex color={"#FFFFFF"} gap={1} alignItems={"center"}>
+              <img
+                width={20}
+                height={20}
+                src={`${CDN_URL}/icons/tm_icon.png`}
+              />
+              TM
+            </Flex>
+          );
         },
       },
       {

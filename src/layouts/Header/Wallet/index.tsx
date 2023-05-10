@@ -179,7 +179,11 @@ const WalletHeader = () => {
               window.open(ROUTE_PATH.TM_TRANSFER_HISTORY, "_self")
             }
           >
-            <GrMoney />
+            <img
+              width={20}
+              height={20}
+              src={`${CDN_URL}/icons/tm_icon.png`}
+            />
             <Text size="medium">{formatCurrency(balanceTM, 5)} TM</Text>
           </div>
         )}
