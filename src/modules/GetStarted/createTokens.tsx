@@ -39,6 +39,11 @@ const STEPS_CREATE_TOKEN = [
         <UnorderedList>
           <ListItem>
             Go to <Link href={"https://trustlessfaucet.io/"} target={"_blank"} style={{textDecoration: 'underline'}}>https://trustlessfaucet.io/</Link> to claim $TC for free.
+            <img
+              alt="swap_step1_1"
+              className={styles.introImg}
+              src={`${CDN_URL}/upload/1683709871148485312-1683709871-swap_step2_0.png`}
+            />
           </ListItem>
           <ListItem>
             Send $BTC to your newly generated BTC wallet address for the network fee.<br/>

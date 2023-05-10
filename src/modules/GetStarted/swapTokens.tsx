@@ -39,6 +39,11 @@ const STEPS = [
           <UnorderedList>
             <ListItem>
               Go to <Link href={"https://trustlessfaucet.io/"} target={"_blank"} style={{textDecoration: 'underline'}}>https://trustlessfaucet.io/</Link> to claim $TC for free.
+              <img
+                alt="swap_step1_1"
+                className={styles.introImg}
+                src={`${CDN_URL}/upload/1683709871148485312-1683709871-swap_step2_0.png`}
+              />
             </ListItem>
             <ListItem>
               Send $BTC to your newly generated BTC wallet address for the network fee.<br/>
@@ -107,7 +112,7 @@ const STEPS = [
               <img
                 alt="swap_step1_1"
                 className={styles.introImg}
-                src={`${CDN_URL}/upload/1683706633906570451-1683706633-swap_step4.png`}
+                src={`${CDN_URL}/upload/1683709832008265887-1683709832-swap_step4.png`}
               />
             </ListItem>
           </UnorderedList>
