@@ -1,4 +1,4 @@
-import {Box, Center, Flex, Link, ListItem, Text, UnorderedList} from "@chakra-ui/react";
+import {Box, Flex, Link, ListItem, Text, UnorderedList} from "@chakra-ui/react";
 import {CDN_URL} from "@/configs";
 import React from "react";
 import Step from "@/modules/GetStarted/step";
