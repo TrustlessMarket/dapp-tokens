@@ -190,20 +190,7 @@ const CreateTokens = () => {
         {
           STEPS_IMPORT_POOL.map(s => {
             return (
-              <Flex gap={6} color={"#FFFFFF"} bg={"#1E1E22"} borderRadius={"8px"} p={6} key={s.step}>
-                <Center fontSize={"28px"} fontWeight={"700"} borderRadius={"50%"}
-                        bg={"#3385FF"}
-                        w={"50px"} h={"50px"} minW={"50px"} minH={"50px"}
-                >
-                  {s.step}
-                </Center>
-                <Flex direction={"column"} alignItems={"flex-start"} textAlign={"left"}>
-                  <Text fontSize={"28px"} fontWeight={"700"}>{s.title}</Text>
-                  <Box fontSize={"md"}>
-                    {s.desc}
-                  </Box>
-                </Flex>
-              </Flex>
+              <Step data={s} key={s.step}/>
             )
           })
         }
@@ -213,20 +200,7 @@ const CreateTokens = () => {
         {
           STEPS_ADD_LIQUIDITY.map(s => {
             return (
-              <Flex gap={6} color={"#FFFFFF"} bg={"#1E1E22"} borderRadius={"8px"} p={6} key={s.step}>
-                <Center fontSize={"28px"} fontWeight={"700"} borderRadius={"50%"}
-                        bg={"#3385FF"}
-                        w={"50px"} h={"50px"} minW={"50px"} minH={"50px"}
-                >
-                  {s.step}
-                </Center>
-                <Flex direction={"column"} alignItems={"flex-start"} textAlign={"left"}>
-                  <Text fontSize={"28px"} fontWeight={"700"}>{s.title}</Text>
-                  <Box fontSize={"md"}>
-                    {s.desc}
-                  </Box>
-                </Flex>
-              </Flex>
+              <Step data={s} key={s.step}/>
             )
           })
         }

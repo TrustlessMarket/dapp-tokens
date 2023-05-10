@@ -1,4 +1,8 @@
 import {Box, Center, Flex, Link, ListItem, Text, UnorderedList} from "@chakra-ui/react";
+import {CDN_URL} from "@/configs";
+import React from "react";
+import Step from "@/modules/GetStarted/step";
+import styles from './styles.module.scss';
 
 const STEPS = [
   {
@@ -9,9 +13,19 @@ const STEPS = [
         <UnorderedList>
           <ListItem>
             Go to <Link href={"https://trustlesswallet.io/"} target={"_blank"} style={{textDecoration: 'underline'}}>trustlesswallet.io</Link> and create a TC Wallet by clicking <Text as="span" fontStyle={"italic"}>"Connect wallet"</Text> to connect your Metamask wallet.
+            <img
+              alt="swap_step1_1"
+              className={styles.introImg}
+              src={`${CDN_URL}/upload/1683705812924381070-1683705812-swap_step1_1.png`}
+            />
           </ListItem>
           <ListItem>
             After connecting, you will have a TC wallet address and a BTC wallet address to cover the network fee.
+            <img
+              alt="swap_step1_1"
+              className={styles.introImg}
+              src={`${CDN_URL}/upload/1683706234267465749-1683706234-swap_step1_2.png`}
+            />
           </ListItem>
         </UnorderedList>
       </Box>
@@ -29,6 +43,11 @@ const STEPS = [
             <ListItem>
               Send $BTC to your newly generated BTC wallet address for the network fee.<br/>
               You can check your $BTC balance here:
+              <img
+                alt="swap_step1_1"
+                className={styles.introImg}
+                src={`${CDN_URL}/upload/1683706377431650464-1683706377-swap_step2.png`}
+              />
             </ListItem>
           </UnorderedList>
         </Box>
@@ -42,15 +61,30 @@ const STEPS = [
           <UnorderedList>
             <ListItem>
               Go to <Link href={"https://trustlessbridge.io/"} target={"_blank"} style={{textDecoration: 'underline'}}>https://trustlessbridge.io/</Link>, and connect your wallet.
+              <img
+                alt="swap_step1_1"
+                className={styles.introImg}
+                src={`${CDN_URL}/upload/1683706461623422665-1683706461-swap_step3_1.png`}
+              />
             </ListItem>
             <ListItem>
               Choose your preferred cryptocurrency (4 options: BTC, ETH, USDC, PEPE).
             </ListItem>
             <ListItem>
               Send the amount of the chosen crypto you want to trade to this wallet, and your crypto will be automatically wrapped.
+              <img
+                alt="swap_step1_1"
+                className={styles.introImg}
+                src={`${CDN_URL}/upload/1683706545509754577-1683706545-swap_step3_2.png`}
+              />
             </ListItem>
             <ListItem>
               Once the transaction is completed, check your wrapped crypto balance under the Tokens tab in your Trustless Wallet: <Link href={"https://trustlesswallet.io/"} target={"_blank"} style={{textDecoration: 'underline'}}>https://trustlesswallet.io/</Link>
+              <img
+                alt="swap_step1_1"
+                className={styles.introImg}
+                src={`${CDN_URL}/upload/1683706594179996670-1683706594-swap_step3_3.png`}
+              />
             </ListItem>
           </UnorderedList>
         </Box>
@@ -70,6 +104,11 @@ const STEPS = [
             </ListItem>
             <ListItem>
               After choosing a token and the amount you want to trade, click <Text as="span" fontStyle={"italic"}>"Approve use of WBTC"</Text>, then click <Text as="span" fontStyle={"italic"}>"Swap"</Text>.
+              <img
+                alt="swap_step1_1"
+                className={styles.introImg}
+                src={`${CDN_URL}/upload/1683706633906570451-1683706633-swap_step4.png`}
+              />
             </ListItem>
           </UnorderedList>
         </Box>
@@ -83,6 +122,11 @@ const STEPS = [
           <UnorderedList>
             <ListItem>
               Go to <Link href={"https://trustlesswallet.io/"} target={"_blank"} style={{textDecoration: 'underline'}}>https://trustlesswallet.io/</Link>, click <Text as="span" fontStyle={"italic"}>"Process"</Text> your transaction on the transactions tab and wait for the confirmation on the mempool.
+              <img
+                alt="swap_step1_1"
+                className={styles.introImg}
+                src={`${CDN_URL}/upload/1683706671933624328-1683706671-swap_step5.png`}
+              />
             </ListItem>
           </UnorderedList>
         </Box>
@@ -96,20 +140,7 @@ const SwapTokens = () => {
       {
         STEPS.map(s => {
           return (
-            <Flex gap={6} color={"#FFFFFF"} bg={"#1E1E22"} borderRadius={"8px"} p={6} key={s.step}>
-              <Center fontSize={"28px"} fontWeight={"700"} borderRadius={"50%"}
-                      bg={"#3385FF"}
-                      w={"50px"} h={"50px"} minW={"50px"} minH={"50px"}
-              >
-                {s.step}
-              </Center>
-              <Flex direction={"column"} alignItems={"flex-start"} textAlign={"left"}>
-                <Text fontSize={"28px"} fontWeight={"700"}>{s.title}</Text>
-                <Box fontSize={"md"}>
-                  {s.desc}
-                </Box>
-              </Flex>
-            </Flex>
+            <Step data={s} key={s.step}/>
           )
         })
       }
