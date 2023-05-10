@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
-import { TC_WEB_URL } from '@/configs';
+import { TC_WEB_URL, WALLET_URL } from '@/configs';
 import { DappsTabs } from '@/enums/tabs';
 import { compareString } from '@/utils';
 
@@ -45,7 +45,7 @@ export const getMessageError = (e: any, option: any) => {
   } else if (compareString(e?.message, ERRORS.PENDING)) {
     title =
       'You have some pending transactions. Please complete all of them before moving on.';
-    url = `${TC_WEB_URL}/?tab=${DappsTabs.TRANSACTION}`;
+    url = `${WALLET_URL}/?tab=${DappsTabs.TRANSACTION}`;
     linkText = 'Go to Wallet';
   }
   return { title, url, linkText };

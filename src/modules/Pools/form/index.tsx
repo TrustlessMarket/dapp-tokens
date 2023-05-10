@@ -13,7 +13,7 @@ import {
   TRUSTLESS_BRIDGE,
   TRUSTLESS_FAUCET,
 } from '@/constants/common';
-import { getMessageError } from '@/constants/error';
+import { getMessageError, toastError } from '@/constants/error';
 import { ROUTE_PATH } from '@/constants/route-path';
 import { IMPORTED_TOKENS, LIQUID_PAIRS } from '@/constants/storage-key';
 import { NULL_ADDRESS } from '@/constants/url';
@@ -90,6 +90,7 @@ import { default as Web3, default as web3 } from 'web3';
 import { ScreenType } from '..';
 import styles from './styles.module.scss';
 import { getPairAPR } from '@/services/pool';
+import { showError } from '@/utils/toast';
 
 const LIMIT_PAGE = 50;
 
@@ -213,7 +214,10 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       setIsApprovePoolToken(
         checkBalanceIsApprove(
           isApproveAmountPoolToken,
-          Web3.utils.toWei(values?.liquidValue || '0', 'ether'),
+          Web3.utils.toWei(
+            new BigNumber(values?.liquidValue || 0).toFixed(18),
+            'ether',
+          ),
         ),
       );
     }
@@ -479,7 +483,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       setIsApproveQuoteToken(
         checkBalanceIsApprove(
           isApproveAmountQuoteToken,
-          Web3.utils.toWei(_amount, 'ether'),
+          Web3.utils.toWei(new BigNumber(_amount || 0).toFixed(18), 'ether'),
         ),
       );
     }
@@ -510,7 +514,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       setIsApproveBaseToken(
         checkBalanceIsApprove(
           isApproveAmountBaseToken,
-          Web3.utils.toWei(_amount, 'ether'),
+          Web3.utils.toWei(new BigNumber(_amount || 0).toFixed(18), 'ether'),
         ),
       );
     }
@@ -1142,15 +1146,8 @@ const CreateMarket = ({
         error: JSON.stringify(err),
         message: message,
       });
-      dispatch(
-        updateCurrentTransaction({
-          status: TransactionStatus.error,
-          id: transactionType.createPool,
-          infoTexts: {
-            error: message,
-          },
-        }),
-      );
+      toastError(showError, err, { address: account });
+      dispatch(updateCurrentTransaction(null));
       // showError({
       //   message: message,
       // });

@@ -2,7 +2,7 @@ import ERC20ABIJson from '@/abis/erc20.json';
 import Button from '@/components/Button';
 import IconSVG from '@/components/IconSVG';
 import Text from '@/components/Text';
-import { CDN_URL, TC_WEB_URL } from '@/configs';
+import { CDN_URL, WALLET_URL } from '@/configs';
 import { ERROR_CODE } from '@/constants/error';
 import { AssetsContext } from '@/contexts/assets-context';
 import { DappsTabs } from '@/enums/tabs';
@@ -118,7 +118,7 @@ const ModalCreateToken: React.FC<Props> = (props: Props) => {
         showError({
           message:
             'You have some pending transactions. Please complete all of them before moving on.',
-          url: `${TC_WEB_URL}/?tab=${DappsTabs.TRANSACTION}`,
+          url: `${WALLET_URL}/?tab=${DappsTabs.TRANSACTION}`,
           linkText: 'Go to Wallet',
         });
       } else if ((err as Error).message === ERROR_CODE.INSUFFICIENT_BALANCE) {
@@ -133,7 +133,7 @@ const ModalCreateToken: React.FC<Props> = (props: Props) => {
           message: `Your balance is insufficient. Please top up at least ${formatBTCPrice(
             estimatedFee.totalFee.toString(),
           )} BTC to pay network fee.`,
-          url: `${TC_WEB_URL}`,
+          url: `${WALLET_URL}`,
           linkText: 'Go to Wallet',
         });
       } else {
