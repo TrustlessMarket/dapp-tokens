@@ -1,0 +1,143 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import ListTable, {ColumnProp} from '@/components/Swap/listTable';
+import {TC_EXPLORER} from '@/configs';
+import {getTMTransferHistory} from '@/services/swap';
+import {formatCurrency} from '@/utils';
+import {Flex, Text} from '@chakra-ui/react';
+import moment from 'moment';
+import {useEffect, useMemo, useState} from 'react';
+import {RxExternalLink} from 'react-icons/rx';
+import {useWeb3React} from "@web3-react/core";
+import {debounce} from "lodash";
+import Spinner from "react-bootstrap/Spinner";
+import InfiniteScroll from "react-infinite-scroll-component";
+
+const LIMIT_PAGE = 30;
+
+const TokenHistory = () => {
+  const [isFetching, setIsFetching] = useState(false);
+  const [list, setList] = useState<any[]>([]);
+  const { account, } = useWeb3React();
+
+  console.log('account', account);
+
+  useEffect(() => {
+    if(account) {
+      getList();
+    }
+  }, [account]);
+
+  const getList = async (page = 1, isFetchMore = false) => {
+    try {
+      setIsFetching(true);
+      const res: any = await getTMTransferHistory({
+        address: account as string,
+        page: page,
+        limit: LIMIT_PAGE,
+      });
+
+      if (isFetchMore) {
+        setList((prev) => [...prev, ...res]);
+      } else {
+        setList(res);
+      }
+    } catch (error) {
+
+    } finally {
+      setIsFetching(false);
+    }
+  };
+
+  const onLoadMoreTokens = () => {
+    if (isFetching || list.length % LIMIT_PAGE !== 0) return;
+    const page = Math.floor(list.length / LIMIT_PAGE) + 1;
+    getList(page, true);
+  };
+
+  const debounceLoadMore = debounce(onLoadMoreTokens, 300);
+
+  const columns: ColumnProp[] = useMemo(
+    () => [
+      {
+        id: 'date',
+        label: 'Date',
+        labelConfig: {
+          fontSize: '12px',
+          fontWeight: '500',
+          color: '#B1B5C3',
+        },
+        config: {
+          borderBottom: 'none',
+        },
+        render(row: any) {
+          return <Text color={"#FFFFFF"}>{moment(row.createdAt).format('lll')}</Text>;
+        },
+      },
+      {
+        id: 'amount',
+        label: 'Amount (TM)',
+        labelConfig: {
+          fontSize: '12px',
+          fontWeight: '500',
+          color: '#B1B5C3',
+        },
+        config: {
+          borderBottom: 'none',
+        },
+        render(row: any) {
+          return (
+            <Text color={"#FFFFFF"}>
+              {formatCurrency(row?.value, 18)}
+            </Text>
+          );
+        },
+      },
+      {
+        id: 'txLink',
+        label: 'Tx Link',
+        labelConfig: {
+          fontSize: '12px',
+          fontWeight: '500',
+          color: '#B1B5C3',
+        },
+        config: {
+          borderBottom: 'none',
+        },
+        render(row: any) {
+          return (
+            <Flex color={"#FFFFFF"}>
+              <a
+                title="explorer"
+                href={`${TC_EXPLORER}/tx/${row.txHash}`}
+                target="_blank"
+              >
+                <RxExternalLink />
+              </a>
+            </Flex>
+          );
+        },
+      },
+    ],
+    [],
+  );
+
+  return (
+    <InfiniteScroll
+      className="tokens-list"
+      dataLength={list?.length || 0}
+      hasMore={true}
+      loader={
+        isFetching && (
+          <div className="loading">
+            <Spinner animation="border" variant="primary" />
+          </div>
+        )
+      }
+      next={debounceLoadMore}
+    >
+      <ListTable data={list} columns={columns} />
+    </InfiniteScroll>
+  );
+};
+
+export default TokenHistory;

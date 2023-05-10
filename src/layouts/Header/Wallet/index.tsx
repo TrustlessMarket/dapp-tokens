@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import IconSVG from '@/components/IconSVG';
-import {CDN_URL, TC_EXPLORER, TM_ADDRESS, WALLET_URL} from '@/configs';
+import {CDN_URL, TM_ADDRESS, WALLET_URL} from '@/configs';
 // import { ROUTE_PATH } from '@/constants/route-path';
 import {AssetsContext} from '@/contexts/assets-context';
 import {getIsAuthenticatedSelector, getUserSelector} from '@/state/user/selector';
@@ -27,6 +27,7 @@ import {WalletPopover} from './Wallet.styled';
 import {GrMoney} from 'react-icons/gr';
 import useBalanceERC20Token from '@/hooks/contract-operations/token/useBalanceERC20Token';
 import web3 from 'web3';
+import {ROUTE_PATH} from "@/constants/route-path";
 
 const WalletHeader = () => {
   const router = useRouter();
@@ -175,9 +176,7 @@ const WalletHeader = () => {
           <div
             className="wallet-link"
             onClick={() =>
-              window.open(
-                `${TC_EXPLORER}/address/${user?.walletAddress}/tokens#address-tabs`,
-              )
+              window.open(ROUTE_PATH.TM_TRANSFER_HISTORY, "_self")
             }
           >
             <GrMoney />
