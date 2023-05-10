@@ -41,7 +41,7 @@ const TMTransferHistory = () => {
   return (
     <BodyContainer className={styles.wrapper}>
       <SectionContainer>
-        <Text fontSize={px2rem(24)} color={"#FFFFFF"} textAlign={"center"} paddingX={[0, 0]}>TM is the governance token of our swap dApp and also functions as a utility token. Early users who participate in token swaps or liquidity provision on the swap dApp are allocated 5% of the total supply of TM tokens. This incentivizes active participation in our platform and allows users to have greater control over the governance of the dApp.</Text>
+        <Text fontSize={px2rem(24)} color={"#FFFFFF"} textAlign={"center"} paddingX={[0, 0]}>TM is <Text as="span" color={"#3385FF"}>both the governance and utility token for our Swap dApp</Text>. Early users who participate in token swaps or adding liquidity receive 5% of TM's total supply. The more you active in these activities, the more tokens earned.</Text>
         <Flex gap={8} mt={6} mb={12} justifyContent={"center"} w={"100%"}>
           <Link href={ROUTE_PATH.SWAP} flex={1}>
             <Button

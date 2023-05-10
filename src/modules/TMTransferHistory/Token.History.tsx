@@ -20,8 +20,6 @@ const TokenHistory = () => {
   const [list, setList] = useState<any[]>([]);
   const { account, } = useWeb3React();
 
-  console.log('account', account);
-
   useEffect(() => {
     if(account) {
       getList();
@@ -59,6 +57,21 @@ const TokenHistory = () => {
 
   const columns: ColumnProp[] = useMemo(
     () => [
+      {
+        id: '#',
+        label: '#',
+        labelConfig: {
+          fontSize: '12px',
+          fontWeight: '500',
+          color: '#B1B5C3',
+        },
+        config: {
+          borderBottom: 'none',
+        },
+        render(row: any, extraData: any, index: any) {
+          return <Text color={"#FFFFFF"}>{index + 1}</Text>;
+        },
+      },
       {
         id: 'type',
         label: 'Type',
