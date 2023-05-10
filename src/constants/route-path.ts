@@ -17,4 +17,5 @@ export const ROUTE_PATH = {
   UPDATE_TOKEN_INFO: '/update-token-info',
   IDO: '/ido',
   IDO_MANAGE: '/ido/manage',
+  TM_TRANSFER_HISTORY: '/tm-transfer-history',
 };

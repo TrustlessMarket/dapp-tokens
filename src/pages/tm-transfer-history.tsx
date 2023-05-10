@@ -1,6 +1,6 @@
 import {CDN_URL} from '@/configs';
 import Layout from '@/layouts';
-import GetStarted from '@/modules/GetStarted';
+import TMTransferHistory from '@/modules/TMTransferHistory';
 import Head from 'next/head';
 import {Box} from "@chakra-ui/react";
 
@@ -12,7 +12,7 @@ export default function Started() {
       </Head>
       <Box bgColor={"#0F0F0F"}>
         <Layout>
-          <GetStarted />
+          <TMTransferHistory />
         </Layout>
       </Box>
     </>

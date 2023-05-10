@@ -38,7 +38,7 @@ export const removeIdo = async (params: {
   address: any;
 }) => {
   const qs = '?' + queryString.stringify(params);
-  return swrFetcher(`${API_URL}${API_PATH}/ido/detail${qs}`, {
+  return swrFetcher(`${API_URL}${API_PATH}/ido/delete${qs}`, {
     method: 'DELETE',
     error: 'Fail to scan tx',
   });

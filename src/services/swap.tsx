@@ -97,3 +97,16 @@ export const getSwapRoutes = async (
     error: 'Fail to get route',
   });
 };
+
+export const getTMTransferHistory = async (
+  params: {
+    address: string;
+  } & IPagingParams,
+) => {
+  const qs = '?' + queryString.stringify(params);
+  // return swrFetcher(`${"https://dapp.dev.trustless.computer/dapp/api"}${API_PATH}/tm/histories${qs}`, {
+  return swrFetcher(`${API_URL}${API_PATH}/tm/histories${qs}`, {
+    method: 'GET',
+    error: 'Fail to TM transfer history',
+  });
+};
