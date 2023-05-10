@@ -1,7 +1,7 @@
 import {Box, Center, Flex, Link, ListItem, Text, UnorderedList} from "@chakra-ui/react";
 import Step from "@/modules/GetStarted/step";
 
-const STEPS = [
+const STEPS_CREATE_TOKEN = [
   {
     step: '1',
     title: 'Create a TC Wallet',
@@ -94,61 +94,144 @@ const STEPS = [
   },
 ];
 
+const STEPS_IMPORT_POOL = [
+  {
+    step: '1',
+    title: <Box>Go to <Link href={"https://trustless.market/"} style={{textDecoration: 'underline'}}>https://trustless.market</Link>, and click <Text as="span" fontStyle={"italic"}>"POOLS"</Text>.</Box>,
+    desc: (
+      <Box>
+
+      </Box>
+    )
+  },
+  {
+    step: '2',
+    title: <Box>Click <Text as="span" fontStyle={"italic"}>"Import Pool"</Text></Box>,
+
+    desc: (
+      <Box>
+
+      </Box>
+    )
+  },
+  {
+    step: '3',
+    title: <Box>Select the tokens you want to import, then click <Text as="span" fontStyle={"italic"}>"Import pool"</Text> and sign.</Box>,
+    desc: (
+      <Box>
+      </Box>
+    )
+  },
+  {
+    step: '4',
+    title: <Box>Process the transactions</Box>,
+    desc: (
+      <Box>
+        <UnorderedList>
+          <ListItem>
+            Go to <Link href={"https://trustlesswallet.io/"} target={"_blank"} style={{textDecoration: 'underline'}}>https://trustlesswallet.io/</Link>, click <Text as="span" fontStyle={"italic"}>"Process"</Text> your transaction on the transactions tab and wait for the confirmation on the mempool.
+          </ListItem>
+        </UnorderedList>
+      </Box>
+    )
+  },
+];
+
+const STEPS_ADD_LIQUIDITY = [
+  {
+    step: '1',
+    title: <Box>Click <Text as="span" fontStyle={"italic"}>"+Add liquidity"</Text></Box>,
+    desc: (
+      <Box>
+
+      </Box>
+    )
+  },
+  {
+    step: '2',
+    title: <Box>Select the tokens and the amount you want to add, then click <Text as="span" fontStyle={"italic"}>"Supply"</Text></Box>,
+    desc: (
+      <Box>
+
+      </Box>
+    )
+  },
+  {
+    step: '3',
+    title: <Box>Process the transactions</Box>,
+    desc: (
+      <Box>
+        <UnorderedList>
+          <ListItem>
+            Go to <Link href={"https://trustlesswallet.io/"} target={"_blank"} style={{textDecoration: 'underline'}}>https://trustlesswallet.io/</Link>, click <Text as="span" fontStyle={"italic"}>"Process"</Text> your transaction on the transactions tab and wait for the confirmation on the mempool.
+          </ListItem>
+        </UnorderedList>
+      </Box>
+    )
+  },
+];
+
 const CreateTokens = () => {
   return (
-    <Flex direction={"column"} gap={6}>
-      <Text>1. Issue a new SBRC-20 token.</Text>
-      {
-        STEPS.map(s => {
-          return (
-            <Step data={s} key={s.step}/>
-          );
-        })
-      }
-      <Text>2. Create a liquidity pool.</Text>
-      <Text>A. Import pool</Text>
-      {
-        STEPS.map(s => {
-          return (
-            <Flex gap={6} color={"#FFFFFF"} bg={"#1E1E22"} borderRadius={"8px"} p={6} key={s.step}>
-              <Center fontSize={"28px"} fontWeight={"700"} borderRadius={"50%"}
-                      bg={"#3385FF"}
-                      w={"50px"} h={"50px"} minW={"50px"} minH={"50px"}
-              >
-                {s.step}
-              </Center>
-              <Flex direction={"column"} alignItems={"flex-start"} textAlign={"left"}>
-                <Text fontSize={"28px"} fontWeight={"700"}>{s.title}</Text>
-                <Box fontSize={"md"}>
-                  {s.desc}
-                </Box>
+    <>
+      <Text fontSize={"xl"} color={"#FFFFFF"} fontWeight={"medium"}>1. Issue a new SBRC-20 token.</Text>
+      <Flex direction={"column"} gap={6} mt={6}>
+        {
+          STEPS_CREATE_TOKEN.map(s => {
+            return (
+              <Step data={s} key={s.step}/>
+            );
+          })
+        }
+      </Flex>
+      <Text fontSize={"xl"} color={"#FFFFFF"} fontWeight={"medium"} mt={6}>2. Create a liquidity pool.</Text>
+      <Text fontSize={"md"} color={"#FFFFFF"} fontWeight={"normal"}>A. Import pool</Text>
+      <Flex direction={"column"} gap={6} mt={6}>
+        {
+          STEPS_IMPORT_POOL.map(s => {
+            return (
+              <Flex gap={6} color={"#FFFFFF"} bg={"#1E1E22"} borderRadius={"8px"} p={6} key={s.step}>
+                <Center fontSize={"28px"} fontWeight={"700"} borderRadius={"50%"}
+                        bg={"#3385FF"}
+                        w={"50px"} h={"50px"} minW={"50px"} minH={"50px"}
+                >
+                  {s.step}
+                </Center>
+                <Flex direction={"column"} alignItems={"flex-start"} textAlign={"left"}>
+                  <Text fontSize={"28px"} fontWeight={"700"}>{s.title}</Text>
+                  <Box fontSize={"md"}>
+                    {s.desc}
+                  </Box>
+                </Flex>
               </Flex>
-            </Flex>
-          )
-        })
-      }
-      <Text>B. Add liquidity to existing pools</Text>
-      {
-        STEPS.map(s => {
-          return (
-            <Flex gap={6} color={"#FFFFFF"} bg={"#1E1E22"} borderRadius={"8px"} p={6} key={s.step}>
-              <Center fontSize={"28px"} fontWeight={"700"} borderRadius={"50%"}
-                      bg={"#3385FF"}
-                      w={"50px"} h={"50px"} minW={"50px"} minH={"50px"}
-              >
-                {s.step}
-              </Center>
-              <Flex direction={"column"} alignItems={"flex-start"} textAlign={"left"}>
-                <Text fontSize={"28px"} fontWeight={"700"}>{s.title}</Text>
-                <Box fontSize={"md"}>
-                  {s.desc}
-                </Box>
+            )
+          })
+        }
+      </Flex>
+      <Text fontSize={"md"} color={"#FFFFFF"} fontWeight={"normal"} mt={6}>B. Add liquidity to existing pools</Text>
+      <Flex direction={"column"} gap={6} mt={6}>
+        {
+          STEPS_ADD_LIQUIDITY.map(s => {
+            return (
+              <Flex gap={6} color={"#FFFFFF"} bg={"#1E1E22"} borderRadius={"8px"} p={6} key={s.step}>
+                <Center fontSize={"28px"} fontWeight={"700"} borderRadius={"50%"}
+                        bg={"#3385FF"}
+                        w={"50px"} h={"50px"} minW={"50px"} minH={"50px"}
+                >
+                  {s.step}
+                </Center>
+                <Flex direction={"column"} alignItems={"flex-start"} textAlign={"left"}>
+                  <Text fontSize={"28px"} fontWeight={"700"}>{s.title}</Text>
+                  <Box fontSize={"md"}>
+                    {s.desc}
+                  </Box>
+                </Flex>
               </Flex>
-            </Flex>
-          )
-        })
-      }
-    </Flex>
+            )
+          })
+        }
+      </Flex>
+    </>
   )
 };
 

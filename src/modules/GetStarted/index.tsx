@@ -13,7 +13,7 @@ const GetStarted = () => {
           <h3 className={styles.upload_title}>Let’s get you ready for Bitcoin DeFi.</h3>
         </div>
         <Box
-          className="tab-container"
+          className={styles.tabContainer}
           // style={{
           //   borderTop: `1px solid ${colors.darkBorderColor}`,
           //   maxHeight: '300px',
@@ -21,8 +21,8 @@ const GetStarted = () => {
           flex={1}
           mt={6}
         >
-          <Tabs>
-            <TabList>
+          <Tabs isFitted variant='soft-rounded'>
+            <TabList mb={6} mt={6}>
               <Tab>Swap tokens</Tab>
               <Tab>Create tokens</Tab>
             </TabList>
