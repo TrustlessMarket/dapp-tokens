@@ -24,7 +24,6 @@ import {useSelector} from 'react-redux';
 import {isScreenDarkMode} from '..';
 import {ConnectWalletButton, WalletBalance} from '../Header.styled';
 import {WalletPopover} from './Wallet.styled';
-import {GrMoney} from 'react-icons/gr';
 import useBalanceERC20Token from '@/hooks/contract-operations/token/useBalanceERC20Token';
 import web3 from 'web3';
 import {ROUTE_PATH} from "@/constants/route-path";
