@@ -521,8 +521,8 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           {_reserveIn: reserveInfos[index]?._reserve1, _reserveOut: reserveInfos[index]?._reserve0};
 
         const amountIn = new BigNumber(_amount);
-        const reserveIn = new BigNumber(_reserveIn);
-        const reserveOut = new BigNumber(_reserveOut);
+        const reserveIn = new BigNumber(Web3.utils.fromWei(Web3.utils.toBN(_reserveIn), 'ether').toString());
+        const reserveOut = new BigNumber(Web3.utils.fromWei(Web3.utils.toBN(_reserveOut), 'ether').toString());
         if (amountIn.lte(0) || reserveIn.lte(0) || reserveOut.lte(0)) {
           return;
         }
@@ -542,8 +542,8 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         {_reserveIn: reserveInfos[0]?._reserve1, _reserveOut: reserveInfos[0]?._reserve0};
 
       const amountIn = new BigNumber(amount);
-      const reserveIn = new BigNumber(_reserveIn);
-      const reserveOut = new BigNumber(_reserveOut);
+      const reserveIn = new BigNumber(Web3.utils.fromWei(Web3.utils.toBN(_reserveIn), 'ether').toString());
+      const reserveOut = new BigNumber(Web3.utils.fromWei(Web3.utils.toBN(_reserveOut), 'ether').toString());
       if (amountIn.lte(0) || reserveIn.lte(0) || reserveOut.lte(0)) {
         return;
       }
@@ -594,8 +594,8 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           {_reserveIn: reserveInfosRevert[index]?._reserve1, _reserveOut: reserveInfosRevert[index]?._reserve0};
 
         const amountIn = new BigNumber(_amount);
-        const reserveIn = new BigNumber(_reserveIn);
-        const reserveOut = new BigNumber(_reserveOut);
+        const reserveIn = new BigNumber(Web3.utils.fromWei(Web3.utils.toBN(_reserveIn), 'ether').toString());
+        const reserveOut = new BigNumber(Web3.utils.fromWei(Web3.utils.toBN(_reserveOut), 'ether').toString());
         if (amountIn.lte(0) || reserveIn.lte(0) || reserveOut.lte(0)) {
           return;
         }
@@ -615,8 +615,8 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         {_reserveIn: reserveInfos[0]?._reserve1, _reserveOut: reserveInfos[0]?._reserve0};
 
       const amountIn = new BigNumber(amount);
-      const reserveIn = new BigNumber(_reserveIn);
-      const reserveOut = new BigNumber(_reserveOut);
+      const reserveIn = new BigNumber(Web3.utils.fromWei(Web3.utils.toBN(_reserveIn), 'ether').toString());
+      const reserveOut = new BigNumber(Web3.utils.fromWei(Web3.utils.toBN(_reserveOut), 'ether').toString());
       if (amountIn.lte(0) || reserveIn.lte(0) || reserveOut.lte(0)) {
         return;
       }
