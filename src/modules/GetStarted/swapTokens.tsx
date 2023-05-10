@@ -97,7 +97,7 @@ const STEPS = [
         <Box>
           <UnorderedList>
             <ListItem>
-              You are now ready to swap BRC-20 tokens using WBTC.
+              You are now ready to swap SBRC-20 tokens using Wrapped Crypto (i.e WBTC).
             </ListItem>
             <ListItem>
               Go to <Link href={"https://trustless.market/"} style={{textDecoration: 'underline'}}>https://trustless.market</Link> and select the token you want to swap.
