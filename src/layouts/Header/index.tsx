@@ -20,7 +20,8 @@ export const isScreenDarkMode = () => {
   return (
     compareString(router?.pathname, ROUTE_PATH.HOME) ||
     compareString(router?.pathname, ROUTE_PATH.MARKETS) ||
-    compareString(router?.pathname, ROUTE_PATH.TOKEN)
+    compareString(router?.pathname, ROUTE_PATH.TOKEN) ||
+    compareString(router?.pathname, ROUTE_PATH.GET_STARTED)
   );
 };
 
