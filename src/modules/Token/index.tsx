@@ -2,16 +2,16 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import FiledButton from '@/components/Swap/button/filedButton';
 import { ROUTE_PATH } from '@/constants/route-path';
-import { camelCaseKeys, compareString, formatCurrency } from '@/utils';
-import { formatAmountBigNumber } from '@/utils/format';
+import { camelCaseKeys } from '@/utils';
 import {
   Box,
-  Divider,
   Flex,
   Spinner,
-  Stat,
-  StatHelpText,
-  StatNumber,
+  Tab,
+  TabList,
+  TabPanel,
+  TabPanels,
+  Tabs,
   Text,
 } from '@chakra-ui/react';
 import BigNumber from 'bignumber.js';
@@ -19,12 +19,16 @@ import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { StyledTokenDetailContainer } from './Token.styled';
 // import TokenChart from './Token.Chart';
-import SocialToken from '@/components/Social';
+import { IToken } from '@/interfaces/token';
 import { getChartToken, getTokenRp } from '@/services/swap';
 import { useWeb3React } from '@web3-react/core';
 import { sortBy } from 'lodash';
 import dynamic from 'next/dynamic';
-import { DEFAULT_BASE_TOKEN } from '../Swap/form';
+import TokenTopInfo from './Token.TopInfo';
+import TokenLeftInfo from './Token.LeftInfo';
+import TokenHistory from './Token.History';
+import { colors } from '@/theme/colors';
+import { WBTC_ADDRESS } from '../Swap/form';
 
 const TokenChart = dynamic(() => import('./Token.Chart'), {
   ssr: false,
@@ -35,7 +39,7 @@ const TokenDetail = () => {
   const address: any = router.query?.address;
   const [loading, setLoading] = useState(true);
 
-  const [data, setData] = useState<any>({});
+  const [data, setData] = useState<IToken>();
   const [chartData, setChartData] = useState<any[]>([]);
   const { account } = useWeb3React();
 
@@ -69,13 +73,13 @@ const TokenDetail = () => {
       const _data = sortedData?.map((v: any) => {
         return {
           // ...v,
-          value: new BigNumber(v.closeUsd).toNumber(),
+          value: new BigNumber(v.btcPrice).toNumber(),
           time: Number(v.timestamp),
-          open: new BigNumber(v.openUsd).toNumber(),
-          high: new BigNumber(v.highUsd).toNumber(),
-          close: new BigNumber(v.closeUsd).toNumber(),
-          low: new BigNumber(v.lowUsd).toNumber(),
-          // volume: Number(v.volume || 0),
+          open: new BigNumber(v.open).toNumber(),
+          high: new BigNumber(v.high).toNumber(),
+          close: new BigNumber(v.close).toNumber(),
+          low: new BigNumber(v.low).toNumber(),
+          volume: new BigNumber(v.totalVolume).toNumber(),
         };
       });
 
@@ -90,8 +94,8 @@ const TokenDetail = () => {
 
   if (loading) {
     return (
-      <StyledTokenDetailContainer>
-        <Spinner />
+      <StyledTokenDetailContainer className="loading-container">
+        <Spinner size={'lg'} color="#FFFFFF" style={{ margin: '0 auto' }} />
       </StyledTokenDetailContainer>
     );
   }
@@ -111,84 +115,40 @@ const TokenDetail = () => {
 
   return (
     <StyledTokenDetailContainer>
-      <Box style={{ textAlign: 'center' }}>
-        {data.thumbnail && <img src={data.thumbnail} alt="img" className="avatar" />}
-        <Text>{data.name}</Text>
-        <Text>#{data.index}</Text>
-        <Text>
-          Supply:{' '}
-          {formatCurrency(formatAmountBigNumber(data.totalSupply, data.decimal))}
-        </Text>
-        <Flex justifyContent={'center'} gap={8} mt={6}>
-          <FiledButton
-            style={{}}
-            onClick={() =>
-              router.replace(
-                `${ROUTE_PATH.SWAP}?from_token=${DEFAULT_BASE_TOKEN}&to_token=${data?.address}`,
-              )
-            }
+      <TokenTopInfo data={data} />
+      <Flex width={'100%'} height={'100%'} flex={1}>
+        <TokenLeftInfo data={data} />
+        <Flex
+          flexDirection={'column'}
+          flex={4}
+          style={{
+            borderLeft: `1px solid ${colors.darkBorderColor}`,
+          }}
+        >
+          <Box flex={2}>
+            <TokenChart chartData={chartData} />
+          </Box>
+          <Box
+            className="tab-container"
+            // style={{
+            //   borderTop: `1px solid ${colors.darkBorderColor}`,
+            //   maxHeight: '300px',
+            // }}
+            flex={1}
           >
-            Buy now
-          </FiledButton>
-          {compareString(data.owner, account) && (
-            <FiledButton
-              variant={'outline'}
-              style={{
-                backgroundColor: 'transparent',
-                borderColor: 'gray',
-              }}
-              _hover={{
-                color: '#000',
-                opacity: 0.7,
-              }}
-              onClick={() =>
-                router.push(
-                  `${ROUTE_PATH.UPDATE_TOKEN_INFO}?address=${data?.address}`,
-                )
-              }
-            >
-              Update token info
-            </FiledButton>
-          )}
+            <Tabs>
+              <TabList>
+                <Tab>Trade History</Tab>
+              </TabList>
+              <TabPanels>
+                <TabPanel>
+                  <TokenHistory data={data} />
+                </TabPanel>
+              </TabPanels>
+            </Tabs>
+          </Box>
         </Flex>
-        <Flex mt={6} justifyContent={'center'}>
-          <SocialToken socials={data.social} />
-        </Flex>
-      </Box>
-      <Divider />
-      <Box>
-        <Stat style={{ textAlign: 'center' }}>
-          <StatHelpText>Price:</StatHelpText>
-          <StatNumber>${formatCurrency(data.usdPrice, 10)}</StatNumber>
-        </Stat>
-        <Stat style={{ textAlign: 'center' }}>
-          <StatHelpText>Market cap:</StatHelpText>
-          <StatNumber>
-            {formatCurrency(
-              formatAmountBigNumber(
-                new BigNumber(data?.usdPrice)
-                  .multipliedBy(data.totalSupply)
-                  .toFixed(),
-                data.decimal,
-              ),
-            )}
-          </StatNumber>
-        </Stat>
-        <Stat style={{ textAlign: 'center' }}>
-          <StatHelpText>Volume:</StatHelpText>
-          <StatNumber>${formatCurrency(data.usdTotalVolume, 2)}</StatNumber>
-        </Stat>
-      </Box>
-      {/* <Text>Chart Price</Text> */}
-      <Box
-        style={{
-          height: 300,
-          width: 600,
-          position: 'relative',
-        }}
-      >
-        <TokenChart chartData={chartData} />
-      </Box>
+      </Flex>
     </StyledTokenDetailContainer>
   );
 };

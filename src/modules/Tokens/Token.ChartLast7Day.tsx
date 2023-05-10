@@ -1,14 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { ROUTE_PATH } from '@/constants/route-path';
 import { IToken } from '@/interfaces/token';
 import { getChartToken } from '@/services/swap';
 import { Box } from '@chakra-ui/react';
 import BigNumber from 'bignumber.js';
 import { createChart } from 'lightweight-charts';
 import { last, sortBy } from 'lodash';
-import { useRouter } from 'next/router';
 import { useEffect, useRef, useState } from 'react';
-import { FaChartLine } from 'react-icons/fa';
 
 const ChartThumb = ({ chartData }: { chartData: any[] }) => {
   const chartContainerRef = useRef<any>();
@@ -99,8 +96,6 @@ const ChartThumb = ({ chartData }: { chartData: any[] }) => {
 };
 
 const TokenChartLast7Day = ({ token }: { token: IToken }) => {
-  const router = useRouter();
-
   const dataCached = localStorage.getItem(`cache_chart_${token.address}`);
   let _data = [];
   if (dataCached) {
@@ -154,7 +149,6 @@ const TokenChartLast7Day = ({ token }: { token: IToken }) => {
 
   return (
     <Box
-      onClick={() => router.push(`${ROUTE_PATH.TOKEN}?address=${token?.address}`)}
       aria-label={''}
       style={{
         width: '146px',
@@ -162,7 +156,7 @@ const TokenChartLast7Day = ({ token }: { token: IToken }) => {
         position: 'relative',
       }}
     >
-      {data.length > 0 ? <ChartThumb chartData={data} /> : <FaChartLine />}
+      {data.length > 0 ? <ChartThumb chartData={data} /> : null}
     </Box>
   );
 };

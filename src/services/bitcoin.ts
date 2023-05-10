@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { apiClient } from '@/services';
 import {
   BINANCE_PAIR,
@@ -21,23 +22,10 @@ export const getCollectedUTXO = async (
 ): Promise<ICollectedUTXOResp | undefined> => {
   try {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const collected: any = await apiClient.get<ICollectedUTXOResp>(`${WALLETS_API_PATH}/${btcAddress}`);
-    const incomingUTXOs: TC_SDK.UTXO[] = [];
-    const pendingUTXOs = await getPendingUTXOs(btcAddress);
-    for (const utxo of pendingUTXOs) {
-      for (let index = 0; index < utxo.vout.length; index++) {
-        const vout = utxo.vout[index];
-        if (vout.scriptpubkey_address.toLowerCase() === btcAddress.toLowerCase() && vout.value) {
-          // append incoming utxo
-          incomingUTXOs.push({
-            tx_hash: utxo.txid,
-            tx_output_n: index,
-            value: new BigNumber(vout.value),
-          });
-        }
-      }
-    }
-    const tempUTXOs = [...(collected?.txrefs || []), ...incomingUTXOs];
+    const collected: any = await apiClient.get<ICollectedUTXOResp>(
+      `${WALLETS_API_PATH}/${btcAddress}`,
+    );
+    const tempUTXOs = [...(collected?.txrefs || [])];
     let utxos;
     try {
       const tcClient = new TC_SDK.TcClient(TC_SDK.Mainnet, TC_NETWORK_RPC);
@@ -53,21 +41,26 @@ export const getCollectedUTXO = async (
     return {
       ...collected,
       txrefs: utxos || [],
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any;
   } catch (err) {
     console.log(err);
   }
 };
 
-export const getPendingUTXOs = async (btcAddress: string): Promise<IPendingUTXO[]> => {
+export const getPendingUTXOs = async (
+  btcAddress: string,
+): Promise<IPendingUTXO[]> => {
   let pendingUTXOs = [];
   if (!btcAddress) return [];
   try {
-    const res = await fetch(`https://blockstream.info/api/address/${btcAddress}/txs`).then(res => {
+    const res = await fetch(
+      `https://blockstream.info/api/address/${btcAddress}/txs`,
+    ).then((res) => {
       return res.json();
     });
-    pendingUTXOs = (res || []).filter((item: IPendingUTXO) => !item.status.confirmed);
+    pendingUTXOs = (res || []).filter(
+      (item: IPendingUTXO) => !item.status.confirmed,
+    );
   } catch (err) {
     return [];
   }
@@ -96,7 +89,9 @@ export const getFeeRate = async (): Promise<IFeeRate> => {
   }
 };
 
-export const getTokenRate = async (pair: BINANCE_PAIR = 'ETHBTC'): Promise<number> => {
+export const getTokenRate = async (
+  pair: BINANCE_PAIR = 'ETHBTC',
+): Promise<number> => {
   try {
     const res = await fetch(`${BINANCE_API_URL}/ticker/price?symbol=${pair}`);
     const data: ITokenPriceResp = await res.json();

@@ -15,6 +15,7 @@ export const BNS_CONTRACT: string = process.env.NEXT_PUBLIC_BNS_CONTRACT!;
 export const BFS_ADDRESS: string = process.env.NEXT_PUBLIC_BFS_CONTRACT!;
 export const UNIV2_FACTORY_ADDRESS: string = process.env.NEXT_PUBLIC_UNIV2_FACTORY!;
 export const UNIV2_ROUTER_ADDRESS: string = process.env.NEXT_PUBLIC_UNIV2_ROUTER!;
+export const TM_ADDRESS: string = process.env.NEXT_PUBLIC_TM_ADDRESS!;
 
 export const TC_WEB_URL: string = process.env.NEXT_PUBLIC_TC_WEB_URL!;
 export const TRANSFER_TX_SIZE = 1000!;

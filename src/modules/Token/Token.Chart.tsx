@@ -1,16 +1,20 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { memo, useEffect, useRef } from 'react';
 
-import { formatCurrency } from '@/utils';
+import { compareString, formatCurrency } from '@/utils';
 import {
   createChart,
   CrosshairMode,
   LastPriceAnimationMode,
   LineType,
+  PriceScaleMode,
   TrackingModeExitMode,
 } from 'lightweight-charts';
 import useAsyncEffect from 'use-async-effect';
 import { StyledTokenChartContainer } from './Token.styled';
+import BigNumber from 'bignumber.js';
+import moment from 'moment';
+import { colors } from '@/theme/colors';
 
 interface TokenChartProps {
   chartData: any[];
@@ -31,23 +35,23 @@ const TokenChart: React.FC<TokenChartProps> = ({ chartData }) => {
         height: chartContainerRef.current.clientHeight,
         localization: {
           priceFormatter: (p: any) => {
-            return formatCurrency(p, 18);
+            return new BigNumber(p).toFixed(18);
           },
-          // timeFormatter: (t) => {
-          //   return moment.unix(t).format('lll');
-          // },
+          timeFormatter: (t: any) => {
+            return moment.unix(t).format('lll');
+          },
         },
         layout: {
           textColor: '#B1B5C3',
-          background: { type: 'solid', color: 'white' } as any,
+          background: { type: 'solid', color: 'transparent' } as any,
         },
         rightPriceScale: {
-          borderColor: '#E6E8EC',
-          entireTextOnly: true,
-          // mode: PriceScaleMode.IndexedTo100,
+          borderColor: colors.darkBorderColor,
+          // entireTextOnly: true,
+          mode: PriceScaleMode.Logarithmic,
         },
         timeScale: {
-          borderColor: '#E6E8EC',
+          borderColor: colors.darkBorderColor,
           timeVisible: true,
           secondsVisible: false,
           barSpacing: 32,
@@ -68,7 +72,7 @@ const TokenChart: React.FC<TokenChartProps> = ({ chartData }) => {
         watermark: {
           text: 'trustless.market',
           fontSize: 50,
-          color: 'rgba(0,0,0,0.04)',
+          color: 'rgba(255, 255, 255, 0.04)',
           visible: true,
         },
         trackingMode: {
@@ -100,6 +104,64 @@ const TokenChart: React.FC<TokenChartProps> = ({ chartData }) => {
         //   minMove: 0.000000000000000001,
         // },
       });
+
+      const container: any = document.getElementById('chartContainer');
+
+      const toolTip: any = document.createElement('div');
+      toolTip.style = `position: absolute; font-size: 12px; z-index: 4; top: 0px; left: 0px;`;
+      toolTip.style.background = 'transparent';
+      toolTip.style.color = 'white';
+      container.appendChild(toolTip);
+
+      chart.current.subscribeCrosshairMove((param: any) => {
+        if (
+          param.point === undefined ||
+          !param.time ||
+          param.point.x < 0 ||
+          param.point.x > container.clientWidth ||
+          param.point.y < 0 ||
+          param.point.y > container.clientHeight
+        ) {
+          toolTip.style.display = 'none';
+        } else {
+          const dateStr = param.time;
+          toolTip.style.display = 'block';
+          const data = param.seriesData?.get?.(candleSeries.current);
+
+          if (data) {
+            const vol = refCandles.current.find((c) =>
+              compareString(c.time, data.time),
+            );
+
+            const color =
+              Number(vol.close) < Number(vol.open) ? '#EF466F' : '#45B26B';
+
+            toolTip.innerHTML = `<div class="wrapValues">
+              <div>${moment(moment.unix(dateStr)).format('lll')} | </div>
+              <div>O <span style="color: ${color}">${formatCurrency(
+              vol?.open,
+              18,
+            )}</span></div>
+              <div>H <span style="color: ${color}">${formatCurrency(
+              vol?.high,
+              18,
+            )}</span></div>
+              <div>L <span style="color: ${color}">${formatCurrency(
+              vol?.low,
+              18,
+            )}</span></div>
+              <div>C <span style="color: ${color}">${formatCurrency(
+              vol?.close,
+              18,
+            )}</span></div>
+              <div>Vol <span style="color: ${color}">${formatCurrency(
+              vol?.volume,
+              18,
+            )}</span> ${'WBTC'}</div>
+            </div>`;
+          }
+        }
+      });
     }
   }, []);
 
@@ -130,7 +192,11 @@ const TokenChart: React.FC<TokenChartProps> = ({ chartData }) => {
   }, [chartData]);
 
   return (
-    <StyledTokenChartContainer ref={chartContainerRef} style={{ height: '100%' }} />
+    <StyledTokenChartContainer
+      ref={chartContainerRef}
+      style={{ height: '100%' }}
+      id="chartContainer"
+    />
   );
 };
 

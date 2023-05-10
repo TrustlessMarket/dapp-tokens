@@ -19,6 +19,7 @@ import Head from 'next/head';
 import { useEffect, useState } from 'react';
 import { Toaster } from 'react-hot-toast';
 import { Provider } from 'react-redux';
+import GoogleAnalytics from "../components/GA/GoogleAnalytics";
 
 export default function App({ Component, pageProps }: AppProps) {
   const { seoInfo = {} } = pageProps;
@@ -127,6 +128,7 @@ export default function App({ Component, pageProps }: AppProps) {
                   <ScreenLayoutProvider>
                     <AssetsProvider>
                       <Hydrated>
+                        <GoogleAnalytics />
                         <Component {...pageProps} />
                       </Hydrated>
                     </AssetsProvider>

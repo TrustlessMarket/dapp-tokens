@@ -1,4 +1,5 @@
 export interface IToken {
+  btcPrice?: number | string;
   ownerSupply?: string | number;
   toBalance?: string | number;
   fromBalance?: string | number;
@@ -13,7 +14,7 @@ export interface IToken {
   slug?: string;
   symbol: string;
   name: string;
-  price?: number;
+  price?: number | string;
   usdPrice?: number;
   usdVolume?: number;
   usdTotalVolume?: number;
@@ -35,4 +36,5 @@ export interface IToken {
   index?: number;
   balance?: string;
   decimal?: number | string;
+  network?: string;
 }

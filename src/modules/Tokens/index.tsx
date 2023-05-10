@@ -18,7 +18,7 @@ import { StyledTokens, UploadFileContainer } from './Tokens.styled';
 // import { ROUTE_PATH } from '@/constants/route-path';
 import { ROUTE_PATH } from '@/constants/route-path';
 import { WalletContext } from '@/contexts/wallet-context';
-import { DEFAULT_BASE_TOKEN } from '@/modules/Swap/form';
+import { WBTC_ADDRESS } from '@/modules/Swap/form';
 import { showError } from '@/utils/toast';
 import { Box, Flex } from '@chakra-ui/react';
 import BigNumber from 'bignumber.js';
@@ -29,6 +29,7 @@ import BodyContainer from '@/components/Swap/bodyContainer';
 import { AiOutlineCaretDown, AiOutlineCaretUp } from 'react-icons/ai';
 import TokenChartLast7Day from './Token.ChartLast7Day';
 import px2rem from '@/utils/px2rem';
+import { FaChartBar, FaChartLine } from 'react-icons/fa';
 
 const LIMIT_PAGE = 500;
 //const ALL_ONE_PAGE = 10000;
@@ -44,6 +45,7 @@ const Tokens = () => {
     'Volume',
     'Supply',
     'Last 7d',
+    'Actions',
   ];
   /*'Price','24h %','Market Cap'*/
 
@@ -198,9 +200,14 @@ const Tokens = () => {
               className={'avatar'}
             />
             <Flex direction={'column'}>
-              <Box>{token?.name}</Box>
-              <Box fontSize={px2rem(14)} color={'#FFFFFFAA'}>
-                ({token?.symbol})
+              <Flex gap={1} alignItems={"flex-end"}>
+                <Box fontWeight={"500"}>{token?.name}</Box>
+                <Box fontSize={px2rem(16)} color={'rgba(255, 255, 255, 0.7)'}>
+                  {token?.symbol}
+                </Box>
+              </Flex>
+              <Box fontSize={px2rem(14)} color={'rgba(255, 255, 255, 0.7)'}>
+                {token?.network || 'TC'}
               </Box>
             </Flex>
           </Flex>
@@ -248,13 +255,26 @@ const Tokens = () => {
           ) || 'n/a',
         usdVol: `$${formatCurrency(marketCap, 2)}`,
         usdVolume: <span>${formatCurrency(tokenVolume, 2)}</span>,
-        supply: formatCurrency(totalSupply.toString()),
-        action: <TokenChartLast7Day token={token} />,
+        supply: formatCurrency(totalSupply.toString(), 0),
+        chart: <TokenChartLast7Day token={token} />,
+        action: (
+          <Flex justifyContent={'center'}>
+            <Box
+              cursor={'pointer'}
+              onClick={() =>
+                router.push(`${ROUTE_PATH.TOKEN}?address=${token?.address}`)
+              }
+              title="View detail"
+            >
+              <FaChartBar />
+            </Box>
+          </Flex>
+        ),
       },
       config: {
         onClick: () => {
           router.push(
-            `${ROUTE_PATH.SWAP}?from_token=${DEFAULT_BASE_TOKEN}&to_token=${token?.address}`,
+            `${ROUTE_PATH.SWAP}?from_token=${WBTC_ADDRESS}&to_token=${token?.address}`,
           );
         },
         style: {
