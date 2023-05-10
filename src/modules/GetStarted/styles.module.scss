@@ -1,4 +1,73 @@
 .wrapper {
   width: 100%;
-  background: linear-gradient(90deg, #00c6ff 0%, #0072ff 100%);
+  background: #0F0F0F;
+  padding-top: 48px;
+  padding-bottom: 48px;
+
+  .upload_title {
+    //margin-bottom: ${px2rem(48)};
+    margin-left: auto;
+    margin-right: auto;
+    width: fit-content;
+    //z-index: 1;
+    //position: relative;
+    color: white;
+    //font-size: ${px2rem(48)};
+    //line-height: 48 / 44;
+  }
+
+  .tab-container {
+    border-top: 1px solid #353945;
+    max-height: 300px;
+    .chakra-tabs,
+    .chakra-tabs__tab-panels,
+    .chakra-tabs__tab-panel,
+    .chakra-tabs__tab-panel > div,
+    .chakra-table__container,
+    .chakra-table {
+      max-height: inherit;
+    }
+    .chakra-tabs,
+    .chakra-table__container {
+      height: 100%;
+    }
+    .chakra-table__container {
+      overflow: auto;
+    }
+    .chakra-tabs__tab-panels {
+      height: calc(100% - 53px);
+    }
+    .chakra-tabs__tab-panel {
+      padding: 10px;
+      padding-bottom: 0px;
+      height: 100%;
+      > div {
+        height: 100%;
+      }
+    }
+    .chakra-tabs__tablist {
+      border-bottom: 1px solid #353945;
+      button {
+        font-size: 16px;
+      }
+    }
+    .chakra-tabs__tab {
+      &[aria-selected='true'] {
+        background-color: transparent;
+        color: white;
+      }
+    }
+    .chakra-table {
+      thead {
+        td {
+          color: rgba(255, 255, 255, 0.5);
+        }
+      }
+      tbody {
+        td {
+          color: rgba(255, 255, 255, 0.5);
+        }
+      }
+    }
+  }
 }

@@ -10,7 +10,7 @@ export default function Started() {
       <Head>
         <link rel="icon" href={`${CDN_URL}/icons/logo-tc-market.svg`} />
       </Head>
-      <Box>
+      <Box bgColor={"#0F0F0F"}>
         <Layout>
           <GetStarted />
         </Layout>
