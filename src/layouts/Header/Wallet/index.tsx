@@ -1,32 +1,31 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import IconSVG from '@/components/IconSVG';
-import { CDN_URL, TC_EXPLORER, TC_WEB_URL } from '@/configs';
+import {CDN_URL, TC_EXPLORER, TM_ADDRESS, WALLET_URL} from '@/configs';
 // import { ROUTE_PATH } from '@/constants/route-path';
-import { AssetsContext } from '@/contexts/assets-context';
-import { getIsAuthenticatedSelector, getUserSelector } from '@/state/user/selector';
-import { formatBTCPrice } from '@/utils/format';
-import { useWeb3React } from '@web3-react/core';
+import {AssetsContext} from '@/contexts/assets-context';
+import {getIsAuthenticatedSelector, getUserSelector} from '@/state/user/selector';
+import {formatBTCPrice} from '@/utils/format';
+import {useWeb3React} from '@web3-react/core';
 import copy from 'copy-to-clipboard';
 // import { useRouter } from 'next/router';
 import SelectedNetwork from '@/components/Swap/selectNetwork';
 import Text from '@/components/Text';
-import { SupportedChainId } from '@/constants/chains';
-import { TRUSTLESS_BRIDGE, TRUSTLESS_FAUCET } from '@/constants/common';
-import { WalletContext } from '@/contexts/wallet-context';
-import { compareString, formatCurrency, formatLongAddress } from '@/utils';
-import { showError } from '@/utils/toast';
-import { useRouter } from 'next/router';
-import { useContext, useEffect, useMemo, useRef, useState } from 'react';
-import { OverlayTrigger } from 'react-bootstrap';
-import { toast } from 'react-hot-toast';
-import Jazzicon, { jsNumberForAddress } from 'react-jazzicon';
-import { useSelector } from 'react-redux';
-import { isScreenDarkMode } from '..';
-import { ConnectWalletButton, WalletBalance } from '../Header.styled';
-import { WalletPopover } from './Wallet.styled';
-import { GrMoney } from 'react-icons/gr';
+import {SupportedChainId} from '@/constants/chains';
+import {TRUSTLESS_BRIDGE, TRUSTLESS_FAUCET} from '@/constants/common';
+import {WalletContext} from '@/contexts/wallet-context';
+import {compareString, formatCurrency, formatLongAddress} from '@/utils';
+import {showError} from '@/utils/toast';
+import {useRouter} from 'next/router';
+import {useContext, useEffect, useMemo, useRef, useState} from 'react';
+import {OverlayTrigger} from 'react-bootstrap';
+import {toast} from 'react-hot-toast';
+import Jazzicon, {jsNumberForAddress} from 'react-jazzicon';
+import {useSelector} from 'react-redux';
+import {isScreenDarkMode} from '..';
+import {ConnectWalletButton, WalletBalance} from '../Header.styled';
+import {WalletPopover} from './Wallet.styled';
+import {GrMoney} from 'react-icons/gr';
 import useBalanceERC20Token from '@/hooks/contract-operations/token/useBalanceERC20Token';
-import { TM_ADDRESS } from '@/configs';
 import web3 from 'web3';
 
 const WalletHeader = () => {
@@ -155,7 +154,7 @@ const WalletHeader = () => {
       </div>
       <div className="divider"></div>
       <div className="cta">
-        <div className="wallet-link" onClick={() => window.open(TC_WEB_URL)}>
+        <div className="wallet-link" onClick={() => window.open(WALLET_URL)}>
           <IconSVG
             src={`${CDN_URL}/icons/ic-wallet.svg`}
             maxWidth="20"
