@@ -1,4 +1,4 @@
-import {Box, Center, Flex, Text} from "@chakra-ui/react";
+import {Box, Flex, Text} from "@chakra-ui/react";
 
 interface IStep {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
