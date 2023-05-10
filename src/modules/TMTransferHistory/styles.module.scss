@@ -3,4 +3,22 @@
   background: #0F0F0F;
   padding-top: 48px;
   padding-bottom: 48px;
+
+  .swapButton {
+    width: 215px;
+    height: 48px;
+    border-radius: 8px;
+    background: #3385FF;
+    color: #FFFFFF;
+    font-size: 16px;
+  }
+
+  .addLiquidityButton {
+    width: 215px;
+    height: 48px;
+    border-radius: 8px;
+    background: #FFFFFF;
+    color: #000000;
+    font-size: 16px;
+  }
 }

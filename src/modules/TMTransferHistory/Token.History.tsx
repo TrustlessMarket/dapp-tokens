@@ -2,7 +2,7 @@
 import ListTable, {ColumnProp} from '@/components/Swap/listTable';
 import {TC_EXPLORER} from '@/configs';
 import {getTMTransferHistory} from '@/services/swap';
-import {formatCurrency} from '@/utils';
+import {compareString, formatCurrency} from '@/utils';
 import {Flex, Text} from '@chakra-ui/react';
 import moment from 'moment';
 import {useEffect, useMemo, useState} from 'react';
@@ -11,6 +11,7 @@ import {useWeb3React} from "@web3-react/core";
 import {debounce} from "lodash";
 import Spinner from "react-bootstrap/Spinner";
 import InfiniteScroll from "react-infinite-scroll-component";
+import {colors} from "@/theme/colors";
 
 const LIMIT_PAGE = 30;
 
@@ -58,6 +59,29 @@ const TokenHistory = () => {
 
   const columns: ColumnProp[] = useMemo(
     () => [
+      {
+        id: 'type',
+        label: 'Type',
+        labelConfig: {
+          fontSize: '12px',
+          fontWeight: '500',
+          color: '#B1B5C3',
+        },
+        config: {
+          borderBottom: 'none',
+        },
+        render(row: any) {
+          let type = 'Sent';
+          let color = colors.redPrimary;
+
+          if (compareString(row?.to, account)) {
+            type = 'Received';
+            color = colors.greenPrimary;
+          }
+
+          return <Text style={{ color }}>{type}</Text>;
+        },
+      },
       {
         id: 'date',
         label: 'Date',
