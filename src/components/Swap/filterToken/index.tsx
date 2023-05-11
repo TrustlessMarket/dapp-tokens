@@ -1,20 +1,21 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import FiledButton from '@/components/Swap/button/filedButton';
 import FieldText from '@/components/Swap/form/fieldText';
-import ListTable, { ColumnProp } from '@/components/Swap/listTable';
+import ListTable, {ColumnProp} from '@/components/Swap/listTable';
 import TokenBalance from '@/components/Swap/tokenBalance';
-import { COMMON_TOKEN } from '@/constants/common';
+import {COMMON_TOKEN_CONTRACT} from '@/constants/common';
 import useDebounce from '@/hooks/useDebounce';
-import { closeModal, openModal } from '@/state/modal';
-import { Box, Flex, Text } from '@chakra-ui/react';
-import { useWindowSize } from '@trustless-computer/dapp-core';
+import {closeModal, openModal} from '@/state/modal';
+import {Box, Flex, Text} from '@chakra-ui/react';
+import {useWindowSize} from '@trustless-computer/dapp-core';
 import cx from 'classnames';
-import { clone } from 'lodash';
-import React, { useEffect, useMemo, useState } from 'react';
-import { Field, Form, useFormState } from 'react-final-form';
-import { AiOutlineCaretDown } from 'react-icons/ai';
-import { useDispatch } from 'react-redux';
+import {clone} from 'lodash';
+import React, {useEffect, useMemo, useState} from 'react';
+import {Field, Form, useFormState} from 'react-final-form';
+import {AiOutlineCaretDown} from 'react-icons/ai';
+import {useDispatch} from 'react-redux';
 import styles from './styles.module.scss';
+import {compareString} from "@/utils";
 
 interface FilterButtonProps {
   data: any[];
@@ -45,10 +46,12 @@ const FilterModal: React.FC<FilterModalProps> = ({
 
   const commonData = useMemo(() => {
     const res = [];
-    for (let i = 0; i < data.length; i++) {
-      const e = data[i];
-      if (COMMON_TOKEN.includes(e.symbol)) {
-        res.push(e);
+    for (let i = 0; i < COMMON_TOKEN_CONTRACT.length; i++) {
+      const address = COMMON_TOKEN_CONTRACT[i];
+
+      const token = data?.find(e => compareString(e?.address, address));
+      if(token) {
+        res.push(token);
       }
     }
     return res;
