@@ -153,7 +153,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const { account } = useWeb3React();
   const { values } = useFormState();
   const { change, restart } = useForm();
-  const btnDisabled = loading;
+  const btnDisabled = loading || (isScreenRemove && !isPaired);
 
   useImperativeHandle(ref, () => {
     return {
@@ -261,6 +261,10 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         tokenB: quoteToken,
       });
 
+      if (compareString(response, NULL_ADDRESS) && isScreenRemove) {
+        throw Error('Pool not pair');
+      }
+
       if (!compareString(response, NULL_ADDRESS)) {
         const [resReserve, resSupply, resAmountApprovePool, resAPR] =
           await Promise.all([
@@ -311,6 +315,8 @@ export const MakeFormSwap = forwardRef((props, ref) => {
 
       setPairAddress(response);
     } catch (error) {
+      toastError(showError, error, {});
+
       console.log('error', error);
     }
   };
@@ -764,13 +770,15 @@ export const MakeFormSwap = forwardRef((props, ref) => {
               <Text>
                 Balance: {formatCurrency(baseBalance)} {baseToken?.symbol}
               </Text>
-              <Text
-                cursor={'pointer'}
-                color={'#3385FF'}
-                onClick={handleChangeMaxBaseAmount}
-              >
-                MAX
-              </Text>
+              {!isScreenRemove && (
+                <Text
+                  cursor={'pointer'}
+                  color={'#3385FF'}
+                  onClick={handleChangeMaxBaseAmount}
+                >
+                  MAX
+                </Text>
+              )}
             </Flex>
           )
         }
@@ -825,13 +833,15 @@ export const MakeFormSwap = forwardRef((props, ref) => {
               <Text>
                 Balance: {formatCurrency(quoteBalance)} {quoteToken?.symbol}
               </Text>
-              <Text
-                cursor={'pointer'}
-                color={'#3385FF'}
-                onClick={handleChangeMaxQuoteAmount}
-              >
-                MAX
-              </Text>
+              {!isScreenRemove && (
+                <Text
+                  cursor={'pointer'}
+                  color={'#3385FF'}
+                  onClick={handleChangeMaxQuoteAmount}
+                >
+                  MAX
+                </Text>
+              )}
             </Flex>
           )
         }
