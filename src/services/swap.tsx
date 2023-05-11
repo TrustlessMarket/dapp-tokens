@@ -110,3 +110,15 @@ export const getTMTransferHistory = async (
     error: 'Fail to TM transfer history',
   });
 };
+
+export const getUserTradeHistory = async (
+  params: {
+    address: string;
+  } & IPagingParams,
+) => {
+  const qs = '?' + queryString.stringify(params);
+  return swrFetcher(`${API_URL}${API_PATH}/user/trade-histories${qs}`, {
+    method: 'GET',
+    error: 'Fail to get user trade history',
+  });
+};
