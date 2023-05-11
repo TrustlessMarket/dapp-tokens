@@ -13,7 +13,6 @@ import store from '@/state';
 import { updateCurrentTransaction } from '@/state/pnftExchange';
 import { compareString, getContract } from '@/utils';
 import { useWeb3React } from '@web3-react/core';
-import BigNumber from 'bignumber.js';
 import { useCallback, useContext } from 'react';
 import Web3 from 'web3';
 
@@ -101,7 +100,7 @@ const useRemoveLiquidity: ContractOperationHook<
           .removeLiquidity(
             tokenA,
             tokenB,
-            Web3.utils.toWei(new BigNumber(liquidValue).toFixed(18), 'ether'),
+            liquidValue,
             Web3.utils.toWei(amountAMin, 'ether'),
             Web3.utils.toWei(amountBMin, 'ether'),
             account,

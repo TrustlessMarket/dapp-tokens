@@ -2,35 +2,34 @@
 import FiledButton from '@/components/Swap/button/filedButton';
 import FilterButton from '@/components/Swap/filterToken';
 import { ROUTE_PATH } from '@/constants/route-path';
+import { IMPORTED_TOKENS, LIQUID_PAIRS } from '@/constants/storage-key';
+import { NULL_ADDRESS } from '@/constants/url';
+import useGetPair from '@/hooks/contract-operations/swap/useGetPair';
+import useGetReserves from '@/hooks/contract-operations/swap/useReserves';
+import useInfoERC20Token, {
+  IInfoERC20TokenResponse,
+} from '@/hooks/contract-operations/token/useInfoERC20Token';
+import useSupplyERC20Liquid from '@/hooks/contract-operations/token/useSupplyERC20Liquid';
 import { IToken } from '@/interfaces/token';
-import { Box, Flex, Stat, StatHelpText, StatNumber, Text } from '@chakra-ui/react';
-import { useRouter } from 'next/router';
-import { useEffect, useRef, useState } from 'react';
-import { Form, useForm } from 'react-final-form';
-import styles from './styles.module.scss';
 import { getTokens } from '@/services/token-explorer';
-import { isDevelop } from '@/utils/commons';
 import {
   camelCaseKeys,
   compareString,
   formatCurrency,
   sortAddressPair,
 } from '@/utils';
-import pairsMock from '@/dataMock/tokens.json';
-import { IMPORTED_TOKENS, LIQUID_PAIRS } from '@/constants/storage-key';
-import useInfoERC20Token, {
-  IInfoERC20TokenResponse,
-} from '@/hooks/contract-operations/token/useInfoERC20Token';
-import { BsPlus } from 'react-icons/bs';
-import cx from 'classnames';
-import useGetPair from '@/hooks/contract-operations/swap/useGetPair';
-import useGetReserves from '@/hooks/contract-operations/swap/useReserves';
-import useSupplyERC20Liquid from '@/hooks/contract-operations/token/useSupplyERC20Liquid';
-import { NULL_ADDRESS } from '@/constants/url';
+import { isDevelop } from '@/utils/commons';
+import { Box, Flex, Stat, StatHelpText, StatNumber, Text } from '@chakra-ui/react';
 import BigNumber from 'bignumber.js';
-import { ScreenType } from '..';
+import cx from 'classnames';
+import { useRouter } from 'next/router';
+import { useEffect, useRef, useState } from 'react';
+import { Form, useForm } from 'react-final-form';
 import { toast } from 'react-hot-toast';
+import { BsPlus } from 'react-icons/bs';
 import Web3 from 'web3';
+import { ScreenType } from '..';
+import styles from './styles.module.scss';
 
 interface MakeFormImportPoolProps {
   onSubmit: (_: any) => void;
@@ -181,12 +180,7 @@ const MakeFormImportPool: React.FC<MakeFormImportPoolProps> = ({
         page: page,
         is_test: isDevelop() ? '1' : '',
       });
-      let _list: IToken[] = [];
-      if (isDevelop()) {
-        _list = camelCaseKeys(pairsMock);
-      } else {
-        _list = camelCaseKeys(res);
-      }
+      let _list: IToken[] = camelCaseKeys(res);
       const _getImportTokens = getImportTokens();
       _list = _getImportTokens.concat(_list);
       refTokensList.current = _list;
