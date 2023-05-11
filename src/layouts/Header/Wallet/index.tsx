@@ -171,6 +171,14 @@ const WalletHeader = () => {
           <IconSVG src={`/wrapbtc.svg`} maxWidth="20" color="black" type="fill" />
           <Text size="medium">Wrap BTC</Text>
         </div>
+        <div className="wallet-link" onClick={() => window.open(TRUSTLESS_BRIDGE)}>
+          <IconSVG src={`/wrapbtc.svg`} maxWidth="20" color="black" type="fill" />
+          <Text size="medium">Wrap ETH</Text>
+        </div>
+        <div className="wallet-link" onClick={() => window.open(TRUSTLESS_BRIDGE)}>
+          <IconSVG src={`/wrapbtc.svg`} maxWidth="20" color="black" type="fill" />
+          <Text size="medium">Wrap USDC</Text>
+        </div>
         {user?.walletAddress && (
           <div
             className="wallet-link"
