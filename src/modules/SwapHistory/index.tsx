@@ -2,7 +2,7 @@
 import styles from "@/modules/TMTransferHistory/styles.module.scss";
 import BodyContainer from "@/components/Swap/bodyContainer";
 import SectionContainer from "@/components/Swap/sectionContainer";
-import TokenHistory from "@/modules/TMTransferHistory/Token.History";
+import TokenHistory from "@/modules/SwapHistory/Token.History";
 import {Box, Button, Flex, Text} from "@chakra-ui/react";
 import px2rem from "@/utils/px2rem";
 import Link from "next/link";

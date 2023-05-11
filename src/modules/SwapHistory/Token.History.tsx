@@ -1,28 +1,28 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import ListTable, { ColumnProp } from '@/components/Swap/listTable';
-import { TC_EXPLORER } from '@/configs';
-import { IToken } from '@/interfaces/token';
-import { getTradeHistory } from '@/services/swap';
-import { colors } from '@/theme/colors';
-import { compareString, formatCurrency } from '@/utils';
-import { Flex, Text } from '@chakra-ui/react';
+import ListTable, {ColumnProp} from '@/components/Swap/listTable';
+import {TC_EXPLORER} from '@/configs';
+import {getUserTradeHistory} from '@/services/swap';
+import {colors} from '@/theme/colors';
+import {compareString, formatCurrency} from '@/utils';
+import {Flex, Text} from '@chakra-ui/react';
 import moment from 'moment';
-import { useEffect, useMemo, useState } from 'react';
-import { RxExternalLink } from 'react-icons/rx';
-import { DEFAULT_FROM_TOKEN_ADDRESS } from '../Pools';
-import { StyledTokenTrading } from './Token.styled';
+import {useEffect, useMemo, useState} from 'react';
+import {RxExternalLink} from 'react-icons/rx';
+import {DEFAULT_FROM_TOKEN_ADDRESS} from '../Pools';
+import {useWeb3React} from "@web3-react/core";
 
-const TokenHistory = ({ data }: { data: IToken }) => {
+const TokenHistory = () => {
   const [list, setList] = useState<any[]>([]);
+  const { account } = useWeb3React();
 
   useEffect(() => {
     getList();
-  }, []);
+  }, [account]);
 
   const getList = async () => {
     try {
-      const response: any = await getTradeHistory({
-        contract_address: data.address,
+      const response: any = await getUserTradeHistory({
+        address: '0x07e51AEc82C7163e3237cfbf8C0E6A07413FA18E',
         page: 1,
         limit: 30,
       });
@@ -113,7 +113,7 @@ const TokenHistory = ({ data }: { data: IToken }) => {
         },
         render(row: any) {
           return (
-            <Text>
+            <Text color={"#FFFFFF"}>
               {formatCurrency(row.price, 18)} {row.pair.token1Obj.symbol}
             </Text>
           );
@@ -133,7 +133,7 @@ const TokenHistory = ({ data }: { data: IToken }) => {
         render(row: any) {
           const amount = getAmount(row);
           return (
-            <Text>
+            <Text color={"#FFFFFF"}>
               {formatCurrency(amount, 18)} {row.pair.token0Obj.symbol}
             </Text>
           );
@@ -166,7 +166,7 @@ const TokenHistory = ({ data }: { data: IToken }) => {
           borderBottom: 'none',
         },
         render(row: any) {
-          return <Text>{moment(row.createdAt).format('lll')}</Text>;
+          return <Text color={"#FFFFFF"}>{moment(row.createdAt).format('lll')}</Text>;
         },
       },
       {
@@ -182,7 +182,7 @@ const TokenHistory = ({ data }: { data: IToken }) => {
         },
         render(row: any) {
           return (
-            <Flex>
+            <Flex color={"#FFFFFF"}>
               <a
                 title="explorer"
                 href={`${TC_EXPLORER}/tx/${row.txHash}`}
@@ -199,9 +199,7 @@ const TokenHistory = ({ data }: { data: IToken }) => {
   );
 
   return (
-    <StyledTokenTrading>
-      <ListTable data={list} columns={columns} />
-    </StyledTokenTrading>
+    <ListTable data={list} columns={columns} />
   );
 };
 
