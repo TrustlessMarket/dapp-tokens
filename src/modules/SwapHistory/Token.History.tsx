@@ -1,42 +1,57 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import ListTable, {ColumnProp} from '@/components/Swap/listTable';
-import {TC_EXPLORER} from '@/configs';
+import {TC_EXPLORER, WALLET_URL} from '@/configs';
 import {getUserTradeHistory} from '@/services/swap';
 import {colors} from '@/theme/colors';
-import {compareString, formatCurrency} from '@/utils';
-import {Flex, Text} from '@chakra-ui/react';
+import {camelCaseKeys, compareString, formatCurrency} from '@/utils';
+import {Button, Flex, Text} from '@chakra-ui/react';
 import moment from 'moment';
 import {useEffect, useMemo, useState} from 'react';
 import {RxExternalLink} from 'react-icons/rx';
-import {DEFAULT_FROM_TOKEN_ADDRESS} from '../Pools';
 import {useWeb3React} from "@web3-react/core";
+import usePendingSwapTransactions from "@/hooks/contract-operations/swap/usePendingSwapTransactions";
+import {WBTC_ADDRESS} from "@/modules/Swap/form";
 
 const TokenHistory = () => {
   const [list, setList] = useState<any[]>([]);
+  const [listPending, setListPending] = useState<any[]>([]);
   const { account } = useWeb3React();
+  const { call: getPendingSwapTransactions } = usePendingSwapTransactions();
 
   useEffect(() => {
-    getList();
+    if(account) {
+      getList();
+      getPendingTransactions();
+    }
   }, [account]);
 
   const getList = async () => {
     try {
       const response: any = await getUserTradeHistory({
-        address: '0x07e51AEc82C7163e3237cfbf8C0E6A07413FA18E',
+        address: account as string,
         page: 1,
         limit: 30,
       });
-      setList(response);
+      setList(response || []);
     } catch (error) {}
+  };
+
+  const getPendingTransactions = async () => {
+    try {
+      const response: any = await getPendingSwapTransactions({});
+      setListPending(camelCaseKeys(response));
+    } catch (error) {
+      console.log('getPendingTransactions', error)
+    }
   };
 
   const checkIsSell = (row: any) => {
     let isSell = true;
     if (
-      (compareString(row?.pair?.token0, DEFAULT_FROM_TOKEN_ADDRESS) &&
-        Number(row.amount1Out) > 0) ||
-      (compareString(row?.pair?.token1, DEFAULT_FROM_TOKEN_ADDRESS) &&
-        Number(row.amount0Out) > 0)
+      (compareString(row?.pair?.token0, WBTC_ADDRESS) &&
+        Number(row.amount0In) > 0) ||
+      (compareString(row?.pair?.token1, WBTC_ADDRESS) &&
+        Number(row.amount1In) > 0)
     ) {
       isSell = false;
     }
@@ -45,31 +60,31 @@ const TokenHistory = () => {
 
   const getAmount = (row: any) => {
     if (
-      compareString(row?.pair?.token0, DEFAULT_FROM_TOKEN_ADDRESS) &&
-      Number(row.amount1Out) > 0
+      compareString(row?.pair?.token0, WBTC_ADDRESS) &&
+      Number(row.amount0In) > 0
     ) {
-      return row.amount1Out;
+      return row.amount0In;
     }
 
     if (
-      compareString(row?.pair?.token1, DEFAULT_FROM_TOKEN_ADDRESS) &&
-      Number(row.amount0Out) > 0
-    ) {
-      return row.amount0Out;
-    }
-
-    if (
-      !compareString(row?.pair?.token1, DEFAULT_FROM_TOKEN_ADDRESS) &&
+      compareString(row?.pair?.token1, WBTC_ADDRESS) &&
       Number(row.amount1In) > 0
     ) {
       return row.amount1In;
     }
 
     if (
-      !compareString(row?.pair?.token0, DEFAULT_FROM_TOKEN_ADDRESS) &&
-      Number(row.amount0In) > 0
+      !compareString(row?.pair?.token1, WBTC_ADDRESS) &&
+      Number(row.amount1Out) > 0
     ) {
-      return row.amount0In;
+      return row.amount1Out;
+    }
+
+    if (
+      !compareString(row?.pair?.token0, WBTC_ADDRESS) &&
+      Number(row.amount0Out) > 0
+    ) {
+      return row.amount0Out;
     }
 
     return 0;
@@ -112,7 +127,7 @@ const TokenHistory = () => {
           borderBottom: 'none',
         },
         render(row: any) {
-          return (
+          return row?.status !== 'pending' && (
             <Text color={"#FFFFFF"}>
               {formatCurrency(row.price, 18)} {row.pair.token1Obj.symbol}
             </Text>
@@ -139,21 +154,6 @@ const TokenHistory = () => {
           );
         },
       },
-      //   {
-      //     id: 'maker',
-      //     label: 'Maker',
-      //     labelConfig: {
-      //       fontSize: '12px',
-      //       fontWeight: '500',
-      //       color: '#B1B5C3',
-      //     },
-      //     config: {
-      //       borderBottom: 'none',
-      //     },
-      //     render(row: any) {
-      //       return <Text>{shortCryptoAddress(row.sender, 8)}</Text>;
-      //     },
-      //   },
       {
         id: 'date',
         label: 'Date',
@@ -166,7 +166,22 @@ const TokenHistory = () => {
           borderBottom: 'none',
         },
         render(row: any) {
-          return <Text color={"#FFFFFF"}>{moment(row.createdAt).format('lll')}</Text>;
+          return <Text color={"#FFFFFF"}>{row?.createdAt ? moment(row.createdAt).format('lll') : '-'}</Text>;
+        },
+      },
+      {
+        id: 'status',
+        label: 'Status',
+        labelConfig: {
+          fontSize: '12px',
+          fontWeight: '500',
+          color: '#B1B5C3',
+        },
+        config: {
+          borderBottom: 'none',
+        },
+        render(row: any) {
+          return <Text color={row?.status === 'pending' ? "#FFE899" : "rgb(0, 170, 108)"}>{row?.status === 'pending' ? 'Pending' : 'Success'}</Text>;
         },
       },
       {
@@ -183,13 +198,27 @@ const TokenHistory = () => {
         render(row: any) {
           return (
             <Flex color={"#FFFFFF"}>
-              <a
-                title="explorer"
-                href={`${TC_EXPLORER}/tx/${row.txHash}`}
-                target="_blank"
-              >
-                <RxExternalLink />
-              </a>
+              {
+                row.txHash ? (
+                  <a
+                    title="explorer"
+                    href={`${TC_EXPLORER}/tx/${row.txHash}`}
+                    target="_blank"
+                  >
+                    <RxExternalLink />
+                  </a>
+                ) : (
+                  <a
+                    title="explorer"
+                    href={`${WALLET_URL}`}
+                    target="_blank"
+                  >
+                    <Button bg={"#FFE899"} color={"#000000"} borderRadius={"4px"}>
+                      Process
+                    </Button>
+                  </a>
+                )
+              }
             </Flex>
           );
         },
@@ -199,7 +228,7 @@ const TokenHistory = () => {
   );
 
   return (
-    <ListTable data={list} columns={columns} />
+    <ListTable data={[...listPending, ...list]} columns={columns} />
   );
 };
 
