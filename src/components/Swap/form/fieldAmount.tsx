@@ -13,6 +13,7 @@ import {
 import Cleave from 'cleave.js/react';
 import React from 'react';
 
+import { formatCurrency } from '@/utils';
 import styles from './styles.module.scss';
 
 interface FieldAmountProps {
@@ -100,7 +101,7 @@ const FieldAmount = (props: FieldAmountProps) => {
         <Box className={styles.formControl}>
           <Cleave
             placeholder={placeholder}
-            value={value}
+            value={formatCurrency(value)}
             maxLength={maxLength}
             onChange={handleChange}
             onFocus={onFocus}
