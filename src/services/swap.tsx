@@ -8,7 +8,7 @@ import { isProduction } from '@/utils/commons';
 const API_PATH = '/swap';
 
 export const getTokenRp = async (
-  params: IPagingParams & { address?: string },
+  params: IPagingParams & { address?: string, sort?: string, sort_type?: number },
 ): Promise<IToken[]> => {
   const qs = '?' + queryString.stringify(params);
 

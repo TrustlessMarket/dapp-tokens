@@ -241,39 +241,41 @@ const ListTable: React.FC<ListTableProps> = ({
         {!noHeader && (
           <Thead>
             <Tr>
-              {columns.map((v) => (
-                <Th {...v.config} {...v.labelConfig} key={v.id}>
-                  <Flex
-                    gap={1}
-                    alignItems="center"
-                    className={v.onSort ? 'sort' : ''}
-                    style={{
-                      cursor: v.onSort ? 'pointer' : 'default',
-                    }}
-                    onClick={v.onSort && v.onSort}
-                  >
-                    {v.label}
-                    {v.onSort && (
-                      <Box>
-                        <FaChevronUp
-                          style={{
-                            marginBottom: '-3px',
-                            fontSize: '10px',
-                            color: !v.sort?.includes('-') ? '#ff831a' : 'unset',
-                          }}
-                        />
-                        <FaChevronDown
-                          style={{
-                            marginTop: '-3px',
-                            fontSize: '10px',
-                            color: v.sort?.includes('-') ? '#ff831a' : 'unset',
-                          }}
-                        />
-                      </Box>
-                    )}
-                  </Flex>
-                </Th>
-              ))}
+              {columns.map((v) => {
+                return (
+                  <Th {...v.config} {...v.labelConfig} key={v.id}>
+                    <Flex
+                      gap={1}
+                      alignItems="center"
+                      className={v.onSort ? 'sort' : ''}
+                      style={{
+                        cursor: v.onSort ? 'pointer' : 'default',
+                      }}
+                      onClick={v.onSort && v.onSort}
+                    >
+                      {v.label}
+                      {v.onSort && (
+                        <Box>
+                          <FaChevronUp
+                            style={{
+                              marginBottom: '-3px',
+                              fontSize: '10px',
+                              color: !v.sort?.includes('-') ? '#ff831a' : 'unset',
+                            }}
+                          />
+                          <FaChevronDown
+                            style={{
+                              marginTop: '-3px',
+                              fontSize: '10px',
+                              color: v.sort?.includes('-') ? '#ff831a' : 'unset',
+                            }}
+                          />
+                        </Box>
+                      )}
+                    </Flex>
+                  </Th>
+                )
+              })}
             </Tr>
           </Thead>
         )}

@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import Button from '@/components/Button';
-import Table from '@/components/Table';
 import {IToken} from '@/interfaces/token';
 import {getTokenRp} from '@/services/swap';
 import {getIsAuthenticatedSelector} from '@/state/user/selector';
@@ -55,10 +54,8 @@ const Tokens = () => {
 
   const isAuthenticated = useSelector(getIsAuthenticatedSelector);
   const { onDisconnect, onConnect, requestBtcAddress } = useContext(WalletContext);
-
-  // const { data, error, isLoading } = useSWR(getApiKey(getTokens), getTokens);
-
   const [tokensList, setTokensList] = useState<IToken[]>([]);
+  const [sort, setSort] = useState({ sort: "-total_volume" });
 
   const handleConnectWallet = async () => {
     try {
@@ -76,59 +73,9 @@ const Tokens = () => {
   const fetchTokens = async (page = 1, isFetchMore = false) => {
     try {
       setIsFetching(true);
-      const res = await getTokenRp({ limit: LIMIT_PAGE, page: page });
-      console.log(res.length);
-      /* const res1 = await getTokenRp({ limit: ALL_ONE_PAGE, page: 1 });;
-
-      for(let i = 0;i<res.length;i++)
-      {
-        for(let j = 0;j<res1.length;j++)
-        {
-          if(res[i].address==res1[j].address)
-          {
-            if( res1[j].volume!=0) {
-              res[i].volume = res1[j].volume;
-            }
-            if( res1[j].price!=0) {
-              res[i].price = res1[j].price;
-            }
-            if( res1[j].percent!=0) {
-              res[i].percent = res1[j].percent;
-            }
-            if( res1[j].usd_price!=0) {
-              res[i].usd_price = res1[j].usd_price;
-            }
-            if( res1[j].usd_volume!=0) {
-              res[i].usd_volume = res1[j].usd_volume;
-            }
-
-            break;
-          }
-        }
-      }
-      for(let i = 0;i<res.length-1;i++)
-      {
-        for(let j = i+1;j<res.length;j++) {
-
-
-          let isswap = false;
-          if (!res[i].volume && res[j].volume) {
-            isswap =true;
-          }else if (res[i].volume && res[j].volume) {
-            if(res[j].volume>res[i].volume) {
-              isswap =true;
-            }
-          }
-          if (isswap)
-          {
-
-            const temp = res[i];
-            res[i] = res[j];
-            res[j] = temp;
-          }
-        }}
-      */
-
+      const sortField = sort?.sort?.replace('-', '');
+      const sortType = sort?.sort?.includes('-') ? -1 : 1;
+      const res = await getTokenRp({ limit: LIMIT_PAGE, page: page, sort: sortField, sort_type: sortType });
       if (isFetchMore) {
         setTokensList((prev) => [...prev, ...res]);
       } else {
@@ -161,12 +108,12 @@ const Tokens = () => {
 
   useEffect(() => {
     fetchTokens();
-  }, []);
+  }, [JSON.stringify(sort)]);
 
   const columns: ColumnProp[] = useMemo(
     () => [
       {
-        id: '#',
+        id: 'index',
         label: '#',
         labelConfig: {
           fontSize: '12px',
@@ -176,6 +123,14 @@ const Tokens = () => {
         config: {
           // borderBottom: 'none',
         },
+        onSort: () => {
+          const sortField = 'index';
+          setSort((_sort) => ({
+            ..._sort,
+            sort: !_sort?.sort?.includes(sortField) || _sort?.sort === sortField ? `-${sortField}` : sortField,
+          }));
+        },
+        sort: sort?.sort,
         render(row: any) {
           return <Text color={"#FFFFFF"}>{row?.index}</Text>;
         },
@@ -191,6 +146,14 @@ const Tokens = () => {
         config: {
           // borderBottom: 'none',
         },
+        onSort: () => {
+          const sortField = 'name';
+          setSort((_sort) => ({
+            ..._sort,
+            sort: !_sort?.sort?.includes(sortField) || _sort?.sort === sortField ? `-${sortField}` : sortField,
+          }));
+        },
+        sort: sort?.sort,
         render(row: any) {
           return (
             <Flex gap={2} minW={px2rem(200)} alignItems={'center'}>
@@ -230,6 +193,14 @@ const Tokens = () => {
         config: {
           // borderBottom: 'none',
         },
+        onSort: () => {
+          const sortField = 'usd_price';
+          setSort((_sort) => ({
+            ..._sort,
+            sort: !_sort?.sort?.includes(sortField) || _sort?.sort === sortField ? `-${sortField}` : sortField,
+          }));
+        },
+        sort: sort?.sort,
         render(row: any) {
           const tokenPrice = row?.usdPrice
             ? new BigNumber(row?.usdPrice).toFixed()
@@ -248,6 +219,14 @@ const Tokens = () => {
         config: {
           // borderBottom: 'none',
         },
+        onSort: () => {
+          const sortField = 'percent';
+          setSort((_sort) => ({
+            ..._sort,
+            sort: !_sort?.sort?.includes(sortField) || _sort?.sort === sortField ? `-${sortField}` : sortField,
+          }));
+        },
+        sort: sort?.sort,
         render(row: any) {
           return (
             <Flex
@@ -274,6 +253,14 @@ const Tokens = () => {
         config: {
           // borderBottom: 'none',
         },
+        onSort: () => {
+          const sortField = 'percent_7day';
+          setSort((_sort) => ({
+            ..._sort,
+            sort: !_sort?.sort?.includes(sortField) || _sort?.sort === sortField ? `-${sortField}` : sortField,
+          }));
+        },
+        sort: sort?.sort,
         render(row: any) {
           return (
             <Flex
@@ -313,7 +300,7 @@ const Tokens = () => {
         },
       },
       {
-        id: 'volume',
+        id: 'total_volume',
         label: 'Volume',
         labelConfig: {
           fontSize: '12px',
@@ -323,6 +310,14 @@ const Tokens = () => {
         config: {
           // borderBottom: 'none',
         },
+        onSort: () => {
+          const sortField = 'total_volume';
+          setSort((_sort) => ({
+            ..._sort,
+            sort: !_sort?.sort?.includes(sortField) || _sort?.sort === sortField ? `-${sortField}` : sortField,
+          }));
+        },
+        sort: sort?.sort,
         render(row: any) {
           const tokenVolume = row?.usdTotalVolume
             ? new BigNumber(row?.usdTotalVolume).toFixed()
@@ -341,6 +336,14 @@ const Tokens = () => {
         config: {
           // borderBottom: 'none',
         },
+        onSort: () => {
+          const sortField = 'total_supply';
+          setSort((_sort) => ({
+            ..._sort,
+            sort: !_sort?.sort?.includes(sortField) || _sort?.sort === sortField ? `-${sortField}` : sortField,
+          }));
+        },
+        sort: sort?.sort,
         render(row: any) {
           const totalSupply = new BigNumber(row?.totalSupply || 0).div(
             decimalToExponential(Number(row?.decimal || 18)),
@@ -391,7 +394,7 @@ const Tokens = () => {
         },
       },
     ],
-    [],
+    [sort.sort],
   );
 
   const tokenDatas = tokensList.map((token) => {
@@ -591,11 +594,6 @@ const Tokens = () => {
           next={debounceLoadMore}
         >
           <ListTable data={tokensList} columns={columns} onItemClick={handleItemClick}/>
-          <Table
-            tableHead={TABLE_HEADINGS}
-            data={tokenDatas}
-            className={'token-table'}
-          />
         </InfiniteScroll>
         <ModalCreateToken show={showModal} handleClose={() => setShowModal(false)} />
       </StyledTokens>
