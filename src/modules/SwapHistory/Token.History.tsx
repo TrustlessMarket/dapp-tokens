@@ -16,6 +16,7 @@ const TokenHistory = () => {
   const [list, setList] = useState<any[]>([]);
   const [listPending, setListPending] = useState<any[]>([]);
   const { account } = useWeb3React();
+  // const account = '0x07e51AEc82C7163e3237cfbf8C0E6A07413FA18E';
   const { call: getPendingSwapTransactions } = usePendingSwapTransactions();
 
   useEffect(() => {
@@ -49,9 +50,9 @@ const TokenHistory = () => {
     let isSell = true;
     if (
       (compareString(row?.pair?.token0, WBTC_ADDRESS) &&
-        Number(row.amount0In) > 0) ||
+        Number(row.amount1Out) > 0) ||
       (compareString(row?.pair?.token1, WBTC_ADDRESS) &&
-        Number(row.amount1In) > 0)
+        Number(row.amount0Out) > 0)
     ) {
       isSell = false;
     }
@@ -61,30 +62,30 @@ const TokenHistory = () => {
   const getAmount = (row: any) => {
     if (
       compareString(row?.pair?.token0, WBTC_ADDRESS) &&
-      Number(row.amount0In) > 0
-    ) {
-      return row.amount0In;
-    }
-
-    if (
-      compareString(row?.pair?.token1, WBTC_ADDRESS) &&
-      Number(row.amount1In) > 0
-    ) {
-      return row.amount1In;
-    }
-
-    if (
-      !compareString(row?.pair?.token1, WBTC_ADDRESS) &&
       Number(row.amount1Out) > 0
     ) {
       return row.amount1Out;
     }
 
     if (
-      !compareString(row?.pair?.token0, WBTC_ADDRESS) &&
+      compareString(row?.pair?.token1, WBTC_ADDRESS) &&
       Number(row.amount0Out) > 0
     ) {
       return row.amount0Out;
+    }
+
+    if (
+      !compareString(row?.pair?.token1, WBTC_ADDRESS) &&
+      Number(row.amount1In) > 0
+    ) {
+      return row.amount1In;
+    }
+
+    if (
+      !compareString(row?.pair?.token0, WBTC_ADDRESS) &&
+      Number(row.amount0In) > 0
+    ) {
+      return row.amount0In;
     }
 
     return 0;
