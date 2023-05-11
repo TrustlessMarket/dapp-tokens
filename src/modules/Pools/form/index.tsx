@@ -302,9 +302,6 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             ? resReserve._reserve1
             : resReserve._reserve0;
 
-          console.log(token1);
-          console.log(token2);
-
           const youPool = new BigNumber(resSupply.ownerSupply).dividedBy(
             resSupply.totalSupply,
           );
@@ -721,10 +718,16 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const onChangeSlider = (v: any) => {
     if (baseToken && quoteToken) {
       const [token0, token1] = sortAddressPair(baseToken, quoteToken);
-      const { _reserve0, _reserve1 } = perPrice;
 
       const cPercent = Number(v) / 100;
       const _percentPool = Number(percentPool) / 100;
+
+      const _reserve0 = compareString(token0.address, baseToken.address)
+        ? perPrice._reserve0
+        : perPrice._reserve1;
+      const _reserve1 = compareString(token1.address, quoteToken.address)
+        ? perPrice._reserve1
+        : perPrice._reserve0;
 
       const __reserve0 = new BigNumber(_percentPool)
         .multipliedBy(_reserve0)
@@ -771,7 +774,12 @@ export const MakeFormSwap = forwardRef((props, ref) => {
                 min={0}
                 max={100}
                 onChange={onChangeSlider}
-                disabled={!baseToken || !quoteToken}
+                disabled={
+                  !baseToken ||
+                  !quoteToken ||
+                  !isPaired ||
+                  Number(supply?.ownerSupply) === 0
+                }
               />
             </div>
           </Box>
