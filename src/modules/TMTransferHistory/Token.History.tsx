@@ -179,7 +179,7 @@ const TokenHistory = () => {
         },
       },
     ],
-    [],
+    [account],
   );
 
   return (
