@@ -376,7 +376,7 @@ const LiquidityContainer = () => {
         <StyledLiquidNote>
           <Text className="title">Liquidity provider rewards</Text>
           <Text className="desc">
-            Liquidity providers earn a 2% fee on all trades proportional to their
+            Liquidity providers earn a 1% fee on all trades proportional to their
             share of the pool. Fees are added to the pool, accrue in real time and
             can be claimed by withdrawing your liquidity.
           </Text>

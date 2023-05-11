@@ -1,29 +1,35 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import FiledButton from '@/components/Swap/button/filedButton';
 import FilterButton from '@/components/Swap/filterToken';
-import {ROUTE_PATH} from '@/constants/route-path';
-import {IToken} from '@/interfaces/token';
-import {Box, Flex, Stat, StatHelpText, StatNumber, Text} from '@chakra-ui/react';
-import {useRouter} from 'next/router';
-import {useEffect, useRef, useState} from 'react';
-import {Form, useForm} from 'react-final-form';
-import styles from './styles.module.scss';
-import {getTokens} from '@/services/token-explorer';
-import {isDevelop} from '@/utils/commons';
-import {camelCaseKeys, compareString, formatCurrency, sortAddressPair,} from '@/utils';
-import pairsMock from '@/dataMock/tokens.json';
-import {IMPORTED_TOKENS, LIQUID_PAIRS} from '@/constants/storage-key';
-import useInfoERC20Token, {IInfoERC20TokenResponse,} from '@/hooks/contract-operations/token/useInfoERC20Token';
-import {BsPlus} from 'react-icons/bs';
-import cx from 'classnames';
+import { ROUTE_PATH } from '@/constants/route-path';
+import { IMPORTED_TOKENS, LIQUID_PAIRS } from '@/constants/storage-key';
+import { NULL_ADDRESS } from '@/constants/url';
 import useGetPair from '@/hooks/contract-operations/swap/useGetPair';
 import useGetReserves from '@/hooks/contract-operations/swap/useReserves';
+import useInfoERC20Token, {
+  IInfoERC20TokenResponse,
+} from '@/hooks/contract-operations/token/useInfoERC20Token';
 import useSupplyERC20Liquid from '@/hooks/contract-operations/token/useSupplyERC20Liquid';
-import {NULL_ADDRESS} from '@/constants/url';
+import { IToken } from '@/interfaces/token';
+import { getTokens } from '@/services/token-explorer';
+import {
+  camelCaseKeys,
+  compareString,
+  formatCurrency,
+  sortAddressPair,
+} from '@/utils';
+import { isDevelop } from '@/utils/commons';
+import { Box, Flex, Stat, StatHelpText, StatNumber, Text } from '@chakra-ui/react';
 import BigNumber from 'bignumber.js';
-import {ScreenType} from '..';
-import {toast} from 'react-hot-toast';
-import Web3 from "web3";
+import cx from 'classnames';
+import { useRouter } from 'next/router';
+import { useEffect, useRef, useState } from 'react';
+import { Form, useForm } from 'react-final-form';
+import { toast } from 'react-hot-toast';
+import { BsPlus } from 'react-icons/bs';
+import Web3 from 'web3';
+import { ScreenType } from '..';
+import styles from './styles.module.scss';
 
 interface MakeFormImportPoolProps {
   onSubmit: (_: any) => void;
@@ -174,12 +180,7 @@ const MakeFormImportPool: React.FC<MakeFormImportPoolProps> = ({
         page: page,
         is_test: isDevelop() ? '1' : '',
       });
-      let _list: IToken[] = [];
-      if (isDevelop()) {
-        _list = camelCaseKeys(pairsMock);
-      } else {
-        _list = camelCaseKeys(res);
-      }
+      let _list: IToken[] = camelCaseKeys(res);
       const _getImportTokens = getImportTokens();
       _list = _getImportTokens.concat(_list);
       refTokensList.current = _list;
@@ -259,11 +260,24 @@ const MakeFormImportPool: React.FC<MakeFormImportPoolProps> = ({
       return;
     }
     const [token1, token2] = sortAddressPair(baseToken, quoteToken);
+
+    const pair1 = new BigNumber(Web3.utils.fromWei(perPrice._reserve0))
+      .dividedBy(Web3.utils.fromWei(perPrice._reserve1))
+      .toFixed(18);
+
+    const pair2 = new BigNumber(Web3.utils.fromWei(perPrice._reserve1, 'ether'))
+      .dividedBy(Web3.utils.fromWei(perPrice._reserve0, 'ether'))
+      .toFixed(18);
+
     return (
-      <Flex className="price-pool-content">
+      <Flex gap={4} flexWrap={'wrap'} className="price-pool-content">
         <Box>
           <Stat>
-            <StatNumber>{!isPaired ? '-' : 1}</StatNumber>
+            <StatNumber>
+              {!isPaired
+                ? '-'
+                : formatCurrency(pair1, Number(pair1) > 1000000 ? 4 : 18)}
+            </StatNumber>
             <StatHelpText>{`${token1.symbol} per ${token2.symbol}`}</StatHelpText>
           </Stat>
         </Box>
@@ -272,11 +286,7 @@ const MakeFormImportPool: React.FC<MakeFormImportPoolProps> = ({
             <StatNumber>
               {!isPaired
                 ? '-'
-                : formatCurrency(
-                    new BigNumber(Web3.utils.fromWei(perPrice._reserve1, 'ether'))
-                      .dividedBy(Web3.utils.fromWei(perPrice._reserve0, 'ether'))
-                      .toString(),
-                  )}
+                : formatCurrency(pair2, Number(pair2) > 1000000 ? 4 : 18)}
             </StatNumber>
             <StatHelpText>{`${token2.symbol} per ${token1.symbol}`}</StatHelpText>
           </Stat>

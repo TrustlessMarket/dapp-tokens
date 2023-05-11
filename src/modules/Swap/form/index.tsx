@@ -699,7 +699,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
                   // width={25}
                   // height={25}
                   src={
-                    'https://cdn.trustless.computer/upload/1683638149328694935-1683638149-wbtc.png'
+                    'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png'
                   }
                   alt={'wbtc-icon'}
                   className={'avatar'}

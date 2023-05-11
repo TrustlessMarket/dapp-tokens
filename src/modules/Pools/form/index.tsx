@@ -18,7 +18,6 @@ import { ROUTE_PATH } from '@/constants/route-path';
 import { IMPORTED_TOKENS, LIQUID_PAIRS } from '@/constants/storage-key';
 import { NULL_ADDRESS } from '@/constants/url';
 import { AssetsContext } from '@/contexts/assets-context';
-import pairsMock from '@/dataMock/tokens.json';
 import useAddLiquidity, {
   IAddLiquidityParams,
 } from '@/hooks/contract-operations/pools/useAddLiquidity';
@@ -37,6 +36,7 @@ import useSupplyERC20Liquid from '@/hooks/contract-operations/token/useSupplyERC
 import useContractOperation from '@/hooks/contract-operations/useContractOperation';
 import { IToken } from '@/interfaces/token';
 import { TransactionStatus } from '@/interfaces/walletTransaction';
+import { getPairAPR } from '@/services/pool';
 import { logErrorToServer } from '@/services/swap';
 import { getTokens } from '@/services/token-explorer';
 import { useAppDispatch, useAppSelector } from '@/state/hooks';
@@ -57,6 +57,7 @@ import { isDevelop } from '@/utils/commons';
 import { composeValidators, requiredAmount } from '@/utils/formValidate';
 import { formatAmountBigNumber } from '@/utils/format';
 import px2rem from '@/utils/px2rem';
+import { showError } from '@/utils/toast';
 import {
   Box,
   Flex,
@@ -89,8 +90,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { default as Web3, default as web3 } from 'web3';
 import { ScreenType } from '..';
 import styles from './styles.module.scss';
-import { getPairAPR } from '@/services/pool';
-import { showError } from '@/utils/toast';
 
 const LIMIT_PAGE = 50;
 
@@ -153,7 +152,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const { account } = useWeb3React();
   const { values } = useFormState();
   const { change, restart } = useForm();
-  const btnDisabled = loading;
+  const btnDisabled = loading || (isScreenRemove && !isPaired);
 
   useImperativeHandle(ref, () => {
     return {
@@ -214,10 +213,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       setIsApprovePoolToken(
         checkBalanceIsApprove(
           isApproveAmountPoolToken,
-          Web3.utils.toWei(
-            new BigNumber(values?.liquidValue || 0).toFixed(18),
-            'ether',
-          ),
+          new BigNumber(values?.liquidValue || 0).toFixed(18),
         ),
       );
     }
@@ -261,6 +257,10 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         tokenB: quoteToken,
       });
 
+      if (compareString(response, NULL_ADDRESS) && isScreenRemove) {
+        throw Error('Pool not pair');
+      }
+
       if (!compareString(response, NULL_ADDRESS)) {
         const [resReserve, resSupply, resAmountApprovePool, resAPR] =
           await Promise.all([
@@ -288,15 +288,31 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           setSupply(resSupply);
         }
 
-        console.log(
-          resSupply?.totalSupply?.toString(),
-          formatAmountBigNumber(resReserve._reserve0, baseToken.decimal),
-          formatAmountBigNumber(resReserve._reserve1, baseToken.decimal),
-        );
-
         if (isScreenRemove) {
-          setBaseBalance(Web3.utils.fromWei(resReserve._reserve0, 'ether'));
-          setQuoteBalance(Web3.utils.fromWei(resReserve._reserve1, 'ether'));
+          const [token1, token2] = sortAddressPair(baseToken, quoteToken);
+
+          const reserve0 = compareString(token1.address, baseToken.address)
+            ? resReserve._reserve0
+            : resReserve._reserve1;
+          const reserve1 = compareString(token2.address, quoteToken.address)
+            ? resReserve._reserve1
+            : resReserve._reserve0;
+
+          const youPool = new BigNumber(resSupply.ownerSupply).dividedBy(
+            resSupply.totalSupply,
+          );
+
+          setBaseBalance(
+            new BigNumber(Web3.utils.fromWei(reserve0, 'ether'))
+              .multipliedBy(youPool)
+              .toString(),
+          );
+          setQuoteBalance(
+            new BigNumber(Web3.utils.fromWei(reserve1, 'ether'))
+              .multipliedBy(youPool)
+              .toString(),
+          );
+
           setIsApproveAmountPoolToken(resAmountApprovePool);
         }
 
@@ -311,6 +327,8 @@ export const MakeFormSwap = forwardRef((props, ref) => {
 
       setPairAddress(response);
     } catch (error) {
+      toastError(showError, error, {});
+
       console.log('error', error);
     }
   };
@@ -323,12 +341,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         page: page,
         is_test: isDevelop() ? '1' : '',
       });
-      let _list: IToken[] = [];
-      if (isDevelop()) {
-        _list = camelCaseKeys(pairsMock);
-      } else {
-        _list = camelCaseKeys(res);
-      }
+      let _list: IToken[] = camelCaseKeys(res);
       const _getImportTokens = getImportTokens();
       _list = _getImportTokens.concat(_list);
       refTokensList.current = _list;
@@ -468,10 +481,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           ? new BigNumber(perPrice._reserve0).dividedBy(perPrice._reserve1)
           : new BigNumber(perPrice._reserve1).dividedBy(perPrice._reserve0);
 
-      const _baseAmount = formatCurrency(
-        new BigNumber(_amount).multipliedBy(rate).toFixed(18),
-        18,
-      );
+      const _baseAmount = new BigNumber(_amount).multipliedBy(rate).toFixed(18);
 
       change('baseAmount', _baseAmount);
       setIsApproveBaseToken(
@@ -501,11 +511,10 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         findIndex === 1
           ? new BigNumber(perPrice._reserve0).dividedBy(perPrice._reserve1)
           : new BigNumber(perPrice._reserve1).dividedBy(perPrice._reserve0);
-      const _quoteAmount = formatCurrency(
-        new BigNumber(_amount).multipliedBy(rate).toFixed(18),
-        18,
-      );
+      const _quoteAmount = new BigNumber(_amount).multipliedBy(rate).toFixed(18);
+
       change('quoteAmount', _quoteAmount);
+
       setIsApproveQuoteToken(
         checkBalanceIsApprove(isApproveAmountQuoteToken, _quoteAmount),
       );
@@ -552,7 +561,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         setIsApproveQuoteToken(
           checkBalanceIsApprove(web3.utils.fromWei(_isApprove), values?.quoteAmount),
         );
-      } else if (isScreenRemove && !isApprovePoolToken && pairAddress) {
+      } else if (isScreenRemove && !isApprovePoolToken && isPaired) {
         await requestApproveToken({
           address: pairAddress,
         });
@@ -697,10 +706,16 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const onChangeSlider = (v: any) => {
     if (baseToken && quoteToken) {
       const [token0, token1] = sortAddressPair(baseToken, quoteToken);
-      const { _reserve0, _reserve1 } = perPrice;
 
       const cPercent = Number(v) / 100;
       const _percentPool = Number(percentPool) / 100;
+
+      const _reserve0 = compareString(token0.address, baseToken.address)
+        ? perPrice._reserve0
+        : perPrice._reserve1;
+      const _reserve1 = compareString(token1.address, quoteToken.address)
+        ? perPrice._reserve1
+        : perPrice._reserve0;
 
       const __reserve0 = new BigNumber(_percentPool)
         .multipliedBy(_reserve0)
@@ -717,9 +732,8 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         .toString();
 
       const liquidValue = new BigNumber(cPercent)
-        .multipliedBy(_percentPool)
         .multipliedBy(supply.ownerSupply)
-        .toString();
+        .toFixed(0);
 
       change('baseAmount', _baseBalance);
       change('quoteAmount', _quoteBalance);
@@ -747,7 +761,12 @@ export const MakeFormSwap = forwardRef((props, ref) => {
                 min={0}
                 max={100}
                 onChange={onChangeSlider}
-                disabled={!baseToken || !quoteToken}
+                disabled={
+                  !baseToken ||
+                  !quoteToken ||
+                  !isPaired ||
+                  Number(supply?.ownerSupply) === 0
+                }
               />
             </div>
           </Box>
@@ -764,13 +783,15 @@ export const MakeFormSwap = forwardRef((props, ref) => {
               <Text>
                 Balance: {formatCurrency(baseBalance)} {baseToken?.symbol}
               </Text>
-              <Text
-                cursor={'pointer'}
-                color={'#3385FF'}
-                onClick={handleChangeMaxBaseAmount}
-              >
-                MAX
-              </Text>
+              {!isScreenRemove && (
+                <Text
+                  cursor={'pointer'}
+                  color={'#3385FF'}
+                  onClick={handleChangeMaxBaseAmount}
+                >
+                  MAX
+                </Text>
+              )}
             </Flex>
           )
         }
@@ -825,13 +846,15 @@ export const MakeFormSwap = forwardRef((props, ref) => {
               <Text>
                 Balance: {formatCurrency(quoteBalance)} {quoteToken?.symbol}
               </Text>
-              <Text
-                cursor={'pointer'}
-                color={'#3385FF'}
-                onClick={handleChangeMaxQuoteAmount}
-              >
-                MAX
-              </Text>
+              {!isScreenRemove && (
+                <Text
+                  cursor={'pointer'}
+                  color={'#3385FF'}
+                  onClick={handleChangeMaxQuoteAmount}
+                >
+                  MAX
+                </Text>
+              )}
             </Flex>
           )
         }
@@ -1098,6 +1121,11 @@ const CreateMarket = ({
       let response: any;
 
       if (isRemove) {
+        console.log(
+          'values?.liquidValue',
+          web3.utils.fromWei(new BigNumber(values?.liquidValue).toFixed()),
+        );
+
         const data = {
           tokenA: token0?.address,
           tokenB: token1?.address,
@@ -1108,6 +1136,9 @@ const CreateMarket = ({
 
         response = await removeLiquidity(data);
       } else {
+        console.log('amount0', amount0);
+        console.log('amount1', new BigNumber(amount1).toString());
+
         const data = {
           tokenA: token0?.address,
           tokenB: token1?.address,
