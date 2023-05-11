@@ -13,7 +13,6 @@ import 'react-datepicker/dist/react-datepicker.css';
 
 import cx from 'classnames';
 
-import { colors } from '@/theme/colors';
 import moment from 'moment';
 import { BsCalendar2 } from 'react-icons/bs';
 import styles from './styles.module.scss';
@@ -27,6 +26,7 @@ interface FieldDateProps {
   errorMessage?: any;
   appendComp?: any;
   errorPlacement?: string;
+  disabled?: boolean;
   inputType?: 'text' | 'textarea';
   fieldChanged?: (_: any) => void;
 }
@@ -38,6 +38,7 @@ const FieldDate = (props: FieldDateProps) => {
     rightLabel,
     meta,
     fieldChanged,
+    disabled,
     // disabledInput, errorPlacement, zIndex, anchorAppend,
     // ...restProps
   } = props;
@@ -48,8 +49,6 @@ const FieldDate = (props: FieldDateProps) => {
   const isError = meta.error && meta.touched;
 
   const handleChange = (e: any) => {
-    console.log(e);
-
     onChange(e);
     fieldChanged?.(e);
   };
@@ -72,6 +71,7 @@ const FieldDate = (props: FieldDateProps) => {
       )}
       <Box className={cx(styles.formCalendar, 'field-calendar-container')}>
         <DatePicker
+          disabled={disabled}
           onChange={handleChange}
           selected={value}
           showTimeSelect
@@ -80,8 +80,9 @@ const FieldDate = (props: FieldDateProps) => {
           // dateFormatCalendar="yyyy/MM/dd"
           timeFormat="HH:mm"
           dateFormat="MMMM d, yyyy h:mm aa"
+          placeholderText="Choose date"
         />
-        <BsCalendar2 color={colors.white500} />
+        <BsCalendar2 color={'rgba(0, 0, 0, 1)'} />
       </Box>
 
       <FormErrorMessage fontSize="sm" color="brand.danger.400">

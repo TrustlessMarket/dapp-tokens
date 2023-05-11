@@ -3,19 +3,20 @@
   > div {
     &:first-child {
       font-style: normal;
-      font-weight: 500;
-      font-size: 14px;
+      font-weight: 400;
+      font-size: 16px;
       line-height: 140%;
       /* identical to box height, or 20px */
 
       /* text/grey 2 */
 
-      color: #999999;
+      color: #1c1c1c;
+      opacity: 0.7;
     }
     &:last-child {
       font-style: normal;
       font-weight: 500;
-      font-size: 14px;
+      font-size: 16px;
       line-height: 140%;
       /* identical to box height, or 20px */
 
@@ -23,7 +24,7 @@
 
       /* text / black */
 
-      color: #000000;
+      color: #1c1c1c;
       a {
         display: flex;
         align-items: center;

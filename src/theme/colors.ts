@@ -7,6 +7,8 @@ export const colors = {
   greenPrimary: '#16c784',
   redPrimary: '#ea3943',
   darkBorderColor: '#353945',
+  dark: '#0F0F0F',
+  bluePrimary: '#3385FF',
 };
 
 export type ColorsTheme = typeof darkTheme;

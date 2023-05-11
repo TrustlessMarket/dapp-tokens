@@ -12,10 +12,9 @@ import cx from 'classnames';
 import { clone } from 'lodash';
 import React, { useEffect, useMemo, useState } from 'react';
 import { Field, Form, useFormState } from 'react-final-form';
-import { AiOutlineCaretDown } from 'react-icons/ai';
+import { IoChevronDownOutline } from 'react-icons/io5';
 import { useDispatch } from 'react-redux';
 import styles from './styles.module.scss';
-import { colors } from '@/theme/colors';
 
 interface FilterButtonProps {
   data: any[] | undefined;
@@ -357,7 +356,7 @@ const FilterButton: React.FC<FilterButtonProps> = ({
         ) : (
           <Text className="select-placeholder">Select a token</Text>
         )}
-        <AiOutlineCaretDown color={colors.white500} />
+        <IoChevronDownOutline color={'#5B5B5B'} />
       </Flex>
     </FiledButton>
   );

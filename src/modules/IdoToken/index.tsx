@@ -1,31 +1,29 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Box, Flex, Text } from '@chakra-ui/react';
-import { StyledIdoContainer } from './IdoToken.styled';
-import FiledButton from '@/components/Swap/button/filedButton';
-import { BsPencil, BsPlusLg, BsTrash } from 'react-icons/bs';
-import { useEffect, useMemo, useState } from 'react';
-import { useRouter } from 'next/router';
-import { ROUTE_PATH } from '@/constants/route-path';
-import ListTable, { ColumnProp } from '@/components/Swap/listTable';
-import { getListIdo } from '@/services/ido';
-import moment from 'moment';
-import { IToken } from '@/interfaces/token';
-import { TOKEN_ICON_DEFAULT } from '@/constants/common';
-import { compareString, formatCurrency } from '@/utils';
-import SocialToken from '@/components/Social';
 import CountDownTimer from '@/components/Countdown';
-import { useWeb3React } from '@web3-react/core';
-import { colors } from '@/theme/colors';
-import { useDispatch } from 'react-redux';
-import { openModal } from '@/state/modal';
-import { closeModal } from '@/state/modal';
-import IdoTokenRemove from './IdoToken.Remove';
+import SocialToken from '@/components/Social';
+import FiledButton from '@/components/Swap/button/filedButton';
+import ListTable, { ColumnProp } from '@/components/Swap/listTable';
+import { TOKEN_ICON_DEFAULT } from '@/constants/common';
+import { IToken } from '@/interfaces/token';
+import { getListIdo } from '@/services/ido';
 import { useAppSelector } from '@/state/hooks';
+import { closeModal, openModal } from '@/state/modal';
 import { selectPnftExchange } from '@/state/pnftExchange';
+import { colors } from '@/theme/colors';
+import { compareString, formatCurrency } from '@/utils';
+import { Box, Flex, Text } from '@chakra-ui/react';
+import { useWeb3React } from '@web3-react/core';
+import { truncate } from 'lodash';
+import moment from 'moment';
+import { useEffect, useMemo, useState } from 'react';
+import { BsPencil, BsTrash } from 'react-icons/bs';
+import { useDispatch } from 'react-redux';
+import IdoTokenManage from '../IdoTokenManage';
+import IdoTokenStatus from './IdoToken.Status';
+import { StyledIdoContainer } from './IdoToken.styled';
 
 const IdoTokenContainer = () => {
-  const router = useRouter();
   const [data, setData] = useState<any[]>();
   const [loading, setLoading] = useState(true);
   const { account } = useWeb3React();
@@ -49,23 +47,6 @@ const IdoTokenContainer = () => {
     }
   };
 
-  const onConfirmRemove = (_ido: any) => {
-    const id = 'removeIdo';
-    const close = () => dispatch(closeModal({ id }));
-    dispatch(
-      openModal({
-        id,
-        theme: 'dark',
-        title: 'Confirm remove ido',
-        modalProps: {
-          centered: true,
-          // contentClassName: styles.modalContent,
-        },
-        render: () => <IdoTokenRemove ido={_ido} onClose={close} />,
-      }),
-    );
-  };
-
   const columns: ColumnProp[] = useMemo(() => {
     return [
       {
@@ -80,9 +61,23 @@ const IdoTokenContainer = () => {
           borderBottom: 'none',
         },
         render(row: any) {
+          return <IdoTokenStatus row={row} />;
+        },
+      },
+      {
+        id: 'date',
+        label: 'Date',
+        labelConfig: {
+          fontSize: '12px',
+          fontWeight: '500',
+          color: '#B1B5C3',
+        },
+        config: {
+          borderBottom: 'none',
+        },
+        render(row: any) {
           return (
             <Box>
-              <Text className="up-coming">Upcoming</Text>
               <Text>{moment(row.startAt).format('MMM, DD')}</Text>
             </Box>
           );
@@ -124,10 +119,10 @@ const IdoTokenContainer = () => {
             <Flex gap={4}>
               <img src={token.thumbnail || TOKEN_ICON_DEFAULT} />
               <Box>
-                <Text>
-                  {token.name} ({token.symbol})
+                <Text className="record-title">
+                  {token.name} <span>{token.symbol}</span>
                 </Text>
-                <Text className="desc">#{token.index}</Text>
+                <Text className="note">#{token.index}</Text>
               </Box>
             </Flex>
           );
@@ -146,7 +141,14 @@ const IdoTokenContainer = () => {
         },
         render(row: any) {
           const token: IToken = row.token;
-          return <Text>{token.description}</Text>;
+          return (
+            <Text className="description">
+              {truncate(token.description, {
+                length: 100,
+                separator: '...',
+              })}
+            </Text>
+          );
         },
       },
       {
@@ -202,15 +204,10 @@ const IdoTokenContainer = () => {
           if (compareString(token.owner, account)) {
             return (
               <Flex alignItems={'center'} gap={4}>
-                <Box
-                  cursor={'pointer'}
-                  onClick={() =>
-                    router.push(`${ROUTE_PATH.IDO_MANAGE}?id=${row.id}`)
-                  }
-                >
+                <Box cursor={'pointer'} onClick={() => onShowCreateIDO(row)}>
                   <BsPencil />
                 </Box>
-                <Box cursor={'pointer'} onClick={() => onConfirmRemove(row)}>
+                <Box cursor={'pointer'} onClick={() => onShowCreateIDO(row, true)}>
                   <BsTrash style={{ color: colors.redPrimary }} />
                 </Box>
               </Flex>
@@ -223,19 +220,45 @@ const IdoTokenContainer = () => {
     ];
   }, [account]);
 
+  const onShowCreateIDO = async (_ido?: any, isRemove?: boolean) => {
+    const id = 'manageIdo';
+    const close = () => dispatch(closeModal({ id }));
+    dispatch(
+      openModal({
+        id,
+        theme: 'dark',
+        title: isRemove ? 'Remove IDO Token' : 'Submit IDO Token',
+        modalProps: {
+          centered: true,
+          size: 'xl',
+          // contentClassName: styles.modalContent,
+        },
+        render: () => (
+          <IdoTokenManage ido={_ido} onClose={close} isRemove={isRemove} />
+        ),
+      }),
+    );
+  };
+
   return (
     <StyledIdoContainer>
       <Text as={'h1'} className="title">
-        Upcoming <span>IDO</span>
+        Upcoming IDO
+      </Text>
+      <Text className="desc">
+        This page dedicate to providing information about upcoming token public
+        sales. Here, you will find a comprehensive list of upcoming token public
+        sales, along with detailed information about each project and the respective
+        tokens being offered.
       </Text>
 
-      <Box className="content">
-        <Flex mb={4} justifyContent={'flex-end'}>
-          <FiledButton onClick={() => router.push(ROUTE_PATH.IDO_MANAGE)}>
-            <Text ml={1}>Submit IDO Token</Text>
-          </FiledButton>
-        </Flex>
+      <Flex mb={'24px'} mt={'24px'} justifyContent={'center'}>
+        <FiledButton onClick={onShowCreateIDO}>
+          <Text ml={1}>Submit IDO Token</Text>
+        </FiledButton>
+      </Flex>
 
+      <Box className="content">
         <ListTable data={data} columns={columns} initialLoading={loading} />
       </Box>
     </StyledIdoContainer>
