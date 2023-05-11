@@ -12,7 +12,7 @@ export const StyledTokens = styled.div`
     border-radius: 50%;
   }
 
-  .table {
+  .table, .chakra-table {
     th:first-of-type {
       max-width: ${px2rem(50)};
       white-space: nowrap;
@@ -26,8 +26,8 @@ export const StyledTokens = styled.div`
     }
 
     td {
-      padding-top: ${px2rem(26)};
-      padding-bottom: ${px2rem(26)};
+      padding-top: ${px2rem(24)};
+      padding-bottom: ${px2rem(24)};
     }
     
     .tableHead {
@@ -37,24 +37,27 @@ export const StyledTokens = styled.div`
       border-bottom: 1px solid rgb(34,37,49);
     }
     
-    .tableData {
-      border-bottom: 1px solid rgb(34,37,49);
-      &_item {
-        color: #FFFFFF;
-        
-        .increase {
-          color: #16c784;
+    thead {
+      tr {
+        th {
+          border-bottom-color: rgb(34,37,49);
         }
-        
-        .descrease {
-          color: #ea3943;
-        }
-      }
-      
-      &:hover {
-        background-color: rgb(23,25,36);
       }
     }
+
+    tbody {
+      tr {
+        td {
+          vertical-align: middle;
+          border-bottom-color: rgb(34,37,49);
+        }
+        
+        &:hover {
+          background-color: rgb(23,25,36);
+        }
+      }
+    }
+    
   }
 
   .loading {

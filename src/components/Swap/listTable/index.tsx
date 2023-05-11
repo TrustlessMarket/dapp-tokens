@@ -51,6 +51,7 @@ interface ListTableProps {
   selectedItem?: any;
   needUpdate?: any;
   initialLoading?: boolean;
+  className?: any
 }
 
 const ItemTable = ({
@@ -126,6 +127,7 @@ const ListTable: React.FC<ListTableProps> = ({
   needUpdate,
   initialLoading,
   onTdRow,
+ className,
 }) => {
   // const { currentWallet } = useCurrentWallet();
   const [rows, setRows] = useState(data);
@@ -235,7 +237,7 @@ const ListTable: React.FC<ListTableProps> = ({
 
   return (
     <TableContainer className={styles.container}>
-      <Table variant="simple">
+      <Table variant="simple" className={className}>
         {!noHeader && (
           <Thead>
             <Tr>

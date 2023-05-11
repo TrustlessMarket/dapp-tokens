@@ -1,35 +1,35 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import Button from '@/components/Button';
 import Table from '@/components/Table';
-import Text from '@/components/Text';
-import { IToken } from '@/interfaces/token';
-import { getTokenRp } from '@/services/swap';
-import { getIsAuthenticatedSelector } from '@/state/user/selector';
-import { formatCurrency } from '@/utils';
-import { decimalToExponential } from '@/utils/format';
-import { debounce } from 'lodash';
-import { useContext, useEffect, useState } from 'react';
+import {IToken} from '@/interfaces/token';
+import {getTokenRp} from '@/services/swap';
+import {getIsAuthenticatedSelector} from '@/state/user/selector';
+import {formatCurrency} from '@/utils';
+import {decimalToExponential} from '@/utils/format';
+import {debounce} from 'lodash';
+import {useContext, useEffect, useMemo, useState} from 'react';
 import Spinner from 'react-bootstrap/Spinner';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import { useSelector } from 'react-redux';
+import {useSelector} from 'react-redux';
 import ModalCreateToken from './ModalCreateToken';
-import { StyledTokens, UploadFileContainer } from './Tokens.styled';
+import {StyledTokens, UploadFileContainer} from './Tokens.styled';
 // import { useRouter } from 'next/router';
 // import { ROUTE_PATH } from '@/constants/route-path';
-import { ROUTE_PATH } from '@/constants/route-path';
-import { WalletContext } from '@/contexts/wallet-context';
-import { WBTC_ADDRESS } from '@/modules/Swap/form';
-import { showError } from '@/utils/toast';
-import { Box, Flex } from '@chakra-ui/react';
+import {ROUTE_PATH} from '@/constants/route-path';
+import {WalletContext} from '@/contexts/wallet-context';
+import {WBTC_ADDRESS} from '@/modules/Swap/form';
+import {showError} from '@/utils/toast';
+import {Box, Flex, Text} from '@chakra-ui/react';
 import BigNumber from 'bignumber.js';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
+import {useRouter} from 'next/router';
 //const EXPLORER_URL = TRUSTLESS_COMPUTER_CHAIN_INFO.explorers[0].url;
 import BodyContainer from '@/components/Swap/bodyContainer';
-import { AiOutlineCaretDown, AiOutlineCaretUp } from 'react-icons/ai';
+import {AiOutlineCaretDown, AiOutlineCaretUp} from 'react-icons/ai';
 import TokenChartLast7Day from './Token.ChartLast7Day';
 import px2rem from '@/utils/px2rem';
-import { FaChartBar, FaChartLine } from 'react-icons/fa';
+import {FaChartBar} from 'react-icons/fa';
+import ListTable, {ColumnProp} from '@/components/Swap/listTable';
 
 const LIMIT_PAGE = 500;
 //const ALL_ONE_PAGE = 10000;
@@ -163,6 +163,237 @@ const Tokens = () => {
     fetchTokens();
   }, []);
 
+  const columns: ColumnProp[] = useMemo(
+    () => [
+      {
+        id: '#',
+        label: '#',
+        labelConfig: {
+          fontSize: '12px',
+          fontWeight: '500',
+          color: '#B1B5C3',
+        },
+        config: {
+          // borderBottom: 'none',
+        },
+        render(row: any) {
+          return <Text color={"#FFFFFF"}>{row?.index}</Text>;
+        },
+      },
+      {
+        id: 'name',
+        label: 'Name',
+        labelConfig: {
+          fontSize: '12px',
+          fontWeight: '500',
+          color: '#B1B5C3',
+        },
+        config: {
+          // borderBottom: 'none',
+        },
+        render(row: any) {
+          return (
+            <Flex gap={2} minW={px2rem(200)} alignItems={'center'}>
+              <img
+                // width={25}
+                // height={25}
+                src={
+                  row?.thumbnail ||
+                  'https://cdn.trustless.computer/upload/1683530065704444020-1683530065-default-coin.svg'
+                }
+                alt={row?.thumbnail || 'default-icon'}
+                className={'avatar'}
+              />
+              <Flex direction={'column'}>
+                <Flex gap={1} alignItems={"flex-end"}>
+                  <Box fontWeight={"500"} color={"#FFFFFF"}>{row?.name}</Box>
+                  <Box fontSize={px2rem(16)} color={'rgba(255, 255, 255, 0.7)'}>
+                    {row?.symbol}
+                  </Box>
+                </Flex>
+                <Box fontSize={px2rem(14)} color={'rgba(255, 255, 255, 0.7)'}>
+                  {row?.network || 'TC'}
+                </Box>
+              </Flex>
+            </Flex>
+          );
+        },
+      },
+      {
+        id: 'price',
+        label: 'Price',
+        labelConfig: {
+          fontSize: '12px',
+          fontWeight: '500',
+          color: '#B1B5C3',
+        },
+        config: {
+          // borderBottom: 'none',
+        },
+        render(row: any) {
+          const tokenPrice = row?.usdPrice
+            ? new BigNumber(row?.usdPrice).toFixed()
+            : 'n/a';
+          return <Text color={"#FFFFFF"}>${formatCurrency(tokenPrice, 10)}</Text>;
+        },
+      },
+      {
+        id: 'percent24h',
+        label: '24h %',
+        labelConfig: {
+          fontSize: '12px',
+          fontWeight: '500',
+          color: '#B1B5C3',
+        },
+        config: {
+          // borderBottom: 'none',
+        },
+        render(row: any) {
+          return (
+            <Flex
+              alignItems={'center'}
+              color={Number(row?.percent) > 0 ? '#16c784' : Number(row?.percent) < 0 ? '#ea3943' : '#FFFFFF'}
+            >
+              {Number(row?.percent) > 0 && <AiOutlineCaretUp color={'#16c784'} />}
+              {Number(row?.percent) < 0 && (
+                <AiOutlineCaretDown color={'#ea3943'} />
+              )}
+              {formatCurrency(row?.percent, 2)}%
+            </Flex>
+          );
+        },
+      },
+      {
+        id: 'percent7d',
+        label: '7d %',
+        labelConfig: {
+          fontSize: '12px',
+          fontWeight: '500',
+          color: '#B1B5C3',
+        },
+        config: {
+          // borderBottom: 'none',
+        },
+        render(row: any) {
+          return (
+            <Flex
+              alignItems={'center'}
+              color={Number(row?.percent7Day) > 0 ? '#16c784' : Number(row?.percent7Day) < 0 ? '#ea3943' : '#FFFFFF'}
+            >
+              {Number(row?.percent7Day) > 0 && (
+                <AiOutlineCaretUp color={'#16c784'} />
+              )}
+              {Number(row?.percent7Day) < 0 && (
+                <AiOutlineCaretDown color={'#ea3943'} />
+              )}
+              {formatCurrency(row?.percent7Day, 2)}%
+            </Flex>
+          );
+        },
+      },
+      {
+        id: 'market_cap',
+        label: 'Market Cap',
+        labelConfig: {
+          fontSize: '12px',
+          fontWeight: '500',
+          color: '#B1B5C3',
+        },
+        config: {
+          // borderBottom: 'none',
+        },
+        render(row: any) {
+          const totalSupply = new BigNumber(row?.totalSupply || 0).div(
+            decimalToExponential(Number(row?.decimal || 18)),
+          );
+          const marketCap = row?.usdPrice
+            ? new BigNumber(row?.usdPrice).multipliedBy(totalSupply).toFixed()
+            : 'n/a';
+          return <Text color={"#FFFFFF"}>${formatCurrency(marketCap, 2)}</Text>;
+        },
+      },
+      {
+        id: 'volume',
+        label: 'Volume',
+        labelConfig: {
+          fontSize: '12px',
+          fontWeight: '500',
+          color: '#B1B5C3',
+        },
+        config: {
+          // borderBottom: 'none',
+        },
+        render(row: any) {
+          const tokenVolume = row?.usdTotalVolume
+            ? new BigNumber(row?.usdTotalVolume).toFixed()
+            : 'n/a';
+          return <Text color={"#FFFFFF"}>${formatCurrency(tokenVolume, 2)}</Text>;
+        },
+      },
+      {
+        id: 'supply',
+        label: 'Supply',
+        labelConfig: {
+          fontSize: '12px',
+          fontWeight: '500',
+          color: '#B1B5C3',
+        },
+        config: {
+          // borderBottom: 'none',
+        },
+        render(row: any) {
+          const totalSupply = new BigNumber(row?.totalSupply || 0).div(
+            decimalToExponential(Number(row?.decimal || 18)),
+          );
+          return <Text color={"#FFFFFF"}>{formatCurrency(totalSupply.toString(), 0)}</Text>;
+        },
+      },
+      {
+        id: 'last7d',
+        label: 'Last 7d',
+        labelConfig: {
+          fontSize: '12px',
+          fontWeight: '500',
+          color: '#B1B5C3',
+        },
+        config: {
+          // borderBottom: 'none',
+        },
+        render(row: any) {
+          return <TokenChartLast7Day token={row} />;
+        },
+      },
+      {
+        id: 'actions',
+        label: 'Actions',
+        labelConfig: {
+          fontSize: '12px',
+          fontWeight: '500',
+          color: '#B1B5C3',
+        },
+        config: {
+          // borderBottom: 'none',
+        },
+        render(row: any) {
+          return (
+            <Flex justifyContent={'center'} color={"#FFFFFF"}>
+              <Box
+                cursor={'pointer'}
+                onClick={() =>
+                  router.push(`${ROUTE_PATH.TOKEN}?address=${row?.address}`)
+                }
+                title="View detail"
+              >
+                <FaChartBar />
+              </Box>
+            </Flex>
+          );
+        },
+      },
+    ],
+    [],
+  );
+
   const tokenDatas = tokensList.map((token) => {
     // if(compareString(token?.symbol, 'SLP')) {
     //   console.log('token', token);
@@ -284,6 +515,12 @@ const Tokens = () => {
     };
   });
 
+  const handleItemClick = (token) => {
+    router.push(
+      `${ROUTE_PATH.SWAP}?from_token=${WBTC_ADDRESS}&to_token=${token?.address}`,
+    );
+  }
+
   return (
     <BodyContainer>
       <StyledTokens>
@@ -353,6 +590,7 @@ const Tokens = () => {
           }
           next={debounceLoadMore}
         >
+          <ListTable data={tokensList} columns={columns} onItemClick={handleItemClick}/>
           <Table
             tableHead={TABLE_HEADINGS}
             data={tokenDatas}
