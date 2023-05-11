@@ -18,7 +18,6 @@ import { ROUTE_PATH } from '@/constants/route-path';
 import { IMPORTED_TOKENS, LIQUID_PAIRS } from '@/constants/storage-key';
 import { NULL_ADDRESS } from '@/constants/url';
 import { AssetsContext } from '@/contexts/assets-context';
-import pairsMock from '@/dataMock/tokens.json';
 import useAddLiquidity, {
   IAddLiquidityParams,
 } from '@/hooks/contract-operations/pools/useAddLiquidity';
@@ -214,10 +213,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       setIsApprovePoolToken(
         checkBalanceIsApprove(
           isApproveAmountPoolToken,
-          Web3.utils.toWei(
-            new BigNumber(values?.liquidValue || 0).toFixed(18),
-            'ether',
-          ),
+          new BigNumber(values?.liquidValue || 0).toFixed(18),
         ),
       );
     }
@@ -316,6 +312,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
               .multipliedBy(youPool)
               .toString(),
           );
+
           setIsApproveAmountPoolToken(resAmountApprovePool);
         }
 
@@ -344,12 +341,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         page: page,
         is_test: isDevelop() ? '1' : '',
       });
-      let _list: IToken[] = [];
-      if (isDevelop()) {
-        _list = camelCaseKeys(pairsMock);
-      } else {
-        _list = camelCaseKeys(res);
-      }
+      let _list: IToken[] = camelCaseKeys(res);
       const _getImportTokens = getImportTokens();
       _list = _getImportTokens.concat(_list);
       refTokensList.current = _list;
@@ -489,10 +481,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           ? new BigNumber(perPrice._reserve0).dividedBy(perPrice._reserve1)
           : new BigNumber(perPrice._reserve1).dividedBy(perPrice._reserve0);
 
-      const _baseAmount = formatCurrency(
-        new BigNumber(_amount).multipliedBy(rate).toFixed(18),
-        18,
-      );
+      const _baseAmount = new BigNumber(_amount).multipliedBy(rate).toFixed(18);
 
       change('baseAmount', _baseAmount);
       setIsApproveBaseToken(
@@ -522,11 +511,10 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         findIndex === 1
           ? new BigNumber(perPrice._reserve0).dividedBy(perPrice._reserve1)
           : new BigNumber(perPrice._reserve1).dividedBy(perPrice._reserve0);
-      const _quoteAmount = formatCurrency(
-        new BigNumber(_amount).multipliedBy(rate).toFixed(18),
-        18,
-      );
+      const _quoteAmount = new BigNumber(_amount).multipliedBy(rate).toFixed(18);
+
       change('quoteAmount', _quoteAmount);
+
       setIsApproveQuoteToken(
         checkBalanceIsApprove(isApproveAmountQuoteToken, _quoteAmount),
       );
@@ -573,7 +561,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         setIsApproveQuoteToken(
           checkBalanceIsApprove(web3.utils.fromWei(_isApprove), values?.quoteAmount),
         );
-      } else if (isScreenRemove && !isApprovePoolToken && pairAddress) {
+      } else if (isScreenRemove && !isApprovePoolToken && isPaired) {
         await requestApproveToken({
           address: pairAddress,
         });
@@ -744,9 +732,8 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         .toString();
 
       const liquidValue = new BigNumber(cPercent)
-        .multipliedBy(_percentPool)
         .multipliedBy(supply.ownerSupply)
-        .toString();
+        .toFixed(0);
 
       change('baseAmount', _baseBalance);
       change('quoteAmount', _quoteBalance);
@@ -1134,6 +1121,11 @@ const CreateMarket = ({
       let response: any;
 
       if (isRemove) {
+        console.log(
+          'values?.liquidValue',
+          web3.utils.fromWei(new BigNumber(values?.liquidValue).toFixed()),
+        );
+
         const data = {
           tokenA: token0?.address,
           tokenB: token1?.address,
@@ -1144,6 +1136,9 @@ const CreateMarket = ({
 
         response = await removeLiquidity(data);
       } else {
+        console.log('amount0', amount0);
+        console.log('amount1', new BigNumber(amount1).toString());
+
         const data = {
           tokenA: token0?.address,
           tokenB: token1?.address,
