@@ -1,14 +1,14 @@
-import ERC20ABIJson from '@/abis/erc20.json';
-import { TransactionEventType } from '@/enums/transaction';
-import { ContractOperationHook, DAppType } from '@/interfaces/contract-operation';
-import {compareString, getContract, sortAddressPair} from '@/utils';
-import { useWeb3React } from '@web3-react/core';
-import { useCallback } from 'react';
-import web3 from 'web3';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-empty-interface */
+import {TransactionEventType} from '@/enums/transaction';
+import {ContractOperationHook, DAppType} from '@/interfaces/contract-operation';
+import {compareString, sortAddressPair} from '@/utils';
+import {useWeb3React} from '@web3-react/core';
+import {useCallback} from 'react';
+import Web3 from 'web3';
 import useBitcoin from "@/hooks/useBitcoin";
 import web3Eth from "web3-eth-abi";
 import {getTokenDetail} from "@/services/token-explorer";
-import Web3 from "web3";
 
 export interface IPendingSwapTransactionsParams {
 
@@ -24,10 +24,8 @@ const usePendingSwapTransactions: ContractOperationHook<
   const funcSwapHash = '0x38ed1739';
 
   const call = useCallback(
-    async (params: IPendingSwapTransactionsParams): Promise<any> => {
+    async ({}): Promise<any> => {
       if (account && provider) {
-
-        let isPendingTx = false;
 
         const unInscribedTxIDs = await getUnInscribedTransactionDetailByAddress(
           account,
@@ -50,8 +48,8 @@ const usePendingSwapTransactions: ContractOperationHook<
 
             let amount0_in = '0';
             let amount1_in = '0';
-            let amount0_out = '0';
-            let amount1_out = '0';
+            const amount0_out = '0';
+            const amount1_out = '0';
 
             if(compareString(path[0], token0.address)) {
               amount0_in = amountIn;
