@@ -37,6 +37,7 @@ import useSupplyERC20Liquid from '@/hooks/contract-operations/token/useSupplyERC
 import useContractOperation from '@/hooks/contract-operations/useContractOperation';
 import { IToken } from '@/interfaces/token';
 import { TransactionStatus } from '@/interfaces/walletTransaction';
+import { getPairAPR } from '@/services/pool';
 import { logErrorToServer } from '@/services/swap';
 import { getTokens } from '@/services/token-explorer';
 import { useAppDispatch, useAppSelector } from '@/state/hooks';
@@ -57,6 +58,7 @@ import { isDevelop } from '@/utils/commons';
 import { composeValidators, requiredAmount } from '@/utils/formValidate';
 import { formatAmountBigNumber } from '@/utils/format';
 import px2rem from '@/utils/px2rem';
+import { showError } from '@/utils/toast';
 import {
   Box,
   Flex,
@@ -89,8 +91,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { default as Web3, default as web3 } from 'web3';
 import { ScreenType } from '..';
 import styles from './styles.module.scss';
-import { getPairAPR } from '@/services/pool';
-import { showError } from '@/utils/toast';
 
 const LIMIT_PAGE = 50;
 
@@ -292,15 +292,33 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           setSupply(resSupply);
         }
 
-        console.log(
-          resSupply?.totalSupply?.toString(),
-          formatAmountBigNumber(resReserve._reserve0, baseToken.decimal),
-          formatAmountBigNumber(resReserve._reserve1, baseToken.decimal),
-        );
-
         if (isScreenRemove) {
-          setBaseBalance(Web3.utils.fromWei(resReserve._reserve0, 'ether'));
-          setQuoteBalance(Web3.utils.fromWei(resReserve._reserve1, 'ether'));
+          const [token1, token2] = sortAddressPair(baseToken, quoteToken);
+
+          const reserve0 = compareString(token1.address, baseToken.address)
+            ? resReserve._reserve0
+            : resReserve._reserve1;
+          const reserve1 = compareString(token2.address, quoteToken.address)
+            ? resReserve._reserve1
+            : resReserve._reserve0;
+
+          console.log(token1);
+          console.log(token2);
+
+          const youPool = new BigNumber(resSupply.ownerSupply).dividedBy(
+            resSupply.totalSupply,
+          );
+
+          setBaseBalance(
+            new BigNumber(Web3.utils.fromWei(reserve0, 'ether'))
+              .multipliedBy(youPool)
+              .toString(),
+          );
+          setQuoteBalance(
+            new BigNumber(Web3.utils.fromWei(reserve1, 'ether'))
+              .multipliedBy(youPool)
+              .toString(),
+          );
           setIsApproveAmountPoolToken(resAmountApprovePool);
         }
 
