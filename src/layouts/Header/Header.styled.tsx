@@ -56,13 +56,13 @@ const Wrapper = styled.div`
     display: flex;
     flex-direction: row;
     align-items: center;
-    gap: ${px2rem(16)};
+    gap: ${px2rem(32)};
     position: relative;
 
     .external-link {
       display: flex;
       align-items: center;
-      gap: ${px2rem(16)};
+      gap: ${px2rem(24)};
       margin-right: ${px2rem(24)};
       text-transform: uppercase;
       font-size: ${px2rem(16)};

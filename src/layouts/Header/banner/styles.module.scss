@@ -1,0 +1,40 @@
+.wrapper {
+  width: 100%;
+  background: #3385FF;
+  transition: all 0.3s ease;
+  font-weight: 500;
+  font-size: 16px;
+
+  .banner {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 100px;
+    padding: 8px;
+  }
+
+  .checkItOut {
+    color: #FFFFFF;
+    display: inline;
+    &:hover {
+      text-decoration: none;
+    }
+  }
+
+  &.active {
+    background: #1E1E22;
+
+    .banner {
+      background: rgba(255, 126, 33, 0.2);
+      border-radius: 100px;
+      padding: 8px;
+    }
+
+    .checkItOut {
+      color: #FF7E21;
+      display: inline;
+
+      &:hover {
+        text-decoration: none;
+      }
+    }
+  }
+}

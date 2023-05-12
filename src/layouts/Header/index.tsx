@@ -1,19 +1,19 @@
 /* eslint-disable react-hooks/rules-of-hooks */
-import { CDN_URL } from '@/configs';
-import { ROUTE_PATH } from '@/constants/route-path';
-import { gsap } from 'gsap';
+import {CDN_URL} from '@/configs';
+import {ROUTE_PATH} from '@/constants/route-path';
+import {gsap} from 'gsap';
 import Link from 'next/link';
-import { useEffect, useMemo, useRef, useState } from 'react';
-import { Wrapper } from './Header.styled';
+import {useEffect, useRef, useState} from 'react';
+import {Wrapper} from './Header.styled';
 import MenuMobile from './MenuMobile';
 import WalletHeader from './Wallet';
-import { useWindowSize } from '@trustless-computer/dapp-core';
-import { useRouter } from 'next/router';
-import { GENERATIVE_DISCORD, TRUSTLESS_COMPUTER } from '@/constants/common';
-import { useScreenLayout } from '@/hooks/useScreenLayout';
-import { Flex, Text, Link as LinkText } from '@chakra-ui/react';
-import { defaultProvider } from '@/contexts/screen-context';
-import { compareString } from '@/utils';
+import {useWindowSize} from '@trustless-computer/dapp-core';
+import {useRouter} from 'next/router';
+import {GENERATIVE_DISCORD, TRUSTLESS_COMPUTER} from '@/constants/common';
+import {useScreenLayout} from '@/hooks/useScreenLayout';
+import {defaultProvider} from '@/contexts/screen-context';
+import {compareString} from '@/utils';
+import Banner from "@/layouts/Header/banner";
 
 export const isScreenDarkMode = () => {
   const router = useRouter();
@@ -34,9 +34,9 @@ const Header = () => {
   const router = useRouter();
   const { headerHeight, showGetStarted } = useScreenLayout();
 
-  const isTokensPage = useMemo(() => {
-    return isScreenDarkMode();
-  }, [router?.pathname]);
+  // const isTokensPage = useMemo(() => {
+  //   return isScreenDarkMode();
+  // }, [router?.pathname]);
 
   useEffect(() => {
     if (refMenu.current) {
@@ -100,6 +100,14 @@ const Header = () => {
               >
                 Pools
               </Link>
+              <Link
+                href={ROUTE_PATH.GET_STARTED}
+                className={
+                  router?.pathname?.includes(ROUTE_PATH.GET_STARTED) ? 'isSelected' : ''
+                }
+              >
+                Get Started
+              </Link>
             </div>
           </div>
         </div>
@@ -122,27 +130,7 @@ const Header = () => {
         </div>
       </div>
       {showGetStarted && (
-        <Flex
-          height={10}
-          alignItems="center"
-          justifyContent="center"
-          bgColor={`#ebebeb${isTokensPage ? '33' : ''}`}
-        >
-          <Text
-            fontWeight="medium"
-            fontSize="sm"
-            color={isTokensPage ? 'white' : 'black'}
-          >
-            New to Bitcoin DeFi?{' '}
-            <LinkText
-              fontWeight="bold"
-              color="brand.info.400"
-              href={ROUTE_PATH.GET_STARTED}
-            >
-              Start here.
-            </LinkText>{' '}
-          </Text>
-        </Flex>
+        <Banner />
       )}
     </Wrapper>
   );
