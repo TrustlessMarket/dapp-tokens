@@ -62,7 +62,7 @@ const Banner = () => {
         gap={2}
       >
         <CountDownTimer end_time={moment("2023-05-12 22:00:00", "YYYY-MM-DD HH:mm:ss")} isActive={isActive}/>
-        $GM Crowdfunding Now Live.{' '}
+        $GM (the first smart contract on Bitcoin) crowdfunding campaign is live.{' '}
         <LinkText
           className={styles.checkItOut}
           href={"https://newbitcoincity.com/gm"}
@@ -70,7 +70,7 @@ const Banner = () => {
           textDecoration={"none"}
         >
           <Flex gap={1} alignItems={"center"}>
-            <Text>Check it out</Text>
+            <Text>Get $GM</Text>
             <img alt={"checkout"} src={`${CDN_URL}/icons/${isActive ? 'explore_active.svg' : 'explore_inactive.svg'}`} />
           </Flex>
         </LinkText>
