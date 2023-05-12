@@ -16,4 +16,5 @@ export const ROUTE_PATH = {
   TOKEN: '/token',
   UPDATE_TOKEN_INFO: '/update-token-info',
   TM_TRANSFER_HISTORY: '/tm-transfer-history',
+  SWAP_HISTORY: '/swap-history',
 };

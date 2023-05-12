@@ -41,7 +41,6 @@ const TokenDetail = () => {
 
   const [data, setData] = useState<IToken>();
   const [chartData, setChartData] = useState<any[]>([]);
-  const { account } = useWeb3React();
 
   useEffect(() => {
     if (address) {

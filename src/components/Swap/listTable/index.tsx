@@ -87,11 +87,11 @@ const ItemTable = ({
       <Tr
         onClick={onClick}
         cursor={onItemClick ? 'pointer' : 'default'}
-        className={cx(selectedItem?.id === item.id ? 'selected' : '', 'notOnTdRow')}
+        className={cx(selectedItem?.id === item?.id ? 'selected' : '', 'notOnTdRow')}
       >
         {columns.map((v) => (
           <Td {...v.config} key={v.id}>
-            {v.render ? v.render(item, extraData, index) : item[v.id]}
+            {v.render ? v.render(item, extraData, index) : item[v?.id]}
           </Td>
         ))}
       </Tr>
