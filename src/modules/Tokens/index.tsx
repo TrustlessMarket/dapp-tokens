@@ -28,8 +28,8 @@ import BodyContainer from '@/components/Swap/bodyContainer';
 import {AiOutlineCaretDown, AiOutlineCaretUp} from 'react-icons/ai';
 import TokenChartLast7Day from './Token.ChartLast7Day';
 import px2rem from '@/utils/px2rem';
-import {FaChartBar} from 'react-icons/fa';
 import ListTable, {ColumnProp} from '@/components/Swap/listTable';
+import {VscArrowSwap} from 'react-icons/vsc';
 
 const LIMIT_PAGE = 30;
 
@@ -369,19 +369,24 @@ const Tokens = () => {
         },
         render(row: any) {
           return (
-            <Flex color={"#FFFFFF"} fontSize={px2rem(16)}>
-              <Box
+            <Flex color={"#FFFFFF"} fontSize={px2rem(12)}>
+              <Flex
+                gap={3}
+                alignItems={"center"}
                 cursor={'pointer'}
                 onClick={() =>
                   router.push(
                     `${ROUTE_PATH.SWAP}?from_token=${WBTC_ADDRESS}&to_token=${row?.address}`,
                   )
                 }
-                title="View detail"
-                textDecoration={'underline'}
+                title="Swap now"
+                bg={"#1E1E22"}
+                borderRadius={"4px"}
+                padding={2}
               >
-                Swap now
-              </Box>
+                <VscArrowSwap />
+                SWAP NOW
+              </Flex>
             </Flex>
           );
         },
