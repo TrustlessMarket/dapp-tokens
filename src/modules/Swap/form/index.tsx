@@ -31,7 +31,7 @@ import {
 } from '@/state/pnftExchange';
 import {getIsAuthenticatedSelector, getUserSelector} from '@/state/user/selector';
 import {camelCaseKeys, compareString, formatCurrency, sortAddressPair} from '@/utils';
-import {isDevelop, isProduction} from '@/utils/commons';
+import {isDevelop} from '@/utils/commons';
 import {composeValidators, required} from '@/utils/formValidate';
 import px2rem from '@/utils/px2rem';
 import {showError} from '@/utils/toast';
@@ -49,12 +49,10 @@ import {RiArrowUpDownLine} from 'react-icons/ri';
 import {useDispatch, useSelector} from 'react-redux';
 import Web3 from 'web3';
 import styles from './styles.module.scss';
-import tokensMocks from '@/dataMock/tokens.json';
-import routesMocks from '@/dataMock/routes.json';
 
 const LIMIT_PAGE = 50;
 const FEE = 2;
-export const WBTC_ADDRESS = isProduction() ? '0xfB83c18569fB43f1ABCbae09Baf7090bFFc8CBBD' : '0x435bdab1bcB2fcf80e5cF47dba209E28c340c3Bf';
+export const WBTC_ADDRESS = isDevelop() ? '0x435bdab1bcB2fcf80e5cF47dba209E28c340c3Bf' : '0xfB83c18569fB43f1ABCbae09Baf7090bFFc8CBBD';
 export const DEV_ADDRESS = '0xdd2863416081D0C10E57AaB4B3C5197183be4B34';
 
 interface IPairReserve {
@@ -227,11 +225,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         is_test: isDevelop() ? '1' : '',
       });
 
-      const list = isProduction()
-        ? res
-          ? camelCaseKeys(res)
-          : []
-        : camelCaseKeys(tokensMocks);
+      const list = res ? camelCaseKeys(res) : [];
 
       setTokensList(list);
       setBaseTokensList(list);
@@ -258,7 +252,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         is_test: isDevelop() ? '1' : '',
         from_token: from_token,
       });
-      return isProduction() ? res : tokensMocks;
+      return res;
     } catch (err: unknown) {
       console.log('Failed to fetch tokens owned');
     } finally {
@@ -302,19 +296,15 @@ export const MakeFormSwap = forwardRef((props, ref) => {
 
   const getSwapRoutesInfo = async (from_token: string, to_token: string) => {
     try {
-      if(isProduction()) {
-        const params = {
-          // from_token: '0xF545f1D9AAA0c648B545948E6C972688f3064148',
-          // to_token: '0xe8B88A8188cD7025AaE3719c0F845915E1f3B5c0',
-          from_token: from_token,
-          to_token: to_token,
-        };
-        const response = await getSwapRoutes(params);
+      const params = {
+        // from_token: '0xF545f1D9AAA0c648B545948E6C972688f3064148',
+        // to_token: '0xe8B88A8188cD7025AaE3719c0F845915E1f3B5c0',
+        from_token: from_token,
+        to_token: to_token,
+      };
+      const response = await getSwapRoutes(params);
 
-        setSwapRoutes(response);
-      } else {
-        setSwapRoutes(camelCaseKeys(routesMocks));
-      }
+      setSwapRoutes(response);
     } catch (error) {
       console.log('error', error);
     }
