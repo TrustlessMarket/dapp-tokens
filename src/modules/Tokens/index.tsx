@@ -404,9 +404,9 @@ const Tokens = () => {
             {/* <img src={IcBitcoinCloud} alt="upload file icon" /> */}
             <div className="upload_content">
               {/* <h3 className="upload_title">BRC-20 on Bitcoin</h3> */}
-              <Text className="upload_text">
+              <Text className="upload_text" color={"rgba(255, 255, 255, 0.7)"}>
                 Smart BRC-20s are{' '}
-                <span style={{ color: '#3385FF' }}>
+                <span style={{ color: '#FFFFFF' }}>
                   the first smart contracts deployed on Bitcoin
                 </span>
                 . They run exactly as programmed without any possibility of fraud,
@@ -434,12 +434,11 @@ const Tokens = () => {
             <Link href={ROUTE_PATH.SWAP}>
               <Button
                 className="comming-soon-btn"
-                bg={'white'}
                 background={'#3385FF'}
               >
                 <Text
                   size="medium"
-                  color="bg1"
+                  color="#FFFFFF"
                   className="brc20-text"
                   fontWeight="medium"
                 >

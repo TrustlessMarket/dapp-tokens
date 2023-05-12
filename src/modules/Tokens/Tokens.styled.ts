@@ -30,18 +30,14 @@ export const StyledTokens = styled.div`
       padding-bottom: ${px2rem(24)};
     }
     
-    .tableHead {
-      &_item {
-        color: #FFFFFF;
-      }
-      border-bottom: 1px solid rgb(34,37,49);
-    }
-    
     thead {
       tr {
         th {
+          background: #1E1E22;
           text-transform: uppercase;
           border-bottom-color: rgb(34,37,49);
+          padding-top: ${px2rem(12)};
+          padding-bottom: ${px2rem(12)};
         }
       }
     }
@@ -68,7 +64,7 @@ export const StyledTokens = styled.div`
   }
   
   .upload_title {
-    margin-bottom: ${px2rem(24)};
+    //margin-bottom: ${px2rem(24)};
     margin-left: auto;
     margin-right: auto;
     width: fit-content;
@@ -116,6 +112,7 @@ export const UploadFileContainer = styled.div`
     position: relative;
     overflow: hidden;
     gap: ${px2rem(32)};
+    margin-bottom: ${px2rem(16)};
   }
 
   .button-text {
