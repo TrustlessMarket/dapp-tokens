@@ -20,4 +20,5 @@ export const TM_ADDRESS: string = process.env.NEXT_PUBLIC_TM_ADDRESS!;
 export const TC_WEB_URL: string = process.env.NEXT_PUBLIC_TC_WEB_URL!;
 export const TRANSFER_TX_SIZE = 1000!;
 
+export const MEMPOOL_URL: string = 'https://mempool.space';
 /* eslint-enable @typescript-eslint/no-non-null-assertion */
