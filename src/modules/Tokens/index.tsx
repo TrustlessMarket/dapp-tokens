@@ -374,11 +374,13 @@ const Tokens = () => {
                 gap={3}
                 alignItems={"center"}
                 cursor={'pointer'}
-                onClick={() =>
+                onClick={(e) => {
+                  e.stopPropagation();
+                  e.preventDefault();
                   router.push(
                     `${ROUTE_PATH.SWAP}?from_token=${WBTC_ADDRESS}&to_token=${row?.address}`,
                   )
-                }
+                }}
                 title="Swap now"
                 bg={"#1E1E22"}
                 borderRadius={"4px"}
