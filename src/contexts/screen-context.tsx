@@ -14,6 +14,7 @@ export const defaultProvider = {
   footerTradingHeight: 35,
   footerTradingHeightMobile: 60,
   showGetStarted: false,
+  bannerHeight: 60
 };
 
 const ScreenLayoutContext = createContext(defaultProvider);
@@ -52,7 +53,7 @@ const ScreenLayoutProvider: React.FC<any> = ({ children }) => {
 
     // if (!_isMobile) {
       height +=
-        (showGetStarted ? 40 : 0)
+        (showGetStarted ? 60 : 0)
       ;
     // }
 

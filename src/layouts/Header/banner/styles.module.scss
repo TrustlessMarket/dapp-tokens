@@ -5,6 +5,12 @@
   font-weight: 500;
   font-size: 16px;
 
+  .banner {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 100px;
+    padding: 8px;
+  }
+
   .checkItOut {
     color: #FFFFFF;
     display: inline;
@@ -15,6 +21,12 @@
 
   &.active {
     background: #1E1E22;
+
+    .banner {
+      background: rgba(255, 126, 33, 0.2);
+      border-radius: 100px;
+      padding: 8px;
+    }
 
     .checkItOut {
       color: #FF7E21;

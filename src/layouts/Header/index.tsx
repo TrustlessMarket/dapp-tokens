@@ -3,7 +3,7 @@ import {CDN_URL} from '@/configs';
 import {ROUTE_PATH} from '@/constants/route-path';
 import {gsap} from 'gsap';
 import Link from 'next/link';
-import {useEffect, useMemo, useRef, useState} from 'react';
+import {useEffect, useRef, useState} from 'react';
 import {Wrapper} from './Header.styled';
 import MenuMobile from './MenuMobile';
 import WalletHeader from './Wallet';
@@ -33,9 +33,9 @@ const Header = () => {
   const router = useRouter();
   const { headerHeight, showGetStarted } = useScreenLayout();
 
-  const isTokensPage = useMemo(() => {
-    return isScreenDarkMode();
-  }, [router?.pathname]);
+  // const isTokensPage = useMemo(() => {
+  //   return isScreenDarkMode();
+  // }, [router?.pathname]);
 
   useEffect(() => {
     if (refMenu.current) {

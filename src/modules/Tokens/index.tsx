@@ -387,7 +387,7 @@ const Tokens = () => {
     [sort.sort],
   );
 
-  const handleItemClick = (token) => {
+  const handleItemClick = (token: any) => {
     router.push(
       `${ROUTE_PATH.SWAP}?from_token=${WBTC_ADDRESS}&to_token=${token?.address}`,
     );
