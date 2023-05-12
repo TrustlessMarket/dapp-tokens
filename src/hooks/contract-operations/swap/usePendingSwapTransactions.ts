@@ -34,15 +34,11 @@ const usePendingSwapTransactions: ContractOperationHook<
           getPendingInscribeTxsDetail(account),
         ]);
 
-        console.log('unInscribedTxIDs ======>', unInscribedTxIDs);
-        console.log('pendingTxIds ======>', pendingTxIds);
-
         const response = [];
 
         for await (const unInscribedTxID of unInscribedTxIDs) {
-          console.log('pendingtx - unInscribedTxID', unInscribedTxID);
-
           const _getTxDetail = await getTCTxByHash(unInscribedTxID.Hash);
+
           const _inputStart = _getTxDetail.input.slice(0, 10);
 
           if (compareString(funcSwapHash, _inputStart)) {
@@ -99,7 +95,7 @@ const usePendingSwapTransactions: ContractOperationHook<
                 token1: token1_obj.address,
               },
               price: '0',
-              tx_hash: null,
+              tx_hash: unInscribedTxID.Hash,
               status: 'pending',
             });
           }
@@ -174,7 +170,7 @@ const usePendingSwapTransactions: ContractOperationHook<
                 token1: token1_obj.address,
               },
               price: '0',
-              tx_hash: null,
+              tx_hash: pendingTxID.TCHash,
               status: 'pending',
             });
           }
