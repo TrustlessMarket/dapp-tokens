@@ -30,24 +30,9 @@ import px2rem from '@/utils/px2rem';
 import {FaChartBar} from 'react-icons/fa';
 import ListTable, {ColumnProp} from '@/components/Swap/listTable';
 
-const LIMIT_PAGE = 500;
-//const ALL_ONE_PAGE = 10000;
+const LIMIT_PAGE = 30;
 
 const Tokens = () => {
-  const TABLE_HEADINGS = [
-    '#',
-    'Name',
-    'Price',
-    '24h %',
-    '7d %',
-    'Market Cap',
-    'Volume',
-    'Supply',
-    'Last 7d',
-    'Actions',
-  ];
-  /*'Price','24h %','Market Cap'*/
-
   const router = useRouter();
   const [showModal, setShowModal] = useState(false);
   const [isFetching, setIsFetching] = useState(false);
@@ -183,7 +168,7 @@ const Tokens = () => {
         },
       },
       {
-        id: 'price',
+        id: 'usd_price',
         label: 'Price',
         labelConfig: {
           fontSize: '12px',
@@ -209,7 +194,7 @@ const Tokens = () => {
         },
       },
       {
-        id: 'percent24h',
+        id: 'percent',
         label: '24h %',
         labelConfig: {
           fontSize: '12px',
@@ -243,7 +228,7 @@ const Tokens = () => {
         },
       },
       {
-        id: 'percent7d',
+        id: 'percent_7day',
         label: '7d %',
         labelConfig: {
           fontSize: '12px',
@@ -289,14 +274,16 @@ const Tokens = () => {
         config: {
           // borderBottom: 'none',
         },
+        onSort: () => {
+          const sortField = 'market_cap';
+          setSort((_sort) => ({
+            ..._sort,
+            sort: !_sort?.sort?.includes(sortField) || _sort?.sort === sortField ? `-${sortField}` : sortField,
+          }));
+        },
+        sort: sort?.sort,
         render(row: any) {
-          const totalSupply = new BigNumber(row?.totalSupply || 0).div(
-            decimalToExponential(Number(row?.decimal || 18)),
-          );
-          const marketCap = row?.usdPrice
-            ? new BigNumber(row?.usdPrice).multipliedBy(totalSupply).toFixed()
-            : 'n/a';
-          return <Text color={"#FFFFFF"}>${formatCurrency(marketCap, 2)}</Text>;
+          return <Text color={"#FFFFFF"}>${formatCurrency(row?.usdMarketCap, 2)}</Text>;
         },
       },
       {
@@ -326,7 +313,7 @@ const Tokens = () => {
         },
       },
       {
-        id: 'supply',
+        id: 'total_supply_number',
         label: 'Supply',
         labelConfig: {
           fontSize: '12px',
@@ -337,7 +324,7 @@ const Tokens = () => {
           // borderBottom: 'none',
         },
         onSort: () => {
-          const sortField = 'total_supply';
+          const sortField = 'total_supply_number';
           setSort((_sort) => ({
             ..._sort,
             sort: !_sort?.sort?.includes(sortField) || _sort?.sort === sortField ? `-${sortField}` : sortField,
@@ -396,127 +383,6 @@ const Tokens = () => {
     ],
     [sort.sort],
   );
-
-  const tokenDatas = tokensList.map((token) => {
-    // if(compareString(token?.symbol, 'SLP')) {
-    //   console.log('token', token);
-    // }
-    const totalSupply = new BigNumber(token?.totalSupply || 0).div(
-      decimalToExponential(Number(token?.decimal || 18)),
-    );
-    const tokenPrice = token?.usdPrice
-      ? new BigNumber(token?.usdPrice).toFixed()
-      : 'n/a';
-    const tokenVolume = token?.usdTotalVolume
-      ? new BigNumber(token?.usdTotalVolume).toFixed()
-      : 'n/a';
-    const marketCap = token?.usdPrice
-      ? new BigNumber(token?.usdPrice).multipliedBy(totalSupply).toFixed()
-      : 'n/a';
-
-    //const linkTokenExplorer = `${EXPLORER_URL}/token/${token?.address}`;
-    //const linkToOwnerExplorer = `${EXPLORER_URL}/address/${token?.owner}`;
-
-    return {
-      id: `token-${token?.address}}`,
-      render: {
-        number: token?.index,
-        name: (
-          <Flex gap={2} minW={px2rem(200)} alignItems={'center'}>
-            <img
-              // width={25}
-              // height={25}
-              src={
-                token?.thumbnail ||
-                'https://cdn.trustless.computer/upload/1683530065704444020-1683530065-default-coin.svg'
-              }
-              alt={token?.thumbnail || 'default-icon'}
-              className={'avatar'}
-            />
-            <Flex direction={'column'}>
-              <Flex gap={1} alignItems={"flex-end"}>
-                <Box fontWeight={"500"}>{token?.name}</Box>
-                <Box fontSize={px2rem(16)} color={'rgba(255, 255, 255, 0.7)'}>
-                  {token?.symbol}
-                </Box>
-              </Flex>
-              <Box fontSize={px2rem(14)} color={'rgba(255, 255, 255, 0.7)'}>
-                {token?.network || 'TC'}
-              </Box>
-            </Flex>
-          </Flex>
-        ),
-        price: `$${formatCurrency(tokenPrice, 10)}`,
-        percent:
-          (
-            <Flex
-              alignItems={'center'}
-              className={
-                Number(token?.percent) > 0
-                  ? 'increase'
-                  : Number(token?.percent) < 0
-                  ? 'descrease'
-                  : ''
-              }
-            >
-              {Number(token?.percent) > 0 && <AiOutlineCaretUp color={'#16c784'} />}
-              {Number(token?.percent) < 0 && (
-                <AiOutlineCaretDown color={'#ea3943'} />
-              )}
-              {formatCurrency(token?.percent, 2)}%
-            </Flex>
-          ) || 'n/a',
-        percent7Day:
-          (
-            <Flex
-              alignItems={'center'}
-              className={
-                Number(token?.percent7Day) > 0
-                  ? 'increase'
-                  : Number(token?.percent7Day) < 0
-                  ? 'descrease'
-                  : ''
-              }
-            >
-              {Number(token?.percent7Day) > 0 && (
-                <AiOutlineCaretUp color={'#16c784'} />
-              )}
-              {Number(token?.percent7Day) < 0 && (
-                <AiOutlineCaretDown color={'#ea3943'} />
-              )}
-              {formatCurrency(token?.percent7Day, 2)}%
-            </Flex>
-          ) || 'n/a',
-        usdVol: `$${formatCurrency(marketCap, 2)}`,
-        usdVolume: <span>${formatCurrency(tokenVolume, 2)}</span>,
-        supply: formatCurrency(totalSupply.toString(), 0),
-        chart: <TokenChartLast7Day token={token} />,
-        action: (
-          <Flex justifyContent={'center'}>
-            <Box
-              cursor={'pointer'}
-              onClick={() =>
-                router.push(`${ROUTE_PATH.TOKEN}?address=${token?.address}`)
-              }
-              title="View detail"
-            >
-              <FaChartBar />
-            </Box>
-          </Flex>
-        ),
-      },
-      config: {
-        onClick: () => {
-          router.push(
-            `${ROUTE_PATH.SWAP}?from_token=${WBTC_ADDRESS}&to_token=${token?.address}`,
-          );
-        },
-        style: {
-          cursor: 'pointer',
-        },
-      },
-    };
-  });
 
   const handleItemClick = (token) => {
     router.push(
@@ -593,7 +459,7 @@ const Tokens = () => {
           }
           next={debounceLoadMore}
         >
-          <ListTable data={tokensList} columns={columns} onItemClick={handleItemClick}/>
+          <ListTable data={tokensList} columns={columns} onItemClick={handleItemClick} sort={sort} showEmpty={false}/>
         </InfiniteScroll>
         <ModalCreateToken show={showModal} handleClose={() => setShowModal(false)} />
       </StyledTokens>

@@ -1,27 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { apiClient } from '@/services';
-import {
-  Box,
-  Flex,
-  Spinner,
-  Table,
-  TableContainer,
-  Tbody,
-  Td,
-  Tfoot,
-  Th,
-  Thead,
-  Tr,
-} from '@chakra-ui/react';
-import React, { Fragment, ReactNode, memo, useEffect, useState } from 'react';
+import {apiClient} from '@/services';
+import {Box, Flex, Spinner, Table, TableContainer, Tbody, Td, Tfoot, Th, Thead, Tr,} from '@chakra-ui/react';
+import React, {Fragment, memo, ReactNode, useEffect, useState} from 'react';
 // import { useCurrentWallet } from "app/hooks/useCurrentWallet";
 import EmptyList from '@/components/Swap/emptyList';
 import Pagination from '@/components/Swap/pagination';
-import { useAppSelector } from '@/state/hooks';
-import { selectPnftExchange } from '@/state/pnftExchange';
-import { compareString } from '@/utils';
+import {useAppSelector} from '@/state/hooks';
+import {selectPnftExchange} from '@/state/pnftExchange';
+import {compareString} from '@/utils';
 import cx from 'classnames';
-import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
+import {AiFillCaretDown, AiFillCaretUp} from 'react-icons/ai';
 import styles from './styles.module.scss';
 
 export interface ColumnProp {
@@ -51,7 +39,9 @@ interface ListTableProps {
   selectedItem?: any;
   needUpdate?: any;
   initialLoading?: boolean;
-  className?: any
+  className?: any,
+  sort?: any
+  showEmpty?: boolean
 }
 
 const ItemTable = ({
@@ -127,7 +117,9 @@ const ListTable: React.FC<ListTableProps> = ({
   needUpdate,
   initialLoading,
   onTdRow,
- className,
+  className,
+  sort,
+  showEmpty,
 }) => {
   // const { currentWallet } = useCurrentWallet();
   const [rows, setRows] = useState(data);
@@ -197,7 +189,7 @@ const ListTable: React.FC<ListTableProps> = ({
           </Tr>
         </Tbody>
       );
-    if (rows?.length === 0 || rows?.length === undefined)
+    if (showEmpty && (rows?.length === 0 || rows?.length === undefined))
       return (
         <Tbody className={styles.item}>
           <Tr className="notOnTdRow">
@@ -256,20 +248,24 @@ const ListTable: React.FC<ListTableProps> = ({
                       {v.label}
                       {v.onSort && (
                         <Box>
-                          <FaChevronUp
-                            style={{
-                              marginBottom: '-3px',
-                              fontSize: '10px',
-                              color: !v.sort?.includes('-') ? '#ff831a' : 'unset',
-                            }}
-                          />
-                          <FaChevronDown
-                            style={{
-                              marginTop: '-3px',
-                              fontSize: '10px',
-                              color: v.sort?.includes('-') ? '#ff831a' : 'unset',
-                            }}
-                          />
+                          {
+                            v.sort === `-${v?.id}` && (
+                            <AiFillCaretDown
+                                style={{
+                                color: '#FFFFFF'
+                              }}
+                            />
+                            )
+                          }
+                          {
+                            v.sort === `${v?.id}` && (
+                              <AiFillCaretUp
+                                style={{
+                                  color: '#FFFFFF'
+                                }}
+                              />
+                            )
+                          }
                         </Box>
                       )}
                     </Flex>
