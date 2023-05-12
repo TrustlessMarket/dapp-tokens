@@ -9,6 +9,7 @@ import Web3 from 'web3';
 import useBitcoin from "@/hooks/useBitcoin";
 import web3Eth from "web3-eth-abi";
 import {getTokenDetail} from "@/services/token-explorer";
+import {IToken} from "@/interfaces/token";
 
 export interface IPendingSwapTransactionsParams {
 
@@ -44,7 +45,7 @@ const usePendingSwapTransactions: ContractOperationHook<
             const amountIn = Web3.utils.fromWei(value['0'], 'ether');
             const path = value['2'];
 
-            const [token0, token1] = sortAddressPair({address: path[0]}, {address: path[path.length - 1]});
+            const [token0, token1] = sortAddressPair({address: path[0]} as IToken, {address: path[path.length - 1]} as IToken);
 
             let amount0_in = '0';
             let amount1_in = '0';
