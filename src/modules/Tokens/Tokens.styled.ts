@@ -50,11 +50,10 @@ export const StyledTokens = styled.div`
         }
         
         &:hover {
-          background-color: rgb(23,25,36);
+          background-color: #1E1E22;
         }
       }
     }
-    
   }
 
   .loading {

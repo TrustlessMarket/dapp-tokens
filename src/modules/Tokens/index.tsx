@@ -229,43 +229,43 @@ const Tokens = () => {
           );
         },
       },
-      {
-        id: 'percent_7day',
-        label: '7d %',
-        labelConfig: {
-          fontSize: '12px',
-          fontWeight: '500',
-          color: '#B1B5C3',
-        },
-        config: {
-          // borderBottom: 'none',
-        },
-        onSort: () => {
-          const sortField = 'percent_7day';
-          setSort((_sort) => ({
-            ..._sort,
-            sort: !_sort?.sort?.includes(sortField) || _sort?.sort === sortField ? `-${sortField}` : sortField,
-          }));
-        },
-        sort: sort?.sort,
-        render(row: any) {
-          return (
-            <Flex
-              alignItems={'center'}
-              color={Number(row?.percent7Day) > 0 ? '#16c784' : Number(row?.percent7Day) < 0 ? '#ea3943' : '#FFFFFF'}
-              fontSize={px2rem(16)}
-            >
-              {Number(row?.percent7Day) > 0 && (
-                <AiOutlineCaretUp color={'#16c784'} />
-              )}
-              {Number(row?.percent7Day) < 0 && (
-                <AiOutlineCaretDown color={'#ea3943'} />
-              )}
-              {formatCurrency(row?.percent7Day, 2)}%
-            </Flex>
-          );
-        },
-      },
+      // {
+      //   id: 'percent_7day',
+      //   label: '7d %',
+      //   labelConfig: {
+      //     fontSize: '12px',
+      //     fontWeight: '500',
+      //     color: '#B1B5C3',
+      //   },
+      //   config: {
+      //     // borderBottom: 'none',
+      //   },
+      //   onSort: () => {
+      //     const sortField = 'percent_7day';
+      //     setSort((_sort) => ({
+      //       ..._sort,
+      //       sort: !_sort?.sort?.includes(sortField) || _sort?.sort === sortField ? `-${sortField}` : sortField,
+      //     }));
+      //   },
+      //   sort: sort?.sort,
+      //   render(row: any) {
+      //     return (
+      //       <Flex
+      //         alignItems={'center'}
+      //         color={Number(row?.percent7Day) > 0 ? '#16c784' : Number(row?.percent7Day) < 0 ? '#ea3943' : '#FFFFFF'}
+      //         fontSize={px2rem(16)}
+      //       >
+      //         {Number(row?.percent7Day) > 0 && (
+      //           <AiOutlineCaretUp color={'#16c784'} />
+      //         )}
+      //         {Number(row?.percent7Day) < 0 && (
+      //           <AiOutlineCaretDown color={'#ea3943'} />
+      //         )}
+      //         {formatCurrency(row?.percent7Day, 2)}%
+      //       </Flex>
+      //     );
+      //   },
+      // },
       {
         id: 'market_cap',
         label: 'Market Cap',
@@ -369,15 +369,18 @@ const Tokens = () => {
         },
         render(row: any) {
           return (
-            <Flex justifyContent={'center'} color={"#FFFFFF"} fontSize={px2rem(16)}>
+            <Flex color={"#FFFFFF"} fontSize={px2rem(16)}>
               <Box
                 cursor={'pointer'}
                 onClick={() =>
-                  router.push(`${ROUTE_PATH.TOKEN}?address=${row?.address}`)
+                  router.push(
+                    `${ROUTE_PATH.SWAP}?from_token=${WBTC_ADDRESS}&to_token=${row?.address}`,
+                  )
                 }
                 title="View detail"
+                textDecoration={'underline'}
               >
-                <FaChartBar />
+                Swap now
               </Box>
             </Flex>
           );
@@ -388,9 +391,7 @@ const Tokens = () => {
   );
 
   const handleItemClick = (token: any) => {
-    router.push(
-      `${ROUTE_PATH.SWAP}?from_token=${WBTC_ADDRESS}&to_token=${token?.address}`,
-    );
+    router.push(`${ROUTE_PATH.TOKEN}?address=${token?.address}`);
   }
 
   return (
