@@ -7,12 +7,12 @@ export const StyledTokens = styled.div`
   
   .avatar {
     object-fit: cover;
-    width: ${px2rem(50)};
-    height: ${px2rem(50)};
+    width: ${px2rem(40)};
+    height: ${px2rem(40)};
     border-radius: 50%;
   }
 
-  .table, .chakra-table {
+  .chakra-table {
     th:first-of-type {
       max-width: ${px2rem(50)};
       white-space: nowrap;
@@ -40,6 +40,7 @@ export const StyledTokens = styled.div`
     thead {
       tr {
         th {
+          text-transform: uppercase;
           border-bottom-color: rgb(34,37,49);
         }
       }

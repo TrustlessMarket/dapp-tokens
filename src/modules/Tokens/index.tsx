@@ -117,7 +117,7 @@ const Tokens = () => {
         },
         sort: sort?.sort,
         render(row: any) {
-          return <Text color={"#FFFFFF"}>{row?.index}</Text>;
+          return <Text color={"#FFFFFF"} fontSize={px2rem(16)}>{row?.index}</Text>;
         },
       },
       {
@@ -153,13 +153,13 @@ const Tokens = () => {
                 className={'avatar'}
               />
               <Flex direction={'column'}>
-                <Flex gap={1} alignItems={"flex-end"}>
+                <Flex gap={1} alignItems={"flex-end"} fontSize={px2rem(16)}>
                   <Box fontWeight={"500"} color={"#FFFFFF"}>{row?.name}</Box>
-                  <Box fontSize={px2rem(16)} color={'rgba(255, 255, 255, 0.7)'}>
+                  <Box color={'rgba(255, 255, 255, 0.7)'}>
                     {row?.symbol}
                   </Box>
                 </Flex>
-                <Box fontSize={px2rem(14)} color={'rgba(255, 255, 255, 0.7)'}>
+                <Box fontSize={px2rem(12)} color={'rgba(255, 255, 255, 0.7)'}>
                   {row?.network || 'TC'}
                 </Box>
               </Flex>
@@ -190,7 +190,7 @@ const Tokens = () => {
           const tokenPrice = row?.usdPrice
             ? new BigNumber(row?.usdPrice).toFixed()
             : 'n/a';
-          return <Text color={"#FFFFFF"}>${formatCurrency(tokenPrice, 10)}</Text>;
+          return <Text color={"#FFFFFF"} fontSize={px2rem(16)}>${formatCurrency(tokenPrice, 10)}</Text>;
         },
       },
       {
@@ -217,6 +217,7 @@ const Tokens = () => {
             <Flex
               alignItems={'center'}
               color={Number(row?.percent) > 0 ? '#16c784' : Number(row?.percent) < 0 ? '#ea3943' : '#FFFFFF'}
+              fontSize={px2rem(16)}
             >
               {Number(row?.percent) > 0 && <AiOutlineCaretUp color={'#16c784'} />}
               {Number(row?.percent) < 0 && (
@@ -251,6 +252,7 @@ const Tokens = () => {
             <Flex
               alignItems={'center'}
               color={Number(row?.percent7Day) > 0 ? '#16c784' : Number(row?.percent7Day) < 0 ? '#ea3943' : '#FFFFFF'}
+              fontSize={px2rem(16)}
             >
               {Number(row?.percent7Day) > 0 && (
                 <AiOutlineCaretUp color={'#16c784'} />
@@ -283,7 +285,7 @@ const Tokens = () => {
         },
         sort: sort?.sort,
         render(row: any) {
-          return <Text color={"#FFFFFF"}>${formatCurrency(row?.usdMarketCap, 2)}</Text>;
+          return <Text color={"#FFFFFF"} fontSize={px2rem(16)}>${formatCurrency(row?.usdMarketCap, 2)}</Text>;
         },
       },
       {
@@ -309,7 +311,7 @@ const Tokens = () => {
           const tokenVolume = row?.usdTotalVolume
             ? new BigNumber(row?.usdTotalVolume).toFixed()
             : 'n/a';
-          return <Text color={"#FFFFFF"}>${formatCurrency(tokenVolume, 2)}</Text>;
+          return <Text color={"#FFFFFF"} fontSize={px2rem(16)}>${formatCurrency(tokenVolume, 2)}</Text>;
         },
       },
       {
@@ -335,7 +337,7 @@ const Tokens = () => {
           const totalSupply = new BigNumber(row?.totalSupply || 0).div(
             decimalToExponential(Number(row?.decimal || 18)),
           );
-          return <Text color={"#FFFFFF"}>{formatCurrency(totalSupply.toString(), 0)}</Text>;
+          return <Text color={"#FFFFFF"} fontSize={px2rem(16)}>{formatCurrency(totalSupply.toString(), 0)}</Text>;
         },
       },
       {
@@ -366,7 +368,7 @@ const Tokens = () => {
         },
         render(row: any) {
           return (
-            <Flex justifyContent={'center'} color={"#FFFFFF"}>
+            <Flex justifyContent={'center'} color={"#FFFFFF"} fontSize={px2rem(16)}>
               <Box
                 cursor={'pointer'}
                 onClick={() =>
