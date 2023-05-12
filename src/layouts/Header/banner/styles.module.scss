@@ -1,0 +1,28 @@
+.wrapper {
+  width: 100%;
+  background: #3385FF;
+  transition: all 0.5s ease;
+  font-weight: 500;
+  font-size: 16px;
+
+  .checkItOut {
+    color: #FFFFFF;
+    display: inline;
+    &:hover {
+      text-decoration: none;
+    }
+  }
+
+  &.active {
+    background: #1E1E22;
+
+    .checkItOut {
+      color: #FF7E21;
+      display: inline;
+
+      &:hover {
+        text-decoration: none;
+      }
+    }
+  }
+}
