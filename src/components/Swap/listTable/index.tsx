@@ -40,7 +40,6 @@ interface ListTableProps {
   needUpdate?: any;
   initialLoading?: boolean;
   className?: any,
-  sort?: any
   showEmpty?: boolean
 }
 
@@ -118,7 +117,6 @@ const ListTable: React.FC<ListTableProps> = ({
   initialLoading,
   onTdRow,
   className,
-  sort,
   showEmpty,
 }) => {
   // const { currentWallet } = useCurrentWallet();

@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import Button from '@/components/Button';
 import {IToken} from '@/interfaces/token';
 import {getTokenRp} from '@/services/swap';
@@ -461,7 +462,7 @@ const Tokens = () => {
           }
           next={debounceLoadMore}
         >
-          <ListTable data={tokensList} columns={columns} onItemClick={handleItemClick} sort={sort} showEmpty={false}/>
+          <ListTable data={tokensList} columns={columns} onItemClick={handleItemClick} showEmpty={false}/>
         </InfiniteScroll>
         <ModalCreateToken show={showModal} handleClose={() => setShowModal(false)} />
       </StyledTokens>
