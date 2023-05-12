@@ -67,15 +67,10 @@ const usePendingSwapTransactions: ContractOperationHook<
               amount1_in = amountIn;
             }
 
-            console.log('token0', token0);
-            console.log('token1', token1);
-
             const [token0_obj, token1_obj] = await Promise.all([
               getTokenDetail(token0.address),
               getTokenDetail(token1.address),
             ]);
-
-            // console.log('token0_obj, token1_obj', token0_obj, token1_obj);
 
             response.push({
               // amountIn: value['0'],
@@ -140,9 +135,6 @@ const usePendingSwapTransactions: ContractOperationHook<
             } else {
               amount1_in = amountIn;
             }
-
-            console.log('token0', token0);
-            console.log('token1', token1);
 
             const [token0_obj, token1_obj] = await Promise.all([
               getTokenDetail(token0.address),
