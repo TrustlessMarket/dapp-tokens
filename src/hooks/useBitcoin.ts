@@ -194,6 +194,24 @@ const useBitcoin = () => {
     return res;
   };
 
+  const getTCTxReceipt = async (tcAddress: string): Promise<any> => {
+    if (!tcAddress) throw Error('Address not found');
+    const res: any = await tcClient.getTCTxReceipt(tcAddress);
+    return res;
+  };
+
+  const getPendingInscribeTxsDetail = async (
+    tcAddress: string,
+  ): Promise<
+    TC_SDK.GetPendingInscribeTxsResp[] & {
+      input: string;
+    }
+  > => {
+    if (!tcAddress) throw Error('Address not found');
+    const res: any = await tcClient.getPendingInscribeTxsDetail(tcAddress);
+    return res;
+  };
+
   return {
     createInscribeTx,
     createBatchInscribeTxs,
@@ -202,6 +220,8 @@ const useBitcoin = () => {
     getUnInscribedTransactionByAddress,
     getUnInscribedTransactionDetailByAddress,
     getTCTxByHash,
+    getPendingInscribeTxsDetail,
+    getTCTxReceipt,
   };
 };
 
