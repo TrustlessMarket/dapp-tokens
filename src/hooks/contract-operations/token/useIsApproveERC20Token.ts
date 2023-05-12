@@ -1,4 +1,5 @@
 import ERC20ABIJson from '@/abis/erc20.json';
+import { CONTRACT_METHOD_IDS } from '@/constants/methodId';
 import { AssetsContext } from '@/contexts/assets-context';
 import { TransactionEventType } from '@/enums/transaction';
 import useBitcoin from '@/hooks/useBitcoin';
@@ -12,7 +13,6 @@ import web3Eth from 'web3-eth-abi';
 export interface IIsApproveERC20TokenParams {
   erc20TokenAddress: string;
   address: string;
-  amount?: string;
 }
 
 const useIsApproveERC20Token: ContractOperationHook<
@@ -22,8 +22,6 @@ const useIsApproveERC20Token: ContractOperationHook<
   const { account, provider } = useWeb3React();
   const { btcBalance, feeRate } = useContext(AssetsContext);
   const { getUnInscribedTransactionDetailByAddress, getTCTxByHash } = useBitcoin();
-
-  const ApproveHex = '0x095ea7b3';
 
   const call = useCallback(
     async (params: IIsApproveERC20TokenParams): Promise<string> => {
@@ -47,7 +45,7 @@ const useIsApproveERC20Token: ContractOperationHook<
         if (txDetail) {
           const _txtDetail = await getTCTxByHash(txDetail.Hash);
           const _inputStart = _txtDetail.input.slice(0, 10);
-          if (compareString(ApproveHex, _inputStart)) {
+          if (compareString(CONTRACT_METHOD_IDS.APPROVE, _inputStart)) {
             const _input = _txtDetail.input.slice(10);
             const value = web3Eth.decodeParameters(['address', 'uint256'], _input);
 
