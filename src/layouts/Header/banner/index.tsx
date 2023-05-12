@@ -11,7 +11,7 @@ import {useScreenLayout} from "@/hooks/useScreenLayout";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export const CountDownTimer = ({ end_time, isActive } : {end_time: any, isActive: boolean}) => {
-  const [hours, minutes, seconds, expired] = useCountDownTimer(
+  const [days, hours, minutes, seconds, expired] = useCountDownTimer(
     moment(end_time).format("YYYY/MM/DD HH:mm:ss")
   );
 
@@ -22,6 +22,8 @@ export const CountDownTimer = ({ end_time, isActive } : {end_time: any, isActive
       dispatch(requestReload());
     }
   }, [expired]);
+
+  console.log('days', days);
 
   return (
     <Flex as={"span"} className={styles.banner} gap={1}>
