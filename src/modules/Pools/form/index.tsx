@@ -484,6 +484,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       const _baseAmount = new BigNumber(_amount).multipliedBy(rate).toFixed(18);
 
       change('baseAmount', _baseAmount);
+
       setIsApproveBaseToken(
         checkBalanceIsApprove(isApproveAmountBaseToken, _baseAmount),
       );
@@ -491,10 +492,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
 
     if (Number(_amount) > 0 && baseToken && quoteToken) {
       setIsApproveQuoteToken(
-        checkBalanceIsApprove(
-          isApproveAmountQuoteToken,
-          Web3.utils.toWei(new BigNumber(_amount || 0).toFixed(18), 'ether'),
-        ),
+        checkBalanceIsApprove(isApproveAmountQuoteToken, _amount),
       );
     }
   };
@@ -521,10 +519,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     }
     if (Number(_amount) > 0 && baseToken && quoteToken) {
       setIsApproveBaseToken(
-        checkBalanceIsApprove(
-          isApproveAmountBaseToken,
-          Web3.utils.toWei(new BigNumber(_amount || 0).toFixed(18), 'ether'),
-        ),
+        checkBalanceIsApprove(isApproveAmountBaseToken, _amount),
       );
     }
   };

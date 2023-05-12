@@ -1,6 +1,6 @@
 import UniswapV2Router from '@/abis/UniswapV2Router.json';
 import { transactionType } from '@/components/Swap/alertInfoProcessing/types';
-import { APP_ENV, TRANSFER_TX_SIZE, UNIV2_ROUTER_ADDRESS } from '@/configs';
+import { APP_ENV, UNIV2_ROUTER_ADDRESS } from '@/configs';
 import { ERROR_CODE } from '@/constants/error';
 import { MaxUint256 } from '@/constants/url';
 import { AssetsContext } from '@/contexts/assets-context';
@@ -15,6 +15,7 @@ import { compareString, getContract } from '@/utils';
 import { useWeb3React } from '@web3-react/core';
 import { useCallback, useContext } from 'react';
 import Web3 from 'web3';
+import useIsApproveERC20Token from '../token/useIsApproveERC20Token';
 
 export interface IAddLiquidityParams {
   tokenA: string;
@@ -32,6 +33,7 @@ const useAddLiquidity: ContractOperationHook<IAddLiquidityParams, boolean> = () 
   const { account, provider } = useWeb3React();
   const { btcBalance, feeRate } = useContext(AssetsContext);
   const { getUnInscribedTransactionDetailByAddress, getTCTxByHash } = useBitcoin();
+  const { call: isApproveERC20Token } = useIsApproveERC20Token();
 
   const funcLiquidHex = '0xe8e33700';
 
@@ -47,17 +49,27 @@ const useAddLiquidity: ContractOperationHook<IAddLiquidityParams, boolean> = () 
         // to,
       } = params;
 
-      if (account && provider) {
+      if (account && provider && tokenA && tokenB) {
         const contract = getContract(
           UNIV2_ROUTER_ADDRESS,
           UniswapV2Router,
           provider,
           account,
         );
-        console.log({
-          tcTxSizeByte: TRANSFER_TX_SIZE,
-          feeRatePerByte: feeRate.fastestFee,
-        });
+
+        const [amountApproveA, amountApproveB] = await Promise.all([
+          isApproveERC20Token({
+            address: UNIV2_ROUTER_ADDRESS,
+            erc20TokenAddress: tokenA,
+          }),
+          isApproveERC20Token({
+            address: UNIV2_ROUTER_ADDRESS,
+            erc20TokenAddress: tokenB,
+          }),
+        ]);
+
+        console.log('amountApproveA', amountApproveA);
+        console.log('amountApproveB', amountApproveB);
 
         let isPendingTx = false;
 
@@ -66,12 +78,8 @@ const useAddLiquidity: ContractOperationHook<IAddLiquidityParams, boolean> = () 
         );
 
         for await (const unInscribedTxID of unInscribedTxIDs) {
-          console.log('unInscribedTxID', unInscribedTxID);
-
           const _getTxDetail = await getTCTxByHash(unInscribedTxID.Hash);
           const _inputStart = _getTxDetail.input.slice(0, 10);
-
-          console.log('_inputStart', _inputStart);
 
           if (compareString(funcLiquidHex, _inputStart)) {
             isPendingTx = true;
