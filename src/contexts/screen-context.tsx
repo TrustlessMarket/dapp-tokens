@@ -14,7 +14,8 @@ export const defaultProvider = {
   footerTradingHeight: 35,
   footerTradingHeightMobile: 60,
   showGetStarted: false,
-  bannerHeight: 60
+  bannerHeight: 60,
+  bannerHeightMobile: 120
 };
 
 const ScreenLayoutContext = createContext(defaultProvider);
@@ -41,6 +42,12 @@ const ScreenLayoutProvider: React.FC<any> = ({ children }) => {
       : defaultProvider.footerHeight
   }, [_isMobile]);
 
+  const bannerHeight = useMemo(() => {
+    return _isMobile
+      ? defaultProvider.bannerHeightMobile
+      : defaultProvider.bannerHeight
+  }, [_isMobile]);
+
   const showGetStarted = true;
 
   useEffect(() => {
@@ -53,7 +60,7 @@ const ScreenLayoutProvider: React.FC<any> = ({ children }) => {
 
     // if (!_isMobile) {
       height +=
-        (showGetStarted ? 60 : 0)
+        (showGetStarted ? bannerHeight : 0)
       ;
     // }
 
@@ -69,6 +76,7 @@ const ScreenLayoutProvider: React.FC<any> = ({ children }) => {
     headerHeight,
     footerHeight,
     showGetStarted,
+    bannerHeight,
   };
 
   return (

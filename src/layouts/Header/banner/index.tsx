@@ -73,6 +73,8 @@ const Banner = () => {
         color={'white'}
         alignItems={"center"}
         gap={2}
+        direction={["column", "row"]}
+        textAlign={["center", "left"]}
       >
         <CountDownTimer end_time={moment(time, "YYYY-MM-DD HH:mm:ss")} isActive={isActive}/>
         $GM (the first smart contract on Bitcoin) crowdfunding campaign is live.{' '}
