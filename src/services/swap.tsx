@@ -36,7 +36,7 @@ export const getSwapTokens = async (
 
 export const scanTrx = async (params: { tx_hash: string }) => {
   const qs = '?' + queryString.stringify(params);
-  return swrFetcher(`${API_URL}${API_PATH}/scan?tx_hash=${qs}`, {
+  return swrFetcher(`${API_URL}${API_PATH}/scan${qs}`, {
     method: 'GET',
     error: 'Fail to scan tx',
   });
