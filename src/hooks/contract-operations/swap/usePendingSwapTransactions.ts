@@ -10,6 +10,7 @@ import { useWeb3React } from '@web3-react/core';
 import { useCallback } from 'react';
 import Web3 from 'web3';
 import web3Eth from 'web3-eth-abi';
+import {getTCTxDetailByHash} from "@/services/swap";
 
 export interface IPendingSwapTransactionsParams {}
 
@@ -37,7 +38,10 @@ const usePendingSwapTransactions: ContractOperationHook<
         const response = [];
 
         for await (const unInscribedTxID of unInscribedTxIDs) {
-          const _getTxDetail = await getTCTxByHash(unInscribedTxID.Hash);
+          const [_getTxDetail, _getTxDetail2] = await Promise.all([
+            getTCTxByHash(unInscribedTxID.Hash),
+            getTCTxDetailByHash({tx_hash: unInscribedTxID.Hash})
+          ]);
 
           const _inputStart = _getTxDetail.input.slice(0, 10);
 
@@ -78,7 +82,7 @@ const usePendingSwapTransactions: ContractOperationHook<
               path: value['2'],
               to: value['3'],
               // deadline: value['4'],
-              created_at: null,
+              created_at: _getTxDetail2?.length > 0 ? _getTxDetail2[0].createdAt : null,
               amount0_in,
               amount1_in,
               amount0_out,
@@ -97,7 +101,11 @@ const usePendingSwapTransactions: ContractOperationHook<
         }
 
         for await (const pendingTxID of pendingTxIds) {
-          const _getTxDetail = await getTCTxByHash(pendingTxID.TCHash);
+          const [_getTxDetail, _getTxDetail2] = await Promise.all([
+            getTCTxByHash(pendingTxID.TCHash),
+            getTCTxDetailByHash({tx_hash: pendingTxID.TCHash})
+          ]);
+
           const _inputStart = _getTxDetail.input.slice(0, 10);
 
           if (compareString(funcSwapHash, _inputStart)) {
@@ -150,7 +158,7 @@ const usePendingSwapTransactions: ContractOperationHook<
               path: value['2'],
               to: value['3'],
               // deadline: value['4'],
-              created_at: null,
+              created_at: _getTxDetail2?.length > 0 ? _getTxDetail2[0].createdAt : null,
               amount0_in,
               amount1_in,
               amount0_out,

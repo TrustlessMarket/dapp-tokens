@@ -122,3 +122,15 @@ export const getUserTradeHistory = async (
     error: 'Fail to get user trade history',
   });
 };
+
+export const getTCTxDetailByHash = async (
+  params: {
+    tx_hash: string
+  },
+) => {
+  const qs = '?' + queryString.stringify(params);
+  return swrFetcher(`${API_URL}${API_PATH}/transactions/pending${qs}`, {
+    method: 'GET',
+    error: 'Fail to TC Tx detail',
+  });
+};
