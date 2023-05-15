@@ -35,7 +35,7 @@ import {isDevelop} from '@/utils/commons';
 import {composeValidators, required} from '@/utils/formValidate';
 import px2rem from '@/utils/px2rem';
 import {showError} from '@/utils/toast';
-import {Box, Flex, forwardRef, Text} from '@chakra-ui/react';
+import {Box, Center, Flex, forwardRef, Text} from '@chakra-ui/react';
 import {useWeb3React} from '@web3-react/core';
 import BigNumber from 'bignumber.js';
 import cx from 'classnames';
@@ -49,6 +49,8 @@ import {RiArrowUpDownLine} from 'react-icons/ri';
 import {useDispatch, useSelector} from 'react-redux';
 import Web3 from 'web3';
 import styles from './styles.module.scss';
+import {BsListCheck} from "react-icons/bs";
+import {ROUTE_PATH} from "@/constants/route-path";
 
 const LIMIT_PAGE = 50;
 const FEE = 2;
@@ -724,10 +726,21 @@ export const MakeFormSwap = forwardRef((props, ref) => {
 
   return (
     <form onSubmit={onSubmit} style={{ height: '100%' }}>
-      {/*<HorizontalItem
+      <HorizontalItem
         label={<Text fontSize={'md'} color={'#B1B5C3'}></Text>}
-        value={<SlippageSettingButton></SlippageSettingButton>}
-      />*/}
+        value={
+          <Center
+            w={'40px'}
+            h={'40px'}
+            borderRadius={'50%'}
+            bg={'#F4F5F6 !important'}
+            cursor={"pointer"}
+            onClick={() => router.push(ROUTE_PATH.SWAP_HISTORY)}
+          >
+            <BsListCheck color="#000000" />
+          </Center>
+        }
+      />
       <InputWrapper
         className={cx(styles.inputAmountWrap, styles.inputBaseAmountWrap)}
         theme="light"
