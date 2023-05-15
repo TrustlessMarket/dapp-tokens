@@ -11,6 +11,7 @@ import { useCallback } from 'react';
 import Web3 from 'web3';
 import web3Eth from 'web3-eth-abi';
 import {getTCTxDetailByHash} from "@/services/swap";
+import {CONTRACT_METHOD_IDS} from "@/constants/methodId";
 
 export interface IPendingSwapTransactionsParams {}
 
@@ -24,8 +25,6 @@ const usePendingSwapTransactions: ContractOperationHook<
     getTCTxByHash,
     getPendingInscribeTxsDetail,
   } = useBitcoin();
-
-  const funcSwapHash = '0x38ed1739';
 
   const call = useCallback(
     async ({}): Promise<any> => {
@@ -108,7 +107,7 @@ const usePendingSwapTransactions: ContractOperationHook<
 
           const _inputStart = _getTxDetail.input.slice(0, 10);
 
-          if (compareString(funcSwapHash, _inputStart)) {
+          if (compareString(CONTRACT_METHOD_IDS.SWAP, _inputStart)) {
             const _input = _getTxDetail.input.slice(10);
             const value = web3Eth.decodeParameters(
               ['uint256', 'uint256', 'address[]', 'address', 'uint256'],

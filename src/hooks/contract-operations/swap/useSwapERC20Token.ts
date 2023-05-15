@@ -15,6 +15,7 @@ import { compareString, getContract } from '@/utils';
 import { useWeb3React } from '@web3-react/core';
 import { useCallback, useContext } from 'react';
 import Web3 from 'web3';
+import {CONTRACT_METHOD_IDS} from "@/constants/methodId";
 
 export interface ISwapERC20TokenParams {
   addresses: string[];
@@ -30,8 +31,6 @@ const useSwapERC20Token: ContractOperationHook<
   const { account, provider } = useWeb3React();
   const { btcBalance, feeRate } = useContext(AssetsContext);
   const { getUnInscribedTransactionDetailByAddress, getTCTxByHash } = useBitcoin();
-
-  const funcSwapHash = '0x38ed1739';
 
   const call = useCallback(
     async (params: ISwapERC20TokenParams): Promise<boolean> => {
@@ -60,7 +59,7 @@ const useSwapERC20Token: ContractOperationHook<
           const _getTxDetail = await getTCTxByHash(unInscribedTxID.Hash);
           const _inputStart = _getTxDetail.input.slice(0, 10);
 
-          if (compareString(funcSwapHash, _inputStart)) {
+          if (compareString(CONTRACT_METHOD_IDS.SWAP, _inputStart)) {
             isPendingTx = true;
           }
         }
