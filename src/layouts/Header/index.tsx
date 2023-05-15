@@ -14,6 +14,7 @@ import {useScreenLayout} from '@/hooks/useScreenLayout';
 import {defaultProvider} from '@/contexts/screen-context';
 import {compareString} from '@/utils';
 import Banner from "@/layouts/Header/banner";
+import {DEV_ADDRESS, WBTC_ADDRESS} from "@/modules/Swap/form";
 
 export const isScreenDarkMode = () => {
   const router = useRouter();
@@ -85,7 +86,7 @@ const Header = () => {
                 Markets
               </Link>
               <Link
-                href={ROUTE_PATH.SWAP}
+                href={`${ROUTE_PATH.SWAP}?from_token=${WBTC_ADDRESS}&to_token=${DEV_ADDRESS}`}
                 className={
                   router?.pathname?.includes(ROUTE_PATH.SWAP) ? 'isSelected' : ''
                 }

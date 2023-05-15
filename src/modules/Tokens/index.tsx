@@ -17,7 +17,7 @@ import {StyledTokens, UploadFileContainer} from './Tokens.styled';
 // import { ROUTE_PATH } from '@/constants/route-path';
 import {ROUTE_PATH} from '@/constants/route-path';
 import {WalletContext} from '@/contexts/wallet-context';
-import {WBTC_ADDRESS} from '@/modules/Swap/form';
+import {DEV_ADDRESS, WBTC_ADDRESS} from '@/modules/Swap/form';
 import {showError} from '@/utils/toast';
 import {Box, Flex, Text} from '@chakra-ui/react';
 import BigNumber from 'bignumber.js';
@@ -439,7 +439,9 @@ const Tokens = () => {
                 Issue Smart BRC-20
               </Text>
             </Button>
-            <Link href={ROUTE_PATH.SWAP}>
+            <Link
+              href={`${ROUTE_PATH.SWAP}?from_token=${WBTC_ADDRESS}&to_token=${DEV_ADDRESS}`}
+            >
               <Button
                 className="comming-soon-btn"
                 background={'#3385FF'}

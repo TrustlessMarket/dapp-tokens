@@ -152,6 +152,30 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   }, []);
 
   useEffect(() => {
+    if(router?.query?.from_token) {
+      const token = baseTokensList.find((t: any) =>
+        compareString(t.address, router?.query?.from_token),
+      );
+
+      if (token) {
+        handleSelectBaseToken(token);
+      }
+    }
+  },[JSON.stringify(baseTokensList), router?.query?.from_token]);
+
+  useEffect(() => {
+    if(router?.query?.to_token) {
+      const token = quoteTokensList.find((t: any) =>
+        compareString(t.address, router?.query?.to_token),
+      );
+
+      if (token) {
+        handleSelectQuoteToken(token);
+      }
+    }
+  },[JSON.stringify(quoteTokensList), router?.query?.to_token]);
+
+  useEffect(() => {
     if (baseToken?.address && quoteToken?.address) {
       getSwapRoutesInfo(baseToken?.address, quoteToken?.address);
     }
@@ -233,12 +257,13 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       setBaseTokensList(list);
       setQuoteTokensList(list);
 
-      const token = list.find((t: any) =>
-        compareString(t.address, WBTC_ADDRESS),
-      );
-      if (token) {
-        handleSelectBaseToken(token);
-      }
+      // const token = list.find((t: any) =>
+      //   compareString(t.address, router?.query?.from_token || WBTC_ADDRESS),
+      // );
+      //
+      // if (token) {
+      //   handleSelectBaseToken(token);
+      // }
     } catch (err: unknown) {
       console.log('Failed to fetch tokens owned');
     } finally {
@@ -363,6 +388,10 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     setIsChangeBaseToken(true);
     setBaseToken(token);
     change('baseToken', token);
+    router.replace(
+      `${ROUTE_PATH.SWAP}?from_token=${token.address}&to_token=${router?.query?.to_token || ''}`,
+    );
+
     try {
       const _fromTokens: any = await fetchFromTokens(token?.address);
       if (_fromTokens) {
@@ -407,6 +436,9 @@ export const MakeFormSwap = forwardRef((props, ref) => {
 
     setQuoteToken(token);
     change('quoteToken', token);
+    router.replace(
+      `${ROUTE_PATH.SWAP}?from_token=${router?.query?.from_token || ''}&to_token=${token.address}`,
+    );
   };
 
   const onChangeTransferType = async () => {
@@ -425,6 +457,9 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     setQuoteBalance(baseBalance);
     setAmountBaseTokenApproved(amountQuoteTokenApproved);
     setAmountQuoteTokenApproved(amountBaseTokenApproved);
+    router.replace(
+      `${ROUTE_PATH.SWAP}?from_token=${router?.query?.to_token || ''}&to_token=${router?.query?.from_token || ''}`,
+    );
 
     try {
       if (baseToken?.address && quoteToken?.address) {
