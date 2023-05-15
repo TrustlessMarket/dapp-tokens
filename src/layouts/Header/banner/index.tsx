@@ -12,7 +12,7 @@ import {useAppSelector} from "@/state/hooks";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const START_TIME = '2023-05-12 22:00:00';
-const END_TIME = '2023-05-15 22:00:00';
+const END_TIME = '2023-05-18 22:00:00';
 
 export const CountDownTimer = ({ end_time, isActive } : {end_time: any, isActive: boolean}) => {
   const [days, hours, minutes, seconds, expired] = useCountDownTimer(
