@@ -6,15 +6,14 @@ export const StyledTokens = styled.div`
   padding-bottom: ${px2rem(48)};
 
   .upload_title {
-    margin-bottom: ${px2rem(48)};
+    margin-bottom: ${px2rem(24)};
     margin-left: auto;
     margin-right: auto;
     width: fit-content;
     z-index: 1;
     position: relative;
     color: white;
-    font-size: ${px2rem(48)};
-    line-height: 48 / 44;
+    font-size: ${px2rem(32)};
   }
 `;
 

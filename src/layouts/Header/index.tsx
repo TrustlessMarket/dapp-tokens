@@ -17,6 +17,7 @@ import Banner from "@/layouts/Header/banner";
 import {DEV_ADDRESS, WBTC_ADDRESS} from "@/modules/Swap/form";
 
 export const isScreenDarkMode = () => {
+  return true;
   const router = useRouter();
   return (
     compareString(router?.pathname, ROUTE_PATH.HOME) ||

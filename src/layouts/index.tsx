@@ -4,8 +4,6 @@ import Header from './Header';
 import styled from 'styled-components';
 import px2rem from '@/utils/px2rem';
 
-const FO0TER_HEIGHT = 80;
-
 export const Container = styled.div`
   min-height: 100vh;
   max-width: 1920px;
@@ -28,7 +26,7 @@ const Layout: React.FC<PropsWithChildren> = ({ children }) => {
     <>
       <Header />
       {children}
-      <Footer height={FO0TER_HEIGHT} />
+      <Footer />
     </>
   );
 };

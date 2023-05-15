@@ -30,6 +30,7 @@ import TokenChartLast7Day from './Token.ChartLast7Day';
 import px2rem from '@/utils/px2rem';
 import ListTable, {ColumnProp} from '@/components/Swap/listTable';
 import {VscArrowSwap} from 'react-icons/vsc';
+import styles from './styles.module.scss';
 
 const LIMIT_PAGE = 30;
 
@@ -402,7 +403,7 @@ const Tokens = () => {
   }
 
   return (
-    <BodyContainer>
+    <BodyContainer className={styles.wrapper}>
       <StyledTokens>
         <div className="max-content">
           <h3 className="upload_title">Smart BRC-20</h3>

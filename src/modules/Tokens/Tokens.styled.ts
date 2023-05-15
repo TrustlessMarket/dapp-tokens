@@ -2,8 +2,9 @@ import px2rem from '@/utils/px2rem';
 import styled from 'styled-components';
 
 export const StyledTokens = styled.div`
-  margin-top: ${px2rem(48)};
-  margin-bottom: ${px2rem(48)};
+  padding-top: ${px2rem(48)};
+  padding-bottom: ${px2rem(48)};
+  background-color: #0F0F0F;
   
   .avatar {
     object-fit: cover;

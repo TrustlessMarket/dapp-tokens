@@ -6,6 +6,7 @@ import Link from 'next/link';
 
 const Wrapper = styled.div`
   /* max-width: 1920px; */
+  background: #0F0F0F;
 
   .container {
     padding: 0;
