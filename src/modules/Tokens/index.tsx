@@ -41,7 +41,7 @@ const Tokens = () => {
   const isAuthenticated = useSelector(getIsAuthenticatedSelector);
   const { onDisconnect, onConnect, requestBtcAddress } = useContext(WalletContext);
   const [tokensList, setTokensList] = useState<IToken[]>([]);
-  const [sort, setSort] = useState({ sort: "-total_volume" });
+  const [sort, setSort] = useState({ sort: "" });
 
   const handleConnectWallet = async () => {
     try {
@@ -300,14 +300,14 @@ const Tokens = () => {
         config: {
           // borderBottom: 'none',
         },
-        onSort: () => {
-          const sortField = 'total_volume';
-          setSort((_sort) => ({
-            ..._sort,
-            sort: !_sort?.sort?.includes(sortField) || _sort?.sort === sortField ? `-${sortField}` : sortField,
-          }));
-        },
-        sort: sort?.sort,
+        // onSort: () => {
+        //   const sortField = 'total_volume';
+        //   setSort((_sort) => ({
+        //     ..._sort,
+        //     sort: !_sort?.sort?.includes(sortField) || _sort?.sort === sortField ? `-${sortField}` : sortField,
+        //   }));
+        // },
+        // sort: sort?.sort,
         render(row: any) {
           const tokenVolume = row?.usdTotalVolume
             ? new BigNumber(row?.usdTotalVolume).toFixed()
@@ -374,11 +374,13 @@ const Tokens = () => {
                 gap={3}
                 alignItems={"center"}
                 cursor={'pointer'}
-                onClick={() =>
+                onClick={(e) => {
+                  e.stopPropagation();
+                  e.preventDefault();
                   router.push(
                     `${ROUTE_PATH.SWAP}?from_token=${WBTC_ADDRESS}&to_token=${row?.address}`,
                   )
-                }
+                }}
                 title="Swap now"
                 bg={"#1E1E22"}
                 borderRadius={"4px"}
