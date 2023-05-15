@@ -44,7 +44,7 @@ const usePendingSwapTransactions: ContractOperationHook<
 
           const _inputStart = _getTxDetail.input.slice(0, 10);
 
-          if (compareString(funcSwapHash, _inputStart)) {
+          if (compareString(CONTRACT_METHOD_IDS.SWAP, _inputStart)) {
             const _input = _getTxDetail.input.slice(10);
             const value = web3Eth.decodeParameters(
               ['uint256', 'uint256', 'address[]', 'address', 'uint256'],
