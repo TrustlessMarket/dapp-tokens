@@ -1,3 +1,5 @@
+import BigNumber from 'bignumber.js';
+
 export const checkLines = (str: string) => str.split(/\r\n|\r|\n/).length;
 
 export const checkForHttpRegex = (str: string) => {
@@ -25,3 +27,15 @@ export const capitalizeFirstLetter = (string: string) => {
 export const stringToBuffer = (str: string): Buffer => {
   return Buffer.from(str);
 };
+
+export const compareString = (a: unknown, b: unknown) => {
+  return a?.toString?.()?.toLowerCase?.() === b?.toString?.()?.toLowerCase?.();
+};
+
+export function formatCurrency(value: number | string = 0, decimalNumber = 6) {
+  if (isNaN(Number(value))) return 0;
+  return new BigNumber(value)
+    .decimalPlaces(decimalNumber, 1)
+    .toFormat(decimalNumber)
+    .replace(/(\.[0-9]*[1-9])0+$|\.0*$/, '$1');
+}

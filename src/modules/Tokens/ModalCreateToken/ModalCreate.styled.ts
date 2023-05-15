@@ -28,6 +28,47 @@ export const StyledModalUpload = styled(Modal)`
     border-top: none;
   }
 
+  .est-fee {
+    margin-top: ${px2rem(20)};
+    margin-bottom: ${px2rem(28)};
+  }
+
+  .est-fee-options {
+    display: flex;
+    align-items: center;
+    gap: ${px2rem(10)};
+  }
+
+  .est-fee-item {
+    flex: 1;
+    padding: ${px2rem(8)} ${px2rem(16)};
+    border: 1px solid #cecece;
+    border-radius: 8px;
+    display: grid;
+    place-items: center;
+    text-align: center;
+    opacity: 0.6;
+
+    &.active {
+      opacity: 1;
+      border-color: #3385ff;
+      border-width: 2px;
+    }
+
+    &:hover {
+      cursor: pointer;
+      opacity: 1;
+    }
+  }
+
+  .ext-price {
+    color: #3385ff;
+    font-size: ${px2rem(14)};
+    span {
+      font-size: ${px2rem(12)};
+    }
+  }
+
   .confirm-btn {
     width: 100%;
     margin-top: ${px2rem(8)};
@@ -60,6 +101,7 @@ export const WrapInput = styled.div`
     font-size: ${px2rem(16)};
     line-height: ${px2rem(26)};
     border: 1px solid ${({ theme }: { theme: DefaultTheme }) => theme.border3};
+    color:black;      
 
     :hover {
       border: 1px solid

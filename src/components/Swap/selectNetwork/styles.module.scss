@@ -1,0 +1,37 @@
+.btnButton {
+  align-items: center;
+  background-color: rgb(239, 244, 245);
+  border-radius: 16px;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px -2px 0px inset;
+  cursor: pointer;
+  height: 42px !important;
+  padding-left: 42px !important;
+  padding-right: 8px !important;
+  position: relative;
+  background-image: none !important;
+  :global {
+    .img {
+      left: 1px;
+      position: absolute;
+      top: 1px;
+      z-index: 2;
+      border-radius: 100%;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: white;
+      img {
+        border-radius: 100%;
+      }
+    }
+    p {
+      color: #280d5f;
+      display: block;
+      margin-left: 8px;
+      margin-right: 4px;
+      font-size: 14px;
+    }
+  }
+}

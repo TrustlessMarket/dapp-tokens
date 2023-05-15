@@ -8,4 +8,13 @@ export const ROUTE_PATH = {
   USE_TRUSTLESS: '/use-trustless-computer',
   WALLET: '/wallet',
   CONNECT_WALLET: '/connect-wallet',
+  POOLS: '/pools',
+  ADD_POOL: '/add-pool',
+  SWAP: '/swap',
+  MARKETS: '/markets',
+  GET_STARTED: '/get-started',
+  TOKEN: '/token',
+  UPDATE_TOKEN_INFO: '/update-token-info',
+  TM_TRANSFER_HISTORY: '/tm-transfer-history',
+  SWAP_HISTORY: '/swap-history',
 };

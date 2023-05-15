@@ -2,7 +2,7 @@ import { StyledEmpty } from './Empty.styled';
 import { CDN_URL } from '@/configs';
 
 export type TEmpty = {
-  infoText?: string;
+  infoText?: string | React.ReactNode;
   isTable?: boolean;
 };
 

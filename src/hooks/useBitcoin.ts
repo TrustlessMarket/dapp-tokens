@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { TC_NETWORK_RPC } from '@/configs';
 import { ConnectionType, getConnection } from '@/connection';
 import { AssetsContext } from '@/contexts/assets-context';
@@ -75,7 +76,10 @@ const useBitcoin = () => {
     };
   };
 
-  const createInscribeTx = async ({ tcTxIDs, feeRatePerByte }: ICreateInscribeParams) => {
+  const createInscribeTx = async ({
+    tcTxIDs,
+    feeRatePerByte,
+  }: ICreateInscribeParams) => {
     const assets = await getAvailableAssetsCreateTx();
     if (!assets) throw new Error('Can not load assets');
     const { privateKey } = await signKey();
@@ -89,14 +93,15 @@ const useBitcoin = () => {
       tcClient,
     });
 
-    const { commitTxHex, commitTxID, revealTxHex, revealTxID } = await TC_SDK.createInscribeTx({
-      senderPrivateKey: privateKey,
-      utxos: assets.txrefs,
-      inscriptions: {},
-      tcTxIDs,
-      feeRatePerByte,
-      tcClient,
-    });
+    const { commitTxHex, commitTxID, revealTxHex, revealTxID } =
+      await TC_SDK.createInscribeTx({
+        senderPrivateKey: privateKey,
+        utxos: assets.txrefs,
+        inscriptions: {},
+        tcTxIDs,
+        feeRatePerByte,
+        tcClient,
+      });
 
     console.log('commitTxID', commitTxID);
     console.log('commitTxHex', commitTxHex);
@@ -106,7 +111,10 @@ const useBitcoin = () => {
     return { commitTxHex, commitTxID, revealTxHex, revealTxID };
   };
 
-  const createBatchInscribeTxs = async ({ tcTxDetails, feeRatePerByte }: ICreateBatchInscribeParams) => {
+  const createBatchInscribeTxs = async ({
+    tcTxDetails,
+    feeRatePerByte,
+  }: ICreateBatchInscribeParams) => {
     const assets = await getAvailableAssetsCreateTx();
     if (!assets) throw new Error('Can not load assets');
     const { privateKey } = await signKey();
@@ -155,16 +163,53 @@ const useBitcoin = () => {
     return { nonce, gasPrice };
   };
 
-  const getUnInscribedTransactionByAddress = async (tcAddress: string): Promise<Array<string>> => {
+  const getUnInscribedTransactionByAddress = async (
+    tcAddress: string,
+  ): Promise<Array<string>> => {
     if (!tcAddress) throw Error('Address not found');
-    const { unInscribedTxIDs } = await tcClient.getUnInscribedTransactionByAddress(tcAddress);
+    const { unInscribedTxIDs } = await tcClient.getUnInscribedTransactionByAddress(
+      tcAddress,
+    );
     return unInscribedTxIDs;
   };
 
-  const getUnInscribedTransactionDetailByAddress = async (tcAddress: string): Promise<TC_SDK.TCTxDetail[]> => {
+  const getUnInscribedTransactionDetailByAddress = async (
+    tcAddress: string,
+  ): Promise<TC_SDK.TCTxDetail[]> => {
     if (!tcAddress) throw Error('Address not found');
-    const { unInscribedTxDetails } = await tcClient.getUnInscribedTransactionDetailByAddress(tcAddress);
+    const { unInscribedTxDetails } =
+      await tcClient.getUnInscribedTransactionDetailByAddress(tcAddress);
     return unInscribedTxDetails;
+  };
+
+  const getTCTxByHash = async (
+    tcAddress: string,
+  ): Promise<
+    TC_SDK.GetTxByHashResp & {
+      input: string;
+    }
+  > => {
+    if (!tcAddress) throw Error('Address not found');
+    const res: any = await tcClient.getTCTxByHash(tcAddress);
+    return res;
+  };
+
+  const getTCTxReceipt = async (tcAddress: string): Promise<any> => {
+    if (!tcAddress) throw Error('Address not found');
+    const res: any = await tcClient.getTCTxReceipt(tcAddress);
+    return res;
+  };
+
+  const getPendingInscribeTxsDetail = async (
+    tcAddress: string,
+  ): Promise<
+    TC_SDK.GetPendingInscribeTxsResp[] & {
+      input: string;
+    }
+  > => {
+    if (!tcAddress) throw Error('Address not found');
+    const res: any = await tcClient.getPendingInscribeTxsDetail(tcAddress);
+    return res;
   };
 
   return {
@@ -174,6 +219,9 @@ const useBitcoin = () => {
     getNonceInscribeable,
     getUnInscribedTransactionByAddress,
     getUnInscribedTransactionDetailByAddress,
+    getTCTxByHash,
+    getPendingInscribeTxsDetail,
+    getTCTxReceipt,
   };
 };
 

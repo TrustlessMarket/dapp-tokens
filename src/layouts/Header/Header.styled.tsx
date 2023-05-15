@@ -5,15 +5,27 @@ import styled, { DefaultTheme } from 'styled-components';
 import Link from 'next/link';
 
 const Wrapper = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-  position: relative;
+  /* max-width: 1920px; */
+
+  .container {
+    padding: 0;
+    //height: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+
+    @media screen and (max-width: 767px) {
+      overflow-x: auto;
+      padding: 0 ${px2rem(16)};
+    }
+  }
 
   .logo {
     z-index: 999;
     max-width: ${px2rem(40)};
+    min-width: ${px2rem(40)};
   }
 
   a {
@@ -30,12 +42,40 @@ const Wrapper = styled.div`
     transform: translateX(-47%);
   }
 
+  .leftWrapper {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: ${px2rem(32)};
+  }
+
+  .leftContainer,
   .rightContainer {
+    color: #3385ff;
+
     display: flex;
     flex-direction: row;
     align-items: center;
     gap: ${px2rem(16)};
     position: relative;
+
+    .external-link {
+      display: flex;
+      align-items: center;
+      gap: ${px2rem(16)};
+      margin-right: ${px2rem(24)};
+      text-transform: uppercase;
+      font-size: ${px2rem(16)};
+      font-weight: 500;
+
+      a:hover {
+        text-decoration: none;
+      }
+
+      .isSelected {
+        border-bottom: 2px solid #3385ff;
+      }
+    }
 
     @media screen and (min-width: 1024px) {
       :hover {
@@ -144,8 +184,14 @@ const WalletBalance = styled.div`
   cursor: pointer;
   transition: all 0.2s ease;
 
+  &.isTokenPage {
+    p {
+      color: #ffffff;
+    }
+  }
+
   &:hover {
-    border-color: ${({ theme }: { theme: DefaultTheme }) => theme.white};
+    border-color: ${({ theme }: { theme: DefaultTheme }) => theme.primary['d9']};
   }
 
   .balance {

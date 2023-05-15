@@ -1,5 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { IToken } from '@/interfaces/token';
 import { getAddress } from '@ethersproject/address';
+import BigNumber from 'bignumber.js';
 import camelCase from 'lodash/camelCase';
+import { formatCurrency } from './string';
 
 export function isAddress(value: string): string | false {
   try {
@@ -22,7 +26,7 @@ export const shortCryptoAddress = (address = '', toLength?: number) => {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const camelCaseKeys = (obj: any): any => {
   if (Array.isArray(obj)) {
-    return obj.map(v => camelCaseKeys(v));
+    return obj.map((v) => camelCaseKeys(v));
   }
   if (obj !== null && obj.constructor === Object) {
     return Object.keys(obj).reduce(
@@ -34,4 +38,39 @@ export const camelCaseKeys = (obj: any): any => {
     );
   }
   return obj;
+};
+
+export const sortAddressPair = (
+  tokenA: IToken,
+  tokenB: IToken,
+): [IToken, IToken] => {
+  const { token0, token1 } =
+    tokenA.address.toLowerCase() < tokenB.address.toLowerCase()
+      ? { token0: tokenA, token1: tokenB }
+      : { token0: tokenB, token1: tokenA };
+  return [token0, token1];
+};
+
+export const abbreviateNumber = (value: any) => {
+  const formatValue = new BigNumber(value).toNumber();
+  const si = [
+    { value: 1, symbol: '' },
+    { value: 1e3, symbol: 'k' },
+    { value: 1e6, symbol: 'M' },
+    { value: 1e9, symbol: 'G' },
+    { value: 1e12, symbol: 'T' },
+    { value: 1e15, symbol: 'P' },
+    { value: 1e18, symbol: 'E' },
+  ];
+  const rx = /\.0+$|(\.[0-9]*[1-9])0+$/;
+  let i;
+  for (i = si.length - 1; i > 0; i--) {
+    if (formatValue >= si[i].value) {
+      break;
+    }
+  }
+  return (
+    formatCurrency((formatValue / si[i].value).toFixed(2).replace(rx, '$1')) +
+    si[i].symbol
+  );
 };

@@ -1,0 +1,79 @@
+.wrapper {
+  padding: 8px 16px 0 16px;
+  // border-bottom: 1px solid #e6e8ec;
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  :global {
+    .chakra-table__container {
+      overflow-x: hidden;
+    }
+  }
+
+  :global tbody tr {
+    &:hover,
+    &.selected {
+      background-color: #f4f5f6;
+    }
+    td {
+      &:first-child {
+        border-top-left-radius: 8px;
+        border-bottom-left-radius: 8px;
+      }
+      &:last-child {
+        border-top-right-radius: 8px;
+        border-bottom-right-radius: 8px;
+      }
+    }
+  }
+}
+
+.image {
+  border-radius: 8px;
+  border: 1px solid rgb(220, 220, 220);
+}
+
+.link {
+  color: #9999b4 !important;
+  font-size: 12px;
+  // &:hover {
+  //   color: #0000f4 !important;
+  //   text-decoration: underline;
+  // }
+}
+
+@media screen and (max-width: 768px) {
+  .wrapper {
+    padding: 0;
+  }
+}
+
+.modalContent {
+  :global {
+    .chakra-modal__body {
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+
+      @media screen and (max-width: 768px) {
+        max-height: 87vh;
+      }
+    }
+  }
+}
+
+.filterModalContent {
+  :global {
+    .chakra-modal__body {
+      padding: 0;
+    }
+  }
+}
+
+.filterButton {
+  background: unset !important;
+  color: #1C1C1C !important;
+  height: 70px !important;
+  font-size: 20px !important;
+}

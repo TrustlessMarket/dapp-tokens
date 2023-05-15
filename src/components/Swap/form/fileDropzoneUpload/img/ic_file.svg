@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="40px" height="49px" viewBox="0 0 40 49" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 64 (93537) - https://sketch.com -->
+    <title>Shape</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linearGradient-1">
+            <stop stop-color="#E1EBFF" offset="0%"></stop>
+            <stop stop-color="#FAFBFD" offset="100%"></stop>
+        </linearGradient>
+        <rect id="path-2" x="0" y="0" width="687" height="624" rx="10"></rect>
+        <rect id="path-4" x="432" y="373" width="629" height="152" rx="10"></rect>
+        <mask id="mask-5" maskContentUnits="userSpaceOnUse" maskUnits="objectBoundingBox" x="0" y="0" width="629" height="152" fill="white">
+            <use xlink:href="#path-4"></use>
+        </mask>
+    </defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Account-2-Copy-5" transform="translate(-661.000000, -423.000000)">
+            <rect id="Rectangle" fill="url(#linearGradient-1)" x="0" y="315" width="1440" height="195"></rect>
+            <g id="1Untitled-1-Recovered-+-Path-3-Mask" transform="translate(405.000000, 247.000000)">
+                <mask id="mask-3" fill="white">
+                    <use xlink:href="#path-2"></use>
+                </mask>
+                <use id="Mask" fill="#FFFFFF" xlink:href="#path-2"></use>
+            </g>
+            <use id="Rectangle" stroke="#E0E0E0" mask="url(#mask-5)" stroke-width="4" stroke-dasharray="5,3" xlink:href="#path-4"></use>
+            <g id="upload-file" transform="translate(661.000000, 423.000000)" fill="#b1c2de" fill-rule="nonzero">
+                <path d="M29.8088542,0 L4.444375,0 C1.99333333,0 0,1.99552083 0,4.44447917 L0,44.4444792 C0,46.895625 1.99333333,48.8889583 4.44447917,48.8889583 L35.5555208,48.8889583 C38.0066667,48.8889583 40,46.895625 40,44.4444792 L40,10.1911458 L29.8088542,0 Z M22.2221875,28.8888542 L22.2221875,40 L17.7777083,40 L17.7777083,28.8888542 L11.1110417,28.8888542 L20,20 L28.8888542,28.8888542 L22.2221875,28.8888542 Z M26.6666667,13.3333333 L26.6666667,2.2221875 L37.7777083,13.3333333 L26.6666667,13.3333333 Z" id="Shape"></path>
+            </g>
+        </g>
+    </g>
+</svg>

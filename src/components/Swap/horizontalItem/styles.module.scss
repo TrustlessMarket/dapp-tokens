@@ -1,0 +1,45 @@
+.container {
+  //margin-bottom: 12px;
+  > div {
+    &:first-child {
+      font-style: normal;
+      font-weight: 500;
+      font-size: 14px;
+      line-height: 140%;
+      /* identical to box height, or 20px */
+
+      /* text/grey 2 */
+
+      color: #999999;
+    }
+    &:last-child {
+      font-style: normal;
+      font-weight: 500;
+      font-size: 14px;
+      line-height: 140%;
+      /* identical to box height, or 20px */
+
+      text-align: right;
+
+      /* text / black */
+
+      color: #000000;
+      a {
+        display: flex;
+        align-items: center;
+        font-style: normal;
+        font-weight: 500;
+        font-size: 14px;
+        line-height: 140%;
+        /* identical to box height, or 20px */
+
+        text-align: right;
+
+        /* others / blue */
+
+        color: #1879ec;
+        cursor: pointer;
+      }
+    }
+  }
+}

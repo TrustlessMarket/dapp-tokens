@@ -1,6 +1,10 @@
 export const colors = {
   white: '#FFFFFF',
+  white500: 'rgba(255, 255, 255, 0.5)',
   black: '#000000',
+  greenPrimary: '#16c784',
+  redPrimary: '#ea3943',
+  darkBorderColor: '#353945',
 };
 
 export type ColorsTheme = typeof darkTheme;

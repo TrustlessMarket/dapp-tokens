@@ -25,7 +25,7 @@ const nextConfig = {
       },
       {
         protocol: 'https',
-        hostname: '**.trustless.domains',
+        hostname: '**.trustless.market',
       },
     ],
   },

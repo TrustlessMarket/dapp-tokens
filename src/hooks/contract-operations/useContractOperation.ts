@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { SupportedChainId } from '@/constants/chains';
 import { ROUTE_PATH } from '@/constants/route-path';
 import { AssetsContext } from '@/contexts/assets-context';
@@ -10,6 +12,9 @@ import { useContext } from 'react';
 import { useSelector } from 'react-redux';
 import * as TC_SDK from 'trustless-computer-sdk';
 import useBitcoin from '../useBitcoin';
+import { ERROR_CODE } from '@/constants/error';
+import { isProduction } from '@/utils/commons';
+import { logErrorToServer } from '@/services/swap';
 
 interface IParams<P, R> {
   operation: ContractOperationHook<P, R>;
@@ -78,16 +83,14 @@ const useContractOperation = <P, R>(
       );
       console.timeEnd('____unInscribedTxIDsLoadTime');
 
-      if (unInscribedTxIDs.length > 0) {
-        throw Error(
-          'You have some pending transactions. Please complete all of them before moving on.',
-        );
-      }
+      // if (unInscribedTxIDs.length > 0) {
+      //   throw Error(ERROR_CODE.PENDING);
+      // }
 
       console.log('unInscribedTxIDs', unInscribedTxIDs);
 
       console.time('____metamaskCreateTxTime');
-      const tx: R = await call({
+      const tx: any = await call({
         ...params,
       });
       console.timeEnd('____metamaskCreateTxTime');
@@ -115,18 +118,36 @@ const useContractOperation = <P, R>(
       // }
       // await createTransactionHistory(transactionHistory);
 
-      await TC_SDK.signTransaction({
+      TC_SDK.signTransaction({
         method: `${transactionType} ${dAppType}`,
         hash: Object(tx).hash,
         dappURL: window.location.origin,
         isRedirect: false,
+        target: '_blank',
+        isMainnet: isProduction(),
+      });
+
+      if (tx.wait) {
+        await tx.wait();
+      }
+
+      logErrorToServer({
+        type: 'logs',
+        error: JSON.stringify(tx),
+        address: user?.walletAddress,
       });
 
       return tx;
     } catch (err) {
+      logErrorToServer({
+        type: 'error',
+        error: JSON.stringify(err),
+        address: user?.walletAddress,
+      });
       if (Object(err).reason) {
         throw Error(capitalizeFirstLetter(Object(err).reason));
       }
+
       throw err;
     }
   };

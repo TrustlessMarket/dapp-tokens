@@ -24,10 +24,23 @@ export const isSvgUrl = async (url: string) => {
 };
 
 export const isValidImage = (url: string): Promise<boolean> =>
-  new Promise(resolve => {
+  new Promise((resolve) => {
     const img = new Image();
 
     img.src = url;
     img.onload = () => resolve(true);
     img.onerror = () => resolve(false);
   });
+
+interface ImageThumb {
+  width?: number;
+  height?: number;
+  url: string;
+  showOriginal?: boolean;
+}
+
+export const getImageThumb = (params: ImageThumb) => {
+  const { url } = params;
+  if (!url) return '';
+  return url;
+};
