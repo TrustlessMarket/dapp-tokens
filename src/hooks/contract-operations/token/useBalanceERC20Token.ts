@@ -1,7 +1,7 @@
 import ERC20ABIJson from '@/abis/erc20.json';
 import { TransactionEventType } from '@/enums/transaction';
 import { ContractOperationHook, DAppType } from '@/interfaces/contract-operation';
-import { getContract } from '@/utils';
+import { getContract, isConnectedTrustChain } from '@/utils';
 import { useWeb3React } from '@web3-react/core';
 import { useCallback } from 'react';
 import web3 from 'web3';
@@ -15,11 +15,12 @@ const useBalanceERC20Token: ContractOperationHook<
   string
 > = () => {
   const { account, provider } = useWeb3React();
+  const isConnected = isConnectedTrustChain();
 
   const call = useCallback(
     async (params: IBalanceERC20TokenParams): Promise<string> => {
       const { erc20TokenAddress } = params;
-      if (account && provider && erc20TokenAddress) {
+      if (account && provider && erc20TokenAddress && isConnected) {
         const contract = getContract(erc20TokenAddress, ERC20ABIJson.abi, provider);
 
         const transaction = await contract
@@ -30,7 +31,7 @@ const useBalanceERC20Token: ContractOperationHook<
       }
       return '0';
     },
-    [account, provider],
+    [account, provider, isConnected],
   );
 
   return {

@@ -1,11 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-hooks/rules-of-hooks */
+import { TC_NETWORK_RPC } from '@/configs';
+import { SupportedChainId } from '@/constants/chains';
+import { isAddress } from '@ethersproject/address';
 import { AddressZero } from '@ethersproject/constants';
 import { Contract } from '@ethersproject/contracts';
-import { isAddress } from '@ethersproject/address';
 import type { JsonRpcProvider, JsonRpcSigner } from '@ethersproject/providers';
 import { useWeb3React } from '@web3-react/core';
 import { ethers } from 'ethers';
+import { compareString } from './string';
 
 function getProviderOrSigner(
   provider: JsonRpcProvider,
@@ -34,13 +37,22 @@ export function getContract(
 }
 
 export const getProviderProvider = () => {
-  const { provider: defaultProvider, isActive } = useWeb3React();
-  let provider = defaultProvider;
-  if ((!provider && window.ethereum) || !isActive) {
-    provider = new ethers.providers.Web3Provider(
-      window.ethereum as ethers.providers.ExternalProvider,
-    );
+  const { provider: defaultProvider } = useWeb3React();
+
+  let provider: any = defaultProvider;
+  if ((!provider && window.ethereum) || !isConnectedTrustChain()) {
+    provider = new ethers.providers.JsonRpcProvider(TC_NETWORK_RPC);
   }
 
   return provider;
+};
+
+export const isConnectedTrustChain = () => {
+  const { isActive, chainId } = useWeb3React();
+
+  if (isActive && compareString(chainId, SupportedChainId.TRUSTLESS_COMPUTER)) {
+    return true;
+  }
+
+  return false;
 };
