@@ -871,7 +871,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             children={FieldAmount}
             validate={composeValidators(required, validateQuoteAmount)}
             fieldChanged={onChangeValueQuoteAmount}
-            disabled={submitting}
+            disabled={true}
             // placeholder={"Enter number of tokens"}
             decimals={quoteToken?.decimal || 18}
             className={cx(styles.inputAmount, styles.collateralAmount)}
