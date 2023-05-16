@@ -348,10 +348,11 @@ const FilterButton: React.FC<FilterButtonProps> = ({
         alignItems={'center'}
         justifyContent={'space-between'}
         width={'100%'}
+        color={'#FFFFFF'}
       >
         {selectedToken ? (
           <Flex direction={'column'} alignItems={'flex-start'}>
-            <Text fontWeight={'600'} fontSize={'md'}>
+            <Text fontWeight={'500'} fontSize={'md'}>
               {selectedToken?.symbol}
             </Text>
             <Text fontSize={'xs'}>{selectedToken?.network}</Text>
@@ -359,7 +360,7 @@ const FilterButton: React.FC<FilterButtonProps> = ({
         ) : (
           <Text>Select token</Text>
         )}
-        <AiOutlineCaretDown color={'#686A6C'} />
+        <AiOutlineCaretDown fontSize={"16px"}/>
       </Flex>
     </FiledButton>
   );

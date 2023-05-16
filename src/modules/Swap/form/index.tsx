@@ -877,7 +877,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             disabled={submitting}
             // placeholder={"Enter number of tokens"}
             decimals={quoteToken?.decimal || 18}
-            className={cx(styles.inputAmount, styles.collateralAmount)}
+            className={cx(styles.inputAmount)}
             prependComp={
               <FilterButton
                 data={quoteTokensList}
@@ -905,7 +905,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         <Box mt={1}>
           <HorizontalItem
             label={
-              <Text fontSize={'xs'} fontWeight={'medium'} color={'#FFFFFF'}>
+              <Text fontSize={'sm'} fontWeight={'medium'} color={'#FFFFFF'}>
                 1 {quoteToken?.symbol} =&nbsp;
                 {formatCurrency(exchangeRate.toString(), baseToken?.decimal || 18)}
                 &nbsp;{baseToken?.symbol}
