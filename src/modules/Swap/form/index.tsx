@@ -674,7 +674,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       await requestApproveToken(baseToken);
       checkApproveBaseToken(baseToken);
 
-      toast.success('Transaction has been created. Please wait for few minutes.');
+      toast.success('Transaction has been created. You can swap now!');
     } catch (err: any) {
       logErrorToServer({
         type: 'error',
@@ -771,6 +771,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             bg={'#F4F5F6 !important'}
             cursor={"pointer"}
             onClick={() => router.push(ROUTE_PATH.SWAP_HISTORY)}
+            title="History"
           >
             <BsListCheck color="#000000" />
           </Center>
