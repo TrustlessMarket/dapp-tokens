@@ -8,7 +8,7 @@ import { AiOutlineCaretDown, AiOutlineCaretUp } from 'react-icons/ai';
 import { StyledTokenTopInfo } from './Token.styled';
 import { useRouter } from 'next/router';
 import { ROUTE_PATH } from '@/constants/route-path';
-import { WBTC_ADDRESS } from '../Swap/form';
+import {WBTC_ADDRESS, WETH_ADDRESS} from '../Swap/form';
 import { useWeb3React } from '@web3-react/core';
 
 const TokenTopInfo = ({ data }: { data: IToken }) => {
@@ -118,10 +118,11 @@ const TokenTopInfo = ({ data }: { data: IToken }) => {
             color: colors.white,
             fontSize: '16px',
           }}
-          onClick={() =>
+          onClick={() => {
+            const from_token = compareString(data?.symbol, 'GM') ? WETH_ADDRESS : WBTC_ADDRESS;
             router.push(
-              `${ROUTE_PATH.SWAP}?from_token=${WBTC_ADDRESS}&to_token=${data?.address}`,
-            )
+              `${ROUTE_PATH.SWAP}?from_token=${from_token}&to_token=${data?.address}`,
+            )}
           }
         >
           Swap Now
