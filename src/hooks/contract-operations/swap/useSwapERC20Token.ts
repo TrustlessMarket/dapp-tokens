@@ -15,7 +15,7 @@ import { compareString, getContract } from '@/utils';
 import { useWeb3React } from '@web3-react/core';
 import { useCallback, useContext } from 'react';
 import Web3 from 'web3';
-import {CONTRACT_METHOD_IDS} from "@/constants/methodId";
+import { CONTRACT_METHOD_IDS } from '@/constants/methodId';
 
 export interface ISwapERC20TokenParams {
   addresses: string[];
@@ -54,8 +54,6 @@ const useSwapERC20Token: ContractOperationHook<
         );
 
         for await (const unInscribedTxID of unInscribedTxIDs) {
-          console.log('unInscribedTxID', unInscribedTxID);
-
           const _getTxDetail = await getTCTxByHash(unInscribedTxID.Hash);
           const _inputStart = _getTxDetail.input.slice(0, 10);
 
