@@ -816,7 +816,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
                 onExtraSearch={onExtraSearch}
               />
             }
-            borderColor={'#5B5B5B'}
+            borderColor={'#353945'}
           />
         </Flex>
       </InputWrapper>
@@ -881,7 +881,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
               />
             }
             // hideError={true}
-            borderColor={'#5B5B5B'}
+            borderColor={'#353945'}
           />
         </Flex>
       </InputWrapper>

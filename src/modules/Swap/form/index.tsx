@@ -50,6 +50,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import Web3 from 'web3';
 import styles from './styles.module.scss';
 import {BsListCheck} from "react-icons/bs";
+import {BiBell} from "react-icons/bi";
 import {ROUTE_PATH} from "@/constants/route-path";
 
 const LIMIT_PAGE = 50;
@@ -698,7 +699,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           />
           <Text className={"router-text"}>Auto Router</Text>
         </Flex>
-        <Flex justifyContent={"space-between"} w={"100%"}>
+        <Flex justifyContent={"space-between"} w={"100%"} color={"#FFFFFF"}>
           <Flex alignItems={"center"}>
             <img
               // width={25}
@@ -779,10 +780,10 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       <InputWrapper
         className={cx(styles.inputAmountWrap, styles.inputBaseAmountWrap)}
         theme="light"
-        label={<Text fontSize={px2rem(16)}>Swap from</Text>}
+        label={<Text fontSize={px2rem(14)} color={"#FFFFFF"}>Swap from</Text>}
         rightLabel={
           baseToken && (
-            <Flex gap={1} fontSize={px2rem(16)}>
+            <Flex gap={1} fontSize={px2rem(14)} color={"#FFFFFF"}>
               <Text>Balance:</Text>
               <TokenBalance
                 token={baseToken}
@@ -793,6 +794,9 @@ export const MakeFormSwap = forwardRef((props, ref) => {
                 cursor={'pointer'}
                 color={'#3385FF'}
                 onClick={handleChangeMaxBaseAmount}
+                bgColor={"rgba(51, 133, 255, 0.2)"}
+                borderRadius={"4px"}
+                padding={"1px 12px"}
               >
                 MAX
               </Text>
@@ -819,7 +823,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
                 value={baseToken}
               />
             }
-            borderColor={'#5B5B5B'}
+            borderColor={'#353945'}
           />
         </Flex>
       </InputWrapper>
@@ -838,10 +842,10 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       <InputWrapper
         className={cx(styles.inputAmountWrap, styles.inputQuoteAmountWrap)}
         theme="light"
-        label={<Text fontSize={px2rem(16)}>Swap to</Text>}
+        label={<Text fontSize={px2rem(14)} color={"#FFFFFF"}>Swap to</Text>}
         rightLabel={
           quoteToken && (
-            <Flex gap={1} fontSize={px2rem(16)}>
+            <Flex gap={1} fontSize={px2rem(14)} color={"#FFFFFF"}>
               <Text>Balance:</Text>
               <TokenBalance
                 token={quoteToken}
@@ -852,6 +856,9 @@ export const MakeFormSwap = forwardRef((props, ref) => {
                 cursor={'pointer'}
                 color={'#3385FF'}
                 onClick={handleChangeMaxQuoteAmount}
+                bgColor={"rgba(51, 133, 255, 0.2)"}
+                borderRadius={"4px"}
+                padding={"1px 12px"}
               >
                 MAX
               </Text>
@@ -880,15 +887,15 @@ export const MakeFormSwap = forwardRef((props, ref) => {
               />
             }
             // hideError={true}
-            borderColor={'#5B5B5B'}
+            borderColor={'#353945'}
           />
         </Flex>
       </InputWrapper>
       <Box mt={1}>
         <HorizontalItem
           label={
-            <Text fontSize={'xs'} fontWeight={'medium'} color={'#23262F'}>
-              Fee: {FEE * (swapRoutes?.length || 1)}%
+            <Text fontSize={'md'} fontWeight={'medium'} color={'rgba(255, 255, 255, 0.7)'}>
+              FEE: {FEE * (swapRoutes?.length || 1)}%
             </Text>
           }
         />
@@ -912,23 +919,44 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         </>
       )}
       {isAuthenticated && isLoadedAssets && new BigNumber(juiceBalance || 0).lte(0) && (
-        <Text fontSize="md" color="brand.warning.400" textAlign={'left'}>
-          Your TC balance is insufficient. You can receive free TC on our faucet site{' '}
-          <Link
-            href={TRUSTLESS_FAUCET}
-            target={'_blank'}
-            style={{ textDecoration: 'underline' }}
+        <Flex gap={3} mt={2}>
+          <Center
+            w={'24px'}
+            h={'24px'}
+            borderRadius={'50%'}
+            bg={'rgba(255, 126, 33, 0.2)'}
+            as={"span"}
           >
-            here
-          </Link>
-          .
-        </Text>
+            <BiBell color="#FF7E21" />
+          </Center>
+          <Text fontSize="sm" color="#FF7E21" textAlign={'left'}>
+            Your TC balance is insufficient. You can receive free TC on our faucet site{' '}
+            <Link
+              href={TRUSTLESS_FAUCET}
+              target={'_blank'}
+              style={{ textDecoration: 'underline' }}
+            >
+              here
+            </Link>
+            .
+          </Text>
+        </Flex>
       )}
       {isAuthenticated &&
         baseToken &&
         BRIDGE_SUPPORT_TOKEN.includes(baseToken?.symbol) &&
         new BigNumber(baseBalance || 0).lte(0) && (
-          <Text fontSize="md" color="brand.warning.400" textAlign={'left'}>
+        <Flex gap={3} mt={2}>
+          <Center
+            w={'24px'}
+            h={'24px'}
+            borderRadius={'50%'}
+            bg={'rgba(255, 126, 33, 0.2)'}
+            as={"span"}
+          >
+            <BiBell color="#FF7E21" />
+          </Center>
+          <Text fontSize="sm" color="#FF7E21" textAlign={'left'}>
             Insufficient {baseToken?.symbol} balance! Consider swapping your{' '}
             {baseToken?.symbol?.replace('W', '')} to trustless network{' '}
             <Link
@@ -940,6 +968,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             </Link>
             .
           </Text>
+        </Flex>
         )}
       <WrapperConnected
         type={isRequireApprove ? 'button' : 'submit'}

@@ -186,7 +186,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
                 className={cx(styles.collateralAmount)}
                 // hideError={true}
                 inputType={'textarea'}
-                borderColor={'#5B5B5B'}
+                borderColor={'#353945'}
                 rows="4"
               />
             </Flex>
@@ -203,7 +203,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
                 disabled={submitting}
                 placeholder={"Enter Website"}
                 className={cx(styles.inputAmount, styles.collateralAmount)}
-                borderColor={'#5B5B5B'}
+                borderColor={'#353945'}
               />
               <Field
                 name="discord"
@@ -211,7 +211,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
                 disabled={submitting}
                 placeholder={"Enter Discord"}
                 className={cx(styles.inputAmount, styles.collateralAmount)}
-                borderColor={'#5B5B5B'}
+                borderColor={'#353945'}
               />
               {/*<Field
                 name="instagram"
@@ -219,7 +219,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
                 disabled={submitting}
                 placeholder={"Enter Instagram"}
                 className={cx(styles.inputAmount, styles.collateralAmount)}
-                borderColor={'#5B5B5B'}
+                borderColor={'#353945'}
               />*/}
               {/*<Field
                 name="medium"
@@ -227,7 +227,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
                 disabled={submitting}
                 placeholder={"Enter Medium"}
                 className={cx(styles.inputAmount, styles.collateralAmount)}
-                borderColor={'#5B5B5B'}
+                borderColor={'#353945'}
               />*/}
               <Field
                 name="telegram"
@@ -235,7 +235,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
                 disabled={submitting}
                 placeholder={"Enter Telegram"}
                 className={cx(styles.inputAmount, styles.collateralAmount)}
-                borderColor={'#5B5B5B'}
+                borderColor={'#353945'}
               />
               <Field
                 name="twitter"
@@ -243,7 +243,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
                 disabled={submitting}
                 placeholder={"Enter Twitter"}
                 className={cx(styles.inputAmount, styles.collateralAmount)}
-                borderColor={'#5B5B5B'}
+                borderColor={'#353945'}
               />
             </Flex>
           </InputWrapper>
