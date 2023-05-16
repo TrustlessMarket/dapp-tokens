@@ -55,6 +55,7 @@ import {ROUTE_PATH} from "@/constants/route-path";
 const LIMIT_PAGE = 50;
 const FEE = 2;
 export const WBTC_ADDRESS = isDevelop() ? '0x435bdab1bcB2fcf80e5cF47dba209E28c340c3Bf' : '0xfB83c18569fB43f1ABCbae09Baf7090bFFc8CBBD';
+export const WETH_ADDRESS = '0x74B033e56434845E02c9bc4F0caC75438033b00D';
 export const DEV_ADDRESS = '0xdd2863416081D0C10E57AaB4B3C5197183be4B34';
 
 interface IPairReserve {
