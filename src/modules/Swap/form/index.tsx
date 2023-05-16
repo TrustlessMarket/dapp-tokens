@@ -535,7 +535,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   }) => {
     if (!amount || isNaN(Number(amount)) || !tokenIn?.address || !tokenOut?.address) return;
 
-    if(!compareString(tokenIn?.address, WBTC_ADDRESS) && !compareString(tokenOut?.address, WBTC_ADDRESS)) {
+    if(!compareString(tokenIn?.address, WBTC_ADDRESS) && !compareString(tokenOut?.address, WBTC_ADDRESS) && swapRoutes?.length > 1) {
       const listPair = [{baseToken: tokenIn, quoteToken: {address: WBTC_ADDRESS}}, {baseToken: {address: WBTC_ADDRESS}, quoteToken: tokenOut}];
 
       let _amount = amount;
