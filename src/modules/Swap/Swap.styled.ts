@@ -62,7 +62,7 @@ export const UploadFileContainer = styled.div`
     background-clip: text;
     -webkit-text-fill-color: transparent;
     -webkit-background-clip:text;
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 500;
   }
 `;

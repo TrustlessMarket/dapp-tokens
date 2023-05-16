@@ -769,11 +769,11 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             w={'40px'}
             h={'40px'}
             borderRadius={'50%'}
-            bg={'#F4F5F6 !important'}
             cursor={"pointer"}
+            bgColor={"#353945"}
             onClick={() => router.push(ROUTE_PATH.SWAP_HISTORY)}
           >
-            <BsListCheck color="#000000" />
+            <BsListCheck color="#FFFFFF" fontSize={"20px"}/>
           </Center>
         }
       />
@@ -828,16 +828,17 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         </Flex>
       </InputWrapper>
       <Flex justifyContent={'center'}>
-        <Box
+        <Center
           onClick={onChangeTransferType}
-          className="btn-transfer"
+          w={'40px'}
+          h={'40px'}
+          borderRadius={'50%'}
           cursor={'pointer'}
           p={2}
-          // bgColor={'#B1B5C3'}
-          borderRadius={'8px'}
+          bgColor={'#353945'}
         >
-          <RiArrowUpDownLine color="#3385FF" />
-        </Box>
+          <RiArrowUpDownLine color="#FFFFFF" fontSize={"20px"}/>
+        </Center>
       </Flex>
       <InputWrapper
         className={cx(styles.inputAmountWrap, styles.inputQuoteAmountWrap)}
@@ -894,7 +895,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       <Box mt={1}>
         <HorizontalItem
           label={
-            <Text fontSize={'md'} fontWeight={'medium'} color={'rgba(255, 255, 255, 0.7)'}>
+            <Text fontSize={'sm'} fontWeight={'medium'} color={'rgba(255, 255, 255, 0.7)'}>
               FEE: {FEE * (swapRoutes?.length || 1)}%
             </Text>
           }
@@ -904,7 +905,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         <Box mt={1}>
           <HorizontalItem
             label={
-              <Text fontSize={'xs'} fontWeight={'medium'} color={'#23262F'}>
+              <Text fontSize={'xs'} fontWeight={'medium'} color={'#FFFFFF'}>
                 1 {quoteToken?.symbol} =&nbsp;
                 {formatCurrency(exchangeRate.toString(), baseToken?.decimal || 18)}
                 &nbsp;{baseToken?.symbol}
