@@ -16,6 +16,7 @@ import {AiOutlineCaretDown} from 'react-icons/ai';
 import {useDispatch} from 'react-redux';
 import styles from './styles.module.scss';
 import {compareString} from "@/utils";
+import {RxMagnifyingGlass} from "react-icons/rx";
 
 interface FilterButtonProps {
   data: any[];
@@ -61,11 +62,16 @@ const FilterModal: React.FC<FilterModalProps> = ({
     () => [
       {
         id: 'market',
-        label: 'Token',
+        label: (
+          <Flex w={"100%"} gap={4} alignItems={'flex-start'} justifyContent={'space-between'}>
+            <Text>TOKEN</Text>
+            <Text>BALANCE</Text>
+          </Flex>
+        ),
         labelConfig: {
           fontSize: '12px',
           fontWeight: '500',
-          color: '#B1B5C3',
+          color: '#1C1C1C',
         },
         config: {
           borderBottom: 'none',
@@ -153,8 +159,15 @@ const FilterModal: React.FC<FilterModalProps> = ({
         placeholder="Search name or paste address"
         style={{
           textAlign: 'left',
+          fontSize: '14px'
         }}
         // fieldChanged={onChange}
+        prependComp={
+          <Box mt={2}>
+            <RxMagnifyingGlass fontSize={"32px"} color={"#B6B6B6"}/>
+          </Box>
+        }
+        borderColor={'#ECECED'}
       />
       {commonData && commonData?.length > 0 && (
         <Box mt={4}>
@@ -274,7 +287,7 @@ const FilterButton: React.FC<FilterButtonProps> = ({
         id,
         theme: 'dark',
         title: 'Select a Token',
-        className: mobileScreen && styles.filterModalContent,
+        className: styles.modalContent,
         modalProps: {
           centered: true,
           size: mobileScreen ? 'full' : 'xl',

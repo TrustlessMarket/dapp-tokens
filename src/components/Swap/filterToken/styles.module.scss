@@ -50,23 +50,29 @@
 
 .modalContent {
   :global {
+    .chakra-modal__header {
+      font-size: 28px;
+      padding: 0 16px;
+    }
     .chakra-modal__body {
-      padding: 0;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
+      padding: 0 16px;
 
       @media screen and (max-width: 768px) {
+        padding: 0;
         max-height: 87vh;
       }
     }
-  }
-}
 
-.filterModalContent {
-  :global {
-    .chakra-modal__body {
-      padding: 0;
+    .chakra-table {
+      thead {
+        tr {
+          th {
+            padding-top: 12px;
+            padding-bottom: 12px;
+            background-color: #F7F7FA;
+          }
+        }
+      }
     }
   }
 }
