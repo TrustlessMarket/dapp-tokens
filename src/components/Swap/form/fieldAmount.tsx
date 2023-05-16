@@ -81,6 +81,7 @@ const FieldAmount = (props: FieldAmountProps) => {
         </Flex>
       )}
       <InputGroup
+        borderStyle={"solid"}
         borderWidth={1}
         borderColor={shouldShowError ? 'brand.danger.400' : borderColor}
         borderRadius={8}
