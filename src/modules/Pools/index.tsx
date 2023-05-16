@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import HorizontalItem from '@/components/HorizontalItem';
+import HorizontalItem from '@/components/Swap/horizontalItem';
 import BodyContainer from '@/components/Swap/bodyContainer';
 import FiledButton from '@/components/Swap/button/filedButton';
 import ListTable from '@/components/Swap/listTable';
@@ -34,6 +34,11 @@ import { StyledLiquidNote, StyledTokens, UploadFileContainer } from './Pools.sty
 import CreateMarket from './form';
 import ImportPool from './form/importPool';
 import styles from './styles.module.scss';
+import SectionContainer from "@/components/Swap/sectionContainer";
+import Spinner from "react-bootstrap/Spinner";
+import InfiniteScroll from "react-infinite-scroll-component";
+import {debounce} from "lodash";
+import {getTokenRp} from "@/services/swap";
 
 export enum ScreenType {
   default = 'default',
@@ -41,7 +46,9 @@ export enum ScreenType {
   add_liquid = 'add-liquidity',
   add_pool = 'add-pool',
   remove = 'remove',
-}
+};
+
+const LIMIT_PAGE = 30;
 
 export const DEFAULT_FROM_TOKEN_ADDRESS =
   '0xfB83c18569fB43f1ABCbae09Baf7090bFFc8CBBD';
@@ -146,6 +153,8 @@ const ItemLiquid = ({ pool }: { pool: IToken }) => {
 const LiquidityContainer = () => {
   const [data, setData] = useState([]);
   // const [isCreate, setIsCreate] = useState(true);
+  const [tokensList, setTokensList] = useState<IToken[]>([]);
+  const [isFetching, setIsFetching] = useState(false);
 
   const router = useRouter();
   const routerQuery = router.query;
@@ -161,6 +170,31 @@ const LiquidityContainer = () => {
       );
     }
   }, [routerQuery]);
+
+  const fetchTokens = async (page = 1, isFetchMore = false) => {
+    try {
+      setIsFetching(true);
+      const res = await getTokenRp({ limit: LIMIT_PAGE, page: page });
+      if (isFetchMore) {
+        setTokensList((prev) => [...prev, ...res]);
+      } else {
+        setTokensList(res);
+      }
+    } catch (err: unknown) {
+      console.log(err);
+      console.log('Failed to fetch tokens owned');
+    } finally {
+      setIsFetching(false);
+    }
+  };
+
+  const onLoadMoreTokens = () => {
+    if (isFetching || tokensList.length % LIMIT_PAGE !== 0) return;
+    const page = Math.floor(tokensList.length / LIMIT_PAGE) + 1;
+    fetchTokens(page, true);
+  };
+
+  const debounceLoadMore = debounce(onLoadMoreTokens, 300);
 
   const renderTitle = () => {
     switch (routerQuery.type) {
@@ -271,6 +305,7 @@ const LiquidityContainer = () => {
               // maxW={['auto', '70%']}
               marginX={'auto'}
               direction={['column', 'row']}
+              mb={4}
             >
               <Heading as={'h6'}>Pools</Heading>
               <Flex gap={4}>
@@ -317,8 +352,23 @@ const LiquidityContainer = () => {
                 </FiledButton>
               </Flex>
             </Flex>
+            <InfiniteScroll
+              className="tokens-list"
+              dataLength={tokensList?.length || 0}
+              hasMore={true}
+              loader={
+                isFetching && (
+                  <div className="loading">
+                    <Spinner animation="border" variant="primary" />
+                  </div>
+                )
+              }
+              next={debounceLoadMore}
+            >
+              <ListTable data={data} columns={columns} showEmpty={false}/>
+            </InfiniteScroll>
 
-            <UploadFileContainer>
+            {/*<UploadFileContainer>
               <div className="upload_left">
                 <Box className={styles.wrapper}>
                   <ListTable
@@ -329,7 +379,7 @@ const LiquidityContainer = () => {
                   />
                 </Box>
               </div>
-            </UploadFileContainer>
+            </UploadFileContainer>*/}
           </>
         );
     }
@@ -338,6 +388,168 @@ const LiquidityContainer = () => {
   const columns = useMemo(() => {
     return [
       {
+        id: 'pair',
+        label: 'Pair',
+        labelConfig: {
+          fontSize: '12px',
+          fontWeight: '500',
+          color: '#B1B5C3',
+        },
+        config: {
+          backgroundColor: '#FFFFFF',
+          // borderBottom: 'none',
+        },
+        render(row: IToken) {
+          console.log('rowrowrow', row);
+          return <Text fontSize={px2rem(14)}>{row?.name}</Text>;
+        },
+      },
+      {
+        id: 'your_liquidity',
+        label: 'Your Liquidity',
+        labelConfig: {
+          fontSize: '12px',
+          fontWeight: '500',
+          color: '#B1B5C3',
+        },
+        config: {
+          backgroundColor: '#FFFFFF',
+          // borderBottom: 'none',
+        },
+        render(row: IToken) {
+          const share = new BigNumber(row?.ownerSupply || 0)
+            .dividedBy(row?.totalSupply || 1);
+
+          const fromBalance = new BigNumber(share).multipliedBy(row?.fromBalance);
+          const toBalance = new BigNumber(share).multipliedBy(row?.toBalance);
+
+          return (
+            <Flex direction={"column"} color={"#000000"} fontSize={px2rem(14)}>
+              {
+                Number(share) > 0 ? (
+                  <>
+                    <Text>{row.name.split('-')[0]}: {formatCurrency(
+                      formatAmountBigNumber(fromBalance, row.decimal),
+                    ).toString()}</Text>
+                    <Text>{row.name.split('-')[1]}: {formatCurrency(
+                      formatAmountBigNumber(toBalance, row.decimal),
+                    ).toString()}</Text>
+                  </>
+                ) : (
+                  <Text>--</Text>
+                )
+              }
+            </Flex>
+          );
+        },
+      },
+      {
+        id: 'total_liquidity',
+        label: 'Total Liquidity',
+        labelConfig: {
+          fontSize: '12px',
+          fontWeight: '500',
+          color: '#B1B5C3',
+        },
+        config: {
+          backgroundColor: '#FFFFFF',
+          // borderBottom: 'none',
+        },
+        render(row: IToken) {
+          return (
+            <Flex direction={"column"} color={"#000000"} fontSize={px2rem(14)}>
+              <Text>{row.name.split('-')[0]}: {formatCurrency(
+                formatAmountBigNumber(row?.fromBalance, row.decimal),
+              ).toString()}</Text>
+              <Text>{row.name.split('-')[1]}: {formatCurrency(
+                formatAmountBigNumber(row?.toBalance, row.decimal),
+              ).toString()}</Text>
+            </Flex>
+          );
+        },
+      },
+      {
+        id: 'volume24h',
+        label: 'Volume 24h',
+        labelConfig: {
+          fontSize: '12px',
+          fontWeight: '500',
+          color: '#B1B5C3',
+        },
+        config: {
+          backgroundColor: '#FFFFFF',
+          // borderBottom: 'none',
+        },
+        render(row: IToken) {
+          return <Text fontSize={px2rem(14)} textAlign={"left"}>{row?.name}</Text>;
+        },
+      },
+      {
+        id: 'apy',
+        label: 'APY',
+        labelConfig: {
+          fontSize: '12px',
+          fontWeight: '500',
+          color: '#B1B5C3',
+        },
+        config: {
+          backgroundColor: '#FFFFFF',
+          // borderBottom: 'none',
+        },
+        render(row: IToken) {
+          return <Text fontSize={px2rem(14)} textAlign={"left"}>{row?.name}</Text>;
+        },
+      },
+      {
+        id: 'actions',
+        label: ' ',
+        labelConfig: {
+          fontSize: '12px',
+          fontWeight: '500',
+          color: '#B1B5C3',
+        },
+        config: {
+          backgroundColor: '#FFFFFF',
+          // borderBottom: 'none',
+        },
+        render(row: IToken) {
+          return (
+            <Flex gap={4} mt={4} justifyContent={'center'}>
+              <FiledButton
+                style={{
+                  backgroundColor: 'gray',
+                }}
+                btnSize="l"
+                onClick={() =>
+                  router.replace(
+                    `${ROUTE_PATH.POOLS}?type=${ScreenType.add_liquid}&f=${row.fromAddress}&t=${row.toAddress}`,
+                  )
+                }
+              >
+                Add
+              </FiledButton>
+              {
+                Number(row?.ownerSupply || 0) > 0 && (
+                  <FiledButton
+                    btnSize="l"
+                    style={{
+                      backgroundColor: 'red',
+                    }}
+                    onClick={() =>
+                      router.replace(
+                        `${ROUTE_PATH.POOLS}?type=${ScreenType.remove}&f=${row.fromAddress}&t=${row.toAddress}`,
+                      )
+                    }
+                  >
+                    Remove
+                  </FiledButton>
+                )
+              }
+            </Flex>
+          );
+        },
+      },
+      /*{
         id: 'rank',
         label: '',
         // labelConfig: {
@@ -351,15 +563,16 @@ const LiquidityContainer = () => {
         render(row: IToken) {
           return <ItemLiquid pool={row} />;
         },
-      },
+      },*/
     ];
   }, []);
 
   useEffect(() => {
-    fetchLiquid();
+    fetchMyLiquidities();
+    fetchTokens();
   }, [JSON.stringify(router.query)]);
 
-  const fetchLiquid = async () => {
+  const fetchMyLiquidities = async () => {
     try {
       let pairLiquid = localStorage.getItem(LIQUID_PAIRS);
 
@@ -372,17 +585,19 @@ const LiquidityContainer = () => {
 
   return (
     <BodyContainer className={styles.containerWrapper}>
-      <StyledTokens>
-        <StyledLiquidNote>
-          <Text className="title">Liquidity provider rewards</Text>
-          <Text className="desc">
-            Liquidity providers earn a 1% fee on all trades proportional to their
-            share of the pool. Fees are added to the pool, accrue in real time and
-            can be claimed by withdrawing your liquidity.
-          </Text>
-        </StyledLiquidNote>
-        {renderScreen()}
-      </StyledTokens>
+      <SectionContainer>
+        <StyledTokens>
+          <StyledLiquidNote>
+            <Text className="title">Liquidity provider rewards</Text>
+            <Text className="desc">
+              Liquidity providers earn a 1% fee on all trades proportional to their
+              share of the pool. Fees are added to the pool, accrue in real time and
+              can be claimed by withdrawing your liquidity.
+            </Text>
+          </StyledLiquidNote>
+          {renderScreen()}
+        </StyledTokens>
+      </SectionContainer>
     </BodyContainer>
   );
 };

@@ -5,7 +5,7 @@ import styled, { DefaultTheme } from 'styled-components';
 export const StyledTokens = styled.div`
   padding-top: ${px2rem(48)};
   padding-bottom: ${px2rem(48)};
-  width: 720px !important;
+  //width: 720px !important;
   //max-width: 640px;
   margin-left: auto;
   margin-right: auto;
@@ -15,7 +15,7 @@ export const StyledTokens = styled.div`
     color: white;
   }
 
-  .table {
+  .chakra-table {
     th:first-of-type {
       max-width: ${px2rem(50)};
       white-space: nowrap;
@@ -31,6 +31,18 @@ export const StyledTokens = styled.div`
     td {
       padding-top: ${px2rem(26)};
       padding-bottom: ${px2rem(26)};
+    }
+
+    thead {
+      tr {
+        th {
+          background: #FFFFFF;
+          text-transform: uppercase;
+          border-bottom-color: #000000;
+          padding-top: ${px2rem(12)};
+          padding-bottom: ${px2rem(12)};
+        }
+      }
     }
   }
 
