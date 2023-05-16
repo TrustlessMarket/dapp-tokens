@@ -34,9 +34,9 @@ export function getContract(
 }
 
 export const getProviderProvider = () => {
-  const { provider: defaultProvider } = useWeb3React();
+  const { provider: defaultProvider, isActive } = useWeb3React();
   let provider = defaultProvider;
-  if (!provider && window.ethereum) {
+  if ((!provider && window.ethereum) || !isActive) {
     provider = new ethers.providers.Web3Provider(
       window.ethereum as ethers.providers.ExternalProvider,
     );
