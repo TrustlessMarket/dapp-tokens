@@ -7,7 +7,7 @@ import {getIsAuthenticatedSelector} from '@/state/user/selector';
 import {formatCurrency} from '@/utils';
 import {decimalToExponential} from '@/utils/format';
 import {debounce} from 'lodash';
-import {useContext, useEffect, useMemo, useState} from 'react';
+import React, {useContext, useEffect, useMemo, useRef, useState} from 'react';
 import Spinner from 'react-bootstrap/Spinner';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import {useSelector} from 'react-redux';
@@ -17,9 +17,8 @@ import {StyledTokens, UploadFileContainer} from './Tokens.styled';
 // import { ROUTE_PATH } from '@/constants/route-path';
 import {ROUTE_PATH} from '@/constants/route-path';
 import {WalletContext} from '@/contexts/wallet-context';
-import {DEV_ADDRESS, WBTC_ADDRESS} from '@/modules/Swap/form';
 import {showError} from '@/utils/toast';
-import {Box, Flex, Text} from '@chakra-ui/react';
+import {Box, Flex, forwardRef, Text} from '@chakra-ui/react';
 import BigNumber from 'bignumber.js';
 import Link from 'next/link';
 import {useRouter} from 'next/router';
@@ -30,10 +29,14 @@ import TokenChartLast7Day from './Token.ChartLast7Day';
 import px2rem from '@/utils/px2rem';
 import ListTable, {ColumnProp} from '@/components/Swap/listTable';
 import {VscArrowSwap} from 'react-icons/vsc';
+import {Field, Form, useFormState} from "react-final-form";
+import {DEV_ADDRESS, WBTC_ADDRESS} from "@/modules/Swap/form";
+import useDebounce from "@/hooks/useDebounce";
+import FieldText from "@/components/Swap/form/fieldText";
 
 const LIMIT_PAGE = 30;
 
-const Tokens = () => {
+export const MakeFormSwap = forwardRef((props, ref) => {
   const router = useRouter();
   const [showModal, setShowModal] = useState(false);
   const [isFetching, setIsFetching] = useState(false);
@@ -42,6 +45,7 @@ const Tokens = () => {
   const { onDisconnect, onConnect, requestBtcAddress } = useContext(WalletContext);
   const [tokensList, setTokensList] = useState<IToken[]>([]);
   const [sort, setSort] = useState({ sort: "" });
+  const { values } = useFormState();
 
   const handleConnectWallet = async () => {
     try {
@@ -56,12 +60,13 @@ const Tokens = () => {
     }
   };
 
-  const fetchTokens = async (page = 1, isFetchMore = false) => {
+  const fetchTokens = async (page = 1, isFetchMore = false,) => {
     try {
       setIsFetching(true);
       const sortField = sort?.sort?.replace('-', '');
       const sortType = sort?.sort?.includes('-') ? -1 : 1;
-      const res = await getTokenRp({ limit: LIMIT_PAGE, page: page, sort: sortField, sort_type: sortType });
+      const search = values?.search_text;
+      const res = await getTokenRp({ limit: LIMIT_PAGE, page: page, sort: sortField, sort_type: sortType, search: search }) || [];
       if (isFetchMore) {
         setTokensList((prev) => [...prev, ...res]);
       } else {
@@ -92,9 +97,11 @@ const Tokens = () => {
     }
   };
 
+  const debounced = useDebounce(values?.search_text);
+
   useEffect(() => {
     fetchTokens();
-  }, [JSON.stringify(sort)]);
+  }, [JSON.stringify(sort), debounced]);
 
   const columns: ColumnProp[] = useMemo(
     () => [
@@ -402,81 +409,113 @@ const Tokens = () => {
   }
 
   return (
-    <BodyContainer>
-      <StyledTokens>
-        <div className="max-content">
-          <h3 className="upload_title">Smart BRC-20</h3>
-        </div>
-        <UploadFileContainer className="max-content">
-          <div className="upload_left">
-            {/* <img src={IcBitcoinCloud} alt="upload file icon" /> */}
-            <div className="upload_content">
-              {/* <h3 className="upload_title">BRC-20 on Bitcoin</h3> */}
-              <Text className="upload_text" color={"rgba(255, 255, 255, 0.7)"}>
-                Smart BRC-20s are{' '}
-                <span style={{ color: '#FFFFFF' }}>
+    <StyledTokens>
+      <div className="max-content">
+        <h3 className="upload_title">Smart BRC-20</h3>
+      </div>
+      <UploadFileContainer className="max-content">
+        <div className="upload_left">
+          {/* <img src={IcBitcoinCloud} alt="upload file icon" /> */}
+          <div className="upload_content">
+            {/* <h3 className="upload_title">BRC-20 on Bitcoin</h3> */}
+            <Text className="upload_text" color={"rgba(255, 255, 255, 0.7)"}>
+              Smart BRC-20s are{' '}
+              <span style={{ color: '#FFFFFF' }}>
                   the first smart contracts deployed on Bitcoin
                 </span>
-                . They run exactly as programmed without any possibility of fraud,
-                third-party interference, or censorship. Issue your Smart BRC-20 on
-                Bitcoin for virtually anything: a cryptocurrency, a share in a
-                company, voting rights in a DAO, and more.
-              </Text>
-            </div>
+              . They run exactly as programmed without any possibility of fraud,
+              third-party interference, or censorship. Issue your Smart BRC-20 on
+              Bitcoin for virtually anything: a cryptocurrency, a share in a
+              company, voting rights in a DAO, and more.
+            </Text>
           </div>
-          <div className="upload_right">
+        </div>
+        <div className="upload_right">
+          <Button
+            className="button-create-box"
+            background={'white'}
+            onClick={handleCreateToken}
+          >
+            <Text
+              size="medium"
+              color={'black'}
+              className="button-text"
+              fontWeight="medium"
+            >
+              Issue Smart BRC-20
+            </Text>
+          </Button>
+          <Link
+            href={`${ROUTE_PATH.SWAP}?from_token=${WBTC_ADDRESS}&to_token=${DEV_ADDRESS}`}
+          >
             <Button
-              className="button-create-box"
-              background={'white'}
-              onClick={handleCreateToken}
+              className="comming-soon-btn"
+              background={'#3385FF'}
             >
               <Text
                 size="medium"
-                color={'black'}
-                className="button-text"
+                color="#FFFFFF"
+                className="brc20-text"
                 fontWeight="medium"
               >
-                Issue Smart BRC-20
+                Swap Smart BRC-20
               </Text>
             </Button>
-            <Link
-              href={`${ROUTE_PATH.SWAP}?from_token=${WBTC_ADDRESS}&to_token=${DEV_ADDRESS}`}
-            >
-              <Button
-                className="comming-soon-btn"
-                background={'#3385FF'}
-              >
-                <Text
-                  size="medium"
-                  color="#FFFFFF"
-                  className="brc20-text"
-                  fontWeight="medium"
-                >
-                  Swap Smart BRC-20
-                </Text>
-              </Button>
-            </Link>
-          </div>
-        </UploadFileContainer>
-        <InfiniteScroll
-          className="tokens-list"
-          dataLength={tokensList?.length || 0}
-          hasMore={true}
-          loader={
-            isFetching && (
-              <div className="loading">
-                <Spinner animation="border" variant="primary" />
-              </div>
-            )
-          }
-          next={debounceLoadMore}
-        >
-          <ListTable data={tokensList} columns={columns} onItemClick={handleItemClick} showEmpty={false}/>
-        </InfiniteScroll>
-        <ModalCreateToken show={showModal} handleClose={() => setShowModal(false)} />
-      </StyledTokens>
+          </Link>
+        </div>
+      </UploadFileContainer>
+      <Flex mb={4} justifyContent={"flex-end"}>
+        <Field
+          component={FieldText}
+          name="search_text"
+          placeholder="Search name or symbol"
+          style={{
+            textAlign: 'left',
+          }}
+          className={"search_text"}
+          borderColor={"#353945"}
+          // fieldChanged={onChange}
+        />
+      </Flex>
+      <InfiniteScroll
+        className="tokens-list"
+        dataLength={tokensList?.length || 0}
+        hasMore={true}
+        loader={
+          isFetching && (
+            <div className="loading">
+              <Spinner animation="border" variant="primary" />
+            </div>
+          )
+        }
+        next={debounceLoadMore}
+      >
+        <ListTable data={tokensList} columns={columns} onItemClick={handleItemClick} showEmpty={false}/>
+      </InfiniteScroll>
+      <ModalCreateToken show={showModal} handleClose={() => setShowModal(false)} />
+    </StyledTokens>
+  );
+});
+
+const ListTokenForm = () => {
+  const refForm = useRef<any>();
+
+  const handleSubmit = async (values: any) => {
+
+  };
+
+  return (
+    <BodyContainer>
+      <Form onSubmit={handleSubmit} initialValues={{}}>
+        {({ handleSubmit }) => (
+          <MakeFormSwap
+            ref={refForm}
+            onSubmit={handleSubmit}
+          />
+        )}
+      </Form>
     </BodyContainer>
   );
 };
 
-export default Tokens;
+export default ListTokenForm;
