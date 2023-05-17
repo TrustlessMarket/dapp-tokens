@@ -410,8 +410,8 @@ const LiquidityContainer = () => {
       tokens.push(row?.token1Obj?.symbol);
     }
 
-    const content = `Great news! I have added liquidity to Trustless Market for ${tokens.join(',')} token. Now you can easily trade ${tokens.join(',')} on Trustless Market with ease and convenience.`;
-    const hashtags = `TrustlessMarket,LiquidityProvider,TradeNow,${tokens.join(', ')}`;
+    const content = `Great news! I have added liquidity to Trustless Market for ${tokens.join(', ')} token. Now you can easily trade ${tokens.join(', ')} on Trustless Market with ease and convenience.`;
+    const hashtags = `TrustlessMarket,LiquidityProvider,TradeNow,${tokens.join(',')}`;
     console.log('shareUrl', shareUrl);
     window.open(
       `https://twitter.com/intent/tweet?url=${shareUrl}&text=${encodeURIComponent(
