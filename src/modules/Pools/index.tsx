@@ -24,6 +24,7 @@ import {
   Icon,
   IconButton,
   Text,
+  Center
 } from '@chakra-ui/react';
 import BigNumber from 'bignumber.js';
 import {useRouter} from 'next/router';
@@ -40,6 +41,9 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import {debounce} from "lodash";
 import {getListLiquidity} from "@/services/swap";
 import {ILiquidity} from "@/interfaces/liquidity";
+import {AiOutlineMinusCircle, AiOutlinePlusCircle} from "react-icons/ai";
+import {BsTwitter} from "react-icons/bs";
+import {TC_WEB_URL} from "@/configs";
 
 export enum ScreenType {
   default = 'default',
@@ -385,6 +389,17 @@ const LiquidityContainer = () => {
     }
   };
 
+  const shareTwitter = (shareUrl: string) => {
+    const content = 'I have add liquidity on TC. Join with me';
+    console.log('shareUrl', shareUrl);
+    window.open(
+      `https://twitter.com/intent/tweet?url=${shareUrl}&text=${encodeURIComponent(
+        content
+      )}`,
+      "_blank"
+    );
+  };
+
   const columns = useMemo(() => {
     return [
       {
@@ -543,36 +558,56 @@ const LiquidityContainer = () => {
 
           return (
             <Flex gap={4} justifyContent={'center'}>
-              <FiledButton
-                style={{
-                  backgroundColor: 'gray',
+              <Center
+                title={"Add Liquidity"}
+                cursor={"pointer"}
+                fontSize={"24px"}
+                _hover={{
+                  color: '#0072ff',
                 }}
-                btnSize="l"
-                onClick={() =>
-                  router.replace(
-                    `${ROUTE_PATH.POOLS}?type=${ScreenType.add_liquid}&f=${row?.token0Obj?.address}&t=${row?.token1Obj?.address}`,
-                  )
-                }
               >
-                Add
-              </FiledButton>
+                <AiOutlinePlusCircle
+                  onClick={() =>
+                    router.replace(
+                      `${ROUTE_PATH.POOLS}?type=${ScreenType.add_liquid}&f=${row?.token0Obj?.address}&t=${row?.token1Obj?.address}`,
+                    )
+                  }
+                />
+              </Center>
               {
-                Number(share) > 0 && (
-                  <FiledButton
-                    btnSize="l"
-                    style={{
-                      backgroundColor: 'red',
+                Number(share) >= 0 && (
+                  <Center
+                    title={"Remove Liquidity"}
+                    cursor={"pointer"}
+                    fontSize={"24px"}
+                    _hover={{
+                      color: '#FF0000',
                     }}
-                    onClick={() =>
-                      router.replace(
-                        `${ROUTE_PATH.POOLS}?type=${ScreenType.remove}&f=${row?.token0Obj?.address}&t=${row?.token1Obj?.address}`,
-                      )
-                    }
                   >
-                    Remove
-                  </FiledButton>
+                    <AiOutlineMinusCircle
+                      onClick={() =>
+                        router.replace(
+                          `${ROUTE_PATH.POOLS}?type=${ScreenType.remove}&f=${row?.token0Obj?.address}&t=${row?.token1Obj?.address}`,
+                        )
+                      }
+                    />
+                  </Center>
                 )
               }
+              <Center
+                title={"Share Twitter"}
+                cursor={"pointer"}
+                fontSize={"24px"}
+                _hover={{
+                  color: '#33CCFF',
+                }}
+              >
+                <BsTwitter
+                  onClick={() =>
+                    shareTwitter(`${TC_WEB_URL}${ROUTE_PATH.POOLS}?type=${ScreenType.add_liquid}&f=${row?.token0Obj?.address}&t=${row?.token1Obj?.address}`)
+                }
+                />
+              </Center>
             </Flex>
           );
         },
