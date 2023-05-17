@@ -35,7 +35,7 @@ const TokenTopInfo = ({ data }: { data: IToken }) => {
         </Box>
         <Flex className="block-info diver-right">
           <Text className="title">
-            {formatCurrency(Number(data.btcPrice || 0).toFixed(18), 18)} WBTC
+            {formatCurrency(Number(data.btcPrice || 0).toFixed(18), 18)} {data?.baseTokenSymbol || 'WBTC'}
           </Text>
           <Text className="desc">
             ${formatCurrency(Number(data.usdPrice || 0).toFixed(18), 18)}
