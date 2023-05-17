@@ -389,13 +389,34 @@ const LiquidityContainer = () => {
     }
   };
 
-  const shareTwitter = (shareUrl: string) => {
-    const content = 'I have add liquidity on TC. Join with me';
+  const BASE_ADDRESS = [
+    "0xfB83c18569fB43f1ABCbae09Baf7090bFFc8CBBD",
+    "0x74B033e56434845E02c9bc4F0caC75438033b00D",
+    "0x3ED8040D47133AB8A73Dc41d365578D6e7643E54",
+  ];
+
+  const shareTwitter = (row: ILiquidity) => {
+    const shareUrl = `${TRUSTLESS_MARKET_URL}${ROUTE_PATH.POOLS}?type=${ScreenType.add_liquid}&f=${row?.token0Obj?.address}&t=${row?.token1Obj?.address}`;
+    const tokens = [];
+
+    const isBaseToken0 = BASE_ADDRESS.some(address => compareString(address, row?.token0Obj?.address));
+    const isBaseToken1 = BASE_ADDRESS.some(address => compareString(address, row?.token1Obj?.address));
+
+    if(!isBaseToken0) {
+      tokens.push(row?.token0Obj?.symbol);
+    }
+
+    if(!isBaseToken1) {
+      tokens.push(row?.token1Obj?.symbol);
+    }
+
+    const content = `Great news! I have added liquidity to Trustless Market for ${tokens.join(',')} token. Now you can easily trade ${tokens.join(',')} on Trustless Market with ease and convenience.`;
+    const hashtags = `TrustlessMarket,LiquidityProvider,TradeNow,${tokens.join(',')}`;
     console.log('shareUrl', shareUrl);
     window.open(
       `https://twitter.com/intent/tweet?url=${shareUrl}&text=${encodeURIComponent(
         content
-      )}`,
+      )}&hashtags=${hashtags}`,
       "_blank"
     );
   };
@@ -662,7 +683,7 @@ const LiquidityContainer = () => {
               >
                 <BsTwitter
                   onClick={() =>
-                    shareTwitter(`${TRUSTLESS_MARKET_URL}${ROUTE_PATH.POOLS}?type=${ScreenType.add_liquid}&f=${row?.token0Obj?.address}&t=${row?.token1Obj?.address}`)
+                    shareTwitter(row)
                 }
                 />
               </Center>
