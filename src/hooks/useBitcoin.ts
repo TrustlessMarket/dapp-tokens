@@ -187,6 +187,7 @@ const useBitcoin = () => {
   ): Promise<
     TC_SDK.GetTxByHashResp & {
       input: string;
+      to: string;
     }
   > => {
     if (!tcAddress) throw Error('Address not found');

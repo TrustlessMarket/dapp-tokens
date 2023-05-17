@@ -32,7 +32,7 @@ const useGetReserves: ContractOperationHook<
         const contract = getContract(address, UniswapV2PairJson, provider, account);
 
         const transaction = await contract
-          .connect(provider.getSigner())
+          .connect(provider)
           .getReserves();
 
         return {

@@ -1,11 +1,9 @@
 import UniswapV2Router from '@/abis/UniswapV2Router.json';
 import { transactionType } from '@/components/Swap/alertInfoProcessing/types';
 import { APP_ENV, UNIV2_ROUTER_ADDRESS } from '@/configs';
-import { ERROR_CODE } from '@/constants/error';
 import { MaxUint256 } from '@/constants/url';
 import { AssetsContext } from '@/contexts/assets-context';
 import { TransactionEventType } from '@/enums/transaction';
-import useBitcoin from '@/hooks/useBitcoin';
 import { ContractOperationHook, DAppType } from '@/interfaces/contract-operation';
 import { TransactionStatus } from '@/interfaces/walletTransaction';
 import { logErrorToServer, scanTrx } from '@/services/swap';
@@ -15,7 +13,6 @@ import { compareString, getContract } from '@/utils';
 import { useWeb3React } from '@web3-react/core';
 import { useCallback, useContext } from 'react';
 import Web3 from 'web3';
-import useIsApproveERC20Token from '../token/useIsApproveERC20Token';
 
 export interface IAddLiquidityParams {
   tokenA: string;
@@ -32,10 +29,6 @@ export interface IAddLiquidityParams {
 const useAddLiquidity: ContractOperationHook<IAddLiquidityParams, boolean> = () => {
   const { account, provider } = useWeb3React();
   const { btcBalance, feeRate } = useContext(AssetsContext);
-  const { getUnInscribedTransactionDetailByAddress, getTCTxByHash } = useBitcoin();
-  const { call: isApproveERC20Token } = useIsApproveERC20Token();
-
-  const funcLiquidHex = '0xe8e33700';
 
   const call = useCallback(
     async (params: IAddLiquidityParams): Promise<boolean> => {
@@ -57,38 +50,38 @@ const useAddLiquidity: ContractOperationHook<IAddLiquidityParams, boolean> = () 
           account,
         );
 
-        const [amountApproveA, amountApproveB] = await Promise.all([
-          isApproveERC20Token({
-            address: UNIV2_ROUTER_ADDRESS,
-            erc20TokenAddress: tokenA,
-          }),
-          isApproveERC20Token({
-            address: UNIV2_ROUTER_ADDRESS,
-            erc20TokenAddress: tokenB,
-          }),
-        ]);
+        // const [amountApproveA, amountApproveB] = await Promise.all([
+        //   isApproveERC20Token({
+        //     address: UNIV2_ROUTER_ADDRESS,
+        //     erc20TokenAddress: tokenA,
+        //   }),
+        //   isApproveERC20Token({
+        //     address: UNIV2_ROUTER_ADDRESS,
+        //     erc20TokenAddress: tokenB,
+        //   }),
+        // ]);
 
-        console.log('amountApproveA', amountApproveA);
-        console.log('amountApproveB', amountApproveB);
+        // console.log('amountApproveA', amountApproveA);
+        // console.log('amountApproveB', amountApproveB);
 
-        let isPendingTx = false;
+        // let isPendingTx = false;
 
-        const unInscribedTxIDs = await getUnInscribedTransactionDetailByAddress(
-          account,
-        );
+        // const unInscribedTxIDs = await getUnInscribedTransactionDetailByAddress(
+        //   account,
+        // );
 
-        for await (const unInscribedTxID of unInscribedTxIDs) {
-          const _getTxDetail = await getTCTxByHash(unInscribedTxID.Hash);
-          const _inputStart = _getTxDetail.input.slice(0, 10);
+        // for await (const unInscribedTxID of unInscribedTxIDs) {
+        //   const _getTxDetail = await getTCTxByHash(unInscribedTxID.Hash);
+        //   const _inputStart = _getTxDetail.input.slice(0, 10);
 
-          if (compareString(funcLiquidHex, _inputStart)) {
-            isPendingTx = true;
-          }
-        }
+        //   if (compareString(funcLiquidHex, _inputStart)) {
+        //     isPendingTx = true;
+        //   }
+        // }
 
-        if (isPendingTx) {
-          throw Error(ERROR_CODE.PENDING);
-        }
+        // if (isPendingTx) {
+        //   throw Error(ERROR_CODE.PENDING);
+        // }
 
         // if (compareString(APP_ENV, 'production')) {
         //   const estimatedFee = TC_SDK.estimateInscribeFee({
