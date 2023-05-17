@@ -440,7 +440,6 @@ const LiquidityContainer = () => {
           borderBottomLeftRadius: '8px',
         },
         render(row: ILiquidity) {
-          console.log('rowrowrow', row);
           return <Flex fontSize={px2rem(14)} alignItems={"center"} gap={1}>
             <Flex gap={1} alignItems={"center"}>
               <img
