@@ -17,7 +17,6 @@ import {StyledTokens, UploadFileContainer} from './Tokens.styled';
 // import { ROUTE_PATH } from '@/constants/route-path';
 import {ROUTE_PATH} from '@/constants/route-path';
 import {WalletContext} from '@/contexts/wallet-context';
-import {DEV_ADDRESS, WBTC_ADDRESS} from '@/modules/Swap/form';
 import {showError} from '@/utils/toast';
 import {Box, Flex, Text} from '@chakra-ui/react';
 import BigNumber from 'bignumber.js';
@@ -31,6 +30,7 @@ import px2rem from '@/utils/px2rem';
 import ListTable, {ColumnProp} from '@/components/Swap/listTable';
 import {VscArrowSwap} from 'react-icons/vsc';
 import {CDN_URL} from "@/configs";
+import {DEV_ADDRESS, WBTC_ADDRESS} from "@/constants/common";
 
 const LIMIT_PAGE = 30;
 

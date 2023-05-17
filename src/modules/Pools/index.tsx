@@ -44,6 +44,7 @@ import {ILiquidity} from "@/interfaces/liquidity";
 import {AiOutlineMinusCircle, AiOutlinePlusCircle} from "react-icons/ai";
 import {BsTwitter} from "react-icons/bs";
 import {CDN_URL, TRUSTLESS_MARKET_URL} from "@/configs";
+import {USDC_ADDRESS, WBTC_ADDRESS, WETH_ADDRESS} from "@/constants/common";
 
 export enum ScreenType {
   default = 'default',
@@ -390,12 +391,10 @@ const LiquidityContainer = () => {
   };
 
   const BASE_ADDRESS = [
-    "0xfB83c18569fB43f1ABCbae09Baf7090bFFc8CBBD",
-    "0x74B033e56434845E02c9bc4F0caC75438033b00D",
-    "0x3ED8040D47133AB8A73Dc41d365578D6e7643E54",
+    WBTC_ADDRESS,
+    WETH_ADDRESS,
+    USDC_ADDRESS,
   ];
-
-  const USDC_ADDRESS = '0x3ED8040D47133AB8A73Dc41d365578D6e7643E54';
 
   const sortTokens = (tokenA: IToken | undefined, tokenB: IToken | undefined) => {
     if(compareString(USDC_ADDRESS, tokenA?.address)) {
