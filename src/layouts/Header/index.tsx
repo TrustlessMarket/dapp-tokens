@@ -9,12 +9,11 @@ import MenuMobile from './MenuMobile';
 import WalletHeader from './Wallet';
 import {useWindowSize} from '@trustless-computer/dapp-core';
 import {useRouter} from 'next/router';
-import {GENERATIVE_DISCORD, TRUSTLESS_COMPUTER} from '@/constants/common';
+import {DEV_ADDRESS, GENERATIVE_DISCORD, TRUSTLESS_COMPUTER, WBTC_ADDRESS} from '@/constants/common';
 import {useScreenLayout} from '@/hooks/useScreenLayout';
 import {defaultProvider} from '@/contexts/screen-context';
 import {compareString} from '@/utils';
 import Banner from "@/layouts/Header/banner";
-import {DEV_ADDRESS, WBTC_ADDRESS} from "@/modules/Swap/form";
 
 export const isScreenDarkMode = () => {
   const router = useRouter();

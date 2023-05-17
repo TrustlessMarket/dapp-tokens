@@ -31,8 +31,8 @@ import px2rem from '@/utils/px2rem';
 import ListTable, {ColumnProp} from '@/components/Swap/listTable';
 import {VscArrowSwap} from 'react-icons/vsc';
 import {CDN_URL} from "@/configs";
+import {DEV_ADDRESS, WBTC_ADDRESS} from "@/constants/common";
 import {Field, Form, useFormState} from "react-final-form";
-import {DEV_ADDRESS, WBTC_ADDRESS} from "@/modules/Swap/form";
 import useDebounce from "@/hooks/useDebounce";
 import FieldText from "@/components/Swap/form/fieldText";
 

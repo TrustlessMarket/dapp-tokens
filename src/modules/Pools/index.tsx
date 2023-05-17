@@ -44,6 +44,7 @@ import {ILiquidity} from "@/interfaces/liquidity";
 import {AiOutlineMinusCircle, AiOutlinePlusCircle} from "react-icons/ai";
 import {BsTwitter} from "react-icons/bs";
 import {CDN_URL, TRUSTLESS_MARKET_URL} from "@/configs";
+import {USDC_ADDRESS, WBTC_ADDRESS, WETH_ADDRESS} from "@/constants/common";
 
 export enum ScreenType {
   default = 'default',
@@ -390,25 +391,42 @@ const LiquidityContainer = () => {
   };
 
   const BASE_ADDRESS = [
-    "0xfB83c18569fB43f1ABCbae09Baf7090bFFc8CBBD",
-    "0x74B033e56434845E02c9bc4F0caC75438033b00D",
-    "0x3ED8040D47133AB8A73Dc41d365578D6e7643E54",
+    WBTC_ADDRESS,
+    WETH_ADDRESS,
+    USDC_ADDRESS,
   ];
+
+  const sortTokens = (tokenA: IToken | undefined, tokenB: IToken | undefined) => {
+    if(compareString(USDC_ADDRESS, tokenA?.address)) {
+      return [tokenB, tokenA];
+    } else if(compareString(USDC_ADDRESS, tokenB?.address)) {
+      return [tokenA, tokenB];
+    } else if (BASE_ADDRESS.some(address => compareString(address, tokenA?.address))) {
+      return [tokenB, tokenA];
+    } else if (BASE_ADDRESS.some(address => compareString(address, tokenB?.address))) {
+      return [tokenA, tokenB];
+    } else {
+      return [tokenA, tokenB];
+    }
+  }
 
   const shareTwitter = (row: ILiquidity) => {
     const shareUrl = `${TRUSTLESS_MARKET_URL}${ROUTE_PATH.POOLS}?type=${ScreenType.add_liquid}&f=${row?.token0Obj?.address}&t=${row?.token1Obj?.address}`;
     const tokens = [];
 
-    const isBaseToken0 = BASE_ADDRESS.some(address => compareString(address, row?.token0Obj?.address));
-    const isBaseToken1 = BASE_ADDRESS.some(address => compareString(address, row?.token1Obj?.address));
+    // const isBaseToken0 = BASE_ADDRESS.some(address => compareString(address, row?.token0Obj?.address));
+    // const isBaseToken1 = BASE_ADDRESS.some(address => compareString(address, row?.token1Obj?.address));
+    //
+    // if(!isBaseToken0) {
+    //   tokens.push(row?.token0Obj?.symbol);
+    // }
+    //
+    // if(!isBaseToken1) {
+    //   tokens.push(row?.token1Obj?.symbol);
+    // }
 
-    if(!isBaseToken0) {
-      tokens.push(row?.token0Obj?.symbol);
-    }
-
-    if(!isBaseToken1) {
-      tokens.push(row?.token1Obj?.symbol);
-    }
+    tokens.push(row?.token0Obj?.symbol);
+    tokens.push(row?.token1Obj?.symbol);
 
     const content = `Great news! I have added liquidity to Trustless Market for ${tokens.join(', ')} token. Now you can easily trade ${tokens.join(', ')} on Trustless Market with ease and convenience.`;
     const hashtags = `TrustlessMarket,LiquidityProvider,TradeNow,${tokens.join(',')}`;
@@ -440,23 +458,25 @@ const LiquidityContainer = () => {
           borderBottomLeftRadius: '8px',
         },
         render(row: ILiquidity) {
+          const [token0Obj, token1Obj] = sortTokens(row?.token0Obj, row?.token1Obj);
+
           return <Flex fontSize={px2rem(14)} alignItems={"center"} gap={1}>
             <Flex gap={1} alignItems={"center"}>
               <img
-                src={row?.token0Obj?.thumbnail || `${CDN_URL}/upload/1683530065704444020-1683530065-default-coin.svg`}
-                alt={row?.token0Obj?.thumbnail || 'default-icon'}
+                src={token0Obj?.thumbnail || `${CDN_URL}/upload/1683530065704444020-1683530065-default-coin.svg`}
+                alt={token0Obj?.thumbnail || 'default-icon'}
                 className={'avatar'}
               />
-              <Text>{row?.token0Obj?.symbol}</Text>
+              <Text>{token0Obj?.symbol}</Text>
             </Flex>
             -
             <Flex gap={1} alignItems={"center"}>
               <img
-                src={row?.token1Obj?.thumbnail || `${CDN_URL}/upload/1683530065704444020-1683530065-default-coin.svg`}
-                alt={row?.token1Obj?.thumbnail || 'default-icon'}
+                src={token1Obj?.thumbnail || `${CDN_URL}/upload/1683530065704444020-1683530065-default-coin.svg`}
+                alt={token1Obj?.thumbnail || 'default-icon'}
                 className={'avatar'}
               />
-              <Text>{row?.token1Obj?.symbol}</Text>
+              <Text>{token1Obj?.symbol}</Text>
             </Flex>
           </Flex>;
         },
@@ -474,6 +494,8 @@ const LiquidityContainer = () => {
           backgroundColor: '#FFFFFF',
         },
         render(row: ILiquidity) {
+          const [token0Obj, token1Obj] = sortTokens(row?.token0Obj, row?.token1Obj);
+
           let myLiquidity = null;
 
           for (let index = 0; index < myLiquidities?.length; index++) {
@@ -485,14 +507,17 @@ const LiquidityContainer = () => {
           }
 
           let share = 0;
-          let fromBalance = 0;
-          let toBalance = 0;
+          let balances = [0, 0];
           if(myLiquidity) {
             share = new BigNumber(myLiquidity?.ownerSupply || 0)
               .dividedBy(myLiquidity?.totalSupply || 1).toNumber();
 
-            fromBalance = new BigNumber(share).multipliedBy(myLiquidity?.fromBalance || 0).toNumber();
-            toBalance = new BigNumber(share).multipliedBy(myLiquidity?.toBalance || 0).toNumber();
+            const fromBalance = new BigNumber(share).multipliedBy(myLiquidity?.fromBalance || 0).toNumber();
+            const toBalance = new BigNumber(share).multipliedBy(myLiquidity?.toBalance || 0).toNumber();
+
+            balances = compareString(myLiquidity?.fromAddress, token0Obj?.address) ?
+              [fromBalance, toBalance] :
+              [toBalance, fromBalance];
           }
 
           return (
@@ -501,21 +526,21 @@ const LiquidityContainer = () => {
                 Number(share) > 0 ? (
                   <>
                     <Flex gap={1} alignItems={"center"}>
-                      <Text>{formatCurrency(formatAmountBigNumber(fromBalance, myLiquidity?.decimal)).toString()}</Text>
+                      <Text>{formatCurrency(formatAmountBigNumber(balances[0], myLiquidity?.decimal)).toString()}</Text>
                       <img
-                        src={row?.token0Obj?.thumbnail || `${CDN_URL}/upload/1683530065704444020-1683530065-default-coin.svg`}
-                        alt={row?.token0Obj?.thumbnail || 'default-icon'}
+                        src={token0Obj?.thumbnail || `${CDN_URL}/upload/1683530065704444020-1683530065-default-coin.svg`}
+                        alt={token0Obj?.thumbnail || 'default-icon'}
                         className={'avatar2'}
-                        title={row?.token0Obj?.symbol}
+                        title={token0Obj?.symbol}
                       />
                     </Flex>
                     <Flex gap={1} alignItems={"center"}>
-                      <Text>{formatCurrency(formatAmountBigNumber(toBalance, myLiquidity?.decimal)).toString()}</Text>
+                      <Text>{formatCurrency(formatAmountBigNumber(balances[1], myLiquidity?.decimal)).toString()}</Text>
                       <img
-                        src={row?.token1Obj?.thumbnail || `${CDN_URL}/upload/1683530065704444020-1683530065-default-coin.svg`}
-                        alt={row?.token1Obj?.thumbnail || 'default-icon'}
+                        src={token1Obj?.thumbnail || `${CDN_URL}/upload/1683530065704444020-1683530065-default-coin.svg`}
+                        alt={token1Obj?.thumbnail || 'default-icon'}
                         className={'avatar2'}
-                        title={row?.token1Obj?.symbol}
+                        title={token1Obj?.symbol}
                       />
                     </Flex>
                   </>
@@ -540,24 +565,29 @@ const LiquidityContainer = () => {
           backgroundColor: '#FFFFFF',
         },
         render(row: ILiquidity) {
+          const [token0Obj, token1Obj] = sortTokens(row?.token0Obj, row?.token1Obj);
+          const [reserve0, reserve1] = compareString(token0Obj?.address, row?.token0Obj?.address) ?
+            [row?.reserve0, row?.reserve1] :
+            [row?.reserve1, row?.reserve0];
+
           return (
             <Flex direction={"column"} color={"#000000"} fontSize={px2rem(14)}>
               <Flex gap={1} alignItems={"center"}>
-                <Text>{formatCurrency(row?.reserve0,).toString()}</Text>
+                <Text>{formatCurrency(reserve0,).toString()}</Text>
                 <img
-                  src={row?.token0Obj?.thumbnail || `${CDN_URL}/upload/1683530065704444020-1683530065-default-coin.svg`}
-                  alt={row?.token0Obj?.thumbnail || 'default-icon'}
+                  src={token0Obj?.thumbnail || `${CDN_URL}/upload/1683530065704444020-1683530065-default-coin.svg`}
+                  alt={token0Obj?.thumbnail || 'default-icon'}
                   className={'avatar2'}
-                  title={row?.token0Obj?.symbol}
+                  title={token0Obj?.symbol}
                 />
               </Flex>
               <Flex gap={1} alignItems={"center"}>
-                <Text>{formatCurrency(row?.reserve1,).toString()}</Text>
+                <Text>{formatCurrency(reserve1,).toString()}</Text>
                 <img
-                  src={row?.token1Obj?.thumbnail || `${CDN_URL}/upload/1683530065704444020-1683530065-default-coin.svg`}
-                  alt={row?.token1Obj?.thumbnail || 'default-icon'}
+                  src={token1Obj?.thumbnail || `${CDN_URL}/upload/1683530065704444020-1683530065-default-coin.svg`}
+                  alt={token1Obj?.thumbnail || 'default-icon'}
                   className={'avatar2'}
-                  title={row?.token1Obj?.symbol}
+                  title={token1Obj?.symbol}
                 />
               </Flex>
             </Flex>
