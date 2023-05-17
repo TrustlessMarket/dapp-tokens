@@ -4,6 +4,7 @@ import { IToken } from '@/interfaces/token';
 import { swrFetcher } from '@/utils/swr';
 import queryString from 'query-string';
 import { isProduction } from '@/utils/commons';
+import {ILiquidity} from "@/interfaces/liquidity";
 
 const API_PATH = '/swap';
 
@@ -36,7 +37,7 @@ export const getSwapTokens = async (
 
 export const scanTrx = async (params: { tx_hash: string }) => {
   const qs = '?' + queryString.stringify(params);
-  return swrFetcher(`${API_URL}${API_PATH}/scan?tx_hash=${qs}`, {
+  return swrFetcher(`${API_URL}${API_PATH}/scan${qs}`, {
     method: 'GET',
     error: 'Fail to scan tx',
   });
@@ -120,5 +121,27 @@ export const getUserTradeHistory = async (
   return swrFetcher(`${API_URL}${API_PATH}/user/trade-histories${qs}`, {
     method: 'GET',
     error: 'Fail to get user trade history',
+  });
+};
+
+export const getTCTxDetailByHash = async (
+  params: {
+    tx_hash: string
+  },
+) => {
+  const qs = '?' + queryString.stringify(params);
+  return swrFetcher(`${API_URL}${API_PATH}/transactions/pending${qs}`, {
+    method: 'GET',
+    error: 'Fail to TC Tx detail',
+  });
+};
+
+export const getListLiquidity = async (
+  params: IPagingParams,
+): Promise<ILiquidity[]> => {
+  const qs = '?' + queryString.stringify(params);
+  return swrFetcher(`${API_URL}${API_PATH}/pair/apr/list${qs}`, {
+    method: 'GET',
+    error: 'Fail to get list liquidity',
   });
 };

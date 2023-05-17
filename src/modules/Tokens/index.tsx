@@ -17,7 +17,7 @@ import {StyledTokens, UploadFileContainer} from './Tokens.styled';
 // import { ROUTE_PATH } from '@/constants/route-path';
 import {ROUTE_PATH} from '@/constants/route-path';
 import {WalletContext} from '@/contexts/wallet-context';
-import {WBTC_ADDRESS} from '@/modules/Swap/form';
+import {DEV_ADDRESS, WBTC_ADDRESS} from '@/modules/Swap/form';
 import {showError} from '@/utils/toast';
 import {Box, Flex, Text} from '@chakra-ui/react';
 import BigNumber from 'bignumber.js';
@@ -30,6 +30,7 @@ import TokenChartLast7Day from './Token.ChartLast7Day';
 import px2rem from '@/utils/px2rem';
 import ListTable, {ColumnProp} from '@/components/Swap/listTable';
 import {VscArrowSwap} from 'react-icons/vsc';
+import {CDN_URL} from "@/configs";
 
 const LIMIT_PAGE = 30;
 
@@ -148,7 +149,7 @@ const Tokens = () => {
                 // height={25}
                 src={
                   row?.thumbnail ||
-                  'https://cdn.trustless.computer/upload/1683530065704444020-1683530065-default-coin.svg'
+                  `${CDN_URL}/upload/1683530065704444020-1683530065-default-coin.svg`
                 }
                 alt={row?.thumbnail || 'default-icon'}
                 className={'avatar'}
@@ -439,7 +440,9 @@ const Tokens = () => {
                 Issue Smart BRC-20
               </Text>
             </Button>
-            <Link href={ROUTE_PATH.SWAP}>
+            <Link
+              href={`${ROUTE_PATH.SWAP}?from_token=${WBTC_ADDRESS}&to_token=${DEV_ADDRESS}`}
+            >
               <Button
                 className="comming-soon-btn"
                 background={'#3385FF'}

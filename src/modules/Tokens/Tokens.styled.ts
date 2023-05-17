@@ -73,6 +73,10 @@ export const StyledTokens = styled.div`
     font-size: ${px2rem(48)};
     line-height: 48 / 44;
   }
+
+  .tokens-list {
+    overflow: hidden !important;
+  }
   
   @media screen and (max-width: 768px) {
     margin-top: ${px2rem(24)};

@@ -34,14 +34,12 @@ const useIsApproveERC20Token: ContractOperationHook<
           contract.connect(provider.getSigner()).allowance(account, address),
         ]);
 
+        let amountApprove = transaction.toString();
+
         const txPendingForTokenAddress = unInscribedTxIDs.filter((v) =>
           compareString(v.To, erc20TokenAddress),
         );
-
-        let amountApprove = transaction.toString();
-
         const txDetail = maxBy(txPendingForTokenAddress, 'Nonce');
-
         if (txDetail) {
           const _txtDetail = await getTCTxByHash(txDetail.Hash);
           const _inputStart = _txtDetail.input.slice(0, 10);
