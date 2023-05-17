@@ -8,5 +8,8 @@ export interface ILiquidity {
   apr?: string;
   volume?: string;
   token0Obj?: IToken;
-  token1Obj: IToken
+  token1Obj?: IToken;
+  reserve0?: string;
+  reserve1?: string;
+  usdVolume?: string;
 }

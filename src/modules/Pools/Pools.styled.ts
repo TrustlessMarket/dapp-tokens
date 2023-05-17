@@ -38,7 +38,7 @@ export const StyledTokens = styled.div`
         th {
           background: #FFFFFF;
           text-transform: uppercase;
-          border-bottom-color: #000000;
+          border-bottom-color: #EDF2F7;
           padding-top: ${px2rem(12)};
           padding-bottom: ${px2rem(12)};
         }

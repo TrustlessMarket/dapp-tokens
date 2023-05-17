@@ -19,12 +19,12 @@ import {
   AccordionItem,
   AccordionPanel,
   Box,
+  Center,
   Flex,
   Heading,
   Icon,
   IconButton,
-  Text,
-  Center
+  Text
 } from '@chakra-ui/react';
 import BigNumber from 'bignumber.js';
 import {useRouter} from 'next/router';
@@ -43,7 +43,7 @@ import {getListLiquidity} from "@/services/swap";
 import {ILiquidity} from "@/interfaces/liquidity";
 import {AiOutlineMinusCircle, AiOutlinePlusCircle} from "react-icons/ai";
 import {BsTwitter} from "react-icons/bs";
-import {TC_WEB_URL} from "@/configs";
+import {TRUSTLESS_MARKET_URL} from "@/configs";
 
 export enum ScreenType {
   default = 'default',
@@ -157,7 +157,7 @@ const ItemLiquid = ({ pool }: { pool: IToken }) => {
 
 const LiquidityContainer = () => {
   const [myLiquidities, setMyLiquidities] = useState([]);
-  const [liquidityList, setLiquidityList] = useState<any>([]);
+  const [liquidityList, setLiquidityList] = useState<ILiquidity[]>([]);
   const [isFetching, setIsFetching] = useState(false);
 
   const router = useRouter();
@@ -435,8 +435,8 @@ const LiquidityContainer = () => {
           let myLiquidity = null;
 
           for (let index = 0; index < myLiquidities?.length; index++) {
-            const l = myLiquidities[index];
-            if(compareString(l.fromAddress, row?.token0Obj?.address) && compareString(l.toAddress, row?.token1Obj?.address)) {
+            const l = myLiquidities[index] as IToken;
+            if(compareString(l?.fromAddress, row?.token0Obj?.address) && compareString(l?.toAddress, row?.token1Obj?.address)) {
               myLiquidity = l;
               break;
             }
@@ -447,10 +447,10 @@ const LiquidityContainer = () => {
           let toBalance = 0;
           if(myLiquidity) {
             share = new BigNumber(myLiquidity?.ownerSupply || 0)
-              .dividedBy(myLiquidity?.totalSupply || 1);
+              .dividedBy(myLiquidity?.totalSupply || 1).toNumber();
 
-            fromBalance = new BigNumber(share).multipliedBy(myLiquidity?.fromBalance);
-            toBalance = new BigNumber(share).multipliedBy(myLiquidity?.toBalance);
+            fromBalance = new BigNumber(share).multipliedBy(myLiquidity?.fromBalance || 0).toNumber();
+            toBalance = new BigNumber(share).multipliedBy(myLiquidity?.toBalance || 0).toNumber();
           }
 
           return (
@@ -538,7 +538,7 @@ const LiquidityContainer = () => {
           let myLiquidity = null;
 
           for (let index = 0; index < myLiquidities?.length; index++) {
-            const l = myLiquidities[index];
+            const l = myLiquidities[index] as IToken;
             if(compareString(l.fromAddress, row?.token0Obj?.address) && compareString(l.toAddress, row?.token1Obj?.address)) {
               myLiquidity = l;
               break;
@@ -550,10 +550,10 @@ const LiquidityContainer = () => {
           let toBalance = 0;
           if(myLiquidity) {
             share = new BigNumber(myLiquidity?.ownerSupply || 0)
-              .dividedBy(myLiquidity?.totalSupply || 1);
+              .dividedBy(myLiquidity?.totalSupply || 1).toNumber();
 
-            fromBalance = new BigNumber(share).multipliedBy(myLiquidity?.fromBalance);
-            toBalance = new BigNumber(share).multipliedBy(myLiquidity?.toBalance);
+            fromBalance = new BigNumber(share).multipliedBy(myLiquidity?.fromBalance || 0).toNumber();
+            toBalance = new BigNumber(share).multipliedBy(myLiquidity?.toBalance || 0).toNumber();
           }
 
           return (
@@ -604,7 +604,7 @@ const LiquidityContainer = () => {
               >
                 <BsTwitter
                   onClick={() =>
-                    shareTwitter(`${TC_WEB_URL}${ROUTE_PATH.POOLS}?type=${ScreenType.add_liquid}&f=${row?.token0Obj?.address}&t=${row?.token1Obj?.address}`)
+                    shareTwitter(`${TRUSTLESS_MARKET_URL}${ROUTE_PATH.POOLS}?type=${ScreenType.add_liquid}&f=${row?.token0Obj?.address}&t=${row?.token1Obj?.address}`)
                 }
                 />
               </Center>

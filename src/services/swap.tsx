@@ -4,6 +4,7 @@ import { IToken } from '@/interfaces/token';
 import { swrFetcher } from '@/utils/swr';
 import queryString from 'query-string';
 import { isProduction } from '@/utils/commons';
+import {ILiquidity} from "@/interfaces/liquidity";
 
 const API_PATH = '/swap';
 
@@ -137,7 +138,7 @@ export const getTCTxDetailByHash = async (
 
 export const getListLiquidity = async (
   params: IPagingParams,
-) => {
+): Promise<ILiquidity[]> => {
   const qs = '?' + queryString.stringify(params);
   return swrFetcher(`${API_URL}${API_PATH}/pair/apr/list${qs}`, {
     method: 'GET',
