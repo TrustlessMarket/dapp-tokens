@@ -78,6 +78,23 @@ export const StyledTokens = styled.div`
     overflow: hidden !important;
   }
   
+  .chakra-form-control {
+    max-width: 300px;
+    
+    .chakra-input__group {
+      background-color: transparent;
+      
+      > div {
+        background-color: transparent;
+      }
+    }
+  }
+  
+  .search_text {
+    font-size: 14px;
+    color: #FFFFFF;
+  }
+  
   @media screen and (max-width: 768px) {
     margin-top: ${px2rem(24)};
 

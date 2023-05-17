@@ -24,6 +24,7 @@ interface FieldTextProps {
   errorPlacement?: string;
   inputType?: 'text' | 'textarea';
   fieldChanged?: (_: any) => void;
+  borderColor?: string;
 }
 
 const FieldText = (props: FieldTextProps) => {
@@ -37,6 +38,7 @@ const FieldText = (props: FieldTextProps) => {
     appendComp,
     fieldChanged,
     // disabledInput, errorPlacement, zIndex, anchorAppend,
+    borderColor = 'background.default',
     ...restProps
   } = props;
   const { onChange, onBlur, onFocus, value } = input;
@@ -70,7 +72,7 @@ const FieldText = (props: FieldTextProps) => {
       )}
       <InputGroup
         borderWidth={1}
-        borderColor={shouldShowError ? 'brand.danger.400' : 'background.default'}
+        borderColor={shouldShowError ? 'brand.danger.400' : borderColor}
         borderRadius={8}
         bgColor="background.default"
         overflow="hidden"
