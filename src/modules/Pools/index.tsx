@@ -519,7 +519,28 @@ const LiquidityContainer = () => {
           backgroundColor: '#FFFFFF',
           // borderBottom: 'none',
         },
-        render(row: IToken) {
+        render(row: ILiquidity) {
+          let myLiquidity = null;
+
+          for (let index = 0; index < myLiquidities?.length; index++) {
+            const l = myLiquidities[index];
+            if(compareString(l.fromAddress, row?.token0Obj?.address) && compareString(l.toAddress, row?.token1Obj?.address)) {
+              myLiquidity = l;
+              break;
+            }
+          }
+
+          let share = 0;
+          let fromBalance = 0;
+          let toBalance = 0;
+          if(myLiquidity) {
+            share = new BigNumber(myLiquidity?.ownerSupply || 0)
+              .dividedBy(myLiquidity?.totalSupply || 1);
+
+            fromBalance = new BigNumber(share).multipliedBy(myLiquidity?.fromBalance);
+            toBalance = new BigNumber(share).multipliedBy(myLiquidity?.toBalance);
+          }
+
           return (
             <Flex gap={4} justifyContent={'center'}>
               <FiledButton
@@ -529,14 +550,14 @@ const LiquidityContainer = () => {
                 btnSize="l"
                 onClick={() =>
                   router.replace(
-                    `${ROUTE_PATH.POOLS}?type=${ScreenType.add_liquid}&f=${row.fromAddress}&t=${row.toAddress}`,
+                    `${ROUTE_PATH.POOLS}?type=${ScreenType.add_liquid}&f=${row?.token0Obj?.address}&t=${row?.token1Obj?.address}`,
                   )
                 }
               >
                 Add
               </FiledButton>
               {
-                Number(row?.ownerSupply || 0) > 0 && (
+                Number(share) > 0 && (
                   <FiledButton
                     btnSize="l"
                     style={{
@@ -544,7 +565,7 @@ const LiquidityContainer = () => {
                     }}
                     onClick={() =>
                       router.replace(
-                        `${ROUTE_PATH.POOLS}?type=${ScreenType.remove}&f=${row.fromAddress}&t=${row.toAddress}`,
+                        `${ROUTE_PATH.POOLS}?type=${ScreenType.remove}&f=${row?.token0Obj?.address}&t=${row?.token1Obj?.address}`,
                       )
                     }
                   >
