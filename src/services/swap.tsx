@@ -134,3 +134,13 @@ export const getTCTxDetailByHash = async (
     error: 'Fail to TC Tx detail',
   });
 };
+
+export const getListLiquidity = async (
+  params: IPagingParams,
+) => {
+  const qs = '?' + queryString.stringify(params);
+  return swrFetcher(`${API_URL}${API_PATH}/pair/apr/list${qs}`, {
+    method: 'GET',
+    error: 'Fail to get list liquidity',
+  });
+};

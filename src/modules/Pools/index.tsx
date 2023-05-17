@@ -4,13 +4,13 @@ import HorizontalItem from '@/components/Swap/horizontalItem';
 import BodyContainer from '@/components/Swap/bodyContainer';
 import FiledButton from '@/components/Swap/button/filedButton';
 import ListTable from '@/components/Swap/listTable';
-import { ROUTE_PATH } from '@/constants/route-path';
-import { LIQUID_PAIRS } from '@/constants/storage-key';
+import {ROUTE_PATH} from '@/constants/route-path';
+import {LIQUID_PAIRS} from '@/constants/storage-key';
 import useGetReserves from '@/hooks/contract-operations/swap/useReserves';
 import useSupplyERC20Liquid from '@/hooks/contract-operations/token/useSupplyERC20Liquid';
-import { IToken } from '@/interfaces/token';
-import { camelCaseKeys, compareString, formatCurrency } from '@/utils';
-import { formatAmountBigNumber } from '@/utils/format';
+import {IToken} from '@/interfaces/token';
+import {camelCaseKeys, compareString, formatCurrency} from '@/utils';
+import {formatAmountBigNumber} from '@/utils/format';
 import px2rem from '@/utils/px2rem';
 import {
   Accordion,
@@ -26,11 +26,11 @@ import {
   Text,
 } from '@chakra-ui/react';
 import BigNumber from 'bignumber.js';
-import { useRouter } from 'next/router';
-import { useEffect, useMemo, useState } from 'react';
-import { FiPlus } from 'react-icons/fi';
-import { IoArrowBackOutline } from 'react-icons/io5';
-import { StyledLiquidNote, StyledTokens, UploadFileContainer } from './Pools.styled';
+import {useRouter} from 'next/router';
+import {useEffect, useMemo, useState} from 'react';
+import {FiPlus} from 'react-icons/fi';
+import {IoArrowBackOutline} from 'react-icons/io5';
+import {StyledLiquidNote, StyledTokens, UploadFileContainer} from './Pools.styled';
 import CreateMarket from './form';
 import ImportPool from './form/importPool';
 import styles from './styles.module.scss';
@@ -38,7 +38,8 @@ import SectionContainer from "@/components/Swap/sectionContainer";
 import Spinner from "react-bootstrap/Spinner";
 import InfiniteScroll from "react-infinite-scroll-component";
 import {debounce} from "lodash";
-import {getTokenRp} from "@/services/swap";
+import {getListLiquidity} from "@/services/swap";
+import {ILiquidity} from "@/interfaces/liquidity";
 
 export enum ScreenType {
   default = 'default',
@@ -151,9 +152,8 @@ const ItemLiquid = ({ pool }: { pool: IToken }) => {
 };
 
 const LiquidityContainer = () => {
-  const [data, setData] = useState([]);
-  // const [isCreate, setIsCreate] = useState(true);
-  const [tokensList, setTokensList] = useState<IToken[]>([]);
+  const [myLiquidities, setMyLiquidities] = useState([]);
+  const [liquidityList, setLiquidityList] = useState<any>([]);
   const [isFetching, setIsFetching] = useState(false);
 
   const router = useRouter();
@@ -171,14 +171,14 @@ const LiquidityContainer = () => {
     }
   }, [routerQuery]);
 
-  const fetchTokens = async (page = 1, isFetchMore = false) => {
+  const fetchLiquidities = async (page = 1, isFetchMore = false) => {
     try {
       setIsFetching(true);
-      const res = await getTokenRp({ limit: LIMIT_PAGE, page: page });
+      const res = await getListLiquidity({ limit: LIMIT_PAGE, page: page });
       if (isFetchMore) {
-        setTokensList((prev) => [...prev, ...res]);
+        setLiquidityList((prev) => [...prev, ...res]);
       } else {
-        setTokensList(res);
+        setLiquidityList(res);
       }
     } catch (err: unknown) {
       console.log(err);
@@ -189,9 +189,9 @@ const LiquidityContainer = () => {
   };
 
   const onLoadMoreTokens = () => {
-    if (isFetching || tokensList.length % LIMIT_PAGE !== 0) return;
-    const page = Math.floor(tokensList.length / LIMIT_PAGE) + 1;
-    fetchTokens(page, true);
+    if (isFetching || liquidityList.length % LIMIT_PAGE !== 0) return;
+    const page = Math.floor(liquidityList.length / LIMIT_PAGE) + 1;
+    fetchLiquidities(page, true);
   };
 
   const debounceLoadMore = debounce(onLoadMoreTokens, 300);
@@ -354,7 +354,7 @@ const LiquidityContainer = () => {
             </Flex>
             <InfiniteScroll
               className="tokens-list"
-              dataLength={tokensList?.length || 0}
+              dataLength={liquidityList?.length || 0}
               hasMore={true}
               loader={
                 isFetching && (
@@ -365,7 +365,7 @@ const LiquidityContainer = () => {
               }
               next={debounceLoadMore}
             >
-              <ListTable data={data} columns={columns} showEmpty={false}/>
+              <ListTable data={liquidityList} columns={columns} showEmpty={false}/>
             </InfiniteScroll>
 
             {/*<UploadFileContainer>
@@ -399,9 +399,9 @@ const LiquidityContainer = () => {
           backgroundColor: '#FFFFFF',
           // borderBottom: 'none',
         },
-        render(row: IToken) {
+        render(row: ILiquidity) {
           console.log('rowrowrow', row);
-          return <Text fontSize={px2rem(14)}>{row?.name}</Text>;
+          return <Text fontSize={px2rem(14)}>{row?.token0Obj?.symbol} - {row?.token1Obj?.symbol}</Text>;
         },
       },
       {
@@ -416,24 +416,35 @@ const LiquidityContainer = () => {
           backgroundColor: '#FFFFFF',
           // borderBottom: 'none',
         },
-        render(row: IToken) {
-          const share = new BigNumber(row?.ownerSupply || 0)
-            .dividedBy(row?.totalSupply || 1);
+        render(row: ILiquidity) {
+          let myLiquidity = null;
 
-          const fromBalance = new BigNumber(share).multipliedBy(row?.fromBalance);
-          const toBalance = new BigNumber(share).multipliedBy(row?.toBalance);
+          for (let index = 0; index < myLiquidities?.length; index++) {
+            const l = myLiquidities[index];
+            if(compareString(l.fromAddress, row?.token0Obj?.address) && compareString(l.toAddress, row?.token1Obj?.address)) {
+              myLiquidity = l;
+              break;
+            }
+          }
+
+          let share = 0;
+          let fromBalance = 0;
+          let toBalance = 0;
+          if(myLiquidity) {
+            share = new BigNumber(myLiquidity?.ownerSupply || 0)
+              .dividedBy(myLiquidity?.totalSupply || 1);
+
+            fromBalance = new BigNumber(share).multipliedBy(myLiquidity?.fromBalance);
+            toBalance = new BigNumber(share).multipliedBy(myLiquidity?.toBalance);
+          }
 
           return (
             <Flex direction={"column"} color={"#000000"} fontSize={px2rem(14)}>
               {
-                Number(share) > 0 ? (
+                Number(share) >= 0 ? (
                   <>
-                    <Text>{row.name.split('-')[0]}: {formatCurrency(
-                      formatAmountBigNumber(fromBalance, row.decimal),
-                    ).toString()}</Text>
-                    <Text>{row.name.split('-')[1]}: {formatCurrency(
-                      formatAmountBigNumber(toBalance, row.decimal),
-                    ).toString()}</Text>
+                    <Text>{row?.token0Obj?.symbol}: {formatCurrency(formatAmountBigNumber(fromBalance, myLiquidity?.decimal)).toString()}</Text>
+                    <Text>{row?.token1Obj?.symbol}: {formatCurrency(formatAmountBigNumber(toBalance, myLiquidity?.decimal)).toString()}</Text>
                   </>
                 ) : (
                   <Text>--</Text>
@@ -455,15 +466,11 @@ const LiquidityContainer = () => {
           backgroundColor: '#FFFFFF',
           // borderBottom: 'none',
         },
-        render(row: IToken) {
+        render(row: ILiquidity) {
           return (
             <Flex direction={"column"} color={"#000000"} fontSize={px2rem(14)}>
-              <Text>{row.name.split('-')[0]}: {formatCurrency(
-                formatAmountBigNumber(row?.fromBalance, row.decimal),
-              ).toString()}</Text>
-              <Text>{row.name.split('-')[1]}: {formatCurrency(
-                formatAmountBigNumber(row?.toBalance, row.decimal),
-              ).toString()}</Text>
+              <Text>{row?.token0Obj?.symbol}: {formatCurrency(row?.reserve0,).toString()}</Text>
+              <Text>{row?.token1Obj?.symbol}: {formatCurrency(row?.reserve1,).toString()}</Text>
             </Flex>
           );
         },
@@ -480,13 +487,13 @@ const LiquidityContainer = () => {
           backgroundColor: '#FFFFFF',
           // borderBottom: 'none',
         },
-        render(row: IToken) {
-          return <Text fontSize={px2rem(14)} textAlign={"left"}>{row?.name}</Text>;
+        render(row: ILiquidity) {
+          return <Text fontSize={px2rem(14)} textAlign={"left"}>${formatCurrency(row?.usdVolume || 0, 2)}</Text>;
         },
       },
       {
-        id: 'apy',
-        label: 'APY',
+        id: 'apr',
+        label: 'APR',
         labelConfig: {
           fontSize: '12px',
           fontWeight: '500',
@@ -496,8 +503,8 @@ const LiquidityContainer = () => {
           backgroundColor: '#FFFFFF',
           // borderBottom: 'none',
         },
-        render(row: IToken) {
-          return <Text fontSize={px2rem(14)} textAlign={"left"}>{row?.name}</Text>;
+        render(row: ILiquidity) {
+          return <Text fontSize={px2rem(14)} textAlign={"left"}>{formatCurrency(row?.apr, 2)}%</Text>;
         },
       },
       {
@@ -514,7 +521,7 @@ const LiquidityContainer = () => {
         },
         render(row: IToken) {
           return (
-            <Flex gap={4} mt={4} justifyContent={'center'}>
+            <Flex gap={4} justifyContent={'center'}>
               <FiledButton
                 style={{
                   backgroundColor: 'gray',
@@ -565,11 +572,11 @@ const LiquidityContainer = () => {
         },
       },*/
     ];
-  }, []);
+  }, [JSON.stringify(liquidityList), JSON.stringify(myLiquidities)]);
 
   useEffect(() => {
     fetchMyLiquidities();
-    fetchTokens();
+    fetchLiquidities();
   }, [JSON.stringify(router.query)]);
 
   const fetchMyLiquidities = async () => {
@@ -578,7 +585,7 @@ const LiquidityContainer = () => {
 
       if (pairLiquid) {
         pairLiquid = JSON.parse(pairLiquid) || [];
-        setData(camelCaseKeys(pairLiquid));
+        setMyLiquidities(camelCaseKeys(pairLiquid));
       }
     } catch (error) {}
   };
