@@ -28,7 +28,7 @@ import {
 } from '@chakra-ui/react';
 import BigNumber from 'bignumber.js';
 import {useRouter} from 'next/router';
-import {useEffect, useMemo, useState} from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 import {FiPlus} from 'react-icons/fi';
 import {IoArrowBackOutline} from 'react-icons/io5';
 import {StyledLiquidNote, StyledTokens, UploadFileContainer} from './Pools.styled';
@@ -43,7 +43,7 @@ import {getListLiquidity} from "@/services/swap";
 import {ILiquidity} from "@/interfaces/liquidity";
 import {AiOutlineMinusCircle, AiOutlinePlusCircle} from "react-icons/ai";
 import {BsTwitter} from "react-icons/bs";
-import {TRUSTLESS_MARKET_URL} from "@/configs";
+import {CDN_URL, TRUSTLESS_MARKET_URL} from "@/configs";
 
 export enum ScreenType {
   default = 'default',
@@ -408,15 +408,37 @@ const LiquidityContainer = () => {
         labelConfig: {
           fontSize: '12px',
           fontWeight: '500',
-          color: '#B1B5C3',
+          color: '#000000',
+          borderTopLeftRadius: '8px',
+          borderBottomLeftRadius: '8px',
         },
         config: {
+          borderBottom: 'none',
           backgroundColor: '#FFFFFF',
-          // borderBottom: 'none',
+          borderTopLeftRadius: '8px',
+          borderBottomLeftRadius: '8px',
         },
         render(row: ILiquidity) {
           console.log('rowrowrow', row);
-          return <Text fontSize={px2rem(14)}>{row?.token0Obj?.symbol} - {row?.token1Obj?.symbol}</Text>;
+          return <Flex fontSize={px2rem(14)} alignItems={"center"} gap={1}>
+            <Flex gap={1} alignItems={"center"}>
+              <img
+                src={row?.token0Obj?.thumbnail || `${CDN_URL}/upload/1683530065704444020-1683530065-default-coin.svg`}
+                alt={row?.token0Obj?.thumbnail || 'default-icon'}
+                className={'avatar'}
+              />
+              <Text>{row?.token0Obj?.symbol}</Text>
+            </Flex>
+            -
+            <Flex gap={1} alignItems={"center"}>
+              <img
+                src={row?.token1Obj?.thumbnail || `${CDN_URL}/upload/1683530065704444020-1683530065-default-coin.svg`}
+                alt={row?.token1Obj?.thumbnail || 'default-icon'}
+                className={'avatar'}
+              />
+              <Text>{row?.token1Obj?.symbol}</Text>
+            </Flex>
+          </Flex>;
         },
       },
       {
@@ -425,11 +447,11 @@ const LiquidityContainer = () => {
         labelConfig: {
           fontSize: '12px',
           fontWeight: '500',
-          color: '#B1B5C3',
+          color: '#000000',
         },
         config: {
+          borderBottom: 'none',
           backgroundColor: '#FFFFFF',
-          // borderBottom: 'none',
         },
         render(row: ILiquidity) {
           let myLiquidity = null;
@@ -456,10 +478,26 @@ const LiquidityContainer = () => {
           return (
             <Flex direction={"column"} color={"#000000"} fontSize={px2rem(14)}>
               {
-                Number(share) >= 0 ? (
+                Number(share) > 0 ? (
                   <>
-                    <Text>{row?.token0Obj?.symbol}: {formatCurrency(formatAmountBigNumber(fromBalance, myLiquidity?.decimal)).toString()}</Text>
-                    <Text>{row?.token1Obj?.symbol}: {formatCurrency(formatAmountBigNumber(toBalance, myLiquidity?.decimal)).toString()}</Text>
+                    <Flex gap={1} alignItems={"center"}>
+                      <Text>{formatCurrency(formatAmountBigNumber(fromBalance, myLiquidity?.decimal)).toString()}</Text>
+                      <img
+                        src={row?.token0Obj?.thumbnail || `${CDN_URL}/upload/1683530065704444020-1683530065-default-coin.svg`}
+                        alt={row?.token0Obj?.thumbnail || 'default-icon'}
+                        className={'avatar2'}
+                        title={row?.token0Obj?.symbol}
+                      />
+                    </Flex>
+                    <Flex gap={1} alignItems={"center"}>
+                      <Text>{formatCurrency(formatAmountBigNumber(toBalance, myLiquidity?.decimal)).toString()}</Text>
+                      <img
+                        src={row?.token1Obj?.thumbnail || `${CDN_URL}/upload/1683530065704444020-1683530065-default-coin.svg`}
+                        alt={row?.token1Obj?.thumbnail || 'default-icon'}
+                        className={'avatar2'}
+                        title={row?.token1Obj?.symbol}
+                      />
+                    </Flex>
                   </>
                 ) : (
                   <Text>--</Text>
@@ -475,17 +513,33 @@ const LiquidityContainer = () => {
         labelConfig: {
           fontSize: '12px',
           fontWeight: '500',
-          color: '#B1B5C3',
+          color: '#000000',
         },
         config: {
+          borderBottom: 'none',
           backgroundColor: '#FFFFFF',
-          // borderBottom: 'none',
         },
         render(row: ILiquidity) {
           return (
             <Flex direction={"column"} color={"#000000"} fontSize={px2rem(14)}>
-              <Text>{row?.token0Obj?.symbol}: {formatCurrency(row?.reserve0,).toString()}</Text>
-              <Text>{row?.token1Obj?.symbol}: {formatCurrency(row?.reserve1,).toString()}</Text>
+              <Flex gap={1} alignItems={"center"}>
+                <Text>{formatCurrency(row?.reserve0,).toString()}</Text>
+                <img
+                  src={row?.token0Obj?.thumbnail || `${CDN_URL}/upload/1683530065704444020-1683530065-default-coin.svg`}
+                  alt={row?.token0Obj?.thumbnail || 'default-icon'}
+                  className={'avatar2'}
+                  title={row?.token0Obj?.symbol}
+                />
+              </Flex>
+              <Flex gap={1} alignItems={"center"}>
+                <Text>{formatCurrency(row?.reserve1,).toString()}</Text>
+                <img
+                  src={row?.token1Obj?.thumbnail || `${CDN_URL}/upload/1683530065704444020-1683530065-default-coin.svg`}
+                  alt={row?.token1Obj?.thumbnail || 'default-icon'}
+                  className={'avatar2'}
+                  title={row?.token1Obj?.symbol}
+                />
+              </Flex>
             </Flex>
           );
         },
@@ -496,27 +550,27 @@ const LiquidityContainer = () => {
         labelConfig: {
           fontSize: '12px',
           fontWeight: '500',
-          color: '#B1B5C3',
+          color: '#000000',
         },
         config: {
+          borderBottom: 'none',
           backgroundColor: '#FFFFFF',
-          // borderBottom: 'none',
         },
         render(row: ILiquidity) {
           return <Text fontSize={px2rem(14)} textAlign={"left"}>${formatCurrency(row?.usdVolume || 0, 2)}</Text>;
         },
       },
       {
-        id: 'apr',
-        label: 'APR',
+        id: 'apy',
+        label: 'APY',
         labelConfig: {
           fontSize: '12px',
           fontWeight: '500',
-          color: '#B1B5C3',
+          color: '#000000',
         },
         config: {
+          borderBottom: 'none',
           backgroundColor: '#FFFFFF',
-          // borderBottom: 'none',
         },
         render(row: ILiquidity) {
           return <Text fontSize={px2rem(14)} textAlign={"left"}>{formatCurrency(row?.apr, 2)}%</Text>;
@@ -529,10 +583,14 @@ const LiquidityContainer = () => {
           fontSize: '12px',
           fontWeight: '500',
           color: '#B1B5C3',
+          borderTopRightRadius: '8px',
+          borderBottomRightRadius: '8px',
         },
         config: {
+          borderBottom: 'none',
           backgroundColor: '#FFFFFF',
-          // borderBottom: 'none',
+          borderTopRightRadius: '8px',
+          borderBottomRightRadius: '8px',
         },
         render(row: ILiquidity) {
           let myLiquidity = null;

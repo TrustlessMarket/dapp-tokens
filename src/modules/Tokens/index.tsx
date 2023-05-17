@@ -30,6 +30,7 @@ import TokenChartLast7Day from './Token.ChartLast7Day';
 import px2rem from '@/utils/px2rem';
 import ListTable, {ColumnProp} from '@/components/Swap/listTable';
 import {VscArrowSwap} from 'react-icons/vsc';
+import {CDN_URL} from "@/configs";
 
 const LIMIT_PAGE = 30;
 
@@ -148,7 +149,7 @@ const Tokens = () => {
                 // height={25}
                 src={
                   row?.thumbnail ||
-                  'https://cdn.trustless.computer/upload/1683530065704444020-1683530065-default-coin.svg'
+                  `${CDN_URL}/upload/1683530065704444020-1683530065-default-coin.svg`
                 }
                 alt={row?.thumbnail || 'default-icon'}
                 className={'avatar'}

@@ -12,6 +12,7 @@ import {debounce} from "lodash";
 import Spinner from "react-bootstrap/Spinner";
 import InfiniteScroll from "react-infinite-scroll-component";
 import {colors} from "@/theme/colors";
+import styles from './styles.module.scss';
 
 const LIMIT_PAGE = 30;
 
@@ -184,7 +185,7 @@ const TokenHistory = () => {
 
   return (
     <InfiniteScroll
-      className="tokens-list"
+      className={styles.tokensList}
       dataLength={list?.length || 0}
       hasMore={true}
       loader={
