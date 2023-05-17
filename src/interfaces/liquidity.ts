@@ -12,4 +12,6 @@ export interface ILiquidity {
   reserve0?: string;
   reserve1?: string;
   usdVolume?: string;
+  totalVolume?: string;
+  usdTotalVolume?: string;
 }

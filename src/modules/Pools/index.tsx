@@ -565,8 +565,8 @@ const LiquidityContainer = () => {
         },
       },
       {
-        id: 'volume24h',
-        label: 'Volume 24h',
+        id: 'volume',
+        label: 'Volume',
         labelConfig: {
           fontSize: '12px',
           fontWeight: '500',
@@ -577,7 +577,7 @@ const LiquidityContainer = () => {
           backgroundColor: '#FFFFFF',
         },
         render(row: ILiquidity) {
-          return <Text fontSize={px2rem(14)} textAlign={"left"}>${formatCurrency(row?.usdVolume || 0, 2)}</Text>;
+          return <Text fontSize={px2rem(14)} textAlign={"left"}>${formatCurrency(row?.usdTotalVolume || 0, 2)}</Text>;
         },
       },
       {
