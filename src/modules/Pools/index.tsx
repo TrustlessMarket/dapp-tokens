@@ -410,7 +410,7 @@ const LiquidityContainer = () => {
       tokens.push(row?.token1Obj?.symbol);
     }
 
-    const content = `Great news! I have added liquidity to Trustless Market for ${tokens.join(',')} token. Now you can easily trade ${tokens.join(',')} on Trustless Market with ease and convenience.`;
+    const content = `Great news! I have added liquidity to Trustless Market for ${tokens.join(', ')} token. Now you can easily trade ${tokens.join(', ')} on Trustless Market with ease and convenience.`;
     const hashtags = `TrustlessMarket,LiquidityProvider,TradeNow,${tokens.join(',')}`;
     console.log('shareUrl', shareUrl);
     window.open(
@@ -440,7 +440,6 @@ const LiquidityContainer = () => {
           borderBottomLeftRadius: '8px',
         },
         render(row: ILiquidity) {
-          console.log('rowrowrow', row);
           return <Flex fontSize={px2rem(14)} alignItems={"center"} gap={1}>
             <Flex gap={1} alignItems={"center"}>
               <img
