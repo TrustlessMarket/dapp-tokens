@@ -5,7 +5,7 @@ import cx from 'classnames';
 import {CDN_URL} from "@/configs";
 import useCountDownTimer from "@/hooks/useCountdown";
 import {useDispatch} from "react-redux";
-import {requestReload, selectPnftExchange} from "@/state/pnftExchange";
+import {requestReload, selectPnftExchange, updateShowBanner} from "@/state/pnftExchange";
 import moment from "moment";
 import {useScreenLayout} from "@/hooks/useScreenLayout";
 import {useAppSelector} from "@/state/hooks";
@@ -24,6 +24,7 @@ export const CountDownTimer = ({ end_time, isActive } : {end_time: any, isActive
   useEffect(() => {
     if (expired && end_time) {
       dispatch(requestReload());
+      dispatch(updateShowBanner(false));
     }
   }, [expired]);
 
@@ -39,6 +40,7 @@ const Banner = () => {
   const [isActive, setIsActive] = useState(false);
   const { bannerHeight } = useScreenLayout();
   const needReload = useAppSelector(selectPnftExchange).needReload;
+  const showBanner = useAppSelector(selectPnftExchange).showBanner;
 
   useEffect(() => {
     const intervalID = setInterval(() => {
@@ -54,7 +56,7 @@ const Banner = () => {
     return END_TIME;
   }, [needReload]);
 
-  return (
+  return showBanner && (
     <Flex
       height={`${bannerHeight}px`}
       alignItems="center"
