@@ -11,12 +11,12 @@ import {useScreenLayout} from "@/hooks/useScreenLayout";
 import {useAppSelector} from "@/state/hooks";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-const START_TIME = '2023-05-12 22:00:00';
-const END_TIME = '2023-05-18 22:00:00';
+// const START_TIME = 1683903600;
+const END_TIME = 1684422000;
 
 export const CountDownTimer = ({ end_time, isActive } : {end_time: any, isActive: boolean}) => {
   const [days, hours, minutes, seconds, expired] = useCountDownTimer(
-    moment(end_time).format("YYYY/MM/DD HH:mm:ss")
+    moment.unix(end_time).format("YYYY/MM/DD HH:mm:ss")
   );
 
   const dispatch = useDispatch();
@@ -51,13 +51,7 @@ const Banner = () => {
   }, []);
 
   const time = useMemo(() => {
-    if(moment().isBefore(moment(START_TIME, "YYYY-MM-DD HH:mm:ss"))) {
-      return START_TIME;
-    } else if(moment().isBefore(moment(END_TIME, "YYYY-MM-DD HH:mm:ss"))) {
-      return END_TIME;
-    }
-
-    return moment().format("YYYY-MM-DD HH:mm:ss");
+    return END_TIME;
   }, [needReload]);
 
   return (
@@ -76,7 +70,7 @@ const Banner = () => {
         direction={["column", "row"]}
         textAlign={["center", "left"]}
       >
-        <CountDownTimer end_time={moment(time, "YYYY-MM-DD HH:mm:ss")} isActive={isActive}/>
+        <CountDownTimer end_time={time} isActive={isActive}/>
         $GM (the first smart contract on Bitcoin) crowdfunding campaign is live.{' '}
         <LinkText
           className={styles.checkItOut}
