@@ -105,7 +105,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const { values } = useFormState();
   const { change, restart } = useForm();
   const btnDisabled = loading || !baseToken || !quoteToken;
-  const isRequireApprove = isAuthenticated && new BigNumber(amountBaseTokenApproved).lt(
+  const isRequireApprove = isAuthenticated && new BigNumber(amountBaseTokenApproved || 0).lt(
     Web3.utils.toWei(`${values?.baseAmount || 0}`, 'ether'),
   );
 
@@ -191,12 +191,24 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     reserveIn: BigNumber,
     reserveOut: BigNumber,
   ): BigNumber => {
-    const amountInWithFee = amountIn.multipliedBy(1000 - FEE * 10);
-    const numerator = amountInWithFee.multipliedBy(reserveOut);
-    const denominator = reserveIn.multipliedBy(1000).plus(amountInWithFee);
-    const amountOut = numerator.div(denominator).decimalPlaces(18);
+    try {
+      const amountInWithFee = amountIn.multipliedBy(1000 - FEE * 10);
+      const numerator = amountInWithFee.multipliedBy(reserveOut);
+      const denominator = reserveIn.multipliedBy(1000).plus(amountInWithFee);
+      const amountOut = numerator.div(denominator).decimalPlaces(18);
 
-    return amountOut;
+      return amountOut;
+    } catch (err) {
+      logErrorToServer({
+        type: 'error',
+        address: account,
+        error: JSON.stringify(err),
+        message: err?.message,
+        place_happen: 'getQuoteAmountOut'
+      });
+
+      return new BigNumber(0);
+    }
   };
 
   const getBaseAmountOut = (
@@ -204,12 +216,24 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     reserveIn: BigNumber,
     reserveOut: BigNumber,
   ): BigNumber => {
-    const amountInWithFee = amountIn.multipliedBy(1000 + FEE * 10);
-    const numerator = amountInWithFee.multipliedBy(reserveOut);
-    const denominator = reserveIn.multipliedBy(1000).plus(amountInWithFee);
-    const amountOut = numerator.div(denominator).decimalPlaces(18);
+    try {
+      const amountInWithFee = amountIn.multipliedBy(1000 + FEE * 10);
+      const numerator = amountInWithFee.multipliedBy(reserveOut);
+      const denominator = reserveIn.multipliedBy(1000).plus(amountInWithFee);
+      const amountOut = numerator.div(denominator).decimalPlaces(18);
 
-    return amountOut;
+      return amountOut;
+    } catch (err) {
+      logErrorToServer({
+        type: 'error',
+        address: account,
+        error: JSON.stringify(err),
+        message: err?.message,
+        place_happen: 'getBaseAmountOut'
+      });
+
+      return new BigNumber(0);
+    }
   };
 
   useEffect(() => {
@@ -496,6 +520,9 @@ export const MakeFormSwap = forwardRef((props, ref) => {
 
   const validateBaseAmount = useCallback(
     (_amount: any) => {
+      if (!_amount) {
+        return undefined;
+      }
       if (new BigNumber(_amount).lte(0)) {
         return `Required`;
       }
@@ -535,55 +562,65 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     tokenOut: any;
     swapRoutes: any;
   }) => {
-    if (!amount || isNaN(Number(amount)) || !tokenIn?.address || !tokenOut?.address) return;
+    try {
+      if (!amount || isNaN(Number(amount)) || !tokenIn?.address || !tokenOut?.address) return;
 
-    if(!compareString(tokenIn?.address, WBTC_ADDRESS) && !compareString(tokenOut?.address, WBTC_ADDRESS) && swapRoutes?.length > 1) {
-      const listPair = [{baseToken: tokenIn, quoteToken: {address: WBTC_ADDRESS}}, {baseToken: {address: WBTC_ADDRESS}, quoteToken: tokenOut}];
+      if(!compareString(tokenIn?.address, WBTC_ADDRESS) && !compareString(tokenOut?.address, WBTC_ADDRESS) && swapRoutes?.length > 1) {
+        const listPair = [{baseToken: tokenIn, quoteToken: {address: WBTC_ADDRESS}}, {baseToken: {address: WBTC_ADDRESS}, quoteToken: tokenOut}];
 
-      let _amount = amount;
-      for (let index = 0; index < listPair?.length; index++) {
-        const { baseToken, quoteToken } = listPair[index];
-        const [token0, token1] = sortAddressPair(baseToken, quoteToken);
+        let _amount = amount;
+        for (let index = 0; index < listPair?.length; index++) {
+          const { baseToken, quoteToken } = listPair[index];
+          const [token0, token1] = sortAddressPair(baseToken, quoteToken);
 
-        const { _reserveIn, _reserveOut } = compareString(token0?.address, baseToken?.address) ?
-          {_reserveIn: reserveInfos[index]?._reserve0, _reserveOut: reserveInfos[index]?._reserve1} :
-          {_reserveIn: reserveInfos[index]?._reserve1, _reserveOut: reserveInfos[index]?._reserve0};
+          const { _reserveIn, _reserveOut } = compareString(token0?.address, baseToken?.address) ?
+            {_reserveIn: reserveInfos[index]?._reserve0, _reserveOut: reserveInfos[index]?._reserve1} :
+            {_reserveIn: reserveInfos[index]?._reserve1, _reserveOut: reserveInfos[index]?._reserve0};
 
-        const amountIn = new BigNumber(_amount);
+          const amountIn = new BigNumber(_amount);
+          const reserveIn = new BigNumber(Web3.utils.fromWei(Web3.utils.toBN(_reserveIn || 0), 'ether').toString());
+          const reserveOut = new BigNumber(Web3.utils.fromWei(Web3.utils.toBN(_reserveOut || 0), 'ether').toString());
+          if (amountIn.lte(0) || reserveIn.lte(0) || reserveOut.lte(0)) {
+            return;
+          }
+
+          _amount = getQuoteAmountOut(amountIn, reserveIn, reserveOut);
+        }
+
+        const rate = new BigNumber(amount).div(_amount).decimalPlaces(tokenIn?.decimal || 18);
+
+        setExchangeRate(rate.toString());
+        change('quoteAmount', _amount.toFixed());
+      } else {
+        const [token0, token1] = sortAddressPair(tokenIn, tokenOut);
+
+        const { _reserveIn, _reserveOut } = compareString(token0?.address, tokenIn?.address) ?
+          {_reserveIn: reserveInfos[0]?._reserve0, _reserveOut: reserveInfos[0]?._reserve1} :
+          {_reserveIn: reserveInfos[0]?._reserve1, _reserveOut: reserveInfos[0]?._reserve0};
+
+        const amountIn = new BigNumber(amount);
         const reserveIn = new BigNumber(Web3.utils.fromWei(Web3.utils.toBN(_reserveIn || 0), 'ether').toString());
         const reserveOut = new BigNumber(Web3.utils.fromWei(Web3.utils.toBN(_reserveOut || 0), 'ether').toString());
         if (amountIn.lte(0) || reserveIn.lte(0) || reserveOut.lte(0)) {
           return;
         }
 
-        _amount = getQuoteAmountOut(amountIn, reserveIn, reserveOut);
+        const quoteAmount = getQuoteAmountOut(amountIn, reserveIn, reserveOut);
+
+        const rate = new BigNumber(amount).div(quoteAmount).decimalPlaces(tokenIn?.decimal || 18);
+        setExchangeRate(rate.toString());
+
+        // console.log('handleBaseAmountChange', quoteAmount.toFixed());
+        change('quoteAmount', quoteAmount.toFixed());
       }
-
-      const rate = new BigNumber(amount).div(_amount).decimalPlaces(tokenIn?.decimal || 18);
-
-      setExchangeRate(rate.toString());
-      change('quoteAmount', _amount.toFixed());
-    } else {
-      const [token0, token1] = sortAddressPair(tokenIn, tokenOut);
-
-      const { _reserveIn, _reserveOut } = compareString(token0?.address, tokenIn?.address) ?
-        {_reserveIn: reserveInfos[0]?._reserve0, _reserveOut: reserveInfos[0]?._reserve1} :
-        {_reserveIn: reserveInfos[0]?._reserve1, _reserveOut: reserveInfos[0]?._reserve0};
-
-      const amountIn = new BigNumber(amount);
-      const reserveIn = new BigNumber(Web3.utils.fromWei(Web3.utils.toBN(_reserveIn || 0), 'ether').toString());
-      const reserveOut = new BigNumber(Web3.utils.fromWei(Web3.utils.toBN(_reserveOut || 0), 'ether').toString());
-      if (amountIn.lte(0) || reserveIn.lte(0) || reserveOut.lte(0)) {
-        return;
-      }
-
-      const quoteAmount = getQuoteAmountOut(amountIn, reserveIn, reserveOut);
-
-      const rate = new BigNumber(amount).div(quoteAmount).decimalPlaces(tokenIn?.decimal || 18);
-      setExchangeRate(rate.toString());
-
-      // console.log('handleBaseAmountChange', quoteAmount.toFixed());
-      change('quoteAmount', quoteAmount.toFixed());
+    } catch (err) {
+      logErrorToServer({
+        type: 'error',
+        address: account,
+        error: JSON.stringify(err),
+        message: err?.message,
+        place_happen: 'handleBaseAmountChange'
+      });
     }
   };
 
@@ -610,56 +647,66 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     tokenOut: any;
     swapRoutes: any;
   }) => {
-    if (!amount || isNaN(Number(amount)) || !tokenIn?.address || !tokenOut?.address) return;
+    try {
+      if (!amount || isNaN(Number(amount)) || !tokenIn?.address || !tokenOut?.address) return;
 
-    if(!compareString(tokenIn?.address, WBTC_ADDRESS) && !compareString(tokenOut?.address, WBTC_ADDRESS) && swapRoutes?.length > 1) {
-      const listPair = [{baseToken: tokenOut, quoteToken: {address: WBTC_ADDRESS}}, {baseToken: {address: WBTC_ADDRESS}, quoteToken: tokenIn}];
-      const reserveInfosRevert = [...reserveInfos].reverse();
+      if(!compareString(tokenIn?.address, WBTC_ADDRESS) && !compareString(tokenOut?.address, WBTC_ADDRESS) && swapRoutes?.length > 1) {
+        const listPair = [{baseToken: tokenOut, quoteToken: {address: WBTC_ADDRESS}}, {baseToken: {address: WBTC_ADDRESS}, quoteToken: tokenIn}];
+        const reserveInfosRevert = [...reserveInfos].reverse();
 
-      let _amount = amount;
-      for (let index = 0; index < listPair?.length; index++) {
-        const { baseToken, quoteToken } = listPair[index];
-        const [token0, token1] = sortAddressPair(baseToken, quoteToken);
+        let _amount = amount;
+        for (let index = 0; index < listPair?.length; index++) {
+          const { baseToken, quoteToken } = listPair[index];
+          const [token0, token1] = sortAddressPair(baseToken, quoteToken);
 
-        const { _reserveIn, _reserveOut } = compareString(token0?.address, baseToken?.address) ?
-          {_reserveIn: reserveInfosRevert[index]?._reserve0, _reserveOut: reserveInfosRevert[index]?._reserve1} :
-          {_reserveIn: reserveInfosRevert[index]?._reserve1, _reserveOut: reserveInfosRevert[index]?._reserve0};
+          const { _reserveIn, _reserveOut } = compareString(token0?.address, baseToken?.address) ?
+            {_reserveIn: reserveInfosRevert[index]?._reserve0, _reserveOut: reserveInfosRevert[index]?._reserve1} :
+            {_reserveIn: reserveInfosRevert[index]?._reserve1, _reserveOut: reserveInfosRevert[index]?._reserve0};
 
-        const amountIn = new BigNumber(_amount);
+          const amountIn = new BigNumber(_amount);
+          const reserveIn = new BigNumber(Web3.utils.fromWei(Web3.utils.toBN(_reserveIn || 0), 'ether').toString());
+          const reserveOut = new BigNumber(Web3.utils.fromWei(Web3.utils.toBN(_reserveOut || 0), 'ether').toString());
+          if (amountIn.lte(0) || reserveIn.lte(0) || reserveOut.lte(0)) {
+            return;
+          }
+
+          _amount = getBaseAmountOut(amountIn, reserveIn, reserveOut);
+        }
+
+        const rate = new BigNumber(_amount).div(amount).decimalPlaces(tokenIn?.decimal || 18);
+
+        setExchangeRate(rate.toString());
+        change('baseAmount', _amount.toFixed());
+      } else {
+        const [token0, token1] = sortAddressPair(tokenIn, tokenOut);
+
+        const { _reserveIn, _reserveOut } = compareString(token0?.address, tokenOut?.address) ?
+          {_reserveIn: reserveInfos[0]?._reserve0, _reserveOut: reserveInfos[0]?._reserve1} :
+          {_reserveIn: reserveInfos[0]?._reserve1, _reserveOut: reserveInfos[0]?._reserve0};
+
+        const amountIn = new BigNumber(amount);
         const reserveIn = new BigNumber(Web3.utils.fromWei(Web3.utils.toBN(_reserveIn || 0), 'ether').toString());
         const reserveOut = new BigNumber(Web3.utils.fromWei(Web3.utils.toBN(_reserveOut || 0), 'ether').toString());
         if (amountIn.lte(0) || reserveIn.lte(0) || reserveOut.lte(0)) {
           return;
         }
 
-        _amount = getBaseAmountOut(amountIn, reserveIn, reserveOut);
+        const baseAmount = getBaseAmountOut(amountIn, reserveIn, reserveOut);
+
+        const rate = new BigNumber(baseAmount).div(amount).decimalPlaces(tokenIn?.decimal || 18);
+        setExchangeRate(rate.toString());
+
+        // console.log('handleQuoteAmountChange', baseAmount.toFixed());
+        change('baseAmount', baseAmount.toFixed());
       }
-
-      const rate = new BigNumber(_amount).div(amount).decimalPlaces(tokenIn?.decimal || 18);
-
-      setExchangeRate(rate.toString());
-      change('baseAmount', _amount.toFixed());
-    } else {
-      const [token0, token1] = sortAddressPair(tokenIn, tokenOut);
-
-      const { _reserveIn, _reserveOut } = compareString(token0?.address, tokenOut?.address) ?
-        {_reserveIn: reserveInfos[0]?._reserve0, _reserveOut: reserveInfos[0]?._reserve1} :
-        {_reserveIn: reserveInfos[0]?._reserve1, _reserveOut: reserveInfos[0]?._reserve0};
-
-      const amountIn = new BigNumber(amount);
-      const reserveIn = new BigNumber(Web3.utils.fromWei(Web3.utils.toBN(_reserveIn || 0), 'ether').toString());
-      const reserveOut = new BigNumber(Web3.utils.fromWei(Web3.utils.toBN(_reserveOut || 0), 'ether').toString());
-      if (amountIn.lte(0) || reserveIn.lte(0) || reserveOut.lte(0)) {
-        return;
-      }
-
-      const baseAmount = getBaseAmountOut(amountIn, reserveIn, reserveOut);
-
-      const rate = new BigNumber(baseAmount).div(amount).decimalPlaces(tokenIn?.decimal || 18);
-      setExchangeRate(rate.toString());
-
-      // console.log('handleQuoteAmountChange', baseAmount.toFixed());
-      change('baseAmount', baseAmount.toFixed());
+    } catch (err) {
+      logErrorToServer({
+        type: 'error',
+        address: account,
+        error: JSON.stringify(err),
+        message: err?.message,
+        place_happen: 'handleQuoteAmountChange'
+      });
     }
   };
 

@@ -49,6 +49,7 @@ interface LogErrorToServerPayload {
   error: string;
   tx_hash?: string;
   message?: string;
+  place_happen?: string;
 }
 
 export const logErrorToServer = async (payload: LogErrorToServerPayload) => {
