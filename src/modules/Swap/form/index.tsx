@@ -1090,6 +1090,11 @@ const TradingForm = () => {
                 </Text>
               }
             />
+            <Text fontSize="md" color="brand.warning.400" textAlign={'left'}>
+              {
+                slippage === 100 ? `Your current slippage is set at 100%. Trade at your own risk.` : `Your transaction will revert if the price changes ${slippage} percentage.`
+              }
+            </Text>
             <FiledButton
               loadingText="Processing"
               btnSize={'h'}
