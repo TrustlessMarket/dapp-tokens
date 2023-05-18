@@ -14,7 +14,7 @@ import {formatCurrency} from "@/utils";
 import px2rem from "@/utils/px2rem";
 import Link from "next/link";
 import {ROUTE_PATH} from "@/constants/route-path";
-import {DEV_ADDRESS, WBTC_ADDRESS} from "@/modules/Swap/form";
+import {DEV_ADDRESS, WBTC_ADDRESS} from "@/constants/common";
 
 const TMTransferHistory = () => {
   const { isActive } = useWeb3React();

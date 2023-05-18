@@ -79,3 +79,15 @@
     font-size: 16px !important;
   }
 }
+
+.modalContent {
+  :global {
+    .modal-header-wrap {
+      margin-bottom: 0;
+    }
+    .chakra-modal__body {
+      //padding: 0;
+    }
+  }
+}
+

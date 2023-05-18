@@ -10,7 +10,7 @@ import HorizontalItem from '@/components/Swap/horizontalItem';
 import TokenBalance from '@/components/Swap/tokenBalance';
 import WrapperConnected from '@/components/WrapperConnected';
 import {UNIV2_ROUTER_ADDRESS} from '@/configs';
-import {BRIDGE_SUPPORT_TOKEN, TRUSTLESS_BRIDGE, TRUSTLESS_FAUCET,} from '@/constants/common';
+import {BRIDGE_SUPPORT_TOKEN, DEV_ADDRESS, TRUSTLESS_BRIDGE, TRUSTLESS_FAUCET, WBTC_ADDRESS,} from '@/constants/common';
 import {toastError} from '@/constants/error';
 import {AssetsContext} from '@/contexts/assets-context';
 import useGetReserves from '@/hooks/contract-operations/swap/useReserves';
@@ -42,7 +42,7 @@ import cx from 'classnames';
 import debounce from 'lodash/debounce';
 import Link from 'next/link';
 import {useRouter} from 'next/router';
-import {useCallback, useContext, useEffect, useImperativeHandle, useRef, useState,} from 'react';
+import React, {useCallback, useContext, useEffect, useImperativeHandle, useRef, useState,} from 'react';
 import {Field, Form, useForm, useFormState} from 'react-final-form';
 import toast from 'react-hot-toast';
 import {RiArrowUpDownLine} from 'react-icons/ri';
@@ -52,17 +52,12 @@ import styles from './styles.module.scss';
 import {BsListCheck} from "react-icons/bs";
 import {BiBell} from "react-icons/bi";
 import {ROUTE_PATH} from "@/constants/route-path";
+import SlippageSettingButton from "@/components/Swap/slippageSetting/button";
+import {closeModal, openModal} from "@/state/modal";
+import {useWindowSize} from "@trustless-computer/dapp-core";
 
 const LIMIT_PAGE = 50;
 const FEE = 2;
-export const WBTC_ADDRESS = isDevelop() ? '0x435bdab1bcB2fcf80e5cF47dba209E28c340c3Bf' : '0xfB83c18569fB43f1ABCbae09Baf7090bFFc8CBBD';
-export const DEV_ADDRESS = '0xdd2863416081D0C10E57AaB4B3C5197183be4B34';
-
-interface IPairReserve {
-  reserve0: string;
-  reserve1: string;
-}
-
 export const MakeFormSwap = forwardRef((props, ref) => {
   const { onSubmit, submitting } = props;
   const [loading, setLoading] = useState(false);
@@ -307,6 +302,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           reserveInfos: reserves,
           tokenIn: baseToken,
           tokenOut: quoteToken,
+          swapRoutes: swapRoutes
         });
       } else if (isChangeQuoteToken) {
         setIsChangeQuoteToken(false);
@@ -315,6 +311,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           reserveInfos: reserves,
           tokenIn: baseToken,
           tokenOut: quoteToken,
+          swapRoutes: swapRoutes
         });
       }
     } catch (error) {
@@ -333,6 +330,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       const response = await getSwapRoutes(params);
 
       setSwapRoutes(response);
+      change('swapRoutes', response);
     } catch (error) {
       console.log('error', error);
     }
@@ -520,6 +518,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       reserveInfos,
       tokenIn: baseToken,
       tokenOut: quoteToken,
+      swapRoutes: swapRoutes
     });
   };
 
@@ -528,15 +527,17 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     reserveInfos,
     tokenIn,
     tokenOut,
+    swapRoutes
   }: {
     amount: any;
     reserveInfos: any
     tokenIn: any;
     tokenOut: any;
+    swapRoutes: any;
   }) => {
     if (!amount || isNaN(Number(amount)) || !tokenIn?.address || !tokenOut?.address) return;
 
-    if(!compareString(tokenIn?.address, WBTC_ADDRESS) && !compareString(tokenOut?.address, WBTC_ADDRESS)) {
+    if(!compareString(tokenIn?.address, WBTC_ADDRESS) && !compareString(tokenOut?.address, WBTC_ADDRESS) && swapRoutes?.length > 1) {
       const listPair = [{baseToken: tokenIn, quoteToken: {address: WBTC_ADDRESS}}, {baseToken: {address: WBTC_ADDRESS}, quoteToken: tokenOut}];
 
       let _amount = amount;
@@ -549,8 +550,8 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           {_reserveIn: reserveInfos[index]?._reserve1, _reserveOut: reserveInfos[index]?._reserve0};
 
         const amountIn = new BigNumber(_amount);
-        const reserveIn = new BigNumber(Web3.utils.fromWei(Web3.utils.toBN(_reserveIn), 'ether').toString());
-        const reserveOut = new BigNumber(Web3.utils.fromWei(Web3.utils.toBN(_reserveOut), 'ether').toString());
+        const reserveIn = new BigNumber(Web3.utils.fromWei(Web3.utils.toBN(_reserveIn || 0), 'ether').toString());
+        const reserveOut = new BigNumber(Web3.utils.fromWei(Web3.utils.toBN(_reserveOut || 0), 'ether').toString());
         if (amountIn.lte(0) || reserveIn.lte(0) || reserveOut.lte(0)) {
           return;
         }
@@ -570,8 +571,8 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         {_reserveIn: reserveInfos[0]?._reserve1, _reserveOut: reserveInfos[0]?._reserve0};
 
       const amountIn = new BigNumber(amount);
-      const reserveIn = new BigNumber(Web3.utils.fromWei(Web3.utils.toBN(_reserveIn), 'ether').toString());
-      const reserveOut = new BigNumber(Web3.utils.fromWei(Web3.utils.toBN(_reserveOut), 'ether').toString());
+      const reserveIn = new BigNumber(Web3.utils.fromWei(Web3.utils.toBN(_reserveIn || 0), 'ether').toString());
+      const reserveOut = new BigNumber(Web3.utils.fromWei(Web3.utils.toBN(_reserveOut || 0), 'ether').toString());
       if (amountIn.lte(0) || reserveIn.lte(0) || reserveOut.lte(0)) {
         return;
       }
@@ -592,6 +593,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       reserveInfos,
       tokenIn: baseToken,
       tokenOut: quoteToken,
+      swapRoutes: swapRoutes
     });
   };
 
@@ -600,15 +602,17 @@ export const MakeFormSwap = forwardRef((props, ref) => {
      reserveInfos,
      tokenIn,
      tokenOut,
+     swapRoutes
   }: {
     amount: any;
     reserveInfos: any
     tokenIn: any;
     tokenOut: any;
+    swapRoutes: any;
   }) => {
     if (!amount || isNaN(Number(amount)) || !tokenIn?.address || !tokenOut?.address) return;
 
-    if(!compareString(tokenIn?.address, WBTC_ADDRESS) && !compareString(tokenOut?.address, WBTC_ADDRESS)) {
+    if(!compareString(tokenIn?.address, WBTC_ADDRESS) && !compareString(tokenOut?.address, WBTC_ADDRESS) && swapRoutes?.length > 1) {
       const listPair = [{baseToken: tokenOut, quoteToken: {address: WBTC_ADDRESS}}, {baseToken: {address: WBTC_ADDRESS}, quoteToken: tokenIn}];
       const reserveInfosRevert = [...reserveInfos].reverse();
 
@@ -622,8 +626,8 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           {_reserveIn: reserveInfosRevert[index]?._reserve1, _reserveOut: reserveInfosRevert[index]?._reserve0};
 
         const amountIn = new BigNumber(_amount);
-        const reserveIn = new BigNumber(Web3.utils.fromWei(Web3.utils.toBN(_reserveIn), 'ether').toString());
-        const reserveOut = new BigNumber(Web3.utils.fromWei(Web3.utils.toBN(_reserveOut), 'ether').toString());
+        const reserveIn = new BigNumber(Web3.utils.fromWei(Web3.utils.toBN(_reserveIn || 0), 'ether').toString());
+        const reserveOut = new BigNumber(Web3.utils.fromWei(Web3.utils.toBN(_reserveOut || 0), 'ether').toString());
         if (amountIn.lte(0) || reserveIn.lte(0) || reserveOut.lte(0)) {
           return;
         }
@@ -643,8 +647,8 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         {_reserveIn: reserveInfos[0]?._reserve1, _reserveOut: reserveInfos[0]?._reserve0};
 
       const amountIn = new BigNumber(amount);
-      const reserveIn = new BigNumber(Web3.utils.fromWei(Web3.utils.toBN(_reserveIn), 'ether').toString());
-      const reserveOut = new BigNumber(Web3.utils.fromWei(Web3.utils.toBN(_reserveOut), 'ether').toString());
+      const reserveIn = new BigNumber(Web3.utils.fromWei(Web3.utils.toBN(_reserveIn || 0), 'ether').toString());
+      const reserveOut = new BigNumber(Web3.utils.fromWei(Web3.utils.toBN(_reserveOut || 0), 'ether').toString());
       if (amountIn.lte(0) || reserveIn.lte(0) || reserveOut.lte(0)) {
         return;
       }
@@ -675,7 +679,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       await requestApproveToken(baseToken);
       checkApproveBaseToken(baseToken);
 
-      toast.success('Transaction has been created. Please wait for few minutes.');
+      toast.success('Transaction has been created. You can swap now!');
     } catch (err: any) {
       logErrorToServer({
         type: 'error',
@@ -765,6 +769,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       <HorizontalItem
         label={<Text fontSize={'md'} color={'#B1B5C3'}></Text>}
         value={
+        <Flex gap={1}>
           <Center
             w={'40px'}
             h={'40px'}
@@ -772,9 +777,12 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             cursor={"pointer"}
             bgColor={"#353945"}
             onClick={() => router.push(ROUTE_PATH.SWAP_HISTORY)}
+            title="History"
           >
             <BsListCheck color="#FFFFFF" fontSize={"20px"}/>
           </Center>
+          <SlippageSettingButton></SlippageSettingButton>
+        </Flex>
         }
       />
       <InputWrapper
@@ -874,7 +882,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             children={FieldAmount}
             validate={composeValidators(required, validateQuoteAmount)}
             fieldChanged={onChangeValueQuoteAmount}
-            disabled={submitting}
+            disabled={true}
             // placeholder={"Enter number of tokens"}
             decimals={quoteToken?.decimal || 18}
             className={cx(styles.inputAmount)}
@@ -1019,11 +1027,82 @@ const TradingForm = () => {
     operation: useSwapERC20Token,
   });
   const user = useSelector(getUserSelector);
-  // const slippage = useAppSelector(selectPnftExchange).slippage;
+  const slippage = useAppSelector(selectPnftExchange).slippage;
+  const { mobileScreen } = useWindowSize();
+
+  const confirmSwap = (values: any) => {
+    const {baseToken, quoteToken, baseAmount, quoteAmount, onConfirm} = values;
+    const id = 'modalSwapConfirm';
+    // const close = () => dispatch(closeModal({id}));
+    dispatch(
+      openModal({
+        id,
+        theme: 'dark',
+        title: 'Confirm swap',
+        className: styles.modalContent,
+        modalProps: {
+          centered: true,
+          size: mobileScreen ? 'full' : 'xl',
+          zIndex: 9999999,
+        },
+        render: () => (
+          <Flex direction={"column"} gap={2}>
+            <HorizontalItem
+              label={<Text fontSize={'sm'} color={'#B1B5C3'}>Swap amount</Text>}
+              value={
+                <Text fontSize={'sm'}>
+                  {formatCurrency(baseAmount, 6)} {baseToken?.symbol}
+                </Text>
+              }
+            />
+            <HorizontalItem
+              label={<Text fontSize={'sm'} color={'#B1B5C3'}>Estimate receive amount</Text>}
+              value={
+                <Text fontSize={'sm'}>
+                  {formatCurrency(quoteAmount, 6)} {quoteToken?.symbol}
+                </Text>
+              }
+            />
+            <HorizontalItem
+              label={<Text fontSize={'sm'} color={'#B1B5C3'}>Slippage</Text>}
+              value={
+                <Text fontSize={'sm'}>
+                  {slippage}%
+                </Text>
+              }
+            />
+            <FiledButton
+              loadingText="Processing"
+              btnSize={'h'}
+              onClick={onConfirm}
+              mt={4}
+            >
+              Confirm
+            </FiledButton>
+          </Flex>
+        ),
+      }),
+    );
+  }
 
   const handleSubmit = async (values: any) => {
-    const { baseToken, quoteToken, baseAmount, quoteAmount } = values;
     console.log('handleSubmit', values);
+    const id = 'modalSwapConfirm';
+    const close = () => dispatch(closeModal({id}));
+
+    confirmSwap({
+        ...values,
+        onConfirm: () => {
+          close();
+          handleSwap(values);
+        }
+      }
+    );
+  };
+
+  const handleSwap = async (values: any) => {
+    const { baseToken, quoteToken, baseAmount, quoteAmount, swapRoutes } = values;
+
     try {
       setSubmitting(true);
       dispatch(
@@ -1033,15 +1112,13 @@ const TradingForm = () => {
         }),
       );
 
-      const slippage = 100;
-
       const amountOutMin = new BigNumber(quoteAmount)
         .multipliedBy(100 - slippage)
         .dividedBy(100)
         .decimalPlaces(quoteToken?.decimal || 18)
         .toString();
 
-      const addresses = !compareString(baseToken?.address, WBTC_ADDRESS) && !compareString(quoteToken?.address, WBTC_ADDRESS) ?
+      const addresses = !compareString(baseToken?.address, WBTC_ADDRESS) && !compareString(quoteToken?.address, WBTC_ADDRESS) && swapRoutes?.length > 1 ?
         [baseToken.address, WBTC_ADDRESS, quoteToken.address] :
         [baseToken.address, quoteToken.address];
 
@@ -1074,7 +1151,7 @@ const TradingForm = () => {
       setSubmitting(false);
       dispatch(updateCurrentTransaction(null));
     }
-  };
+  }
 
   return (
     <Box className={styles.container}>

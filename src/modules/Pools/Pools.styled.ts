@@ -5,7 +5,7 @@ import styled, { DefaultTheme } from 'styled-components';
 export const StyledTokens = styled.div`
   padding-top: ${px2rem(48)};
   padding-bottom: ${px2rem(48)};
-  width: 720px !important;
+  //width: 720px !important;
   //max-width: 640px;
   margin-left: auto;
   margin-right: auto;
@@ -15,7 +15,9 @@ export const StyledTokens = styled.div`
     color: white;
   }
 
-  .table {
+  .chakra-table {
+    border-collapse: separate;
+    border-spacing: 0px 4px;
     th:first-of-type {
       max-width: ${px2rem(50)};
       white-space: nowrap;
@@ -31,6 +33,18 @@ export const StyledTokens = styled.div`
     td {
       padding-top: ${px2rem(26)};
       padding-bottom: ${px2rem(26)};
+    }
+
+    thead {
+      tr {
+        th {
+          background: #FFFFFF;
+          text-transform: uppercase;
+          //border-bottom-color: #EDF2F7;
+          padding-top: ${px2rem(12)};
+          padding-bottom: ${px2rem(12)};
+        }
+      }
     }
   }
 
@@ -51,6 +65,26 @@ export const StyledTokens = styled.div`
     font-size: ${px2rem(48)};
     line-height: 48 / 44;
   }
+  
+  .tokens-list {
+    overflow: hidden !important;
+  }
+
+  .avatar {
+    object-fit: cover;
+    width: ${px2rem(25)};
+    height: ${px2rem(25)};
+    border-radius: 50%;
+  }
+  
+  .avatar2 {
+    object-fit: cover;
+    width: ${px2rem(15)};
+    height: ${px2rem(15)};
+    border-radius: 50%;
+  }
+  
+  
 `;
 
 export const UploadFileContainer = styled.div`
