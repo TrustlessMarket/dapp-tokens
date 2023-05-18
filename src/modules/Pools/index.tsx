@@ -46,6 +46,7 @@ import {BsTwitter} from "react-icons/bs";
 import {CDN_URL, TRUSTLESS_MARKET_URL} from "@/configs";
 import {USDC_ADDRESS, WBTC_ADDRESS, WETH_ADDRESS} from "@/constants/common";
 import {useWindowSize} from "@trustless-computer/dapp-core";
+import InfoTooltip from "@/components/Swap/infoTooltip";
 
 export enum ScreenType {
   default = 'default',
@@ -671,56 +672,59 @@ const LiquidityContainer = () => {
 
           return (
             <Flex gap={4} justifyContent={'center'}>
-              <Center
-                title={"Add Liquidity"}
-                cursor={"pointer"}
-                fontSize={"24px"}
-                _hover={{
-                  color: '#0072ff',
-                }}
-              >
-                <AiOutlinePlusCircle
-                  onClick={() =>
-                    router.replace(
-                      `${ROUTE_PATH.POOLS}?type=${ScreenType.add_liquid}&f=${row?.token0Obj?.address}&t=${row?.token1Obj?.address}`,
-                    )
-                  }
-                />
-              </Center>
+              <InfoTooltip label={"Add Liquidity"}>
+                <Center
+                  cursor={"pointer"}
+                  fontSize={"24px"}
+                  _hover={{
+                    color: '#0072ff',
+                  }}
+                >
+                  <AiOutlinePlusCircle
+                    onClick={() =>
+                      router.replace(
+                        `${ROUTE_PATH.POOLS}?type=${ScreenType.add_liquid}&f=${row?.token0Obj?.address}&t=${row?.token1Obj?.address}`,
+                      )
+                    }
+                  />
+                </Center>
+              </InfoTooltip>
               {
                 Number(share) >= 0 && (
-                  <Center
-                    title={"Remove Liquidity"}
-                    cursor={"pointer"}
-                    fontSize={"24px"}
-                    _hover={{
-                      color: '#FF0000',
-                    }}
-                  >
-                    <AiOutlineMinusCircle
-                      onClick={() =>
-                        router.replace(
-                          `${ROUTE_PATH.POOLS}?type=${ScreenType.remove}&f=${row?.token0Obj?.address}&t=${row?.token1Obj?.address}`,
-                        )
-                      }
-                    />
-                  </Center>
+                  <InfoTooltip label={"Remove Liquidity"}>
+                    <Center
+                      cursor={"pointer"}
+                      fontSize={"24px"}
+                      _hover={{
+                        color: '#FF0000',
+                      }}
+                    >
+                      <AiOutlineMinusCircle
+                        onClick={() =>
+                          router.replace(
+                            `${ROUTE_PATH.POOLS}?type=${ScreenType.remove}&f=${row?.token0Obj?.address}&t=${row?.token1Obj?.address}`,
+                          )
+                        }
+                      />
+                    </Center>
+                  </InfoTooltip>
                 )
               }
-              <Center
-                title={"Share Twitter"}
-                cursor={"pointer"}
-                fontSize={"24px"}
-                _hover={{
-                  color: '#33CCFF',
-                }}
-              >
-                <BsTwitter
-                  onClick={() =>
-                    shareTwitter(row)
-                }
-                />
-              </Center>
+              <InfoTooltip label={"Share Twitter"}>
+                <Center
+                  cursor={"pointer"}
+                  fontSize={"24px"}
+                  _hover={{
+                    color: '#33CCFF',
+                  }}
+                >
+                  <BsTwitter
+                    onClick={() =>
+                      shareTwitter(row)
+                    }
+                  />
+                </Center>
+              </InfoTooltip>
             </Flex>
           );
         },
