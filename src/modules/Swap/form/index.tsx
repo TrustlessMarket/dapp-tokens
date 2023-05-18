@@ -1013,7 +1013,7 @@ const TradingForm = () => {
         .decimalPlaces(quoteToken?.decimal || 18)
         .toString();
 
-      const addresses = !compareString(baseToken?.address, WBTC_ADDRESS) && !compareString(quoteToken?.address, WBTC_ADDRESS) && swapRoutes?.length > 0 ?
+      const addresses = !compareString(baseToken?.address, WBTC_ADDRESS) && !compareString(quoteToken?.address, WBTC_ADDRESS) && swapRoutes?.length > 1 ?
         [baseToken.address, WBTC_ADDRESS, quoteToken.address] :
         [baseToken.address, quoteToken.address];
 
