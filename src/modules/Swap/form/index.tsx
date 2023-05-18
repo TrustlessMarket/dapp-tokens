@@ -1251,9 +1251,11 @@ const TradingForm = () => {
               value={<Text fontSize={'sm'}>{slippage}%</Text>}
             />
             <Text fontSize="md" color="brand.warning.400" textAlign={'left'}>
-              {slippage === 100
-                ? `Your current slippage is set at 100%. Trade at your own risk.`
-                : `Your transaction will revert if the price changes ${slippage} percentage.`}
+              {
+                slippage === 100
+                  ? `Your current slippage is set at 100%. Trade at your own risk.`
+                  : `Your slippage percentage of ${slippage}% means that if the price changes by ${slippage}%, your transaction will fail and revert. If you wish to change your slippage percentage, please close this confirmation popup and go to the top of the swap box where you can set a different slippage value.`
+              }
             </Text>
             <FiledButton
               loadingText="Processing"
