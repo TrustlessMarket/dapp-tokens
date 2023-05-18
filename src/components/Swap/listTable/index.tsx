@@ -14,7 +14,7 @@ import styles from './styles.module.scss';
 
 export interface ColumnProp {
   id: string;
-  label: string;
+  label: string | ReactNode;
   sort?: string;
   config?: any;
   render?: (_: any, __: any, ___: any) => void;
