@@ -9,7 +9,7 @@ import {ILiquidity} from "@/interfaces/liquidity";
 const API_PATH = '/swap';
 
 export const getTokenRp = async (
-  params: IPagingParams & { address?: string, sort?: string, sort_type?: number },
+  params: IPagingParams & { address?: string, sort?: string, sort_type?: number, search?: string },
 ): Promise<IToken[]> => {
   const qs = '?' + queryString.stringify(params);
 
