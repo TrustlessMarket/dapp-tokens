@@ -460,7 +460,7 @@ const LiquidityContainer = () => {
         render(row: ILiquidity) {
           const [token0Obj, token1Obj] = sortTokens(row?.token0Obj, row?.token1Obj);
 
-          return <Flex fontSize={px2rem(14)} alignItems={"center"} gap={1}>
+          return <Flex fontSize={px2rem(14)} alignItems={"center"} gap={2}>
             <Flex gap={1} alignItems={"center"}>
               <img
                 src={token0Obj?.thumbnail || `${CDN_URL}/upload/1683530065704444020-1683530065-default-coin.svg`}
@@ -469,7 +469,6 @@ const LiquidityContainer = () => {
               />
               <Text>{token0Obj?.symbol}</Text>
             </Flex>
-            -
             <Flex gap={1} alignItems={"center"}>
               <img
                 src={token1Obj?.thumbnail || `${CDN_URL}/upload/1683530065704444020-1683530065-default-coin.svg`}
