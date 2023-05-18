@@ -56,7 +56,7 @@ const Banner = () => {
     return END_TIME;
   }, [needReload]);
 
-  return showBanner && (
+  return showBanner ? (
     <Flex
       height={`${bannerHeight}px`}
       alignItems="center"
@@ -87,7 +87,7 @@ const Banner = () => {
         </LinkText>
       </Flex>
     </Flex>
-  );
+  ) : <div/>;
 };
 
 export default Banner;
