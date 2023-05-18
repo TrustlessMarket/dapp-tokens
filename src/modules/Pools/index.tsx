@@ -45,6 +45,7 @@ import {AiOutlineMinusCircle, AiOutlinePlusCircle} from "react-icons/ai";
 import {BsTwitter} from "react-icons/bs";
 import {CDN_URL, TRUSTLESS_MARKET_URL} from "@/configs";
 import {USDC_ADDRESS, WBTC_ADDRESS, WETH_ADDRESS} from "@/constants/common";
+import {useWindowSize} from "@trustless-computer/dapp-core";
 
 export enum ScreenType {
   default = 'default',
@@ -160,6 +161,7 @@ const LiquidityContainer = () => {
   const [myLiquidities, setMyLiquidities] = useState([]);
   const [liquidityList, setLiquidityList] = useState<ILiquidity[]>([]);
   const [isFetching, setIsFetching] = useState(false);
+  const { mobileScreen } = useWindowSize();
 
   const router = useRouter();
   const routerQuery = router.query;
@@ -227,6 +229,8 @@ const LiquidityContainer = () => {
               justifyContent={'center'}
               alignItems={'center'}
               position={'relative'}
+              w={["100", "70%"]}
+              marginX={"auto"}
             >
               <IconButton
                 position={'absolute'}
@@ -246,7 +250,7 @@ const LiquidityContainer = () => {
               />
               <Heading as={'h6'}>{renderTitle()}</Heading>
             </Flex>
-            <UploadFileContainer>
+            <UploadFileContainer style={{width: mobileScreen ? '100%' : '70%', marginLeft: 'auto', marginRight: 'auto'}}>
               <div className="upload_left">
                 <Box className={styles.wrapper}>
                   <Box>
@@ -269,6 +273,8 @@ const LiquidityContainer = () => {
               justifyContent={'center'}
               alignItems={'center'}
               position={'relative'}
+              w={["100", "70%"]}
+              marginX={"auto"}
             >
               <IconButton
                 position={'absolute'}
@@ -288,7 +294,7 @@ const LiquidityContainer = () => {
               />
               <Heading as={'h6'}>{renderTitle()}</Heading>
             </Flex>
-            <UploadFileContainer>
+            <UploadFileContainer style={{width: mobileScreen ? '100%' : '70%', marginLeft: 'auto', marginRight: 'auto'}}>
               <div className="upload_left">
                 <Box className={styles.wrapper}>
                   <Box>
