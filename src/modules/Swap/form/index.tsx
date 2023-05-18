@@ -42,7 +42,7 @@ import cx from 'classnames';
 import debounce from 'lodash/debounce';
 import Link from 'next/link';
 import {useRouter} from 'next/router';
-import {useCallback, useContext, useEffect, useImperativeHandle, useRef, useState,} from 'react';
+import React, {useCallback, useContext, useEffect, useImperativeHandle, useRef, useState,} from 'react';
 import {Field, Form, useForm, useFormState} from 'react-final-form';
 import toast from 'react-hot-toast';
 import {RiArrowUpDownLine} from 'react-icons/ri';
@@ -52,6 +52,8 @@ import styles from './styles.module.scss';
 import {BsListCheck} from "react-icons/bs";
 import {ROUTE_PATH} from "@/constants/route-path";
 import SlippageSettingButton from "@/components/Swap/slippageSetting/button";
+import {closeModal, openModal} from "@/state/modal";
+import {useWindowSize} from "@trustless-computer/dapp-core";
 
 const LIMIT_PAGE = 50;
 const FEE = 2;
@@ -1000,10 +1002,81 @@ const TradingForm = () => {
   });
   const user = useSelector(getUserSelector);
   const slippage = useAppSelector(selectPnftExchange).slippage;
+  const { mobileScreen } = useWindowSize();
+
+  const confirmSwap = (values: any) => {
+    const {baseToken, quoteToken, baseAmount, quoteAmount, onConfirm} = values;
+    const id = 'modalSwapConfirm';
+    // const close = () => dispatch(closeModal({id}));
+    dispatch(
+      openModal({
+        id,
+        theme: 'dark',
+        title: 'Confirm swap',
+        className: styles.modalContent,
+        modalProps: {
+          centered: true,
+          size: mobileScreen ? 'full' : 'xl',
+          zIndex: 9999999,
+        },
+        render: () => (
+          <Flex direction={"column"} gap={2}>
+            <HorizontalItem
+              label={<Text fontSize={'sm'} color={'#B1B5C3'}>Swap amount</Text>}
+              value={
+                <Text fontSize={'sm'}>
+                  {formatCurrency(baseAmount, 6)} {baseToken?.symbol}
+                </Text>
+              }
+            />
+            <HorizontalItem
+              label={<Text fontSize={'sm'} color={'#B1B5C3'}>Estimate receive amount</Text>}
+              value={
+                <Text fontSize={'sm'}>
+                  {formatCurrency(quoteAmount, 6)} {quoteToken?.symbol}
+                </Text>
+              }
+            />
+            <HorizontalItem
+              label={<Text fontSize={'sm'} color={'#B1B5C3'}>Slippage</Text>}
+              value={
+                <Text fontSize={'sm'}>
+                  {slippage}%
+                </Text>
+              }
+            />
+            <FiledButton
+              loadingText="Processing"
+              btnSize={'h'}
+              onClick={onConfirm}
+              mt={4}
+            >
+              Confirm
+            </FiledButton>
+          </Flex>
+        ),
+      }),
+    );
+  }
 
   const handleSubmit = async (values: any) => {
-    const { baseToken, quoteToken, baseAmount, quoteAmount, swapRoutes } = values;
     console.log('handleSubmit', values);
+    const id = 'modalSwapConfirm';
+    const close = () => dispatch(closeModal({id}));
+
+    confirmSwap({
+        ...values,
+        onConfirm: () => {
+          close();
+          handleSwap(values);
+        }
+      }
+    );
+  };
+
+  const handleSwap = async (values: any) => {
+    const { baseToken, quoteToken, baseAmount, quoteAmount, swapRoutes } = values;
+
     try {
       setSubmitting(true);
       dispatch(
@@ -1052,7 +1125,7 @@ const TradingForm = () => {
       setSubmitting(false);
       dispatch(updateCurrentTransaction(null));
     }
-  };
+  }
 
   return (
     <Box className={styles.container}>
