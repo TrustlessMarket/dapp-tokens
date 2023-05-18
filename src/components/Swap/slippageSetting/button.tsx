@@ -43,10 +43,13 @@ const SlippageSettingButton = () => {
         <PopoverTrigger>
           <Button
             w={'40px'}
+            maxW={'40px'}
             h={'40px'}
+            maxH={'40px'}
             borderRadius={'50%'}
             bg={'#F4F5F6 !important'}
             p={0}
+            title={"Slippage Setting"}
           >
             <Center>
               <BsGearFill color="#000000" />
