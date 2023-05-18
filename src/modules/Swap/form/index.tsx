@@ -375,6 +375,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
 
       setSwapRoutes(response);
       change('swapRoutes', response);
+      return response;
     } catch (error) {
       console.log('error', error);
     }
@@ -516,7 +517,15 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           setExchangeRate(new BigNumber(1).div(exchangeRate).toString());
         }
 
-        getSwapRoutesInfo(quoteToken?.address, baseToken?.address);
+        const routes = await getSwapRoutesInfo(quoteToken?.address, baseToken?.address);
+
+        onBaseAmountChange({
+          amount: values?.quoteAmount,
+          reserveInfos: reserveInfos,
+          tokenIn: quoteToken,
+          tokenOut: baseToken,
+          swapRoutes: routes,
+        });
       }
 
       if (quoteToken) {
