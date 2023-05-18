@@ -51,6 +51,7 @@ import Web3 from 'web3';
 import styles from './styles.module.scss';
 import {BsListCheck} from "react-icons/bs";
 import {ROUTE_PATH} from "@/constants/route-path";
+import SlippageSettingButton from "@/components/Swap/slippageSetting/button";
 
 const LIMIT_PAGE = 50;
 const FEE = 2;
@@ -765,6 +766,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       <HorizontalItem
         label={<Text fontSize={'md'} color={'#B1B5C3'}></Text>}
         value={
+        <Flex gap={1}>
           <Center
             w={'40px'}
             h={'40px'}
@@ -776,6 +778,8 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           >
             <BsListCheck color="#000000" />
           </Center>
+          <SlippageSettingButton></SlippageSettingButton>
+        </Flex>
         }
       />
       <InputWrapper
@@ -991,7 +995,7 @@ const TradingForm = () => {
     operation: useSwapERC20Token,
   });
   const user = useSelector(getUserSelector);
-  // const slippage = useAppSelector(selectPnftExchange).slippage;
+  const slippage = useAppSelector(selectPnftExchange).slippage;
 
   const handleSubmit = async (values: any) => {
     const { baseToken, quoteToken, baseAmount, quoteAmount, swapRoutes } = values;
@@ -1004,8 +1008,6 @@ const TradingForm = () => {
           id: transactionType.swapToken,
         }),
       );
-
-      const slippage = 100;
 
       const amountOutMin = new BigNumber(quoteAmount)
         .multipliedBy(100 - slippage)
