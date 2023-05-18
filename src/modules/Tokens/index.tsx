@@ -470,7 +470,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         <Field
           component={FieldText}
           name="search_text"
-          placeholder="Search name or symbol"
+          placeholder="Search name, symbol or token address"
           style={{
             textAlign: 'left',
           }}
