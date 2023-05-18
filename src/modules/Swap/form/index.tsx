@@ -198,7 +198,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       const amountOut = numerator.div(denominator).decimalPlaces(18);
 
       return amountOut;
-    } catch (err) {
+    } catch (err: any) {
       logErrorToServer({
         type: 'error',
         address: account,
@@ -223,7 +223,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       const amountOut = numerator.div(denominator).decimalPlaces(18);
 
       return amountOut;
-    } catch (err) {
+    } catch (err: any) {
       logErrorToServer({
         type: 'error',
         address: account,
@@ -613,7 +613,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         // console.log('handleBaseAmountChange', quoteAmount.toFixed());
         change('quoteAmount', quoteAmount.toFixed());
       }
-    } catch (err) {
+    } catch (err: any) {
       logErrorToServer({
         type: 'error',
         address: account,
@@ -699,7 +699,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         // console.log('handleQuoteAmountChange', baseAmount.toFixed());
         change('baseAmount', baseAmount.toFixed());
       }
-    } catch (err) {
+    } catch (err: any) {
       logErrorToServer({
         type: 'error',
         address: account,
