@@ -59,7 +59,7 @@ import React, {
   useCallback,
   useContext,
   useEffect,
-  useImperativeHandle,
+  useImperativeHandle, useMemo,
   useRef,
   useState,
 } from 'react';
@@ -126,11 +126,32 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const { values } = useFormState();
   const { change, restart } = useForm();
   const btnDisabled = loading || !baseToken || !quoteToken;
-  const isRequireApprove =
-    isAuthenticated &&
-    new BigNumber(amountBaseTokenApproved || 0).lt(
-      Web3.utils.toWei(`${values?.baseAmount || 0}`, 'ether'),
-    );
+  // const isRequireApprove =
+  //   isAuthenticated &&
+  //   new BigNumber(amountBaseTokenApproved || 0).lt(
+  //     Web3.utils.toWei(`${values?.baseAmount || 0}`, 'ether'),
+  //   );
+
+  const isRequireApprove = useMemo(() => {
+    let result = false;
+    try {
+      result =
+        isAuthenticated && values?.baseAmount && !isNaN(Number(values?.baseAmount)) &&
+        new BigNumber(amountBaseTokenApproved || 0).lt(
+          Web3.utils.toWei(`${values?.baseAmount || 0}`, 'ether'),
+        );
+    } catch (err: any) {
+      logErrorToServer({
+        type: 'error',
+        address: account,
+        error: JSON.stringify(err),
+        message: err?.message,
+        place_happen: 'isRequireApprove',
+      });
+    }
+
+    return result;
+  }, [isAuthenticated, amountBaseTokenApproved, values?.baseAmount]);
 
   const onBaseAmountChange = useCallback(
     debounce((p) => handleBaseAmountChange(p), 1000),
