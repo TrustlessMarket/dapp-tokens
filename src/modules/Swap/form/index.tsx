@@ -413,14 +413,24 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           status: TransactionStatus.info,
         }),
       );
-      const response = await approveToken({
+      const response: any = await approveToken({
         erc20TokenAddress: token.address,
         address: UNIV2_ROUTER_ADDRESS,
       });
+      dispatch(
+        updateCurrentTransaction({
+          status: TransactionStatus.success,
+          id: transactionType.createPoolApprove,
+          hash: response.hash,
+          infoTexts: {
+            success: `${token.symbol} has been approved successfully. You can swap now!`,
+          },
+        }),
+      );
     } catch (error) {
       throw error;
     } finally {
-      dispatch(updateCurrentTransaction(null));
+      // dispatch(updateCurrentTransaction(null));
     }
   };
 
@@ -863,7 +873,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       await requestApproveToken(baseToken);
       checkApproveBaseToken(baseToken);
 
-      toast.success('Transaction has been created. You can swap now!');
+      // toast.success('Transaction has been created. You can swap now!');
     } catch (err: any) {
       logErrorToServer({
         type: 'error',
@@ -1130,6 +1140,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             .
           </Text>
         )}
+      <Box mt={8} />
       <WrapperConnected
         type={isRequireApprove ? 'button' : 'submit'}
         className={styles.submitButton}
@@ -1158,7 +1169,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             containerConfig={{ flex: 1 }}
             loadingText={submitting ? 'Processing' : ' '}
             processInfo={{
-              id: transactionType.swapToken,
+              id: transactionType.createPoolApprove,
             }}
           >
             SWAP
@@ -1231,9 +1242,9 @@ const TradingForm = () => {
               value={<Text fontSize={'sm'}>{slippage}%</Text>}
             />
             <Text fontSize="md" color="brand.warning.400" textAlign={'left'}>
-              {
-                slippage === 100 ? `Your current slippage is set at 100%. Trade at your own risk.` : `Your transaction will revert if the price changes ${slippage} percentage.`
-              }
+              {slippage === 100
+                ? `Your current slippage is set at 100%. Trade at your own risk.`
+                : `Your transaction will revert if the price changes ${slippage} percentage.`}
             </Text>
             <FiledButton
               loadingText="Processing"
@@ -1271,7 +1282,7 @@ const TradingForm = () => {
       dispatch(
         updateCurrentTransaction({
           status: TransactionStatus.info,
-          id: transactionType.swapToken,
+          id: transactionType.createPoolApprove,
         }),
       );
 

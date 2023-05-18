@@ -1,26 +1,27 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { memo, useEffect, useRef } from 'react';
 
+import { colors } from '@/theme/colors';
 import { compareString, formatCurrency } from '@/utils';
+import BigNumber from 'bignumber.js';
 import {
-  createChart,
   CrosshairMode,
   LastPriceAnimationMode,
   LineType,
   PriceScaleMode,
   TrackingModeExitMode,
+  createChart,
 } from 'lightweight-charts';
+import moment from 'moment';
 import useAsyncEffect from 'use-async-effect';
 import { StyledTokenChartContainer } from './Token.styled';
-import BigNumber from 'bignumber.js';
-import moment from 'moment';
-import { colors } from '@/theme/colors';
 
 interface TokenChartProps {
   chartData: any[];
+  dataSymbol: string;
 }
 
-const TokenChart: React.FC<TokenChartProps> = ({ chartData }) => {
+const TokenChart: React.FC<TokenChartProps> = ({ chartData, dataSymbol }) => {
   const chartContainerRef = useRef<any>();
   const chart = useRef<any>();
   const resizeObserver = useRef<any>();
@@ -157,7 +158,7 @@ const TokenChart: React.FC<TokenChartProps> = ({ chartData }) => {
               <div>Vol <span style="color: ${color}">${formatCurrency(
               vol?.volume,
               18,
-            )}</span> ${'WBTC'}</div>
+            )}</span> ${dataSymbol}</div>
             </div>`;
           }
         }

@@ -409,8 +409,6 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         }),
       );
     } catch (error) {
-      console.log('error', error);
-
       throw error;
     } finally {
     }
@@ -604,15 +602,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         error: JSON.stringify(err),
         message: message,
       });
-      dispatch(
-        updateCurrentTransaction({
-          status: TransactionStatus.error,
-          id: transactionType.createPoolApprove,
-          infoTexts: {
-            error: getMessageError(err, {}).title,
-          },
-        }),
-      );
+      toastError(showError, err, { address: account });
     } finally {
       setLoading(false);
     }
@@ -1016,7 +1006,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             containerConfig={{ flex: 1 }}
             loadingText={submitting ? 'Processing' : ' '}
             processInfo={{
-              id: transactionType.createPool,
+              id: transactionType.createPoolApprove,
             }}
             style={{ backgroundColor: renderContentTitle().btnBgColor }}
           >
@@ -1129,7 +1119,7 @@ const CreateMarket = ({
       dispatch(
         updateCurrentTransaction({
           status: TransactionStatus.info,
-          id: transactionType.createPool,
+          id: transactionType.createPoolApprove,
         }),
       );
 
@@ -1174,7 +1164,7 @@ const CreateMarket = ({
       dispatch(
         updateCurrentTransaction({
           status: TransactionStatus.success,
-          id: transactionType.createPool,
+          id: transactionType.createPoolApprove,
           hash: response.hash,
           infoTexts: {
             success: 'Pool has been created successfully.',
