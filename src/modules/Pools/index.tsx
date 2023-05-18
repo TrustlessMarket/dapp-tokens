@@ -45,6 +45,8 @@ import {AiOutlineMinusCircle, AiOutlinePlusCircle} from "react-icons/ai";
 import {BsTwitter} from "react-icons/bs";
 import {CDN_URL, TRUSTLESS_MARKET_URL} from "@/configs";
 import {USDC_ADDRESS, WBTC_ADDRESS, WETH_ADDRESS} from "@/constants/common";
+import {useWindowSize} from "@trustless-computer/dapp-core";
+import InfoTooltip from "@/components/Swap/infoTooltip";
 
 export enum ScreenType {
   default = 'default',
@@ -160,6 +162,7 @@ const LiquidityContainer = () => {
   const [myLiquidities, setMyLiquidities] = useState([]);
   const [liquidityList, setLiquidityList] = useState<ILiquidity[]>([]);
   const [isFetching, setIsFetching] = useState(false);
+  const { mobileScreen } = useWindowSize();
 
   const router = useRouter();
   const routerQuery = router.query;
@@ -227,6 +230,8 @@ const LiquidityContainer = () => {
               justifyContent={'center'}
               alignItems={'center'}
               position={'relative'}
+              w={["100", "70%"]}
+              marginX={"auto"}
             >
               <IconButton
                 position={'absolute'}
@@ -246,7 +251,7 @@ const LiquidityContainer = () => {
               />
               <Heading as={'h6'}>{renderTitle()}</Heading>
             </Flex>
-            <UploadFileContainer>
+            <UploadFileContainer style={{width: mobileScreen ? '100%' : '70%', marginLeft: 'auto', marginRight: 'auto'}}>
               <div className="upload_left">
                 <Box className={styles.wrapper}>
                   <Box>
@@ -269,6 +274,8 @@ const LiquidityContainer = () => {
               justifyContent={'center'}
               alignItems={'center'}
               position={'relative'}
+              w={["100", "70%"]}
+              marginX={"auto"}
             >
               <IconButton
                 position={'absolute'}
@@ -288,7 +295,7 @@ const LiquidityContainer = () => {
               />
               <Heading as={'h6'}>{renderTitle()}</Heading>
             </Flex>
-            <UploadFileContainer>
+            <UploadFileContainer style={{width: mobileScreen ? '100%' : '70%', marginLeft: 'auto', marginRight: 'auto'}}>
               <div className="upload_left">
                 <Box className={styles.wrapper}>
                   <Box>
@@ -665,56 +672,59 @@ const LiquidityContainer = () => {
 
           return (
             <Flex gap={4} justifyContent={'center'}>
-              <Center
-                title={"Add Liquidity"}
-                cursor={"pointer"}
-                fontSize={"24px"}
-                _hover={{
-                  color: '#0072ff',
-                }}
-              >
-                <AiOutlinePlusCircle
-                  onClick={() =>
-                    router.replace(
-                      `${ROUTE_PATH.POOLS}?type=${ScreenType.add_liquid}&f=${row?.token0Obj?.address}&t=${row?.token1Obj?.address}`,
-                    )
-                  }
-                />
-              </Center>
+              <InfoTooltip label={"Add Liquidity"}>
+                <Center
+                  cursor={"pointer"}
+                  fontSize={"24px"}
+                  _hover={{
+                    color: '#0072ff',
+                  }}
+                >
+                  <AiOutlinePlusCircle
+                    onClick={() =>
+                      router.replace(
+                        `${ROUTE_PATH.POOLS}?type=${ScreenType.add_liquid}&f=${row?.token0Obj?.address}&t=${row?.token1Obj?.address}`,
+                      )
+                    }
+                  />
+                </Center>
+              </InfoTooltip>
               {
                 Number(share) >= 0 && (
-                  <Center
-                    title={"Remove Liquidity"}
-                    cursor={"pointer"}
-                    fontSize={"24px"}
-                    _hover={{
-                      color: '#FF0000',
-                    }}
-                  >
-                    <AiOutlineMinusCircle
-                      onClick={() =>
-                        router.replace(
-                          `${ROUTE_PATH.POOLS}?type=${ScreenType.remove}&f=${row?.token0Obj?.address}&t=${row?.token1Obj?.address}`,
-                        )
-                      }
-                    />
-                  </Center>
+                  <InfoTooltip label={"Remove Liquidity"}>
+                    <Center
+                      cursor={"pointer"}
+                      fontSize={"24px"}
+                      _hover={{
+                        color: '#FF0000',
+                      }}
+                    >
+                      <AiOutlineMinusCircle
+                        onClick={() =>
+                          router.replace(
+                            `${ROUTE_PATH.POOLS}?type=${ScreenType.remove}&f=${row?.token0Obj?.address}&t=${row?.token1Obj?.address}`,
+                          )
+                        }
+                      />
+                    </Center>
+                  </InfoTooltip>
                 )
               }
-              <Center
-                title={"Share Twitter"}
-                cursor={"pointer"}
-                fontSize={"24px"}
-                _hover={{
-                  color: '#33CCFF',
-                }}
-              >
-                <BsTwitter
-                  onClick={() =>
-                    shareTwitter(row)
-                }
-                />
-              </Center>
+              <InfoTooltip label={"Share Twitter"}>
+                <Center
+                  cursor={"pointer"}
+                  fontSize={"24px"}
+                  _hover={{
+                    color: '#33CCFF',
+                  }}
+                >
+                  <BsTwitter
+                    onClick={() =>
+                      shareTwitter(row)
+                    }
+                  />
+                </Center>
+              </InfoTooltip>
             </Flex>
           );
         },

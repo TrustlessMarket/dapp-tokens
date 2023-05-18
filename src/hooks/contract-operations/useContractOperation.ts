@@ -43,9 +43,6 @@ const useContractOperation = <P, R>(
   const router = useRouter();
 
   const checkAndSwitchChainIfNecessary = async (): Promise<void> => {
-    console.log('walletChainId', walletChainId);
-    console.log('chainId', chainId);
-
     if (walletChainId !== chainId) {
       await switchChain(chainId);
     }
@@ -76,47 +73,9 @@ const useContractOperation = <P, R>(
         return tx;
       }
 
-      // Check unInscribed transactions
-      console.time('____unInscribedTxIDsLoadTime');
-      const unInscribedTxIDs = await getUnInscribedTransactionByAddress(
-        user.walletAddress,
-      );
-      console.timeEnd('____unInscribedTxIDsLoadTime');
-
-      // if (unInscribedTxIDs.length > 0) {
-      //   throw Error(ERROR_CODE.PENDING);
-      // }
-
-      console.log('unInscribedTxIDs', unInscribedTxIDs);
-
-      console.time('____metamaskCreateTxTime');
       const tx: any = await call({
         ...params,
       });
-      console.timeEnd('____metamaskCreateTxTime');
-
-      console.log('tcTX', tx);
-
-      console.log('feeRatePerByte', feeRate.fastestFee);
-
-      // Make inscribe transaction
-      // const { commitTxID, revealTxID } = await createInscribeTx({
-      //   tcTxIDs: [...unInscribedTxIDs, Object(tx).hash],
-      //   feeRatePerByte: feeRate.fastestFee,
-      // });
-
-      // const currentTimeString = moment().format('YYYY-MM-DDTHH:mm:ssZ');
-      // const transactionHistory: ICreateTransactionPayload = {
-      //   dapp_type: `${transactionType} ${dAppType}`,
-      //   tx_hash: Object(tx).hash,
-      //   from_address: Object(tx).from,
-      //   to_address: Object(tx).to,
-      //   time: currentTimeString,
-      // };
-      // if (commitTxID && revealTxID) {
-      //   transactionHistory.btc_tx_hash = revealTxID;
-      // }
-      // await createTransactionHistory(transactionHistory);
 
       TC_SDK.signTransaction({
         method: `${transactionType} ${dAppType}`,

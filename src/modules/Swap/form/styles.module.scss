@@ -9,7 +9,7 @@
   :global .chakra-input__left-element {
     margin: 0;
     width: unset;
-    border-right: 1px solid #5B5B5B;
+    border-right: 1px solid #5b5b5b;
   }
 
   :global .chakra-input__right-element {
@@ -79,5 +79,16 @@
 
   button {
     font-size: 16px !important;
+  }
+}
+
+.modalContent {
+  :global {
+    .modal-header-wrap {
+      margin-bottom: 0;
+    }
+    .chakra-modal__body {
+      //padding: 0;
+    }
   }
 }

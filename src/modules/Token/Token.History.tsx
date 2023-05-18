@@ -12,6 +12,8 @@ import { RxExternalLink } from 'react-icons/rx';
 import { DEFAULT_FROM_TOKEN_ADDRESS } from '../Pools';
 import { StyledTokenTrading } from './Token.styled';
 
+export const BASE_TOKEN_ETH_PAIR = '0x74B033e56434845E02c9bc4F0caC75438033b00D';
+
 const TokenHistory = ({ data }: { data: IToken }) => {
   const [list, setList] = useState<any[]>([]);
 
@@ -33,9 +35,11 @@ const TokenHistory = ({ data }: { data: IToken }) => {
   const checkIsSell = (row: any) => {
     let isSell = true;
     if (
-      (compareString(row?.pair?.token0, DEFAULT_FROM_TOKEN_ADDRESS) &&
+      ((compareString(row?.pair?.token0, DEFAULT_FROM_TOKEN_ADDRESS) ||
+        compareString(row?.pair?.token0, BASE_TOKEN_ETH_PAIR)) &&
         Number(row.amount1Out) > 0) ||
-      (compareString(row?.pair?.token1, DEFAULT_FROM_TOKEN_ADDRESS) &&
+      ((compareString(row?.pair?.token1, DEFAULT_FROM_TOKEN_ADDRESS) ||
+        compareString(row?.pair?.token1, BASE_TOKEN_ETH_PAIR)) &&
         Number(row.amount0Out) > 0)
     ) {
       isSell = false;
@@ -45,28 +49,32 @@ const TokenHistory = ({ data }: { data: IToken }) => {
 
   const getAmount = (row: any) => {
     if (
-      compareString(row?.pair?.token0, DEFAULT_FROM_TOKEN_ADDRESS) &&
+      (compareString(row?.pair?.token0, DEFAULT_FROM_TOKEN_ADDRESS) ||
+        compareString(row?.pair?.token0, BASE_TOKEN_ETH_PAIR)) &&
       Number(row.amount1Out) > 0
     ) {
       return row.amount1Out;
     }
 
     if (
-      compareString(row?.pair?.token1, DEFAULT_FROM_TOKEN_ADDRESS) &&
+      (compareString(row?.pair?.token1, DEFAULT_FROM_TOKEN_ADDRESS) ||
+        compareString(row?.pair?.token1, BASE_TOKEN_ETH_PAIR)) &&
       Number(row.amount0Out) > 0
     ) {
       return row.amount0Out;
     }
 
     if (
-      !compareString(row?.pair?.token1, DEFAULT_FROM_TOKEN_ADDRESS) &&
+      (!compareString(row?.pair?.token1, DEFAULT_FROM_TOKEN_ADDRESS) ||
+        !compareString(row?.pair?.token1, BASE_TOKEN_ETH_PAIR)) &&
       Number(row.amount1In) > 0
     ) {
       return row.amount1In;
     }
 
     if (
-      !compareString(row?.pair?.token0, DEFAULT_FROM_TOKEN_ADDRESS) &&
+      (!compareString(row?.pair?.token0, DEFAULT_FROM_TOKEN_ADDRESS) ||
+        !compareString(row?.pair?.token0, BASE_TOKEN_ETH_PAIR)) &&
       Number(row.amount0In) > 0
     ) {
       return row.amount0In;

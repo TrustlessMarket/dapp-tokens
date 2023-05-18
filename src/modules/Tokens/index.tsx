@@ -36,7 +36,7 @@ import {Field, Form, useFormState} from "react-final-form";
 import useDebounce from "@/hooks/useDebounce";
 import FieldText from "@/components/Swap/form/fieldText";
 
-const LIMIT_PAGE = 30;
+const LIMIT_PAGE = 100;
 
 export const MakeFormSwap = forwardRef((props, ref) => {
   const router = useRouter();
@@ -470,7 +470,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         <Field
           component={FieldText}
           name="search_text"
-          placeholder="Search name or symbol"
+          placeholder="Search name, symbol or token address"
           style={{
             textAlign: 'left',
           }}
