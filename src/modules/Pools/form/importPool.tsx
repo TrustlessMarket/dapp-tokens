@@ -23,6 +23,8 @@ import {BsPlus} from 'react-icons/bs';
 import Web3 from 'web3';
 import {ScreenType} from '..';
 import styles from './styles.module.scss';
+import {BiBell} from "react-icons/bi";
+import Link from "next/link";
 
 interface MakeFormImportPoolProps {
   onSubmit: (_: any) => void;
@@ -305,19 +307,29 @@ const MakeFormImportPool: React.FC<MakeFormImportPoolProps> = ({
     }
 
     return (
-      <Box>
-        <Text>You don’t have liquidity in this pool yet.</Text>
-        <a
-          onClick={() =>
-            router.replace(
-              `${ROUTE_PATH.POOLS}?type=${ScreenType.add_liquid}&f=${fromAddress}&t=${toAddress}`,
-            )
-          }
+      <Flex gap={3} mt={10} justifyContent={"center"} alignItems={"center"}>
+        <Center
+          w={'24px'}
+          h={'24px'}
+          minW={'24px'}
+          minH={'24px'}
+          borderRadius={'50%'}
+          bg={'rgba(255, 255, 255, 0.2)'}
+          as={"span"}
         >
-          Add liquidity.
-        </a>
-      </Box>
-    );
+          <BiBell color="#FFFFFF" />
+        </Center>
+        <Text fontSize="sm" color="#FFFFFF" textAlign={'left'}>
+          You don’t have liquidity in this pool yet.{' '}
+          <Link
+            href={`${ROUTE_PATH.POOLS}?type=${ScreenType.add_liquid}&f=${fromAddress}&t=${toAddress}`}
+            style={{ textDecoration: 'underline', color: '#3385FF' }}
+          >
+            Add liquidity.
+          </Link>
+        </Text>
+      </Flex>
+    )
   };
 
   return (
@@ -340,24 +352,16 @@ const MakeFormImportPool: React.FC<MakeFormImportPoolProps> = ({
         />
         <Flex gap={2} justifyContent={"center"}>
           <Center
-            w={'28px'}
-            h={'28px'}
-            minW={"28px"}
-            minH={"28px"}
+            w={'40px'}
+            h={'40px'}
+            minW={"40px"}
+            minH={"40px"}
             borderRadius={'50%'}
             bgColor={"rgba(255, 255, 255, 0.1)"}
           >
-            <BsPlus fontWeight={'bold'} fontSize={'14px'}/>
+            <BsPlus fontWeight={'bold'} fontSize={'30px'} color={"#FFFFFF"}/>
           </Center>
         </Flex>
-        {/*<Box
-          className="btn-transfer"
-          p={2}
-          border={'1px solid #3385FF'}
-          borderRadius={'8px'}
-        >
-          <BsPlus color="#3385FF" />
-        </Box>*/}
         <FilterButton
           data={tokensList}
           commonData={tokensList.slice(0, 3)}
@@ -372,7 +376,7 @@ const MakeFormImportPool: React.FC<MakeFormImportPoolProps> = ({
         />
       </Flex>
       {baseToken && quoteToken && (
-        <Box className="box-info-pair">{renderInfoPair()}</Box>
+        <>{renderInfoPair()}</>
       )}
       {isPaired && (
         <FiledButton
