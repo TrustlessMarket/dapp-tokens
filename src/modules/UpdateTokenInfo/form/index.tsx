@@ -159,7 +159,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           <InputWrapper
             className={cx(styles.submitVideo)}
             theme="light"
-            label={<Text fontSize={px2rem(16)}>Token icon</Text>}
+            label={<Text fontSize={px2rem(14)} color={"#FFFFFF"}>Token icon</Text>}
           >
             <FileDropzoneUpload
               className={styles.uploader}
@@ -173,7 +173,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           <InputWrapper
             className={cx(styles.inputAmountWrap, styles.inputBaseAmountWrap)}
             theme="light"
-            label={<Text fontSize={px2rem(16)}>Description</Text>}
+            label={<Text fontSize={px2rem(14)} color={"#FFFFFF"}>Description</Text>}
           >
             <Flex gap={4} direction={'column'}>
               <Field
@@ -183,7 +183,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
                 // fieldChanged={onChangeValueQuoteAmount}
                 disabled={submitting}
                 placeholder={"Enter description"}
-                className={cx(styles.collateralAmount)}
+                className={cx(styles.inputDescription)}
                 // hideError={true}
                 inputType={'textarea'}
                 borderColor={'#353945'}
@@ -194,7 +194,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           <InputWrapper
             className={cx(styles.inputAmountWrap, styles.inputQuoteAmountWrap)}
             theme="light"
-            label={<Text fontSize={px2rem(16)}>Reference</Text>}
+            label={<Text fontSize={px2rem(14)} color={"#FFFFFF"}>Reference</Text>}
           >
             <Flex gap={4} direction={'column'}>
               <Field
