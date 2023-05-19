@@ -1,7 +1,7 @@
 /* eslint-disable react/no-children-prop */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { transactionType } from '@/components/Swap/alertInfoProcessing/types';
+import {transactionType} from '@/components/Swap/alertInfoProcessing/types';
 import FiledButton from '@/components/Swap/button/filedButton';
 import FilterButton from '@/components/Swap/filterToken';
 import FieldAmount from '@/components/Swap/form/fieldAmount';
@@ -12,68 +12,56 @@ import WrapperConnected from '@/components/WrapperConnected';
 import {CDN_URL, UNIV2_ROUTER_ADDRESS} from '@/configs';
 import {
   BRIDGE_SUPPORT_TOKEN,
-  DEV_ADDRESS, GM_ADDRESS,
+  DEV_ADDRESS,
+  GM_ADDRESS,
   TRUSTLESS_BRIDGE,
   TRUSTLESS_FAUCET,
-  WBTC_ADDRESS, WETH_ADDRESS,
+  WBTC_ADDRESS,
+  WETH_ADDRESS,
 } from '@/constants/common';
-import { toastError } from '@/constants/error';
-import { AssetsContext } from '@/contexts/assets-context';
+import {toastError} from '@/constants/error';
+import {AssetsContext} from '@/contexts/assets-context';
 import useGetReserves from '@/hooks/contract-operations/swap/useReserves';
-import useSwapERC20Token, {
-  ISwapERC20TokenParams,
-} from '@/hooks/contract-operations/swap/useSwapERC20Token';
+import useSwapERC20Token, {ISwapERC20TokenParams,} from '@/hooks/contract-operations/swap/useSwapERC20Token';
 import useApproveERC20Token from '@/hooks/contract-operations/token/useApproveERC20Token';
 import useBalanceERC20Token from '@/hooks/contract-operations/token/useBalanceERC20Token';
 import useIsApproveERC20Token from '@/hooks/contract-operations/token/useIsApproveERC20Token';
 import useContractOperation from '@/hooks/contract-operations/useContractOperation';
-import { IToken } from '@/interfaces/token';
-import { TransactionStatus } from '@/interfaces/walletTransaction';
-import { getSwapRoutes, getSwapTokens, logErrorToServer } from '@/services/swap';
-import { useAppDispatch, useAppSelector } from '@/state/hooks';
+import {IToken} from '@/interfaces/token';
+import {TransactionStatus} from '@/interfaces/walletTransaction';
+import {getSwapRoutes, getSwapTokens, logErrorToServer} from '@/services/swap';
+import {useAppDispatch, useAppSelector} from '@/state/hooks';
 import {
   requestReload,
   requestReloadRealtime,
   selectPnftExchange,
   updateCurrentTransaction,
 } from '@/state/pnftExchange';
-import { getIsAuthenticatedSelector, getUserSelector } from '@/state/user/selector';
-import {
-  camelCaseKeys,
-  compareString,
-  formatCurrency,
-  sortAddressPair,
-} from '@/utils';
-import { isDevelop } from '@/utils/commons';
-import { composeValidators, required } from '@/utils/formValidate';
+import {getIsAuthenticatedSelector, getUserSelector} from '@/state/user/selector';
+import {camelCaseKeys, compareString, formatCurrency, sortAddressPair,} from '@/utils';
+import {isDevelop} from '@/utils/commons';
+import {composeValidators, required} from '@/utils/formValidate';
 import px2rem from '@/utils/px2rem';
-import { showError } from '@/utils/toast';
-import { Box, Center, Flex, forwardRef, Text } from '@chakra-ui/react';
-import { useWeb3React } from '@web3-react/core';
+import {showError} from '@/utils/toast';
+import {Box, Center, Flex, forwardRef, Text} from '@chakra-ui/react';
+import {useWeb3React} from '@web3-react/core';
 import BigNumber from 'bignumber.js';
 import cx from 'classnames';
 import debounce from 'lodash/debounce';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
-import React, {
-  useCallback,
-  useContext,
-  useEffect,
-  useImperativeHandle, useMemo,
-  useRef,
-  useState,
-} from 'react';
-import { Field, Form, useForm, useFormState } from 'react-final-form';
+import {useRouter} from 'next/router';
+import React, {useCallback, useContext, useEffect, useImperativeHandle, useMemo, useRef, useState,} from 'react';
+import {Field, Form, useForm, useFormState} from 'react-final-form';
 import toast from 'react-hot-toast';
-import { RiArrowUpDownLine } from 'react-icons/ri';
-import { useDispatch, useSelector } from 'react-redux';
+import {RiArrowUpDownLine} from 'react-icons/ri';
+import {useDispatch, useSelector} from 'react-redux';
 import Web3 from 'web3';
 import styles from './styles.module.scss';
-import { BsListCheck } from 'react-icons/bs';
-import { ROUTE_PATH } from '@/constants/route-path';
+import {BsListCheck} from 'react-icons/bs';
+import {ROUTE_PATH} from '@/constants/route-path';
 import SlippageSettingButton from '@/components/Swap/slippageSetting/button';
-import { closeModal, openModal } from '@/state/modal';
-import { useWindowSize } from '@trustless-computer/dapp-core';
+import {closeModal, openModal} from '@/state/modal';
+import {useWindowSize} from '@trustless-computer/dapp-core';
 import InfoTooltip from '@/components/Swap/infoTooltip';
 import ModalConfirmApprove from '@/components/ModalConfirmApprove';
 
