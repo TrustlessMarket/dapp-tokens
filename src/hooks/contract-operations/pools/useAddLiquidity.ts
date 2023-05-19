@@ -23,7 +23,7 @@ export interface IAddLiquidityParams {
   amountBDesired: string;
   amountBMin: string;
   decimalB?: string;
-  //   to: string;
+  isPaired: boolean;
 }
 
 const useAddLiquidity: ContractOperationHook<IAddLiquidityParams, boolean> = () => {
@@ -39,7 +39,7 @@ const useAddLiquidity: ContractOperationHook<IAddLiquidityParams, boolean> = () 
         amountADesired,
         amountBDesired,
         amountBMin,
-        // to,
+        isPaired,
       } = params;
 
       if (account && provider && tokenA && tokenB) {
@@ -110,7 +110,7 @@ const useAddLiquidity: ContractOperationHook<IAddLiquidityParams, boolean> = () 
             account,
             MaxUint256,
             {
-              gasLimit: '1000000',
+              gasLimit: isPaired ? '400000' : '1000000',
             },
           );
 

@@ -175,6 +175,10 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   }, [baseToken, quoteToken, needReload]);
 
   useEffect(() => {
+    change('isPaired', isPaired);
+  }, [isPaired]);
+
+  useEffect(() => {
     change('isApproveBaseToken', isApproveBaseToken);
   }, [isApproveBaseToken]);
 
@@ -1110,6 +1114,7 @@ const CreateMarket = ({
       quoteAmount,
       isApproveQuoteToken,
       isApproveBaseToken,
+      isPaired
     } = values;
     // if (!isApproveQuoteToken || !isApproveBaseToken) {
     //   return;
@@ -1150,6 +1155,7 @@ const CreateMarket = ({
           amountADesired: amount0,
           amountBDesired: amount1,
           amountBMin: '0',
+          isPaired
         };
 
         response = await addLiquidity(data);
