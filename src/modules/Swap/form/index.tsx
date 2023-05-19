@@ -1013,13 +1013,15 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         label={<Text fontSize={px2rem(14)} color={"#FFFFFF"}>Swap from</Text>}
         rightLabel={
           baseToken && (
-            <Flex gap={1} fontSize={px2rem(14)} color={"#FFFFFF"}>
-              <Text>Balance:</Text>
-              <TokenBalance
-                token={baseToken}
-                onBalanceChange={(_amount) => setBaseBalance(_amount)}
-              />
-              <Text>{baseToken?.symbol}</Text>
+            <Flex gap={2} fontSize={px2rem(14)} color={"#FFFFFF"}>
+              <Flex gap={1} alignItems={"center"}>
+                Balance:
+                <TokenBalance
+                  token={baseToken}
+                  onBalanceChange={(_amount) => setBaseBalance(_amount)}
+                />
+                {baseToken?.symbol}
+              </Flex>
               <Text
                 cursor={'pointer'}
                 color={'#3385FF'}
@@ -1076,13 +1078,15 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         label={<Text fontSize={px2rem(14)} color={"#FFFFFF"}>Swap to</Text>}
         rightLabel={
           quoteToken && (
-            <Flex gap={1} fontSize={px2rem(14)} color={"#FFFFFF"}>
-              <Text>Balance:</Text>
-              <TokenBalance
-                token={quoteToken}
-                onBalanceChange={(_amount) => setQuoteBalance(_amount)}
-              />
-              <Text>{quoteToken?.symbol}</Text>
+            <Flex gap={2} fontSize={px2rem(14)} color={"#FFFFFF"}>
+              <Flex gap={1} alignItems={"center"}>
+                Balance:
+                <TokenBalance
+                  token={quoteToken}
+                  onBalanceChange={(_amount) => setQuoteBalance(_amount)}
+                />
+                {quoteToken?.symbol}
+              </Flex>
               <Text
                 cursor={'pointer'}
                 color={'#3385FF'}

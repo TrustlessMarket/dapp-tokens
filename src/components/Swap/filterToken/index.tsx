@@ -153,28 +153,12 @@ const FilterModal: React.FC<FilterModalProps> = ({
 
   return (
     <form onSubmit={handleSubmit}>
-      <Field
-        component={FieldText}
-        name="search_text"
-        placeholder="Search name or paste address"
-        style={{
-          textAlign: 'left',
-          fontSize: '14px'
-        }}
-        // fieldChanged={onChange}
-        prependComp={
-          <Box mt={2}>
-            <RxMagnifyingGlass fontSize={"32px"} color={"#B6B6B6"}/>
-          </Box>
-        }
-        borderColor={'#ECECED'}
-      />
       {commonData && commonData?.length > 0 && (
-        <Box mt={4}>
+        <Box mb={4}>
           <Text fontSize={'12px'} fontWeight="500">
-            Common tokens
+            COMMON TOKENS
           </Text>
-          <Box mt={1}>
+          <Box mt={2}>
             <Flex gap={4} maxW="100%" overflow="auto">
               {commonData?.map((row: DataRow) => (
                 <Flex
@@ -183,8 +167,8 @@ const FilterModal: React.FC<FilterModalProps> = ({
                   gap={1}
                   borderRadius={'4px'}
                   border="1px solid #e6e8ec"
-                  px={2}
-                  py={1}
+                  px={4}
+                  py={2}
                   onClick={() => onItemClick(row)}
                   cursor="pointer"
                   minW={'50px'}
@@ -206,7 +190,24 @@ const FilterModal: React.FC<FilterModalProps> = ({
           </Box>
         </Box>
       )}
-
+      <Box>
+        <Field
+          component={FieldText}
+          name="search_text"
+          placeholder="Search name or paste address"
+          style={{
+            textAlign: 'left',
+            fontSize: '14px',
+          }}
+          // fieldChanged={onChange}
+          prependComp={
+            <Box mt={2}>
+              <RxMagnifyingGlass fontSize={"32px"} color={"#B6B6B6"}/>
+            </Box>
+          }
+          borderColor={'#ECECED'}
+        />
+      </Box>
       <Box
         maxHeight={mobileScreen ? 'calc(100vh - 250px)' : '50vh'}
         overflow="auto"
