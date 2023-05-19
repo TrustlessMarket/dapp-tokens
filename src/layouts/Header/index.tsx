@@ -9,11 +9,10 @@ import MenuMobile from './MenuMobile';
 import WalletHeader from './Wallet';
 import {useWindowSize} from '@trustless-computer/dapp-core';
 import {useRouter} from 'next/router';
-import {DEV_ADDRESS, GENERATIVE_DISCORD, TRUSTLESS_COMPUTER, WBTC_ADDRESS} from '@/constants/common';
+import {GENERATIVE_DISCORD, GM_ADDRESS, TRUSTLESS_COMPUTER, WETH_ADDRESS} from '@/constants/common';
 import {useScreenLayout} from '@/hooks/useScreenLayout';
 import {defaultProvider} from '@/contexts/screen-context';
 import {compareString} from '@/utils';
-import Banner from "@/layouts/Header/banner";
 
 export const isScreenDarkMode = () => {
   const router = useRouter();
@@ -32,7 +31,7 @@ const Header = () => {
   const [isOpenMenu, setIsOpenMenu] = useState<boolean>(false);
   const { mobileScreen } = useWindowSize();
   const router = useRouter();
-  const { headerHeight, showGetStarted } = useScreenLayout();
+  const { headerHeight } = useScreenLayout();
 
   // const isTokensPage = useMemo(() => {
   //   return isScreenDarkMode();
@@ -85,7 +84,7 @@ const Header = () => {
                 Markets
               </Link>
               <Link
-                href={`${ROUTE_PATH.SWAP}?from_token=${WBTC_ADDRESS}&to_token=${DEV_ADDRESS}`}
+                href={`${ROUTE_PATH.SWAP}?from_token=${WETH_ADDRESS}&to_token=${GM_ADDRESS}`}
                 className={
                   router?.pathname?.includes(ROUTE_PATH.SWAP) ? 'isSelected' : ''
                 }
@@ -129,9 +128,6 @@ const Header = () => {
           </button>
         </div>
       </div>
-      {showGetStarted && (
-        <Banner />
-      )}
     </Wrapper>
   );
 };
