@@ -93,8 +93,8 @@ export const UploadFileContainer = styled.div`
   margin-top: ${px2rem(10)};
   margin-left: auto;
   margin-right: auto;
-  padding: ${px2rem(12)} ${px2rem(24)};
-  background-color: ${({ theme }: { theme: DefaultTheme }) => theme.bg2};
+  padding: ${px2rem(24)} ${px2rem(24)};
+  background-color: #1E1E22;
   display: flex;
   flex-direction: column;
   align-items: center;

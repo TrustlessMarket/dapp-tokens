@@ -1,34 +1,27 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import FiledButton from '@/components/Swap/button/filedButton';
 import FilterButton from '@/components/Swap/filterToken';
-import { ROUTE_PATH } from '@/constants/route-path';
-import { IMPORTED_TOKENS, LIQUID_PAIRS } from '@/constants/storage-key';
-import { NULL_ADDRESS } from '@/constants/url';
+import {ROUTE_PATH} from '@/constants/route-path';
+import {IMPORTED_TOKENS, LIQUID_PAIRS} from '@/constants/storage-key';
+import {NULL_ADDRESS} from '@/constants/url';
 import useGetPair from '@/hooks/contract-operations/swap/useGetPair';
 import useGetReserves from '@/hooks/contract-operations/swap/useReserves';
-import useInfoERC20Token, {
-  IInfoERC20TokenResponse,
-} from '@/hooks/contract-operations/token/useInfoERC20Token';
+import useInfoERC20Token, {IInfoERC20TokenResponse,} from '@/hooks/contract-operations/token/useInfoERC20Token';
 import useSupplyERC20Liquid from '@/hooks/contract-operations/token/useSupplyERC20Liquid';
-import { IToken } from '@/interfaces/token';
-import { getTokens } from '@/services/token-explorer';
-import {
-  camelCaseKeys,
-  compareString,
-  formatCurrency,
-  sortAddressPair,
-} from '@/utils';
-import { isDevelop } from '@/utils/commons';
-import { Box, Flex, Stat, StatHelpText, StatNumber, Text } from '@chakra-ui/react';
+import {IToken} from '@/interfaces/token';
+import {getTokens} from '@/services/token-explorer';
+import {camelCaseKeys, compareString, formatCurrency, sortAddressPair,} from '@/utils';
+import {isDevelop} from '@/utils/commons';
+import {Box, Center, Flex, Stat, StatHelpText, StatNumber, Text} from '@chakra-ui/react';
 import BigNumber from 'bignumber.js';
 import cx from 'classnames';
-import { useRouter } from 'next/router';
-import { useEffect, useRef, useState } from 'react';
-import { Form, useForm } from 'react-final-form';
-import { toast } from 'react-hot-toast';
-import { BsPlus } from 'react-icons/bs';
+import {useRouter} from 'next/router';
+import React, {useEffect, useRef, useState} from 'react';
+import {Form, useForm} from 'react-final-form';
+import {toast} from 'react-hot-toast';
+import {BsPlus} from 'react-icons/bs';
 import Web3 from 'web3';
-import { ScreenType } from '..';
+import {ScreenType} from '..';
 import styles from './styles.module.scss';
 
 interface MakeFormImportPoolProps {
@@ -330,11 +323,8 @@ const MakeFormImportPool: React.FC<MakeFormImportPoolProps> = ({
   return (
     <form onSubmit={onSubmit}>
       <Flex
-        marginBottom={'15px'}
-        marginTop={'15px'}
-        alignItems={'center'}
+        direction={"column"}
         gap={6}
-        justifyContent={'space-between'}
       >
         <FilterButton
           data={tokensList}
@@ -348,14 +338,26 @@ const MakeFormImportPool: React.FC<MakeFormImportPoolProps> = ({
           value={baseToken}
           onExtraSearch={onExtraSearch}
         />
-        <Box
+        <Flex gap={2} justifyContent={"center"}>
+          <Center
+            w={'28px'}
+            h={'28px'}
+            minW={"28px"}
+            minH={"28px"}
+            borderRadius={'50%'}
+            bgColor={"rgba(255, 255, 255, 0.1)"}
+          >
+            <BsPlus fontWeight={'bold'} fontSize={'14px'}/>
+          </Center>
+        </Flex>
+        {/*<Box
           className="btn-transfer"
           p={2}
           border={'1px solid #3385FF'}
           borderRadius={'8px'}
         >
           <BsPlus color="#3385FF" />
-        </Box>
+        </Box>*/}
         <FilterButton
           data={tokensList}
           commonData={tokensList.slice(0, 3)}
