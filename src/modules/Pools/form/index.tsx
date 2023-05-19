@@ -960,7 +960,9 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             Insufficient {quoteToken?.symbol} balance! Consider swapping your{' '}
             {quoteToken?.symbol?.replace('W', '')} to trustless network{' '}
             <Link
-              href={`${TRUSTLESS_BRIDGE}${baseToken?.symbol?.replace('W', '')?.toLowerCase()}`}
+              href={`${TRUSTLESS_BRIDGE}${baseToken?.symbol
+                ?.replace('W', '')
+                ?.toLowerCase()}`}
               target={'_blank'}
               style={{ textDecoration: 'underline' }}
             >
@@ -1062,6 +1064,7 @@ const CreateMarket = ({
         tokenA: baseToken,
         tokenB: quoteToken,
       });
+      console.log('121212121', response);
       const [resReserve, resSupply] = await Promise.all([
         getReserves({
           address: response,
@@ -1102,6 +1105,8 @@ const CreateMarket = ({
           ...extraInfo,
         });
       }
+      console.log('findIndex', response);
+
       localStorage.setItem(LIQUID_PAIRS, JSON.stringify(__pairs));
     } catch (error) {}
   };
@@ -1114,7 +1119,7 @@ const CreateMarket = ({
       quoteAmount,
       isApproveQuoteToken,
       isApproveBaseToken,
-      isPaired
+      isPaired,
     } = values;
     // if (!isApproveQuoteToken || !isApproveBaseToken) {
     //   return;
@@ -1155,7 +1160,7 @@ const CreateMarket = ({
           amountADesired: amount0,
           amountBDesired: amount1,
           amountBMin: '0',
-          isPaired
+          isPaired,
         };
 
         response = await addLiquidity(data);

@@ -110,7 +110,7 @@ const useAddLiquidity: ContractOperationHook<IAddLiquidityParams, boolean> = () 
             account,
             MaxUint256,
             {
-              gasLimit: isPaired ? '400000' : '1000000',
+              gasLimit: isPaired ? '400000' : '500000',
             },
           );
 
@@ -127,7 +127,7 @@ const useAddLiquidity: ContractOperationHook<IAddLiquidityParams, boolean> = () 
           type: 'logs',
           address: account,
           error: JSON.stringify(transaction),
-          message: "gasLimit: '1000000'",
+          message: "gasLimit: '500000'",
         });
 
         store.dispatch(
