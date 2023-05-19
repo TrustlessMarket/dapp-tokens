@@ -472,13 +472,14 @@ const LiquidityContainer = () => {
         labelConfig: {
           fontSize: '12px',
           fontWeight: '500',
-          color: '#000000',
+          color: '#B1B5C3',
           borderTopLeftRadius: '8px',
           borderBottomLeftRadius: '8px',
         },
         config: {
+          color: '#FFFFFF',
           borderBottom: 'none',
-          backgroundColor: '#FFFFFF',
+          backgroundColor: '#1E1E22',
           borderTopLeftRadius: '8px',
           borderBottomLeftRadius: '8px',
         },
@@ -519,11 +520,12 @@ const LiquidityContainer = () => {
         labelConfig: {
           fontSize: '12px',
           fontWeight: '500',
-          color: '#000000',
+          color: '#B1B5C3',
         },
         config: {
+          color: '#FFFFFF',
           borderBottom: 'none',
-          backgroundColor: '#FFFFFF',
+          backgroundColor: '#1E1E22',
         },
         render(row: ILiquidity) {
           const [token0Obj, token1Obj] = sortTokens(row?.token0Obj, row?.token1Obj);
@@ -561,7 +563,7 @@ const LiquidityContainer = () => {
           }
 
           return (
-            <Flex direction={'column'} color={'#000000'} fontSize={px2rem(14)}>
+            <Flex direction={'column'} fontSize={px2rem(14)}>
               {Number(share) > 0 ? (
                 <>
                   <Flex gap={1} alignItems={'center'}>
@@ -610,11 +612,12 @@ const LiquidityContainer = () => {
         labelConfig: {
           fontSize: '12px',
           fontWeight: '500',
-          color: '#000000',
+          color: '#B1B5C3',
         },
         config: {
+          color: '#FFFFFF',
           borderBottom: 'none',
-          backgroundColor: '#FFFFFF',
+          backgroundColor: '#1E1E22',
         },
         render(row: ILiquidity) {
           const [token0Obj, token1Obj] = sortTokens(row?.token0Obj, row?.token1Obj);
@@ -626,7 +629,7 @@ const LiquidityContainer = () => {
             : [row?.reserve1, row?.reserve0];
 
           return (
-            <Flex direction={'column'} color={'#000000'} fontSize={px2rem(14)}>
+            <Flex direction={'column'} fontSize={px2rem(14)}>
               <Flex gap={1} alignItems={'center'}>
                 <Text>{formatCurrency(reserve0).toString()}</Text>
                 <img
@@ -661,11 +664,12 @@ const LiquidityContainer = () => {
         labelConfig: {
           fontSize: '12px',
           fontWeight: '500',
-          color: '#000000',
+          color: '#B1B5C3',
         },
         config: {
+          color: '#FFFFFF',
           borderBottom: 'none',
-          backgroundColor: '#FFFFFF',
+          backgroundColor: '#1E1E22',
         },
         render(row: ILiquidity) {
           return (
@@ -681,11 +685,12 @@ const LiquidityContainer = () => {
         labelConfig: {
           fontSize: '12px',
           fontWeight: '500',
-          color: '#000000',
+          color: '#B1B5C3',
         },
         config: {
+          color: '#FFFFFF',
           borderBottom: 'none',
-          backgroundColor: '#FFFFFF',
+          backgroundColor: '#1E1E22',
         },
         render(row: ILiquidity) {
           return (
@@ -706,8 +711,9 @@ const LiquidityContainer = () => {
           borderBottomRightRadius: '8px',
         },
         config: {
+          color: '#FFFFFF',
           borderBottom: 'none',
-          backgroundColor: '#FFFFFF',
+          backgroundColor: '#1E1E22',
           borderTopRightRadius: '8px',
           borderBottomRightRadius: '8px',
         },

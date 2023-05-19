@@ -38,7 +38,7 @@ export const StyledTokens = styled.div`
     thead {
       tr {
         th {
-          background: #FFFFFF;
+          background: #1E1E22;
           text-transform: uppercase;
           //border-bottom-color: #EDF2F7;
           padding-top: ${px2rem(12)};
