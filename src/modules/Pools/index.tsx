@@ -4,13 +4,13 @@ import HorizontalItem from '@/components/Swap/horizontalItem';
 import BodyContainer from '@/components/Swap/bodyContainer';
 import FiledButton from '@/components/Swap/button/filedButton';
 import ListTable from '@/components/Swap/listTable';
-import { ROUTE_PATH } from '@/constants/route-path';
-import { LIQUID_PAIRS } from '@/constants/storage-key';
+import {ROUTE_PATH} from '@/constants/route-path';
+import {LIQUID_PAIRS} from '@/constants/storage-key';
 import useGetReserves from '@/hooks/contract-operations/swap/useReserves';
 import useSupplyERC20Liquid from '@/hooks/contract-operations/token/useSupplyERC20Liquid';
-import { IToken } from '@/interfaces/token';
-import { camelCaseKeys, compareString, formatCurrency } from '@/utils';
-import { formatAmountBigNumber } from '@/utils/format';
+import {IToken} from '@/interfaces/token';
+import {camelCaseKeys, compareString, formatCurrency} from '@/utils';
+import {formatAmountBigNumber} from '@/utils/format';
 import px2rem from '@/utils/px2rem';
 import {
   Accordion,
@@ -27,31 +27,27 @@ import {
   Text,
 } from '@chakra-ui/react';
 import BigNumber from 'bignumber.js';
-import { useRouter } from 'next/router';
-import React, { useEffect, useMemo, useState } from 'react';
-import { FiPlus } from 'react-icons/fi';
-import { IoArrowBackOutline } from 'react-icons/io5';
-import { StyledLiquidNote, StyledTokens, UploadFileContainer } from './Pools.styled';
+import {useRouter} from 'next/router';
+import React, {useEffect, useMemo, useState} from 'react';
+import {FiPlus} from 'react-icons/fi';
+import {IoArrowBackOutline} from 'react-icons/io5';
+import {StyledLiquidNote, StyledTokens, UploadFileContainer} from './Pools.styled';
 import CreateMarket from './form';
 import ImportPool from './form/importPool';
 import styles from './styles.module.scss';
 import SectionContainer from '@/components/Swap/sectionContainer';
 import Spinner from 'react-bootstrap/Spinner';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import { debounce } from 'lodash';
-import { getListLiquidity } from '@/services/swap';
-import { ILiquidity } from '@/interfaces/liquidity';
-import { AiOutlineMinusCircle, AiOutlinePlusCircle } from 'react-icons/ai';
-import { BsTwitter } from 'react-icons/bs';
-import {
-  CDN_URL,
-  DEFAULT_FROM_ADDRESS,
-  DEFAULT_TO_ADDRESS,
-  TRUSTLESS_MARKET_URL,
-} from '@/configs';
-import { USDC_ADDRESS, WBTC_ADDRESS, WETH_ADDRESS } from '@/constants/common';
-import { useWindowSize } from '@trustless-computer/dapp-core';
+import {debounce} from 'lodash';
+import {getListLiquidity} from '@/services/swap';
+import {ILiquidity} from '@/interfaces/liquidity';
+import {AiOutlineMinusCircle, AiOutlinePlusCircle} from 'react-icons/ai';
+import {BsTwitter} from 'react-icons/bs';
+import {CDN_URL, DEFAULT_FROM_ADDRESS, DEFAULT_TO_ADDRESS, TRUSTLESS_MARKET_URL,} from '@/configs';
+import {USDC_ADDRESS, WBTC_ADDRESS, WETH_ADDRESS} from '@/constants/common';
+import {useWindowSize} from '@trustless-computer/dapp-core';
 import InfoTooltip from '@/components/Swap/infoTooltip';
+import {TbDiscount2} from "react-icons/tb";
 
 export enum ScreenType {
   default = 'default',
@@ -837,12 +833,27 @@ const LiquidityContainer = () => {
       <SectionContainer>
         <StyledTokens>
           <StyledLiquidNote>
-            <Text className="title">Liquidity provider rewards</Text>
-            <Text className="desc">
-              Liquidity providers earn a 1% fee on all trades proportional to their
-              share of the pool. Fees are added to the pool, accrue in real time and
-              can be claimed by withdrawing your liquidity.
-            </Text>
+            <Flex gap={4} alignItems={"flex-start"}>
+              <Center
+                w={'32px'}
+                h={'32px'}
+                minW={"32px"}
+                minH={"32px"}
+                borderRadius={'50%'}
+                bgColor={"rgba(0, 170, 108, 0.2)"}
+                cursor={'pointer'}
+              >
+                <TbDiscount2 color="#00AA6C" fontSize={"20px"}/>
+              </Center>
+              <Flex direction={"column"}>
+                <Text className="title">Liquidity provider rewards</Text>
+                <Text className="desc">
+                  Liquidity providers earn a 1% fee on all trades proportional to their
+                  share of the pool. Fees are added to the pool, accrue in real time and
+                  can be claimed by withdrawing your liquidity.
+                </Text>
+              </Flex>
+            </Flex>
           </StyledLiquidNote>
           {renderScreen()}
         </StyledTokens>
