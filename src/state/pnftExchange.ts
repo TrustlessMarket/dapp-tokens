@@ -10,6 +10,7 @@ interface NftyLendState {
   slippage: number;
   loadingRealtime: boolean;
   currentTransaction: WalletTransactionData | undefined;
+  showBanner: boolean;
 }
 
 const initialState: NftyLendState = {
@@ -18,6 +19,7 @@ const initialState: NftyLendState = {
   slippage: 50,
   loadingRealtime: false,
   currentTransaction: undefined,
+  showBanner: true,
 };
 
 const slice = createSlice({
@@ -40,6 +42,9 @@ const slice = createSlice({
     updateCurrentTransaction: (state, action) => {
       state.currentTransaction = action.payload;
     },
+    updateShowBanner: (state, action) => {
+      state.showBanner = action.payload;
+    },
   },
 });
 
@@ -49,6 +54,7 @@ export const {
   updateSlippage,
   updateLoadingRealtime,
   updateCurrentTransaction,
+  updateShowBanner
 } = slice.actions;
 
 export const selectPnftExchange = (state: RootState) => state.pnftExchange;

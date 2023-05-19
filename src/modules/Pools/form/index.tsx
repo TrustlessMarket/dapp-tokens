@@ -90,6 +90,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { default as Web3, default as web3 } from 'web3';
 import { ScreenType } from '..';
 import styles from './styles.module.scss';
+import { closeModal, openModal } from '@/state/modal';
+import ModalConfirmApprove from '@/components/ModalConfirmApprove';
 
 const LIMIT_PAGE = 50;
 
@@ -407,8 +409,6 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         }),
       );
     } catch (error) {
-      console.log('error', error);
-
       throw error;
     } finally {
     }
@@ -538,6 +538,31 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     return required > 0 && new BigNumber(required).minus(amount).toNumber() >= 0;
   };
 
+  const onShowModalApprove = () => {
+    const id = 'modal';
+    const onClose = () => dispatch(closeModal({ id }));
+    dispatch(
+      openModal({
+        id,
+        theme: 'dark',
+        title: !isScreenRemove
+          ? `APPROVE USE OF ${
+              !isApproveBaseToken ? baseToken?.symbol : quoteToken?.symbol
+            }`
+          : `APPROVE USE OF THIS LIQUIDITY`,
+        className: styles.modalConfirmApprove,
+        modalProps: {
+          centered: true,
+          // size: mobileScreen ? 'full' : 'xl',
+          zIndex: 9999999,
+        },
+        render: () => (
+          <ModalConfirmApprove onApprove={onApprove} onClose={onClose} />
+        ),
+      }),
+    );
+  };
+
   const onApprove = async () => {
     try {
       setLoading(true);
@@ -577,15 +602,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         error: JSON.stringify(err),
         message: message,
       });
-      dispatch(
-        updateCurrentTransaction({
-          status: TransactionStatus.error,
-          id: transactionType.createPoolApprove,
-          infoTexts: {
-            error: getMessageError(err, {}).title,
-          },
-        }),
-      );
+      toastError(showError, err, { address: account });
     } finally {
       setLoading(false);
     }
@@ -966,7 +983,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             isDisabled={loading}
             loadingText="Processing"
             btnSize={'h'}
-            onClick={onApprove}
+            onClick={onShowModalApprove}
             type="button"
             processInfo={{
               id: transactionType.createPoolApprove,
@@ -989,7 +1006,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             containerConfig={{ flex: 1 }}
             loadingText={submitting ? 'Processing' : ' '}
             processInfo={{
-              id: transactionType.createPool,
+              id: transactionType.createPoolApprove,
             }}
             style={{ backgroundColor: renderContentTitle().btnBgColor }}
           >
@@ -1102,7 +1119,7 @@ const CreateMarket = ({
       dispatch(
         updateCurrentTransaction({
           status: TransactionStatus.info,
-          id: transactionType.createPool,
+          id: transactionType.createPoolApprove,
         }),
       );
 
@@ -1116,11 +1133,6 @@ const CreateMarket = ({
       let response: any;
 
       if (isRemove) {
-        console.log(
-          'values?.liquidValue',
-          web3.utils.fromWei(new BigNumber(values?.liquidValue).toFixed()),
-        );
-
         const data = {
           tokenA: token0?.address,
           tokenB: token1?.address,
@@ -1131,9 +1143,6 @@ const CreateMarket = ({
 
         response = await removeLiquidity(data);
       } else {
-        console.log('amount0', amount0);
-        console.log('amount1', new BigNumber(amount1).toString());
-
         const data = {
           tokenA: token0?.address,
           tokenB: token1?.address,
@@ -1155,7 +1164,7 @@ const CreateMarket = ({
       dispatch(
         updateCurrentTransaction({
           status: TransactionStatus.success,
-          id: transactionType.createPool,
+          id: transactionType.createPoolApprove,
           hash: response.hash,
           infoTexts: {
             success: 'Pool has been created successfully.',

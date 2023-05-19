@@ -148,3 +148,11 @@
     }
   }
 }
+
+.modalConfirmApprove {
+  :global {
+    .modal-header-wrap {
+      margin-bottom: 0px;
+    }
+  }
+}

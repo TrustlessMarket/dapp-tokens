@@ -8,7 +8,8 @@ export const TC_EXPLORER: string = process.env.NEXT_PUBLIC_TC_EXPLORER!;
 export const CDN_URL: string = process.env.NEXT_PUBLIC_CDN_URL!;
 export const API_FAUCET: string = process.env.NEXT_PUBLIC_API_FAUCET!;
 export const WALLET_URL: string = process.env.NEXT_PUBLIC_WALLET_URL!;
-export const TRUSTLESS_MARKET_URL : string = process.env.NEXT_PUBLIC_TRUSTLESS_MARKET_URL!;
+export const TRUSTLESS_MARKET_URL: string =
+  process.env.NEXT_PUBLIC_TRUSTLESS_MARKET_URL!;
 
 // Contract configs
 export const ARTIFACT_CONTRACT: string = process.env.NEXT_PUBLIC_ARTIFACT_CONTRACT!;
@@ -20,6 +21,11 @@ export const TM_ADDRESS: string = process.env.NEXT_PUBLIC_TM_ADDRESS!;
 
 export const TC_WEB_URL: string = process.env.NEXT_PUBLIC_TC_WEB_URL!;
 export const TRANSFER_TX_SIZE = 1000!;
+
+// Token configs
+
+export const DEFAULT_FROM_ADDRESS = process.env.NEXT_PUBLIC_DEFAULT_FROM_ADDRESS!;
+export const DEFAULT_TO_ADDRESS = process.env.NEXT_PUBLIC_DEFAULT_ADDRESS!;
 
 export const MEMPOOL_URL = 'https://mempool.space';
 /* eslint-enable @typescript-eslint/no-non-null-assertion */
