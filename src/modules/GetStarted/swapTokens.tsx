@@ -65,7 +65,7 @@ const STEPS = [
         <Box>
           <UnorderedList>
             <ListItem>
-              Go to <Link href={"https://trustlessbridge.io/eth"} target={"_blank"} style={{textDecoration: 'underline'}}>https://trustlessbridge.io/</Link>, and connect your wallet.
+              Go to <Link href={"https://trustlessbridge.io"} target={"_blank"} style={{textDecoration: 'underline'}}>https://trustlessbridge.io/</Link>, and connect your wallet.
               <img
                 alt="swap_step1_1"
                 className={styles.introImg}
