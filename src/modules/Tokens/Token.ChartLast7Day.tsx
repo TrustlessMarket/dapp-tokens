@@ -143,6 +143,9 @@ const TokenChartLast7Day = ({ token }: { token: IToken }) => {
         });
         setData(_data);
         localStorage.setItem(`cache_chart_${token.address}`, JSON.stringify(_data));
+      } else {
+        setData([]);
+        localStorage.setItem(`cache_chart_${token.address}`, JSON.stringify([]));
       }
     } catch (error) {}
   };
