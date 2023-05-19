@@ -75,7 +75,7 @@ const useSwapERC20Token: ContractOperationHook<
             address,
             MaxUint256,
             {
-              gasLimit: '300000',
+              gasLimit: '250000',
             },
           );
 
@@ -83,7 +83,7 @@ const useSwapERC20Token: ContractOperationHook<
           type: 'logs',
           address: account,
           error: JSON.stringify(transaction),
-          message: "gasLimit: '300000'",
+          message: "gasLimit: '250000'",
         });
 
         // TC_SDK.signTransaction({

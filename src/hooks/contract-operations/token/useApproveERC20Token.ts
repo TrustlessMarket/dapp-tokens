@@ -39,14 +39,14 @@ const useApproveERC20Token: ContractOperationHook<
         const transaction = await contract
           .connect(provider.getSigner())
           .approve(address, MaxUint256, {
-            gasLimit: '100000',
+            gasLimit: '150000',
           });
 
         logErrorToServer({
           type: 'logs',
           address: account,
           error: JSON.stringify(transaction),
-          message: "gasLimit: '100000'",
+          message: "gasLimit: '150000'",
         });
 
         store.dispatch(

@@ -106,7 +106,7 @@ const useRemoveLiquidity: ContractOperationHook<
             account,
             MaxUint256,
             {
-              gasLimit: '300000',
+              gasLimit: '250000',
             },
           );
 
@@ -114,7 +114,7 @@ const useRemoveLiquidity: ContractOperationHook<
           type: 'logs',
           address: account,
           error: JSON.stringify(transaction),
-          message: "gasLimit: '300000'",
+          message: "gasLimit: '250000'",
         });
 
         store.dispatch(

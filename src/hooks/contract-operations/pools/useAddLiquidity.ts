@@ -110,7 +110,7 @@ const useAddLiquidity: ContractOperationHook<IAddLiquidityParams, boolean> = () 
             account,
             MaxUint256,
             {
-              gasLimit: isPaired ? '400000' : '500000',
+              gasLimit: isPaired ? '300000' : '800000',
             },
           );
 
