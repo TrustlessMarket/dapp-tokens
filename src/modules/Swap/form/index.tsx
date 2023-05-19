@@ -12,10 +12,10 @@ import WrapperConnected from '@/components/WrapperConnected';
 import {CDN_URL, UNIV2_ROUTER_ADDRESS} from '@/configs';
 import {
   BRIDGE_SUPPORT_TOKEN,
-  DEV_ADDRESS,
+  DEV_ADDRESS, GM_ADDRESS,
   TRUSTLESS_BRIDGE,
   TRUSTLESS_FAUCET,
-  WBTC_ADDRESS,
+  WBTC_ADDRESS, WETH_ADDRESS,
 } from '@/constants/common';
 import { toastError } from '@/constants/error';
 import { AssetsContext } from '@/contexts/assets-context';
@@ -120,7 +120,8 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   // console.log('baseReserve', baseReserve);
   // console.log('quoteReserve', quoteReserve);
   // console.log('quoteTokensList', quoteTokensList);
-  // console.log('pairAddress', pairAddress);
+  // console.log('reserveInfos', reserveInfos);
+  // console.log('swapRoutes', swapRoutes);
   // console.log('======');
 
   const { values } = useFormState();
@@ -615,6 +616,65 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     });
   };
 
+  const calculateQuoteAmountMultiRoute = (
+    {
+      amount,
+      reserveInfos,
+      tokenIn,
+      tokenOut,
+      swapRoutes,
+      listPair
+    }: {
+      amount: any;
+      reserveInfos: any;
+      tokenIn: any;
+      tokenOut: any;
+      swapRoutes: any;
+      listPair: [];
+    }
+  ) => {
+    let _amount = amount;
+    for (let index = 0; index < listPair?.length; index++) {
+      const {baseToken, quoteToken} = listPair[index];
+      const [token0, token1] = sortAddressPair(baseToken, quoteToken);
+
+      const {_reserveIn, _reserveOut} = compareString(
+        token0?.address,
+        baseToken?.address,
+      )
+        ? {
+          _reserveIn: reserveInfos[index]?._reserve0,
+          _reserveOut: reserveInfos[index]?._reserve1,
+        }
+        : {
+          _reserveIn: reserveInfos[index]?._reserve1,
+          _reserveOut: reserveInfos[index]?._reserve0,
+        };
+
+      const amountIn = new BigNumber(_amount);
+      const reserveIn = new BigNumber(
+        Web3.utils.fromWei(Web3.utils.toBN(_reserveIn || 0), 'ether').toString(),
+      );
+      const reserveOut = new BigNumber(
+        Web3.utils
+          .fromWei(Web3.utils.toBN(_reserveOut || 0), 'ether')
+          .toString(),
+      );
+      if (amountIn.lte(0) || reserveIn.lte(0) || reserveOut.lte(0)) {
+        return;
+      }
+
+      _amount = getQuoteAmountOut(amountIn, reserveIn, reserveOut);
+    }
+
+    const rate = new BigNumber(amount)
+      .div(_amount)
+      .decimalPlaces(tokenIn?.decimal || 18);
+
+    setExchangeRate(rate.toString());
+    change('quoteAmount', _amount.toFixed());
+  }
+
   const handleBaseAmountChange = ({
     amount,
     reserveInfos,
@@ -643,50 +703,36 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         swapRoutes?.length > 1
       ) {
         const listPair = [
-          { baseToken: tokenIn, quoteToken: { address: WBTC_ADDRESS } },
-          { baseToken: { address: WBTC_ADDRESS }, quoteToken: tokenOut },
+          {baseToken: tokenIn, quoteToken: {address: WBTC_ADDRESS}},
+          {baseToken: {address: WBTC_ADDRESS}, quoteToken: tokenOut},
         ];
 
-        let _amount = amount;
-        for (let index = 0; index < listPair?.length; index++) {
-          const { baseToken, quoteToken } = listPair[index];
-          const [token0, token1] = sortAddressPair(baseToken, quoteToken);
+        calculateQuoteAmountMultiRoute({
+          amount,
+          reserveInfos,
+          tokenIn,
+          tokenOut,
+          swapRoutes,
+          listPair
+        });
+      } else if (
+        ((compareString(tokenIn?.address, WBTC_ADDRESS) && compareString(tokenOut?.address, GM_ADDRESS))
+          || (compareString(tokenIn?.address, GM_ADDRESS) && compareString(tokenOut?.address, WBTC_ADDRESS))
+        ) && swapRoutes?.length > 1
+      ) {
+        const listPair = [
+          {baseToken: tokenIn, quoteToken: {address: WETH_ADDRESS}},
+          {baseToken: {address: WETH_ADDRESS}, quoteToken: tokenOut},
+        ];
 
-          const { _reserveIn, _reserveOut } = compareString(
-            token0?.address,
-            baseToken?.address,
-          )
-            ? {
-                _reserveIn: reserveInfos[index]?._reserve0,
-                _reserveOut: reserveInfos[index]?._reserve1,
-              }
-            : {
-                _reserveIn: reserveInfos[index]?._reserve1,
-                _reserveOut: reserveInfos[index]?._reserve0,
-              };
-
-          const amountIn = new BigNumber(_amount);
-          const reserveIn = new BigNumber(
-            Web3.utils.fromWei(Web3.utils.toBN(_reserveIn || 0), 'ether').toString(),
-          );
-          const reserveOut = new BigNumber(
-            Web3.utils
-              .fromWei(Web3.utils.toBN(_reserveOut || 0), 'ether')
-              .toString(),
-          );
-          if (amountIn.lte(0) || reserveIn.lte(0) || reserveOut.lte(0)) {
-            return;
-          }
-
-          _amount = getQuoteAmountOut(amountIn, reserveIn, reserveOut);
-        }
-
-        const rate = new BigNumber(amount)
-          .div(_amount)
-          .decimalPlaces(tokenIn?.decimal || 18);
-
-        setExchangeRate(rate.toString());
-        change('quoteAmount', _amount.toFixed());
+        calculateQuoteAmountMultiRoute({
+          amount,
+          reserveInfos,
+          tokenIn,
+          tokenOut,
+          swapRoutes,
+          listPair
+        });
       } else {
         const [token0, token1] = sortAddressPair(tokenIn, tokenOut);
 
@@ -954,13 +1000,26 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           </Flex>
           {swapRoutes?.length > 1 && (
             <>
-              <img
-                // width={25}
-                // height={25}
-                src={'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png'}
-                alt={'wbtc-icon'}
-                className={'avatar'}
-              />
+              {
+                (compareString(baseToken?.address, WBTC_ADDRESS) && compareString(quoteToken?.address, GM_ADDRESS))
+                || (compareString(baseToken?.address, GM_ADDRESS) && compareString(quoteToken?.address, WBTC_ADDRESS)) ? (
+                  <img
+                    // width={25}
+                    // height={25}
+                    src={'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png'}
+                    alt={'eth-icon'}
+                    className={'avatar'}
+                  />
+                ) : (
+                  <img
+                    // width={25}
+                    // height={25}
+                    src={'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png'}
+                    alt={'wbtc-icon'}
+                    className={'avatar'}
+                  />
+                )
+              }
               <Flex flex={1} alignItems={'center'}>
                 <Box className={'dot-line'}></Box>
               </Flex>
@@ -1336,7 +1395,10 @@ const TradingForm = () => {
         !compareString(quoteToken?.address, WBTC_ADDRESS) &&
         swapRoutes?.length > 1
           ? [baseToken.address, WBTC_ADDRESS, quoteToken.address]
-          : [baseToken.address, quoteToken.address];
+          : ((compareString(baseToken?.address, WBTC_ADDRESS) && compareString(quoteToken?.address, GM_ADDRESS))
+          || (compareString(baseToken?.address, GM_ADDRESS) && compareString(quoteToken?.address, WBTC_ADDRESS))
+        ) && swapRoutes?.length > 1 ? [baseToken.address, WETH_ADDRESS, quoteToken.address]
+            : [baseToken.address, quoteToken.address];
 
       const data = {
         addresses: addresses,
