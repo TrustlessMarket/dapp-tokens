@@ -1204,11 +1204,11 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         baseToken &&
         BRIDGE_SUPPORT_TOKEN.includes(baseToken?.symbol) &&
         new BigNumber(baseBalance || 0).lte(0) && (
-          <Text fontSize="md" color="brand.warning.400" textAlign={'left'}>
+          <Text fontSize="md" color="brand.warning.400" textAlign={'left'} mt={2}>
             Insufficient {baseToken?.symbol} balance! Consider swapping your{' '}
             {baseToken?.symbol?.replace('W', '')} to trustless network{' '}
             <Link
-              href={TRUSTLESS_BRIDGE}
+              href={`${TRUSTLESS_BRIDGE}${baseToken?.symbol?.replace('W', '')?.toLowerCase()}`}
               target={'_blank'}
               style={{ textDecoration: 'underline' }}
             >
