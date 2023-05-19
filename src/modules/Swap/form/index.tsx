@@ -618,7 +618,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       tokenIn: any;
       tokenOut: any;
       swapRoutes: any;
-      listPair: [];
+      listPair: any[];
     }
   ) => {
     let _amount = amount;
