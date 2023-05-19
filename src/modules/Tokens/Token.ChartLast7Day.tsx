@@ -106,7 +106,7 @@ const TokenChartLast7Day = ({ token }: { token: IToken }) => {
 
   useEffect(() => {
     getData();
-  }, [JSON.stringify(token)]);
+  }, [token?.address]);
 
   const getData = async () => {
     try {
