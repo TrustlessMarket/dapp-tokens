@@ -16,7 +16,7 @@ interface NftyLendState {
 const initialState: NftyLendState = {
   needReload: 0,
   reloadRealtime: 0,
-  slippage: 50,
+  slippage: 100,
   loadingRealtime: false,
   currentTransaction: undefined,
   showBanner: true,
