@@ -1277,7 +1277,7 @@ const TradingForm = () => {
                 alt="info"
                 style={{width: 25, height: 25, minWidth: 25, minHeight: 25}}
               />
-              <Text fontSize="sm" color="#B1B5C3" textAlign={'left'} maxW={"500px"}>
+              <Text fontSize="sm" color="brand.warning.400" textAlign={'left'} maxW={"500px"}>
                 {
                   slippage === 100
                     ? `Your current slippage is set at 100%. Trade at your own risk.`
