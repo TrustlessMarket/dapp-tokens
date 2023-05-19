@@ -9,7 +9,7 @@
   :global .chakra-input__left-element {
     margin: 0;
     width: unset;
-    border-right: 1px solid #5b5b5b;
+    border-right: 1px solid #353945;
   }
 
   :global .chakra-input__right-element {
@@ -61,6 +61,7 @@
 .inputAmount {
   color: #FFFFFF !important;
   font-size: 16px !important;
+  height: 100% !important;
 
   &:disabled {
     cursor: not-allowed;
