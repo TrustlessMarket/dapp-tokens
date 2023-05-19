@@ -75,7 +75,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import Slider from 'rc-slider';
 import 'rc-slider/assets/index.css';
-import {
+import React, {
   useCallback,
   useContext,
   useEffect,
@@ -791,15 +791,18 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         label={' '}
         rightLabel={
           !isEmpty(baseToken) && (
-            <Flex gap={1} fontSize={px2rem(16)}>
-              <Text>
+            <Flex gap={2} fontSize={px2rem(14)} color={"#FFFFFF"}>
+              <Flex gap={1} alignItems={"center"}>
                 Balance: {formatCurrency(baseBalance)} {baseToken?.symbol}
-              </Text>
+              </Flex>
               {!isScreenRemove && (
                 <Text
                   cursor={'pointer'}
                   color={'#3385FF'}
                   onClick={handleChangeMaxBaseAmount}
+                  bgColor={"rgba(51, 133, 255, 0.2)"}
+                  borderRadius={"4px"}
+                  padding={"1px 12px"}
                 >
                   MAX
                 </Text>
@@ -854,15 +857,18 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         label={' '}
         rightLabel={
           !isEmpty(quoteToken) && (
-            <Flex gap={1} fontSize={px2rem(16)}>
-              <Text>
+            <Flex gap={2} fontSize={px2rem(14)} color={"#FFFFFF"}>
+              <Flex gap={1} alignItems={"center"}>
                 Balance: {formatCurrency(quoteBalance)} {quoteToken?.symbol}
-              </Text>
+              </Flex>
               {!isScreenRemove && (
                 <Text
                   cursor={'pointer'}
                   color={'#3385FF'}
                   onClick={handleChangeMaxQuoteAmount}
+                  bgColor={"rgba(51, 133, 255, 0.2)"}
+                  borderRadius={"4px"}
+                  padding={"1px 12px"}
                 >
                   MAX
                 </Text>
