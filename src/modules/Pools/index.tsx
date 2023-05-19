@@ -30,6 +30,7 @@ import BigNumber from 'bignumber.js';
 import {useRouter} from 'next/router';
 import React, {useEffect, useMemo, useState} from 'react';
 import {FiPlus} from 'react-icons/fi';
+import {BsDownload, BsTwitter} from 'react-icons/bs';
 import {IoArrowBackOutline} from 'react-icons/io5';
 import {StyledLiquidNote, StyledTokens, UploadFileContainer} from './Pools.styled';
 import CreateMarket from './form';
@@ -42,7 +43,6 @@ import {debounce} from 'lodash';
 import {getListLiquidity} from '@/services/swap';
 import {ILiquidity} from '@/interfaces/liquidity';
 import {AiOutlineMinusCircle, AiOutlinePlusCircle} from 'react-icons/ai';
-import {BsTwitter} from 'react-icons/bs';
 import {CDN_URL, DEFAULT_FROM_ADDRESS, DEFAULT_TO_ADDRESS, TRUSTLESS_MARKET_URL,} from '@/configs';
 import {USDC_ADDRESS, WBTC_ADDRESS, WETH_ADDRESS} from '@/constants/common';
 import {useWindowSize} from '@trustless-computer/dapp-core';
@@ -348,31 +348,53 @@ const LiquidityContainer = () => {
                   Create a Pool
                 </FiledButton> */}
                 <FiledButton
-                  style={{ borderColor: 'white', color: 'white' }}
-                  _hover={{
-                    backgroundColor: 'orange',
-                  }}
-                  variant={'outline'}
-                  // onClick={() => handleChooseAction(true)}
-                  fontSize={`${px2rem(16)} !important`}
+                  border={"1px solid rgba(255, 255, 255, 0.1)"}
+                  bgColor={"#0F0F0F !important"}
+                  borderRadius={"100px !important"}
+                  fontSize={`${px2rem(20)} !important`}
+                  h={"52px !important"}
                   onClick={() =>
                     router.replace(`${ROUTE_PATH.POOLS}?type=${ScreenType.add_pool}`)
                   }
                 >
-                  Import Pool
+                  <Flex gap={2} alignItems={"center"}>
+                    <Center
+                      w={'28px'}
+                      h={'28px'}
+                      minW={"28px"}
+                      minH={"28px"}
+                      borderRadius={'50%'}
+                      bgColor={"rgba(255, 255, 255, 0.1)"}
+                    >
+                      <BsDownload fontWeight={'bold'} fontSize={'14px'}/>
+                    </Center>
+                    Import Pool
+                  </Flex>
                 </FiledButton>
                 <FiledButton
-                  style={{ background: 'orange' }}
-                  // onClick={() => handleChooseAction(true)}
-                  fontSize={`${px2rem(16)} !important`}
+                  bgColor={"#3385FF !important"}
+                  borderRadius={"100px !important"}
+                  fontSize={`${px2rem(20)} !important`}
+                  h={"52px !important"}
                   onClick={() =>
                     router.replace(
                       `${ROUTE_PATH.POOLS}?type=${ScreenType.add_liquid}&f=${DEFAULT_FROM_TOKEN_ADDRESS}&t=${DEFAULT_TO_TOKEN_ADDRESS}`,
                     )
                   }
                 >
-                  <FiPlus fontWeight={'bold'} fontSize={'20px'} />
-                  Add liquidity
+                  <Flex gap={2} alignItems={"center"}>
+                    <Center
+                      w={'28px'}
+                      h={'28px'}
+                      minW={"28px"}
+                      minH={"28px"}
+                      borderRadius={'50%'}
+                      bgColor={"#FFFFFF"}
+                    >
+                      <FiPlus fontWeight={'bold'} fontSize={'18px'} color={"#3385FF"}/>
+                    </Center>
+                    Add liquidity
+                  </Flex>
                 </FiledButton>
               </Flex>
             </Flex>

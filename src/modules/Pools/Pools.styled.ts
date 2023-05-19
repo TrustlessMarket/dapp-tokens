@@ -148,7 +148,7 @@ export const StyledLiquidNote = styled(Box)`
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 12px;
   position: relative;
-  margin-bottom: ${px2rem(24)};
+  margin-bottom: ${px2rem(40)};
   .title {
     font-size: ${px2rem(20)};
     color: #00AA6C;
