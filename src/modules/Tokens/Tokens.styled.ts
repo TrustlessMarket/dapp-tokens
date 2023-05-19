@@ -4,7 +4,6 @@ import styled from 'styled-components';
 export const StyledTokens = styled.div`
   padding-top: ${px2rem(48)};
   padding-bottom: ${px2rem(48)};
-  background-color: #0F0F0F;
   
   .avatar {
     object-fit: cover;

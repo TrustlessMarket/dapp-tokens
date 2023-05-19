@@ -48,12 +48,12 @@ const SlippageSettingButton = () => {
             h={'40px'}
             maxH={'40px'}
             borderRadius={'50%'}
-            bg={'#F4F5F6 !important'}
+            bg={'#353945 !important'}
             p={0}
           >
             <InfoTooltip label={"Slippage Setting"}>
               <Center>
-                <BsGearFill color="#000000" />
+                <BsGearFill color="#FFFFFF" />
               </Center>
             </InfoTooltip>
           </Button>

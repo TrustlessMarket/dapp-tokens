@@ -35,6 +35,7 @@ import {DEV_ADDRESS, WBTC_ADDRESS} from "@/constants/common";
 import {Field, Form, useFormState} from "react-final-form";
 import useDebounce from "@/hooks/useDebounce";
 import FieldText from "@/components/Swap/form/fieldText";
+import styles from './styles.module.scss';
 
 const LIMIT_PAGE = 100;
 
@@ -514,7 +515,7 @@ const ListTokenForm = () => {
   };
 
   return (
-    <BodyContainer>
+    <BodyContainer className={styles.wrapper}>
       <Form onSubmit={handleSubmit} initialValues={{}}>
         {({ handleSubmit }) => (
           <MakeFormSwap
