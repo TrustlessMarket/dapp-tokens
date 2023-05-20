@@ -66,6 +66,8 @@ const useSwapERC20Token: ContractOperationHook<
           throw Error(ERROR_CODE.PENDING);
         }
 
+        const gasLimit = 50000 + addresses.length * 100000;
+
         const transaction = await contract
           .connect(provider.getSigner())
           .swapExactTokensForTokens(
@@ -75,7 +77,7 @@ const useSwapERC20Token: ContractOperationHook<
             address,
             MaxUint256,
             {
-              gasLimit: '250000',
+              gasLimit,
             },
           );
 
@@ -83,7 +85,7 @@ const useSwapERC20Token: ContractOperationHook<
           type: 'logs',
           address: account,
           error: JSON.stringify(transaction),
-          message: "gasLimit: '250000'",
+          message: `gasLimit: '${gasLimit}'`,
         });
 
         // TC_SDK.signTransaction({
