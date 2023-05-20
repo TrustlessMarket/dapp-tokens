@@ -2,6 +2,7 @@ import UniswapV2RouterJson from '@/abis/UniswapV2Router.json';
 import { transactionType } from '@/components/Swap/alertInfoProcessing/types';
 import { TRANSFER_TX_SIZE, UNIV2_ROUTER_ADDRESS } from '@/configs';
 import { ERROR_CODE } from '@/constants/error';
+import { CONTRACT_METHOD_IDS } from '@/constants/methodId';
 import { MaxUint256 } from '@/constants/url';
 import { AssetsContext } from '@/contexts/assets-context';
 import { TransactionEventType } from '@/enums/transaction';
@@ -11,11 +12,10 @@ import { TransactionStatus } from '@/interfaces/walletTransaction';
 import { logErrorToServer, scanTrx } from '@/services/swap';
 import store from '@/state';
 import { updateCurrentTransaction } from '@/state/pnftExchange';
-import { compareString, getContract } from '@/utils';
+import { compareString, getContract, getDefaultGasPrice } from '@/utils';
 import { useWeb3React } from '@web3-react/core';
 import { useCallback, useContext } from 'react';
 import Web3 from 'web3';
-import { CONTRACT_METHOD_IDS } from '@/constants/methodId';
 
 export interface ISwapERC20TokenParams {
   addresses: string[];
@@ -78,6 +78,7 @@ const useSwapERC20Token: ContractOperationHook<
             MaxUint256,
             {
               gasLimit,
+              gasPrice: getDefaultGasPrice(),
             },
           );
 

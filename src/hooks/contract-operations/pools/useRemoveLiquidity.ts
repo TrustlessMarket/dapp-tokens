@@ -11,7 +11,7 @@ import { TransactionStatus } from '@/interfaces/walletTransaction';
 import { logErrorToServer, scanTrx } from '@/services/swap';
 import store from '@/state';
 import { updateCurrentTransaction } from '@/state/pnftExchange';
-import { compareString, getContract } from '@/utils';
+import { compareString, getContract, getDefaultGasPrice } from '@/utils';
 import { useWeb3React } from '@web3-react/core';
 import { useCallback, useContext } from 'react';
 import Web3 from 'web3';
@@ -107,6 +107,7 @@ const useRemoveLiquidity: ContractOperationHook<
             MaxUint256,
             {
               gasLimit: '250000',
+              gasPrice: getDefaultGasPrice(),
             },
           );
 

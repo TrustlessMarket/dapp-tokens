@@ -8,7 +8,7 @@ import { TransactionStatus } from '@/interfaces/walletTransaction';
 import { logErrorToServer } from '@/services/swap';
 import store from '@/state';
 import { updateCurrentTransaction } from '@/state/pnftExchange';
-import { getContract } from '@/utils';
+import { getContract, getDefaultGasPrice } from '@/utils';
 import { useWeb3React } from '@web3-react/core';
 import { useCallback, useContext } from 'react';
 
@@ -40,6 +40,7 @@ const useApproveERC20Token: ContractOperationHook<
           .connect(provider.getSigner())
           .approve(address, MaxUint256, {
             gasLimit: '150000',
+            gasPrice: getDefaultGasPrice(),
           });
 
         logErrorToServer({

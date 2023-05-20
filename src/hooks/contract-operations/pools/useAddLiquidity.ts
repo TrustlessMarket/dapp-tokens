@@ -9,7 +9,7 @@ import { TransactionStatus } from '@/interfaces/walletTransaction';
 import { logErrorToServer, scanTrx } from '@/services/swap';
 import store from '@/state';
 import { updateCurrentTransaction } from '@/state/pnftExchange';
-import { compareString, getContract } from '@/utils';
+import { compareString, getContract, getDefaultGasPrice } from '@/utils';
 import { useWeb3React } from '@web3-react/core';
 import { useCallback, useContext } from 'react';
 import Web3 from 'web3';
@@ -111,6 +111,7 @@ const useAddLiquidity: ContractOperationHook<IAddLiquidityParams, boolean> = () 
             MaxUint256,
             {
               gasLimit: isPaired ? '300000' : '800000',
+              gasPrice: getDefaultGasPrice(),
             },
           );
 
