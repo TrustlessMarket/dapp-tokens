@@ -13,6 +13,7 @@ import {GENERATIVE_DISCORD, GM_ADDRESS, TRUSTLESS_COMPUTER, WETH_ADDRESS} from '
 import {useScreenLayout} from '@/hooks/useScreenLayout';
 import {defaultProvider} from '@/contexts/screen-context';
 import {compareString} from '@/utils';
+import {Flex, Link as LinkText, Text} from "@chakra-ui/react";
 
 export const isScreenDarkMode = () => {
   const router = useRouter();
@@ -31,7 +32,7 @@ const Header = () => {
   const [isOpenMenu, setIsOpenMenu] = useState<boolean>(false);
   const { mobileScreen } = useWindowSize();
   const router = useRouter();
-  const { headerHeight } = useScreenLayout();
+  const { headerHeight, showGetStarted } = useScreenLayout();
 
   // const isTokensPage = useMemo(() => {
   //   return isScreenDarkMode();
@@ -99,14 +100,14 @@ const Header = () => {
               >
                 Pools
               </Link>
-              <Link
+              {/*<Link
                 href={ROUTE_PATH.GET_STARTED}
                 className={
                   router?.pathname?.includes(ROUTE_PATH.GET_STARTED) ? 'isSelected' : ''
                 }
               >
                 Get Started
-              </Link>
+              </Link>*/}
             </div>
           </div>
         </div>
@@ -128,6 +129,31 @@ const Header = () => {
           </button>
         </div>
       </div>
+      {
+        showGetStarted && (
+          <Flex
+            height={10}
+            alignItems="center"
+            justifyContent="center"
+            bgColor={`#ebebeb${isScreenDarkMode() ? '33' : ''}`}
+          >
+            <Text
+              fontWeight="medium"
+              fontSize="sm"
+              color={isScreenDarkMode() ? 'white' : 'black'}
+            >
+              New to Bitcoin DeFi?{' '}
+              <LinkText
+                fontWeight="bold"
+                color="brand.info.400"
+                href={ROUTE_PATH.GET_STARTED}
+              >
+                Start here.
+              </LinkText>{' '}
+            </Text>
+          </Flex>
+        )
+      }
     </Wrapper>
   );
 };
