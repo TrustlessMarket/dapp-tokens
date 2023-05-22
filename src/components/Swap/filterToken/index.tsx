@@ -432,7 +432,11 @@ const FilterButton: React.FC<FilterButtonProps> = ({
               <Text fontWeight={'500'} fontSize={'md'}>
                 {selectedToken?.symbol}
               </Text>
-              <Icon as={ImWarning} fontSize={"14px"} color={getTextColorStatus(selectedToken?.status)}/>
+              {
+                selectedToken?.status && (
+                  <Icon as={ImWarning} fontSize={"14px"} color={getTextColorStatus(selectedToken?.status)}/>
+                )
+              }
             </Flex>
             <Text fontSize={'xs'}>{selectedToken?.network}</Text>
           </Flex>
