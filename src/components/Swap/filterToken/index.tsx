@@ -23,6 +23,7 @@ import VerifiedBadge, {
 } from "@/components/Swap/filterToken/verifiedBadge";
 import {IToken} from "@/interfaces/token";
 import {ImWarning} from "react-icons/im";
+import {HiBadgeCheck} from "react-icons/hi";
 
 interface FilterButtonProps {
   data: any[];
@@ -288,7 +289,7 @@ const FilterButton: React.FC<FilterButtonProps> = ({
   };
 
   const handleShowWarningToken = (token?: IToken) => {
-    if(!token?.status) {
+    if(!token?.status || token?.status === VERIFIED_STATUS.PREMIUM) {
       return;
     }
     const id = 'modalWarningToken';
@@ -319,14 +320,19 @@ const FilterButton: React.FC<FilterButtonProps> = ({
                 <Icon as={ImWarning} fontSize={"30px"}/>
               </Center>
             </Flex>
-            <Text color={getTextColorStatus(token.status)} maxW={"500px"} mt={4}>
+            <Flex direction={"column"} color={getTextColorStatus(token.status)} maxW={"500px"} mt={4}>
               {
-                token?.status === VERIFIED_STATUS.WARNING && `The name of this token is misleading and its trading volume is very low, which may increase the potential risk in trading this token. Please take note of these warnings before proceeding with any trades involving this token.`
+                token?.status === VERIFIED_STATUS.WARNING && (
+                  <>
+                    <Text>The name of this token is misleading and its trading volume is extremely low, which may increase the potential risk of trading this token.</Text>
+                    <Text>Please keep these warnings in mind before proceeding with any trades involving this token.</Text>
+                  </>
+                )
               }
               {
-                token?.status === VERIFIED_STATUS.CAUTION && `This token has low trading volume, which may pose a potentially heightened risk if you decide to trade it.`
+                token?.status === VERIFIED_STATUS.CAUTION && <Text>This token has a low trading volume, which may increase your risk if you decide to trade it.</Text>
               }
-            </Text>
+            </Flex>
             <FiledButton
               loadingText="Processing"
               btnSize={'h'}
@@ -434,7 +440,7 @@ const FilterButton: React.FC<FilterButtonProps> = ({
               </Text>
               {
                 selectedToken?.status && (
-                  <Icon as={ImWarning} fontSize={"14px"} color={getTextColorStatus(selectedToken?.status)}/>
+                  <Icon as={selectedToken?.status === VERIFIED_STATUS.PREMIUM ? HiBadgeCheck : ImWarning} fontSize={"14px"} color={getTextColorStatus(selectedToken?.status)}/>
                 )
               }
             </Flex>
