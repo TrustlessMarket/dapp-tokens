@@ -16,8 +16,8 @@ export const defaultProvider = {
   footerTradingHeight: 35,
   footerTradingHeightMobile: 60,
   showGetStarted: false,
-  bannerHeight: 60,
-  bannerHeightMobile: 120
+  bannerHeight: 40,
+  bannerHeightMobile: 40
 };
 
 const ScreenLayoutContext = createContext(defaultProvider);

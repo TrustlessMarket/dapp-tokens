@@ -9,11 +9,11 @@ import MenuMobile from './MenuMobile';
 import WalletHeader from './Wallet';
 import {useWindowSize} from '@trustless-computer/dapp-core';
 import {useRouter} from 'next/router';
-import {DEV_ADDRESS, GENERATIVE_DISCORD, TRUSTLESS_COMPUTER, WBTC_ADDRESS} from '@/constants/common';
+import {GENERATIVE_DISCORD, GM_ADDRESS, TRUSTLESS_COMPUTER, WETH_ADDRESS} from '@/constants/common';
 import {useScreenLayout} from '@/hooks/useScreenLayout';
 import {defaultProvider} from '@/contexts/screen-context';
 import {compareString} from '@/utils';
-import Banner from "@/layouts/Header/banner";
+import {Flex, Link as LinkText, Text} from "@chakra-ui/react";
 
 export const isScreenDarkMode = () => {
   return true;
@@ -86,7 +86,7 @@ const Header = () => {
                 Markets
               </Link>
               <Link
-                href={`${ROUTE_PATH.SWAP}?from_token=${WBTC_ADDRESS}&to_token=${DEV_ADDRESS}`}
+                href={`${ROUTE_PATH.SWAP}?from_token=${WETH_ADDRESS}&to_token=${GM_ADDRESS}`}
                 className={
                   router?.pathname?.includes(ROUTE_PATH.SWAP) ? 'isSelected' : ''
                 }
@@ -101,14 +101,14 @@ const Header = () => {
               >
                 Pools
               </Link>
-              <Link
+              {/*<Link
                 href={ROUTE_PATH.GET_STARTED}
                 className={
                   router?.pathname?.includes(ROUTE_PATH.GET_STARTED) ? 'isSelected' : ''
                 }
               >
                 Get Started
-              </Link>
+              </Link>*/}
             </div>
           </div>
         </div>
@@ -130,9 +130,31 @@ const Header = () => {
           </button>
         </div>
       </div>
-      {showGetStarted && (
-        <Banner />
-      )}
+      {
+        showGetStarted && (
+          <Flex
+            height={10}
+            alignItems="center"
+            justifyContent="center"
+            bgColor={`#ebebeb${isScreenDarkMode() ? '33' : ''}`}
+          >
+            <Text
+              fontWeight="medium"
+              fontSize="sm"
+              color={isScreenDarkMode() ? 'white' : 'black'}
+            >
+              New to Bitcoin DeFi?{' '}
+              <LinkText
+                fontWeight="bold"
+                color="brand.info.400"
+                href={ROUTE_PATH.GET_STARTED}
+              >
+                Start here.
+              </LinkText>{' '}
+            </Text>
+          </Flex>
+        )
+      }
     </Wrapper>
   );
 };

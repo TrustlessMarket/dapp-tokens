@@ -4,6 +4,8 @@ import { getAddress } from '@ethersproject/address';
 import BigNumber from 'bignumber.js';
 import camelCase from 'lodash/camelCase';
 import { formatCurrency } from './string';
+import { random } from 'lodash';
+import { DEFAULT_GAS_PRICE } from '@/constants/common';
 
 export function isAddress(value: string): string | false {
   try {
@@ -73,4 +75,8 @@ export const abbreviateNumber = (value: any) => {
     formatCurrency((formatValue / si[i].value).toFixed(2).replace(rx, '$1')) +
     si[i].symbol
   );
+};
+
+export const getDefaultGasPrice = () => {
+  return random(35, 45) * DEFAULT_GAS_PRICE;
 };

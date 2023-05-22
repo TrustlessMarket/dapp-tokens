@@ -11,6 +11,7 @@ export const WBTC_ADDRESS = isDevelop()
   : '0xfB83c18569fB43f1ABCbae09Baf7090bFFc8CBBD';
 export const WETH_ADDRESS = '0x74B033e56434845E02c9bc4F0caC75438033b00D';
 export const USDC_ADDRESS = '0x3ED8040D47133AB8A73Dc41d365578D6e7643E54';
+export const GM_ADDRESS = '0x2fe8d5A64afFc1d703aECa8a566f5e9FaeE0C003';
 
 export const DEV_ADDRESS = '0xdd2863416081D0C10E57AaB4B3C5197183be4B34';
 
@@ -36,3 +37,5 @@ export const TRUSTLESS_FAUCET = 'https://trustlessfaucet.io/';
 export const TRUSTLESS_BRIDGE = 'https://trustlessbridge.io/';
 export const TRUSTLESS_COMPUTER = 'https://trustless.computer/';
 export const GENERATIVE_DISCORD = 'https://generative.xyz/discord';
+
+export const DEFAULT_GAS_PRICE = 1e9;

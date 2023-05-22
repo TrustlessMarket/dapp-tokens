@@ -175,6 +175,10 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   }, [baseToken, quoteToken, needReload]);
 
   useEffect(() => {
+    change('isPaired', isPaired);
+  }, [isPaired]);
+
+  useEffect(() => {
     change('isApproveBaseToken', isApproveBaseToken);
   }, [isApproveBaseToken]);
 
@@ -941,11 +945,11 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         baseToken &&
         BRIDGE_SUPPORT_TOKEN.includes(baseToken?.symbol) &&
         new BigNumber(baseBalance || 0).lte(0) && (
-          <Text fontSize="md" color="brand.warning.400" textAlign={'left'}>
+          <Text fontSize="md" color="brand.warning.400" textAlign={'left'} mt={2}>
             Insufficient {baseToken?.symbol} balance! Consider swapping your{' '}
             {baseToken?.symbol?.replace('W', '')} to trustless network{' '}
             <Link
-              href={TRUSTLESS_BRIDGE}
+              href={`${TRUSTLESS_BRIDGE}${baseToken?.symbol?.replace('W', '')?.toLowerCase()}`}
               target={'_blank'}
               style={{ textDecoration: 'underline' }}
             >
@@ -958,11 +962,13 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         quoteToken &&
         BRIDGE_SUPPORT_TOKEN.includes(quoteToken?.symbol) &&
         new BigNumber(quoteBalance || 0).lte(0) && (
-          <Text fontSize="md" color="brand.warning.400" textAlign={'left'}>
+          <Text fontSize="md" color="brand.warning.400" textAlign={'left'} mt={2}>
             Insufficient {quoteToken?.symbol} balance! Consider swapping your{' '}
             {quoteToken?.symbol?.replace('W', '')} to trustless network{' '}
             <Link
-              href={TRUSTLESS_BRIDGE}
+              href={`${TRUSTLESS_BRIDGE}${baseToken?.symbol
+                ?.replace('W', '')
+                ?.toLowerCase()}`}
               target={'_blank'}
               style={{ textDecoration: 'underline' }}
             >
@@ -1064,6 +1070,7 @@ const CreateMarket = ({
         tokenA: baseToken,
         tokenB: quoteToken,
       });
+      console.log('121212121', response);
       const [resReserve, resSupply] = await Promise.all([
         getReserves({
           address: response,
@@ -1104,6 +1111,8 @@ const CreateMarket = ({
           ...extraInfo,
         });
       }
+      console.log('findIndex', response);
+
       localStorage.setItem(LIQUID_PAIRS, JSON.stringify(__pairs));
     } catch (error) {}
   };
@@ -1116,6 +1125,7 @@ const CreateMarket = ({
       quoteAmount,
       isApproveQuoteToken,
       isApproveBaseToken,
+      isPaired,
     } = values;
     // if (!isApproveQuoteToken || !isApproveBaseToken) {
     //   return;
@@ -1156,6 +1166,7 @@ const CreateMarket = ({
           amountADesired: amount0,
           amountBDesired: amount1,
           amountBMin: '0',
+          isPaired,
         };
 
         response = await addLiquidity(data);
