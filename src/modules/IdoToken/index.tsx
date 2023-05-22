@@ -30,6 +30,8 @@ const IdoTokenContainer = () => {
   const dispatch = useDispatch();
   const needReload = useAppSelector(selectPnftExchange).needReload;
 
+  console.log('data', data);
+
   useEffect(() => {
     getData();
   }, [needReload]);
