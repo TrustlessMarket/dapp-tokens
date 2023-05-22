@@ -1001,7 +1001,6 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             processInfo={{
               id: transactionType.createPoolApprove,
             }}
-            containerConfig={{ marginTop: '24px' }}
           >
             {!isScreenRemove
               ? `APPROVE USE OF ${
@@ -1017,7 +1016,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             // borderRadius={'100px !important'}
             // className="btn-submit"
             btnSize={'h'}
-            containerConfig={{ flex: 1, marginTop: '24px' }}
+            containerConfig={{ flex: 1 }}
             loadingText={submitting ? 'Processing' : ' '}
             processInfo={{
               id: transactionType.createPoolApprove,
