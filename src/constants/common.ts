@@ -6,7 +6,6 @@ export const PAGE_ENTER = 'PAGE_ENTER';
 
 export const BRIDGE_SUPPORT_TOKEN = ['WBTC', 'WETH'];
 export const COMMON_TOKEN = ['BUTT', 'NAKA', 'DEV'];
-export const BRIDGE_SUPPORT_TOKEN = ['WBTC', 'WETH'];
 
 export const WBTC_ADDRESS = isDevelop()
   ? '0x435bdab1bcB2fcf80e5cF47dba209E28c340c3Bf'
