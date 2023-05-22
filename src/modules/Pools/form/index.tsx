@@ -65,7 +65,7 @@ import {
   StatHelpText,
   StatNumber,
   Text,
-  forwardRef,
+  forwardRef, Center,
 } from '@chakra-ui/react';
 import { useWeb3React } from '@web3-react/core';
 import BigNumber from 'bignumber.js';
@@ -627,7 +627,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       .toFixed(18);
 
     return (
-      <Flex gap={4} flexWrap={'wrap'} className="price-pool-content">
+      <Flex gap={4} flexWrap={'wrap'} className="price-pool-content" mt={1}>
         <Box>
           <Stat>
             <StatNumber>
@@ -844,17 +844,18 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           />
         </Flex>
       </InputWrapper>
-      <Flex justifyContent={'center'} mt={6}>
-        <Box
-          className="btn-transfer"
-          p={2}
-          border={'1px solid #3385FF'}
-          borderRadius={'8px'}
+      <Flex gap={2} justifyContent={"center"} mt={6}>
+        <Center
+          w={'40px'}
+          h={'40px'}
+          minW={"40px"}
+          minH={"40px"}
+          borderRadius={'50%'}
+          bgColor={"rgba(255, 255, 255, 0.1)"}
         >
-          <BsPlus color="#3385FF" />
-        </Box>
+          <BsPlus fontWeight={'bold'} fontSize={'30px'} color={"#FFFFFF"}/>
+        </Center>
       </Flex>
-
       <InputWrapper
         className={cx(styles.inputAmountWrap, styles.inputQuoteAmountWrap)}
         theme="light"
@@ -921,7 +922,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
 
       {baseToken && quoteToken && (
         <Box className={styles.pricePoolContainer}>
-          <Text>Initial prices and pool share</Text>
+          <Text>INITIAL PRICES AND POOL SHARE</Text>
           {renderPricePool()}
         </Box>
       )}

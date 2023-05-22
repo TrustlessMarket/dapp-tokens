@@ -265,7 +265,7 @@ const MakeFormImportPool: React.FC<MakeFormImportPoolProps> = ({
       .toFixed(18);
 
     return (
-      <Flex gap={4} flexWrap={'wrap'} className="price-pool-content">
+      <Flex gap={4} flexWrap={'wrap'} className="price-pool-content" mt={1}>
         <Box>
           <Stat>
             <StatNumber>
