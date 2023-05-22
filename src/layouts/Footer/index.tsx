@@ -1,10 +1,10 @@
+import { useScreenLayout } from '@/hooks/useScreenLayout';
 import px2rem from '@/utils/px2rem';
+import { Box } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import { useMemo } from 'react';
 import styled, { DefaultTheme } from 'styled-components';
 import { isScreenDarkMode } from '../Header';
-import { Box } from '@chakra-ui/react';
-import {useScreenLayout} from "@/hooks/useScreenLayout";
 // import IcDiscord from '@/assets/icons/ic_discord.svg';
 // import IcTwitter from '@/assets/icons/ic_twitter.svg';
 // import IcGithub from '@/assets/icons/ic_github.svg';
@@ -21,7 +21,7 @@ const Wrapper = styled.div`
   width: 100%;
   bottom: 0;
   z-index: 9;
-  background-color: #0F0F0F;
+  background-color: #0f0f0f;
   @media screen and (max-width: ${({ theme }: { theme: DefaultTheme }) =>
       theme.breakpoint.md}) {
     gap: ${px2rem(16)};
@@ -95,12 +95,16 @@ const Wrapper = styled.div`
   }
 `;
 
-const Footer = () => {
+const Footer = ({ isHide }: { isHide?: boolean }) => {
   const { footerHeight } = useScreenLayout();
   const router = useRouter();
   const isTokensPage = useMemo(() => {
     return isScreenDarkMode();
   }, [router?.pathname]);
+
+  if (isHide) {
+    return null;
+  }
 
   return (
     <>

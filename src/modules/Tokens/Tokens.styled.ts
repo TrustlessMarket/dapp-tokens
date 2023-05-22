@@ -4,7 +4,7 @@ import styled from 'styled-components';
 export const StyledTokens = styled.div`
   padding-top: ${px2rem(48)};
   padding-bottom: ${px2rem(48)};
-  
+
   .avatar {
     object-fit: cover;
     width: ${px2rem(40)};
@@ -29,13 +29,13 @@ export const StyledTokens = styled.div`
       padding-top: ${px2rem(24)};
       padding-bottom: ${px2rem(24)};
     }
-    
+
     thead {
       tr {
         th {
-          background: #1E1E22;
+          background: #1e1e22;
           text-transform: uppercase;
-          border-bottom-color: rgb(34,37,49);
+          border-bottom-color: rgb(34, 37, 49);
           padding-top: ${px2rem(12)};
           padding-bottom: ${px2rem(12)};
         }
@@ -46,11 +46,11 @@ export const StyledTokens = styled.div`
       tr {
         td {
           vertical-align: middle;
-          border-bottom-color: rgb(34,37,49);
+          border-bottom-color: rgb(34, 37, 49);
         }
-        
+
         &:hover {
-          background-color: #1E1E22;
+          background-color: #1e1e22;
         }
       }
     }
@@ -61,7 +61,7 @@ export const StyledTokens = styled.div`
     align-items: center;
     justify-content: center;
   }
-  
+
   .upload_title {
     //margin-bottom: ${px2rem(24)};
     margin-left: auto;
@@ -77,26 +77,26 @@ export const StyledTokens = styled.div`
   .tokens-list {
     overflow: hidden !important;
   }
-  
+
   .chakra-form-control {
     max-width: 300px;
-    
+
     .chakra-input__group {
       background-color: transparent;
-      
+
       > div {
         background-color: transparent;
       }
     }
   }
-  
+
   .search_text {
     font-size: 14px;
-    color: #FFFFFF;
+    color: #ffffff;
   }
-  
+
   @media screen and (max-width: 768px) {
-    margin-top: ${px2rem(24)};
+    /* margin-top: ${px2rem(24)}; */
 
     .upload_title {
       margin-bottom: ${px2rem(16)};
@@ -107,7 +107,7 @@ export const StyledTokens = styled.div`
 export const UploadFileContainer = styled.div`
   position: relative;
   z-index: 1;
- // max-width: ${px2rem(800)};
+  // max-width: ${px2rem(800)};
   margin-left: auto;
   margin-right: auto;
   padding: ${px2rem(24)} ${px2rem(32)};
@@ -138,18 +138,17 @@ export const UploadFileContainer = styled.div`
   .button-text {
     font-family: var(--font-heading) !important;
     padding: ${px2rem(11)} ${px2rem(36)};
-
   }
-  .button-create-box{
+  .button-create-box {
     //margin-right: 30px;
   }
   .brc20-text {
     font-family: var(--font-heading) !important;
     padding: ${px2rem(11)} ${px2rem(36)};
   }
-  .comming-soon-text{
+  .comming-soon-text {
     font-family: var(--font-heading) !important;
-    padding-bottom:${px2rem(7)};
+    padding-bottom: ${px2rem(7)};
     line-height: 100%;
   }
 
@@ -159,20 +158,20 @@ export const UploadFileContainer = styled.div`
     width: ${px2rem(150)};
     top: 0;
   }
-  .token-table{
+  .token-table {
     text-align: center;
   }
-  .comming-soon-btn{
+  .comming-soon-btn {
     //margin-left: 10px;
-    vertical-align:top;
+    vertical-align: top;
   }
-  .upload_text{
+  .upload_text {
     font-size: 1.5rem;
   }
 
   @media screen and (max-width: 768px) {
     padding: ${px2rem(24)} ${px2rem(0)};
-    .upload_text{
+    .upload_text {
       font-size: 1rem;
     }
 

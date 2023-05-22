@@ -1,38 +1,40 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import IconSVG from '@/components/IconSVG';
-import {CDN_URL, TM_ADDRESS, WALLET_URL} from '@/configs';
+import { CDN_URL, TM_ADDRESS, WALLET_URL } from '@/configs';
 // import { ROUTE_PATH } from '@/constants/route-path';
-import {AssetsContext} from '@/contexts/assets-context';
-import {getIsAuthenticatedSelector, getUserSelector} from '@/state/user/selector';
-import {formatBTCPrice} from '@/utils/format';
-import {useWeb3React} from '@web3-react/core';
+import { AssetsContext } from '@/contexts/assets-context';
+import { getIsAuthenticatedSelector, getUserSelector } from '@/state/user/selector';
+import { formatBTCPrice } from '@/utils/format';
+import { useWeb3React } from '@web3-react/core';
 import copy from 'copy-to-clipboard';
 // import { useRouter } from 'next/router';
 import SelectedNetwork from '@/components/Swap/selectNetwork';
 import Text from '@/components/Text';
-import {SupportedChainId} from '@/constants/chains';
-import {TRUSTLESS_BRIDGE, TRUSTLESS_FAUCET} from '@/constants/common';
-import {WalletContext} from '@/contexts/wallet-context';
-import {compareString, formatCurrency, formatLongAddress} from '@/utils';
-import {showError} from '@/utils/toast';
-import {useRouter} from 'next/router';
-import {useContext, useEffect, useMemo, useRef, useState} from 'react';
-import {OverlayTrigger} from 'react-bootstrap';
-import {toast} from 'react-hot-toast';
-import Jazzicon, {jsNumberForAddress} from 'react-jazzicon';
-import {useSelector} from 'react-redux';
-import {isScreenDarkMode} from '..';
-import {ConnectWalletButton, WalletBalance} from '../Header.styled';
-import {WalletPopover} from './Wallet.styled';
+import { SupportedChainId } from '@/constants/chains';
+import { TRUSTLESS_BRIDGE, TRUSTLESS_FAUCET } from '@/constants/common';
+import { WalletContext } from '@/contexts/wallet-context';
+import { compareString, formatCurrency, formatLongAddress } from '@/utils';
+import { showError } from '@/utils/toast';
+import { useRouter } from 'next/router';
+import { useContext, useEffect, useMemo, useRef, useState } from 'react';
+import { OverlayTrigger } from 'react-bootstrap';
+import { toast } from 'react-hot-toast';
+import Jazzicon, { jsNumberForAddress } from 'react-jazzicon';
+import { useSelector } from 'react-redux';
+import { isScreenDarkMode } from '..';
+import { ConnectWalletButton, WalletBalance } from '../Header.styled';
+import { WalletPopover } from './Wallet.styled';
 import useBalanceERC20Token from '@/hooks/contract-operations/token/useBalanceERC20Token';
 import web3 from 'web3';
-import {ROUTE_PATH} from "@/constants/route-path";
+import { ROUTE_PATH } from '@/constants/route-path';
+import { useWindowSize } from '@trustless-computer/dapp-core';
 
 const WalletHeader = () => {
   const router = useRouter();
   const { account, chainId, isActive } = useWeb3React();
   const user = useSelector(getUserSelector);
   const { onDisconnect, onConnect, requestBtcAddress } = useContext(WalletContext);
+  const { mobileScreen } = useWindowSize();
 
   const isAuthenticated = useSelector(getIsAuthenticatedSelector);
   const { btcBalance, juiceBalance } = useContext(AssetsContext);
@@ -98,8 +100,8 @@ const WalletHeader = () => {
   };
 
   const gotoBridge = (tab: string, tokenSymbol: string) => {
-    window.open(`${TRUSTLESS_BRIDGE}?tab=${tab}&tokenSymbol=${tokenSymbol}`)
-  }
+    window.open(`${TRUSTLESS_BRIDGE}?tab=${tab}&tokenSymbol=${tokenSymbol}`);
+  };
 
   const walletPopover = (
     <WalletPopover
@@ -186,15 +188,9 @@ const WalletHeader = () => {
         {user?.walletAddress && (
           <div
             className="wallet-link"
-            onClick={() =>
-              window.open(ROUTE_PATH.TM_TRANSFER_HISTORY, "_self")
-            }
+            onClick={() => window.open(ROUTE_PATH.TM_TRANSFER_HISTORY, '_self')}
           >
-            <img
-              width={20}
-              height={20}
-              src={`${CDN_URL}/icons/tm_icon.png`}
-            />
+            <img width={20} height={20} src={`${CDN_URL}/icons/tm_icon.png`} />
             <Text size="medium">{formatCurrency(balanceTM, 5)} TM</Text>
           </div>
         )}
@@ -230,7 +226,7 @@ const WalletHeader = () => {
               show={show}
             >
               <div
-                className="wallet"
+                className={`wallet ${mobileScreen ? 'isMobile' : ''}`}
                 // onClick={() => window.open(TC_WEB_URL)}
                 ref={ref}
                 onMouseEnter={handleOnMouseEnter}

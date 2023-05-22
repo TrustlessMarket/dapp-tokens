@@ -1,8 +1,8 @@
+import px2rem from '@/utils/px2rem';
 import React, { PropsWithChildren } from 'react';
+import styled from 'styled-components';
 import Footer from './Footer';
 import Header from './Header';
-import styled from 'styled-components';
-import px2rem from '@/utils/px2rem';
 
 export const Container = styled.div`
   min-height: 100vh;
@@ -21,12 +21,16 @@ export const Container = styled.div`
   padding-right: 6%; */
 `;
 
-const Layout: React.FC<PropsWithChildren> = ({ children }) => {
+interface LayoutProps extends PropsWithChildren {
+  isHideFooter?: boolean;
+}
+
+const Layout: React.FC<LayoutProps> = ({ children, isHideFooter }) => {
   return (
     <>
       <Header />
       {children}
-      <Footer />
+      <Footer isHide={isHideFooter} />
     </>
   );
 };

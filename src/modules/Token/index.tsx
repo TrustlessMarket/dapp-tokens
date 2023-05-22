@@ -4,8 +4,6 @@ import FiledButton from '@/components/Swap/button/filedButton';
 import { ROUTE_PATH } from '@/constants/route-path';
 import { camelCaseKeys } from '@/utils';
 import {
-  Box,
-  Flex,
   Spinner,
   Tab,
   TabList,
@@ -13,20 +11,28 @@ import {
   TabPanels,
   Tabs,
   Text,
+  Tooltip,
 } from '@chakra-ui/react';
 import BigNumber from 'bignumber.js';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
-import { StyledTokenDetailContainer } from './Token.styled';
+import {
+  StyledHistoryContentContainer,
+  StyledLeftContentContainer,
+  StyledTokenChartContainer,
+  StyledTokenDetailContainer,
+  StyledTokenTopInfo,
+} from './Token.styled';
 // import TokenChart from './Token.Chart';
+import { CDN_URL } from '@/configs';
 import { IToken } from '@/interfaces/token';
 import { getChartToken, getTokenRp } from '@/services/swap';
-import { colors } from '@/theme/colors';
 import { sortBy } from 'lodash';
 import dynamic from 'next/dynamic';
 import TokenHistory from './Token.History';
 import TokenLeftInfo from './Token.LeftInfo';
 import TokenTopInfo from './Token.TopInfo';
+import { useWeb3React } from '@web3-react/core';
 
 const TokenChart = dynamic(() => import('./Token.Chart'), {
   ssr: false,
@@ -39,6 +45,8 @@ const TokenDetail = () => {
 
   const [data, setData] = useState<IToken>();
   const [chartData, setChartData] = useState<any[]>([]);
+
+  const { account, isActive } = useWeb3React();
 
   useEffect(() => {
     if (address) {
@@ -89,9 +97,16 @@ const TokenDetail = () => {
     }
   };
 
+  const topSpacing = 0;
+
   if (loading) {
     return (
-      <StyledTokenDetailContainer className="loading-container">
+      <StyledTokenDetailContainer
+        style={{
+          minHeight: `calc(100vh - ${topSpacing}px)`,
+        }}
+        className="loading-container"
+      >
         <Spinner size={'lg'} color="#FFFFFF" style={{ margin: '0 auto' }} />
       </StyledTokenDetailContainer>
     );
@@ -99,9 +114,15 @@ const TokenDetail = () => {
 
   if (!data || !address) {
     return (
-      <StyledTokenDetailContainer className="token-notfound-container">
+      <StyledTokenDetailContainer
+        style={{
+          minHeight: `calc(100vh - ${topSpacing}px)`,
+        }}
+        className="token-notfound-container"
+      >
         <div className="token-notfound">
-          <Text>Token not found</Text>
+          <img src={`${CDN_URL}/images/crying.svg`} alt="token-detail" />
+          <Text>Opps.... Token not found</Text>
           <FiledButton onClick={() => router.replace(ROUTE_PATH.HOME)}>
             Go to Markets
           </FiledButton>
@@ -111,44 +132,48 @@ const TokenDetail = () => {
   }
 
   return (
-    <StyledTokenDetailContainer>
-      <TokenTopInfo data={data} />
-      <Flex width={'100%'} height={'100%'} flex={1}>
+    <StyledTokenDetailContainer
+      style={{
+        minHeight: `calc(100vh - ${topSpacing}px)`,
+      }}
+    >
+      <StyledTokenTopInfo area={'topinfo'}>
+        <TokenTopInfo data={data} />
+      </StyledTokenTopInfo>
+      <StyledLeftContentContainer area={'left'}>
         <TokenLeftInfo data={data} />
-        <Flex
-          flexDirection={'column'}
-          flex={4}
-          style={{
-            borderLeft: `1px solid ${colors.darkBorderColor}`,
-          }}
-        >
-          <Box flex={2}>
-            <TokenChart
-              chartData={chartData}
-              dataSymbol={data?.baseTokenSymbol || 'WBTC'}
-            />
-          </Box>
-          <Box
-            className="tab-container"
-            // style={{
-            //   borderTop: `1px solid ${colors.darkBorderColor}`,
-            //   maxHeight: '300px',
-            // }}
-            flex={1}
-          >
-            <Tabs>
-              <TabList>
-                <Tab>Trade History</Tab>
-              </TabList>
-              <TabPanels>
-                <TabPanel>
-                  <TokenHistory data={data} />
-                </TabPanel>
-              </TabPanels>
-            </Tabs>
-          </Box>
-        </Flex>
-      </Flex>
+      </StyledLeftContentContainer>
+      <StyledTokenChartContainer area={'chart'}>
+        <TokenChart
+          chartData={chartData}
+          dataSymbol={data?.baseTokenSymbol || 'WBTC'}
+        />
+      </StyledTokenChartContainer>
+      <StyledHistoryContentContainer className={'tab-container'} area={'history'}>
+        <Tabs isManual>
+          <TabList>
+            <Tab>Trade History</Tab>
+            <Tab isDisabled={!Boolean(account && isActive)}>
+              <Tooltip
+                isDisabled={Boolean(account && isActive)}
+                label="Connect your wallet to see your swaps"
+              >
+                My swaps
+              </Tooltip>
+            </Tab>
+          </TabList>
+          <TabPanels>
+            <TabPanel>
+              <TokenHistory data={data} />
+            </TabPanel>
+            {account && isActive && (
+              <TabPanel>
+                <TokenHistory data={data} isOwner={true} />
+              </TabPanel>
+            )}
+          </TabPanels>
+        </Tabs>
+      </StyledHistoryContentContainer>
     </StyledTokenDetailContainer>
   );
 };

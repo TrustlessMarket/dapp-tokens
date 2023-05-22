@@ -18,7 +18,7 @@ interface SocialTokenProps {
 
 const SocialToken: React.FC<SocialTokenProps> = ({ socials }) => {
   return (
-    <StyledSocial columns={3} gap={4}>
+    <StyledSocial className={'social-container'} columns={3} gap={4}>
       {socials?.twitter && (
         <Flex
           onClick={() => window.open(socials?.twitter, '_blank')}

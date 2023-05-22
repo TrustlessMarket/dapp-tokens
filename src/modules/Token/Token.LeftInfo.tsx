@@ -1,11 +1,9 @@
-import { Box, Text } from '@chakra-ui/react';
-import React from 'react';
-import { StyledTokenLeftInfo } from './Token.styled';
 import HorizontalItem from '@/components/HorizontalItem';
 import { IToken } from '@/interfaces/token';
 import { formatCurrency } from '@/utils';
-import BigNumber from 'bignumber.js';
 import { decimalToExponential } from '@/utils/format';
+import { Box, Text } from '@chakra-ui/react';
+import BigNumber from 'bignumber.js';
 import TokenListPaired from './Token.ListPaired';
 
 const TokenLeftInfo = ({ data }: { data: IToken }) => {
@@ -19,7 +17,7 @@ const TokenLeftInfo = ({ data }: { data: IToken }) => {
     ? new BigNumber(data?.usdPrice).multipliedBy(totalSupply).toFixed()
     : 'n/a';
   return (
-    <StyledTokenLeftInfo flex={1}>
+    <>
       <Box className="token-info dive-bottom">
         <Text className="title">Token info</Text>
         <HorizontalItem
@@ -39,7 +37,7 @@ const TokenLeftInfo = ({ data }: { data: IToken }) => {
         />
       </Box>
       <TokenListPaired data={data} />
-    </StyledTokenLeftInfo>
+    </>
   );
 };
 

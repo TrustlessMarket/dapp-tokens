@@ -2,40 +2,40 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-empty-function */
 import Button from '@/components/Button';
-import {IToken} from '@/interfaces/token';
-import {getTokenRp} from '@/services/swap';
-import {getIsAuthenticatedSelector} from '@/state/user/selector';
-import {formatCurrency} from '@/utils';
-import {decimalToExponential} from '@/utils/format';
-import {debounce} from 'lodash';
-import React, {useContext, useEffect, useMemo, useRef, useState} from 'react';
+import { IToken } from '@/interfaces/token';
+import { getTokenRp } from '@/services/swap';
+import { getIsAuthenticatedSelector } from '@/state/user/selector';
+import { formatCurrency } from '@/utils';
+import { decimalToExponential } from '@/utils/format';
+import { debounce } from 'lodash';
+import { useContext, useEffect, useMemo, useRef, useState } from 'react';
 import Spinner from 'react-bootstrap/Spinner';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import {useSelector} from 'react-redux';
+import { useSelector } from 'react-redux';
 import ModalCreateToken from './ModalCreateToken';
-import {StyledTokens, UploadFileContainer} from './Tokens.styled';
+import { StyledTokens, UploadFileContainer } from './Tokens.styled';
 // import { useRouter } from 'next/router';
 // import { ROUTE_PATH } from '@/constants/route-path';
-import {ROUTE_PATH} from '@/constants/route-path';
-import {WalletContext} from '@/contexts/wallet-context';
-import {showError} from '@/utils/toast';
-import {Box, Flex, forwardRef, Icon, Text} from '@chakra-ui/react';
+import { ROUTE_PATH } from '@/constants/route-path';
+import { WalletContext } from '@/contexts/wallet-context';
+import { showError } from '@/utils/toast';
+import { Box, Flex, forwardRef, Icon, Text } from '@chakra-ui/react';
 import BigNumber from 'bignumber.js';
 import Link from 'next/link';
-import {useRouter} from 'next/router';
+import { useRouter } from 'next/router';
 //const EXPLORER_URL = TRUSTLESS_COMPUTER_CHAIN_INFO.explorers[0].url;
 import BodyContainer from '@/components/Swap/bodyContainer';
-import {AiOutlineCaretDown, AiOutlineCaretUp} from 'react-icons/ai';
-import TokenChartLast7Day from './Token.ChartLast7Day';
+import FieldText from '@/components/Swap/form/fieldText';
+import ListTable, { ColumnProp } from '@/components/Swap/listTable';
+import { CDN_URL } from '@/configs';
+import { GM_ADDRESS, WBTC_ADDRESS, WETH_ADDRESS } from '@/constants/common';
+import useDebounce from '@/hooks/useDebounce';
 import px2rem from '@/utils/px2rem';
-import ListTable, {ColumnProp} from '@/components/Swap/listTable';
-import {VscArrowSwap} from 'react-icons/vsc';
-import {CDN_URL} from "@/configs";
-import {GM_ADDRESS, WBTC_ADDRESS, WETH_ADDRESS} from "@/constants/common";
-import {Field, Form, useFormState} from "react-final-form";
-import useDebounce from "@/hooks/useDebounce";
-import FieldText from "@/components/Swap/form/fieldText";
+import { Field, Form, useFormState } from 'react-final-form';
+import { AiOutlineCaretDown, AiOutlineCaretUp } from 'react-icons/ai';
+import { VscArrowSwap } from 'react-icons/vsc';
 import styles from './styles.module.scss';
+import TokenChartLast7Day from './Token.ChartLast7Day';
 
 const LIMIT_PAGE = 100;
 
@@ -47,7 +47,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const isAuthenticated = useSelector(getIsAuthenticatedSelector);
   const { onDisconnect, onConnect, requestBtcAddress } = useContext(WalletContext);
   const [tokensList, setTokensList] = useState<IToken[]>([]);
-  const [sort, setSort] = useState({ sort: "" });
+  const [sort, setSort] = useState({ sort: '' });
   const { values } = useFormState();
 
   const handleConnectWallet = async () => {
@@ -63,13 +63,20 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     }
   };
 
-  const fetchTokens = async (page = 1, isFetchMore = false,) => {
+  const fetchTokens = async (page = 1, isFetchMore = false) => {
     try {
       setIsFetching(true);
       const sortField = sort?.sort?.replace('-', '');
       const sortType = sort?.sort?.includes('-') ? -1 : 1;
       const search = values?.search_text;
-      const res = await getTokenRp({ limit: LIMIT_PAGE, page: page, sort: sortField, sort_type: sortType, search: search }) || [];
+      const res =
+        (await getTokenRp({
+          limit: LIMIT_PAGE,
+          page: page,
+          sort: sortField,
+          sort_type: sortType,
+          search: search,
+        })) || [];
       if (isFetchMore) {
         setTokensList((prev) => [...prev, ...res]);
       } else {
@@ -123,12 +130,19 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           const sortField = 'index';
           setSort((_sort) => ({
             ..._sort,
-            sort: !_sort?.sort?.includes(sortField) || _sort?.sort === sortField ? `-${sortField}` : sortField,
+            sort:
+              !_sort?.sort?.includes(sortField) || _sort?.sort === sortField
+                ? `-${sortField}`
+                : sortField,
           }));
         },
         sort: sort?.sort,
         render(row: any) {
-          return <Text color={"#FFFFFF"} fontSize={px2rem(16)}>{row?.index}</Text>;
+          return (
+            <Text color={'#FFFFFF'} fontSize={px2rem(16)}>
+              {row?.index}
+            </Text>
+          );
         },
       },
       {
@@ -146,7 +160,10 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           const sortField = 'name';
           setSort((_sort) => ({
             ..._sort,
-            sort: !_sort?.sort?.includes(sortField) || _sort?.sort === sortField ? `-${sortField}` : sortField,
+            sort:
+              !_sort?.sort?.includes(sortField) || _sort?.sort === sortField
+                ? `-${sortField}`
+                : sortField,
           }));
         },
         sort: sort?.sort,
@@ -164,11 +181,11 @@ export const MakeFormSwap = forwardRef((props, ref) => {
                 className={'avatar'}
               />
               <Flex direction={'column'}>
-                <Flex gap={1} alignItems={"flex-end"} fontSize={px2rem(16)}>
-                  <Box fontWeight={"500"} color={"#FFFFFF"}>{row?.name}</Box>
-                  <Box color={'rgba(255, 255, 255, 0.7)'}>
-                    {row?.symbol}
+                <Flex gap={1} alignItems={'flex-end'} fontSize={px2rem(16)}>
+                  <Box fontWeight={'500'} color={'#FFFFFF'}>
+                    {row?.name}
                   </Box>
+                  <Box color={'rgba(255, 255, 255, 0.7)'}>{row?.symbol}</Box>
                 </Flex>
                 <Box fontSize={px2rem(12)} color={'rgba(255, 255, 255, 0.7)'}>
                   {row?.network || 'TC'}
@@ -193,7 +210,10 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           const sortField = 'usd_price';
           setSort((_sort) => ({
             ..._sort,
-            sort: !_sort?.sort?.includes(sortField) || _sort?.sort === sortField ? `-${sortField}` : sortField,
+            sort:
+              !_sort?.sort?.includes(sortField) || _sort?.sort === sortField
+                ? `-${sortField}`
+                : sortField,
           }));
         },
         sort: sort?.sort,
@@ -201,7 +221,11 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           const tokenPrice = row?.usdPrice
             ? new BigNumber(row?.usdPrice).toFixed()
             : 'n/a';
-          return <Text color={"#FFFFFF"} fontSize={px2rem(16)}>${formatCurrency(tokenPrice, 10)}</Text>;
+          return (
+            <Text color={'#FFFFFF'} fontSize={px2rem(16)}>
+              ${formatCurrency(tokenPrice, 10)}
+            </Text>
+          );
         },
       },
       {
@@ -219,7 +243,10 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           const sortField = 'percent';
           setSort((_sort) => ({
             ..._sort,
-            sort: !_sort?.sort?.includes(sortField) || _sort?.sort === sortField ? `-${sortField}` : sortField,
+            sort:
+              !_sort?.sort?.includes(sortField) || _sort?.sort === sortField
+                ? `-${sortField}`
+                : sortField,
           }));
         },
         sort: sort?.sort,
@@ -227,13 +254,17 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           return (
             <Flex
               alignItems={'center'}
-              color={Number(row?.percent) > 0 ? '#16c784' : Number(row?.percent) < 0 ? '#ea3943' : '#FFFFFF'}
+              color={
+                Number(row?.percent) > 0
+                  ? '#16c784'
+                  : Number(row?.percent) < 0
+                  ? '#ea3943'
+                  : '#FFFFFF'
+              }
               fontSize={px2rem(16)}
             >
               {Number(row?.percent) > 0 && <AiOutlineCaretUp color={'#16c784'} />}
-              {Number(row?.percent) < 0 && (
-                <AiOutlineCaretDown color={'#ea3943'} />
-              )}
+              {Number(row?.percent) < 0 && <AiOutlineCaretDown color={'#ea3943'} />}
               {formatCurrency(row?.percent, 2)}%
             </Flex>
           );
@@ -291,12 +322,19 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           const sortField = 'market_cap';
           setSort((_sort) => ({
             ..._sort,
-            sort: !_sort?.sort?.includes(sortField) || _sort?.sort === sortField ? `-${sortField}` : sortField,
+            sort:
+              !_sort?.sort?.includes(sortField) || _sort?.sort === sortField
+                ? `-${sortField}`
+                : sortField,
           }));
         },
         sort: sort?.sort,
         render(row: any) {
-          return <Text color={"#FFFFFF"} fontSize={px2rem(16)}>${formatCurrency(row?.usdMarketCap, 2)}</Text>;
+          return (
+            <Text color={'#FFFFFF'} fontSize={px2rem(16)}>
+              ${formatCurrency(row?.usdMarketCap, 2)}
+            </Text>
+          );
         },
       },
       {
@@ -322,7 +360,11 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           const tokenVolume = row?.usdTotalVolume
             ? new BigNumber(row?.usdTotalVolume).toFixed()
             : 'n/a';
-          return <Text color={"#FFFFFF"} fontSize={px2rem(16)}>${formatCurrency(tokenVolume, 2)}</Text>;
+          return (
+            <Text color={'#FFFFFF'} fontSize={px2rem(16)}>
+              ${formatCurrency(tokenVolume, 2)}
+            </Text>
+          );
         },
       },
       {
@@ -340,7 +382,10 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           const sortField = 'total_supply_number';
           setSort((_sort) => ({
             ..._sort,
-            sort: !_sort?.sort?.includes(sortField) || _sort?.sort === sortField ? `-${sortField}` : sortField,
+            sort:
+              !_sort?.sort?.includes(sortField) || _sort?.sort === sortField
+                ? `-${sortField}`
+                : sortField,
           }));
         },
         sort: sort?.sort,
@@ -348,7 +393,11 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           const totalSupply = new BigNumber(row?.totalSupply || 0).div(
             decimalToExponential(Number(row?.decimal || 18)),
           );
-          return <Text color={"#FFFFFF"} fontSize={px2rem(16)}>{formatCurrency(totalSupply.toString(), 0)}</Text>;
+          return (
+            <Text color={'#FFFFFF'} fontSize={px2rem(16)}>
+              {formatCurrency(totalSupply.toString(), 0)}
+            </Text>
+          );
         },
       },
       {
@@ -382,28 +431,28 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             <Flex fontSize={px2rem(12)}>
               <Flex
                 gap={3}
-                alignItems={"center"}
+                alignItems={'center'}
                 cursor={'pointer'}
                 onClick={(e) => {
                   e.stopPropagation();
                   e.preventDefault();
                   router.push(
                     `${ROUTE_PATH.SWAP}?from_token=${WBTC_ADDRESS}&to_token=${row?.address}`,
-                  )
+                  );
                 }}
                 title="Swap now"
-                color={"#FFFFFF"}
-                bg={"#1E1E22"}
-                borderRadius={"4px"}
+                color={'#FFFFFF'}
+                bg={'#1E1E22'}
+                borderRadius={'4px'}
                 paddingX={2}
                 paddingY={1}
                 _hover={{
-                  color:"#1E1E22",
-                  bg:"#FFFFFF"
+                  color: '#1E1E22',
+                  bg: '#FFFFFF',
                 }}
-                fontWeight={"medium"}
+                fontWeight={'medium'}
               >
-                <Icon as={VscArrowSwap} fontWeight={"medium"} fontSize={"18px"}/>
+                <Icon as={VscArrowSwap} fontWeight={'medium'} fontSize={'18px'} />
                 SWAP NOW
               </Flex>
             </Flex>
@@ -416,7 +465,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
 
   const handleItemClick = (token: any) => {
     router.push(`${ROUTE_PATH.TOKEN}?address=${token?.address}`);
-  }
+  };
 
   return (
     <StyledTokens>
@@ -428,15 +477,15 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           {/* <img src={IcBitcoinCloud} alt="upload file icon" /> */}
           <div className="upload_content">
             {/* <h3 className="upload_title">BRC-20 on Bitcoin</h3> */}
-            <Text className="upload_text" color={"rgba(255, 255, 255, 0.7)"}>
+            <Text className="upload_text" color={'rgba(255, 255, 255, 0.7)'}>
               Smart BRC-20s are{' '}
               <span style={{ color: '#FFFFFF' }}>
-                  the first smart contracts deployed on Bitcoin
-                </span>
+                the first smart contracts deployed on Bitcoin
+              </span>
               . They run exactly as programmed without any possibility of fraud,
               third-party interference, or censorship. Issue your Smart BRC-20 on
-              Bitcoin for virtually anything: a cryptocurrency, a share in a
-              company, voting rights in a DAO, and more.
+              Bitcoin for virtually anything: a cryptocurrency, a share in a company,
+              voting rights in a DAO, and more.
             </Text>
           </div>
         </div>
@@ -458,10 +507,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           <Link
             href={`${ROUTE_PATH.SWAP}?from_token=${WETH_ADDRESS}&to_token=${GM_ADDRESS}`}
           >
-            <Button
-              className="comming-soon-btn"
-              background={'#3385FF'}
-            >
+            <Button className="comming-soon-btn" background={'#3385FF'}>
               <Text
                 size="medium"
                 color="#FFFFFF"
@@ -474,7 +520,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           </Link>
         </div>
       </UploadFileContainer>
-      <Flex mb={4} justifyContent={"flex-end"}>
+      <Flex mb={4} justifyContent={'flex-end'}>
         <Field
           component={FieldText}
           name="search_text"
@@ -482,8 +528,8 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           style={{
             textAlign: 'left',
           }}
-          className={"search_text"}
-          borderColor={"#353945"}
+          className={'search_text'}
+          borderColor={'#353945'}
           // fieldChanged={onChange}
         />
       </Flex>
@@ -500,7 +546,12 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         }
         next={debounceLoadMore}
       >
-        <ListTable data={tokensList} columns={columns} onItemClick={handleItemClick} showEmpty={false}/>
+        <ListTable
+          data={tokensList}
+          columns={columns}
+          onItemClick={handleItemClick}
+          showEmpty={false}
+        />
       </InfiniteScroll>
       <ModalCreateToken show={showModal} handleClose={() => setShowModal(false)} />
     </StyledTokens>
@@ -510,18 +561,13 @@ export const MakeFormSwap = forwardRef((props, ref) => {
 const ListTokenForm = () => {
   const refForm = useRef<any>();
 
-  const handleSubmit = async (values: any) => {
-
-  };
+  const handleSubmit = async (values: any) => {};
 
   return (
     <BodyContainer className={styles.wrapper}>
       <Form onSubmit={handleSubmit} initialValues={{}}>
         {({ handleSubmit }) => (
-          <MakeFormSwap
-            ref={refForm}
-            onSubmit={handleSubmit}
-          />
+          <MakeFormSwap ref={refForm} onSubmit={handleSubmit} />
         )}
       </Form>
     </BodyContainer>

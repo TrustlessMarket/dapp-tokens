@@ -12,7 +12,7 @@ const Token = () => {
         <link rel="icon" href={`${CDN_URL}/icons/logo-tc-market.svg`} />
       </Head>
       <Box bgColor={'#0F0F0F'}>
-        <Layout>
+        <Layout isHideFooter={true}>
           <TokenDetail />
         </Layout>
       </Box>

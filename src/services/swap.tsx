@@ -4,12 +4,17 @@ import { IToken } from '@/interfaces/token';
 import { swrFetcher } from '@/utils/swr';
 import queryString from 'query-string';
 import { isProduction } from '@/utils/commons';
-import {ILiquidity} from "@/interfaces/liquidity";
+import { ILiquidity } from '@/interfaces/liquidity';
 
 const API_PATH = '/swap';
 
 export const getTokenRp = async (
-  params: IPagingParams & { address?: string, sort?: string, sort_type?: number, search?: string },
+  params: IPagingParams & {
+    address?: string;
+    sort?: string;
+    sort_type?: number;
+    search?: string;
+  },
 ): Promise<IToken[]> => {
   const qs = '?' + queryString.stringify(params);
 
@@ -78,6 +83,7 @@ export const getChartToken = async (
 export const getTradeHistory = async (
   params: {
     contract_address: string;
+    user_address?: string;
   } & IPagingParams,
 ) => {
   const qs = '?' + queryString.stringify(params);
@@ -87,12 +93,10 @@ export const getTradeHistory = async (
   });
 };
 
-export const getSwapRoutes = async (
-  params: {
-    from_token: string;
-    to_token: string;
-  }
-) => {
+export const getSwapRoutes = async (params: {
+  from_token: string;
+  to_token: string;
+}) => {
   const qs = '?' + queryString.stringify(params);
   return swrFetcher(`${API_URL}${API_PATH}/token/route${qs}`, {
     method: 'GET',
@@ -125,11 +129,7 @@ export const getUserTradeHistory = async (
   });
 };
 
-export const getTCTxDetailByHash = async (
-  params: {
-    tx_hash: string
-  },
-) => {
+export const getTCTxDetailByHash = async (params: { tx_hash: string }) => {
   const qs = '?' + queryString.stringify(params);
   return swrFetcher(`${API_URL}${API_PATH}/transactions/pending${qs}`, {
     method: 'GET',
