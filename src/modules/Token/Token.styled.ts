@@ -142,7 +142,7 @@ export const StyledTokenTopInfo = styled(Flex)`
     }
     .desc {
       font-weight: 500;
-      font-size: 16px;
+      font-size: ${px2rem(16)};
       color: ${colors.white500};
     }
   }
