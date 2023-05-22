@@ -6,7 +6,7 @@ import Link from 'next/link';
 
 const Wrapper = styled.div`
   /* max-width: 1920px; */
-  background: #0F0F0F;
+  background: #0f0f0f;
   //border-bottom: 1px solid #353945;
 
   .container {
@@ -51,7 +51,6 @@ const Wrapper = styled.div`
     gap: ${px2rem(32)};
   }
 
-
   .leftContainer {
     color: #3385ff;
 
@@ -61,7 +60,7 @@ const Wrapper = styled.div`
   }
 
   .rightContainer {
-    color: #FFFFFF;
+    color: #ffffff;
 
     .external-link {
       color: inherit;
@@ -106,10 +105,11 @@ const Wrapper = styled.div`
     }
 
     .btnMenuMobile {
-      display: none;
+      width: 30px;
+      height: 30px;
       img {
-        width: 24px;
-        height: 24px;
+        width: 100%;
+        height: 100%;
       }
     }
   }
@@ -250,11 +250,11 @@ const WalletAdress = styled(Tooltip)`
 
 const ConnectWalletButton = styled(Button)`
   padding: ${px2rem(8)} ${px2rem(16)};
-  color: #1C1C1C;
+  color: #1c1c1c;
   font-size: ${px2rem(14)};
   line-height: ${px2rem(24)};
   font-weight: 500;
-  background: #FFFFFF;
+  background: #ffffff;
   text-transform: uppercase;
   border-radius: 8px !important;
   letter-spacing: 0.01em;

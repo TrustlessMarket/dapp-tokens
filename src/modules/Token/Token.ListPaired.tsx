@@ -2,12 +2,12 @@
 import Empty from '@/components/Empty';
 import HorizontalItem from '@/components/HorizontalItem';
 import FiledButton from '@/components/Swap/button/filedButton';
-import {ROUTE_PATH} from '@/constants/route-path';
+import { ROUTE_PATH } from '@/constants/route-path';
 import useGetReserves from '@/hooks/contract-operations/swap/useReserves';
 import useSupplyERC20Liquid from '@/hooks/contract-operations/token/useSupplyERC20Liquid';
-import {IToken} from '@/interfaces/token';
-import {getListPaired, getPairAPR} from '@/services/pool';
-import {abbreviateNumber, formatCurrency} from '@/utils';
+import { IToken } from '@/interfaces/token';
+import { getListPaired, getPairAPR } from '@/services/pool';
+import { abbreviateNumber, formatCurrency } from '@/utils';
 import {
   Accordion,
   AccordionButton,
@@ -20,10 +20,10 @@ import {
   Text,
 } from '@chakra-ui/react';
 import moment from 'moment';
-import {useRouter} from 'next/router';
-import {useEffect, useState} from 'react';
+import { useRouter } from 'next/router';
+import { useEffect, useState } from 'react';
 import web3 from 'web3';
-import {DEFAULT_FROM_TOKEN_ADDRESS, ScreenType} from '../Pools';
+import { DEFAULT_FROM_TOKEN_ADDRESS, ScreenType } from '../Pools';
 
 const TokenPoolDetail = ({ paired }: { paired: any }) => {
   const router = useRouter();
@@ -81,7 +81,7 @@ const TokenPoolDetail = ({ paired }: { paired: any }) => {
   };
 
   return (
-    <AccordionItem mb={4} isFocusable={true} className="accordion-container">
+    <AccordionItem mb={4} className="accordion-container">
       <Text>
         <AccordionButton>
           <Box as="span" flex="1" textAlign="left">
@@ -202,7 +202,7 @@ const TokenListPaired = ({ data }: { data: IToken }) => {
       );
     }
     return (
-      <Accordion defaultIndex={list?.map((_, i) => i)} allowMultiple>
+      <Accordion defaultIndex={[0]} allowMultiple>
         {list?.map((l: any) => (
           <TokenPoolDetail paired={l} key={l.id} />
         ))}
@@ -211,9 +211,11 @@ const TokenListPaired = ({ data }: { data: IToken }) => {
   };
 
   return (
-    <Box className="token-info">
+    <Box className="token-info list-paired-container">
       <Text className="title">Pools</Text>
-      <Box mt={4}>{renderContent()}</Box>
+      <Box className="list-paired-content" mt={4}>
+        {renderContent()}
+      </Box>
     </Box>
   );
 };
