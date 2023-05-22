@@ -1,32 +1,20 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { apiClient } from '@/services';
-import {
-  Box,
-  Flex,
-  Spinner,
-  Table,
-  TableContainer,
-  Tbody,
-  Td,
-  Tfoot,
-  Th,
-  Thead,
-  Tr,
-} from '@chakra-ui/react';
-import React, { Fragment, ReactNode, memo, useEffect, useState } from 'react';
+import {apiClient} from '@/services';
+import {Box, Flex, Spinner, Table, TableContainer, Tbody, Td, Tfoot, Th, Thead, Tr,} from '@chakra-ui/react';
+import React, {Fragment, memo, ReactNode, useEffect, useState} from 'react';
 // import { useCurrentWallet } from "app/hooks/useCurrentWallet";
 import EmptyList from '@/components/Swap/emptyList';
 import Pagination from '@/components/Swap/pagination';
-import { useAppSelector } from '@/state/hooks';
-import { selectPnftExchange } from '@/state/pnftExchange';
-import { compareString } from '@/utils';
+import {useAppSelector} from '@/state/hooks';
+import {selectPnftExchange} from '@/state/pnftExchange';
+import {compareString} from '@/utils';
 import cx from 'classnames';
-import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
+import {AiFillCaretDown, AiFillCaretUp} from 'react-icons/ai';
 import styles from './styles.module.scss';
 
 export interface ColumnProp {
   id: string;
-  label: string;
+  label: string | ReactNode;
   sort?: string;
   config?: any;
   render?: (_: any, __: any, ___: any) => void;
@@ -51,6 +39,8 @@ interface ListTableProps {
   selectedItem?: any;
   needUpdate?: any;
   initialLoading?: boolean;
+  className?: any,
+  showEmpty?: boolean
 }
 
 const ItemTable = ({
@@ -97,11 +87,11 @@ const ItemTable = ({
       <Tr
         onClick={onClick}
         cursor={onItemClick ? 'pointer' : 'default'}
-        className={cx(selectedItem?.id === item.id ? 'selected' : '', 'notOnTdRow')}
+        className={cx(selectedItem?.id === item?.id ? 'selected' : '', 'notOnTdRow')}
       >
         {columns.map((v) => (
           <Td {...v.config} key={v.id}>
-            {v.render ? v.render(item, extraData, index) : item[v.id]}
+            {v.render ? v.render(item, extraData, index) : item[v?.id]}
           </Td>
         ))}
       </Tr>
@@ -126,6 +116,8 @@ const ListTable: React.FC<ListTableProps> = ({
   needUpdate,
   initialLoading,
   onTdRow,
+  className,
+  showEmpty,
 }) => {
   // const { currentWallet } = useCurrentWallet();
   const [rows, setRows] = useState(data);
@@ -195,7 +187,7 @@ const ListTable: React.FC<ListTableProps> = ({
           </Tr>
         </Tbody>
       );
-    if (rows?.length === 0 || rows?.length === undefined)
+    if (showEmpty && (rows?.length === 0 || rows?.length === undefined))
       return (
         <Tbody className={styles.item}>
           <Tr className="notOnTdRow">
@@ -235,43 +227,49 @@ const ListTable: React.FC<ListTableProps> = ({
 
   return (
     <TableContainer className={styles.container}>
-      <Table variant="simple">
+      <Table variant="simple" className={className}>
         {!noHeader && (
           <Thead>
             <Tr>
-              {columns.map((v) => (
-                <Th {...v.config} {...v.labelConfig} key={v.id}>
-                  <Flex
-                    gap={1}
-                    alignItems="center"
-                    className={v.onSort ? 'sort' : ''}
-                    style={{
-                      cursor: v.onSort ? 'pointer' : 'default',
-                    }}
-                    onClick={v.onSort && v.onSort}
-                  >
-                    {v.label}
-                    {v.onSort && (
-                      <Box>
-                        <FaChevronUp
-                          style={{
-                            marginBottom: '-3px',
-                            fontSize: '10px',
-                            color: !v.sort?.includes('-') ? '#ff831a' : 'unset',
-                          }}
-                        />
-                        <FaChevronDown
-                          style={{
-                            marginTop: '-3px',
-                            fontSize: '10px',
-                            color: v.sort?.includes('-') ? '#ff831a' : 'unset',
-                          }}
-                        />
-                      </Box>
-                    )}
-                  </Flex>
-                </Th>
-              ))}
+              {columns.map((v) => {
+                return (
+                  <Th {...v.config} {...v.labelConfig} key={v.id}>
+                    <Flex
+                      gap={1}
+                      alignItems="center"
+                      className={v.onSort ? 'sort' : ''}
+                      style={{
+                        cursor: v.onSort ? 'pointer' : 'default',
+                      }}
+                      onClick={v.onSort && v.onSort}
+                    >
+                      {v.label}
+                      {v.onSort && (
+                        <Box>
+                          {
+                            v.sort === `-${v?.id}` && (
+                            <AiFillCaretDown
+                                style={{
+                                color: '#FFFFFF'
+                              }}
+                            />
+                            )
+                          }
+                          {
+                            v.sort === `${v?.id}` && (
+                              <AiFillCaretUp
+                                style={{
+                                  color: '#FFFFFF'
+                                }}
+                              />
+                            )
+                          }
+                        </Box>
+                      )}
+                    </Flex>
+                  </Th>
+                )
+              })}
             </Tr>
           </Thead>
         )}

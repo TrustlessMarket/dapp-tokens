@@ -229,6 +229,7 @@
     font-size: 20px;
     color: #000000;
     text-align: left;
+    border: none;
     @media screen and (max-width: 768px) {
       font-size: 14px;
     }
@@ -238,6 +239,8 @@
     }
     &:focus-visible {
       outline: 0;
+      border: none;
+      box-shadow: none;
     }
 
     &:disabled {

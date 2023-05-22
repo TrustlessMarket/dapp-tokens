@@ -65,7 +65,7 @@ import {
   StatHelpText,
   StatNumber,
   Text,
-  forwardRef,
+  forwardRef, Center,
 } from '@chakra-ui/react';
 import { useWeb3React } from '@web3-react/core';
 import BigNumber from 'bignumber.js';
@@ -75,7 +75,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import Slider from 'rc-slider';
 import 'rc-slider/assets/index.css';
-import {
+import React, {
   useCallback,
   useContext,
   useEffect,
@@ -90,6 +90,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { default as Web3, default as web3 } from 'web3';
 import { ScreenType } from '..';
 import styles from './styles.module.scss';
+import { closeModal, openModal } from '@/state/modal';
+import ModalConfirmApprove from '@/components/ModalConfirmApprove';
+import {BiBell} from "react-icons/bi";
 
 const LIMIT_PAGE = 50;
 
@@ -171,6 +174,10 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   useEffect(() => {
     checkPair();
   }, [baseToken, quoteToken, needReload]);
+
+  useEffect(() => {
+    change('isPaired', isPaired);
+  }, [isPaired]);
 
   useEffect(() => {
     change('isApproveBaseToken', isApproveBaseToken);
@@ -407,8 +414,6 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         }),
       );
     } catch (error) {
-      console.log('error', error);
-
       throw error;
     } finally {
     }
@@ -484,6 +489,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       const _baseAmount = new BigNumber(_amount).multipliedBy(rate).toFixed(18);
 
       change('baseAmount', _baseAmount);
+
       setIsApproveBaseToken(
         checkBalanceIsApprove(isApproveAmountBaseToken, _baseAmount),
       );
@@ -491,10 +497,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
 
     if (Number(_amount) > 0 && baseToken && quoteToken) {
       setIsApproveQuoteToken(
-        checkBalanceIsApprove(
-          isApproveAmountQuoteToken,
-          Web3.utils.toWei(new BigNumber(_amount || 0).toFixed(18), 'ether'),
-        ),
+        checkBalanceIsApprove(isApproveAmountQuoteToken, _amount),
       );
     }
   };
@@ -521,10 +524,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     }
     if (Number(_amount) > 0 && baseToken && quoteToken) {
       setIsApproveBaseToken(
-        checkBalanceIsApprove(
-          isApproveAmountBaseToken,
-          Web3.utils.toWei(new BigNumber(_amount || 0).toFixed(18), 'ether'),
-        ),
+        checkBalanceIsApprove(isApproveAmountBaseToken, _amount),
       );
     }
   };
@@ -541,6 +541,31 @@ export const MakeFormSwap = forwardRef((props, ref) => {
 
   const checkBalanceIsApprove = (required: any = 0, amount: any = 0) => {
     return required > 0 && new BigNumber(required).minus(amount).toNumber() >= 0;
+  };
+
+  const onShowModalApprove = () => {
+    const id = 'modal';
+    const onClose = () => dispatch(closeModal({ id }));
+    dispatch(
+      openModal({
+        id,
+        theme: 'dark',
+        title: !isScreenRemove
+          ? `APPROVE USE OF ${
+              !isApproveBaseToken ? baseToken?.symbol : quoteToken?.symbol
+            }`
+          : `APPROVE USE OF THIS LIQUIDITY`,
+        className: styles.modalConfirmApprove,
+        modalProps: {
+          centered: true,
+          // size: mobileScreen ? 'full' : 'xl',
+          zIndex: 9999999,
+        },
+        render: () => (
+          <ModalConfirmApprove onApprove={onApprove} onClose={onClose} />
+        ),
+      }),
+    );
   };
 
   const onApprove = async () => {
@@ -582,15 +607,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         error: JSON.stringify(err),
         message: message,
       });
-      dispatch(
-        updateCurrentTransaction({
-          status: TransactionStatus.error,
-          id: transactionType.createPoolApprove,
-          infoTexts: {
-            error: getMessageError(err, {}).title,
-          },
-        }),
-      );
+      toastError(showError, err, { address: account });
     } finally {
       setLoading(false);
     }
@@ -611,13 +628,13 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       .toFixed(18);
 
     return (
-      <Flex gap={4} flexWrap={'wrap'} className="price-pool-content">
+      <Flex gap={4} flexWrap={'wrap'} className="price-pool-content" mt={2}>
         <Box>
           <Stat>
             <StatNumber>
               {!isPaired
                 ? '-'
-                : formatCurrency(pair1, Number(pair1) > 1000000 ? 4 : 18)}
+                : formatCurrency(pair1, Number(pair1) > 1000000 ? 4 : 8)}
             </StatNumber>
             <StatHelpText>{`${token1.symbol} per ${token2.symbol}`}</StatHelpText>
           </Stat>
@@ -627,7 +644,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             <StatNumber>
               {!isPaired
                 ? '-'
-                : formatCurrency(pair2, Number(pair2) > 1000000 ? 4 : 18)}
+                : formatCurrency(pair2, Number(pair2) > 1000000 ? 4 : 8)}
             </StatNumber>
             <StatHelpText>{`${token2.symbol} per ${token1.symbol}`}</StatHelpText>
           </Stat>
@@ -779,15 +796,18 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         label={' '}
         rightLabel={
           !isEmpty(baseToken) && (
-            <Flex gap={1} fontSize={px2rem(16)}>
-              <Text>
+            <Flex gap={2} fontSize={px2rem(14)} color={"#FFFFFF"}>
+              <Flex gap={1} alignItems={"center"}>
                 Balance: {formatCurrency(baseBalance)} {baseToken?.symbol}
-              </Text>
+              </Flex>
               {!isScreenRemove && (
                 <Text
                   cursor={'pointer'}
                   color={'#3385FF'}
                   onClick={handleChangeMaxBaseAmount}
+                  bgColor={"rgba(51, 133, 255, 0.2)"}
+                  borderRadius={"4px"}
+                  padding={"1px 12px"}
                 >
                   MAX
                 </Text>
@@ -821,36 +841,40 @@ export const MakeFormSwap = forwardRef((props, ref) => {
                 onExtraSearch={onExtraSearch}
               />
             }
-            borderColor={'#5B5B5B'}
+            borderColor={'#353945'}
           />
         </Flex>
       </InputWrapper>
-      <Flex justifyContent={'center'} mt={6}>
-        <Box
-          className="btn-transfer"
-          p={2}
-          border={'1px solid #3385FF'}
-          borderRadius={'8px'}
+      <Flex gap={2} justifyContent={"center"} mt={6}>
+        <Center
+          w={'40px'}
+          h={'40px'}
+          minW={"40px"}
+          minH={"40px"}
+          borderRadius={'50%'}
+          bgColor={"rgba(255, 255, 255, 0.1)"}
         >
-          <BsPlus color="#3385FF" />
-        </Box>
+          <BsPlus fontWeight={'bold'} fontSize={'30px'} color={"#FFFFFF"}/>
+        </Center>
       </Flex>
-
       <InputWrapper
         className={cx(styles.inputAmountWrap, styles.inputQuoteAmountWrap)}
         theme="light"
         label={' '}
         rightLabel={
           !isEmpty(quoteToken) && (
-            <Flex gap={1} fontSize={px2rem(16)}>
-              <Text>
+            <Flex gap={2} fontSize={px2rem(14)} color={"#FFFFFF"}>
+              <Flex gap={1} alignItems={"center"}>
                 Balance: {formatCurrency(quoteBalance)} {quoteToken?.symbol}
-              </Text>
+              </Flex>
               {!isScreenRemove && (
                 <Text
                   cursor={'pointer'}
                   color={'#3385FF'}
                   onClick={handleChangeMaxQuoteAmount}
+                  bgColor={"rgba(51, 133, 255, 0.2)"}
+                  borderRadius={"4px"}
+                  padding={"1px 12px"}
                 >
                   MAX
                 </Text>
@@ -886,7 +910,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
               />
             }
             // hideError={true}
-            borderColor={'#5B5B5B'}
+            borderColor={'#353945'}
           />
         </Flex>
       </InputWrapper>
@@ -899,7 +923,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
 
       {baseToken && quoteToken && (
         <Box className={styles.pricePoolContainer}>
-          <Text>Initial prices and pool share</Text>
+          <Text>INITIAL PRICES AND POOL SHARE</Text>
           {renderPricePool()}
         </Box>
       )}
@@ -923,35 +947,57 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         baseToken &&
         BRIDGE_SUPPORT_TOKEN.includes(baseToken?.symbol) &&
         new BigNumber(baseBalance || 0).lte(0) && (
-          <Text fontSize="md" color="brand.warning.400" textAlign={'left'}>
-            Insufficient {baseToken?.symbol} balance! Consider swapping your{' '}
-            {baseToken?.symbol?.replace('W', '')} to trustless network{' '}
-            <Link
-              href={TRUSTLESS_BRIDGE}
-              target={'_blank'}
-              style={{ textDecoration: 'underline' }}
+          <Flex gap={3} mt={4}>
+            <Center
+              w={'24px'}
+              h={'24px'}
+              borderRadius={'50%'}
+              bg={'rgba(255, 126, 33, 0.2)'}
+              as={"span"}
             >
-              here
-            </Link>
-            .
-          </Text>
+              <BiBell color="#FF7E21" />
+            </Center>
+            <Text fontSize="sm" color="#FF7E21" textAlign={'left'}>
+              Insufficient {baseToken?.symbol} balance! Consider swapping your{' '}
+              {baseToken?.symbol?.replace('W', '')} to trustless network{' '}
+              <Link
+                href={`${TRUSTLESS_BRIDGE}${baseToken?.symbol?.replace('W', '')?.toLowerCase()}`}
+                target={'_blank'}
+                style={{ textDecoration: 'underline' }}
+              >
+                here
+              </Link>
+              .
+            </Text>
+          </Flex>
         )}
       {isAuthenticated &&
         quoteToken &&
         BRIDGE_SUPPORT_TOKEN.includes(quoteToken?.symbol) &&
         new BigNumber(quoteBalance || 0).lte(0) && (
-          <Text fontSize="md" color="brand.warning.400" textAlign={'left'}>
-            Insufficient {quoteToken?.symbol} balance! Consider swapping your{' '}
-            {quoteToken?.symbol?.replace('W', '')} to trustless network{' '}
-            <Link
-              href={TRUSTLESS_BRIDGE}
-              target={'_blank'}
-              style={{ textDecoration: 'underline' }}
+          <Flex gap={3} mt={4}>
+            <Center
+              w={'24px'}
+              h={'24px'}
+              borderRadius={'50%'}
+              bg={'rgba(255, 126, 33, 0.2)'}
+              as={"span"}
             >
-              here
-            </Link>
-            .
-          </Text>
+              <BiBell color="#FF7E21" />
+            </Center>
+            <Text fontSize="sm" color="#FF7E21" textAlign={'left'}>
+              Insufficient {quoteToken?.symbol} balance! Consider swapping your{' '}
+              {quoteToken?.symbol?.replace('W', '')} to trustless network{' '}
+              <Link
+                href={`${TRUSTLESS_BRIDGE}${quoteToken?.symbol?.replace('W', '')?.toLowerCase()}`}
+                target={'_blank'}
+                style={{ textDecoration: 'underline' }}
+              >
+                here
+              </Link>
+              .
+            </Text>
+          </Flex>
         )}
       <WrapperConnected
         type={
@@ -971,7 +1017,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             isDisabled={loading}
             loadingText="Processing"
             btnSize={'h'}
-            onClick={onApprove}
+            onClick={onShowModalApprove}
             type="button"
             processInfo={{
               id: transactionType.createPoolApprove,
@@ -994,9 +1040,10 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             containerConfig={{ flex: 1 }}
             loadingText={submitting ? 'Processing' : ' '}
             processInfo={{
-              id: transactionType.createPool,
+              id: transactionType.createPoolApprove,
             }}
             style={{ backgroundColor: renderContentTitle().btnBgColor }}
+            mt={6}
           >
             {renderContentTitle().btnTitle}
           </FiledButton>
@@ -1046,6 +1093,7 @@ const CreateMarket = ({
         tokenA: baseToken,
         tokenB: quoteToken,
       });
+      console.log('121212121', response);
       const [resReserve, resSupply] = await Promise.all([
         getReserves({
           address: response,
@@ -1086,6 +1134,8 @@ const CreateMarket = ({
           ...extraInfo,
         });
       }
+      console.log('findIndex', response);
+
       localStorage.setItem(LIQUID_PAIRS, JSON.stringify(__pairs));
     } catch (error) {}
   };
@@ -1098,6 +1148,7 @@ const CreateMarket = ({
       quoteAmount,
       isApproveQuoteToken,
       isApproveBaseToken,
+      isPaired,
     } = values;
     // if (!isApproveQuoteToken || !isApproveBaseToken) {
     //   return;
@@ -1107,7 +1158,7 @@ const CreateMarket = ({
       dispatch(
         updateCurrentTransaction({
           status: TransactionStatus.info,
-          id: transactionType.createPool,
+          id: transactionType.createPoolApprove,
         }),
       );
 
@@ -1121,11 +1172,6 @@ const CreateMarket = ({
       let response: any;
 
       if (isRemove) {
-        console.log(
-          'values?.liquidValue',
-          web3.utils.fromWei(new BigNumber(values?.liquidValue).toFixed()),
-        );
-
         const data = {
           tokenA: token0?.address,
           tokenB: token1?.address,
@@ -1136,9 +1182,6 @@ const CreateMarket = ({
 
         response = await removeLiquidity(data);
       } else {
-        console.log('amount0', amount0);
-        console.log('amount1', new BigNumber(amount1).toString());
-
         const data = {
           tokenA: token0?.address,
           tokenB: token1?.address,
@@ -1146,6 +1189,7 @@ const CreateMarket = ({
           amountADesired: amount0,
           amountBDesired: amount1,
           amountBMin: '0',
+          isPaired,
         };
 
         response = await addLiquidity(data);
@@ -1160,7 +1204,7 @@ const CreateMarket = ({
       dispatch(
         updateCurrentTransaction({
           status: TransactionStatus.success,
-          id: transactionType.createPool,
+          id: transactionType.createPoolApprove,
           hash: response.hash,
           infoTexts: {
             success: 'Pool has been created successfully.',

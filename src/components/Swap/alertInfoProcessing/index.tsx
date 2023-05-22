@@ -122,6 +122,7 @@ const AlertInfoProcess: React.FC<AlertInfoProcessProps> = ({
       opacity={0.8}
       py={processInfo?.size === 'sm' ? 2 : 4}
       gap={2}
+      mb={3}
     >
       <AlertIcon boxSize="40px" mr={0} />
       <Flex direction={'column'}>

@@ -97,6 +97,10 @@ const WalletHeader = () => {
     toast.success('Copied');
   };
 
+  const gotoBridge = (tab: string, tokenSymbol: string) => {
+    window.open(`${TRUSTLESS_BRIDGE}?tab=${tab}&tokenSymbol=${tokenSymbol}`)
+  }
+
   const walletPopover = (
     <WalletPopover
       id="wallet-header"
@@ -167,9 +171,17 @@ const WalletHeader = () => {
           <IconSVG src={`/faucet.svg`} maxWidth="20" color="black" />
           <Text size="medium">Faucet</Text>
         </div>
-        <div className="wallet-link" onClick={() => window.open(TRUSTLESS_BRIDGE)}>
+        <div className="wallet-link" onClick={() => gotoBridge('deposit', 'btc')}>
           <IconSVG src={`/wrapbtc.svg`} maxWidth="20" color="black" type="fill" />
           <Text size="medium">Wrap BTC</Text>
+        </div>
+        <div className="wallet-link" onClick={() => gotoBridge('deposit', 'eth')}>
+          <IconSVG src={`/wrapbtc.svg`} maxWidth="20" color="black" type="fill" />
+          <Text size="medium">Wrap ETH</Text>
+        </div>
+        <div className="wallet-link" onClick={() => gotoBridge('deposit', 'usdc')}>
+          <IconSVG src={`/wrapbtc.svg`} maxWidth="20" color="black" type="fill" />
+          <Text size="medium">Wrap USDC</Text>
         </div>
         {user?.walletAddress && (
           <div

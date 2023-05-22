@@ -1,21 +1,23 @@
 /* eslint-disable react-hooks/rules-of-hooks */
-import { CDN_URL } from '@/configs';
-import { ROUTE_PATH } from '@/constants/route-path';
-import { gsap } from 'gsap';
+import {CDN_URL} from '@/configs';
+import {ROUTE_PATH} from '@/constants/route-path';
+import {gsap} from 'gsap';
 import Link from 'next/link';
-import { useEffect, useMemo, useRef, useState } from 'react';
-import { Wrapper } from './Header.styled';
+import {useEffect, useRef, useState} from 'react';
+import {Wrapper} from './Header.styled';
 import MenuMobile from './MenuMobile';
 import WalletHeader from './Wallet';
-import { useWindowSize } from '@trustless-computer/dapp-core';
-import { useRouter } from 'next/router';
-import { GENERATIVE_DISCORD, TRUSTLESS_COMPUTER } from '@/constants/common';
-import { useScreenLayout } from '@/hooks/useScreenLayout';
-import { Flex, Text, Link as LinkText } from '@chakra-ui/react';
-import { defaultProvider } from '@/contexts/screen-context';
-import { compareString } from '@/utils';
+import {useWindowSize} from '@trustless-computer/dapp-core';
+import {useRouter} from 'next/router';
+import {GENERATIVE_DISCORD, GM_ADDRESS, TRUSTLESS_COMPUTER, WETH_ADDRESS} from '@/constants/common';
+import {useScreenLayout} from '@/hooks/useScreenLayout';
+import {defaultProvider} from '@/contexts/screen-context';
+import {compareString} from '@/utils';
+import {Flex, Link as LinkText, Text} from "@chakra-ui/react";
+import {RiArrowRightUpLine} from "react-icons/ri";
 
 export const isScreenDarkMode = () => {
+  return true;
   const router = useRouter();
   return (
     compareString(router?.pathname, ROUTE_PATH.HOME) ||
@@ -24,7 +26,8 @@ export const isScreenDarkMode = () => {
     compareString(router?.pathname, ROUTE_PATH.IDO_MANAGE) ||
     compareString(router?.pathname, ROUTE_PATH.TOKEN) ||
     compareString(router?.pathname, ROUTE_PATH.GET_STARTED) ||
-    compareString(router?.pathname, ROUTE_PATH.TM_TRANSFER_HISTORY)
+    compareString(router?.pathname, ROUTE_PATH.TM_TRANSFER_HISTORY) ||
+    compareString(router?.pathname, ROUTE_PATH.SWAP_HISTORY)
   );
 };
 
@@ -35,9 +38,9 @@ const Header = () => {
   const router = useRouter();
   const { headerHeight, showGetStarted } = useScreenLayout();
 
-  const isTokensPage = useMemo(() => {
-    return isScreenDarkMode();
-  }, [router?.pathname]);
+  // const isTokensPage = useMemo(() => {
+  //   return isScreenDarkMode();
+  // }, [router?.pathname]);
 
   useEffect(() => {
     if (refMenu.current) {
@@ -86,7 +89,7 @@ const Header = () => {
                 Markets
               </Link>
               <Link
-                href={ROUTE_PATH.SWAP}
+                href={`${ROUTE_PATH.SWAP}?from_token=${WETH_ADDRESS}&to_token=${GM_ADDRESS}`}
                 className={
                   router?.pathname?.includes(ROUTE_PATH.SWAP) ? 'isSelected' : ''
                 }
@@ -109,6 +112,14 @@ const Header = () => {
               >
                 Ido
               </Link>
+              {/*<Link
+                href={ROUTE_PATH.GET_STARTED}
+                className={
+                  router?.pathname?.includes(ROUTE_PATH.GET_STARTED) ? 'isSelected' : ''
+                }
+              >
+                Get Started
+              </Link>*/}
             </div>
           </div>
         </div>
@@ -117,10 +128,16 @@ const Header = () => {
           {!mobileScreen && (
             <div className="external-link">
               <Link href={GENERATIVE_DISCORD} target={'_blank'}>
-                DISCORD
+                <Flex gap={1} alignItems={"center"}>
+                  <Text>DISCORD</Text>
+                  <RiArrowRightUpLine fontSize={"20px"}/>
+                </Flex>
               </Link>
               <Link href={TRUSTLESS_COMPUTER} target={'_blank'}>
-                TRUSTLESS
+                <Flex gap={1} alignItems={"center"}>
+                  <Text>TRUSTLESS</Text>
+                  <RiArrowRightUpLine fontSize={"20px"}/>
+                </Flex>
               </Link>
             </div>
           )}
@@ -130,29 +147,31 @@ const Header = () => {
           </button>
         </div>
       </div>
-      {showGetStarted && (
-        <Flex
-          height={10}
-          alignItems="center"
-          justifyContent="center"
-          bgColor={`#ebebeb${isTokensPage ? '33' : ''}`}
-        >
-          <Text
-            fontWeight="medium"
-            fontSize="sm"
-            color={isTokensPage ? 'white' : 'black'}
+      {
+        showGetStarted && (
+          <Flex
+            height={10}
+            alignItems="center"
+            justifyContent="center"
+            bgColor={`#ebebeb${isScreenDarkMode() ? '33' : ''}`}
           >
-            New to Bitcoin DeFi?{' '}
-            <LinkText
-              fontWeight="bold"
-              color="brand.info.400"
-              href={ROUTE_PATH.GET_STARTED}
+            <Text
+              fontWeight="medium"
+              fontSize="sm"
+              color={isScreenDarkMode() ? 'white' : 'black'}
             >
-              Start here.
-            </LinkText>{' '}
-          </Text>
-        </Flex>
-      )}
+              New to Bitcoin DeFi?{' '}
+              <LinkText
+                fontWeight="bold"
+                color="brand.info.400"
+                href={ROUTE_PATH.GET_STARTED}
+              >
+                Start here.
+              </LinkText>{' '}
+            </Text>
+          </Flex>
+        )
+      }
     </Wrapper>
   );
 };

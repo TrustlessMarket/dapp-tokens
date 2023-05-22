@@ -2,17 +2,17 @@ import px2rem from '@/utils/px2rem';
 import styled from 'styled-components';
 
 export const StyledTokens = styled.div`
-  margin-top: ${px2rem(48)};
-  margin-bottom: ${px2rem(48)};
+  padding-top: ${px2rem(48)};
+  padding-bottom: ${px2rem(48)};
   
   .avatar {
     object-fit: cover;
-    width: ${px2rem(50)};
-    height: ${px2rem(50)};
+    width: ${px2rem(40)};
+    height: ${px2rem(40)};
     border-radius: 50%;
   }
 
-  .table {
+  .chakra-table {
     th:first-of-type {
       max-width: ${px2rem(50)};
       white-space: nowrap;
@@ -26,33 +26,32 @@ export const StyledTokens = styled.div`
     }
 
     td {
-      padding-top: ${px2rem(26)};
-      padding-bottom: ${px2rem(26)};
+      padding-top: ${px2rem(24)};
+      padding-bottom: ${px2rem(24)};
     }
     
-    .tableHead {
-      &_item {
-        color: #FFFFFF;
+    thead {
+      tr {
+        th {
+          background: #1E1E22;
+          text-transform: uppercase;
+          border-bottom-color: rgb(34,37,49);
+          padding-top: ${px2rem(12)};
+          padding-bottom: ${px2rem(12)};
+        }
       }
-      border-bottom: 1px solid rgb(34,37,49);
     }
-    
-    .tableData {
-      border-bottom: 1px solid rgb(34,37,49);
-      &_item {
-        color: #FFFFFF;
-        
-        .increase {
-          color: #16c784;
+
+    tbody {
+      tr {
+        td {
+          vertical-align: middle;
+          border-bottom-color: rgb(34,37,49);
         }
         
-        .descrease {
-          color: #ea3943;
+        &:hover {
+          background-color: #1E1E22;
         }
-      }
-      
-      &:hover {
-        background-color: rgb(23,25,36);
       }
     }
   }
@@ -64,7 +63,7 @@ export const StyledTokens = styled.div`
   }
   
   .upload_title {
-    margin-bottom: ${px2rem(24)};
+    //margin-bottom: ${px2rem(24)};
     margin-left: auto;
     margin-right: auto;
     width: fit-content;
@@ -73,6 +72,27 @@ export const StyledTokens = styled.div`
     color: white;
     font-size: ${px2rem(48)};
     line-height: 48 / 44;
+  }
+
+  .tokens-list {
+    overflow: hidden !important;
+  }
+  
+  .chakra-form-control {
+    max-width: 300px;
+    
+    .chakra-input__group {
+      background-color: transparent;
+      
+      > div {
+        background-color: transparent;
+      }
+    }
+  }
+  
+  .search_text {
+    font-size: 14px;
+    color: #FFFFFF;
   }
   
   @media screen and (max-width: 768px) {
@@ -112,6 +132,7 @@ export const UploadFileContainer = styled.div`
     position: relative;
     overflow: hidden;
     gap: ${px2rem(32)};
+    margin-bottom: ${px2rem(16)};
   }
 
   .button-text {

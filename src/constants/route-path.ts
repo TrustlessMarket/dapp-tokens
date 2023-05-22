@@ -18,4 +18,5 @@ export const ROUTE_PATH = {
   IDO: '/ido',
   IDO_MANAGE: '/ido/manage',
   TM_TRANSFER_HISTORY: '/tm-transfer-history',
+  SWAP_HISTORY: '/swap-history',
 };

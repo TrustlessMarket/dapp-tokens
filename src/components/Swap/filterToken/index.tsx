@@ -1,20 +1,22 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import FiledButton from '@/components/Swap/button/filedButton';
 import FieldText from '@/components/Swap/form/fieldText';
-import ListTable, { ColumnProp } from '@/components/Swap/listTable';
+import ListTable, {ColumnProp} from '@/components/Swap/listTable';
 import TokenBalance from '@/components/Swap/tokenBalance';
-import { COMMON_TOKEN } from '@/constants/common';
+import {COMMON_TOKEN_CONTRACT} from '@/constants/common';
 import useDebounce from '@/hooks/useDebounce';
-import { closeModal, openModal } from '@/state/modal';
-import { Box, Flex, Text } from '@chakra-ui/react';
-import { useWindowSize } from '@trustless-computer/dapp-core';
+import {closeModal, openModal} from '@/state/modal';
+import {Box, Flex, Text} from '@chakra-ui/react';
+import {useWindowSize} from '@trustless-computer/dapp-core';
 import cx from 'classnames';
-import { clone } from 'lodash';
-import React, { useEffect, useMemo, useState } from 'react';
-import { Field, Form, useFormState } from 'react-final-form';
-import { IoChevronDownOutline } from 'react-icons/io5';
-import { useDispatch } from 'react-redux';
+import {clone} from 'lodash';
+import React, {useEffect, useMemo, useState} from 'react';
+import {Field, Form, useFormState} from 'react-final-form';
+import {useDispatch} from 'react-redux';
+import {AiOutlineCaretDown} from 'react-icons/ai';
 import styles from './styles.module.scss';
+import {compareString} from "@/utils";
+import {RxMagnifyingGlass} from "react-icons/rx";
 
 interface FilterButtonProps {
   data: any[] | undefined;
@@ -45,10 +47,12 @@ const FilterModal: React.FC<FilterModalProps> = ({
 
   const commonData = useMemo(() => {
     const res = [];
-    for (let i = 0; i < data.length; i++) {
-      const e = data[i];
-      if (COMMON_TOKEN.includes(e.symbol)) {
-        res.push(e);
+    for (let i = 0; i < COMMON_TOKEN_CONTRACT.length; i++) {
+      const address = COMMON_TOKEN_CONTRACT[i];
+
+      const token = data?.find(e => compareString(e?.address, address));
+      if(token) {
+        res.push(token);
       }
     }
     return res;
@@ -58,11 +62,16 @@ const FilterModal: React.FC<FilterModalProps> = ({
     () => [
       {
         id: 'market',
-        label: 'Token',
+        label: (
+          <Flex w={"100%"} gap={4} alignItems={'flex-start'} justifyContent={'space-between'}>
+            <Text>TOKEN</Text>
+            <Text>BALANCE</Text>
+          </Flex>
+        ),
         labelConfig: {
           fontSize: '12px',
           fontWeight: '500',
-          color: '#B1B5C3',
+          color: '#1C1C1C',
         },
         config: {
           borderBottom: 'none',
@@ -144,21 +153,12 @@ const FilterModal: React.FC<FilterModalProps> = ({
 
   return (
     <form onSubmit={handleSubmit}>
-      <Field
-        component={FieldText}
-        name="search_text"
-        placeholder="Search name or paste address"
-        style={{
-          textAlign: 'left',
-        }}
-        // fieldChanged={onChange}
-      />
       {commonData && commonData?.length > 0 && (
-        <Box mt={4}>
+        <Box mb={4}>
           <Text fontSize={'12px'} fontWeight="500">
-            Common tokens
+            COMMON TOKENS
           </Text>
-          <Box mt={1}>
+          <Box mt={2}>
             <Flex gap={4} maxW="100%" overflow="auto">
               {commonData?.map((row: DataRow) => (
                 <Flex
@@ -167,8 +167,8 @@ const FilterModal: React.FC<FilterModalProps> = ({
                   gap={1}
                   borderRadius={'4px'}
                   border="1px solid #e6e8ec"
-                  px={2}
-                  py={1}
+                  px={4}
+                  py={2}
                   onClick={() => onItemClick(row)}
                   cursor="pointer"
                   minW={'50px'}
@@ -190,7 +190,24 @@ const FilterModal: React.FC<FilterModalProps> = ({
           </Box>
         </Box>
       )}
-
+      <Box>
+        <Field
+          component={FieldText}
+          name="search_text"
+          placeholder="Search name or paste address"
+          style={{
+            textAlign: 'left',
+            fontSize: '14px',
+          }}
+          // fieldChanged={onChange}
+          prependComp={
+            <Box mt={2}>
+              <RxMagnifyingGlass fontSize={"32px"} color={"#B6B6B6"}/>
+            </Box>
+          }
+          borderColor={'#ECECED'}
+        />
+      </Box>
       <Box
         maxHeight={mobileScreen ? 'calc(100vh - 250px)' : '50vh'}
         overflow="auto"
@@ -271,7 +288,7 @@ const FilterButton: React.FC<FilterButtonProps> = ({
         id,
         theme: 'dark',
         title: 'Select a Token',
-        className: mobileScreen && styles.filterModalContent,
+        className: styles.modalContent,
         modalProps: {
           centered: true,
           size: mobileScreen ? 'full' : 'xl',
@@ -345,10 +362,11 @@ const FilterButton: React.FC<FilterButtonProps> = ({
         alignItems={'center'}
         justifyContent={'space-between'}
         width={'100%'}
+        color={'#FFFFFF'}
       >
         {selectedToken ? (
           <Flex direction={'column'} alignItems={'flex-start'}>
-            <Text fontWeight={'600'} fontSize={'md'}>
+            <Text fontWeight={'500'} fontSize={'md'}>
               {selectedToken?.symbol}
             </Text>
             <Text fontSize={'xs'}>{selectedToken?.network}</Text>
@@ -356,7 +374,7 @@ const FilterButton: React.FC<FilterButtonProps> = ({
         ) : (
           <Text className="select-placeholder">Select a token</Text>
         )}
-        <IoChevronDownOutline color={'#5B5B5B'} />
+        <AiOutlineCaretDown fontSize={"16px"}/>
       </Flex>
     </FiledButton>
   );

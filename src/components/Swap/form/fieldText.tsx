@@ -8,10 +8,12 @@ import {
   FormLabel,
   Input,
   InputGroup,
+  InputLeftElement,
   InputRightElement,
 } from '@chakra-ui/react';
 
 import styles from './styles.module.scss';
+import React from "react";
 
 interface FieldTextProps {
   input?: any;
@@ -20,10 +22,12 @@ interface FieldTextProps {
   rightLabel?: string;
   placeholder?: string;
   errorMessage?: any;
+  prependComp?: any;
   appendComp?: any;
   errorPlacement?: string;
   inputType?: 'text' | 'textarea';
   fieldChanged?: (_: any) => void;
+  borderColor?: string;
 }
 
 const FieldText = (props: FieldTextProps) => {
@@ -34,9 +38,11 @@ const FieldText = (props: FieldTextProps) => {
     meta,
     placeholder,
     inputType = 'text',
+    prependComp,
     appendComp,
     fieldChanged,
     // disabledInput, errorPlacement, zIndex, anchorAppend,
+    borderColor = 'background.default',
     ...restProps
   } = props;
   const { onChange, onBlur, onFocus, value } = input;
@@ -69,13 +75,23 @@ const FieldText = (props: FieldTextProps) => {
         </Flex>
       )}
       <InputGroup
+        borderStyle={"solid"}
         borderWidth={1}
-        borderColor={shouldShowError ? 'brand.danger.400' : 'background.default'}
+        borderColor={shouldShowError ? 'brand.danger.400' : borderColor}
         borderRadius={8}
         bgColor="background.default"
         overflow="hidden"
       >
-        <Box className={styles.formControl} bgColor="#f4f5f6">
+        {prependComp && (
+          <InputLeftElement
+            children={prependComp}
+            // ml={2}
+            // mr={2}
+            // height="100%"
+            position={'relative'}
+          />
+        )}
+        <Box className={styles.formControl}>
           <Input
             as={inputType === 'text' ? 'input' : 'textarea'}
             placeholder={placeholder}

@@ -21,14 +21,12 @@ import { StyledTokenDetailContainer } from './Token.styled';
 // import TokenChart from './Token.Chart';
 import { IToken } from '@/interfaces/token';
 import { getChartToken, getTokenRp } from '@/services/swap';
-import { useWeb3React } from '@web3-react/core';
+import { colors } from '@/theme/colors';
 import { sortBy } from 'lodash';
 import dynamic from 'next/dynamic';
-import TokenTopInfo from './Token.TopInfo';
-import TokenLeftInfo from './Token.LeftInfo';
 import TokenHistory from './Token.History';
-import { colors } from '@/theme/colors';
-import { WBTC_ADDRESS } from '../Swap/form';
+import TokenLeftInfo from './Token.LeftInfo';
+import TokenTopInfo from './Token.TopInfo';
 
 const TokenChart = dynamic(() => import('./Token.Chart'), {
   ssr: false,
@@ -41,7 +39,6 @@ const TokenDetail = () => {
 
   const [data, setData] = useState<IToken>();
   const [chartData, setChartData] = useState<any[]>([]);
-  const { account } = useWeb3React();
 
   useEffect(() => {
     if (address) {
@@ -126,7 +123,10 @@ const TokenDetail = () => {
           }}
         >
           <Box flex={2}>
-            <TokenChart chartData={chartData} />
+            <TokenChart
+              chartData={chartData}
+              dataSymbol={data?.baseTokenSymbol || 'WBTC'}
+            />
           </Box>
           <Box
             className="tab-container"

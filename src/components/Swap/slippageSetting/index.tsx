@@ -17,7 +17,7 @@ import debounce from 'lodash/debounce';
 import { useAppDispatch, useAppSelector } from '@/state/hooks';
 import { selectPnftExchange, updateSlippage } from '@/state/pnftExchange';
 
-const SLIPPAGES = [0.5, 1, 1.5, 2];
+const SLIPPAGES = [1, 10, 50, 100];
 
 const SlippageSetting = ({ error: myError }: { error: any }) => {
   const [slippage, setSlippage] = useState(
@@ -62,12 +62,12 @@ const SlippageSetting = ({ error: myError }: { error: any }) => {
 
   return (
     <Box className={styles.wrapper}>
-      <Text fontSize="xs" fontWeight="medium" color={'#B1B5C3'} mb={2}>
+      <Text fontSize="xs" fontWeight="medium" color={'#B1B5C3'} textAlign={"left"}>
         Slippage Tolerance
       </Text>
-      <Flex direction={'column'}>
+      <Flex direction={'column'} mt={2}>
         <Flex alignItems="center" gap={2}>
-          <InputGroup size="sm">
+          {/*<InputGroup size="sm">
             <Input
               value={slippage}
               className={'inputSlippage'}
@@ -78,8 +78,8 @@ const SlippageSetting = ({ error: myError }: { error: any }) => {
               disabled
             />
             <InputRightAddon children="%" />
-          </InputGroup>
-          <Flex gap={1} className={styles.listButton}>
+          </InputGroup>*/}
+          <Flex gap={1} className={styles.listButton} justifyContent={"space-between"} w={"100%"}>
             {SLIPPAGES.map((value) => (
               <Button
                 key={value}

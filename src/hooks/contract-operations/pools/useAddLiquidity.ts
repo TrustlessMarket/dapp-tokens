@@ -1,17 +1,15 @@
 import UniswapV2Router from '@/abis/UniswapV2Router.json';
 import { transactionType } from '@/components/Swap/alertInfoProcessing/types';
-import { APP_ENV, TRANSFER_TX_SIZE, UNIV2_ROUTER_ADDRESS } from '@/configs';
-import { ERROR_CODE } from '@/constants/error';
+import { APP_ENV, UNIV2_ROUTER_ADDRESS } from '@/configs';
 import { MaxUint256 } from '@/constants/url';
 import { AssetsContext } from '@/contexts/assets-context';
 import { TransactionEventType } from '@/enums/transaction';
-import useBitcoin from '@/hooks/useBitcoin';
 import { ContractOperationHook, DAppType } from '@/interfaces/contract-operation';
 import { TransactionStatus } from '@/interfaces/walletTransaction';
 import { logErrorToServer, scanTrx } from '@/services/swap';
 import store from '@/state';
 import { updateCurrentTransaction } from '@/state/pnftExchange';
-import { compareString, getContract } from '@/utils';
+import { compareString, getContract, getDefaultGasPrice } from '@/utils';
 import { useWeb3React } from '@web3-react/core';
 import { useCallback, useContext } from 'react';
 import Web3 from 'web3';
@@ -25,15 +23,12 @@ export interface IAddLiquidityParams {
   amountBDesired: string;
   amountBMin: string;
   decimalB?: string;
-  //   to: string;
+  isPaired: boolean;
 }
 
 const useAddLiquidity: ContractOperationHook<IAddLiquidityParams, boolean> = () => {
   const { account, provider } = useWeb3React();
   const { btcBalance, feeRate } = useContext(AssetsContext);
-  const { getUnInscribedTransactionDetailByAddress, getTCTxByHash } = useBitcoin();
-
-  const funcLiquidHex = '0xe8e33700';
 
   const call = useCallback(
     async (params: IAddLiquidityParams): Promise<boolean> => {
@@ -44,43 +39,49 @@ const useAddLiquidity: ContractOperationHook<IAddLiquidityParams, boolean> = () 
         amountADesired,
         amountBDesired,
         amountBMin,
-        // to,
+        isPaired,
       } = params;
 
-      if (account && provider) {
+      if (account && provider && tokenA && tokenB) {
         const contract = getContract(
           UNIV2_ROUTER_ADDRESS,
           UniswapV2Router,
           provider,
           account,
         );
-        console.log({
-          tcTxSizeByte: TRANSFER_TX_SIZE,
-          feeRatePerByte: feeRate.fastestFee,
-        });
 
-        let isPendingTx = false;
+        // const [amountApproveA, amountApproveB] = await Promise.all([
+        //   isApproveERC20Token({
+        //     address: UNIV2_ROUTER_ADDRESS,
+        //     erc20TokenAddress: tokenA,
+        //   }),
+        //   isApproveERC20Token({
+        //     address: UNIV2_ROUTER_ADDRESS,
+        //     erc20TokenAddress: tokenB,
+        //   }),
+        // ]);
 
-        const unInscribedTxIDs = await getUnInscribedTransactionDetailByAddress(
-          account,
-        );
+        // console.log('amountApproveA', amountApproveA);
+        // console.log('amountApproveB', amountApproveB);
 
-        for await (const unInscribedTxID of unInscribedTxIDs) {
-          console.log('unInscribedTxID', unInscribedTxID);
+        // let isPendingTx = false;
 
-          const _getTxDetail = await getTCTxByHash(unInscribedTxID.Hash);
-          const _inputStart = _getTxDetail.input.slice(0, 10);
+        // const unInscribedTxIDs = await getUnInscribedTransactionDetailByAddress(
+        //   account,
+        // );
 
-          console.log('_inputStart', _inputStart);
+        // for await (const unInscribedTxID of unInscribedTxIDs) {
+        //   const _getTxDetail = await getTCTxByHash(unInscribedTxID.Hash);
+        //   const _inputStart = _getTxDetail.input.slice(0, 10);
 
-          if (compareString(funcLiquidHex, _inputStart)) {
-            isPendingTx = true;
-          }
-        }
+        //   if (compareString(funcLiquidHex, _inputStart)) {
+        //     isPendingTx = true;
+        //   }
+        // }
 
-        if (isPendingTx) {
-          throw Error(ERROR_CODE.PENDING);
-        }
+        // if (isPendingTx) {
+        //   throw Error(ERROR_CODE.PENDING);
+        // }
 
         // if (compareString(APP_ENV, 'production')) {
         //   const estimatedFee = TC_SDK.estimateInscribeFee({
@@ -109,7 +110,8 @@ const useAddLiquidity: ContractOperationHook<IAddLiquidityParams, boolean> = () 
             account,
             MaxUint256,
             {
-              gasLimit: '1000000',
+              gasLimit: isPaired ? '300000' : '800000',
+              gasPrice: getDefaultGasPrice(),
             },
           );
 
@@ -126,13 +128,13 @@ const useAddLiquidity: ContractOperationHook<IAddLiquidityParams, boolean> = () 
           type: 'logs',
           address: account,
           error: JSON.stringify(transaction),
-          message: "gasLimit: '1000000'",
+          message: "gasLimit: '500000'",
         });
 
         store.dispatch(
           updateCurrentTransaction({
             status: TransactionStatus.pending,
-            id: transactionType.createPool,
+            id: transactionType.createPoolApprove,
             hash: transaction.hash,
             infoTexts: {
               pending: `Transaction confirmed. Please wait for it to be processed on the Bitcoin. Note that it may take up to 10 minutes for a block confirmation on the Bitcoin blockchain.`,

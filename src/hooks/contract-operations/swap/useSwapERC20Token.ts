@@ -2,6 +2,7 @@ import UniswapV2RouterJson from '@/abis/UniswapV2Router.json';
 import { transactionType } from '@/components/Swap/alertInfoProcessing/types';
 import { TRANSFER_TX_SIZE, UNIV2_ROUTER_ADDRESS } from '@/configs';
 import { ERROR_CODE } from '@/constants/error';
+import { CONTRACT_METHOD_IDS } from '@/constants/methodId';
 import { MaxUint256 } from '@/constants/url';
 import { AssetsContext } from '@/contexts/assets-context';
 import { TransactionEventType } from '@/enums/transaction';
@@ -11,7 +12,7 @@ import { TransactionStatus } from '@/interfaces/walletTransaction';
 import { logErrorToServer, scanTrx } from '@/services/swap';
 import store from '@/state';
 import { updateCurrentTransaction } from '@/state/pnftExchange';
-import { compareString, getContract } from '@/utils';
+import { compareString, getContract, getDefaultGasPrice } from '@/utils';
 import { useWeb3React } from '@web3-react/core';
 import { useCallback, useContext } from 'react';
 import Web3 from 'web3';
@@ -30,8 +31,6 @@ const useSwapERC20Token: ContractOperationHook<
   const { account, provider } = useWeb3React();
   const { btcBalance, feeRate } = useContext(AssetsContext);
   const { getUnInscribedTransactionDetailByAddress, getTCTxByHash } = useBitcoin();
-
-  const funcSwapHash = '0x38ed1739';
 
   const call = useCallback(
     async (params: ISwapERC20TokenParams): Promise<boolean> => {
@@ -55,14 +54,12 @@ const useSwapERC20Token: ContractOperationHook<
         );
 
         for await (const unInscribedTxID of unInscribedTxIDs) {
-          console.log('unInscribedTxID', unInscribedTxID);
-
           const _getTxDetail = await getTCTxByHash(unInscribedTxID.Hash);
           console.log('_getTxDetail', _getTxDetail);
 
           const _inputStart = _getTxDetail.input.slice(0, 10);
 
-          if (compareString(funcSwapHash, _inputStart)) {
+          if (compareString(CONTRACT_METHOD_IDS.SWAP, _inputStart)) {
             isPendingTx = true;
           }
         }
@@ -70,6 +67,8 @@ const useSwapERC20Token: ContractOperationHook<
         if (isPendingTx) {
           throw Error(ERROR_CODE.PENDING);
         }
+
+        const gasLimit = 50000 + addresses.length * 100000;
 
         const transaction = await contract
           .connect(provider.getSigner())
@@ -80,7 +79,8 @@ const useSwapERC20Token: ContractOperationHook<
             address,
             MaxUint256,
             {
-              gasLimit: '500000',
+              gasLimit,
+              gasPrice: getDefaultGasPrice(),
             },
           );
 
@@ -88,7 +88,7 @@ const useSwapERC20Token: ContractOperationHook<
           type: 'logs',
           address: account,
           error: JSON.stringify(transaction),
-          message: "gasLimit: '500000'",
+          message: `gasLimit: '${gasLimit}'`,
         });
 
         // TC_SDK.signTransaction({
@@ -103,7 +103,7 @@ const useSwapERC20Token: ContractOperationHook<
         store.dispatch(
           updateCurrentTransaction({
             status: TransactionStatus.pending,
-            id: transactionType.swapToken,
+            id: transactionType.createPoolApprove,
             hash: transaction.hash,
             infoTexts: {
               pending: `Transaction confirmed. Please wait for it to be processed on the Bitcoin. Note that it may take up to 10 minutes for a block confirmation on the Bitcoin blockchain.`,

@@ -11,7 +11,7 @@ import { TransactionStatus } from '@/interfaces/walletTransaction';
 import { logErrorToServer, scanTrx } from '@/services/swap';
 import store from '@/state';
 import { updateCurrentTransaction } from '@/state/pnftExchange';
-import { compareString, getContract } from '@/utils';
+import { compareString, getContract, getDefaultGasPrice } from '@/utils';
 import { useWeb3React } from '@web3-react/core';
 import { useCallback, useContext } from 'react';
 import Web3 from 'web3';
@@ -106,7 +106,8 @@ const useRemoveLiquidity: ContractOperationHook<
             account,
             MaxUint256,
             {
-              gasLimit: '500000',
+              gasLimit: '250000',
+              gasPrice: getDefaultGasPrice(),
             },
           );
 
@@ -114,13 +115,13 @@ const useRemoveLiquidity: ContractOperationHook<
           type: 'logs',
           address: account,
           error: JSON.stringify(transaction),
-          message: "gasLimit: '500000'",
+          message: "gasLimit: '250000'",
         });
 
         store.dispatch(
           updateCurrentTransaction({
             status: TransactionStatus.pending,
-            id: transactionType.createPool,
+            id: transactionType.createPoolApprove,
             hash: transaction.hash,
             infoTexts: {
               pending: `Transaction confirmed. Please wait for it to be processed on the Bitcoin. Note that it may take up to 10 minutes for a block confirmation on the Bitcoin blockchain.`,

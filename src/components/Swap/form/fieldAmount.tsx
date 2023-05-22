@@ -81,13 +81,12 @@ const FieldAmount = (props: FieldAmountProps) => {
         </Flex>
       )}
       <InputGroup
+        borderStyle={"solid"}
         borderWidth={1}
         borderColor={shouldShowError ? 'brand.danger.400' : borderColor}
         borderRadius={8}
-        // bgColor="background.default"
-        // display={"flex"}
-        // overflow="hidden"
-        className={styles.formContainer}
+        bgColor="background.default"
+        overflow="hidden"
       >
         {prependComp && (
           <InputLeftElement

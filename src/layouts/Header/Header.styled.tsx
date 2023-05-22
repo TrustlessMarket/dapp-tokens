@@ -6,6 +6,8 @@ import Link from 'next/link';
 
 const Wrapper = styled.div`
   /* max-width: 1920px; */
+  background: #0F0F0F;
+  //border-bottom: 1px solid #353945;
 
   .container {
     padding: 0;
@@ -49,20 +51,37 @@ const Wrapper = styled.div`
     gap: ${px2rem(32)};
   }
 
+
+  .leftContainer {
+    color: #3385ff;
+
+    .external-link {
+      color: inherit;
+    }
+  }
+
+  .rightContainer {
+    color: #FFFFFF;
+
+    .external-link {
+      color: inherit;
+    }
+  }
+
   .leftContainer,
   .rightContainer {
-    color: #3385ff;
+    //color: #3385ff;
 
     display: flex;
     flex-direction: row;
     align-items: center;
-    gap: ${px2rem(16)};
+    gap: ${px2rem(32)};
     position: relative;
 
     .external-link {
       display: flex;
       align-items: center;
-      gap: ${px2rem(16)};
+      gap: ${px2rem(24)};
       margin-right: ${px2rem(24)};
       text-transform: uppercase;
       font-size: ${px2rem(16)};
@@ -231,14 +250,14 @@ const WalletAdress = styled(Tooltip)`
 
 const ConnectWalletButton = styled(Button)`
   padding: ${px2rem(8)} ${px2rem(16)};
-  color: #3385ff;
+  color: #1C1C1C;
   font-size: ${px2rem(14)};
   line-height: ${px2rem(24)};
-  font-weight: 400;
-  background: transparent;
+  font-weight: 500;
+  background: #FFFFFF;
   text-transform: uppercase;
-  border: 1px solid #3385ff;
   border-radius: 8px !important;
+  letter-spacing: 0.01em;
 
   :disabled {
     opacity: 0.8;

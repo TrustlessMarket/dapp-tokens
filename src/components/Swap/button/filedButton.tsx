@@ -29,6 +29,9 @@ const FiledButton: React.FC<FiledButtonProps> = (props) => {
 
   return (
     <>
+      {Boolean(processInfo) && (
+        <AlertInfoProcess loading={isLoading} processInfo={processInfo} />
+      )}
       <Flex
         direction={'column'}
         gap={1}
@@ -36,10 +39,7 @@ const FiledButton: React.FC<FiledButtonProps> = (props) => {
         className={styles.container}
         {...containerConfig}
       >
-        {Boolean(processInfo) && (
-          <AlertInfoProcess loading={isLoading} processInfo={processInfo} />
-        )}
-        {(!isLoading || !Boolean(processInfo)) && (
+        {!isLoading && (
           <Button
             className={cx(styles[`${btnSize}`], className)}
             isLoading={isLoading}
