@@ -57,10 +57,11 @@ import {RiArrowUpDownLine} from 'react-icons/ri';
 import {useDispatch, useSelector} from 'react-redux';
 import Web3 from 'web3';
 import styles from './styles.module.scss';
-import {BsListCheck} from 'react-icons/bs';
-import {ROUTE_PATH} from '@/constants/route-path';
-import SlippageSettingButton from '@/components/Swap/slippageSetting/button';
-import {closeModal, openModal} from '@/state/modal';
+import {BsListCheck} from "react-icons/bs";
+import {BiBell} from "react-icons/bi";
+import {ROUTE_PATH} from "@/constants/route-path";
+import SlippageSettingButton from "@/components/Swap/slippageSetting/button";
+import {closeModal, openModal} from "@/state/modal";
 import {useWindowSize} from '@trustless-computer/dapp-core';
 import InfoTooltip from '@/components/Swap/infoTooltip';
 import ModalConfirmApprove from '@/components/ModalConfirmApprove';
@@ -969,8 +970,8 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           />
           <Text className={'router-text'}>Auto Router</Text>
         </Flex>
-        <Flex justifyContent={'space-between'} w={'100%'}>
-          <Flex alignItems={'center'}>
+        <Flex justifyContent={"space-between"} w={"100%"} color={"#FFFFFF"}>
+          <Flex alignItems={"center"}>
             <img
               // width={25}
               // height={25}
@@ -1042,11 +1043,11 @@ export const MakeFormSwap = forwardRef((props, ref) => {
                 w={'40px'}
                 h={'40px'}
                 borderRadius={'50%'}
-                bg={'#F4F5F6 !important'}
+                bgColor={"#353945"}
                 cursor={'pointer'}
                 onClick={() => router.push(ROUTE_PATH.SWAP_HISTORY)}
               >
-                <BsListCheck color="#000000" />
+                <BsListCheck color="#FFFFFF" fontSize={"20px"}/>
               </Center>
             </InfoTooltip>
             <SlippageSettingButton />
@@ -1056,20 +1057,25 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       <InputWrapper
         className={cx(styles.inputAmountWrap, styles.inputBaseAmountWrap)}
         theme="light"
-        label={<Text fontSize={px2rem(16)}>Swap from</Text>}
+        label={<Text fontSize={px2rem(14)} color={"#FFFFFF"}>Swap from</Text>}
         rightLabel={
           baseToken && (
-            <Flex gap={1} fontSize={px2rem(16)}>
-              <Text>Balance:</Text>
-              <TokenBalance
-                token={baseToken}
-                onBalanceChange={(_amount) => setBaseBalance(_amount)}
-              />
-              <Text>{baseToken?.symbol}</Text>
+            <Flex gap={2} fontSize={px2rem(14)} color={"#FFFFFF"}>
+              <Flex gap={1} alignItems={"center"}>
+                Balance:
+                <TokenBalance
+                  token={baseToken}
+                  onBalanceChange={(_amount) => setBaseBalance(_amount)}
+                />
+                {baseToken?.symbol}
+              </Flex>
               <Text
                 cursor={'pointer'}
                 color={'#3385FF'}
                 onClick={handleChangeMaxBaseAmount}
+                bgColor={"rgba(51, 133, 255, 0.2)"}
+                borderRadius={"4px"}
+                padding={"1px 12px"}
               >
                 MAX
               </Text>
@@ -1096,39 +1102,45 @@ export const MakeFormSwap = forwardRef((props, ref) => {
                 value={baseToken}
               />
             }
-            borderColor={'#5B5B5B'}
+            borderColor={'#353945'}
           />
         </Flex>
       </InputWrapper>
-      <Flex justifyContent={'center'}>
-        <Box
+      <Flex justifyContent={'center'} mt={4}>
+        <Center
           onClick={onChangeTransferType}
-          className="btn-transfer"
+          w={'40px'}
+          h={'40px'}
+          borderRadius={'50%'}
           cursor={'pointer'}
           p={2}
-          // bgColor={'#B1B5C3'}
-          borderRadius={'8px'}
+          bgColor={'#353945'}
         >
-          <RiArrowUpDownLine color="#3385FF" />
-        </Box>
+          <RiArrowUpDownLine color="#FFFFFF" fontSize={"20px"}/>
+        </Center>
       </Flex>
       <InputWrapper
         className={cx(styles.inputAmountWrap, styles.inputQuoteAmountWrap)}
         theme="light"
-        label={<Text fontSize={px2rem(16)}>Swap to</Text>}
+        label={<Text fontSize={px2rem(14)} color={"#FFFFFF"}>Swap to</Text>}
         rightLabel={
           quoteToken && (
-            <Flex gap={1} fontSize={px2rem(16)}>
-              <Text>Balance:</Text>
-              <TokenBalance
-                token={quoteToken}
-                onBalanceChange={(_amount) => setQuoteBalance(_amount)}
-              />
-              <Text>{quoteToken?.symbol}</Text>
+            <Flex gap={2} fontSize={px2rem(14)} color={"#FFFFFF"}>
+              <Flex gap={1} alignItems={"center"}>
+                Balance:
+                <TokenBalance
+                  token={quoteToken}
+                  onBalanceChange={(_amount) => setQuoteBalance(_amount)}
+                />
+                {quoteToken?.symbol}
+              </Flex>
               <Text
                 cursor={'pointer'}
                 color={'#3385FF'}
                 onClick={handleChangeMaxQuoteAmount}
+                bgColor={"rgba(51, 133, 255, 0.2)"}
+                borderRadius={"4px"}
+                padding={"1px 12px"}
               >
                 MAX
               </Text>
@@ -1146,7 +1158,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             disabled={true}
             // placeholder={"Enter number of tokens"}
             decimals={quoteToken?.decimal || 18}
-            className={cx(styles.inputAmount, styles.collateralAmount)}
+            className={cx(styles.inputAmount)}
             prependComp={
               <FilterButton
                 data={quoteTokensList}
@@ -1157,15 +1169,15 @@ export const MakeFormSwap = forwardRef((props, ref) => {
               />
             }
             // hideError={true}
-            borderColor={'#5B5B5B'}
+            borderColor={'#353945'}
           />
         </Flex>
       </InputWrapper>
       <Box mt={1}>
         <HorizontalItem
           label={
-            <Text fontSize={'xs'} fontWeight={'medium'} color={'#23262F'}>
-              Fee: {FEE * (swapRoutes?.length || 1)}%
+            <Text fontSize={'sm'} fontWeight={'medium'} color={'rgba(255, 255, 255, 0.7)'}>
+              FEE: {FEE * (swapRoutes?.length || 1)}%
             </Text>
           }
         />
@@ -1174,7 +1186,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         <Box mt={1}>
           <HorizontalItem
             label={
-              <Text fontSize={'xs'} fontWeight={'medium'} color={'#23262F'}>
+              <Text fontSize={'sm'} fontWeight={'medium'} color={'#FFFFFF'}>
                 1 {quoteToken?.symbol} =&nbsp;
                 {formatCurrency(exchangeRate.toString(), baseToken?.decimal || 18)}
                 &nbsp;{baseToken?.symbol}
@@ -1187,24 +1199,45 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       {isAuthenticated &&
         isLoadedAssets &&
         new BigNumber(juiceBalance || 0).lte(0) && (
-          <Text fontSize="md" color="brand.warning.400" textAlign={'left'}>
-            Your TC balance is insufficient. You can receive free TC on our faucet
-            site{' '}
-            <Link
-              href={TRUSTLESS_FAUCET}
-              target={'_blank'}
-              style={{ textDecoration: 'underline' }}
+          <Flex gap={3} mt={2}>
+            <Center
+              w={'24px'}
+              h={'24px'}
+              borderRadius={'50%'}
+              bg={'rgba(255, 126, 33, 0.2)'}
+              as={"span"}
             >
-              here
-            </Link>
-            .
-          </Text>
+              <BiBell color="#FF7E21" />
+            </Center>
+            <Text fontSize="sm" color="#FF7E21" textAlign={'left'}>
+              Your TC balance is insufficient. You can receive free TC on our faucet
+              site{' '}
+              <Link
+                href={TRUSTLESS_FAUCET}
+                target={'_blank'}
+                style={{ textDecoration: 'underline' }}
+              >
+                here
+              </Link>
+              .
+            </Text>
+          </Flex>
         )}
       {isAuthenticated &&
         baseToken &&
         BRIDGE_SUPPORT_TOKEN.includes(baseToken?.symbol) &&
         new BigNumber(baseBalance || 0).lte(0) && (
-          <Text fontSize="md" color="brand.warning.400" textAlign={'left'} mt={2}>
+        <Flex gap={3} mt={2}>
+          <Center
+            w={'24px'}
+            h={'24px'}
+            borderRadius={'50%'}
+            bg={'rgba(255, 126, 33, 0.2)'}
+            as={"span"}
+          >
+            <BiBell color="#FF7E21" />
+          </Center>
+          <Text fontSize="sm" color="#FF7E21" textAlign={'left'}>
             Insufficient {baseToken?.symbol} balance! Consider swapping your{' '}
             {baseToken?.symbol?.replace('W', '')} to trustless network{' '}
             <Link
@@ -1216,6 +1249,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             </Link>
             .
           </Text>
+        </Flex>
         )}
       <Box mt={8} />
       <WrapperConnected

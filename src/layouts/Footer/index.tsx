@@ -4,6 +4,7 @@ import { useMemo } from 'react';
 import styled, { DefaultTheme } from 'styled-components';
 import { isScreenDarkMode } from '../Header';
 import { Box } from '@chakra-ui/react';
+import {useScreenLayout} from "@/hooks/useScreenLayout";
 // import IcDiscord from '@/assets/icons/ic_discord.svg';
 // import IcTwitter from '@/assets/icons/ic_twitter.svg';
 // import IcGithub from '@/assets/icons/ic_github.svg';
@@ -14,12 +15,13 @@ const Wrapper = styled.div`
   flex-direction: row;
   align-items: center;
   justify-content: center;
-  //margin-top: ${px2rem(140)};
+  border-top: 1px solid #353945;
   flex-wrap: wrap;
   gap: ${px2rem(32)};
   width: 100%;
   bottom: 0;
   z-index: 9;
+  background-color: #0F0F0F;
   @media screen and (max-width: ${({ theme }: { theme: DefaultTheme }) =>
       theme.breakpoint.md}) {
     gap: ${px2rem(16)};
@@ -27,10 +29,10 @@ const Wrapper = styled.div`
 
   .text {
     font-style: normal;
-    font-weight: 500;
-    font-size: ${px2rem(16)};
-    line-height: ${px2rem(26)};
-    margin-right: ${px2rem(16)};
+    font-weight: 400;
+    font-size: ${px2rem(14)};
+    //line-height: ${px2rem(26)};
+    //margin-right: ${px2rem(16)};
     //color: ${({ theme }: { theme: DefaultTheme }) => theme.text1};
 
     @media screen and (max-width: ${({ theme }: { theme: DefaultTheme }) =>
@@ -93,7 +95,8 @@ const Wrapper = styled.div`
   }
 `;
 
-const Footer = ({ height }: { height: number }) => {
+const Footer = () => {
+  const { footerHeight } = useScreenLayout();
   const router = useRouter();
   const isTokensPage = useMemo(() => {
     return isScreenDarkMode();
@@ -101,8 +104,8 @@ const Footer = ({ height }: { height: number }) => {
 
   return (
     <>
-      <Box style={{ height }} />
-      <Wrapper style={{ height }}>
+      <Box style={{ height: footerHeight }} />
+      <Wrapper style={{ height: footerHeight }}>
         <p className="text" style={{ color: isTokensPage ? 'white' : 'black' }}>
           Open-source software. Made with ❤️ on Bitcoin.
         </p>

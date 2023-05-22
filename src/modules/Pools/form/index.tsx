@@ -65,7 +65,7 @@ import {
   StatHelpText,
   StatNumber,
   Text,
-  forwardRef,
+  forwardRef, Center,
 } from '@chakra-ui/react';
 import { useWeb3React } from '@web3-react/core';
 import BigNumber from 'bignumber.js';
@@ -75,7 +75,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import Slider from 'rc-slider';
 import 'rc-slider/assets/index.css';
-import {
+import React, {
   useCallback,
   useContext,
   useEffect,
@@ -92,6 +92,7 @@ import { ScreenType } from '..';
 import styles from './styles.module.scss';
 import { closeModal, openModal } from '@/state/modal';
 import ModalConfirmApprove from '@/components/ModalConfirmApprove';
+import {BiBell} from "react-icons/bi";
 
 const LIMIT_PAGE = 50;
 
@@ -627,13 +628,13 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       .toFixed(18);
 
     return (
-      <Flex gap={4} flexWrap={'wrap'} className="price-pool-content">
+      <Flex gap={4} flexWrap={'wrap'} className="price-pool-content" mt={2}>
         <Box>
           <Stat>
             <StatNumber>
               {!isPaired
                 ? '-'
-                : formatCurrency(pair1, Number(pair1) > 1000000 ? 4 : 18)}
+                : formatCurrency(pair1, Number(pair1) > 1000000 ? 4 : 8)}
             </StatNumber>
             <StatHelpText>{`${token1.symbol} per ${token2.symbol}`}</StatHelpText>
           </Stat>
@@ -643,7 +644,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             <StatNumber>
               {!isPaired
                 ? '-'
-                : formatCurrency(pair2, Number(pair2) > 1000000 ? 4 : 18)}
+                : formatCurrency(pair2, Number(pair2) > 1000000 ? 4 : 8)}
             </StatNumber>
             <StatHelpText>{`${token2.symbol} per ${token1.symbol}`}</StatHelpText>
           </Stat>
@@ -795,15 +796,18 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         label={' '}
         rightLabel={
           !isEmpty(baseToken) && (
-            <Flex gap={1} fontSize={px2rem(16)}>
-              <Text>
+            <Flex gap={2} fontSize={px2rem(14)} color={"#FFFFFF"}>
+              <Flex gap={1} alignItems={"center"}>
                 Balance: {formatCurrency(baseBalance)} {baseToken?.symbol}
-              </Text>
+              </Flex>
               {!isScreenRemove && (
                 <Text
                   cursor={'pointer'}
                   color={'#3385FF'}
                   onClick={handleChangeMaxBaseAmount}
+                  bgColor={"rgba(51, 133, 255, 0.2)"}
+                  borderRadius={"4px"}
+                  padding={"1px 12px"}
                 >
                   MAX
                 </Text>
@@ -837,36 +841,40 @@ export const MakeFormSwap = forwardRef((props, ref) => {
                 onExtraSearch={onExtraSearch}
               />
             }
-            borderColor={'#5B5B5B'}
+            borderColor={'#353945'}
           />
         </Flex>
       </InputWrapper>
-      <Flex justifyContent={'center'} mt={6}>
-        <Box
-          className="btn-transfer"
-          p={2}
-          border={'1px solid #3385FF'}
-          borderRadius={'8px'}
+      <Flex gap={2} justifyContent={"center"} mt={6}>
+        <Center
+          w={'40px'}
+          h={'40px'}
+          minW={"40px"}
+          minH={"40px"}
+          borderRadius={'50%'}
+          bgColor={"rgba(255, 255, 255, 0.1)"}
         >
-          <BsPlus color="#3385FF" />
-        </Box>
+          <BsPlus fontWeight={'bold'} fontSize={'30px'} color={"#FFFFFF"}/>
+        </Center>
       </Flex>
-
       <InputWrapper
         className={cx(styles.inputAmountWrap, styles.inputQuoteAmountWrap)}
         theme="light"
         label={' '}
         rightLabel={
           !isEmpty(quoteToken) && (
-            <Flex gap={1} fontSize={px2rem(16)}>
-              <Text>
+            <Flex gap={2} fontSize={px2rem(14)} color={"#FFFFFF"}>
+              <Flex gap={1} alignItems={"center"}>
                 Balance: {formatCurrency(quoteBalance)} {quoteToken?.symbol}
-              </Text>
+              </Flex>
               {!isScreenRemove && (
                 <Text
                   cursor={'pointer'}
                   color={'#3385FF'}
                   onClick={handleChangeMaxQuoteAmount}
+                  bgColor={"rgba(51, 133, 255, 0.2)"}
+                  borderRadius={"4px"}
+                  padding={"1px 12px"}
                 >
                   MAX
                 </Text>
@@ -902,7 +910,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
               />
             }
             // hideError={true}
-            borderColor={'#5B5B5B'}
+            borderColor={'#353945'}
           />
         </Flex>
       </InputWrapper>
@@ -915,7 +923,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
 
       {baseToken && quoteToken && (
         <Box className={styles.pricePoolContainer}>
-          <Text>Initial prices and pool share</Text>
+          <Text>INITIAL PRICES AND POOL SHARE</Text>
           {renderPricePool()}
         </Box>
       )}
@@ -939,37 +947,57 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         baseToken &&
         BRIDGE_SUPPORT_TOKEN.includes(baseToken?.symbol) &&
         new BigNumber(baseBalance || 0).lte(0) && (
-          <Text fontSize="md" color="brand.warning.400" textAlign={'left'} mt={2}>
-            Insufficient {baseToken?.symbol} balance! Consider swapping your{' '}
-            {baseToken?.symbol?.replace('W', '')} to trustless network{' '}
-            <Link
-              href={`${TRUSTLESS_BRIDGE}${baseToken?.symbol?.replace('W', '')?.toLowerCase()}`}
-              target={'_blank'}
-              style={{ textDecoration: 'underline' }}
+          <Flex gap={3} mt={4}>
+            <Center
+              w={'24px'}
+              h={'24px'}
+              borderRadius={'50%'}
+              bg={'rgba(255, 126, 33, 0.2)'}
+              as={"span"}
             >
-              here
-            </Link>
-            .
-          </Text>
+              <BiBell color="#FF7E21" />
+            </Center>
+            <Text fontSize="sm" color="#FF7E21" textAlign={'left'}>
+              Insufficient {baseToken?.symbol} balance! Consider swapping your{' '}
+              {baseToken?.symbol?.replace('W', '')} to trustless network{' '}
+              <Link
+                href={`${TRUSTLESS_BRIDGE}${baseToken?.symbol?.replace('W', '')?.toLowerCase()}`}
+                target={'_blank'}
+                style={{ textDecoration: 'underline' }}
+              >
+                here
+              </Link>
+              .
+            </Text>
+          </Flex>
         )}
       {isAuthenticated &&
         quoteToken &&
         BRIDGE_SUPPORT_TOKEN.includes(quoteToken?.symbol) &&
         new BigNumber(quoteBalance || 0).lte(0) && (
-          <Text fontSize="md" color="brand.warning.400" textAlign={'left'} mt={2}>
-            Insufficient {quoteToken?.symbol} balance! Consider swapping your{' '}
-            {quoteToken?.symbol?.replace('W', '')} to trustless network{' '}
-            <Link
-              href={`${TRUSTLESS_BRIDGE}${baseToken?.symbol
-                ?.replace('W', '')
-                ?.toLowerCase()}`}
-              target={'_blank'}
-              style={{ textDecoration: 'underline' }}
+          <Flex gap={3} mt={4}>
+            <Center
+              w={'24px'}
+              h={'24px'}
+              borderRadius={'50%'}
+              bg={'rgba(255, 126, 33, 0.2)'}
+              as={"span"}
             >
-              here
-            </Link>
-            .
-          </Text>
+              <BiBell color="#FF7E21" />
+            </Center>
+            <Text fontSize="sm" color="#FF7E21" textAlign={'left'}>
+              Insufficient {quoteToken?.symbol} balance! Consider swapping your{' '}
+              {quoteToken?.symbol?.replace('W', '')} to trustless network{' '}
+              <Link
+                href={`${TRUSTLESS_BRIDGE}${quoteToken?.symbol?.replace('W', '')?.toLowerCase()}`}
+                target={'_blank'}
+                style={{ textDecoration: 'underline' }}
+              >
+                here
+              </Link>
+              .
+            </Text>
+          </Flex>
         )}
       <WrapperConnected
         type={
@@ -1015,6 +1043,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
               id: transactionType.createPoolApprove,
             }}
             style={{ backgroundColor: renderContentTitle().btnBgColor }}
+            mt={6}
           >
             {renderContentTitle().btnTitle}
           </FiledButton>

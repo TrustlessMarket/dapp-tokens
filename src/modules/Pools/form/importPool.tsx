@@ -1,35 +1,30 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import FiledButton from '@/components/Swap/button/filedButton';
 import FilterButton from '@/components/Swap/filterToken';
-import { ROUTE_PATH } from '@/constants/route-path';
-import { IMPORTED_TOKENS, LIQUID_PAIRS } from '@/constants/storage-key';
-import { NULL_ADDRESS } from '@/constants/url';
+import {ROUTE_PATH} from '@/constants/route-path';
+import {IMPORTED_TOKENS, LIQUID_PAIRS} from '@/constants/storage-key';
+import {NULL_ADDRESS} from '@/constants/url';
 import useGetPair from '@/hooks/contract-operations/swap/useGetPair';
 import useGetReserves from '@/hooks/contract-operations/swap/useReserves';
-import useInfoERC20Token, {
-  IInfoERC20TokenResponse,
-} from '@/hooks/contract-operations/token/useInfoERC20Token';
+import useInfoERC20Token, {IInfoERC20TokenResponse,} from '@/hooks/contract-operations/token/useInfoERC20Token';
 import useSupplyERC20Liquid from '@/hooks/contract-operations/token/useSupplyERC20Liquid';
-import { IToken } from '@/interfaces/token';
-import { getTokens } from '@/services/token-explorer';
-import {
-  camelCaseKeys,
-  compareString,
-  formatCurrency,
-  sortAddressPair,
-} from '@/utils';
-import { isDevelop } from '@/utils/commons';
-import { Box, Flex, Stat, StatHelpText, StatNumber, Text } from '@chakra-ui/react';
+import {IToken} from '@/interfaces/token';
+import {getTokens} from '@/services/token-explorer';
+import {camelCaseKeys, compareString, formatCurrency, sortAddressPair,} from '@/utils';
+import {isDevelop} from '@/utils/commons';
+import {Box, Center, Flex, Stat, StatHelpText, StatNumber, Text} from '@chakra-ui/react';
 import BigNumber from 'bignumber.js';
 import cx from 'classnames';
-import { useRouter } from 'next/router';
-import { useEffect, useRef, useState } from 'react';
-import { Form, useForm } from 'react-final-form';
-import { toast } from 'react-hot-toast';
-import { BsPlus } from 'react-icons/bs';
+import {useRouter} from 'next/router';
+import React, {useEffect, useRef, useState} from 'react';
+import {Form, useForm} from 'react-final-form';
+import {toast} from 'react-hot-toast';
+import {BsPlus} from 'react-icons/bs';
 import Web3 from 'web3';
-import { ScreenType } from '..';
+import {ScreenType} from '..';
 import styles from './styles.module.scss';
+import {BiBell} from "react-icons/bi";
+import Link from "next/link";
 
 interface MakeFormImportPoolProps {
   onSubmit: (_: any) => void;
@@ -270,13 +265,13 @@ const MakeFormImportPool: React.FC<MakeFormImportPoolProps> = ({
       .toFixed(18);
 
     return (
-      <Flex gap={4} flexWrap={'wrap'} className="price-pool-content">
+      <Flex gap={4} flexWrap={'wrap'} className="price-pool-content" mt={2}>
         <Box>
           <Stat>
             <StatNumber>
               {!isPaired
                 ? '-'
-                : formatCurrency(pair1, Number(pair1) > 1000000 ? 4 : 18)}
+                : formatCurrency(pair1, Number(pair1) > 1000000 ? 4 : 8)}
             </StatNumber>
             <StatHelpText>{`${token1.symbol} per ${token2.symbol}`}</StatHelpText>
           </Stat>
@@ -286,7 +281,7 @@ const MakeFormImportPool: React.FC<MakeFormImportPoolProps> = ({
             <StatNumber>
               {!isPaired
                 ? '-'
-                : formatCurrency(pair2, Number(pair2) > 1000000 ? 4 : 18)}
+                : formatCurrency(pair2, Number(pair2) > 1000000 ? 4 : 8)}
             </StatNumber>
             <StatHelpText>{`${token2.symbol} per ${token1.symbol}`}</StatHelpText>
           </Stat>
@@ -305,36 +300,43 @@ const MakeFormImportPool: React.FC<MakeFormImportPoolProps> = ({
     if (isPaired) {
       return (
         <Box className={styles.pricePoolContainer}>
-          <Text style={{ textAlign: 'center' }}>Initial prices and pool share</Text>
+          <Text style={{ textAlign: 'center' }}>INITIAL PRICES AND POOL SHARE</Text>
           {renderPricePool()}
         </Box>
       );
     }
 
     return (
-      <Box>
-        <Text>You don’t have liquidity in this pool yet.</Text>
-        <a
-          onClick={() =>
-            router.replace(
-              `${ROUTE_PATH.POOLS}?type=${ScreenType.add_liquid}&f=${fromAddress}&t=${toAddress}`,
-            )
-          }
+      <Flex gap={3} mt={10} justifyContent={"center"} alignItems={"center"}>
+        <Center
+          w={'24px'}
+          h={'24px'}
+          minW={'24px'}
+          minH={'24px'}
+          borderRadius={'50%'}
+          bg={'rgba(255, 255, 255, 0.2)'}
+          as={"span"}
         >
-          Add liquidity.
-        </a>
-      </Box>
-    );
+          <BiBell color="#FFFFFF" />
+        </Center>
+        <Text fontSize="sm" color="#FFFFFF" textAlign={'left'}>
+          You don’t have liquidity in this pool yet.{' '}
+          <Link
+            href={`${ROUTE_PATH.POOLS}?type=${ScreenType.add_liquid}&f=${fromAddress}&t=${toAddress}`}
+            style={{ textDecoration: 'underline', color: '#3385FF' }}
+          >
+            Add liquidity.
+          </Link>
+        </Text>
+      </Flex>
+    )
   };
 
   return (
     <form onSubmit={onSubmit}>
       <Flex
-        marginBottom={'15px'}
-        marginTop={'15px'}
-        alignItems={'center'}
+        direction={"column"}
         gap={6}
-        justifyContent={'space-between'}
       >
         <FilterButton
           data={tokensList}
@@ -348,14 +350,18 @@ const MakeFormImportPool: React.FC<MakeFormImportPoolProps> = ({
           value={baseToken}
           onExtraSearch={onExtraSearch}
         />
-        <Box
-          className="btn-transfer"
-          p={2}
-          border={'1px solid #3385FF'}
-          borderRadius={'8px'}
-        >
-          <BsPlus color="#3385FF" />
-        </Box>
+        <Flex gap={2} justifyContent={"center"}>
+          <Center
+            w={'40px'}
+            h={'40px'}
+            minW={"40px"}
+            minH={"40px"}
+            borderRadius={'50%'}
+            bgColor={"rgba(255, 255, 255, 0.1)"}
+          >
+            <BsPlus fontWeight={'bold'} fontSize={'30px'} color={"#FFFFFF"}/>
+          </Center>
+        </Flex>
         <FilterButton
           data={tokensList}
           commonData={tokensList.slice(0, 3)}
@@ -370,7 +376,7 @@ const MakeFormImportPool: React.FC<MakeFormImportPoolProps> = ({
         />
       </Flex>
       {baseToken && quoteToken && (
-        <Box className="box-info-pair">{renderInfoPair()}</Box>
+        <>{renderInfoPair()}</>
       )}
       {isPaired && (
         <FiledButton
@@ -380,7 +386,7 @@ const MakeFormImportPool: React.FC<MakeFormImportPoolProps> = ({
           // borderRadius={'100px !important'}
           // className="btn-submit"
           btnSize={'h'}
-          containerConfig={{ flex: 1 }}
+          containerConfig={{ flex: 1, marginTop: '24px' }}
           loadingText={submitting ? 'Processing' : ' '}
           style={{ backgroundColor: '#3385FF' }}
         >

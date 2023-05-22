@@ -38,7 +38,7 @@ export const StyledTokens = styled.div`
     thead {
       tr {
         th {
-          background: #FFFFFF;
+          background: #1E1E22;
           text-transform: uppercase;
           //border-bottom-color: #EDF2F7;
           padding-top: ${px2rem(12)};
@@ -93,8 +93,8 @@ export const UploadFileContainer = styled.div`
   margin-top: ${px2rem(10)};
   margin-left: auto;
   margin-right: auto;
-  padding: ${px2rem(12)} ${px2rem(24)};
-  background-color: ${({ theme }: { theme: DefaultTheme }) => theme.bg2};
+  padding: ${px2rem(24)} ${px2rem(24)};
+  background-color: #1E1E22;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -142,17 +142,21 @@ export const UploadFileContainer = styled.div`
 `;
 
 export const StyledLiquidNote = styled(Box)`
-  background-color: #f5f5f5c9;
+  background-color: #1E1E22;
   z-index: 1;
-  padding: 15px 20px;
-  border-radius: 8px;
+  padding: ${px2rem(24)};
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
   position: relative;
-  margin-bottom: ${px2rem(30)};
+  margin-bottom: ${px2rem(40)};
   .title {
-    font-weight: bold;
+    font-size: ${px2rem(20)};
+    color: #00AA6C;
+    font-weight: 500;
     margin-bottom: 5px;
   }
   .desc {
-    font-size: ${px2rem(13)};
+    color: #FFFFFF;
+    font-size: ${px2rem(16)};
   }
 `;

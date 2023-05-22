@@ -159,7 +159,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           <InputWrapper
             className={cx(styles.submitVideo)}
             theme="light"
-            label={<Text fontSize={px2rem(16)}>Token icon</Text>}
+            label={<Text fontSize={px2rem(14)} color={"#FFFFFF"}>Token icon</Text>}
           >
             <FileDropzoneUpload
               className={styles.uploader}
@@ -173,7 +173,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           <InputWrapper
             className={cx(styles.inputAmountWrap, styles.inputBaseAmountWrap)}
             theme="light"
-            label={<Text fontSize={px2rem(16)}>Description</Text>}
+            label={<Text fontSize={px2rem(14)} color={"#FFFFFF"}>Description</Text>}
           >
             <Flex gap={4} direction={'column'}>
               <Field
@@ -183,10 +183,10 @@ export const MakeFormSwap = forwardRef((props, ref) => {
                 // fieldChanged={onChangeValueQuoteAmount}
                 disabled={submitting}
                 placeholder={"Enter description"}
-                className={cx(styles.collateralAmount)}
+                className={cx(styles.inputDescription)}
                 // hideError={true}
                 inputType={'textarea'}
-                borderColor={'#5B5B5B'}
+                borderColor={'#353945'}
                 rows="4"
               />
             </Flex>
@@ -194,7 +194,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           <InputWrapper
             className={cx(styles.inputAmountWrap, styles.inputQuoteAmountWrap)}
             theme="light"
-            label={<Text fontSize={px2rem(16)}>Reference</Text>}
+            label={<Text fontSize={px2rem(14)} color={"#FFFFFF"}>Reference</Text>}
           >
             <Flex gap={4} direction={'column'}>
               <Field
@@ -203,7 +203,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
                 disabled={submitting}
                 placeholder={"Enter Website"}
                 className={cx(styles.inputAmount, styles.collateralAmount)}
-                borderColor={'#5B5B5B'}
+                borderColor={'#353945'}
               />
               <Field
                 name="discord"
@@ -211,7 +211,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
                 disabled={submitting}
                 placeholder={"Enter Discord"}
                 className={cx(styles.inputAmount, styles.collateralAmount)}
-                borderColor={'#5B5B5B'}
+                borderColor={'#353945'}
               />
               {/*<Field
                 name="instagram"
@@ -219,7 +219,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
                 disabled={submitting}
                 placeholder={"Enter Instagram"}
                 className={cx(styles.inputAmount, styles.collateralAmount)}
-                borderColor={'#5B5B5B'}
+                borderColor={'#353945'}
               />*/}
               {/*<Field
                 name="medium"
@@ -227,7 +227,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
                 disabled={submitting}
                 placeholder={"Enter Medium"}
                 className={cx(styles.inputAmount, styles.collateralAmount)}
-                borderColor={'#5B5B5B'}
+                borderColor={'#353945'}
               />*/}
               <Field
                 name="telegram"
@@ -235,7 +235,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
                 disabled={submitting}
                 placeholder={"Enter Telegram"}
                 className={cx(styles.inputAmount, styles.collateralAmount)}
-                borderColor={'#5B5B5B'}
+                borderColor={'#353945'}
               />
               <Field
                 name="twitter"
@@ -243,7 +243,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
                 disabled={submitting}
                 placeholder={"Enter Twitter"}
                 className={cx(styles.inputAmount, styles.collateralAmount)}
-                borderColor={'#5B5B5B'}
+                borderColor={'#353945'}
               />
             </Flex>
           </InputWrapper>

@@ -4,13 +4,13 @@ import HorizontalItem from '@/components/Swap/horizontalItem';
 import BodyContainer from '@/components/Swap/bodyContainer';
 import FiledButton from '@/components/Swap/button/filedButton';
 import ListTable from '@/components/Swap/listTable';
-import { ROUTE_PATH } from '@/constants/route-path';
-import { LIQUID_PAIRS } from '@/constants/storage-key';
+import {ROUTE_PATH} from '@/constants/route-path';
+import {LIQUID_PAIRS} from '@/constants/storage-key';
 import useGetReserves from '@/hooks/contract-operations/swap/useReserves';
 import useSupplyERC20Liquid from '@/hooks/contract-operations/token/useSupplyERC20Liquid';
-import { IToken } from '@/interfaces/token';
-import { camelCaseKeys, compareString, formatCurrency } from '@/utils';
-import { formatAmountBigNumber } from '@/utils/format';
+import {IToken} from '@/interfaces/token';
+import {camelCaseKeys, compareString, formatCurrency} from '@/utils';
+import {formatAmountBigNumber} from '@/utils/format';
 import px2rem from '@/utils/px2rem';
 import {
   Accordion,
@@ -27,31 +27,27 @@ import {
   Text,
 } from '@chakra-ui/react';
 import BigNumber from 'bignumber.js';
-import { useRouter } from 'next/router';
-import React, { useEffect, useMemo, useState } from 'react';
-import { FiPlus } from 'react-icons/fi';
-import { IoArrowBackOutline } from 'react-icons/io5';
-import { StyledLiquidNote, StyledTokens, UploadFileContainer } from './Pools.styled';
+import {useRouter} from 'next/router';
+import React, {useEffect, useMemo, useState} from 'react';
+import {FiPlus} from 'react-icons/fi';
+import {BsDownload, BsTwitter} from 'react-icons/bs';
+import {IoArrowBackOutline} from 'react-icons/io5';
+import {StyledLiquidNote, StyledTokens, UploadFileContainer} from './Pools.styled';
 import CreateMarket from './form';
 import ImportPool from './form/importPool';
 import styles from './styles.module.scss';
 import SectionContainer from '@/components/Swap/sectionContainer';
 import Spinner from 'react-bootstrap/Spinner';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import { debounce } from 'lodash';
-import { getListLiquidity } from '@/services/swap';
-import { ILiquidity } from '@/interfaces/liquidity';
-import { AiOutlineMinusCircle, AiOutlinePlusCircle } from 'react-icons/ai';
-import { BsTwitter } from 'react-icons/bs';
-import {
-  CDN_URL,
-  DEFAULT_FROM_ADDRESS,
-  DEFAULT_TO_ADDRESS,
-  TRUSTLESS_MARKET_URL,
-} from '@/configs';
-import { USDC_ADDRESS, WBTC_ADDRESS, WETH_ADDRESS } from '@/constants/common';
-import { useWindowSize } from '@trustless-computer/dapp-core';
+import {debounce} from 'lodash';
+import {getListLiquidity} from '@/services/swap';
+import {ILiquidity} from '@/interfaces/liquidity';
+import {AiOutlineMinusCircle, AiOutlinePlusCircle} from 'react-icons/ai';
+import {CDN_URL, DEFAULT_FROM_ADDRESS, DEFAULT_TO_ADDRESS, TRUSTLESS_MARKET_URL,} from '@/configs';
+import {USDC_ADDRESS, WBTC_ADDRESS, WETH_ADDRESS} from '@/constants/common';
+import {useWindowSize} from '@trustless-computer/dapp-core';
 import InfoTooltip from '@/components/Swap/infoTooltip';
+import {TbDiscount2} from "react-icons/tb";
 
 export enum ScreenType {
   default = 'default',
@@ -352,31 +348,53 @@ const LiquidityContainer = () => {
                   Create a Pool
                 </FiledButton> */}
                 <FiledButton
-                  style={{ borderColor: 'white', color: 'white' }}
-                  _hover={{
-                    backgroundColor: 'orange',
-                  }}
-                  variant={'outline'}
-                  // onClick={() => handleChooseAction(true)}
-                  fontSize={`${px2rem(16)} !important`}
+                  border={"1px solid rgba(255, 255, 255, 0.1)"}
+                  bgColor={"#0F0F0F !important"}
+                  borderRadius={"100px !important"}
+                  fontSize={`${px2rem(20)} !important`}
+                  h={"52px !important"}
                   onClick={() =>
                     router.replace(`${ROUTE_PATH.POOLS}?type=${ScreenType.add_pool}`)
                   }
                 >
-                  Import Pool
+                  <Flex gap={2} alignItems={"center"}>
+                    <Center
+                      w={'28px'}
+                      h={'28px'}
+                      minW={"28px"}
+                      minH={"28px"}
+                      borderRadius={'50%'}
+                      bgColor={"rgba(255, 255, 255, 0.1)"}
+                    >
+                      <BsDownload fontWeight={'bold'} fontSize={'14px'}/>
+                    </Center>
+                    Import Pool
+                  </Flex>
                 </FiledButton>
                 <FiledButton
-                  style={{ background: 'orange' }}
-                  // onClick={() => handleChooseAction(true)}
-                  fontSize={`${px2rem(16)} !important`}
+                  bgColor={"#3385FF !important"}
+                  borderRadius={"100px !important"}
+                  fontSize={`${px2rem(20)} !important`}
+                  h={"52px !important"}
                   onClick={() =>
                     router.replace(
                       `${ROUTE_PATH.POOLS}?type=${ScreenType.add_liquid}&f=${DEFAULT_FROM_TOKEN_ADDRESS}&t=${DEFAULT_TO_TOKEN_ADDRESS}`,
                     )
                   }
                 >
-                  <FiPlus fontWeight={'bold'} fontSize={'20px'} />
-                  Add liquidity
+                  <Flex gap={2} alignItems={"center"}>
+                    <Center
+                      w={'28px'}
+                      h={'28px'}
+                      minW={"28px"}
+                      minH={"28px"}
+                      borderRadius={'50%'}
+                      bgColor={"#FFFFFF"}
+                    >
+                      <FiPlus fontWeight={'bold'} fontSize={'18px'} color={"#3385FF"}/>
+                    </Center>
+                    Add liquidity
+                  </Flex>
                 </FiledButton>
               </Flex>
             </Flex>
@@ -476,13 +494,14 @@ const LiquidityContainer = () => {
         labelConfig: {
           fontSize: '12px',
           fontWeight: '500',
-          color: '#000000',
+          color: '#B1B5C3',
           borderTopLeftRadius: '8px',
           borderBottomLeftRadius: '8px',
         },
         config: {
+          color: '#FFFFFF',
           borderBottom: 'none',
-          backgroundColor: '#FFFFFF',
+          backgroundColor: '#1E1E22',
           borderTopLeftRadius: '8px',
           borderBottomLeftRadius: '8px',
         },
@@ -523,11 +542,12 @@ const LiquidityContainer = () => {
         labelConfig: {
           fontSize: '12px',
           fontWeight: '500',
-          color: '#000000',
+          color: '#B1B5C3',
         },
         config: {
+          color: '#FFFFFF',
           borderBottom: 'none',
-          backgroundColor: '#FFFFFF',
+          backgroundColor: '#1E1E22',
         },
         render(row: ILiquidity) {
           const [token0Obj, token1Obj] = sortTokens(row?.token0Obj, row?.token1Obj);
@@ -565,7 +585,7 @@ const LiquidityContainer = () => {
           }
 
           return (
-            <Flex direction={'column'} color={'#000000'} fontSize={px2rem(14)}>
+            <Flex direction={'column'} fontSize={px2rem(14)}>
               {Number(share) > 0 ? (
                 <>
                   <Flex gap={1} alignItems={'center'}>
@@ -614,11 +634,12 @@ const LiquidityContainer = () => {
         labelConfig: {
           fontSize: '12px',
           fontWeight: '500',
-          color: '#000000',
+          color: '#B1B5C3',
         },
         config: {
+          color: '#FFFFFF',
           borderBottom: 'none',
-          backgroundColor: '#FFFFFF',
+          backgroundColor: '#1E1E22',
         },
         render(row: ILiquidity) {
           const [token0Obj, token1Obj] = sortTokens(row?.token0Obj, row?.token1Obj);
@@ -630,7 +651,7 @@ const LiquidityContainer = () => {
             : [row?.reserve1, row?.reserve0];
 
           return (
-            <Flex direction={'column'} color={'#000000'} fontSize={px2rem(14)}>
+            <Flex direction={'column'} fontSize={px2rem(14)}>
               <Flex gap={1} alignItems={'center'}>
                 <Text>{formatCurrency(reserve0).toString()}</Text>
                 <img
@@ -665,11 +686,12 @@ const LiquidityContainer = () => {
         labelConfig: {
           fontSize: '12px',
           fontWeight: '500',
-          color: '#000000',
+          color: '#B1B5C3',
         },
         config: {
+          color: '#FFFFFF',
           borderBottom: 'none',
-          backgroundColor: '#FFFFFF',
+          backgroundColor: '#1E1E22',
         },
         render(row: ILiquidity) {
           return (
@@ -685,11 +707,12 @@ const LiquidityContainer = () => {
         labelConfig: {
           fontSize: '12px',
           fontWeight: '500',
-          color: '#000000',
+          color: '#B1B5C3',
         },
         config: {
+          color: '#FFFFFF',
           borderBottom: 'none',
-          backgroundColor: '#FFFFFF',
+          backgroundColor: '#1E1E22',
         },
         render(row: ILiquidity) {
           return (
@@ -710,8 +733,9 @@ const LiquidityContainer = () => {
           borderBottomRightRadius: '8px',
         },
         config: {
+          color: '#FFFFFF',
           borderBottom: 'none',
-          backgroundColor: '#FFFFFF',
+          backgroundColor: '#1E1E22',
           borderTopRightRadius: '8px',
           borderBottomRightRadius: '8px',
         },
@@ -837,12 +861,27 @@ const LiquidityContainer = () => {
       <SectionContainer>
         <StyledTokens>
           <StyledLiquidNote>
-            <Text className="title">Liquidity provider rewards</Text>
-            <Text className="desc">
-              Liquidity providers earn a 1% fee on all trades proportional to their
-              share of the pool. Fees are added to the pool, accrue in real time and
-              can be claimed by withdrawing your liquidity.
-            </Text>
+            <Flex gap={4} alignItems={"flex-start"}>
+              <Center
+                w={'32px'}
+                h={'32px'}
+                minW={"32px"}
+                minH={"32px"}
+                borderRadius={'50%'}
+                bgColor={"rgba(0, 170, 108, 0.2)"}
+                cursor={'pointer'}
+              >
+                <TbDiscount2 color="#00AA6C" fontSize={"20px"}/>
+              </Center>
+              <Flex direction={"column"}>
+                <Text className="title">Liquidity provider rewards</Text>
+                <Text className="desc">
+                  Liquidity providers earn a 1% fee on all trades proportional to their
+                  share of the pool. Fees are added to the pool, accrue in real time and
+                  can be claimed by withdrawing your liquidity.
+                </Text>
+              </Flex>
+            </Flex>
           </StyledLiquidNote>
           {renderScreen()}
         </StyledTokens>

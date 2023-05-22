@@ -9,7 +9,7 @@
   :global .chakra-input__left-element {
     margin: 0;
     width: unset;
-    border-right: 1px solid #5b5b5b;
+    border-right: 1px solid #353945;
   }
 
   :global .chakra-input__right-element {
@@ -19,6 +19,10 @@
 
   :global .chakra-form__error-message {
     font-size: 12px;
+  }
+
+  :global .chakra-input__group {
+    background: transparent;
   }
 }
 
@@ -55,10 +59,9 @@
 }
 
 .inputAmount {
-  background: #f4f5f6 !important;
-  //border-radius: 0px !important;
-  height: 70px !important;
-  font-size: 20px !important;
+  color: #FFFFFF !important;
+  font-size: 16px !important;
+  height: 100% !important;
 
   &:disabled {
     cursor: not-allowed;
@@ -67,10 +70,6 @@
   @media screen and (max-width: 768px) {
     font-size: 18px !important;
   }
-}
-
-.collateralAmount {
-  //padding-left: 50px !important;
 }
 
 .submitButton {
