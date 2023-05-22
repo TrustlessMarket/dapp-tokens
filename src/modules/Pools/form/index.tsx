@@ -1022,6 +1022,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
               id: transactionType.createPoolApprove,
             }}
             style={{ backgroundColor: renderContentTitle().btnBgColor }}
+            mt={6}
           >
             {renderContentTitle().btnTitle}
           </FiledButton>

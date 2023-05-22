@@ -7,7 +7,8 @@
       margin-bottom: 20px;
       border-radius: 12px;
       padding: 12px 24px;
-      border: 1px solid #5b5b5b;
+      border: 1px solid #353945;
+      color: #FFFFFF;
       .title {
         font-size: 12px;
         text-align: left;
@@ -57,7 +58,7 @@
   :global .chakra-input__left-element {
     margin: 0;
     width: unset;
-    border-right: 1px solid #5b5b5b;
+    border-right: 1px solid #353945;
   }
 
   :global .chakra-input__right-element {
