@@ -3,6 +3,8 @@ import {useRouter} from "next/router";
 import {useMediaQuery} from "@chakra-ui/react";
 import {useWindowSize} from "@trustless-computer/dapp-core";
 import {useWeb3React} from "@web3-react/core";
+import {useAppSelector} from "@/state/hooks";
+import {selectPnftExchange} from "@/state/pnftExchange";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export const defaultProvider = {
@@ -14,8 +16,8 @@ export const defaultProvider = {
   footerTradingHeight: 35,
   footerTradingHeightMobile: 60,
   showGetStarted: false,
-  bannerHeight: 60,
-  bannerHeightMobile: 120
+  bannerHeight: 40,
+  bannerHeightMobile: 40
 };
 
 const ScreenLayoutContext = createContext(defaultProvider);
@@ -25,6 +27,7 @@ const ScreenLayoutProvider: React.FC<any> = ({ children }) => {
   const [screen800] = useMediaQuery("(max-width: 768px)");
   const { mobileScreen } = useWindowSize();
   const { account } = useWeb3React();
+  const showBanner = useAppSelector(selectPnftExchange).showBanner;
 
   const _isMobile = mobileScreen || screen800;
 
@@ -43,10 +46,10 @@ const ScreenLayoutProvider: React.FC<any> = ({ children }) => {
   }, [_isMobile]);
 
   const bannerHeight = useMemo(() => {
-    return _isMobile
+    return showBanner ? _isMobile
       ? defaultProvider.bannerHeightMobile
-      : defaultProvider.bannerHeight
-  }, [_isMobile]);
+      : defaultProvider.bannerHeight : 0;
+  }, [_isMobile, showBanner]);
 
   const showGetStarted = true;
 
@@ -69,6 +72,7 @@ const ScreenLayoutProvider: React.FC<any> = ({ children }) => {
     _isMobile,
     account,
     router?.pathname,
+    showBanner
   ]);
 
   const values = {

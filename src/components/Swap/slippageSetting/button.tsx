@@ -13,7 +13,7 @@ import {
 import {useState} from 'react';
 import SlippageSetting from './index';
 import styles from './styles.module.scss';
-import {BsGearFill} from "react-icons/bs";
+import {BiDotsHorizontalRounded} from "react-icons/bi";
 import InfoTooltip from "@/components/Swap/infoTooltip";
 
 const SlippageSettingButton = () => {
@@ -53,7 +53,7 @@ const SlippageSettingButton = () => {
           >
             <InfoTooltip label={"Slippage Setting"}>
               <Center>
-                <BsGearFill color="#000000" />
+                <BiDotsHorizontalRounded color="#AFAFAFA0" />
               </Center>
             </InfoTooltip>
           </Button>

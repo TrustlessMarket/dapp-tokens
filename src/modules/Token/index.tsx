@@ -1,22 +1,32 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import FiledButton from '@/components/Swap/button/filedButton';
-import {ROUTE_PATH} from '@/constants/route-path';
-import {camelCaseKeys} from '@/utils';
-import {Box, Flex, Spinner, Tab, TabList, TabPanel, TabPanels, Tabs, Text,} from '@chakra-ui/react';
+import { ROUTE_PATH } from '@/constants/route-path';
+import { camelCaseKeys } from '@/utils';
+import {
+  Box,
+  Flex,
+  Spinner,
+  Tab,
+  TabList,
+  TabPanel,
+  TabPanels,
+  Tabs,
+  Text,
+} from '@chakra-ui/react';
 import BigNumber from 'bignumber.js';
-import {useRouter} from 'next/router';
-import {useEffect, useState} from 'react';
-import {StyledTokenDetailContainer} from './Token.styled';
+import { useRouter } from 'next/router';
+import { useEffect, useState } from 'react';
+import { StyledTokenDetailContainer } from './Token.styled';
 // import TokenChart from './Token.Chart';
-import {IToken} from '@/interfaces/token';
-import {getChartToken, getTokenRp} from '@/services/swap';
-import {sortBy} from 'lodash';
+import { IToken } from '@/interfaces/token';
+import { getChartToken, getTokenRp } from '@/services/swap';
+import { colors } from '@/theme/colors';
+import { sortBy } from 'lodash';
 import dynamic from 'next/dynamic';
-import TokenTopInfo from './Token.TopInfo';
-import TokenLeftInfo from './Token.LeftInfo';
 import TokenHistory from './Token.History';
-import {colors} from '@/theme/colors';
+import TokenLeftInfo from './Token.LeftInfo';
+import TokenTopInfo from './Token.TopInfo';
 
 const TokenChart = dynamic(() => import('./Token.Chart'), {
   ssr: false,
@@ -113,7 +123,10 @@ const TokenDetail = () => {
           }}
         >
           <Box flex={2}>
-            <TokenChart chartData={chartData} />
+            <TokenChart
+              chartData={chartData}
+              dataSymbol={data?.baseTokenSymbol || 'WBTC'}
+            />
           </Box>
           <Box
             className="tab-container"

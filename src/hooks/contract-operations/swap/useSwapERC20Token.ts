@@ -2,6 +2,7 @@ import UniswapV2RouterJson from '@/abis/UniswapV2Router.json';
 import { transactionType } from '@/components/Swap/alertInfoProcessing/types';
 import { TRANSFER_TX_SIZE, UNIV2_ROUTER_ADDRESS } from '@/configs';
 import { ERROR_CODE } from '@/constants/error';
+import { CONTRACT_METHOD_IDS } from '@/constants/methodId';
 import { MaxUint256 } from '@/constants/url';
 import { AssetsContext } from '@/contexts/assets-context';
 import { TransactionEventType } from '@/enums/transaction';
@@ -11,11 +12,10 @@ import { TransactionStatus } from '@/interfaces/walletTransaction';
 import { logErrorToServer, scanTrx } from '@/services/swap';
 import store from '@/state';
 import { updateCurrentTransaction } from '@/state/pnftExchange';
-import { compareString, getContract } from '@/utils';
+import { compareString, getContract, getDefaultGasPrice } from '@/utils';
 import { useWeb3React } from '@web3-react/core';
 import { useCallback, useContext } from 'react';
 import Web3 from 'web3';
-import { CONTRACT_METHOD_IDS } from '@/constants/methodId';
 
 export interface ISwapERC20TokenParams {
   addresses: string[];
@@ -66,6 +66,8 @@ const useSwapERC20Token: ContractOperationHook<
           throw Error(ERROR_CODE.PENDING);
         }
 
+        const gasLimit = 50000 + addresses.length * 100000;
+
         const transaction = await contract
           .connect(provider.getSigner())
           .swapExactTokensForTokens(
@@ -75,7 +77,8 @@ const useSwapERC20Token: ContractOperationHook<
             address,
             MaxUint256,
             {
-              gasLimit: '500000',
+              gasLimit,
+              gasPrice: getDefaultGasPrice(),
             },
           );
 
@@ -83,7 +86,7 @@ const useSwapERC20Token: ContractOperationHook<
           type: 'logs',
           address: account,
           error: JSON.stringify(transaction),
-          message: "gasLimit: '500000'",
+          message: `gasLimit: '${gasLimit}'`,
         });
 
         // TC_SDK.signTransaction({
@@ -98,7 +101,7 @@ const useSwapERC20Token: ContractOperationHook<
         store.dispatch(
           updateCurrentTransaction({
             status: TransactionStatus.pending,
-            id: transactionType.swapToken,
+            id: transactionType.createPoolApprove,
             hash: transaction.hash,
             infoTexts: {
               pending: `Transaction confirmed. Please wait for it to be processed on the Bitcoin. Note that it may take up to 10 minutes for a block confirmation on the Bitcoin blockchain.`,

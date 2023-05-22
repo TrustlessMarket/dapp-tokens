@@ -19,7 +19,7 @@ import {StyledTokens, UploadFileContainer} from './Tokens.styled';
 import {ROUTE_PATH} from '@/constants/route-path';
 import {WalletContext} from '@/contexts/wallet-context';
 import {showError} from '@/utils/toast';
-import {Box, Flex, forwardRef, Text} from '@chakra-ui/react';
+import {Box, Flex, forwardRef, Icon, Text} from '@chakra-ui/react';
 import BigNumber from 'bignumber.js';
 import Link from 'next/link';
 import {useRouter} from 'next/router';
@@ -31,7 +31,7 @@ import px2rem from '@/utils/px2rem';
 import ListTable, {ColumnProp} from '@/components/Swap/listTable';
 import {VscArrowSwap} from 'react-icons/vsc';
 import {CDN_URL} from "@/configs";
-import {DEV_ADDRESS, WBTC_ADDRESS} from "@/constants/common";
+import {GM_ADDRESS, WBTC_ADDRESS, WETH_ADDRESS} from "@/constants/common";
 import {Field, Form, useFormState} from "react-final-form";
 import useDebounce from "@/hooks/useDebounce";
 import FieldText from "@/components/Swap/form/fieldText";
@@ -378,7 +378,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         },
         render(row: any) {
           return (
-            <Flex color={"#FFFFFF"} fontSize={px2rem(12)}>
+            <Flex fontSize={px2rem(12)}>
               <Flex
                 gap={3}
                 alignItems={"center"}
@@ -391,11 +391,18 @@ export const MakeFormSwap = forwardRef((props, ref) => {
                   )
                 }}
                 title="Swap now"
+                color={"#FFFFFF"}
                 bg={"#1E1E22"}
                 borderRadius={"4px"}
-                padding={2}
+                paddingX={2}
+                paddingY={1}
+                _hover={{
+                  color:"#1E1E22",
+                  bg:"#FFFFFF"
+                }}
+                fontWeight={"medium"}
               >
-                <VscArrowSwap />
+                <Icon as={VscArrowSwap} fontWeight={"medium"} fontSize={"18px"}/>
                 SWAP NOW
               </Flex>
             </Flex>
@@ -448,7 +455,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             </Text>
           </Button>
           <Link
-            href={`${ROUTE_PATH.SWAP}?from_token=${WBTC_ADDRESS}&to_token=${DEV_ADDRESS}`}
+            href={`${ROUTE_PATH.SWAP}?from_token=${WETH_ADDRESS}&to_token=${GM_ADDRESS}`}
           >
             <Button
               className="comming-soon-btn"

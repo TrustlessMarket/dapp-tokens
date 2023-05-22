@@ -4,13 +4,13 @@ import HorizontalItem from '@/components/Swap/horizontalItem';
 import BodyContainer from '@/components/Swap/bodyContainer';
 import FiledButton from '@/components/Swap/button/filedButton';
 import ListTable from '@/components/Swap/listTable';
-import {ROUTE_PATH} from '@/constants/route-path';
-import {LIQUID_PAIRS} from '@/constants/storage-key';
+import { ROUTE_PATH } from '@/constants/route-path';
+import { LIQUID_PAIRS } from '@/constants/storage-key';
 import useGetReserves from '@/hooks/contract-operations/swap/useReserves';
 import useSupplyERC20Liquid from '@/hooks/contract-operations/token/useSupplyERC20Liquid';
-import {IToken} from '@/interfaces/token';
-import {camelCaseKeys, compareString, formatCurrency} from '@/utils';
-import {formatAmountBigNumber} from '@/utils/format';
+import { IToken } from '@/interfaces/token';
+import { camelCaseKeys, compareString, formatCurrency } from '@/utils';
+import { formatAmountBigNumber } from '@/utils/format';
 import px2rem from '@/utils/px2rem';
 import {
   Accordion,
@@ -24,29 +24,34 @@ import {
   Heading,
   Icon,
   IconButton,
-  Text
+  Text,
 } from '@chakra-ui/react';
 import BigNumber from 'bignumber.js';
-import {useRouter} from 'next/router';
-import React, {useEffect, useMemo, useState} from 'react';
-import {FiPlus} from 'react-icons/fi';
-import {IoArrowBackOutline} from 'react-icons/io5';
-import {StyledLiquidNote, StyledTokens, UploadFileContainer} from './Pools.styled';
+import { useRouter } from 'next/router';
+import React, { useEffect, useMemo, useState } from 'react';
+import { FiPlus } from 'react-icons/fi';
+import { IoArrowBackOutline } from 'react-icons/io5';
+import { StyledLiquidNote, StyledTokens, UploadFileContainer } from './Pools.styled';
 import CreateMarket from './form';
 import ImportPool from './form/importPool';
 import styles from './styles.module.scss';
-import SectionContainer from "@/components/Swap/sectionContainer";
-import Spinner from "react-bootstrap/Spinner";
-import InfiniteScroll from "react-infinite-scroll-component";
-import {debounce} from "lodash";
-import {getListLiquidity} from "@/services/swap";
-import {ILiquidity} from "@/interfaces/liquidity";
-import {AiOutlineMinusCircle, AiOutlinePlusCircle} from "react-icons/ai";
-import {BsTwitter} from "react-icons/bs";
-import {CDN_URL, TRUSTLESS_MARKET_URL} from "@/configs";
-import {USDC_ADDRESS, WBTC_ADDRESS, WETH_ADDRESS} from "@/constants/common";
-import {useWindowSize} from "@trustless-computer/dapp-core";
-import InfoTooltip from "@/components/Swap/infoTooltip";
+import SectionContainer from '@/components/Swap/sectionContainer';
+import Spinner from 'react-bootstrap/Spinner';
+import InfiniteScroll from 'react-infinite-scroll-component';
+import { debounce } from 'lodash';
+import { getListLiquidity } from '@/services/swap';
+import { ILiquidity } from '@/interfaces/liquidity';
+import { AiOutlineMinusCircle, AiOutlinePlusCircle } from 'react-icons/ai';
+import { BsTwitter } from 'react-icons/bs';
+import {
+  CDN_URL,
+  DEFAULT_FROM_ADDRESS,
+  DEFAULT_TO_ADDRESS,
+  TRUSTLESS_MARKET_URL,
+} from '@/configs';
+import { USDC_ADDRESS, WBTC_ADDRESS, WETH_ADDRESS } from '@/constants/common';
+import { useWindowSize } from '@trustless-computer/dapp-core';
+import InfoTooltip from '@/components/Swap/infoTooltip';
 
 export enum ScreenType {
   default = 'default',
@@ -54,13 +59,12 @@ export enum ScreenType {
   add_liquid = 'add-liquidity',
   add_pool = 'add-pool',
   remove = 'remove',
-};
+}
 
 const LIMIT_PAGE = 30;
 
-export const DEFAULT_FROM_TOKEN_ADDRESS =
-  '0xfB83c18569fB43f1ABCbae09Baf7090bFFc8CBBD';
-export const DEFAULT_TO_TOKEN_ADDRESS = '0xdd2863416081D0C10E57AaB4B3C5197183be4B34';
+export const DEFAULT_FROM_TOKEN_ADDRESS = DEFAULT_FROM_ADDRESS;
+export const DEFAULT_TO_TOKEN_ADDRESS = DEFAULT_TO_ADDRESS;
 
 const ItemLiquid = ({ pool }: { pool: IToken }) => {
   const { call: getSupply } = useSupplyERC20Liquid();
@@ -230,8 +234,8 @@ const LiquidityContainer = () => {
               justifyContent={'center'}
               alignItems={'center'}
               position={'relative'}
-              w={["100", "70%"]}
-              marginX={"auto"}
+              w={['100', '70%']}
+              marginX={'auto'}
             >
               <IconButton
                 position={'absolute'}
@@ -251,7 +255,13 @@ const LiquidityContainer = () => {
               />
               <Heading as={'h6'}>{renderTitle()}</Heading>
             </Flex>
-            <UploadFileContainer style={{width: mobileScreen ? '100%' : '70%', marginLeft: 'auto', marginRight: 'auto'}}>
+            <UploadFileContainer
+              style={{
+                width: mobileScreen ? '100%' : '70%',
+                marginLeft: 'auto',
+                marginRight: 'auto',
+              }}
+            >
               <div className="upload_left">
                 <Box className={styles.wrapper}>
                   <Box>
@@ -274,8 +284,8 @@ const LiquidityContainer = () => {
               justifyContent={'center'}
               alignItems={'center'}
               position={'relative'}
-              w={["100", "70%"]}
-              marginX={"auto"}
+              w={['100', '70%']}
+              marginX={'auto'}
             >
               <IconButton
                 position={'absolute'}
@@ -295,7 +305,13 @@ const LiquidityContainer = () => {
               />
               <Heading as={'h6'}>{renderTitle()}</Heading>
             </Flex>
-            <UploadFileContainer style={{width: mobileScreen ? '100%' : '70%', marginLeft: 'auto', marginRight: 'auto'}}>
+            <UploadFileContainer
+              style={{
+                width: mobileScreen ? '100%' : '70%',
+                marginLeft: 'auto',
+                marginRight: 'auto',
+              }}
+            >
               <div className="upload_left">
                 <Box className={styles.wrapper}>
                   <Box>
@@ -377,7 +393,7 @@ const LiquidityContainer = () => {
               }
               next={debounceLoadMore}
             >
-              <ListTable data={liquidityList} columns={columns} showEmpty={false}/>
+              <ListTable data={liquidityList} columns={columns} showEmpty={false} />
             </InfiniteScroll>
 
             {/*<UploadFileContainer>
@@ -397,25 +413,25 @@ const LiquidityContainer = () => {
     }
   };
 
-  const BASE_ADDRESS = [
-    WBTC_ADDRESS,
-    WETH_ADDRESS,
-    USDC_ADDRESS,
-  ];
+  const BASE_ADDRESS = [WBTC_ADDRESS, WETH_ADDRESS, USDC_ADDRESS];
 
   const sortTokens = (tokenA: IToken | undefined, tokenB: IToken | undefined) => {
-    if(compareString(USDC_ADDRESS, tokenA?.address)) {
+    if (compareString(USDC_ADDRESS, tokenA?.address)) {
       return [tokenB, tokenA];
-    } else if(compareString(USDC_ADDRESS, tokenB?.address)) {
+    } else if (compareString(USDC_ADDRESS, tokenB?.address)) {
       return [tokenA, tokenB];
-    } else if (BASE_ADDRESS.some(address => compareString(address, tokenA?.address))) {
+    } else if (
+      BASE_ADDRESS.some((address) => compareString(address, tokenA?.address))
+    ) {
       return [tokenB, tokenA];
-    } else if (BASE_ADDRESS.some(address => compareString(address, tokenB?.address))) {
+    } else if (
+      BASE_ADDRESS.some((address) => compareString(address, tokenB?.address))
+    ) {
       return [tokenA, tokenB];
     } else {
       return [tokenA, tokenB];
     }
-  }
+  };
 
   const shareTwitter = (row: ILiquidity) => {
     const shareUrl = `${TRUSTLESS_MARKET_URL}${ROUTE_PATH.POOLS}?type=${ScreenType.add_liquid}&f=${row?.token0Obj?.address}&t=${row?.token1Obj?.address}`;
@@ -435,14 +451,20 @@ const LiquidityContainer = () => {
     tokens.push(row?.token0Obj?.symbol);
     tokens.push(row?.token1Obj?.symbol);
 
-    const content = `Great news! I have added liquidity to Trustless Market for ${tokens.join(', ')} token. Now you can easily trade ${tokens.join(', ')} on Trustless Market with ease and convenience.`;
-    const hashtags = `TrustlessMarket,LiquidityProvider,TradeNow,${tokens.join(',')}`;
+    const content = `Great news! I have added liquidity to Trustless Market for ${tokens.join(
+      ', ',
+    )} token. Now you can easily trade ${tokens.join(
+      ', ',
+    )} on Trustless Market with ease and convenience.`;
+    const hashtags = `TrustlessMarket,LiquidityProvider,TradeNow,${tokens.join(
+      ',',
+    )}`;
     console.log('shareUrl', shareUrl);
     window.open(
       `https://twitter.com/intent/tweet?url=${shareUrl}&text=${encodeURIComponent(
-        content
+        content,
       )}&hashtags=${hashtags}`,
-      "_blank"
+      '_blank',
     );
   };
 
@@ -467,24 +489,32 @@ const LiquidityContainer = () => {
         render(row: ILiquidity) {
           const [token0Obj, token1Obj] = sortTokens(row?.token0Obj, row?.token1Obj);
 
-          return <Flex fontSize={px2rem(14)} alignItems={"center"} gap={2}>
-            <Flex gap={1} alignItems={"center"}>
-              <img
-                src={token0Obj?.thumbnail || `${CDN_URL}/upload/1683530065704444020-1683530065-default-coin.svg`}
-                alt={token0Obj?.thumbnail || 'default-icon'}
-                className={'avatar'}
-              />
-              <Text>{token0Obj?.symbol}</Text>
+          return (
+            <Flex fontSize={px2rem(14)} alignItems={'center'} gap={2}>
+              <Flex gap={1} alignItems={'center'}>
+                <img
+                  src={
+                    token0Obj?.thumbnail ||
+                    `${CDN_URL}/upload/1683530065704444020-1683530065-default-coin.svg`
+                  }
+                  alt={token0Obj?.thumbnail || 'default-icon'}
+                  className={'avatar'}
+                />
+                <Text>{token0Obj?.symbol}</Text>
+              </Flex>
+              <Flex gap={1} alignItems={'center'}>
+                <img
+                  src={
+                    token1Obj?.thumbnail ||
+                    `${CDN_URL}/upload/1683530065704444020-1683530065-default-coin.svg`
+                  }
+                  alt={token1Obj?.thumbnail || 'default-icon'}
+                  className={'avatar'}
+                />
+                <Text>{token1Obj?.symbol}</Text>
+              </Flex>
             </Flex>
-            <Flex gap={1} alignItems={"center"}>
-              <img
-                src={token1Obj?.thumbnail || `${CDN_URL}/upload/1683530065704444020-1683530065-default-coin.svg`}
-                alt={token1Obj?.thumbnail || 'default-icon'}
-                className={'avatar'}
-              />
-              <Text>{token1Obj?.symbol}</Text>
-            </Flex>
-          </Flex>;
+          );
         },
       },
       {
@@ -506,7 +536,10 @@ const LiquidityContainer = () => {
 
           for (let index = 0; index < myLiquidities?.length; index++) {
             const l = myLiquidities[index] as IToken;
-            if(compareString(l?.fromAddress, row?.token0Obj?.address) && compareString(l?.toAddress, row?.token1Obj?.address)) {
+            if (
+              compareString(l?.fromAddress, row?.token0Obj?.address) &&
+              compareString(l?.toAddress, row?.token1Obj?.address)
+            ) {
               myLiquidity = l;
               break;
             }
@@ -514,46 +547,63 @@ const LiquidityContainer = () => {
 
           let share = 0;
           let balances = [0, 0];
-          if(myLiquidity) {
+          if (myLiquidity) {
             share = new BigNumber(myLiquidity?.ownerSupply || 0)
-              .dividedBy(myLiquidity?.totalSupply || 1).toNumber();
+              .dividedBy(myLiquidity?.totalSupply || 1)
+              .toNumber();
 
-            const fromBalance = new BigNumber(share).multipliedBy(myLiquidity?.fromBalance || 0).toNumber();
-            const toBalance = new BigNumber(share).multipliedBy(myLiquidity?.toBalance || 0).toNumber();
+            const fromBalance = new BigNumber(share)
+              .multipliedBy(myLiquidity?.fromBalance || 0)
+              .toNumber();
+            const toBalance = new BigNumber(share)
+              .multipliedBy(myLiquidity?.toBalance || 0)
+              .toNumber();
 
-            balances = compareString(myLiquidity?.fromAddress, token0Obj?.address) ?
-              [fromBalance, toBalance] :
-              [toBalance, fromBalance];
+            balances = compareString(myLiquidity?.fromAddress, token0Obj?.address)
+              ? [fromBalance, toBalance]
+              : [toBalance, fromBalance];
           }
 
           return (
-            <Flex direction={"column"} color={"#000000"} fontSize={px2rem(14)}>
-              {
-                Number(share) > 0 ? (
-                  <>
-                    <Flex gap={1} alignItems={"center"}>
-                      <Text>{formatCurrency(formatAmountBigNumber(balances[0], myLiquidity?.decimal)).toString()}</Text>
-                      <img
-                        src={token0Obj?.thumbnail || `${CDN_URL}/upload/1683530065704444020-1683530065-default-coin.svg`}
-                        alt={token0Obj?.thumbnail || 'default-icon'}
-                        className={'avatar2'}
-                        title={token0Obj?.symbol}
-                      />
-                    </Flex>
-                    <Flex gap={1} alignItems={"center"}>
-                      <Text>{formatCurrency(formatAmountBigNumber(balances[1], myLiquidity?.decimal)).toString()}</Text>
-                      <img
-                        src={token1Obj?.thumbnail || `${CDN_URL}/upload/1683530065704444020-1683530065-default-coin.svg`}
-                        alt={token1Obj?.thumbnail || 'default-icon'}
-                        className={'avatar2'}
-                        title={token1Obj?.symbol}
-                      />
-                    </Flex>
-                  </>
-                ) : (
-                  <Text>--</Text>
-                )
-              }
+            <Flex direction={'column'} color={'#000000'} fontSize={px2rem(14)}>
+              {Number(share) > 0 ? (
+                <>
+                  <Flex gap={1} alignItems={'center'}>
+                    <Text>
+                      {formatCurrency(
+                        formatAmountBigNumber(balances[0], myLiquidity?.decimal),
+                      ).toString()}
+                    </Text>
+                    <img
+                      src={
+                        token0Obj?.thumbnail ||
+                        `${CDN_URL}/upload/1683530065704444020-1683530065-default-coin.svg`
+                      }
+                      alt={token0Obj?.thumbnail || 'default-icon'}
+                      className={'avatar2'}
+                      title={token0Obj?.symbol}
+                    />
+                  </Flex>
+                  <Flex gap={1} alignItems={'center'}>
+                    <Text>
+                      {formatCurrency(
+                        formatAmountBigNumber(balances[1], myLiquidity?.decimal),
+                      ).toString()}
+                    </Text>
+                    <img
+                      src={
+                        token1Obj?.thumbnail ||
+                        `${CDN_URL}/upload/1683530065704444020-1683530065-default-coin.svg`
+                      }
+                      alt={token1Obj?.thumbnail || 'default-icon'}
+                      className={'avatar2'}
+                      title={token1Obj?.symbol}
+                    />
+                  </Flex>
+                </>
+              ) : (
+                <Text>--</Text>
+              )}
             </Flex>
           );
         },
@@ -572,25 +622,34 @@ const LiquidityContainer = () => {
         },
         render(row: ILiquidity) {
           const [token0Obj, token1Obj] = sortTokens(row?.token0Obj, row?.token1Obj);
-          const [reserve0, reserve1] = compareString(token0Obj?.address, row?.token0Obj?.address) ?
-            [row?.reserve0, row?.reserve1] :
-            [row?.reserve1, row?.reserve0];
+          const [reserve0, reserve1] = compareString(
+            token0Obj?.address,
+            row?.token0Obj?.address,
+          )
+            ? [row?.reserve0, row?.reserve1]
+            : [row?.reserve1, row?.reserve0];
 
           return (
-            <Flex direction={"column"} color={"#000000"} fontSize={px2rem(14)}>
-              <Flex gap={1} alignItems={"center"}>
-                <Text>{formatCurrency(reserve0,).toString()}</Text>
+            <Flex direction={'column'} color={'#000000'} fontSize={px2rem(14)}>
+              <Flex gap={1} alignItems={'center'}>
+                <Text>{formatCurrency(reserve0).toString()}</Text>
                 <img
-                  src={token0Obj?.thumbnail || `${CDN_URL}/upload/1683530065704444020-1683530065-default-coin.svg`}
+                  src={
+                    token0Obj?.thumbnail ||
+                    `${CDN_URL}/upload/1683530065704444020-1683530065-default-coin.svg`
+                  }
                   alt={token0Obj?.thumbnail || 'default-icon'}
                   className={'avatar2'}
                   title={token0Obj?.symbol}
                 />
               </Flex>
-              <Flex gap={1} alignItems={"center"}>
-                <Text>{formatCurrency(reserve1,).toString()}</Text>
+              <Flex gap={1} alignItems={'center'}>
+                <Text>{formatCurrency(reserve1).toString()}</Text>
                 <img
-                  src={token1Obj?.thumbnail || `${CDN_URL}/upload/1683530065704444020-1683530065-default-coin.svg`}
+                  src={
+                    token1Obj?.thumbnail ||
+                    `${CDN_URL}/upload/1683530065704444020-1683530065-default-coin.svg`
+                  }
                   alt={token1Obj?.thumbnail || 'default-icon'}
                   className={'avatar2'}
                   title={token1Obj?.symbol}
@@ -613,7 +672,11 @@ const LiquidityContainer = () => {
           backgroundColor: '#FFFFFF',
         },
         render(row: ILiquidity) {
-          return <Text fontSize={px2rem(14)} textAlign={"left"}>${formatCurrency(row?.usdTotalVolume || 0, 2)}</Text>;
+          return (
+            <Text fontSize={px2rem(14)} textAlign={'left'}>
+              ${formatCurrency(row?.usdTotalVolume || 0, 2)}
+            </Text>
+          );
         },
       },
       {
@@ -629,7 +692,11 @@ const LiquidityContainer = () => {
           backgroundColor: '#FFFFFF',
         },
         render(row: ILiquidity) {
-          return <Text fontSize={px2rem(14)} textAlign={"left"}>{formatCurrency(row?.apr, 2)}%</Text>;
+          return (
+            <Text fontSize={px2rem(14)} textAlign={'left'}>
+              {formatCurrency(row?.apr, 2)}%
+            </Text>
+          );
         },
       },
       {
@@ -653,7 +720,10 @@ const LiquidityContainer = () => {
 
           for (let index = 0; index < myLiquidities?.length; index++) {
             const l = myLiquidities[index] as IToken;
-            if(compareString(l.fromAddress, row?.token0Obj?.address) && compareString(l.toAddress, row?.token1Obj?.address)) {
+            if (
+              compareString(l.fromAddress, row?.token0Obj?.address) &&
+              compareString(l.toAddress, row?.token1Obj?.address)
+            ) {
               myLiquidity = l;
               break;
             }
@@ -662,20 +732,25 @@ const LiquidityContainer = () => {
           let share = 0;
           let fromBalance = 0;
           let toBalance = 0;
-          if(myLiquidity) {
+          if (myLiquidity) {
             share = new BigNumber(myLiquidity?.ownerSupply || 0)
-              .dividedBy(myLiquidity?.totalSupply || 1).toNumber();
+              .dividedBy(myLiquidity?.totalSupply || 1)
+              .toNumber();
 
-            fromBalance = new BigNumber(share).multipliedBy(myLiquidity?.fromBalance || 0).toNumber();
-            toBalance = new BigNumber(share).multipliedBy(myLiquidity?.toBalance || 0).toNumber();
+            fromBalance = new BigNumber(share)
+              .multipliedBy(myLiquidity?.fromBalance || 0)
+              .toNumber();
+            toBalance = new BigNumber(share)
+              .multipliedBy(myLiquidity?.toBalance || 0)
+              .toNumber();
           }
 
           return (
             <Flex gap={4} justifyContent={'center'}>
-              <InfoTooltip label={"Add Liquidity"}>
+              <InfoTooltip label={'Add Liquidity'}>
                 <Center
-                  cursor={"pointer"}
-                  fontSize={"24px"}
+                  cursor={'pointer'}
+                  fontSize={'24px'}
                   _hover={{
                     color: '#0072ff',
                   }}
@@ -689,40 +764,34 @@ const LiquidityContainer = () => {
                   />
                 </Center>
               </InfoTooltip>
-              {
-                Number(share) >= 0 && (
-                  <InfoTooltip label={"Remove Liquidity"}>
-                    <Center
-                      cursor={"pointer"}
-                      fontSize={"24px"}
-                      _hover={{
-                        color: '#FF0000',
-                      }}
-                    >
-                      <AiOutlineMinusCircle
-                        onClick={() =>
-                          router.replace(
-                            `${ROUTE_PATH.POOLS}?type=${ScreenType.remove}&f=${row?.token0Obj?.address}&t=${row?.token1Obj?.address}`,
-                          )
-                        }
-                      />
-                    </Center>
-                  </InfoTooltip>
-                )
-              }
-              <InfoTooltip label={"Share Twitter"}>
+              {Number(share) >= 0 && (
+                <InfoTooltip label={'Remove Liquidity'}>
+                  <Center
+                    cursor={'pointer'}
+                    fontSize={'24px'}
+                    _hover={{
+                      color: '#FF0000',
+                    }}
+                  >
+                    <AiOutlineMinusCircle
+                      onClick={() =>
+                        router.replace(
+                          `${ROUTE_PATH.POOLS}?type=${ScreenType.remove}&f=${row?.token0Obj?.address}&t=${row?.token1Obj?.address}`,
+                        )
+                      }
+                    />
+                  </Center>
+                </InfoTooltip>
+              )}
+              <InfoTooltip label={'Share Twitter'}>
                 <Center
-                  cursor={"pointer"}
-                  fontSize={"24px"}
+                  cursor={'pointer'}
+                  fontSize={'24px'}
                   _hover={{
                     color: '#33CCFF',
                   }}
                 >
-                  <BsTwitter
-                    onClick={() =>
-                      shareTwitter(row)
-                    }
-                  />
+                  <BsTwitter onClick={() => shareTwitter(row)} />
                 </Center>
               </InfoTooltip>
             </Flex>
