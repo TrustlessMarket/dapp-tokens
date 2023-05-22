@@ -250,14 +250,14 @@ const WalletAdress = styled(Tooltip)`
 
 const ConnectWalletButton = styled(Button)`
   padding: ${px2rem(8)} ${px2rem(16)};
-  color: #3385ff;
+  color: #1C1C1C;
   font-size: ${px2rem(14)};
   line-height: ${px2rem(24)};
-  font-weight: 400;
-  background: transparent;
+  font-weight: 500;
+  background: #FFFFFF;
   text-transform: uppercase;
-  border: 1px solid #3385ff;
   border-radius: 8px !important;
+  letter-spacing: 0.01em;
 
   :disabled {
     opacity: 0.8;
