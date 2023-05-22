@@ -7,7 +7,7 @@ import Link from 'next/link';
 const Wrapper = styled.div`
   /* max-width: 1920px; */
   background: #0F0F0F;
-  border-bottom: 1px solid #353945;
+  //border-bottom: 1px solid #353945;
 
   .container {
     padding: 0;

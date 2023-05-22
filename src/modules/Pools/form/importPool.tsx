@@ -271,7 +271,7 @@ const MakeFormImportPool: React.FC<MakeFormImportPoolProps> = ({
             <StatNumber>
               {!isPaired
                 ? '-'
-                : formatCurrency(pair1, Number(pair1) > 1000000 ? 4 : 18)}
+                : formatCurrency(pair1, Number(pair1) > 1000000 ? 4 : 8)}
             </StatNumber>
             <StatHelpText>{`${token1.symbol} per ${token2.symbol}`}</StatHelpText>
           </Stat>
@@ -281,7 +281,7 @@ const MakeFormImportPool: React.FC<MakeFormImportPoolProps> = ({
             <StatNumber>
               {!isPaired
                 ? '-'
-                : formatCurrency(pair2, Number(pair2) > 1000000 ? 4 : 18)}
+                : formatCurrency(pair2, Number(pair2) > 1000000 ? 4 : 8)}
             </StatNumber>
             <StatHelpText>{`${token2.symbol} per ${token1.symbol}`}</StatHelpText>
           </Stat>
@@ -300,7 +300,7 @@ const MakeFormImportPool: React.FC<MakeFormImportPoolProps> = ({
     if (isPaired) {
       return (
         <Box className={styles.pricePoolContainer}>
-          <Text style={{ textAlign: 'center' }}>Initial prices and pool share</Text>
+          <Text style={{ textAlign: 'center' }}>INITIAL PRICES AND POOL SHARE</Text>
           {renderPricePool()}
         </Box>
       );
@@ -386,7 +386,7 @@ const MakeFormImportPool: React.FC<MakeFormImportPoolProps> = ({
           // borderRadius={'100px !important'}
           // className="btn-submit"
           btnSize={'h'}
-          containerConfig={{ flex: 1 }}
+          containerConfig={{ flex: 1, marginTop: '24px' }}
           loadingText={submitting ? 'Processing' : ' '}
           style={{ backgroundColor: '#3385FF' }}
         >

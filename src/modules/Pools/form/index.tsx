@@ -633,7 +633,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             <StatNumber>
               {!isPaired
                 ? '-'
-                : formatCurrency(pair1, Number(pair1) > 1000000 ? 4 : 18)}
+                : formatCurrency(pair1, Number(pair1) > 1000000 ? 4 : 8)}
             </StatNumber>
             <StatHelpText>{`${token1.symbol} per ${token2.symbol}`}</StatHelpText>
           </Stat>
@@ -643,7 +643,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             <StatNumber>
               {!isPaired
                 ? '-'
-                : formatCurrency(pair2, Number(pair2) > 1000000 ? 4 : 18)}
+                : formatCurrency(pair2, Number(pair2) > 1000000 ? 4 : 8)}
             </StatNumber>
             <StatHelpText>{`${token2.symbol} per ${token1.symbol}`}</StatHelpText>
           </Stat>
@@ -1001,6 +1001,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             processInfo={{
               id: transactionType.createPoolApprove,
             }}
+            containerConfig={{ marginTop: '24px' }}
           >
             {!isScreenRemove
               ? `APPROVE USE OF ${
@@ -1016,7 +1017,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             // borderRadius={'100px !important'}
             // className="btn-submit"
             btnSize={'h'}
-            containerConfig={{ flex: 1 }}
+            containerConfig={{ flex: 1, marginTop: '24px' }}
             loadingText={submitting ? 'Processing' : ' '}
             processInfo={{
               id: transactionType.createPoolApprove,
