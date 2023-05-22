@@ -628,7 +628,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       .toFixed(18);
 
     return (
-      <Flex gap={4} flexWrap={'wrap'} className="price-pool-content" mt={1}>
+      <Flex gap={4} flexWrap={'wrap'} className="price-pool-content" mt={2}>
         <Box>
           <Stat>
             <StatNumber>
@@ -947,7 +947,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         baseToken &&
         BRIDGE_SUPPORT_TOKEN.includes(baseToken?.symbol) &&
         new BigNumber(baseBalance || 0).lte(0) && (
-          <Flex gap={3} mt={2}>
+          <Flex gap={3} mt={4}>
             <Center
               w={'24px'}
               h={'24px'}
@@ -975,7 +975,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         quoteToken &&
         BRIDGE_SUPPORT_TOKEN.includes(quoteToken?.symbol) &&
         new BigNumber(quoteBalance || 0).lte(0) && (
-          <Flex gap={3} mt={2}>
+          <Flex gap={3} mt={4}>
             <Center
               w={'24px'}
               h={'24px'}

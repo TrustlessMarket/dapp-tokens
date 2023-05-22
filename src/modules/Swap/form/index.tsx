@@ -1106,7 +1106,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           />
         </Flex>
       </InputWrapper>
-      <Flex justifyContent={'center'}>
+      <Flex justifyContent={'center'} mt={4}>
         <Center
           onClick={onChangeTransferType}
           w={'40px'}

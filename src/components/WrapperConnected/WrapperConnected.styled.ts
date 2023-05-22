@@ -1,4 +1,4 @@
 import styled from 'styled-components';
-import Button from '../Button';
+import FiledButton from "@/components/Swap/button/filedButton";
 
-export const StyledWrapperConnected = styled(Button)``;
+export const StyledWrapperConnected = styled(FiledButton)``;
