@@ -92,6 +92,7 @@ import { ScreenType } from '..';
 import styles from './styles.module.scss';
 import { closeModal, openModal } from '@/state/modal';
 import ModalConfirmApprove from '@/components/ModalConfirmApprove';
+import {BiBell} from "react-icons/bi";
 
 const LIMIT_PAGE = 50;
 
@@ -946,37 +947,57 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         baseToken &&
         BRIDGE_SUPPORT_TOKEN.includes(baseToken?.symbol) &&
         new BigNumber(baseBalance || 0).lte(0) && (
-          <Text fontSize="md" color="brand.warning.400" textAlign={'left'} mt={2}>
-            Insufficient {baseToken?.symbol} balance! Consider swapping your{' '}
-            {baseToken?.symbol?.replace('W', '')} to trustless network{' '}
-            <Link
-              href={`${TRUSTLESS_BRIDGE}${baseToken?.symbol?.replace('W', '')?.toLowerCase()}`}
-              target={'_blank'}
-              style={{ textDecoration: 'underline' }}
+          <Flex gap={3} mt={2}>
+            <Center
+              w={'24px'}
+              h={'24px'}
+              borderRadius={'50%'}
+              bg={'rgba(255, 126, 33, 0.2)'}
+              as={"span"}
             >
-              here
-            </Link>
-            .
-          </Text>
+              <BiBell color="#FF7E21" />
+            </Center>
+            <Text fontSize="sm" color="#FF7E21" textAlign={'left'}>
+              Insufficient {baseToken?.symbol} balance! Consider swapping your{' '}
+              {baseToken?.symbol?.replace('W', '')} to trustless network{' '}
+              <Link
+                href={`${TRUSTLESS_BRIDGE}${baseToken?.symbol?.replace('W', '')?.toLowerCase()}`}
+                target={'_blank'}
+                style={{ textDecoration: 'underline' }}
+              >
+                here
+              </Link>
+              .
+            </Text>
+          </Flex>
         )}
       {isAuthenticated &&
         quoteToken &&
         BRIDGE_SUPPORT_TOKEN.includes(quoteToken?.symbol) &&
         new BigNumber(quoteBalance || 0).lte(0) && (
-          <Text fontSize="md" color="brand.warning.400" textAlign={'left'} mt={2}>
-            Insufficient {quoteToken?.symbol} balance! Consider swapping your{' '}
-            {quoteToken?.symbol?.replace('W', '')} to trustless network{' '}
-            <Link
-              href={`${TRUSTLESS_BRIDGE}${baseToken?.symbol
-                ?.replace('W', '')
-                ?.toLowerCase()}`}
-              target={'_blank'}
-              style={{ textDecoration: 'underline' }}
+          <Flex gap={3} mt={2}>
+            <Center
+              w={'24px'}
+              h={'24px'}
+              borderRadius={'50%'}
+              bg={'rgba(255, 126, 33, 0.2)'}
+              as={"span"}
             >
-              here
-            </Link>
-            .
-          </Text>
+              <BiBell color="#FF7E21" />
+            </Center>
+            <Text fontSize="sm" color="#FF7E21" textAlign={'left'}>
+              Insufficient {quoteToken?.symbol} balance! Consider swapping your{' '}
+              {quoteToken?.symbol?.replace('W', '')} to trustless network{' '}
+              <Link
+                href={`${TRUSTLESS_BRIDGE}${quoteToken?.symbol?.replace('W', '')?.toLowerCase()}`}
+                target={'_blank'}
+                style={{ textDecoration: 'underline' }}
+              >
+                here
+              </Link>
+              .
+            </Text>
+          </Flex>
         )}
       <WrapperConnected
         type={
