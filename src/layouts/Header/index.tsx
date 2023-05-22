@@ -14,6 +14,7 @@ import {useScreenLayout} from '@/hooks/useScreenLayout';
 import {defaultProvider} from '@/contexts/screen-context';
 import {compareString} from '@/utils';
 import {Flex, Link as LinkText, Text} from "@chakra-ui/react";
+import {RiArrowRightUpLine} from "react-icons/ri";
 
 export const isScreenDarkMode = () => {
   return true;
@@ -117,10 +118,16 @@ const Header = () => {
           {!mobileScreen && (
             <div className="external-link">
               <Link href={GENERATIVE_DISCORD} target={'_blank'}>
-                DISCORD
+                <Flex gap={1} alignItems={"center"}>
+                  <Text>DISCORD</Text>
+                  <RiArrowRightUpLine fontSize={"20px"}/>
+                </Flex>
               </Link>
               <Link href={TRUSTLESS_COMPUTER} target={'_blank'}>
-                TRUSTLESS
+                <Flex gap={1} alignItems={"center"}>
+                  <Text>TRUSTLESS</Text>
+                  <RiArrowRightUpLine fontSize={"20px"}/>
+                </Flex>
               </Link>
             </div>
           )}

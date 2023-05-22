@@ -51,9 +51,26 @@ const Wrapper = styled.div`
     gap: ${px2rem(32)};
   }
 
+
+  .leftContainer {
+    color: #3385ff;
+
+    .external-link {
+      color: inherit;
+    }
+  }
+
+  .rightContainer {
+    color: #FFFFFF;
+
+    .external-link {
+      color: inherit;
+    }
+  }
+
   .leftContainer,
   .rightContainer {
-    color: #3385ff;
+    //color: #3385ff;
 
     display: flex;
     flex-direction: row;
