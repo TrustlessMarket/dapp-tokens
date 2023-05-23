@@ -5,10 +5,10 @@ import SocialToken from '@/components/Social';
 import FiledButton from '@/components/Swap/button/filedButton';
 import ListTable, { ColumnProp } from '@/components/Swap/listTable';
 import { TOKEN_ICON_DEFAULT } from '@/constants/common';
+import { ROUTE_PATH } from '@/constants/route-path';
 import { IToken } from '@/interfaces/token';
 import { getListIdo } from '@/services/ido';
 import { useAppSelector } from '@/state/hooks';
-import { closeModal, openModal } from '@/state/modal';
 import { selectPnftExchange } from '@/state/pnftExchange';
 import { colors } from '@/theme/colors';
 import { compareString, formatCurrency } from '@/utils';
@@ -16,14 +16,12 @@ import { Box, Flex, Text } from '@chakra-ui/react';
 import { useWeb3React } from '@web3-react/core';
 import { truncate } from 'lodash';
 import moment from 'moment';
+import { useRouter } from 'next/router';
 import { useEffect, useMemo, useState } from 'react';
 import { BsPencil, BsTrash } from 'react-icons/bs';
 import { useDispatch } from 'react-redux';
-import IdoTokenManage from '../IdoTokenManage';
 import IdoTokenStatus from './IdoToken.Status';
 import { StyledIdoContainer } from './IdoToken.styled';
-import { useRouter } from 'next/router';
-import { ROUTE_PATH } from '@/constants/route-path';
 
 const IdoTokenContainer = () => {
   const [data, setData] = useState<any[]>();

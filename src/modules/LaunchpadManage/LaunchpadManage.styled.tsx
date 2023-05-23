@@ -1,11 +1,15 @@
+import BodyContainer from '@/components/Swap/bodyContainer';
 import { colors } from '@/theme/colors';
-import { Box } from '@chakra-ui/react';
+import { px2rem } from '@trustless-computer/dapp-core';
 import styled from 'styled-components';
 
-export const StyledIdoManage = styled(Box)`
-  h6 {
+export const StyledLaunchpadManage = styled(BodyContainer)`
+  padding: ${px2rem(60)};
+
+  h4 {
     color: white;
     text-align: center;
+    margin-bottom: ${px2rem(30)};
     span {
       color: orange;
     }
@@ -17,18 +21,18 @@ export const StyledIdoManage = styled(Box)`
   }
 
   label {
-    color: rgba(28, 28, 28, 1);
+    color: ${colors.white500};
   }
 
   .filterContainer {
-    width: 400px;
-    border: 1px solid rgba(236, 236, 237, 1);
+    width: 100%;
+    border: 1px solid ${colors.darkBorderColor};
     height: 60px;
     .chakra-text {
-      color: #1c1c1c;
+      color: ${colors.white};
     }
     .select-placeholder {
-      color: #898989 !important;
+      color: ${colors.white500} !important;
       font-weight: 500;
       font-size: 16px;
     }
@@ -37,15 +41,17 @@ export const StyledIdoManage = styled(Box)`
   .field-calendar-container {
     border-radius: 0px;
     background-color: transparent;
-    border: 1px solid rgba(236, 236, 237, 1);
+    border: 1px solid ${colors.darkBorderColor};
     height: 60px;
+    position: unset;
 
     input {
-      color: #1c1c1c;
+      color: ${colors.white};
       border-radius: 0;
       border: none;
       font-weight: 500;
       font-size: 16px;
+      height: 100%;
       &::placeholder {
         color: #898989 !important;
         font-weight: 500;
@@ -59,14 +65,14 @@ export const StyledIdoManage = styled(Box)`
   .token-info {
     display: flex;
     flex-direction: column;
-    background: #ffffff;
-    box-shadow: 0px 4px 24px 8px rgba(0, 0, 0, 0.08);
+    background: ${colors.darkBorderColor};
+    box-shadow: 0px 4px 24px 8px ${colors.dark};
     border-radius: 12px;
     padding: 24px;
-    width: 350px;
+    min-width: 350px;
 
     h6 {
-      color: #1c1c1c;
+      color: ${colors.white};
       font-weight: 500;
       font-size: 18px;
       line-height: 28px;
@@ -84,6 +90,17 @@ export const StyledIdoManage = styled(Box)`
     p {
       color: ${colors.white};
       margin-top: 10px;
+    }
+
+    .horizontal-item {
+      div {
+        :first-child {
+          color: ${colors.white500};
+        }
+        :last-child {
+          color: ${colors.white};
+        }
+      }
     }
 
     .token-socials {

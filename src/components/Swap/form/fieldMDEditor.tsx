@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable react/no-children-prop */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {
@@ -10,59 +11,58 @@ import {
   InputLeftElement,
   InputRightElement,
 } from '@chakra-ui/react';
-import Cleave from 'cleave.js/react';
-import React from 'react';
 
-import { formatCurrency } from '@/utils';
 import styles from './styles.module.scss';
 
-interface FieldAmountProps {
+import '@uiw/react-markdown-preview/markdown.css';
+import '@uiw/react-md-editor/markdown-editor.css';
+import dynamic from 'next/dynamic';
+
+const MDEditor = dynamic(() => import('@uiw/react-md-editor'), { ssr: false });
+
+interface FieldMDEditorProps {
   input?: any;
   meta?: any;
   label?: string;
-  prependComp?: React.ReactNode;
-  appendComp?: React.ReactNode;
-  onClickMax?: React.MouseEventHandler;
+  rightLabel?: string;
   placeholder?: string;
-  decimals?: number;
-  maxLength?: number;
-  note?: React.ReactNode;
-  rightLabel?: React.ReactNode;
+  errorMessage?: any;
+  prependComp?: any;
+  appendComp?: any;
+  errorPlacement?: string;
+  inputType?: 'text' | 'textarea';
   fieldChanged?: (_: any) => void;
-  hideError?: boolean;
   borderColor?: string;
 }
 
-const FieldAmount = (props: FieldAmountProps) => {
+const FieldMDEditor = (props: FieldMDEditorProps) => {
   const {
     input,
-    meta,
     label,
+    rightLabel,
+    meta,
+    placeholder,
+    inputType = 'text',
     prependComp,
     appendComp,
-    onClickMax,
-    placeholder = '0.0',
-    decimals = 2,
-    maxLength = 256,
-    note,
-    rightLabel,
     fieldChanged,
     // disabledInput, errorPlacement, zIndex, anchorAppend,
-    hideError = false,
     borderColor = 'background.default',
     ...restProps
   } = props;
   const { onChange, onBlur, onFocus, value } = input;
   const { error, touched } = meta;
   const shouldShowError = !!(touched && error) || (error && value);
-  const hasAppend = appendComp || onClickMax;
-
-  const handleChange = (e: any) => {
-    onChange(e.target.rawValue);
-    fieldChanged?.(e.target.rawValue);
-  };
 
   const isError = meta.error && meta.touched;
+
+  const hasAppend = appendComp;
+
+  const handleChange = (e: any) => {
+    console.log(e);
+    onChange(e);
+    fieldChanged?.(e);
+  };
 
   return (
     <FormControl isInvalid={isError}>
@@ -74,13 +74,9 @@ const FieldAmount = (props: FieldAmountProps) => {
             </FormLabel>
           </Box>
           <Box>
-            {typeof rightLabel === 'object' ? (
-              rightLabel
-            ) : (
-              <FormLabel fontSize="xs" fontWeight="medium">
-                {rightLabel}
-              </FormLabel>
-            )}
+            <FormLabel fontSize="xs" fontWeight="medium">
+              {rightLabel}
+            </FormLabel>
           </Box>
         </Flex>
       )}
@@ -91,54 +87,47 @@ const FieldAmount = (props: FieldAmountProps) => {
         borderRadius={8}
         bgColor="background.default"
         overflow="hidden"
+        style={{ height: 300 }}
       >
         {prependComp && (
           <InputLeftElement
             children={prependComp}
-            ml={2}
-            mr={2}
-            height="100%"
+            // ml={2}
+            // mr={2}
+            // height="100%"
             position={'relative'}
           />
         )}
-        <Box className={styles.formControl}>
-          <Cleave
-            placeholder={placeholder}
-            value={formatCurrency(value)}
-            maxLength={maxLength}
+        <Box data-color-mode="dark" className={styles.formControl}>
+          <MDEditor
+            style={{ minHeight: 300 }}
+            value={value}
             onChange={handleChange}
+            {...restProps}
+          />
+          {/* <Input
+            as={inputType === 'text' ? 'input' : 'textarea'}
+            placeholder={placeholder}
+            _placeholder={{ color: '#b3b3b3' }}
+            value={value}
             onFocus={onFocus}
             onBlur={(e) => {
               onBlur();
               e?.target?.blur();
             }}
-            options={{
-              numeral: true,
-              numeralThousandsGroupStyle: 'thousand',
-              numeralPositiveOnly: true,
-              numeralDecimalScale: decimals,
-            }}
+            onChange={handleChange}
             {...restProps}
-          />
+          /> */}
         </Box>
         {hasAppend && (
-          <InputRightElement
-            w="fit-content"
-            mr={2}
-            height="100%"
-            children={appendComp}
-            position={'relative'}
-          />
+          <InputRightElement w="fit-content" pr={2} children={appendComp} />
         )}
       </InputGroup>
-      {!hideError && (
-        <FormErrorMessage fontSize="sm" color="brand.danger.400">
-          {error}
-        </FormErrorMessage>
-      )}
-      <div className="field-note">{note}</div>
+      <FormErrorMessage fontSize="sm" color="brand.danger.400">
+        {error}
+      </FormErrorMessage>
     </FormControl>
   );
 };
 
-export default FieldAmount;
+export default FieldMDEditor;

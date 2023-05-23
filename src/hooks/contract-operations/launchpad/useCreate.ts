@@ -42,6 +42,8 @@ const useCreateLaunchpad: ContractOperationHook<
         launchpadBalance,
       } = params;
 
+      console.log('params', params);
+
       if (account && provider) {
         const contract = getContract(
           LAUNCHPAD_FACTORY_ADDRESS,
@@ -50,17 +52,21 @@ const useCreateLaunchpad: ContractOperationHook<
           account,
         );
 
+        const ratio = new BigNumber(Number(liquidityRatioArg))
+          .multipliedBy(10000)
+          .toString();
+
         const transaction = await contract
           .connect(provider.getSigner())
           .createLaunchpadPool(
             launchpadTokenArg,
             liquidityTokenArg,
-            new BigNumber(liquidityRatioArg).multipliedBy(10000).toString(),
+            ratio,
             moment(startTimeArg).unix(),
             moment(endTimeArg).unix(),
-            web3.utils.fromWei(launchpadBalance),
+            web3.utils.toWei(launchpadBalance),
             {
-              gasLimit: '150000',
+              gasLimit: '1500000',
               // gasPrice: getDefaultGasPrice(),
             },
           );

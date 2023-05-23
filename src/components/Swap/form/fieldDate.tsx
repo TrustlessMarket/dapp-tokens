@@ -54,7 +54,7 @@ const FieldDate = (props: FieldDateProps) => {
   };
 
   return (
-    <FormControl isInvalid={isError}>
+    <FormControl style={{ position: 'unset' }} isInvalid={isError}>
       {(label || rightLabel) && (
         <Flex justifyContent={'space-between'}>
           <Box>

@@ -1,5 +1,8 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 /** @type {import('next').NextConfig} */
-const nextConfig = {
+const removeImports = require('next-remove-imports');
+
+const nextConfig = removeImports()({
   output: 'standalone',
   reactStrictMode: true,
   images: {
@@ -28,6 +31,6 @@ const nextConfig = {
       },
     ],
   },
-};
+});
 
 module.exports = nextConfig;
