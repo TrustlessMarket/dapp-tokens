@@ -65,7 +65,8 @@ import {
   StatHelpText,
   StatNumber,
   Text,
-  forwardRef, Center,
+  forwardRef,
+  Center,
 } from '@chakra-ui/react';
 import { useWeb3React } from '@web3-react/core';
 import BigNumber from 'bignumber.js';
@@ -92,7 +93,7 @@ import { ScreenType } from '..';
 import styles from './styles.module.scss';
 import { closeModal, openModal } from '@/state/modal';
 import ModalConfirmApprove from '@/components/ModalConfirmApprove';
-import {BiBell} from "react-icons/bi";
+import { BiBell } from 'react-icons/bi';
 
 const LIMIT_PAGE = 50;
 
@@ -428,9 +429,9 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         getTokenBalance(token),
       ]);
       setIsApproveAmountBaseToken(web3.utils.fromWei(_isApprove));
-      // if (isScreenAdd) {
-      setBaseBalance(_tokenBalance);
-      // }
+      if (!isScreenRemove) {
+        setBaseBalance(_tokenBalance);
+      }
     } catch (error) {
       throw error;
     }
@@ -446,9 +447,9 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       ]);
 
       setIsApproveAmountQuoteToken(web3.utils.fromWei(_isApprove));
-      // if (isScreenAdd) {
-      setQuoteBalance(_tokenBalance);
-      // }
+      if (!isScreenRemove) {
+        setQuoteBalance(_tokenBalance);
+      }
     } catch (error) {
       throw error;
     }
@@ -796,8 +797,8 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         label={' '}
         rightLabel={
           !isEmpty(baseToken) && (
-            <Flex gap={2} fontSize={px2rem(14)} color={"#FFFFFF"}>
-              <Flex gap={1} alignItems={"center"}>
+            <Flex gap={2} fontSize={px2rem(14)} color={'#FFFFFF'}>
+              <Flex gap={1} alignItems={'center'}>
                 Balance: {formatCurrency(baseBalance)} {baseToken?.symbol}
               </Flex>
               {!isScreenRemove && (
@@ -805,9 +806,9 @@ export const MakeFormSwap = forwardRef((props, ref) => {
                   cursor={'pointer'}
                   color={'#3385FF'}
                   onClick={handleChangeMaxBaseAmount}
-                  bgColor={"rgba(51, 133, 255, 0.2)"}
-                  borderRadius={"4px"}
-                  padding={"1px 12px"}
+                  bgColor={'rgba(51, 133, 255, 0.2)'}
+                  borderRadius={'4px'}
+                  padding={'1px 12px'}
                 >
                   MAX
                 </Text>
@@ -845,16 +846,16 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           />
         </Flex>
       </InputWrapper>
-      <Flex gap={2} justifyContent={"center"} mt={6}>
+      <Flex gap={2} justifyContent={'center'} mt={6}>
         <Center
           w={'40px'}
           h={'40px'}
-          minW={"40px"}
-          minH={"40px"}
+          minW={'40px'}
+          minH={'40px'}
           borderRadius={'50%'}
-          bgColor={"rgba(255, 255, 255, 0.1)"}
+          bgColor={'rgba(255, 255, 255, 0.1)'}
         >
-          <BsPlus fontWeight={'bold'} fontSize={'30px'} color={"#FFFFFF"}/>
+          <BsPlus fontWeight={'bold'} fontSize={'30px'} color={'#FFFFFF'} />
         </Center>
       </Flex>
       <InputWrapper
@@ -863,8 +864,8 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         label={' '}
         rightLabel={
           !isEmpty(quoteToken) && (
-            <Flex gap={2} fontSize={px2rem(14)} color={"#FFFFFF"}>
-              <Flex gap={1} alignItems={"center"}>
+            <Flex gap={2} fontSize={px2rem(14)} color={'#FFFFFF'}>
+              <Flex gap={1} alignItems={'center'}>
                 Balance: {formatCurrency(quoteBalance)} {quoteToken?.symbol}
               </Flex>
               {!isScreenRemove && (
@@ -872,9 +873,9 @@ export const MakeFormSwap = forwardRef((props, ref) => {
                   cursor={'pointer'}
                   color={'#3385FF'}
                   onClick={handleChangeMaxQuoteAmount}
-                  bgColor={"rgba(51, 133, 255, 0.2)"}
-                  borderRadius={"4px"}
-                  padding={"1px 12px"}
+                  bgColor={'rgba(51, 133, 255, 0.2)'}
+                  borderRadius={'4px'}
+                  padding={'1px 12px'}
                 >
                   MAX
                 </Text>
@@ -953,7 +954,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
               h={'24px'}
               borderRadius={'50%'}
               bg={'rgba(255, 126, 33, 0.2)'}
-              as={"span"}
+              as={'span'}
             >
               <BiBell color="#FF7E21" />
             </Center>
@@ -961,7 +962,9 @@ export const MakeFormSwap = forwardRef((props, ref) => {
               Insufficient {baseToken?.symbol} balance! Consider swapping your{' '}
               {baseToken?.symbol?.replace('W', '')} to trustless network{' '}
               <Link
-                href={`${TRUSTLESS_BRIDGE}${baseToken?.symbol?.replace('W', '')?.toLowerCase()}`}
+                href={`${TRUSTLESS_BRIDGE}${baseToken?.symbol
+                  ?.replace('W', '')
+                  ?.toLowerCase()}`}
                 target={'_blank'}
                 style={{ textDecoration: 'underline' }}
               >
@@ -981,7 +984,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
               h={'24px'}
               borderRadius={'50%'}
               bg={'rgba(255, 126, 33, 0.2)'}
-              as={"span"}
+              as={'span'}
             >
               <BiBell color="#FF7E21" />
             </Center>
@@ -989,7 +992,9 @@ export const MakeFormSwap = forwardRef((props, ref) => {
               Insufficient {quoteToken?.symbol} balance! Consider swapping your{' '}
               {quoteToken?.symbol?.replace('W', '')} to trustless network{' '}
               <Link
-                href={`${TRUSTLESS_BRIDGE}${quoteToken?.symbol?.replace('W', '')?.toLowerCase()}`}
+                href={`${TRUSTLESS_BRIDGE}${quoteToken?.symbol
+                  ?.replace('W', '')
+                  ?.toLowerCase()}`}
                 target={'_blank'}
                 style={{ textDecoration: 'underline' }}
               >
@@ -1022,6 +1027,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             processInfo={{
               id: transactionType.createPoolApprove,
             }}
+            mt={6}
           >
             {!isScreenRemove
               ? `APPROVE USE OF ${
