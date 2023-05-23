@@ -5,7 +5,6 @@ import Faqs from "./faqs";
 const IdoDetailContainer = () => {
   return (
     <BodyContainer className={styles.wrapper}>
-sefsdf
       <Faqs />
     </BodyContainer>
   )
