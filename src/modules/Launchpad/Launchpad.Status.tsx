@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { StyledIdoStatus } from './IdoToken.styled';
+import { StyledIdoStatus } from './Launchpad.styled';
 
 export const status = {
   upcoming: 'upcoming',

@@ -1,6 +1,6 @@
 import { CDN_URL } from '@/configs';
 import Layout from '@/layouts';
-import IdoTokenContainer from '@/modules/IdoToken';
+import LaunchpadContainer from '@/modules/Launchpad';
 import { colors } from '@/theme/colors';
 import { Box } from '@chakra-ui/react';
 import Head from 'next/head';
@@ -14,7 +14,7 @@ const IdoToken = () => {
       </Head>
       <Box bgColor={colors.dark}>
         <Layout>
-          <IdoTokenContainer />
+          <LaunchpadContainer />
         </Layout>
       </Box>
     </>

@@ -20,10 +20,11 @@ import { useRouter } from 'next/router';
 import { useEffect, useMemo, useState } from 'react';
 import { BsPencil, BsTrash } from 'react-icons/bs';
 import { useDispatch } from 'react-redux';
-import IdoTokenStatus from './IdoToken.Status';
-import { StyledIdoContainer } from './IdoToken.styled';
+import IdoTokenStatus from './Launchpad.Status';
+import { StyledIdoContainer } from './Launchpad.styled';
+import { getListLaunchpad } from '@/services/launchpad';
 
-const IdoTokenContainer = () => {
+const LaunchpadContainer = () => {
   const [data, setData] = useState<any[]>();
   const [loading, setLoading] = useState(true);
   const { account } = useWeb3React();
@@ -37,7 +38,7 @@ const IdoTokenContainer = () => {
 
   const getData = async () => {
     try {
-      const response: any = await getListIdo({
+      const response: any = await getListLaunchpad({
         page: 1,
         limit: 50,
       });
@@ -62,6 +63,7 @@ const IdoTokenContainer = () => {
           borderBottom: 'none',
         },
         render(row: any) {
+          return <></>;
           return <IdoTokenStatus row={row} />;
         },
       },
@@ -79,7 +81,7 @@ const IdoTokenContainer = () => {
         render(row: any) {
           return (
             <Box>
-              <Text>{moment(row.startAt).format('MMM, DD')}</Text>
+              <Text>{moment(row.startTime).format('MMM, DD')}</Text>
             </Box>
           );
         },
@@ -98,7 +100,7 @@ const IdoTokenContainer = () => {
         render(row: any) {
           return (
             <Text>
-              <CountDownTimer end_time={row.startAt} />
+              <CountDownTimer end_time={row.startTime} />
             </Text>
           );
         },
@@ -118,12 +120,12 @@ const IdoTokenContainer = () => {
           const token: IToken = row.token;
           return (
             <Flex gap={4}>
-              <img src={token.thumbnail || TOKEN_ICON_DEFAULT} />
+              <img src={TOKEN_ICON_DEFAULT} />
               <Box>
-                <Text className="record-title">
+                {/* <Text className="record-title">
                   {token.name} <span>{token.symbol}</span>
                 </Text>
-                <Text className="note">#{token.index}</Text>
+                <Text className="note">#{token.index}</Text> */}
               </Box>
             </Flex>
           );
@@ -144,10 +146,10 @@ const IdoTokenContainer = () => {
           const token: IToken = row.token;
           return (
             <Text className="description">
-              {truncate(token.description, {
+              {/* {truncate(token.description, {
                 length: 100,
                 separator: '...',
-              })}
+              })} */}
             </Text>
           );
         },
@@ -184,6 +186,7 @@ const IdoTokenContainer = () => {
           borderBottom: 'none',
         },
         render(row: any) {
+          return <></>;
           const token: IToken = row.token;
           return <SocialToken socials={token.social} />;
         },
@@ -200,6 +203,7 @@ const IdoTokenContainer = () => {
           borderBottom: 'none',
         },
         render(row: any) {
+          return <></>;
           const token: IToken = row.token;
 
           if (compareString(token.owner, account)) {
@@ -261,10 +265,21 @@ const IdoTokenContainer = () => {
       </Flex>
 
       <Box className="content">
-        <ListTable data={data} columns={columns} initialLoading={loading} />
+        <ListTable
+          data={data}
+          columns={columns}
+          initialLoading={loading}
+          onItemClick={(e) => {
+            console.log('e', e);
+
+            return router.push(
+              `${ROUTE_PATH.LAUNCHPAD_DETAIL}?pool_address=${e.launchpad}`,
+            );
+          }}
+        />
       </Box>
     </StyledIdoContainer>
   );
 };
 
-export default IdoTokenContainer;
+export default LaunchpadContainer;
