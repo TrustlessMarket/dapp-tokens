@@ -1,12 +1,14 @@
-import BodyContainer from "@/components/Swap/bodyContainer";
 import styles from './styles.module.scss';
-import Faqs from "./faqs";
+import IdoFaqs from "./faqs";
+import IdoDescription from "@/modules/IdoDetail/description";
+import {Box} from "@chakra-ui/react";
 
 const IdoDetailContainer = () => {
   return (
-    <BodyContainer className={styles.wrapper}>
-      <Faqs />
-    </BodyContainer>
+    <Box className={styles.wrapper}>
+      <IdoDescription />
+      <IdoFaqs />
+    </Box>
   )
 };
 

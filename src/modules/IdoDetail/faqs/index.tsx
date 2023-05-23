@@ -37,7 +37,7 @@ const faqs = [
     },
 ];
 
-const Faqs = () => {
+const IdoFaqs = () => {
     return (
         <BodyContainer bgColor="transparent" className={styles.container}>
             <Faq data={faqs}/>
@@ -45,4 +45,4 @@ const Faqs = () => {
     )
 };
 
-export default Faqs;
+export default IdoFaqs;
