@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import {AutoSizer, List} from '@/components/ReactVirtualized';
 import px2rem from '@/utils/px2rem';
 import {
@@ -21,8 +23,6 @@ import Jazzicon, {jsNumberForAddress} from 'react-jazzicon';
 import s from './styles.module.scss';
 import {CDN_URL} from '@/configs';
 import SvgInset from '@/components/SvgInset';
-import {toast} from 'react-hot-toast';
-import {useRouter} from 'next/router';
 import {formatCurrency, shortenAddress} from "@/utils";
 import {getGMDepositInfo, IGMDepositInfoListItem, IGMDepositInfoResponse} from "@/services/ido";
 
@@ -33,7 +33,7 @@ type TokenList = {
 };
 
 const AllowlistTable: React.FC = (): React.ReactElement => {
-  const router = useRouter();
+  // const router = useRouter();
   const [depositInfo, setDepositInfo] = useState<IGMDepositInfoResponse | null>(
     null
   );
@@ -44,7 +44,7 @@ const AllowlistTable: React.FC = (): React.ReactElement => {
     undefined
   );
   const { mobileScreen, tabletScreen } = useWindowSize();
-  const top10UsdtValue = useRef(0);
+  // const top10UsdtValue = useRef(0);
   const usdValueNeedToGet1GM = useRef(0);
 
   const getRowHeight = () => {
@@ -65,12 +65,12 @@ const AllowlistTable: React.FC = (): React.ReactElement => {
     }
   };
 
-  const sortByUsdValue = (
-    a: IGMDepositInfoListItem,
-    b: IGMDepositInfoListItem
-  ) => {
-    return b.usdtValue - a.usdtValue;
-  };
+  // const sortByUsdValue = (
+  //   a: IGMDepositInfoListItem,
+  //   b: IGMDepositInfoListItem
+  // ) => {
+  //   return b.usdtValue - a.usdtValue;
+  // };
 
   // const injectCurrentUserData = async (
   //   dataList: Array<IGMDepositInfoListItem>
@@ -243,23 +243,23 @@ const AllowlistTable: React.FC = (): React.ReactElement => {
     );
   };
 
-  const onSearchAddress = (searchTerm: string): void => {
-    const index = depositList.findIndex(
-      item =>
-        item.from.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        item.ens.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-    if (index === -1) {
-      toast.remove();
-      toast.error('Record not found');
-    }
-
-    if (index !== -1 && searchTerm) {
-      setScrollToIndex(index);
-    } else {
-      setScrollToIndex(undefined);
-    }
-  };
+  // const onSearchAddress = (searchTerm: string): void => {
+  //   const index = depositList.findIndex(
+  //     item =>
+  //       item.from.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  //       item.ens.toLowerCase().includes(searchTerm.toLowerCase())
+  //   );
+  //   if (index === -1) {
+  //     toast.remove();
+  //     toast.error('Record not found');
+  //   }
+  //
+  //   if (index !== -1 && searchTerm) {
+  //     setScrollToIndex(index);
+  //   } else {
+  //     setScrollToIndex(undefined);
+  //   }
+  // };
 
   const ContributionBlock = ({ user }: { user: IGMDepositInfoListItem }) => {
     if (!depositInfo || (depositInfo && !depositInfo.mapTokensDeposit))
