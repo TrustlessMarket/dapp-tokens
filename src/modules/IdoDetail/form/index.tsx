@@ -60,7 +60,8 @@ import {ROUTE_PATH} from "@/constants/route-path";
 import {closeModal, openModal} from "@/state/modal";
 import {useWindowSize} from '@trustless-computer/dapp-core';
 import ModalConfirmApprove from '@/components/ModalConfirmApprove';
-import {getUserBoost} from "@/services/launchpad";
+import {getDetailLaunchpad, getUserBoost} from "@/services/launchpad";
+import {getTokenDetail} from "@/services/token-explorer";
 
 const LIMIT_PAGE = 50;
 const FEE = 2;
@@ -89,9 +90,11 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const needReload = useAppSelector(selectPnftExchange).needReload;
   const [exchangeRate, setExchangeRate] = useState('0');
   const [boostInfo, setBoostInfo] = useState<any>();
+  const [poolDetail, setPoolDetail] = useState<any>();
 
-  console.log('account', account);
-  console.log('router', router);
+  console.log('baseToken', baseToken);
+  console.log('quoteToken', quoteToken);
+  console.log('poolDetail', poolDetail);
   console.log('boostInfo', boostInfo);
   console.log('======');
 
@@ -166,11 +169,46 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     }
   }
 
-  useMemo(() => {
+  useEffect(() => {
     if(account && router?.query?.pool_address) {
       getBoostInfo();
     }
   }, [account, router?.query?.pool_address]);
+
+  const getPoolInfo = async () => {
+    try {
+      const response = await getDetailLaunchpad({pool_address: router?.query?.pool_address});
+      setPoolDetail(response);
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  useEffect(() => {
+    if(router?.query?.pool_address) {
+      getPoolInfo();
+    }
+  }, [router?.query?.pool_address]);
+
+  const getTokensInfo = async () => {
+    try {
+      const [res1, res2] = await Promise.all([
+        getTokenDetail(poolDetail.liquidityTokenAddress),
+        getTokenDetail(poolDetail.launchpadToken),
+      ]);
+
+      setBaseToken(res1);
+      setQuoteToken(res2);
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  useEffect(() => {
+    if(poolDetail?.id) {
+      getTokensInfo();
+    }
+  }, [poolDetail?.id]);
 
   useEffect(() => {
     if (router?.query?.from_token) {
