@@ -16,8 +16,6 @@ const Statistic = () => {
     moment.unix(END_TIME).format("YYYY/MM/DD HH:mm:ss")
   );
 
-  console.log('days, hours, minutes, seconds, expired', days, hours, minutes, seconds, expired);
-
   const dispatch = useDispatch();
 
   useEffect(() => {

@@ -60,6 +60,7 @@ import {ROUTE_PATH} from "@/constants/route-path";
 import {closeModal, openModal} from "@/state/modal";
 import {useWindowSize} from '@trustless-computer/dapp-core';
 import ModalConfirmApprove from '@/components/ModalConfirmApprove';
+import {getUserBoost} from "@/services/launchpad";
 
 const LIMIT_PAGE = 50;
 const FEE = 2;
@@ -87,21 +88,12 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const { account } = useWeb3React();
   const needReload = useAppSelector(selectPnftExchange).needReload;
   const [exchangeRate, setExchangeRate] = useState('0');
+  const [boostInfo, setBoostInfo] = useState<any>();
 
-  // console.log('isSwitching', isSwitching);
-  // console.log('amountBaseTokenApproved', amountBaseTokenApproved);
-  // console.log('formatEthPrice', formatEthPrice(amountBaseTokenApproved));
-  // console.log('amountQuoteTokenApproved', amountQuoteTokenApproved);
-  // console.log('baseBalance', baseBalance);
-  // console.log('quoteBalance', quoteBalance);
-  // console.log('baseToken', baseToken);
-  // console.log('quoteToken', quoteToken);
-  // console.log('baseReserve', baseReserve);
-  // console.log('quoteReserve', quoteReserve);
-  // console.log('quoteTokensList', quoteTokensList);
-  // console.log('reserveInfos', reserveInfos);
-  // console.log('swapRoutes', swapRoutes);
-  // console.log('======');
+  console.log('account', account);
+  console.log('router', router);
+  console.log('boostInfo', boostInfo);
+  console.log('======');
 
   const { values } = useFormState();
   const { change, restart } = useForm();
@@ -164,6 +156,21 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   useEffect(() => {
     fetchTokens();
   }, []);
+
+  const getBoostInfo = async () => {
+    try {
+      const response = await getUserBoost({address: account, pool_address: router?.query?.pool_address});
+      setBoostInfo(response);
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  useMemo(() => {
+    if(account && router?.query?.pool_address) {
+      getBoostInfo();
+    }
+  }, [account, router?.query?.pool_address]);
 
   useEffect(() => {
     if (router?.query?.from_token) {
@@ -616,12 +623,18 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       <Box color={"#FFFFFF"}>
         {
           isAuthenticated ? (
-            <Stat>
-              <StatLabel>Boost rate</StatLabel>
-              <StatNumber>
-                30%
-              </StatNumber>
-            </Stat>
+            <>
+              {
+                boostInfo && (
+                  <Stat>
+                    <StatLabel>Boost rate</StatLabel>
+                    <StatNumber>
+                      {boostInfo.boost}%
+                    </StatNumber>
+                  </Stat>
+                )
+              }
+            </>
           ) : (
             <Text>Connect wallet to see your boost rate</Text>
           )
