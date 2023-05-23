@@ -6,7 +6,7 @@ import TokenBalance from '@/components/Swap/tokenBalance';
 import {COMMON_TOKEN_CONTRACT} from '@/constants/common';
 import useDebounce from '@/hooks/useDebounce';
 import {closeModal, openModal} from '@/state/modal';
-import {Box, Flex, Text} from '@chakra-ui/react';
+import {Box, Center, Flex, Icon, Text} from '@chakra-ui/react';
 import {useWindowSize} from '@trustless-computer/dapp-core';
 import cx from 'classnames';
 import {clone} from 'lodash';
@@ -17,6 +17,13 @@ import {AiOutlineCaretDown} from 'react-icons/ai';
 import styles from './styles.module.scss';
 import {compareString} from "@/utils";
 import {RxMagnifyingGlass} from "react-icons/rx";
+import VerifiedBadge, {
+  getTextColorStatus,
+  VERIFIED_STATUS
+} from "@/components/Swap/filterToken/verifiedBadge";
+import {IToken} from "@/interfaces/token";
+import {ImWarning} from "react-icons/im";
+import {HiBadgeCheck} from "react-icons/hi";
 
 interface FilterButtonProps {
   data: any[] | undefined;
@@ -92,6 +99,7 @@ const FilterModal: React.FC<FilterModalProps> = ({
                   >
                     {row?.symbol}
                   </Text>
+                  <VerifiedBadge token={row.extra_item}/>
                 </Flex>
                 <Text
                   fontSize={'xs'}
@@ -274,10 +282,70 @@ const FilterButton: React.FC<FilterButtonProps> = ({
     }
   }, [value?.address]);
 
-  const handleSelectToken = (token: React.SetStateAction<null>) => {
+  const handleSelectToken = (token: React.SetStateAction<unknown>) => {
     setSelectedToken(token);
     handleSelectItem && handleSelectItem(token);
+    handleShowWarningToken(token as IToken);
   };
+
+  const handleShowWarningToken = (token?: IToken) => {
+    if(!token?.status || token?.status === VERIFIED_STATUS.PREMIUM) {
+      return;
+    }
+    const id = 'modalWarningToken';
+    const close = () => dispatch(closeModal({id}));
+    dispatch(
+      openModal({
+        id,
+        theme: 'dark',
+        // title: 'Confirm swap',
+        className: styles.modalWarningToken,
+        modalProps: {
+          centered: true,
+          size: mobileScreen ? 'full' : 'xl',
+          zIndex: 9999999,
+        },
+        render: () => (
+          <Flex direction={'column'} gap={2}>
+            <Flex gap={2} justifyContent={"center"} color={getTextColorStatus(token.status)} alignItems={"center"}>
+              <Text fontSize={"40px"} fontWeight={"medium"}>
+                {token?.status === VERIFIED_STATUS.WARNING ? 'Warning' : 'Caution'}
+              </Text>
+              <Center
+                w={'40px'}
+                h={'40px'}
+                minW={"40px"}
+                minH={"40px"}
+              >
+                <Icon as={ImWarning} fontSize={"30px"}/>
+              </Center>
+            </Flex>
+            <Flex direction={"column"} color={getTextColorStatus(token.status)} maxW={"500px"} mt={4}>
+              {
+                token?.status === VERIFIED_STATUS.WARNING && (
+                  <>
+                    <Text>The name of this token is misleading and its trading volume is extremely low, which may increase the potential risk of trading this token.</Text>
+                    <Text>Please keep these warnings in mind before proceeding with any trades involving this token.</Text>
+                  </>
+                )
+              }
+              {
+                token?.status === VERIFIED_STATUS.CAUTION && <Text>This token has a low trading volume, which may increase your risk if you decide to trade it.</Text>
+              }
+            </Flex>
+            <FiledButton
+              loadingText="Processing"
+              btnSize={'h'}
+              onClick={close}
+              mt={4}
+            >
+              Confirm
+            </FiledButton>
+          </Flex>
+        ),
+      }),
+    );
+  }
 
   const handleOpenModal = () => {
     // parentClose?.();
@@ -366,9 +434,16 @@ const FilterButton: React.FC<FilterButtonProps> = ({
       >
         {selectedToken ? (
           <Flex direction={'column'} alignItems={'flex-start'}>
-            <Text fontWeight={'500'} fontSize={'md'}>
-              {selectedToken?.symbol}
-            </Text>
+            <Flex gap={1} alignItems={"center"}>
+              <Text fontWeight={'500'} fontSize={'md'}>
+                {selectedToken?.symbol}
+              </Text>
+              {
+                selectedToken?.status && (
+                  <Icon as={selectedToken?.status === VERIFIED_STATUS.PREMIUM ? HiBadgeCheck : ImWarning} fontSize={"14px"} color={getTextColorStatus(selectedToken?.status)}/>
+                )
+              }
+            </Flex>
             <Text fontSize={'xs'}>{selectedToken?.network}</Text>
           </Flex>
         ) : (

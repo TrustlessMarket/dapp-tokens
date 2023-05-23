@@ -39,4 +39,5 @@ export interface IToken {
   decimal?: number | string;
   network?: string;
   baseTokenSymbol?: string;
+  status?: string;
 }

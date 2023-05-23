@@ -1,20 +1,25 @@
 /* eslint-disable react-hooks/rules-of-hooks */
-import {CDN_URL} from '@/configs';
-import {ROUTE_PATH} from '@/constants/route-path';
-import {gsap} from 'gsap';
+import { CDN_URL } from '@/configs';
+import { ROUTE_PATH } from '@/constants/route-path';
+import { gsap } from 'gsap';
 import Link from 'next/link';
-import {useEffect, useRef, useState} from 'react';
-import {Wrapper} from './Header.styled';
+import { useEffect, useRef, useState } from 'react';
+import { Wrapper } from './Header.styled';
 import MenuMobile from './MenuMobile';
 import WalletHeader from './Wallet';
-import {useWindowSize} from '@trustless-computer/dapp-core';
-import {useRouter} from 'next/router';
-import {GENERATIVE_DISCORD, GM_ADDRESS, TRUSTLESS_COMPUTER, WETH_ADDRESS} from '@/constants/common';
-import {useScreenLayout} from '@/hooks/useScreenLayout';
-import {defaultProvider} from '@/contexts/screen-context';
-import {compareString} from '@/utils';
-import {Flex, Link as LinkText, Text} from "@chakra-ui/react";
-import {RiArrowRightUpLine} from "react-icons/ri";
+import { useWindowSize } from '@trustless-computer/dapp-core';
+import { useRouter } from 'next/router';
+import {
+  GENERATIVE_DISCORD,
+  GM_ADDRESS,
+  TRUSTLESS_COMPUTER,
+  WETH_ADDRESS,
+} from '@/constants/common';
+import { useScreenLayout } from '@/hooks/useScreenLayout';
+import { defaultProvider } from '@/contexts/screen-context';
+import { compareString } from '@/utils';
+import { Flex, Link as LinkText, Text } from '@chakra-ui/react';
+import { RiArrowRightUpLine } from 'react-icons/ri';
 
 export const isScreenDarkMode = () => {
   return true;
@@ -30,6 +35,24 @@ export const isScreenDarkMode = () => {
     compareString(router?.pathname, ROUTE_PATH.SWAP_HISTORY)
   );
 };
+
+export const HEADER_MENUS = [
+  {
+    key: ROUTE_PATH.MARKETS,
+    route: ROUTE_PATH.MARKETS,
+    name: 'Markets',
+  },
+  {
+    key: ROUTE_PATH.SWAP,
+    route: `${ROUTE_PATH.SWAP}?from_token=${WETH_ADDRESS}&to_token=${GM_ADDRESS}`,
+    name: 'Swap',
+  },
+  {
+    key: ROUTE_PATH.POOLS,
+    route: ROUTE_PATH.POOLS,
+    name: 'Pools',
+  },
+];
 
 const Header = () => {
   const refMenu = useRef<HTMLDivElement | null>(null);
@@ -61,117 +84,82 @@ const Header = () => {
       <div className={'container'} style={{ height: defaultProvider.headerHeight }}>
         <div className={'leftWrapper'}>
           <Link className="logo" href={ROUTE_PATH.HOME}>
-            {!mobileScreen && (
-              <img
-                src={`${CDN_URL}/icons/logo-tc-market.svg`}
-                alt="Trustless Market logo"
-                style={{ height: '40px' }}
-                // height={40}
-              />
-            )}
-            {mobileScreen && (
-              <img
-                src={`${CDN_URL}/icons/logo-tc-market.svg`}
-                alt="Trustless Market logo"
-                width={40}
-                height={40}
-              />
-            )}
+            <img
+              src={`${CDN_URL}/icons/logo-tc-market.svg`}
+              alt="Trustless Market logo"
+              width={40}
+              height={40}
+            />
           </Link>
-          <div className={'leftContainer'}>
-            <div className="external-link">
-              <Link
-                href={ROUTE_PATH.MARKETS}
-                className={
-                  router?.pathname?.includes(ROUTE_PATH.MARKETS) ? 'isSelected' : ''
-                }
-              >
-                Markets
-              </Link>
-              <Link
-                href={`${ROUTE_PATH.SWAP}?from_token=${WETH_ADDRESS}&to_token=${GM_ADDRESS}`}
-                className={
-                  router?.pathname?.includes(ROUTE_PATH.SWAP) ? 'isSelected' : ''
-                }
-              >
-                Swap
-              </Link>
-              <Link
-                href={ROUTE_PATH.POOLS}
-                className={
-                  router?.pathname?.includes(ROUTE_PATH.POOLS) ? 'isSelected' : ''
-                }
-              >
-                Pools
-              </Link>
-              <Link
-                href={ROUTE_PATH.IDO}
-                className={
-                  router?.pathname?.includes(ROUTE_PATH.IDO) ? 'isSelected' : ''
-                }
-              >
-                Ido
-              </Link>
-              {/*<Link
-                href={ROUTE_PATH.GET_STARTED}
-                className={
-                  router?.pathname?.includes(ROUTE_PATH.GET_STARTED) ? 'isSelected' : ''
-                }
-              >
-                Get Started
-              </Link>*/}
+          {!mobileScreen && (
+            <div className={'leftContainer'}>
+              <div className="external-link">
+                {HEADER_MENUS.map((m) => (
+                  <Link
+                    key={m.route}
+                    href={m.route}
+                    className={router?.pathname?.includes(m.key) ? 'isSelected' : ''}
+                  >
+                    {m.name}
+                  </Link>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
         </div>
         <MenuMobile ref={refMenu} onCloseMenu={() => setIsOpenMenu(false)} />
         <div className="rightContainer">
-          {!mobileScreen && (
-            <div className="external-link">
-              <Link href={GENERATIVE_DISCORD} target={'_blank'}>
-                <Flex gap={1} alignItems={"center"}>
-                  <Text>DISCORD</Text>
-                  <RiArrowRightUpLine fontSize={"20px"}/>
-                </Flex>
-              </Link>
-              <Link href={TRUSTLESS_COMPUTER} target={'_blank'}>
-                <Flex gap={1} alignItems={"center"}>
-                  <Text>TRUSTLESS</Text>
-                  <RiArrowRightUpLine fontSize={"20px"}/>
-                </Flex>
-              </Link>
-            </div>
+          {mobileScreen ? (
+            <button className="btnMenuMobile" onClick={() => setIsOpenMenu(true)}>
+              <img
+                src={`${CDN_URL}/icons/ic-header-menu.svg`}
+                alt="trustless.maket"
+              />
+            </button>
+          ) : (
+            <>
+              <div className="external-link">
+                <Link href={GENERATIVE_DISCORD} target={'_blank'}>
+                  <Flex gap={1} alignItems={'center'}>
+                    <Text>DISCORD</Text>
+                    <RiArrowRightUpLine fontSize={'20px'} />
+                  </Flex>
+                </Link>
+                <Link href={TRUSTLESS_COMPUTER} target={'_blank'}>
+                  <Flex gap={1} alignItems={'center'}>
+                    <Text>TRUSTLESS</Text>
+                    <RiArrowRightUpLine fontSize={'20px'} />
+                  </Flex>
+                </Link>
+              </div>
+              <WalletHeader />
+            </>
           )}
-          <WalletHeader />
-          <button className="btnMenuMobile" onClick={() => setIsOpenMenu(true)}>
-            <img src={`${CDN_URL}/icons/ic_hambuger.svg`} />
-          </button>
         </div>
       </div>
-      {
-        showGetStarted && (
-          <Flex
-            height={10}
-            alignItems="center"
-            justifyContent="center"
-            bgColor={`#ebebeb${isScreenDarkMode() ? '33' : ''}`}
+      {showGetStarted && (
+        <Flex
+          height={10}
+          alignItems="center"
+          justifyContent="center"
+          bgColor={`#ebebeb${isScreenDarkMode() ? '33' : ''}`}
+        >
+          <Text
+            fontWeight="medium"
+            fontSize="sm"
+            color={isScreenDarkMode() ? 'white' : 'black'}
           >
-            <Text
-              fontWeight="medium"
-              fontSize="sm"
-              color={isScreenDarkMode() ? 'white' : 'black'}
+            New to Bitcoin DeFi?{' '}
+            <LinkText
+              fontWeight="bold"
+              color="brand.info.400"
+              href={ROUTE_PATH.GET_STARTED}
             >
-              New to Bitcoin DeFi?{' '}
-              <LinkText
-                fontWeight="bold"
-                color="brand.info.400"
-                href={ROUTE_PATH.GET_STARTED}
-              >
-                Start here.
-              </LinkText>{' '}
-            </Text>
-          </Flex>
-        )
-      }
+              Start here.
+            </LinkText>{' '}
+          </Text>
+        </Flex>
+      )}
     </Wrapper>
   );
 };

@@ -15,6 +15,7 @@ import {
 import moment from 'moment';
 import useAsyncEffect from 'use-async-effect';
 import { StyledTokenChartContainer } from './Token.styled';
+import { useWindowSize } from '@trustless-computer/dapp-core';
 
 interface TokenChartProps {
   chartData: any[];
@@ -26,6 +27,7 @@ const TokenChart: React.FC<TokenChartProps> = ({ chartData, dataSymbol }) => {
   const chart = useRef<any>();
   const resizeObserver = useRef<any>();
   const candleSeries = useRef<any>();
+  const { mobileScreen } = useWindowSize();
 
   const refCandles = useRef(chartData);
 
@@ -80,7 +82,7 @@ const TokenChart: React.FC<TokenChartProps> = ({ chartData, dataSymbol }) => {
           exitMode: TrackingModeExitMode.OnTouchEnd,
         },
         handleScroll: {
-          // vertTouchDrag: !isMobile,
+          vertTouchDrag: !mobileScreen,
         },
       });
 

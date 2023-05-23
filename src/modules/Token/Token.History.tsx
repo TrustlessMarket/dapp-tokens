@@ -11,22 +11,25 @@ import { useEffect, useMemo, useState } from 'react';
 import { RxExternalLink } from 'react-icons/rx';
 import { DEFAULT_FROM_TOKEN_ADDRESS } from '../Pools';
 import { StyledTokenTrading } from './Token.styled';
+import { useWeb3React } from '@web3-react/core';
 
 export const BASE_TOKEN_ETH_PAIR = '0x74B033e56434845E02c9bc4F0caC75438033b00D';
 
-const TokenHistory = ({ data }: { data: IToken }) => {
+const TokenHistory = ({ data, isOwner }: { data: IToken; isOwner?: boolean }) => {
   const [list, setList] = useState<any[]>([]);
+  const { account, isActive } = useWeb3React();
 
   useEffect(() => {
     getList();
-  }, []);
+  }, [account, isActive]);
 
   const getList = async () => {
     try {
       const response: any = await getTradeHistory({
         contract_address: data.address,
         page: 1,
-        limit: 30,
+        limit: 100,
+        user_address: isOwner ? account : '',
       });
       setList(response);
     } catch (error) {}
