@@ -25,6 +25,8 @@ import {CDN_URL} from '@/configs';
 import SvgInset from '@/components/SvgInset';
 import {formatCurrency, shortenAddress} from "@/utils";
 import {getGMDepositInfo, IGMDepositInfoListItem, IGMDepositInfoResponse} from "@/services/ido";
+import Search from "@/modules/IdoDetail/statistic/Search";
+import toast from "react-hot-toast";
 
 type TokenList = {
   type: 'turbo' | 'btc' | 'eth' | 'pepe';
@@ -243,23 +245,23 @@ const AllowlistTable: React.FC = (): React.ReactElement => {
     );
   };
 
-  // const onSearchAddress = (searchTerm: string): void => {
-  //   const index = depositList.findIndex(
-  //     item =>
-  //       item.from.toLowerCase().includes(searchTerm.toLowerCase()) ||
-  //       item.ens.toLowerCase().includes(searchTerm.toLowerCase())
-  //   );
-  //   if (index === -1) {
-  //     toast.remove();
-  //     toast.error('Record not found');
-  //   }
-  //
-  //   if (index !== -1 && searchTerm) {
-  //     setScrollToIndex(index);
-  //   } else {
-  //     setScrollToIndex(undefined);
-  //   }
-  // };
+  const onSearchAddress = (searchTerm: string): void => {
+    const index = depositList.findIndex(
+      item =>
+        item.from.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        item.ens.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    if (index === -1) {
+      toast.remove();
+      toast.error('Record not found');
+    }
+
+    if (index !== -1 && searchTerm) {
+      setScrollToIndex(index);
+    } else {
+      setScrollToIndex(undefined);
+    }
+  };
 
   const ContributionBlock = ({ user }: { user: IGMDepositInfoListItem }) => {
     if (!depositInfo || (depositInfo && !depositInfo.mapTokensDeposit))
@@ -531,7 +533,7 @@ const AllowlistTable: React.FC = (): React.ReactElement => {
       </div>*/}
 
       <div className={s.allowListTableWrapper}>
-        {/*<Search onSearch={onSearchAddress} />*/}
+        <Search onSearch={onSearchAddress} />
         <div className={cs(s.dataListWrapper)}>
           {depositList.length === 0 && (
             <div className={s.loadingWrapper}>
