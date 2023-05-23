@@ -658,26 +658,29 @@ export const MakeFormSwap = forwardRef((props, ref) => {
 
   return (
     <form onSubmit={onSubmit} style={{ height: '100%' }}>
-      <Box color={"#FFFFFF"}>
+      {isAuthenticated && <Text color={"#1b77fd"}>Connect wallet to see your boost rate</Text>}
+      <Flex gap={2} color={"#FFFFFF"} mt={1}>
         {
-          isAuthenticated ? (
-            <>
-              {
-                boostInfo && (
-                  <Stat>
-                    <StatLabel>Boost rate</StatLabel>
-                    <StatNumber>
-                      {boostInfo.boost}%
-                    </StatNumber>
-                  </Stat>
-                )
-              }
-            </>
-          ) : (
-            <Text>Connect wallet to see your boost rate</Text>
+          poolDetail && (
+            <Stat >
+              <StatLabel>Launchpad Balance</StatLabel>
+              <StatNumber>
+                {formatCurrency(poolDetail.launchpadBalance)}
+              </StatNumber>
+            </Stat>
           )
         }
-      </Box>
+        {
+          isAuthenticated && boostInfo && (
+            <Stat>
+              <StatLabel>Boost rate</StatLabel>
+              <StatNumber>
+                {boostInfo.boost}%
+              </StatNumber>
+            </Stat>
+          )
+        }
+      </Flex>
       <InputWrapper
         className={cx(styles.inputAmountWrap, styles.inputBaseAmountWrap)}
         theme="light"
