@@ -1,15 +1,15 @@
 .allowListTable {
   .allowListTableWrapper {
-    background: #fafafa;
-    border-radius: 16px;
+    //background: #1E1E22;
+    //border-radius: 16px;
     width: 100%;
-    padding: rem(24) rem(32) rem(32);
-    font-family: var(--chakra-fonts-heading);
+    //padding: 24px 32px;
+    //font-family: var(--chakra-fonts-heading);
     margin-bottom: rem(32);
 
-    @include max-tablet {
-      padding: rem(24) rem(16);
-    }
+    //@include max-tablet {
+    //  padding: rem(24) rem(16);
+    //}
   }
 
   .campaignEndText {
@@ -125,7 +125,7 @@
       }
 
       .dataLabel {
-        color: #1c1c1c;
+        //color: #1c1c1c;
         align-items: center;
         display: flex;
       }
@@ -155,7 +155,7 @@
   .dataItemInner {
     border-radius: 16px;
     padding: rem(16) rem(24);
-    background-color: #fff;
+    background-color: #0F0F0F;
     display: flex;
     align-items: center;
     justify-content: flex-end;
@@ -213,8 +213,8 @@
     width: 13%;
     font-weight: 600;
     font-size: rem(20);
-    line-height: 150%;
-    color: #1c1c1c;
+    //line-height: 150%;
+    color: #FFFFFF;
     text-align: center;
     white-space: nowrap;
   }
@@ -243,7 +243,7 @@
       font-size: rem(18);
       line-height: 150%;
       letter-spacing: -0.01em;
-      color: #1c1c1c;
+      color: #FFFFFF;
       // max-width: 10ch;
       white-space: nowrap;
       overflow: hidden;
@@ -308,11 +308,11 @@
     .percentage {
       font-size: rem(12);
       font-weight: 500;
-      color: #1c1c1c;
+      color: #FFFFFF;
     }
 
     &__black {
-      color: #1c1c1c;
+      color: #FFFFFF;
     }
   }
 

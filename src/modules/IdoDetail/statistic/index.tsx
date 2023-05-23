@@ -57,7 +57,9 @@ const Statistic = () => {
           </GridItem>
         </SimpleGrid>
       </Card>
-      <AllowlistTable />
+      <Card bgColor={"#1E1E22"} paddingX={8} paddingY={6} mt={6}>
+        <AllowlistTable />
+      </Card>
     </Box>
   )
 };
