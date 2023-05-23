@@ -1,12 +1,12 @@
-import SectionContainer from "@/components/Swap/sectionContainer";
 import {GridItem, Heading, SimpleGrid, Text} from "@chakra-ui/react";
 import styles from './styles.module.scss';
 import {CDN_URL} from "@/configs";
+import BodyContainer from "@/components/Swap/bodyContainer";
 
 const IdoDescription = () => {
   return (
-    <SectionContainer className={styles.wrapper}>
-      <SimpleGrid columns={[1, 2]} spacingX={10} spacingY={[6, "120px"]} paddingY={[6, 10]}>
+    <BodyContainer className={styles.wrapper}>
+      <SimpleGrid className={"max-content"} columns={[1, 2]} spacingX={10}>
         <GridItem>
           <Heading
             // className={`${s.rowContent_content_heading}`}
@@ -78,7 +78,7 @@ const IdoDescription = () => {
           />
         </GridItem>
       </SimpleGrid>
-    </SectionContainer>
+    </BodyContainer>
   )
 }
 

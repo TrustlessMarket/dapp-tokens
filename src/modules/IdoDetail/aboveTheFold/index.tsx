@@ -1,14 +1,14 @@
 import styles from './styles.module.scss';
 import {GridItem, SimpleGrid} from "@chakra-ui/react";
-import SectionContainer from "@/components/Swap/sectionContainer";
 import Statistic from "@/modules/IdoDetail/statistic";
 import BuyForm from "@/modules/IdoDetail/form";
 import Card from "@/components/Swap/card";
+import BodyContainer from "@/components/Swap/bodyContainer";
 
 const IdoDetailContainer = () => {
   return (
-    <SectionContainer className={styles.wrapper}>
-      <SimpleGrid columns={[1, 2]} spacingX={10} spacingY={[6, "120px"]}>
+    <BodyContainer className={styles.wrapper}>
+      <SimpleGrid className={"max-content"} columns={[1, 2]} spacingX={10}>
         <GridItem>
           <Card bgColor={"#1E1E22"} paddingX={8} paddingY={6}>
             <BuyForm />
@@ -18,7 +18,7 @@ const IdoDetailContainer = () => {
           <Statistic />
         </GridItem>
       </SimpleGrid>
-    </SectionContainer>
+    </BodyContainer>
   )
 };
 
