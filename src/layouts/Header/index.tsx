@@ -52,6 +52,11 @@ export const HEADER_MENUS = [
     route: ROUTE_PATH.POOLS,
     name: 'Pools',
   },
+  {
+    key: ROUTE_PATH.LAUNCHPAD,
+    route: ROUTE_PATH.LAUNCHPAD,
+    name: 'Launchpad',
+  },
 ];
 
 const Header = () => {
