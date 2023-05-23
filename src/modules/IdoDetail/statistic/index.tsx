@@ -7,6 +7,7 @@ import useCountDownTimer from "@/hooks/useCountdown";
 import moment from "moment/moment";
 import {useDispatch} from "react-redux";
 import {requestReload, updateShowBanner} from "@/state/pnftExchange";
+import AllowlistTable from "@/modules/IdoDetail/statistic/AllowlistTable";
 
 const END_TIME = 1685432779;
 
@@ -56,6 +57,7 @@ const Statistic = () => {
           </GridItem>
         </SimpleGrid>
       </Card>
+      <AllowlistTable />
     </Box>
   )
 };

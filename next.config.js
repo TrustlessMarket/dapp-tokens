@@ -1,3 +1,4 @@
+const path = require("path");
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   output: 'standalone',
@@ -26,7 +27,18 @@ const nextConfig = {
         protocol: 'https',
         hostname: '**.trustless.market',
       },
+      {
+        protocol: "https",
+        hostname: "**",
+      },
     ],
+  },
+  sassOptions: {
+    includePaths: [path.join(__dirname, 'styles')],
+    prependData: `@import "@/styles/_variables.scss";
+    @import "@/styles/_mixins.scss";
+    @import "@/styles/_variables.scss";
+  `,
   },
 };
 

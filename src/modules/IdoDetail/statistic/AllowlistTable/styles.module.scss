@@ -1,0 +1,397 @@
+.allowListTable {
+  .allowListTableWrapper {
+    background: #fafafa;
+    border-radius: 16px;
+    width: 100%;
+    padding: rem(24) rem(32) rem(32);
+    font-family: var(--chakra-fonts-heading);
+    margin-bottom: rem(32);
+
+    @include max-tablet {
+      padding: rem(24) rem(16);
+    }
+  }
+
+  .campaignEndText {
+    font-weight: 500;
+    font-size: rem(24);
+    line-height: 150%;
+    color: #1c1c1c;
+    margin-bottom: rem(32);
+    letter-spacing: -0.01em;
+  }
+
+  .loadingWrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+  }
+
+  .summaryWrapper {
+    display: grid;
+    align-items: center;
+    grid-template-columns: 1fr 1fr;
+
+    &__threeCols {
+      grid-template-columns: 1fr 1fr 1fr;
+
+      @media screen and (max-width: 500px) {
+        grid-template-columns: 1fr;
+        gap: rem(12);
+      }
+      @media screen and (min-width: 768px) {
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: rem(16);
+      }
+
+      @media screen and (min-width: 1279.99px) and (max-width: 1439px) {
+        grid-template-columns: 1fr 1fr;
+        row-gap: rem(12);
+      }
+    }
+  }
+
+  .summaryItem {
+    display: flex;
+    flex-direction: column;
+
+    &__alignRight {
+      align-items: flex-end;
+
+      .summaryValue {
+        text-align: right;
+      }
+    }
+  }
+
+  .summaryLabel {
+    font-weight: 500;
+    font-size: rem(16);
+    line-height: 150%;
+    color: #5b5b5b;
+  }
+
+  .summaryValue {
+    font-weight: 500;
+    font-size: rem(28);
+    line-height: 150%;
+    color: #1588ff;
+    white-space: nowrap;
+
+    &__black {
+      color: #1c1c1c;
+    }
+
+    &__danger {
+      color: $danger;
+    }
+
+    &__blinking {
+      animation: blink 0.8s linear infinite;
+    }
+  }
+
+  .viewAllWrapper {
+    text-align: center;
+    margin-top: rem(14);
+
+    .viewAllbtn {
+      font-weight: 500;
+      font-size: rem(20);
+      line-height: 150%;
+      color: #1588ff;
+    }
+  }
+
+  .dataListWrapper {
+    height: 432px;
+
+    @include max-tablet {
+      height: 400px;
+    }
+  }
+
+  .dataItem {
+    padding-bottom: rem(16);
+
+    &__currentUser {
+      .dataId {
+        // width: 13%;
+      }
+
+      .dataItemInner {
+        background-color: #ffe899;
+      }
+
+      .dataLabel {
+        color: #1c1c1c;
+        align-items: center;
+        display: flex;
+      }
+
+      .dataUserInfo {
+        width: calc(32% - rem(8)) !important;
+      }
+
+      .dataShare {
+        display: flex;
+        justify-content: flex-end;
+        width: 12%;
+      }
+    }
+
+    &__searchHighlight {
+      .dataItemInner {
+        background-color: #ffe899;
+      }
+    }
+  }
+
+  .boostTag {
+    color: white;
+  }
+
+  .dataItemInner {
+    border-radius: 16px;
+    padding: rem(16) rem(24);
+    background-color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: rem(12);
+
+    @include w-max(425px) {
+      column-gap: 0;
+      row-gap: rem(12);
+
+      &.currentUser {
+        .dataShare {
+          order: 3;
+          width: fit-content;
+        }
+
+        .dataContribute {
+          order: 4;
+          width: calc((100% / 2));
+        }
+
+        .dataToken {
+          order: 5;
+          width: calc((100% / 2));
+        }
+      }
+    }
+
+    @media screen and (max-width: 500.98px) {
+      flex-wrap: wrap;
+
+      .dataUserInfo {
+        flex: 1;
+        width: 100%;
+      }
+
+      .dataBoost,
+      .dataToken {
+        margin: 0;
+        width: 50%;
+      }
+
+      .dataShare {
+        width: 50%;
+        margin-left: 0;
+        text-align: right;
+      }
+
+      .dataContribute {
+        text-align: right;
+      }
+    }
+  }
+
+  .dataId {
+    width: 13%;
+    font-weight: 600;
+    font-size: rem(20);
+    line-height: 150%;
+    color: #1c1c1c;
+    text-align: center;
+    white-space: nowrap;
+  }
+
+  .dataUserInfo {
+    width: calc(45% - rem(8));
+    margin-left: rem(8);
+    display: flex;
+    align-items: center;
+    gap: rem(12);
+
+    .avatar {
+      width: 48px;
+      height: 48px;
+      object-fit: cover;
+      border-radius: 50%;
+
+      @include max-tablet {
+        width: 24px;
+        height: 24px;
+      }
+    }
+
+    .userWallet {
+      font-weight: 500;
+      font-size: rem(18);
+      line-height: 150%;
+      letter-spacing: -0.01em;
+      color: #1c1c1c;
+      // max-width: 10ch;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+
+      // @include max-tablet {
+      //   max-width: rem(110);
+      // }
+    }
+  }
+
+  .dataContribute,
+  .dataBoost,
+  .dataToken {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+  }
+
+  .dataContribute {
+    width: 15%;
+
+    .dataValue {
+      display: flex;
+      align-items: center;
+      gap: rem(4);
+    }
+
+    &_divider {
+      width: 1px;
+      height: 12px;
+      background-color: #b6b6b6;
+    }
+  }
+
+  .dataBoost {
+    width: 12%;
+  }
+
+  .dataToken {
+    width: calc(26% - rem(8));
+    align-items: flex-end;
+  }
+
+  .dataLabel {
+    font-weight: 500;
+    font-size: rem(12);
+    line-height: 150%;
+    color: #898989;
+  }
+
+  .dataValue {
+    font-weight: 600;
+    font-size: rem(16);
+    line-height: 150%;
+    color: #1588ff;
+    letter-spacing: -0.01em;
+    text-align: right;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    .percentage {
+      font-size: rem(12);
+      font-weight: 500;
+      color: #1c1c1c;
+    }
+
+    &__black {
+      color: #1c1c1c;
+    }
+  }
+
+  .actionWrapper {
+    margin-top: rem(32);
+    display: flex;
+    flex-direction: row;
+    gap: rem(20);
+
+    .actionBtn {
+      width: 100%;
+      font-weight: 600;
+      font-size: rem(16);
+      line-height: rem(26);
+      height: rem(56);
+      &__claim {
+        background-color: transparent;
+        border: 1px solid #1c1c1c;
+        color: #1c1c1c;
+      }
+    }
+  }
+
+  &__campaignStarted {
+    .allowListTableWrapper {
+      box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.08);
+    }
+  }
+
+  .popoverWrapper {
+    border: none;
+    filter: drop-shadow(0px 4px 20px rgba(0, 0, 0, 0.15));
+    border-radius: 8px;
+
+    .tokenList_header {
+      display: flex;
+      align-items: center;
+      margin-bottom: rem(4);
+
+      > div {
+        flex: 1;
+        font-weight: 500;
+      }
+      > div:not(:first-of-type) {
+        text-align: right;
+      }
+    }
+
+    .tokenList {
+      display: flex;
+      gap: rem(14);
+      flex-direction: column;
+    }
+
+    .tokenList_item {
+      display: flex;
+      align-items: center;
+      > div {
+        flex: 1;
+        font-weight: 500;
+      }
+      > div:not(:first-of-type) {
+        text-align: right;
+      }
+
+      .tokenIcon {
+        border-radius: 50%;
+        box-shadow: 0 0 2px 0px rgba(0, 0, 0, 0.5);
+      }
+
+      p {
+        font-size: rem(14);
+        line-height: 2.1;
+        font-weight: 500;
+      }
+    }
+  }
+
+  .disableScroll {
+    overflow: hidden !important;
+  }
+}
