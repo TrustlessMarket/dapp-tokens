@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 /** @type {import('next').NextConfig} */
+const path = require("path");
 const removeImports = require('next-remove-imports');
 
 const nextConfig = removeImports()({
@@ -29,7 +30,18 @@ const nextConfig = removeImports()({
         protocol: 'https',
         hostname: '**.trustless.market',
       },
+      {
+        protocol: "https",
+        hostname: "**",
+      },
     ],
+  },
+  sassOptions: {
+    includePaths: [path.join(__dirname, 'styles')],
+    prependData: `@import "@/styles/_variables.scss";
+    @import "@/styles/_mixins.scss";
+    @import "@/styles/_variables.scss";
+  `,
   },
 });
 

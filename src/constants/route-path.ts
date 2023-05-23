@@ -20,5 +20,6 @@ export const ROUTE_PATH = {
   TM_TRANSFER_HISTORY: '/tm-transfer-history',
   SWAP_HISTORY: '/swap-history',
   LAUNCHPAD: '/launchpad',
+  LAUNCHPAD_DETAIL: '/launchpad/detail',
   LAUNCHPAD_MANAGE: '/launchpad/manage',
 };
