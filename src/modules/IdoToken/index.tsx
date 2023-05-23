@@ -22,6 +22,8 @@ import { useDispatch } from 'react-redux';
 import IdoTokenManage from '../IdoTokenManage';
 import IdoTokenStatus from './IdoToken.Status';
 import { StyledIdoContainer } from './IdoToken.styled';
+import { useRouter } from 'next/router';
+import { ROUTE_PATH } from '@/constants/route-path';
 
 const IdoTokenContainer = () => {
   const [data, setData] = useState<any[]>();
@@ -29,8 +31,7 @@ const IdoTokenContainer = () => {
   const { account } = useWeb3React();
   const dispatch = useDispatch();
   const needReload = useAppSelector(selectPnftExchange).needReload;
-
-  console.log('data', data);
+  const router = useRouter();
 
   useEffect(() => {
     getData();
@@ -223,23 +224,24 @@ const IdoTokenContainer = () => {
   }, [account]);
 
   const onShowCreateIDO = async (_ido?: any, isRemove?: boolean) => {
-    const id = 'manageIdo';
-    const close = () => dispatch(closeModal({ id }));
-    dispatch(
-      openModal({
-        id,
-        theme: 'dark',
-        title: isRemove ? 'Remove IDO Token' : 'Submit IDO Token',
-        modalProps: {
-          centered: true,
-          size: 'xl',
-          // contentClassName: styles.modalContent,
-        },
-        render: () => (
-          <IdoTokenManage ido={_ido} onClose={close} isRemove={isRemove} />
-        ),
-      }),
-    );
+    return router.push(`${ROUTE_PATH.LAUNCHPAD_MANAGE}`);
+    // const id = 'manageIdo';
+    // const close = () => dispatch(closeModal({ id }));
+    // dispatch(
+    //   openModal({
+    //     id,
+    //     theme: 'dark',
+    //     title: isRemove ? 'Remove IDO Token' : 'Submit Launchpad',
+    //     modalProps: {
+    //       centered: true,
+    //       size: 'xl',
+    //       // contentClassName: styles.modalContent,
+    //     },
+    //     render: () => (
+    //       <IdoTokenManage ido={_ido} onClose={close} isRemove={isRemove} />
+    //     ),
+    //   }),
+    // );
   };
 
   return (
@@ -255,8 +257,8 @@ const IdoTokenContainer = () => {
       </Text>
 
       <Flex mb={'24px'} mt={'24px'} justifyContent={'center'}>
-        <FiledButton onClick={onShowCreateIDO}>
-          <Text ml={1}>Submit IDO Token</Text>
+        <FiledButton btnSize="h" onClick={onShowCreateIDO}>
+          <Text>Submit Launchpad</Text>
         </FiledButton>
       </Flex>
 

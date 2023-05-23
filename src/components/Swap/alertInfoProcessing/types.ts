@@ -3,4 +3,5 @@ export const transactionType = {
   createPoolApprove: 'createPoolApprove',
   swapToken: 'swapToken',
   idoManage: 'idoManage',
+  createLaunchpad: 'createLaunchpad',
 };
