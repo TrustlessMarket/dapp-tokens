@@ -616,13 +616,12 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       <Box color={"#FFFFFF"}>
         {
           isAuthenticated ? (
-
-              <Stat>
-                <StatLabel>Boost rate</StatLabel>
-                <StatNumber>
-                  30%
-                </StatNumber>
-              </Stat>
+            <Stat>
+              <StatLabel>Boost rate</StatLabel>
+              <StatNumber>
+                30%
+              </StatNumber>
+            </Stat>
           ) : (
             <Text>Connect wallet to see your boost rate</Text>
           )

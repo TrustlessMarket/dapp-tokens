@@ -6,7 +6,7 @@ import {CDN_URL} from "@/configs";
 const IdoDescription = () => {
   return (
     <SectionContainer className={styles.wrapper}>
-      <SimpleGrid columns={[1, 2]} spacingX={20} spacingY={[6, "120px"]} paddingY={[6, 20]}>
+      <SimpleGrid columns={[1, 2]} spacingX={10} spacingY={[6, "120px"]} paddingY={[6, 10]}>
         <GridItem>
           <Heading
             // className={`${s.rowContent_content_heading}`}
