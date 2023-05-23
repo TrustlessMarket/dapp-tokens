@@ -179,6 +179,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     try {
       const response = await getDetailLaunchpad({pool_address: router?.query?.pool_address});
       setPoolDetail(response);
+      setBaseToken(response?.liquidityToken);
     } catch (err) {
       throw err;
     }
@@ -721,13 +722,19 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             decimals={baseToken?.decimal || 18}
             className={styles.inputAmount}
             prependComp={
-              <FilterButton
-                data={baseTokensList}
-                commonData={baseTokensList.slice(0, 3)}
-                handleSelectItem={handleSelectBaseToken}
-                parentClose={close}
-                value={baseToken}
-              />
+              baseToken && (
+                <Flex gap={1} alignItems={'center'} color={'#FFFFFF'} paddingX={2}>
+                  <img
+                    src={
+                      baseToken?.thumbnail ||
+                      `${CDN_URL}/upload/1683530065704444020-1683530065-default-coin.svg`
+                    }
+                    alt={baseToken?.thumbnail || 'default-icon'}
+                    className={'avatar'}
+                  />
+                  <Text fontSize={"sm"}>{baseToken?.symbol}</Text>
+                </Flex>
+              )
             }
             borderColor={'#353945'}
           />

@@ -10,6 +10,7 @@
     margin: 0;
     width: unset;
     border-right: 1px solid #353945;
+    height: 48px;
   }
 
   :global .chakra-input__right-element {
@@ -23,6 +24,15 @@
 
   :global .chakra-input__group {
     background: transparent;
+  }
+
+  :global {
+    .avatar {
+      object-fit: cover;
+      width: rem(25);
+      height: rem(25);
+      border-radius: 50%;
+    }
   }
 }
 
