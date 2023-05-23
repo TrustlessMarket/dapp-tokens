@@ -28,7 +28,7 @@ import useIsApproveERC20Token from '@/hooks/contract-operations/token/useIsAppro
 import useContractOperation from '@/hooks/contract-operations/useContractOperation';
 import {IToken} from '@/interfaces/token';
 import {TransactionStatus} from '@/interfaces/walletTransaction';
-import {getSwapRoutes, getSwapTokens, logErrorToServer} from '@/services/swap';
+import {getSwapTokens, logErrorToServer} from '@/services/swap';
 import {useAppDispatch, useAppSelector} from '@/state/hooks';
 import {
   requestReload,
@@ -42,7 +42,7 @@ import {isDevelop} from '@/utils/commons';
 import {composeValidators, required} from '@/utils/formValidate';
 import px2rem from '@/utils/px2rem';
 import {showError} from '@/utils/toast';
-import {Box, Center, Flex, forwardRef, Text} from '@chakra-ui/react';
+import {Box, Center, Flex, forwardRef, Stat, StatLabel, StatNumber, Text} from '@chakra-ui/react';
 import {useWeb3React} from '@web3-react/core';
 import BigNumber from 'bignumber.js';
 import cx from 'classnames';
@@ -613,6 +613,21 @@ export const MakeFormSwap = forwardRef((props, ref) => {
 
   return (
     <form onSubmit={onSubmit} style={{ height: '100%' }}>
+      <Box color={"#FFFFFF"}>
+        {
+          isAuthenticated ? (
+
+              <Stat>
+                <StatLabel>Boost rate</StatLabel>
+                <StatNumber>
+                  30%
+                </StatNumber>
+              </Stat>
+          ) : (
+            <Text>Connect wallet to see your boost rate</Text>
+          )
+        }
+      </Box>
       <InputWrapper
         className={cx(styles.inputAmountWrap, styles.inputBaseAmountWrap)}
         theme="light"
@@ -742,7 +757,6 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           </Text>
         </Flex>
         )}
-      <Box mt={8} />
       <WrapperConnected
         type={isRequireApprove ? 'button' : 'submit'}
         className={styles.submitButton}
@@ -753,6 +767,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             isDisabled={loading}
             loadingText="Processing"
             btnSize={'h'}
+            containerConfig={{ flex: 1, mt: 6 }}
             onClick={onShowModalApprove}
             processInfo={{
               id: transactionType.createPoolApprove,
@@ -768,7 +783,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             // borderRadius={'100px !important'}
             // className="btn-submit"
             btnSize={'h'}
-            containerConfig={{ flex: 1 }}
+            containerConfig={{ flex: 1, mt: 6 }}
             loadingText={submitting ? 'Processing' : ' '}
             processInfo={{
               id: transactionType.createPoolApprove,
