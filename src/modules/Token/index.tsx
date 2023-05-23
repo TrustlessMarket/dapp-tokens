@@ -33,6 +33,7 @@ import TokenHistory from './Token.History';
 import TokenLeftInfo from './Token.LeftInfo';
 import TokenTopInfo from './Token.TopInfo';
 import { useWeb3React } from '@web3-react/core';
+import { useScreenLayout } from '@/hooks/useScreenLayout';
 
 const TokenChart = dynamic(() => import('./Token.Chart'), {
   ssr: false,
@@ -45,6 +46,8 @@ const TokenDetail = () => {
 
   const [data, setData] = useState<IToken>();
   const [chartData, setChartData] = useState<any[]>([]);
+
+  const { headerHeight } = useScreenLayout();
 
   const { account, isActive } = useWeb3React();
 
@@ -97,13 +100,14 @@ const TokenDetail = () => {
     }
   };
 
-  const topSpacing = 0;
+  const topSpacing = headerHeight;
 
   if (loading) {
     return (
       <StyledTokenDetailContainer
+        topSpacing={topSpacing}
         style={{
-          minHeight: `calc(100vh - ${topSpacing}px)`,
+          height: `calc(100vh - ${topSpacing}px)`,
         }}
         className="loading-container"
       >
@@ -115,8 +119,9 @@ const TokenDetail = () => {
   if (!data || !address) {
     return (
       <StyledTokenDetailContainer
+        topSpacing={topSpacing}
         style={{
-          minHeight: `calc(100vh - ${topSpacing}px)`,
+          height: `calc(100vh - ${topSpacing}px)`,
         }}
         className="token-notfound-container"
       >
@@ -133,8 +138,9 @@ const TokenDetail = () => {
 
   return (
     <StyledTokenDetailContainer
+      topSpacing={topSpacing}
       style={{
-        minHeight: `calc(100vh - ${topSpacing}px)`,
+        height: `calc(100vh - ${topSpacing}px)`,
       }}
     >
       <StyledTokenTopInfo area={'topinfo'}>
