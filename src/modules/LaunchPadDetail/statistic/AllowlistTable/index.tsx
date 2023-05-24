@@ -25,7 +25,7 @@ import {CDN_URL} from '@/configs';
 import SvgInset from '@/components/SvgInset';
 import {formatCurrency, shortenAddress} from "@/utils";
 import {getGMDepositInfo, IGMDepositInfoListItem, IGMDepositInfoResponse} from "@/services/ido";
-import Search from "@/modules/IdoDetail/statistic/Search";
+import Search from "@/modules/LaunchPadDetail/statistic/Search";
 import toast from "react-hot-toast";
 
 type TokenList = {
