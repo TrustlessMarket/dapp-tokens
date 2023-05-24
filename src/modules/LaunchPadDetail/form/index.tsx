@@ -19,7 +19,7 @@ import useIsApproveERC20Token from '@/hooks/contract-operations/token/useIsAppro
 import useContractOperation from '@/hooks/contract-operations/useContractOperation';
 import {IToken} from '@/interfaces/token';
 import {TransactionStatus} from '@/interfaces/walletTransaction';
-import {getSwapTokens, logErrorToServer} from '@/services/swap';
+import {logErrorToServer} from '@/services/swap';
 import {useAppDispatch, useAppSelector} from '@/state/hooks';
 import {
   requestReload,
@@ -28,8 +28,7 @@ import {
   updateCurrentTransaction,
 } from '@/state/pnftExchange';
 import {getIsAuthenticatedSelector, getUserSelector} from '@/state/user/selector';
-import {camelCaseKeys, compareString, formatCurrency,} from '@/utils';
-import {isDevelop} from '@/utils/commons';
+import {formatCurrency,} from '@/utils';
 import {composeValidators, required} from '@/utils/formValidate';
 import px2rem from '@/utils/px2rem';
 import {showError} from '@/utils/toast';
@@ -58,14 +57,13 @@ import {useDispatch, useSelector} from 'react-redux';
 import Web3 from 'web3';
 import styles from './styles.module.scss';
 import {BiBell} from 'react-icons/bi';
-import {ROUTE_PATH} from '@/constants/route-path';
 import {closeModal, openModal} from '@/state/modal';
 import {useWindowSize} from '@trustless-computer/dapp-core';
 import ModalConfirmApprove from '@/components/ModalConfirmApprove';
 import {getUserBoost} from "@/services/launchpad";
 import useDepositLaunchpad from '@/hooks/contract-operations/launchpad/useDeposit';
+import SocialToken from "@/components/Social";
 
-const LIMIT_PAGE = 50;
 const FEE = 2;
 export const MakeFormSwap = forwardRef((props, ref) => {
   const { onSubmit, submitting, poolDetail } = props;
@@ -378,6 +376,10 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             <StatNumber>{boostInfo.boost}%</StatNumber>
           </Stat>
         )}
+        <Stat>
+          <StatLabel>Socials</StatLabel>
+          <StatNumber><SocialToken socials={poolDetail?.launchpadToken?.social} /></StatNumber>
+        </Stat>
       </Flex>
       <Flex direction={"column"}>
         <Box className={styles.progressBar}>
@@ -388,10 +390,6 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             borderRadius={12}
           >
             <ProgressLabel className={styles.progressLabel}>
-              {/*{`${formatCurrency(sold, 2)} / ${formatCurrency(
-                order?.initial_caps,
-                2
-              )}`}{" "}*/}
               ({formatCurrency(percent, 2)}%)
             </ProgressLabel>
           </Progress>
@@ -722,22 +720,6 @@ const BuyForm = ({ poolDetail }: any) => {
           id: transactionType.depositLaunchpad,
         }),
       );
-
-      // const amountOutMin = new BigNumber(quoteAmount)
-      //   .multipliedBy(100 - slippage)
-      //   .dividedBy(100)
-      //   .decimalPlaces(quoteToken?.decimal || 18)
-      //   .toString();
-      //
-      // const addresses =
-      //   !compareString(baseToken?.address, WBTC_ADDRESS) &&
-      //   !compareString(quoteToken?.address, WBTC_ADDRESS) &&
-      //   swapRoutes?.length > 1
-      //     ? [baseToken.address, WBTC_ADDRESS, quoteToken.address]
-      //     : ((compareString(baseToken?.address, WBTC_ADDRESS) && compareString(quoteToken?.address, GM_ADDRESS))
-      //     || (compareString(baseToken?.address, GM_ADDRESS) && compareString(quoteToken?.address, WBTC_ADDRESS))
-      //   ) && swapRoutes?.length > 1 ? [baseToken.address, WETH_ADDRESS, quoteToken.address]
-      //       : [baseToken.address, quoteToken.address];
 
       const data = {
         amount: baseAmount,
