@@ -3,7 +3,6 @@ import Layout from '@/layouts';
 import TokenDetail from '@/modules/Token';
 import { Box } from '@chakra-ui/react';
 import Head from 'next/head';
-import React from 'react';
 
 const Token = () => {
   return (

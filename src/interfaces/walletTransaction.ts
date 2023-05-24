@@ -10,6 +10,7 @@ export interface infoTexts {
   success: string;
   error: string;
   pending: string;
+  info: string;
 }
 
 export class WalletTransactionData {

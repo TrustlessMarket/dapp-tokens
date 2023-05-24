@@ -1,0 +1,39 @@
+.container {
+  margin: 4rem auto;
+  width: 744px;
+  align-self: center;
+
+  :global {
+    .chakra-heading {
+      color: #FFFFFF;
+    }
+
+    .faq-question {
+      color: #FFFFFF;
+    }
+
+    .faq-answer {
+      color: #FFFFFF;
+
+      p {
+        color: inherit;
+      }
+    }
+
+    .chakra-accordion__button {
+      background-color: #1E1E22;
+
+      &:hover {
+        background-color: #1E1E33;
+      }
+    }
+
+    .chakra-accordion__panel {
+      background-color: #1E1E22;
+    }
+  }
+
+  @media screen and (max-width: 768px){
+    width: 90vw;
+  }
+}

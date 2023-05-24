@@ -27,6 +27,8 @@ export const isScreenDarkMode = () => {
   return (
     compareString(router?.pathname, ROUTE_PATH.HOME) ||
     compareString(router?.pathname, ROUTE_PATH.MARKETS) ||
+    compareString(router?.pathname, ROUTE_PATH.IDO) ||
+    compareString(router?.pathname, ROUTE_PATH.IDO_MANAGE) ||
     compareString(router?.pathname, ROUTE_PATH.TOKEN) ||
     compareString(router?.pathname, ROUTE_PATH.GET_STARTED) ||
     compareString(router?.pathname, ROUTE_PATH.TM_TRANSFER_HISTORY) ||
@@ -49,6 +51,11 @@ export const HEADER_MENUS = [
     key: ROUTE_PATH.POOLS,
     route: ROUTE_PATH.POOLS,
     name: 'Pools',
+  },
+  {
+    key: ROUTE_PATH.LAUNCHPAD,
+    route: ROUTE_PATH.LAUNCHPAD,
+    name: 'Launchpad',
   },
 ];
 

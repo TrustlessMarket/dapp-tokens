@@ -74,14 +74,18 @@ const FieldAmount = (props: FieldAmountProps) => {
             </FormLabel>
           </Box>
           <Box>
-            <FormLabel fontSize="xs" fontWeight="medium">
-              {rightLabel}
-            </FormLabel>
+            {typeof rightLabel === 'object' ? (
+              rightLabel
+            ) : (
+              <FormLabel fontSize="xs" fontWeight="medium">
+                {rightLabel}
+              </FormLabel>
+            )}
           </Box>
         </Flex>
       )}
       <InputGroup
-        borderStyle={"solid"}
+        borderStyle={'solid'}
         borderWidth={1}
         borderColor={shouldShowError ? 'brand.danger.400' : borderColor}
         borderRadius={8}
