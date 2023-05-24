@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import styles from './styles.module.scss';
 import {GridItem, SimpleGrid} from "@chakra-ui/react";
-import Statistic from "@/modules/IdoDetail/statistic";
-import BuyForm from "@/modules/IdoDetail/form";
+import Statistic from "@/modules/LaunchPadDetail/statistic";
+import BuyForm from "@/modules/LaunchPadDetail/form";
 import Card from "@/components/Swap/card";
 import BodyContainer from "@/components/Swap/bodyContainer";
 
