@@ -38,7 +38,7 @@ const Statistic = ({poolDetail} : any) => {
             <Stat>
               <StatLabel>Total</StatLabel>
               <StatNumber>
-                ${formatCurrency(12345678,901234)}
+                ${formatCurrency(poolDetail?.totalValueUsd || 0,2)}
               </StatNumber>
             </Stat>
           </GridItem>
@@ -46,7 +46,7 @@ const Statistic = ({poolDetail} : any) => {
             <Stat>
               <StatLabel>Contributors</StatLabel>
               <StatNumber>
-                {formatCurrency(1234, 0)}
+                {formatCurrency(poolDetail?.poolDetail || 0, 0)}
               </StatNumber>
             </Stat>
           </GridItem>
