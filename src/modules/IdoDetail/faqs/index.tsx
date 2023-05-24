@@ -2,7 +2,7 @@
 import React from "react";
 import styles from "./styles.module.scss";
 import Faq from "@/components/Swap/faq";
-import BodyContainer from "@/components/Swap/bodyContainer";
+import {Box} from "@chakra-ui/react";
 
 const faqs = [
     {
@@ -41,9 +41,9 @@ const faqs = [
 const IdoFaqs = ({poolDetail} : any) => {
     console.log('poolDetail',  poolDetail);
     return (
-        <BodyContainer bgColor="transparent" className={styles.container}>
+        <Box bgColor="transparent" className={styles.container}>
             <Faq data={faqs}/>
-        </BodyContainer>
+        </Box>
     )
 };
 
