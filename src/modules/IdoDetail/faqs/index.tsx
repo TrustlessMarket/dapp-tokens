@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React from "react";
 import styles from "./styles.module.scss";
 import Faq from "@/components/Swap/faq";
@@ -37,7 +38,8 @@ const faqs = [
     },
 ];
 
-const IdoFaqs = () => {
+const IdoFaqs = ({poolDetail} : any) => {
+    console.log('poolDetail',  poolDetail);
     return (
         <BodyContainer bgColor="transparent" className={styles.container}>
             <Faq data={faqs}/>

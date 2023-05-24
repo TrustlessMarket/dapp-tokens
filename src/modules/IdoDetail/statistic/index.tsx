@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import styles from './styles.module.scss';
 import {Box, GridItem, SimpleGrid, Stat, StatLabel, StatNumber, Text} from "@chakra-ui/react";
 import Card from "@/components/Swap/card";
@@ -9,7 +10,7 @@ import {useDispatch} from "react-redux";
 import {requestReload} from "@/state/pnftExchange";
 import AllowlistTable from "@/modules/IdoDetail/statistic/AllowlistTable";
 
-const Statistic = ({poolDetail}) => {
+const Statistic = ({poolDetail} : any) => {
   const [endTime, setEndTime] = useState(0);
   const [days, hours, minutes, seconds, expired] = useCountDownTimer(
     moment.unix(endTime).format("YYYY/MM/DD HH:mm:ss")

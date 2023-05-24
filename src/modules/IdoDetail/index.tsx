@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import styles from './styles.module.scss';
 import IdoFaqs from "./faqs";
 import IdoDescription from "@/modules/IdoDetail/description";
@@ -15,7 +16,7 @@ const IdoDetailContainer = () => {
 
   const getPoolInfo = async () => {
     try {
-      const response = await getDetailLaunchpad({pool_address: router?.query?.pool_address});
+      const response = await getDetailLaunchpad({pool_address: router?.query?.pool_address as string});
       setPoolDetail(response);
     } catch (err) {
       throw err;
