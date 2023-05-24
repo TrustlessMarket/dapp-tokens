@@ -3,7 +3,6 @@ import Text from '@/components/Text';
 import { useState } from 'react';
 import { Modal } from 'react-bootstrap';
 import { StyledModalUpload, WrapInput, Title } from './TransferModal.styled';
-// import IcCloseModal from '@/assets/icons/ic-close.svg';
 import Button from '@/components/Button';
 import useContractOperation from '@/hooks/contract-operations/useContractOperation';
 import toast from 'react-hot-toast';

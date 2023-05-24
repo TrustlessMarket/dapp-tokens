@@ -43,3 +43,4 @@ export const TOKEN_ICON_DEFAULT =
   'https://cdn.trustless.computer/upload/1683530065704444020-1683530065-default-coin.svg';
 
 export const DEFAULT_GAS_PRICE = 1e9;
+export const ROOT_ADDRESS = '0x0000000000000000000000000000000000000000';

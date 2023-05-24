@@ -1,36 +1,37 @@
 import { ContractOperationHook, DAppType } from '@/interfaces/contract-operation';
-import ERC721ABIJson from '@/abis/erc721.json';
+import { useContract } from '@/hooks/useContract';
+import ERC721MarketplaceABIJson from '@/abis/erc721-marketplace.json';
+import { ERC721_MARKETPLACE_ADDRESS, TRANSFER_TX_SIZE } from '@/configs';
 import { useWeb3React } from '@web3-react/core';
 import { useCallback, useContext } from 'react';
 import { Transaction } from 'ethers';
+import * as TC_SDK from 'trustless-computer-sdk';
 import { AssetsContext } from '@/contexts/assets-context';
 import BigNumber from 'bignumber.js';
-import * as TC_SDK from 'trustless-computer-sdk';
 import { formatBTCPrice } from '@/utils/format';
-import { getContract } from '@/utils';
 import { TransactionEventType } from '@/enums/transaction';
 
-export interface IMintChunksParams {
-  chunks: Buffer;
-  contractAddress: string;
+export interface ICancelListingParams {
+  offerId: string;
 }
 
-const useMintChunks: ContractOperationHook<IMintChunksParams, Transaction | null> = () => {
+const useCancelListing: ContractOperationHook<ICancelListingParams, Transaction | null> = () => {
   const { account, provider } = useWeb3React();
+  const contract = useContract(ERC721_MARKETPLACE_ADDRESS, ERC721MarketplaceABIJson.abi, true);
   const { btcBalance, feeRate } = useContext(AssetsContext);
 
   const call = useCallback(
-    async (params: IMintChunksParams): Promise<Transaction | null> => {
-      const { chunks, contractAddress } = params;
-      if (account && provider && contractAddress) {
-        const contract = getContract(contractAddress, ERC721ABIJson.abi, provider, account);
+    async (params: ICancelListingParams): Promise<Transaction | null> => {
+      if (account && provider && contract) {
+        const {
+          offerId,
+        } = params;
         console.log({
-          tcTxSizeByte: Buffer.byteLength(chunks),
+          tcTxSizeByte: TRANSFER_TX_SIZE,
           feeRatePerByte: feeRate.fastestFee,
-          contractAddress,
         });
         const estimatedFee = TC_SDK.estimateInscribeFee({
-          tcTxSizeByte: Buffer.byteLength(chunks),
+          tcTxSizeByte: TRANSFER_TX_SIZE,
           feeRatePerByte: feeRate.fastestFee,
         });
         const balanceInBN = new BigNumber(btcBalance);
@@ -41,21 +42,24 @@ const useMintChunks: ContractOperationHook<IMintChunksParams, Transaction | null
             )} BTC to pay network fee.`,
           );
         }
-        const transaction = await contract.connect(provider.getSigner()).mintChunks(account, [chunks]);
 
+        const offerIdInBytes32 = '0x' + offerId;
+
+        // Call contract 
+        const transaction = await contract.connect(provider.getSigner()).cancelListing(offerIdInBytes32);
         return transaction;
       }
 
       return null;
     },
-    [account, provider, btcBalance, feeRate],
+    [account, provider, contract, btcBalance, feeRate],
   );
 
   return {
-    call: call,
+    call,
     dAppType: DAppType.ERC721,
-    transactionType: TransactionEventType.MINT,
+    transactionType: TransactionEventType.LIST_FOR_SALE,
   };
 };
 
-export default useMintChunks;
+export default useCancelListing;

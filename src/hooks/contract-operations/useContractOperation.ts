@@ -1,18 +1,12 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { SupportedChainId } from '@/constants/chains';
 import { ROUTE_PATH } from '@/constants/route-path';
-import { AssetsContext } from '@/contexts/assets-context';
 import { ContractOperationHook } from '@/interfaces/contract-operation';
 import { getIsAuthenticatedSelector, getUserSelector } from '@/state/user/selector';
 import { capitalizeFirstLetter, switchChain } from '@/utils';
 import { useWeb3React } from '@web3-react/core';
 import { useRouter } from 'next/router';
-import { useContext } from 'react';
 import { useSelector } from 'react-redux';
 import * as TC_SDK from 'trustless-computer-sdk';
-import useBitcoin from '../useBitcoin';
-import { ERROR_CODE } from '@/constants/error';
 import { isProduction } from '@/utils/commons';
 import { logErrorToServer } from '@/services/swap';
 
@@ -35,11 +29,9 @@ const useContractOperation = <P, R>(
     inscribeable = true,
   } = args;
   const { call, dAppType, transactionType } = operation();
-  const { feeRate } = useContext(AssetsContext);
   const { chainId: walletChainId } = useWeb3React();
   const isAuthenticated = useSelector(getIsAuthenticatedSelector);
   const user = useSelector(getUserSelector);
-  const { getUnInscribedTransactionByAddress } = useBitcoin();
   const router = useRouter();
 
   const checkAndSwitchChainIfNecessary = async (): Promise<void> => {
@@ -73,6 +65,7 @@ const useContractOperation = <P, R>(
         return tx;
       }
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const tx: any = await call({
         ...params,
       });

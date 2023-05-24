@@ -30,23 +30,6 @@ const useEstimateSwapERC20Token: ContractOperationHook<
           provider,
           account,
         );
-        // console.log({
-        //   tcTxSizeByte: TRANSFER_TX_SIZE,
-        //   feeRatePerByte: feeRate.fastestFee,
-        //   erc20TokenAddress,
-        // });
-        // const estimatedFee = TC_SDK.estimateInscribeFee({
-        //   tcTxSizeByte: TRANSFER_TX_SIZE,
-        //   feeRatePerByte: feeRate.fastestFee,
-        // });
-        // const balanceInBN = new BigNumber(btcBalance);
-        // if (balanceInBN.isLessThan(estimatedFee.totalFee)) {
-        //   throw Error(
-        //     `Your balance is insufficient. Please top up at least ${formatBTCPrice(
-        //       estimatedFee.totalFee.toString(),
-        //     )} BTC to pay network fee.`,
-        //   );
-        // }
 
         const transaction = await contract
           .connect(provider.getSigner())
