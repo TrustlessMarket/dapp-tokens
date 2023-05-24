@@ -46,7 +46,7 @@ const Statistic = ({poolDetail} : any) => {
             <Stat>
               <StatLabel>Backers</StatLabel>
               <StatNumber>
-                {formatCurrency(poolDetail?.poolDetail || 0, 0)}
+                {formatCurrency(poolDetail?.contributors || 0, 0)}
               </StatNumber>
             </Stat>
           </GridItem>
@@ -62,7 +62,7 @@ const Statistic = ({poolDetail} : any) => {
         <Text mt={4} fontSize={"sm"} color={"#FFFFFF"}>All or nothing. This project will only be funded if it reaches its goal by {moment.utc(poolDetail?.endTime).format('ddd, MMMM Do YYYY HH:mm:ss Z')}.</Text>
       </Card>
       <Card bgColor={"#1E1E22"} paddingX={8} paddingY={6} mt={6}>
-        <AllowlistTable />
+        <AllowlistTable poolDetail={poolDetail}/>
       </Card>
     </Box>
   )
