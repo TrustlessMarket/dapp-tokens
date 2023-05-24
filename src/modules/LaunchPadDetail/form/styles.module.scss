@@ -101,3 +101,30 @@
     }
   }
 }
+
+.progressBar {
+  position: relative;
+  > div {
+    background: #DBFFF3;
+
+    > div:first-child {
+      background: #28f0a2;
+    }
+  }
+
+  .fireImg {
+    position: absolute;
+    left: -5px;
+    bottom: 0;
+
+    @media screen and (max-width: 768px) {
+      left: -3px;
+    }
+  }
+}
+
+.progressLabel {
+  color: #FFFFFF !important;
+  font-weight: 500 !important;
+  font-size: 14px !important;
+}
