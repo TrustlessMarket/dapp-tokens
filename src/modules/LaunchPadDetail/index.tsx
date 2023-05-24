@@ -10,10 +10,13 @@ import {useRouter} from "next/router";
 import BodyContainer from "@/components/Swap/bodyContainer";
 import cx from 'classnames';
 import Usp from "@/modules/LaunchPadDetail/ups";
+import {useAppSelector} from "@/state/hooks";
+import {selectPnftExchange} from "@/state/pnftExchange";
 
 const IdoDetailContainer = () => {
   const router = useRouter();
   const [poolDetail, setPoolDetail] = useState<any>();
+  const needReload = useAppSelector(selectPnftExchange).needReload;
 
   console.log('poolDetail', poolDetail);
 
@@ -30,7 +33,7 @@ const IdoDetailContainer = () => {
     if(router?.query?.pool_address) {
       getPoolInfo();
     }
-  }, [router?.query?.pool_address]);
+  }, [router?.query?.pool_address, needReload]);
 
   return (
     <Box className={styles.wrapper}>

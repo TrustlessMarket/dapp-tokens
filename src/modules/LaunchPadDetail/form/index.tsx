@@ -8,7 +8,7 @@ import InputWrapper from '@/components/Swap/form/inputWrapper';
 import HorizontalItem from '@/components/Swap/horizontalItem';
 import TokenBalance from '@/components/Swap/tokenBalance';
 import WrapperConnected from '@/components/WrapperConnected';
-import {CDN_URL, UNIV2_ROUTER_ADDRESS} from '@/configs';
+import {CDN_URL} from '@/configs';
 import {BRIDGE_SUPPORT_TOKEN, TRUSTLESS_BRIDGE, TRUSTLESS_FAUCET,} from '@/constants/common';
 import {toastError} from '@/constants/error';
 import {AssetsContext} from '@/contexts/assets-context';
@@ -73,7 +73,6 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const [baseToken, setBaseToken] = useState<any>();
   const [quoteToken, setQuoteToken] = useState<any>();
   const [amountBaseTokenApproved, setAmountBaseTokenApproved] = useState('0');
-  const [tokensList, setTokensList] = useState<IToken[]>([]);
   const [baseTokensList, setBaseTokensList] = useState<IToken[]>([]);
   const { call: isApproved } = useIsApproveERC20Token();
   const { call: tokenBalance } = useBalanceERC20Token();
@@ -133,7 +132,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
 
   const percent = useMemo(() => {
     if(poolDetail?.id) {
-      return new BigNumber(poolDetail?.totalValue).div(poolDetail?.totalValue).toNumber();
+      return new BigNumber(poolDetail?.totalValue).div(poolDetail?.goalBalance).multipliedBy(100).toNumber();
     }
 
     return 0;
@@ -159,17 +158,13 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     try {
       const [_baseBalance, _quoteBalance] = await Promise.all([
         getTokenBalance(values?.baseToken),
-        getTokenBalance(values?.quoteToken),
+        // getTokenBalance(values?.quoteToken),
       ]);
       setBaseBalance(_baseBalance);
     } catch (error) {
       throw error;
     }
   };
-
-  useEffect(() => {
-    fetchTokens();
-  }, []);
 
   const getBoostInfo = async () => {
     try {
@@ -194,20 +189,10 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     if(poolDetail?.id) {
       setBaseToken(poolDetail?.liquidityToken);
       setQuoteToken(poolDetail?.launchpadToken);
+      change('baseToken', poolDetail?.liquidityToken);
+      change('quoteToken', poolDetail?.launchpadToken);
     }
   }, [poolDetail?.id]);
-
-  useEffect(() => {
-    if (router?.query?.from_token) {
-      const token = baseTokensList.find((t: any) =>
-        compareString(t.address, router?.query?.from_token),
-      );
-
-      if (token) {
-        handleSelectBaseToken(token);
-      }
-    }
-  }, [JSON.stringify(baseTokensList), router?.query?.from_token]);
 
   useEffect(() => {
     change('baseBalance', baseBalance);
@@ -224,39 +209,11 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     setAmountBaseTokenApproved(_isApprove);
   };
 
-  const fetchTokens = async (page = 1, isFetchMore = false) => {
-    try {
-      setLoading(true);
-      const res = await getSwapTokens({
-        limit: LIMIT_PAGE,
-        page: page,
-        is_test: isDevelop() ? '1' : '',
-      });
-
-      const list = res ? camelCaseKeys(res) : [];
-
-      setTokensList(list);
-      setBaseTokensList(list);
-
-      // const token = list.find((t: any) =>
-      //   compareString(t.address, router?.query?.from_token || WBTC_ADDRESS),
-      // );
-      //
-      // if (token) {
-      //   handleSelectBaseToken(token);
-      // }
-    } catch (err: unknown) {
-      console.log('Failed to fetch tokens owned');
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const checkTokenApprove = async (token: IToken) => {
     try {
       const response = await isApproved({
         erc20TokenAddress: token.address,
-        address: UNIV2_ROUTER_ADDRESS,
+        address: poolDetail?.launchpad,
       });
       return response;
     } catch (error) {
@@ -287,7 +244,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       );
       const response: any = await approveToken({
         erc20TokenAddress: token.address,
-        address: UNIV2_ROUTER_ADDRESS,
+        address: poolDetail?.launchpad,
       });
       dispatch(
         updateCurrentTransaction({
@@ -304,55 +261,6 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     } finally {
       // dispatch(updateCurrentTransaction(null));
     }
-  };
-
-  const handleSelectBaseToken = async (token: IToken) => {
-    if (compareString(baseToken?.address, token?.address)) {
-      return;
-    }
-    setIsChangeBaseToken(true);
-    setBaseToken(token);
-    change('baseToken', token);
-    router.replace(
-      `${ROUTE_PATH.LAUNCHPAD_DETAIL}?from_token=${token.address}&to_token=${
-        router?.query?.to_token || ''
-      }`,
-    );
-
-    // try {
-    //   const _fromTokens: any = await fetchFromTokens(token?.address);
-    //   if (_fromTokens) {
-    //     setQuoteTokensList(camelCaseKeys(_fromTokens));
-    //     if (quoteToken) {
-    //       const findIndex = _fromTokens.findIndex((v: { address: unknown }) =>
-    //         compareString(v.address, quoteToken.address),
-    //       );
-    //
-    //       if (findIndex < 0) {
-    //         setQuoteToken(null);
-    //         change('quoteToken', null);
-    //       }
-    //     } else {
-    //       let token = null;
-    //
-    //       if (router?.query?.to_token) {
-    //         token = _fromTokens.find((t: { address: unknown }) =>
-    //           compareString(t.address, router?.query?.to_token),
-    //         );
-    //       }
-    //       if (!token) {
-    //         token = _fromTokens.find((t: { address: unknown }) =>
-    //           compareString(t.address, DEV_ADDRESS),
-    //         );
-    //       }
-    //       if (token) {
-    //         handleSelectQuoteToken(token);
-    //       }
-    //     }
-    //   }
-    // } catch (error) {
-    //   throw error;
-    // }
   };
 
   const validateBaseAmount = useCallback(
