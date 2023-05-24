@@ -7,24 +7,22 @@ import ListTable, { ColumnProp } from '@/components/Swap/listTable';
 import { TOKEN_ICON_DEFAULT } from '@/constants/common';
 import { ROUTE_PATH } from '@/constants/route-path';
 import { IToken } from '@/interfaces/token';
-import { getListIdo } from '@/services/ido';
+import { getListLaunchpad } from '@/services/launchpad';
 import { useAppSelector } from '@/state/hooks';
 import { selectPnftExchange } from '@/state/pnftExchange';
 import { colors } from '@/theme/colors';
 import { compareString, formatCurrency } from '@/utils';
 import { Box, Flex, Text } from '@chakra-ui/react';
 import { useWeb3React } from '@web3-react/core';
-import { truncate } from 'lodash';
+import BigNumber from 'bignumber.js';
 import moment from 'moment';
 import { useRouter } from 'next/router';
 import { useEffect, useMemo, useState } from 'react';
 import { BsPencil, BsTrash } from 'react-icons/bs';
 import { useDispatch } from 'react-redux';
-import IdoTokenStatus from './Launchpad.Status';
-import { StyledIdoContainer } from './Launchpad.styled';
-import { getListLaunchpad } from '@/services/launchpad';
 import web3 from 'web3';
-import BigNumber from 'bignumber.js';
+import LaunchpadStatus from './Launchpad.Status';
+import { StyledIdoContainer } from './Launchpad.styled';
 
 const LaunchpadContainer = () => {
   const [data, setData] = useState<any[]>();
@@ -65,8 +63,7 @@ const LaunchpadContainer = () => {
           borderBottom: 'none',
         },
         render(row: any) {
-          return <></>;
-          return <IdoTokenStatus row={row} />;
+          return <LaunchpadStatus row={row} />;
         },
       },
       {
