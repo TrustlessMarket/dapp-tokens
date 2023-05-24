@@ -7,11 +7,11 @@ import BodyContainer from "@/components/Swap/bodyContainer";
 const DATA = [
   {
     img: ``,
-    desc: 'Kickstarter connects creators with backers to fund projects.'
+    desc: 'We connects creators with backers to fund projects.'
   },
   {
     img: ``,
-    desc: 'Rewards aren’t guaranteed, but creators must regularly update backers.'
+    desc: 'Reward values aren’t guaranteed, but creators must regularly update backers.'
   },
   {
     img: ``,

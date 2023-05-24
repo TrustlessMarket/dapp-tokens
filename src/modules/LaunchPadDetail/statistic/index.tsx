@@ -36,7 +36,7 @@ const Statistic = ({poolDetail} : any) => {
         <SimpleGrid columns={3} spacingX={6}>
           <GridItem>
             <Stat>
-              <StatLabel>Total</StatLabel>
+              <StatLabel>Funded</StatLabel>
               <StatNumber>
                 ${formatCurrency(poolDetail?.totalValueUsd || 0,2)}
               </StatNumber>
@@ -44,7 +44,7 @@ const Statistic = ({poolDetail} : any) => {
           </GridItem>
           <GridItem>
             <Stat>
-              <StatLabel>Contributors</StatLabel>
+              <StatLabel>Backers</StatLabel>
               <StatNumber>
                 {formatCurrency(poolDetail?.poolDetail || 0, 0)}
               </StatNumber>
@@ -59,6 +59,7 @@ const Statistic = ({poolDetail} : any) => {
             </Stat>
           </GridItem>
         </SimpleGrid>
+        <Text mt={4} fontSize={"sm"} color={"#FFFFFF"}>All or nothing. This project will only be funded if it reaches its goal by {moment.utc(poolDetail?.endTime).format('ddd, MMMM Do YYYY HH:mm:ss Z')}.</Text>
       </Card>
       <Card bgColor={"#1E1E22"} paddingX={8} paddingY={6} mt={6}>
         <AllowlistTable />
