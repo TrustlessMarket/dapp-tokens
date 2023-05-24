@@ -36,7 +36,7 @@ const useDepositPool: ContractOperationHook<IDepositPoolParams, boolean> = () =>
             new BigNumber(boostRatio || 0).multipliedBy(10000).toString(),
             signature || Buffer.from([]),
             {
-              gasLimit: '150000',
+              gasLimit: '1500000',
               // gasPrice: getDefaultGasPrice(),
             },
           );
