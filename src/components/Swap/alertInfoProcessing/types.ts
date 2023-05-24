@@ -4,4 +4,5 @@ export const transactionType = {
   swapToken: 'swapToken',
   idoManage: 'idoManage',
   createLaunchpad: 'createLaunchpad',
+  depositLaunchpad: 'depositLaunchpad',
 };
