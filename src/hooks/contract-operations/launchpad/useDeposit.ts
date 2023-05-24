@@ -1,17 +1,13 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+import LaunchpadPoolJson from '@/abis/LaunchpadPool.json';
 import { TransactionEventType } from '@/enums/transaction';
 import { ContractOperationHook, DAppType } from '@/interfaces/contract-operation';
+import { logErrorToServer } from '@/services/swap';
 import { getContract } from '@/utils';
 import { useWeb3React } from '@web3-react/core';
-import { useCallback } from 'react';
-import LaunchpadPoolJson from '@/abis/LaunchpadPool.json';
-import web3 from 'web3';
 import BigNumber from 'bignumber.js';
-import { logErrorToServer } from '@/services/swap';
-import store from '@/state';
-import { updateCurrentTransaction } from '@/state/pnftExchange';
-import { transactionType } from '@/components/Swap/alertInfoProcessing/types';
-import { TransactionStatus } from '@/interfaces/walletTransaction';
+import { useCallback } from 'react';
+import web3 from 'web3';
 
 interface IDepositPoolParams {
   amount: string;
@@ -38,7 +34,7 @@ const useDepositPool: ContractOperationHook<IDepositPoolParams, boolean> = () =>
           .deposit(
             web3.utils.toWei(amount),
             new BigNumber(boostRatio || 0).multipliedBy(10000).toString(),
-            signature,
+            signature || Buffer.from([]),
             {
               gasLimit: '150000',
               // gasPrice: getDefaultGasPrice(),
