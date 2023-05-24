@@ -36,7 +36,7 @@ const useDepositPool: ContractOperationHook<IDepositPoolParams, boolean> = () =>
         const transaction = await contract
           .connect(provider.getSigner())
           .deposit(
-            web3.utils.fromWei(amount),
+            web3.utils.toWei(amount),
             new BigNumber(boostRatio || 0).multipliedBy(10000).toString(),
             signature,
             {

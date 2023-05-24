@@ -20,7 +20,6 @@ import {
 import {toastError} from '@/constants/error';
 import {AssetsContext} from '@/contexts/assets-context';
 import useGetReserves from '@/hooks/contract-operations/swap/useReserves';
-import useSwapERC20Token, {ISwapERC20TokenParams,} from '@/hooks/contract-operations/swap/useSwapERC20Token';
 import useApproveERC20Token from '@/hooks/contract-operations/token/useApproveERC20Token';
 import useBalanceERC20Token from '@/hooks/contract-operations/token/useBalanceERC20Token';
 import useIsApproveERC20Token from '@/hooks/contract-operations/token/useIsApproveERC20Token';
@@ -60,7 +59,7 @@ import {closeModal, openModal} from "@/state/modal";
 import {useWindowSize} from '@trustless-computer/dapp-core';
 import ModalConfirmApprove from '@/components/ModalConfirmApprove';
 import {getUserBoost} from "@/services/launchpad";
-import {getTokenDetail} from "@/services/token-explorer";
+import useDepositLaunchpad from '@/hooks/contract-operations/launchpad/useDeposit';
 
 const LIMIT_PAGE = 50;
 const FEE = 2;
@@ -90,11 +89,11 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const [exchangeRate, setExchangeRate] = useState('0');
   const [boostInfo, setBoostInfo] = useState<any>();
 
-  console.log('baseToken', baseToken);
-  console.log('quoteToken', quoteToken);
-  console.log('poolDetail', poolDetail);
-  console.log('boostInfo', boostInfo);
-  console.log('======');
+  // console.log('baseToken', baseToken);
+  // console.log('quoteToken', quoteToken);
+  // console.log('poolDetail', poolDetail);
+  // console.log('boostInfo', boostInfo);
+  // console.log('======');
 
   const { values } = useFormState();
   const { change, restart } = useForm();
@@ -162,6 +161,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     try {
       const response = await getUserBoost({address: account, pool_address: router?.query?.pool_address});
       setBoostInfo(response);
+      change('boostInfo', boostInfo);
     } catch (err) {
       throw err;
     }
@@ -173,24 +173,10 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     }
   }, [account, router?.query?.pool_address]);
 
-  const getTokensInfo = async () => {
-    try {
-      const [res1, res2] = await Promise.all([
-        getTokenDetail(poolDetail.liquidityTokenAddress),
-        getTokenDetail(poolDetail.launchpadToken),
-      ]);
-
-      setBaseToken(res1);
-      setQuoteToken(res2);
-    } catch (e) {
-      throw e;
-    }
-  }
-
   useEffect(() => {
     if(poolDetail?.id) {
-      setBaseToken(poolDetail?.liquidityToken);
-      setQuoteToken(poolDetail?.launchpadToken);
+      setBaseToken({...poolDetail?.liquidityToken, address: poolDetail?.liquidityToken?.contractAddress});
+      setQuoteToken({...poolDetail?.launchpadToken, address: poolDetail?.launchpadToken?.contractAddress});
     }
   }, [poolDetail?.id]);
 
@@ -845,22 +831,22 @@ const BuyForm = ({poolDetail}: any) => {
   const [submitting, setSubmitting] = useState(false);
   const dispatch = useAppDispatch();
   const { account } = useWeb3React();
-  const { run: swapToken } = useContractOperation<ISwapERC20TokenParams, boolean>({
-    operation: useSwapERC20Token,
+  const { run: depositLaunchpad } = useContractOperation({
+    operation: useDepositLaunchpad,
   });
   const user = useSelector(getUserSelector);
   const slippage = useAppSelector(selectPnftExchange).slippage;
   const { mobileScreen } = useWindowSize();
 
-  const confirmSwap = (values: any) => {
+  const confirmDeposit = (values: any) => {
     const { baseToken, quoteToken, baseAmount, quoteAmount, onConfirm } = values;
-    const id = 'modalSwapConfirm';
+    const id = 'modalDepositConfirm';
     // const close = () => dispatch(closeModal({id}));
     dispatch(
       openModal({
         id,
         theme: 'dark',
-        title: 'Confirm swap',
+        title: 'Confirm deposit',
         className: styles.modalContent,
         modalProps: {
           centered: true,
@@ -872,12 +858,12 @@ const BuyForm = ({poolDetail}: any) => {
             <HorizontalItem
               label={
                 <Text fontSize={'sm'} color={'#B1B5C3'}>
-                  Swap amount
+                  Deposit amount
                 </Text>
               }
               value={
                 <Text fontSize={'sm'}>
-                  {formatCurrency(baseAmount, 6)} {baseToken?.symbol}
+                  {formatCurrency(baseAmount, 6)} {poolDetail?.liquidityToken?.symbol}
                 </Text>
               }
             />
@@ -889,11 +875,11 @@ const BuyForm = ({poolDetail}: any) => {
               }
               value={
                 <Text fontSize={'sm'}>
-                  {formatCurrency(quoteAmount, 6)} {quoteToken?.symbol}
+                  {formatCurrency(quoteAmount, 6)} {poolDetail?.launchpadToken?.symbol}
                 </Text>
               }
             />
-            <HorizontalItem
+            {/*<HorizontalItem
               label={
                 <Text fontSize={'sm'} color={'#B1B5C3'}>
                   Slippage
@@ -914,7 +900,7 @@ const BuyForm = ({poolDetail}: any) => {
                     : `Your slippage percentage of ${slippage}% means that if the price changes by ${slippage}%, your transaction will fail and revert. If you wish to change your slippage percentage, please close this confirmation popup and go to the top of the swap box where you can set a different slippage value.`
                 }
               </Text>
-            </Flex>
+            </Flex>*/}
             <FiledButton
               loadingText="Processing"
               btnSize={'h'}
@@ -931,54 +917,60 @@ const BuyForm = ({poolDetail}: any) => {
 
   const handleSubmit = async (values: any) => {
     console.log('handleSubmit', values);
-    const id = 'modalSwapConfirm';
+    const id = 'modalDepositConfirm';
     const close = () => dispatch(closeModal({ id }));
 
-    confirmSwap({
+    confirmDeposit({
       ...values,
       onConfirm: () => {
         close();
-        handleSwap(values);
+        handleDeposit(values);
       },
     });
   };
 
-  const handleSwap = async (values: any) => {
-    const { baseToken, quoteToken, baseAmount, quoteAmount, swapRoutes } = values;
+  const handleDeposit = async (values: any) => {
+    const { boostInfo, baseAmount, quoteAmount, swapRoutes } = values;
 
     try {
       setSubmitting(true);
       dispatch(
         updateCurrentTransaction({
           status: TransactionStatus.info,
-          id: transactionType.createPoolApprove,
+          id: transactionType.depositLaunchpad,
         }),
       );
 
-      const amountOutMin = new BigNumber(quoteAmount)
-        .multipliedBy(100 - slippage)
-        .dividedBy(100)
-        .decimalPlaces(quoteToken?.decimal || 18)
-        .toString();
+      // const amountOutMin = new BigNumber(quoteAmount)
+      //   .multipliedBy(100 - slippage)
+      //   .dividedBy(100)
+      //   .decimalPlaces(quoteToken?.decimal || 18)
+      //   .toString();
+      //
+      // const addresses =
+      //   !compareString(baseToken?.address, WBTC_ADDRESS) &&
+      //   !compareString(quoteToken?.address, WBTC_ADDRESS) &&
+      //   swapRoutes?.length > 1
+      //     ? [baseToken.address, WBTC_ADDRESS, quoteToken.address]
+      //     : ((compareString(baseToken?.address, WBTC_ADDRESS) && compareString(quoteToken?.address, GM_ADDRESS))
+      //     || (compareString(baseToken?.address, GM_ADDRESS) && compareString(quoteToken?.address, WBTC_ADDRESS))
+      //   ) && swapRoutes?.length > 1 ? [baseToken.address, WETH_ADDRESS, quoteToken.address]
+      //       : [baseToken.address, quoteToken.address];
 
-      const addresses =
-        !compareString(baseToken?.address, WBTC_ADDRESS) &&
-        !compareString(quoteToken?.address, WBTC_ADDRESS) &&
-        swapRoutes?.length > 1
-          ? [baseToken.address, WBTC_ADDRESS, quoteToken.address]
-          : ((compareString(baseToken?.address, WBTC_ADDRESS) && compareString(quoteToken?.address, GM_ADDRESS))
-          || (compareString(baseToken?.address, GM_ADDRESS) && compareString(quoteToken?.address, WBTC_ADDRESS))
-        ) && swapRoutes?.length > 1 ? [baseToken.address, WETH_ADDRESS, quoteToken.address]
-            : [baseToken.address, quoteToken.address];
-
-      const data = {
-        addresses: addresses,
-        address: user?.walletAddress,
+      let data = {
         amount: baseAmount,
-        amountOutMin: amountOutMin,
+        launchpadAddress: user?.walletAddress,
+        signature: ''
       };
 
-      const response = await swapToken(data);
+      if(boostInfo) {
+        data.boostRatio = boostInfo.boost;
+        data.signature = boostInfo.adminSignature;
+      }
+
+      console.log('dataaaaa', data);
+
+      const response = await depositLaunchpad(data);
 
       toast.success('Transaction has been created. Please wait for few minutes.');
       refForm.current?.reset();
