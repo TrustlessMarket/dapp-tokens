@@ -21,6 +21,7 @@ export interface ICreateLaunchpadParams {
   startTimeArg: string;
   endTimeArg: string;
   launchpadBalance: string;
+  goalBalance: string;
   faq: string;
   description: string;
 }
@@ -40,9 +41,8 @@ const useCreateLaunchpad: ContractOperationHook<
         startTimeArg,
         endTimeArg,
         launchpadBalance,
+        goalBalance,
       } = params;
-
-      console.log('params', params);
 
       if (account && provider) {
         const contract = getContract(
@@ -65,6 +65,7 @@ const useCreateLaunchpad: ContractOperationHook<
             moment(startTimeArg).unix(),
             moment(endTimeArg).unix(),
             web3.utils.toWei(launchpadBalance),
+            web3.utils.toWei(goalBalance),
             {
               gasLimit: '1500000',
               // gasPrice: getDefaultGasPrice(),

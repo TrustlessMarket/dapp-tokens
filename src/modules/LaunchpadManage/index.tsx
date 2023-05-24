@@ -53,7 +53,7 @@ const LaunchManage = ({ ido, isRemove }: { ido: any; isRemove?: boolean }) => {
       setLoading(true);
 
       const tokenAddress = values?.launchpadTokenArg?.address;
-      const liquidAddress = values?.liquidityTokenArg?.contractAddress;
+      const liquidAddress = values?.liquidityTokenArg?.address;
 
       dispatch(
         updateCurrentTransaction({
@@ -77,6 +77,7 @@ const LaunchManage = ({ ido, isRemove }: { ido: any; isRemove?: boolean }) => {
           startTimeArg: values.startTimeArg,
           endTimeArg: values.endTimeArg,
           launchpadBalance: values.launchpadBalance,
+          goalBalance: values.goalBalance,
           faq: '',
           description: values.description,
         });

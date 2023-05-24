@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import CountDownTimer from '@/components/Countdown';
@@ -21,8 +22,9 @@ import { useEffect, useMemo, useState } from 'react';
 import { BsPencil, BsTrash } from 'react-icons/bs';
 import { useDispatch } from 'react-redux';
 import web3 from 'web3';
-import LaunchpadStatus from './Launchpad.Status';
+import LaunchpadStatus, { useLaunchPadStatus } from './Launchpad.Status';
 import { StyledIdoContainer } from './Launchpad.styled';
+import { ILaunchpad } from '@/interfaces/launchpad';
 
 const LaunchpadContainer = () => {
   const [data, setData] = useState<any[]>();
@@ -52,43 +54,6 @@ const LaunchpadContainer = () => {
   const columns: ColumnProp[] = useMemo(() => {
     return [
       {
-        id: 'status',
-        label: 'Status',
-        labelConfig: {
-          fontSize: '12px',
-          fontWeight: '500',
-          color: '#B1B5C3',
-        },
-        config: {
-          borderBottom: 'none',
-        },
-        render(row: any) {
-          return <LaunchpadStatus row={row} />;
-        },
-      },
-      {
-        id: 'date',
-        label: 'Date',
-        labelConfig: {
-          fontSize: '12px',
-          fontWeight: '500',
-          color: '#B1B5C3',
-        },
-        config: {
-          borderBottom: 'none',
-        },
-        render(row: any) {
-          return (
-            <Box>
-              <Text>{moment(row.startTime).format('MMM, DD')}</Text>
-              <Text>
-                Start at: <CountDownTimer end_time={row.startTime} />
-              </Text>
-            </Box>
-          );
-        },
-      },
-      {
         id: 'token',
         label: 'Token',
         labelConfig: {
@@ -99,41 +64,18 @@ const LaunchpadContainer = () => {
         config: {
           borderBottom: 'none',
         },
-        render(row: any) {
-          const token: IToken = row.token;
+        render(row: ILaunchpad) {
+          const token: IToken = row.launchpadToken;
           return (
             <Flex gap={4}>
-              <img src={TOKEN_ICON_DEFAULT} />
+              <img src={token.thumbnail || TOKEN_ICON_DEFAULT} />
               <Box>
-                {/* <Text className="record-title">
+                <Text className="record-title">
                   {token.name} <span>{token.symbol}</span>
                 </Text>
-                <Text className="note">#{token.index}</Text> */}
+                <Text className="note">{token.network}</Text>
               </Box>
             </Flex>
-          );
-        },
-      },
-      {
-        id: 'description',
-        label: 'Description',
-        labelConfig: {
-          fontSize: '12px',
-          fontWeight: '500',
-          color: '#B1B5C3',
-        },
-        config: {
-          borderBottom: 'none',
-        },
-        render(row: any) {
-          const token: IToken = row.token;
-          return (
-            <Text className="description">
-              {/* {truncate(token.description, {
-                length: 100,
-                separator: '...',
-              })} */}
-            </Text>
           );
         },
       },
@@ -148,7 +90,7 @@ const LaunchpadContainer = () => {
         config: {
           borderBottom: 'none',
         },
-        render(row: any) {
+        render(row: ILaunchpad) {
           const token: IToken = row.launchpadToken;
           return (
             <Text>{`${
@@ -160,8 +102,8 @@ const LaunchpadContainer = () => {
         },
       },
       {
-        id: 'ratio',
-        label: 'Ratio liquidity',
+        id: 'supply',
+        label: 'Supply',
         labelConfig: {
           fontSize: '12px',
           fontWeight: '500',
@@ -170,8 +112,29 @@ const LaunchpadContainer = () => {
         config: {
           borderBottom: 'none',
         },
-        render(row: any) {
+        render(row: ILaunchpad) {
           const token: IToken = row.launchpadToken;
+          return (
+            <Text>{`${
+              token.totalSupply
+                ? `${formatCurrency(token.totalSupply, 18)} ${token?.symbol}`
+                : 'N/A'
+            }`}</Text>
+          );
+        },
+      },
+      {
+        id: 'ratio',
+        label: 'Liquidity reserve',
+        labelConfig: {
+          fontSize: '12px',
+          fontWeight: '500',
+          color: '#B1B5C3',
+        },
+        config: {
+          borderBottom: 'none',
+        },
+        render(row: ILaunchpad) {
           return (
             <Text>{`${
               row.liquidityRatio
@@ -187,6 +150,59 @@ const LaunchpadContainer = () => {
         },
       },
       {
+        id: 'date',
+        label: 'Date',
+        labelConfig: {
+          fontSize: '12px',
+          fontWeight: '500',
+          color: '#B1B5C3',
+        },
+        config: {
+          borderBottom: 'none',
+        },
+        render(row: ILaunchpad) {
+          const [status] = useLaunchPadStatus({ row });
+
+          if (status.value === 'upcoming') {
+            return (
+              <Box>
+                <Text>{moment(row.startTime).format('MMM, DD')}</Text>
+                <Text>
+                  Start at: <CountDownTimer end_time={row.startTime} />
+                </Text>
+              </Box>
+            );
+          }
+          if (status.value === 'crowing-funding') {
+            return (
+              <Box>
+                <Text>{moment(row.endTime).format('MMM, DD')}</Text>
+                <Text>
+                  Ends at: <CountDownTimer end_time={row.endTime} />
+                </Text>
+              </Box>
+            );
+          }
+
+          return <></>;
+        },
+      },
+      {
+        id: 'status',
+        label: 'Status',
+        labelConfig: {
+          fontSize: '12px',
+          fontWeight: '500',
+          color: '#B1B5C3',
+        },
+        config: {
+          borderBottom: 'none',
+        },
+        render(row: ILaunchpad) {
+          return <LaunchpadStatus row={row} />;
+        },
+      },
+      {
         id: 'link',
         label: 'Link',
         labelConfig: {
@@ -197,9 +213,8 @@ const LaunchpadContainer = () => {
         config: {
           borderBottom: 'none',
         },
-        render(row: any) {
-          return <></>;
-          const token: IToken = row.token;
+        render(row: ILaunchpad) {
+          const token: IToken = row.launchpadToken;
           return <SocialToken socials={token.social} />;
         },
       },
@@ -214,11 +229,10 @@ const LaunchpadContainer = () => {
         config: {
           borderBottom: 'none',
         },
-        render(row: any) {
-          return <></>;
-          const token: IToken = row.token;
+        render(row: ILaunchpad) {
+          const token: IToken = row.launchpadToken;
 
-          if (compareString(token.owner, account)) {
+          if (compareString(row.creatorAddress, account)) {
             return (
               <Flex alignItems={'center'} gap={4}>
                 <Box cursor={'pointer'} onClick={() => onShowCreateIDO(row)}>
@@ -261,13 +275,13 @@ const LaunchpadContainer = () => {
   return (
     <StyledIdoContainer>
       <Text as={'h1'} className="title">
-        Upcoming IDO
+        Launchpad
       </Text>
       <Text className="desc">
-        This page dedicate to providing information about upcoming token public
-        sales. Here, you will find a comprehensive list of upcoming token public
-        sales, along with detailed information about each project and the respective
-        tokens being offered.
+        Welcome to our decentralized crowdfunding platform! We're excited to
+        introduce the Kickstarter model deployed on Bitcoin. With our platform, you
+        can support innovative projects and ideas while leveraging the power of
+        blockchain. Join us in revolutionizing the future of crowdfunding!
       </Text>
 
       <Flex mb={'24px'} mt={'24px'} justifyContent={'center'}>
