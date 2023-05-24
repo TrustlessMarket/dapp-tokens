@@ -839,7 +839,7 @@ const BuyForm = ({poolDetail}: any) => {
   const { mobileScreen } = useWindowSize();
 
   const confirmDeposit = (values: any) => {
-    const { baseToken, quoteToken, baseAmount, quoteAmount, onConfirm } = values;
+    const { baseAmount, quoteAmount, onConfirm } = values;
     const id = 'modalDepositConfirm';
     // const close = () => dispatch(closeModal({id}));
     dispatch(
@@ -957,14 +957,15 @@ const BuyForm = ({poolDetail}: any) => {
       //   ) && swapRoutes?.length > 1 ? [baseToken.address, WETH_ADDRESS, quoteToken.address]
       //       : [baseToken.address, quoteToken.address];
 
-      let data = {
+      const data = {
         amount: baseAmount,
-        launchpadAddress: user?.walletAddress,
+        launchpadAddress: poolDetail?.launchpad,
+        boostRatio: "0",
         signature: ''
       };
 
       if(boostInfo) {
-        data.boostRatio = boostInfo.boost;
+        data.boostRatio = boostInfo.boost.toString();
         data.signature = boostInfo.adminSignature;
       }
 
