@@ -3,7 +3,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { transactionType } from '@/components/Swap/alertInfoProcessing/types';
 import FiledButton from '@/components/Swap/button/filedButton';
-import FilterButton from '@/components/Swap/filterToken';
 import FieldAmount from '@/components/Swap/form/fieldAmount';
 import InputWrapper from '@/components/Swap/form/inputWrapper';
 import HorizontalItem from '@/components/Swap/horizontalItem';
@@ -90,7 +89,7 @@ import { getTokenDetail } from '@/services/token-explorer';
 const LIMIT_PAGE = 50;
 const FEE = 2;
 export const MakeFormSwap = forwardRef((props, ref) => {
-  const { onSubmit, submitting } = props;
+  const { onSubmit, submitting, poolDetail } = props;
   const [loading, setLoading] = useState(false);
   const [baseToken, setBaseToken] = useState<any>();
   const [quoteToken, setQuoteToken] = useState<any>();
@@ -114,7 +113,6 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const needReload = useAppSelector(selectPnftExchange).needReload;
   const [exchangeRate, setExchangeRate] = useState('0');
   const [boostInfo, setBoostInfo] = useState<any>();
-  const [poolDetail, setPoolDetail] = useState<any>();
 
   console.log('baseToken', baseToken);
   console.log('quoteToken', quoteToken);
@@ -209,7 +207,6 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       const response = await getDetailLaunchpad({
         pool_address: router?.query?.pool_address,
       });
-      setPoolDetail(response);
       setBaseToken(response?.liquidityToken);
     } catch (err) {
       throw err;
@@ -886,7 +883,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   );
 });
 
-const BuyForm = () => {
+const BuyForm = ({ poolDetail }: any) => {
   const refForm = useRef<any>();
   const [submitting, setSubmitting] = useState(false);
   const dispatch = useAppDispatch();
@@ -1066,6 +1063,7 @@ const BuyForm = () => {
             ref={refForm}
             onSubmit={handleSubmit}
             submitting={submitting}
+            poolDetail={poolDetail}
           />
         )}
       </Form>
