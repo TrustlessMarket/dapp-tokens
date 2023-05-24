@@ -18,8 +18,6 @@ const IdoDetailContainer = () => {
   const [poolDetail, setPoolDetail] = useState<any>();
   const needReload = useAppSelector(selectPnftExchange).needReload;
 
-  console.log('poolDetail', poolDetail);
-
   const getPoolInfo = async () => {
     try {
       const response = await getDetailLaunchpad({pool_address: router?.query?.pool_address as string});

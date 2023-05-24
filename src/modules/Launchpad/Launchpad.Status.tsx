@@ -40,9 +40,9 @@ export const LabelStatus = {
 };
 
 export const useLaunchPadStatus = ({ row }: { row: ILaunchpad }) => {
-  const state = row.state;
-  const startTime = row.startTime;
-  const endTime = row.endTime;
+  const state = row?.state;
+  const startTime = row?.startTime;
+  const endTime = row?.endTime;
 
   let status = LabelStatus.upcoming;
 

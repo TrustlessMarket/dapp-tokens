@@ -100,7 +100,7 @@ const AllowlistTable = ({poolDetail}: any) => {
           <div className={s.dataContribute}>
             <span className={s.dataLabel}>Contribution</span>
             <span className={cs(s.dataValue, s.dataValue__black)}>
-              {formatCurrency(item.amountUsd, 2)}
+              ${formatCurrency(item.amountUsd, 2)}
               <span className={s.dataContribute_divider}></span>
               {
                poolDetail?.liquidityToken?.symbol
