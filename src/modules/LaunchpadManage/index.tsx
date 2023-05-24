@@ -13,6 +13,9 @@ import { toast } from 'react-hot-toast';
 import { useDispatch } from 'react-redux';
 import LaunchManageForm from './LaunchpadManage.Form';
 import { StyledLaunchpadManage } from './LaunchpadManage.styled';
+import { transactionType } from '@/components/Swap/alertInfoProcessing/types';
+import { TransactionStatus } from '@/interfaces/walletTransaction';
+import { ROUTE_PATH } from '@/constants/route-path';
 
 const LaunchManage = ({ ido, isRemove }: { ido: any; isRemove?: boolean }) => {
   const { account } = useWeb3React();
@@ -52,6 +55,13 @@ const LaunchManage = ({ ido, isRemove }: { ido: any; isRemove?: boolean }) => {
       const tokenAddress = values?.launchpadTokenArg?.address;
       const liquidAddress = values?.liquidityTokenArg?.contractAddress;
 
+      dispatch(
+        updateCurrentTransaction({
+          id: transactionType.createLaunchpad,
+          status: TransactionStatus.info,
+        }),
+      );
+
       if (isRemove) {
         // await removeIdo({
         //   id: ido.id,
@@ -60,7 +70,7 @@ const LaunchManage = ({ ido, isRemove }: { ido: any; isRemove?: boolean }) => {
         // });
         toast.success(`Removed IDO successfully.`);
       } else {
-        await createLaunchpad({
+        const response: any = await createLaunchpad({
           launchpadTokenArg: tokenAddress,
           liquidityTokenArg: liquidAddress,
           liquidityRatioArg: values.liquidityRatioArg,
@@ -70,14 +80,25 @@ const LaunchManage = ({ ido, isRemove }: { ido: any; isRemove?: boolean }) => {
           faq: '',
           description: values.description,
         });
-        toast.success(`Submitted IDO successfully.`);
+        console.log('response', response);
+
+        dispatch(
+          updateCurrentTransaction({
+            status: TransactionStatus.success,
+            id: transactionType.createLaunchpad,
+            hash: response.hash,
+            infoTexts: {
+              success: `Created ${values?.launchpadTokenArg?.symbol} - ${values?.liquidityTokenArg?.symbol} launchpad successfully. You can <a href='${ROUTE_PATH.LAUNCHPAD_DETAIL}' >check now!</a>`,
+            },
+          }),
+        );
       }
 
       dispatch(requestReload());
     } catch (err) {
       toastError(showError, err, { address: account });
-    } finally {
       dispatch(updateCurrentTransaction(null));
+    } finally {
       setLoading(false);
     }
   };

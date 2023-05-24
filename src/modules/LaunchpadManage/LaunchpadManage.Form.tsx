@@ -29,7 +29,7 @@ import { colors } from '@/theme/colors';
 import { formatCurrency } from '@/utils';
 import { composeValidators, required, requiredAmount } from '@/utils/formValidate';
 import { showError } from '@/utils/toast';
-import { Box, Flex, FormLabel, Text } from '@chakra-ui/react';
+import { Box, Divider, Flex, FormLabel, Text } from '@chakra-ui/react';
 import { px2rem } from '@trustless-computer/dapp-core';
 import { useWeb3React } from '@web3-react/core';
 import BigNumber from 'bignumber.js';
@@ -155,6 +155,17 @@ const IdoTokenManageForm: React.FC<IdoTokenManageFormProps> = ({
 
       return undefined;
     },
+    [values.launchpadBalance, tokenSelected, balanceToken],
+  );
+
+  const validateMaxRatio = useCallback(
+    (_amount: any) => {
+      if (Number(_amount) > Number(90)) {
+        return `Max ratio is ${90}%`;
+      }
+
+      return undefined;
+    },
     [values.launchpadBalance, tokenSelected],
   );
 
@@ -215,6 +226,7 @@ const IdoTokenManageForm: React.FC<IdoTokenManageFormProps> = ({
         message: message,
       });
       toastError(showError, err, { address: account });
+      dispatch(updateCurrentTransaction(null));
     } finally {
       setLoading(false);
     }
@@ -279,7 +291,9 @@ const IdoTokenManageForm: React.FC<IdoTokenManageFormProps> = ({
                   name="launchpadBalance"
                   decimals={18}
                   children={FieldAmount}
-                  label="Balance"
+                  label={`Balance ${
+                    tokenSelected ? `(${tokenSelected.symbol})` : ''
+                  }`}
                   disabled={isRemove}
                   validate={composeValidators(requiredAmount, validateAmount)}
                   rightLabel={
@@ -312,9 +326,9 @@ const IdoTokenManageForm: React.FC<IdoTokenManageFormProps> = ({
                   name="liquidityRatioArg"
                   decimals={18}
                   children={FieldAmount}
-                  label="Ratio"
+                  label={`Ratio (%)`}
                   disabled={isRemove}
-                  validate={requiredAmount}
+                  validate={composeValidators(requiredAmount, validateMaxRatio)}
                 />
               </Flex>
 
@@ -345,60 +359,68 @@ const IdoTokenManageForm: React.FC<IdoTokenManageFormProps> = ({
           <Box className="token-info" flex={1}>
             <Text as={'h6'}>Token information</Text>
             {tokenSelected && (
-              <>
-                <img
-                  src={tokenSelected?.thumbnail || TOKEN_ICON_DEFAULT}
-                  alt="token-avatar"
-                />
-
+              <Flex
+                justifyContent={'space-between'}
+                flexDirection={'column'}
+                height={'100%'}
+              >
                 <Box>
-                  <SocialToken theme="dark" socials={tokenSelected.social} />
+                  <img
+                    src={tokenSelected?.thumbnail || TOKEN_ICON_DEFAULT}
+                    alt="token-avatar"
+                  />
+
+                  <Box>
+                    <SocialToken theme="dark" socials={tokenSelected.social} />
+                  </Box>
+
+                  <Box mt={6} />
+                  <HorizontalItem
+                    className="horizontal-item"
+                    label={'Name'}
+                    value={tokenSelected?.name}
+                  />
+                  <Box mt={3} />
+                  <HorizontalItem
+                    className="horizontal-item"
+                    label={'Symbol'}
+                    value={tokenSelected?.symbol}
+                  />
+                  <Box mt={3} />
+                  <HorizontalItem
+                    label={'Total Supply'}
+                    className="horizontal-item"
+                    value={formatCurrency(
+                      web3.utils.fromWei(tokenSelected?.totalSupply),
+                    )}
+                  />
+                  <Box mt={3} />
+                  <HorizontalItem
+                    className="horizontal-item"
+                    label={'Description'}
+                    value={truncate(tokenSelected?.description, {
+                      length: 50,
+                      separator: '...',
+                    })}
+                  />
                 </Box>
 
-                <Box mt={6} />
-                <HorizontalItem
-                  className="horizontal-item"
-                  label={'Name'}
-                  value={tokenSelected?.name}
-                />
-                <Box mt={3} />
-                <HorizontalItem
-                  className="horizontal-item"
-                  label={'Symbol'}
-                  value={tokenSelected?.symbol}
-                />
-                <Box mt={3} />
-                <HorizontalItem
-                  label={'Total Supply'}
-                  className="horizontal-item"
-                  value={formatCurrency(
-                    web3.utils.fromWei(tokenSelected?.totalSupply),
-                  )}
-                />
-                <Box mt={3} />
-                <HorizontalItem
-                  className="horizontal-item"
-                  label={'Description'}
-                  value={truncate(tokenSelected?.description, {
-                    length: 50,
-                    separator: '...',
-                  })}
-                />
-
-                <Box mt={6} />
-                <FiledButton
-                  btnSize="l"
-                  variant={'outline'}
-                  className="btn-update-info"
-                  onClick={() => {
-                    router.push(
-                      `${ROUTE_PATH.UPDATE_TOKEN_INFO}?address=${tokenSelected?.address}`,
-                    );
-                  }}
-                >
-                  Update token info
-                </FiledButton>
-              </>
+                <Box>
+                  <Box mt={6} />
+                  <FiledButton
+                    btnSize="l"
+                    variant={'outline'}
+                    className="btn-update-info"
+                    onClick={() => {
+                      router.push(
+                        `${ROUTE_PATH.UPDATE_TOKEN_INFO}?address=${tokenSelected?.address}`,
+                      );
+                    }}
+                  >
+                    Update token info
+                  </FiledButton>
+                </Box>
+              </Flex>
             )}
           </Box>
         </Flex>
@@ -409,44 +431,50 @@ const IdoTokenManageForm: React.FC<IdoTokenManageFormProps> = ({
           label="Description"
           disabled={isRemove}
         />
-        <Flex justifyContent={'center'} mt={8}>
-          <WrapperConnected
-            type={isApproveToken ? 'button' : 'submit'}
-            className="btn-submit"
-          >
-            {!isApproveToken && tokenSelected ? (
-              <FiledButton
-                isLoading={loading}
-                isDisabled={loading}
-                loadingText="Processing"
-                btnSize={'h'}
-                onClick={onShowModalApprove}
-                type="button"
-                processInfo={{
-                  id: transactionType.idoManage,
-                }}
-              >
-                {`APPROVE USE OF ${tokenSelected?.symbol}`}
-              </FiledButton>
-            ) : (
-              <FiledButton
-                isLoading={loading}
-                isDisabled={loading}
-                type="submit"
-                w={['90vw', '80vw', '50vw', '30vw']}
-                style={{
-                  backgroundColor: isRemove ? colors.redPrimary : colors.bluePrimary,
-                }}
-                processInfo={{
-                  id: transactionType.idoManage,
-                }}
-                btnSize="h"
-              >
-                {isRemove ? 'Remove' : detail ? 'Update' : 'Submit'}
-              </FiledButton>
-            )}
-          </WrapperConnected>
-        </Flex>
+        <Box mt={6} />
+        <Field
+          validate={required}
+          name="faqs"
+          children={FieldMDEditor}
+          label="Faqs"
+          disabled={isRemove}
+        />
+        <Box mt={6} />
+        <WrapperConnected
+          type={isApproveToken ? 'button' : 'submit'}
+          className="btn-submit"
+        >
+          {!isApproveToken && tokenSelected ? (
+            <FiledButton
+              isLoading={loading}
+              isDisabled={loading}
+              loadingText="Processing"
+              btnSize={'h'}
+              onClick={onShowModalApprove}
+              type="button"
+              processInfo={{
+                id: transactionType.idoManage,
+              }}
+            >
+              {`APPROVE USE OF ${tokenSelected?.symbol}`}
+            </FiledButton>
+          ) : (
+            <FiledButton
+              isLoading={loading}
+              isDisabled={loading}
+              type="submit"
+              style={{
+                backgroundColor: isRemove ? colors.redPrimary : colors.bluePrimary,
+              }}
+              processInfo={{
+                id: transactionType.createLaunchpad,
+              }}
+              btnSize="h"
+            >
+              {isRemove ? 'Remove' : detail ? 'Update' : 'Submit'}
+            </FiledButton>
+          )}
+        </WrapperConnected>
       </Box>
     </form>
   );

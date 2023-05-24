@@ -15,6 +15,7 @@ import React from 'react';
 
 import { formatCurrency } from '@/utils';
 import styles from './styles.module.scss';
+import { CleaveOptions } from 'cleave.js/options';
 
 interface FieldAmountProps {
   input?: any;
@@ -31,6 +32,7 @@ interface FieldAmountProps {
   fieldChanged?: (_: any) => void;
   hideError?: boolean;
   borderColor?: string;
+  numberOptions?: CleaveOptions;
 }
 
 const FieldAmount = (props: FieldAmountProps) => {
@@ -50,6 +52,7 @@ const FieldAmount = (props: FieldAmountProps) => {
     // disabledInput, errorPlacement, zIndex, anchorAppend,
     hideError = false,
     borderColor = 'background.default',
+    numberOptions,
     ...restProps
   } = props;
   const { onChange, onBlur, onFocus, value } = input;
@@ -117,6 +120,10 @@ const FieldAmount = (props: FieldAmountProps) => {
               numeralThousandsGroupStyle: 'thousand',
               numeralPositiveOnly: true,
               numeralDecimalScale: decimals,
+              tailPrefix: true,
+              rawValueTrimPrefix: true,
+              noImmediatePrefix: false,
+              ...numberOptions,
             }}
             {...restProps}
           />

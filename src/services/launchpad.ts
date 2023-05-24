@@ -23,7 +23,7 @@ export const getListLaunchpad = async (
   });
 };
 
-export const getDetailLaunchpad = async (params: { pool_address?: string }) => {
+export const getDetailLaunchpad = async (params: { pool_address?: any }) => {
   const qs = '?' + queryString.stringify(params);
   return swrFetcher(`${API_EXCHANGE_URL}${API_PATH}/detail${qs}`, {
     method: 'GET',

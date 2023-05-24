@@ -116,4 +116,11 @@ export const StyledLaunchpadManage = styled(BodyContainer)`
       color: #1c1c1c;
     }
   }
+  .append-input {
+    border-left: 1px solid ${colors.darkBorderColor};
+    height: 100%;
+    padding-left: ${px2rem(12)};
+    padding-right: ${px2rem(8)};
+    align-items: center;
+  }
 `;
