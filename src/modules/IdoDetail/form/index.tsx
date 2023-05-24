@@ -1,15 +1,14 @@
 /* eslint-disable react/no-children-prop */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import {transactionType} from '@/components/Swap/alertInfoProcessing/types';
+import { transactionType } from '@/components/Swap/alertInfoProcessing/types';
 import FiledButton from '@/components/Swap/button/filedButton';
-import FilterButton from '@/components/Swap/filterToken';
 import FieldAmount from '@/components/Swap/form/fieldAmount';
 import InputWrapper from '@/components/Swap/form/inputWrapper';
 import HorizontalItem from '@/components/Swap/horizontalItem';
 import TokenBalance from '@/components/Swap/tokenBalance';
 import WrapperConnected from '@/components/WrapperConnected';
-import {CDN_URL, UNIV2_ROUTER_ADDRESS} from '@/configs';
+import { CDN_URL, UNIV2_ROUTER_ADDRESS } from '@/configs';
 import {
   BRIDGE_SUPPORT_TOKEN,
   GM_ADDRESS,
@@ -18,55 +17,76 @@ import {
   WBTC_ADDRESS,
   WETH_ADDRESS,
 } from '@/constants/common';
-import {toastError} from '@/constants/error';
-import {AssetsContext} from '@/contexts/assets-context';
+import { toastError } from '@/constants/error';
+import { AssetsContext } from '@/contexts/assets-context';
 import useGetReserves from '@/hooks/contract-operations/swap/useReserves';
-import useSwapERC20Token, {ISwapERC20TokenParams,} from '@/hooks/contract-operations/swap/useSwapERC20Token';
 import useApproveERC20Token from '@/hooks/contract-operations/token/useApproveERC20Token';
 import useBalanceERC20Token from '@/hooks/contract-operations/token/useBalanceERC20Token';
 import useIsApproveERC20Token from '@/hooks/contract-operations/token/useIsApproveERC20Token';
 import useContractOperation from '@/hooks/contract-operations/useContractOperation';
-import {IToken} from '@/interfaces/token';
-import {TransactionStatus} from '@/interfaces/walletTransaction';
-import {getSwapTokens, logErrorToServer} from '@/services/swap';
-import {useAppDispatch, useAppSelector} from '@/state/hooks';
+import { IToken } from '@/interfaces/token';
+import { TransactionStatus } from '@/interfaces/walletTransaction';
+import { getSwapTokens, logErrorToServer } from '@/services/swap';
+import { useAppDispatch, useAppSelector } from '@/state/hooks';
 import {
   requestReload,
   requestReloadRealtime,
   selectPnftExchange,
   updateCurrentTransaction,
 } from '@/state/pnftExchange';
-import {getIsAuthenticatedSelector, getUserSelector} from '@/state/user/selector';
-import {camelCaseKeys, compareString, formatCurrency, sortAddressPair,} from '@/utils';
-import {isDevelop} from '@/utils/commons';
-import {composeValidators, required} from '@/utils/formValidate';
+import { getIsAuthenticatedSelector, getUserSelector } from '@/state/user/selector';
+import {
+  camelCaseKeys,
+  compareString,
+  formatCurrency,
+  sortAddressPair,
+} from '@/utils';
+import { isDevelop } from '@/utils/commons';
+import { composeValidators, required } from '@/utils/formValidate';
 import px2rem from '@/utils/px2rem';
-import {showError} from '@/utils/toast';
-import {Box, Center, Flex, forwardRef, Stat, StatLabel, StatNumber, Text} from '@chakra-ui/react';
-import {useWeb3React} from '@web3-react/core';
+import { showError } from '@/utils/toast';
+import {
+  Box,
+  Center,
+  Flex,
+  forwardRef,
+  Stat,
+  StatLabel,
+  StatNumber,
+  Text,
+} from '@chakra-ui/react';
+import { useWeb3React } from '@web3-react/core';
 import BigNumber from 'bignumber.js';
 import cx from 'classnames';
 import debounce from 'lodash/debounce';
 import Link from 'next/link';
-import {useRouter} from 'next/router';
-import React, {useCallback, useContext, useEffect, useImperativeHandle, useMemo, useRef, useState,} from 'react';
-import {Field, Form, useForm, useFormState} from 'react-final-form';
+import { useRouter } from 'next/router';
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useImperativeHandle,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
+import { Field, Form, useForm, useFormState } from 'react-final-form';
 import toast from 'react-hot-toast';
-import {useDispatch, useSelector} from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import Web3 from 'web3';
 import styles from './styles.module.scss';
-import {BiBell} from "react-icons/bi";
-import {ROUTE_PATH} from "@/constants/route-path";
-import {closeModal, openModal} from "@/state/modal";
-import {useWindowSize} from '@trustless-computer/dapp-core';
+import { BiBell } from 'react-icons/bi';
+import { ROUTE_PATH } from '@/constants/route-path';
+import { closeModal, openModal } from '@/state/modal';
+import { useWindowSize } from '@trustless-computer/dapp-core';
 import ModalConfirmApprove from '@/components/ModalConfirmApprove';
-import {getDetailLaunchpad, getUserBoost} from "@/services/launchpad";
-import {getTokenDetail} from "@/services/token-explorer";
+import {getUserBoost} from "@/services/launchpad";
+import useDepositLaunchpad from '@/hooks/contract-operations/launchpad/useDeposit';
 
 const LIMIT_PAGE = 50;
 const FEE = 2;
 export const MakeFormSwap = forwardRef((props, ref) => {
-  const { onSubmit, submitting } = props;
+  const { onSubmit, submitting, poolDetail } = props;
   const [loading, setLoading] = useState(false);
   const [baseToken, setBaseToken] = useState<any>();
   const [quoteToken, setQuoteToken] = useState<any>();
@@ -90,13 +110,12 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const needReload = useAppSelector(selectPnftExchange).needReload;
   const [exchangeRate, setExchangeRate] = useState('0');
   const [boostInfo, setBoostInfo] = useState<any>();
-  const [poolDetail, setPoolDetail] = useState<any>();
 
-  console.log('baseToken', baseToken);
-  console.log('quoteToken', quoteToken);
-  console.log('poolDetail', poolDetail);
-  console.log('boostInfo', boostInfo);
-  console.log('======');
+  // console.log('baseToken', baseToken);
+  // console.log('quoteToken', quoteToken);
+  // console.log('poolDetail', poolDetail);
+  // console.log('boostInfo', boostInfo);
+  // console.log('======');
 
   const { values } = useFormState();
   const { change, restart } = useForm();
@@ -111,7 +130,9 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     let result = false;
     try {
       result =
-        isAuthenticated && values?.baseAmount && !isNaN(Number(values?.baseAmount)) &&
+        isAuthenticated &&
+        values?.baseAmount &&
+        !isNaN(Number(values?.baseAmount)) &&
         new BigNumber(amountBaseTokenApproved || 0).lt(
           Web3.utils.toWei(`${values?.baseAmount || 0}`, 'ether'),
         );
@@ -162,52 +183,27 @@ export const MakeFormSwap = forwardRef((props, ref) => {
 
   const getBoostInfo = async () => {
     try {
-      const response = await getUserBoost({address: account, pool_address: router?.query?.pool_address});
+      const response = await getUserBoost({
+        address: account,
+        pool_address: router?.query?.pool_address,
+      });
       setBoostInfo(response);
+      change('boostInfo', boostInfo);
     } catch (err) {
       throw err;
     }
-  }
+  };
 
   useEffect(() => {
-    if(account && router?.query?.pool_address) {
+    if (account && router?.query?.pool_address) {
       getBoostInfo();
     }
   }, [account, router?.query?.pool_address]);
 
-  const getPoolInfo = async () => {
-    try {
-      const response = await getDetailLaunchpad({pool_address: router?.query?.pool_address});
-      setPoolDetail(response);
-      setBaseToken(response?.liquidityToken);
-    } catch (err) {
-      throw err;
-    }
-  }
-
-  useEffect(() => {
-    if(router?.query?.pool_address) {
-      getPoolInfo();
-    }
-  }, [router?.query?.pool_address]);
-
-  const getTokensInfo = async () => {
-    try {
-      const [res1, res2] = await Promise.all([
-        getTokenDetail(poolDetail.liquidityTokenAddress),
-        getTokenDetail(poolDetail.launchpadToken),
-      ]);
-
-      setBaseToken(res1);
-      setQuoteToken(res2);
-    } catch (e) {
-      throw e;
-    }
-  }
-
   useEffect(() => {
     if(poolDetail?.id) {
-      getTokensInfo();
+      setBaseToken({...poolDetail?.liquidityToken, address: poolDetail?.liquidityToken?.contractAddress});
+      setQuoteToken({...poolDetail?.launchpadToken, address: poolDetail?.launchpadToken?.contractAddress});
     }
   }, [poolDetail?.id]);
 
@@ -446,49 +442,45 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     });
   };
 
-  const calculateQuoteAmountMultiRoute = (
-    {
-      amount,
-      reserveInfos,
-      tokenIn,
-      tokenOut,
-      swapRoutes,
-      listPair
-    }: {
-      amount: any;
-      reserveInfos: any;
-      tokenIn: any;
-      tokenOut: any;
-      swapRoutes: any;
-      listPair: any[];
-    }
-  ) => {
+  const calculateQuoteAmountMultiRoute = ({
+    amount,
+    reserveInfos,
+    tokenIn,
+    tokenOut,
+    swapRoutes,
+    listPair,
+  }: {
+    amount: any;
+    reserveInfos: any;
+    tokenIn: any;
+    tokenOut: any;
+    swapRoutes: any;
+    listPair: any[];
+  }) => {
     let _amount = amount;
     for (let index = 0; index < listPair?.length; index++) {
-      const {baseToken, quoteToken} = listPair[index];
+      const { baseToken, quoteToken } = listPair[index];
       const [token0, token1] = sortAddressPair(baseToken, quoteToken);
 
-      const {_reserveIn, _reserveOut} = compareString(
+      const { _reserveIn, _reserveOut } = compareString(
         token0?.address,
         baseToken?.address,
       )
         ? {
-          _reserveIn: reserveInfos[index]?._reserve0,
-          _reserveOut: reserveInfos[index]?._reserve1,
-        }
+            _reserveIn: reserveInfos[index]?._reserve0,
+            _reserveOut: reserveInfos[index]?._reserve1,
+          }
         : {
-          _reserveIn: reserveInfos[index]?._reserve1,
-          _reserveOut: reserveInfos[index]?._reserve0,
-        };
+            _reserveIn: reserveInfos[index]?._reserve1,
+            _reserveOut: reserveInfos[index]?._reserve0,
+          };
 
       const amountIn = new BigNumber(_amount);
       const reserveIn = new BigNumber(
         Web3.utils.fromWei(Web3.utils.toBN(_reserveIn || 0), 'ether').toString(),
       );
       const reserveOut = new BigNumber(
-        Web3.utils
-          .fromWei(Web3.utils.toBN(_reserveOut || 0), 'ether')
-          .toString(),
+        Web3.utils.fromWei(Web3.utils.toBN(_reserveOut || 0), 'ether').toString(),
       );
       if (amountIn.lte(0) || reserveIn.lte(0) || reserveOut.lte(0)) {
         return;
@@ -503,7 +495,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
 
     setExchangeRate(rate.toString());
     change('quoteAmount', _amount.toFixed());
-  }
+  };
 
   const handleBaseAmountChange = ({
     amount,
@@ -533,8 +525,8 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         swapRoutes?.length > 1
       ) {
         const listPair = [
-          {baseToken: tokenIn, quoteToken: {address: WBTC_ADDRESS}},
-          {baseToken: {address: WBTC_ADDRESS}, quoteToken: tokenOut},
+          { baseToken: tokenIn, quoteToken: { address: WBTC_ADDRESS } },
+          { baseToken: { address: WBTC_ADDRESS }, quoteToken: tokenOut },
         ];
 
         calculateQuoteAmountMultiRoute({
@@ -543,16 +535,18 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           tokenIn,
           tokenOut,
           swapRoutes,
-          listPair
+          listPair,
         });
       } else if (
-        ((compareString(tokenIn?.address, WBTC_ADDRESS) && compareString(tokenOut?.address, GM_ADDRESS))
-          || (compareString(tokenIn?.address, GM_ADDRESS) && compareString(tokenOut?.address, WBTC_ADDRESS))
-        ) && swapRoutes?.length > 1
+        ((compareString(tokenIn?.address, WBTC_ADDRESS) &&
+          compareString(tokenOut?.address, GM_ADDRESS)) ||
+          (compareString(tokenIn?.address, GM_ADDRESS) &&
+            compareString(tokenOut?.address, WBTC_ADDRESS))) &&
+        swapRoutes?.length > 1
       ) {
         const listPair = [
-          {baseToken: tokenIn, quoteToken: {address: WETH_ADDRESS}},
-          {baseToken: {address: WETH_ADDRESS}, quoteToken: tokenOut},
+          { baseToken: tokenIn, quoteToken: { address: WETH_ADDRESS } },
+          { baseToken: { address: WETH_ADDRESS }, quoteToken: tokenOut },
         ];
 
         calculateQuoteAmountMultiRoute({
@@ -561,7 +555,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           tokenIn,
           tokenOut,
           swapRoutes,
-          listPair
+          listPair,
         });
       } else {
         const [token0, token1] = sortAddressPair(tokenIn, tokenOut);
@@ -659,37 +653,35 @@ export const MakeFormSwap = forwardRef((props, ref) => {
 
   return (
     <form onSubmit={onSubmit} style={{ height: '100%' }}>
-      {isAuthenticated && <Text color={"#1b77fd"}>Connect wallet to see your boost rate</Text>}
-      <Flex gap={2} color={"#FFFFFF"} mt={1}>
-        {
-          poolDetail && (
-            <Stat >
-              <StatLabel>Launchpad Balance</StatLabel>
-              <StatNumber>
-                {formatCurrency(poolDetail.launchpadBalance)}
-              </StatNumber>
-            </Stat>
-          )
-        }
-        {
-          isAuthenticated && boostInfo && (
-            <Stat>
-              <StatLabel>Boost rate</StatLabel>
-              <StatNumber>
-                {boostInfo.boost}%
-              </StatNumber>
-            </Stat>
-          )
-        }
+      {isAuthenticated && (
+        <Text color={'#1b77fd'}>Connect wallet to see your boost rate</Text>
+      )}
+      <Flex gap={2} color={'#FFFFFF'} mt={1}>
+        {poolDetail && (
+          <Stat>
+            <StatLabel>Launchpad Balance</StatLabel>
+            <StatNumber>{formatCurrency(poolDetail.launchpadBalance)}</StatNumber>
+          </Stat>
+        )}
+        {isAuthenticated && boostInfo && (
+          <Stat>
+            <StatLabel>Boost rate</StatLabel>
+            <StatNumber>{boostInfo.boost}%</StatNumber>
+          </Stat>
+        )}
       </Flex>
       <InputWrapper
         className={cx(styles.inputAmountWrap, styles.inputBaseAmountWrap)}
         theme="light"
-        label={<Text fontSize={px2rem(14)} color={"#FFFFFF"}>Amount</Text>}
+        label={
+          <Text fontSize={px2rem(14)} color={'#FFFFFF'}>
+            Amount
+          </Text>
+        }
         rightLabel={
           baseToken && (
-            <Flex gap={2} fontSize={px2rem(14)} color={"#FFFFFF"}>
-              <Flex gap={1} alignItems={"center"}>
+            <Flex gap={2} fontSize={px2rem(14)} color={'#FFFFFF'}>
+              <Flex gap={1} alignItems={'center'}>
                 Balance:
                 <TokenBalance
                   token={baseToken}
@@ -701,9 +693,9 @@ export const MakeFormSwap = forwardRef((props, ref) => {
                 cursor={'pointer'}
                 color={'#3385FF'}
                 onClick={handleChangeMaxBaseAmount}
-                bgColor={"rgba(51, 133, 255, 0.2)"}
-                borderRadius={"4px"}
-                padding={"1px 12px"}
+                bgColor={'rgba(51, 133, 255, 0.2)'}
+                borderRadius={'4px'}
+                padding={'1px 12px'}
               >
                 MAX
               </Text>
@@ -732,7 +724,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
                     alt={baseToken?.thumbnail || 'default-icon'}
                     className={'avatar'}
                   />
-                  <Text fontSize={"sm"}>{baseToken?.symbol}</Text>
+                  <Text fontSize={'sm'}>{baseToken?.symbol}</Text>
                 </Flex>
               )
             }
@@ -771,7 +763,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
               h={'24px'}
               borderRadius={'50%'}
               bg={'rgba(255, 126, 33, 0.2)'}
-              as={"span"}
+              as={'span'}
             >
               <BiBell color="#FF7E21" />
             </Center>
@@ -793,29 +785,31 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         baseToken &&
         BRIDGE_SUPPORT_TOKEN.includes(baseToken?.symbol) &&
         new BigNumber(baseBalance || 0).lte(0) && (
-        <Flex gap={3} mt={2}>
-          <Center
-            w={'24px'}
-            h={'24px'}
-            borderRadius={'50%'}
-            bg={'rgba(255, 126, 33, 0.2)'}
-            as={"span"}
-          >
-            <BiBell color="#FF7E21" />
-          </Center>
-          <Text fontSize="sm" color="#FF7E21" textAlign={'left'}>
-            Insufficient {baseToken?.symbol} balance! Consider swapping your{' '}
-            {baseToken?.symbol?.replace('W', '')} to trustless network{' '}
-            <Link
-              href={`${TRUSTLESS_BRIDGE}${baseToken?.symbol?.replace('W', '')?.toLowerCase()}`}
-              target={'_blank'}
-              style={{ textDecoration: 'underline' }}
+          <Flex gap={3} mt={2}>
+            <Center
+              w={'24px'}
+              h={'24px'}
+              borderRadius={'50%'}
+              bg={'rgba(255, 126, 33, 0.2)'}
+              as={'span'}
             >
-              here
-            </Link>
-            .
-          </Text>
-        </Flex>
+              <BiBell color="#FF7E21" />
+            </Center>
+            <Text fontSize="sm" color="#FF7E21" textAlign={'left'}>
+              Insufficient {baseToken?.symbol} balance! Consider swapping your{' '}
+              {baseToken?.symbol?.replace('W', '')} to trustless network{' '}
+              <Link
+                href={`${TRUSTLESS_BRIDGE}${baseToken?.symbol
+                  ?.replace('W', '')
+                  ?.toLowerCase()}`}
+                target={'_blank'}
+                style={{ textDecoration: 'underline' }}
+              >
+                here
+              </Link>
+              .
+            </Text>
+          </Flex>
         )}
       <WrapperConnected
         type={isRequireApprove ? 'button' : 'submit'}
@@ -857,27 +851,27 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   );
 });
 
-const BuyForm = () => {
+const BuyForm = ({ poolDetail }: any) => {
   const refForm = useRef<any>();
   const [submitting, setSubmitting] = useState(false);
   const dispatch = useAppDispatch();
   const { account } = useWeb3React();
-  const { run: swapToken } = useContractOperation<ISwapERC20TokenParams, boolean>({
-    operation: useSwapERC20Token,
+  const { run: depositLaunchpad } = useContractOperation({
+    operation: useDepositLaunchpad,
   });
   const user = useSelector(getUserSelector);
   const slippage = useAppSelector(selectPnftExchange).slippage;
   const { mobileScreen } = useWindowSize();
 
-  const confirmSwap = (values: any) => {
-    const { baseToken, quoteToken, baseAmount, quoteAmount, onConfirm } = values;
-    const id = 'modalSwapConfirm';
+  const confirmDeposit = (values: any) => {
+    const { baseAmount, quoteAmount, onConfirm } = values;
+    const id = 'modalDepositConfirm';
     // const close = () => dispatch(closeModal({id}));
     dispatch(
       openModal({
         id,
         theme: 'dark',
-        title: 'Confirm swap',
+        title: 'Confirm deposit',
         className: styles.modalContent,
         modalProps: {
           centered: true,
@@ -889,12 +883,12 @@ const BuyForm = () => {
             <HorizontalItem
               label={
                 <Text fontSize={'sm'} color={'#B1B5C3'}>
-                  Swap amount
+                  Deposit amount
                 </Text>
               }
               value={
                 <Text fontSize={'sm'}>
-                  {formatCurrency(baseAmount, 6)} {baseToken?.symbol}
+                  {formatCurrency(baseAmount, 6)} {poolDetail?.liquidityToken?.symbol}
                 </Text>
               }
             />
@@ -906,11 +900,11 @@ const BuyForm = () => {
               }
               value={
                 <Text fontSize={'sm'}>
-                  {formatCurrency(quoteAmount, 6)} {quoteToken?.symbol}
+                  {formatCurrency(quoteAmount, 6)} {poolDetail?.launchpadToken?.symbol}
                 </Text>
               }
             />
-            <HorizontalItem
+            {/*<HorizontalItem
               label={
                 <Text fontSize={'sm'} color={'#B1B5C3'}>
                   Slippage
@@ -918,20 +912,27 @@ const BuyForm = () => {
               }
               value={<Text fontSize={'sm'}>{slippage}%</Text>}
             />
-            <Flex gap={1} alignItems={slippage === 100 ? 'center' : 'flex-start'} mt={2}>
+            <Flex
+              gap={1}
+              alignItems={slippage === 100 ? 'center' : 'flex-start'}
+              mt={2}
+            >
               <img
                 src={`${CDN_URL}/icons/icon-information.png`}
                 alt="info"
-                style={{width: 25, height: 25, minWidth: 25, minHeight: 25}}
+                style={{ width: 25, height: 25, minWidth: 25, minHeight: 25 }}
               />
-              <Text fontSize="sm" color="brand.warning.400" textAlign={'left'} maxW={"500px"}>
-                {
-                  slippage === 100
-                    ? `Your current slippage is set at 100%. Trade at your own risk.`
-                    : `Your slippage percentage of ${slippage}% means that if the price changes by ${slippage}%, your transaction will fail and revert. If you wish to change your slippage percentage, please close this confirmation popup and go to the top of the swap box where you can set a different slippage value.`
-                }
+              <Text
+                fontSize="sm"
+                color="brand.warning.400"
+                textAlign={'left'}
+                maxW={'500px'}
+              >
+                {slippage === 100
+                  ? `Your current slippage is set at 100%. Trade at your own risk.`
+                  : `Your slippage percentage of ${slippage}% means that if the price changes by ${slippage}%, your transaction will fail and revert. If you wish to change your slippage percentage, please close this confirmation popup and go to the top of the swap box where you can set a different slippage value.`}
               </Text>
-            </Flex>
+            </Flex>*/}
             <FiledButton
               loadingText="Processing"
               btnSize={'h'}
@@ -948,54 +949,61 @@ const BuyForm = () => {
 
   const handleSubmit = async (values: any) => {
     console.log('handleSubmit', values);
-    const id = 'modalSwapConfirm';
+    const id = 'modalDepositConfirm';
     const close = () => dispatch(closeModal({ id }));
 
-    confirmSwap({
+    confirmDeposit({
       ...values,
       onConfirm: () => {
         close();
-        handleSwap(values);
+        handleDeposit(values);
       },
     });
   };
 
-  const handleSwap = async (values: any) => {
-    const { baseToken, quoteToken, baseAmount, quoteAmount, swapRoutes } = values;
+  const handleDeposit = async (values: any) => {
+    const { boostInfo, baseAmount, quoteAmount, swapRoutes } = values;
 
     try {
       setSubmitting(true);
       dispatch(
         updateCurrentTransaction({
           status: TransactionStatus.info,
-          id: transactionType.createPoolApprove,
+          id: transactionType.depositLaunchpad,
         }),
       );
 
-      const amountOutMin = new BigNumber(quoteAmount)
-        .multipliedBy(100 - slippage)
-        .dividedBy(100)
-        .decimalPlaces(quoteToken?.decimal || 18)
-        .toString();
-
-      const addresses =
-        !compareString(baseToken?.address, WBTC_ADDRESS) &&
-        !compareString(quoteToken?.address, WBTC_ADDRESS) &&
-        swapRoutes?.length > 1
-          ? [baseToken.address, WBTC_ADDRESS, quoteToken.address]
-          : ((compareString(baseToken?.address, WBTC_ADDRESS) && compareString(quoteToken?.address, GM_ADDRESS))
-          || (compareString(baseToken?.address, GM_ADDRESS) && compareString(quoteToken?.address, WBTC_ADDRESS))
-        ) && swapRoutes?.length > 1 ? [baseToken.address, WETH_ADDRESS, quoteToken.address]
-            : [baseToken.address, quoteToken.address];
+      // const amountOutMin = new BigNumber(quoteAmount)
+      //   .multipliedBy(100 - slippage)
+      //   .dividedBy(100)
+      //   .decimalPlaces(quoteToken?.decimal || 18)
+      //   .toString();
+      //
+      // const addresses =
+      //   !compareString(baseToken?.address, WBTC_ADDRESS) &&
+      //   !compareString(quoteToken?.address, WBTC_ADDRESS) &&
+      //   swapRoutes?.length > 1
+      //     ? [baseToken.address, WBTC_ADDRESS, quoteToken.address]
+      //     : ((compareString(baseToken?.address, WBTC_ADDRESS) && compareString(quoteToken?.address, GM_ADDRESS))
+      //     || (compareString(baseToken?.address, GM_ADDRESS) && compareString(quoteToken?.address, WBTC_ADDRESS))
+      //   ) && swapRoutes?.length > 1 ? [baseToken.address, WETH_ADDRESS, quoteToken.address]
+      //       : [baseToken.address, quoteToken.address];
 
       const data = {
-        addresses: addresses,
-        address: user?.walletAddress,
         amount: baseAmount,
-        amountOutMin: amountOutMin,
+        launchpadAddress: poolDetail?.launchpad,
+        boostRatio: "0",
+        signature: ''
       };
 
-      const response = await swapToken(data);
+      if(boostInfo) {
+        data.boostRatio = boostInfo.boost.toString();
+        data.signature = boostInfo.adminSignature;
+      }
+
+      console.log('dataaaaa', data);
+
+      const response = await depositLaunchpad(data);
 
       toast.success('Transaction has been created. Please wait for few minutes.');
       refForm.current?.reset();
@@ -1027,6 +1035,7 @@ const BuyForm = () => {
             ref={refForm}
             onSubmit={handleSubmit}
             submitting={submitting}
+            poolDetail={poolDetail}
           />
         )}
       </Form>

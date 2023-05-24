@@ -1,11 +1,12 @@
-import {GridItem, Heading, SimpleGrid, Text} from "@chakra-ui/react";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import {Box, GridItem, Heading, SimpleGrid, Text} from "@chakra-ui/react";
 import styles from './styles.module.scss';
 import {CDN_URL} from "@/configs";
-import BodyContainer from "@/components/Swap/bodyContainer";
 
-const IdoDescription = () => {
+const IdoDescription = ({poolDetail} : any) => {
+  console.log('poolDetail', poolDetail);
   return (
-    <BodyContainer className={styles.wrapper}>
+    <Box className={styles.wrapper}>
       <SimpleGrid className={"max-content"} columns={[1, 2]} spacingX={10}>
         <GridItem>
           <Heading
@@ -78,7 +79,7 @@ const IdoDescription = () => {
           />
         </GridItem>
       </SimpleGrid>
-    </BodyContainer>
+    </Box>
   )
 }
 

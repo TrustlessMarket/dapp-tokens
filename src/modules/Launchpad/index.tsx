@@ -23,6 +23,8 @@ import { useDispatch } from 'react-redux';
 import IdoTokenStatus from './Launchpad.Status';
 import { StyledIdoContainer } from './Launchpad.styled';
 import { getListLaunchpad } from '@/services/launchpad';
+import web3 from 'web3';
+import BigNumber from 'bignumber.js';
 
 const LaunchpadContainer = () => {
   const [data, setData] = useState<any[]>();
@@ -82,26 +84,10 @@ const LaunchpadContainer = () => {
           return (
             <Box>
               <Text>{moment(row.startTime).format('MMM, DD')}</Text>
+              <Text>
+                Start at: <CountDownTimer end_time={row.startTime} />
+              </Text>
             </Box>
-          );
-        },
-      },
-      {
-        id: 'start_at',
-        label: 'Start at',
-        labelConfig: {
-          fontSize: '12px',
-          fontWeight: '500',
-          color: '#B1B5C3',
-        },
-        config: {
-          borderBottom: 'none',
-        },
-        render(row: any) {
-          return (
-            <Text>
-              <CountDownTimer end_time={row.startTime} />
-            </Text>
           );
         },
       },
@@ -156,7 +142,7 @@ const LaunchpadContainer = () => {
       },
       {
         id: 'price',
-        label: 'Price',
+        label: 'Balance',
         labelConfig: {
           fontSize: '12px',
           fontWeight: '500',
@@ -166,10 +152,39 @@ const LaunchpadContainer = () => {
           borderBottom: 'none',
         },
         render(row: any) {
-          const token: IToken = row.token;
+          const token: IToken = row.launchpadToken;
           return (
             <Text>{`${
-              row.price ? `$${formatCurrency(row.price, 18)}` : 'N/A'
+              row.launchpadBalance
+                ? `${formatCurrency(row.launchpadBalance, 18)} ${token?.symbol}`
+                : 'N/A'
+            }`}</Text>
+          );
+        },
+      },
+      {
+        id: 'ratio',
+        label: 'Ratio liquidity',
+        labelConfig: {
+          fontSize: '12px',
+          fontWeight: '500',
+          color: '#B1B5C3',
+        },
+        config: {
+          borderBottom: 'none',
+        },
+        render(row: any) {
+          const token: IToken = row.launchpadToken;
+          return (
+            <Text>{`${
+              row.liquidityRatio
+                ? `${formatCurrency(
+                    new BigNumber(web3.utils.toWei(row.liquidityRatio).toString())
+                      .dividedBy(10000)
+                      .toString(),
+                    18,
+                  )}%`
+                : 'N/A'
             }`}</Text>
           );
         },
@@ -270,8 +285,6 @@ const LaunchpadContainer = () => {
           columns={columns}
           initialLoading={loading}
           onItemClick={(e) => {
-            console.log('e', e);
-
             return router.push(
               `${ROUTE_PATH.LAUNCHPAD_DETAIL}?pool_address=${e.launchpad}`,
             );
