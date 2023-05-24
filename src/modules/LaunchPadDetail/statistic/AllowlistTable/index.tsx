@@ -40,7 +40,7 @@ const AllowlistTable = ({poolDetail}: any) => {
     } else if (tabletScreen) {
       return 80;
     }
-    return 96;
+    return 110;
   };
 
   const fetchDepositInfo = async () => {
@@ -78,7 +78,7 @@ const AllowlistTable = ({poolDetail}: any) => {
               />
             ) : (
               <Jazzicon
-                diameter={mobileScreen || tabletScreen ? 24 : 48}
+                diameter={mobileScreen || tabletScreen ? 24 : 36}
                 seed={jsNumberForAddress(item.userAddress)}
               />
             )}
@@ -101,10 +101,10 @@ const AllowlistTable = ({poolDetail}: any) => {
             <span className={s.dataLabel}>Contribution</span>
             <span className={cs(s.dataValue, s.dataValue__black)}>
               ${formatCurrency(item.amountUsd, 2)}
-              <span className={s.dataContribute_divider}></span>
-              {
-               poolDetail?.liquidityToken?.symbol
-              }
+              {/*<span className={s.dataContribute_divider}></span>*/}
+              <span className={s.percentage}>
+                ${formatCurrency(item.amount)} {poolDetail?.liquidityToken?.symbol}
+              </span>
             </span>
           </div>
           <Popover trigger="hover" isLazy>
@@ -141,9 +141,9 @@ const AllowlistTable = ({poolDetail}: any) => {
                 </span>
                 <span className={s.dataValue}>
                   {`${formatCurrency(item.userLaunchpadBalance)} ${poolDetail?.launchpadToken?.symbol}`}{' '}
-                  <span className={s.percentage}>{`(${item.percentHolding.toFixed(
-                    2
-                  )}%)`}</span>
+                  <span className={s.percentage}>
+                    {`(${item.percentHolding.toFixed(2)}%)`}
+                  </span>
                 </span>
               </div>
             </PopoverTrigger>
