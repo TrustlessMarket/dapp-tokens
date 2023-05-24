@@ -104,8 +104,8 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   //     Web3.utils.toWei(`${values?.baseAmount || 0}`, 'ether'),
   //   );
 
-  // console.log('values', values);
-  // console.log('=====')
+  console.log('values', values);
+  console.log('=====')
 
   const isRequireApprove = useMemo(() => {
     let result = false;
@@ -156,7 +156,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     });
 
     try {
-      const [_baseBalance, _quoteBalance] = await Promise.all([
+      const [_baseBalance] = await Promise.all([
         getTokenBalance(values?.baseToken),
         // getTokenBalance(values?.quoteToken),
       ]);
