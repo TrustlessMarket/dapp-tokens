@@ -106,9 +106,6 @@ const TokenDetail = () => {
     return (
       <StyledTokenDetailContainer
         topSpacing={topSpacing}
-        style={{
-          height: `calc(100vh - ${topSpacing}px)`,
-        }}
         className="loading-container"
       >
         <Spinner size={'lg'} color="#FFFFFF" style={{ margin: '0 auto' }} />
@@ -118,13 +115,7 @@ const TokenDetail = () => {
 
   if (!data || !address) {
     return (
-      <StyledTokenDetailContainer
-        topSpacing={topSpacing}
-        style={{
-          height: `calc(100vh - ${topSpacing}px)`,
-        }}
-        className="token-notfound-container"
-      >
+      <StyledTokenDetailContainer className="token-notfound-container">
         <div className="token-notfound">
           <img src={`${CDN_URL}/images/crying.svg`} alt="token-detail" />
           <Text>Opps.... Token not found</Text>
@@ -137,12 +128,7 @@ const TokenDetail = () => {
   }
 
   return (
-    <StyledTokenDetailContainer
-      topSpacing={topSpacing}
-      style={{
-        height: `calc(100vh - ${topSpacing}px)`,
-      }}
-    >
+    <StyledTokenDetailContainer topSpacing={topSpacing}>
       <StyledTokenTopInfo area={'topinfo'}>
         <TokenTopInfo data={data} />
       </StyledTokenTopInfo>

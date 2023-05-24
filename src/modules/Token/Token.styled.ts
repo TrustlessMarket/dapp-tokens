@@ -11,11 +11,12 @@ export const StyledTokenDetailContainer = styled(Grid)`
   grid-gap: 1px;
   grid-template-columns: minmax(350px, 350px) 1fr;
   grid-template-rows: ${(props: any) =>
-    `minmax(64px, 130px) minmax(100px, calc(2*(100vh - 130px - ${props?.topSpacing}px) / 3)) minmax(100px,calc((100vh - 130px - ${props?.topSpacing}px) / 3))`};
+    `minmax(64px, 130px) minmax(100px, calc((100vh - 130px - ${props?.topSpacing}px) / 2)) minmax(100px,calc((100vh - 130px - ${props?.topSpacing}px) / 2))`};
   grid-template-areas:
     'topinfo topinfo'
     'left chart'
     'left history';
+  min-height: ${(props: any) => `calc(100vh - ${props?.topSpacing}px)`};
   .avatar {
     width: 40px;
     height: 40px;
@@ -31,6 +32,9 @@ export const StyledTokenDetailContainer = styled(Grid)`
       'chart'
       'history'
       'left';
+    min-height: ${(props: any) => `calc(100vh - ${props?.topSpacing}px)`};
+    height: unset;
+    overflow: auto;
   }
   &.loading-container,
   &.token-notfound-container {
