@@ -20,8 +20,7 @@ import useBalanceERC20Token from '@/hooks/contract-operations/token/useBalanceER
 import useIsApproveERC20Token from '@/hooks/contract-operations/token/useIsApproveERC20Token';
 import { IToken } from '@/interfaces/token';
 import { TransactionStatus } from '@/interfaces/walletTransaction';
-import { getListTokenForIdo } from '@/services/ido';
-import { getListLiquidityToken } from '@/services/launchpad';
+import { getListLiquidityToken, getListOwnerToken } from '@/services/launchpad';
 import { logErrorToServer } from '@/services/swap';
 import { closeModal, openModal } from '@/state/modal';
 import { updateCurrentTransaction } from '@/state/pnftExchange';
@@ -29,7 +28,7 @@ import { colors } from '@/theme/colors';
 import { formatCurrency } from '@/utils';
 import { composeValidators, required, requiredAmount } from '@/utils/formValidate';
 import { showError } from '@/utils/toast';
-import { Box, Divider, Flex, FormLabel, Text } from '@chakra-ui/react';
+import { Box, Flex, FormLabel, Text } from '@chakra-ui/react';
 import { px2rem } from '@trustless-computer/dapp-core';
 import { useWeb3React } from '@web3-react/core';
 import BigNumber from 'bignumber.js';
@@ -132,8 +131,8 @@ const IdoTokenManageForm: React.FC<IdoTokenManageFormProps> = ({
     }
     try {
       const response = await Promise.all([
-        getListTokenForIdo({
-          owner: account,
+        getListOwnerToken({
+          address: account,
           page: 1,
           limit: 9999,
         }),

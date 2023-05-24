@@ -4,12 +4,25 @@
     "inputs": [
       {
         "indexed": false,
+        "internalType": "uint8",
+        "name": "version",
+        "type": "uint8"
+      }
+    ],
+    "name": "Initialized",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
         "internalType": "address",
         "name": "launchpad",
         "type": "address"
       },
       {
-        "indexed": false,
+        "indexed": true,
         "internalType": "address",
         "name": "launchpadToken",
         "type": "address"
@@ -74,6 +87,11 @@
         "internalType": "uint256",
         "name": "launchpadBalance",
         "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "goalBalance",
+        "type": "uint256"
       }
     ],
     "name": "createLaunchpadPool",
@@ -116,7 +134,7 @@
       },
       {
         "internalType": "uint256",
-        "name": "lpTokenReleaseDuraion",
+        "name": "lpTokenReleaseDuration",
         "type": "uint256"
       }
     ],

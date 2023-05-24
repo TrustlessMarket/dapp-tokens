@@ -13,6 +13,16 @@ export const getListLiquidityToken = async () => {
   });
 };
 
+export const getListOwnerToken = async (
+  params: { address: string } & IPagingParams,
+) => {
+  const qs = '?' + queryString.stringify(params);
+  return swrFetcher(`${API_EXCHANGE_URL}${API_PATH}/launchpad-token${qs}`, {
+    method: 'GET',
+    error: 'getListLiquidityToken',
+  });
+};
+
 export const getListLaunchpad = async (
   params: { address?: string } & IPagingParams,
 ) => {
