@@ -131,10 +131,12 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     return result;
   }, [isAuthenticated, amountBaseTokenApproved, values?.baseAmount]);
 
-  const sold = 25;
-
   const percent = useMemo(() => {
-    return 15;
+    if(poolDetail?.id) {
+      return new BigNumber(poolDetail?.totalValue).div(poolDetail?.totalValue).toNumber();
+    }
+
+    return 0;
   }, [poolDetail?.id, needReload]);
 
   const onBaseAmountChange = useCallback(
@@ -488,8 +490,8 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           {/*<Image src={fireImg} className={styles.fireImg} />*/}
         </Box>
         <Flex direction={"column"} mt={1}>
-          <Text color={"brand.success.400"} fontSize={"xl"} fontWeight={"medium"}>US$ 10,011</Text>
-          <Text color={"#FFFFFF"} fontSize={"xs"}>pledged of US$ 200,000 goal</Text>
+          <Text color={"brand.success.400"} fontSize={"xl"} fontWeight={"medium"}>{formatCurrency(poolDetail?.totalValue || 0)} {baseToken?.symbol}</Text>
+          <Text color={"#FFFFFF"} fontSize={"xs"}>pledged of {formatCurrency(poolDetail?.goalBalance || 0)} {baseToken?.symbol} goal</Text>
         </Flex>
       </Flex>
       <InputWrapper
