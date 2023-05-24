@@ -33,7 +33,18 @@ import {isDevelop} from '@/utils/commons';
 import {composeValidators, required} from '@/utils/formValidate';
 import px2rem from '@/utils/px2rem';
 import {showError} from '@/utils/toast';
-import {Box, Center, Flex, forwardRef, Stat, StatLabel, StatNumber, Text,} from '@chakra-ui/react';
+import {
+  Box,
+  Center,
+  Flex,
+  forwardRef,
+  Progress,
+  ProgressLabel,
+  Stat,
+  StatLabel,
+  StatNumber,
+  Text,
+} from '@chakra-ui/react';
 import {useWeb3React} from '@web3-react/core';
 import BigNumber from 'bignumber.js';
 import cx from 'classnames';
@@ -120,6 +131,12 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     return result;
   }, [isAuthenticated, amountBaseTokenApproved, values?.baseAmount]);
 
+  const sold = 25;
+
+  const percent = useMemo(() => {
+    return 15;
+  }, [poolDetail?.id, needReload]);
+
   const onBaseAmountChange = useCallback(
     debounce((p) => handleBaseAmountChange(p), 1000),
     [],
@@ -169,7 +186,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     if (account && router?.query?.pool_address) {
       getBoostInfo();
     }
-  }, [account, router?.query?.pool_address]);
+  }, [account, router?.query?.pool_address, needReload]);
 
   useEffect(() => {
     if(poolDetail?.id) {
@@ -452,6 +469,29 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           </Stat>
         )}
       </Flex>
+      <Flex direction={"column"}>
+        <Box className={styles.progressBar}>
+          <Progress
+            w={["100%", "100%"]}
+            h="24px"
+            value={percent < 15 ? 15 : percent}
+            borderRadius={12}
+          >
+            <ProgressLabel className={styles.progressLabel}>
+              {/*{`${formatCurrency(sold, 2)} / ${formatCurrency(
+                order?.initial_caps,
+                2
+              )}`}{" "}*/}
+              ({formatCurrency(percent, 2)}%)
+            </ProgressLabel>
+          </Progress>
+          {/*<Image src={fireImg} className={styles.fireImg} />*/}
+        </Box>
+        <Flex direction={"column"} mt={1}>
+          <Text color={"brand.success.400"} fontSize={"xl"} fontWeight={"medium"}>US$ 10,011</Text>
+          <Text color={"#FFFFFF"} fontSize={"xs"}>pledged of US$ 200,000 goal</Text>
+        </Flex>
+      </Flex>
       <InputWrapper
         className={cx(styles.inputAmountWrap, styles.inputBaseAmountWrap)}
         theme="light"
@@ -643,7 +683,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
               id: transactionType.createPoolApprove,
             }}
           >
-            BUY
+            BACK THIS PROJECT
           </FiledButton>
         )}
       </WrapperConnected>

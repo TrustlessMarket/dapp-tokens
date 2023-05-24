@@ -66,6 +66,19 @@
     "anonymous": false,
     "inputs": [
       {
+        "indexed": false,
+        "internalType": "uint8",
+        "name": "version",
+        "type": "uint8"
+      }
+    ],
+    "name": "Initialized",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
         "indexed": true,
         "internalType": "address",
         "name": "previousOwner",
@@ -189,6 +202,11 @@
       },
       {
         "internalType": "uint256",
+        "name": "goalBalance",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
         "name": "startTime",
         "type": "uint256"
       },
@@ -261,54 +279,76 @@
   {
     "inputs": [
       {
-        "internalType": "address",
-        "name": "creatorArg",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "launchpadTokenArg",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "liquidityTokenArg",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "protocolRatioArg",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "liquidityRatioArg",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "startTimeArg",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "endTimeArg",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "lpTokenReleaseTimeArg",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "launchpadBalanceArg",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "liquidityBalanceArg",
-        "type": "uint256"
+        "components": [
+          {
+            "internalType": "address",
+            "name": "factory",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "creator",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "launchpadToken",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "liquidityToken",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "protocolRatio",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "creatorRatio",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "liquidityRatio",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "startTime",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "endTime",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "lpTokenReleaseTime",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "launchpadBalance",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "liquidityBalance",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "goalBalance",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct ILaunchpadPool.InitParams",
+        "name": "params",
+        "type": "tuple"
       }
     ],
     "name": "initialize",

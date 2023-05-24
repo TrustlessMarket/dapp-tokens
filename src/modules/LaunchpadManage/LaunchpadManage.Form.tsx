@@ -72,6 +72,7 @@ const IdoTokenManageForm: React.FC<IdoTokenManageFormProps> = ({
   const { call: tokenBalance } = useBalanceERC20Token();
 
   const tokenSelected: IToken | undefined = values?.launchpadTokenArg;
+  const liquidityTokenSelected: IToken | undefined = values?.liquidityTokenArg;
 
   useEffect(() => {
     if (detail) {
@@ -330,6 +331,17 @@ const IdoTokenManageForm: React.FC<IdoTokenManageFormProps> = ({
                   validate={composeValidators(requiredAmount, validateMaxRatio)}
                 />
               </Flex>
+              <Box mb={6} />
+              <Field
+                name="goalBalance"
+                decimals={18}
+                children={FieldAmount}
+                label={`Goal balance ${
+                  liquidityTokenSelected ? `(${liquidityTokenSelected.symbol})` : ''
+                }`}
+                disabled={isRemove}
+                validate={composeValidators(requiredAmount, validateMaxRatio)}
+              />
 
               <Box mb={6} />
               <Flex gap={6} flexDirection={['column', 'column', 'row']}>
