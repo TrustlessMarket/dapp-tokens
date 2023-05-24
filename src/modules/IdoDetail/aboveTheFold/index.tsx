@@ -5,17 +5,17 @@ import BuyForm from "@/modules/IdoDetail/form";
 import Card from "@/components/Swap/card";
 import BodyContainer from "@/components/Swap/bodyContainer";
 
-const IdoDetailContainer = () => {
+const IdoDetailContainer = ({poolDetail}) => {
   return (
     <BodyContainer className={styles.wrapper}>
       <SimpleGrid className={"max-content"} columns={[1, 2]} spacingX={10}>
         <GridItem>
           <Card bgColor={"#1E1E22"} paddingX={8} paddingY={6}>
-            <BuyForm />
+            <BuyForm poolDetail={poolDetail}/>
           </Card>
         </GridItem>
         <GridItem>
-          <Statistic />
+          <Statistic poolDetail={poolDetail}/>
         </GridItem>
       </SimpleGrid>
     </BodyContainer>

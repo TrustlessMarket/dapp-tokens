@@ -1,27 +1,31 @@
 import styles from './styles.module.scss';
 import {Box, GridItem, SimpleGrid, Stat, StatLabel, StatNumber, Text} from "@chakra-ui/react";
 import Card from "@/components/Swap/card";
-import React, {useEffect} from "react";
+import React, {useEffect, useState} from "react";
 import {formatCurrency} from "@/utils";
 import useCountDownTimer from "@/hooks/useCountdown";
 import moment from "moment/moment";
 import {useDispatch} from "react-redux";
-import {requestReload, updateShowBanner} from "@/state/pnftExchange";
+import {requestReload} from "@/state/pnftExchange";
 import AllowlistTable from "@/modules/IdoDetail/statistic/AllowlistTable";
 
-const END_TIME = 1685432779;
-
-const Statistic = () => {
+const Statistic = ({poolDetail}) => {
+  const [endTime, setEndTime] = useState(0);
   const [days, hours, minutes, seconds, expired] = useCountDownTimer(
-    moment.unix(END_TIME).format("YYYY/MM/DD HH:mm:ss")
+    moment.unix(endTime).format("YYYY/MM/DD HH:mm:ss")
   );
+
+  useEffect(() => {
+    if(poolDetail?.id) {
+      setEndTime(moment(poolDetail?.endTime).unix());
+    }
+  }, [poolDetail?.id])
 
   const dispatch = useDispatch();
 
   useEffect(() => {
-    if (expired && END_TIME) {
+    if (expired && endTime) {
       dispatch(requestReload());
-      dispatch(updateShowBanner(false));
     }
   }, [expired]);
 
