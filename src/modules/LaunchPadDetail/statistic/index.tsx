@@ -41,8 +41,8 @@ const Statistic = ({poolDetail}: any) => {
   return (
     <Box className={styles.wrapper}>
       <Card bgColor={'#1E1E22'}>
-        {isAuthenticated && (
-          <Text color={'#1b77fd'} mb={'8px !important'}>
+        {!isAuthenticated && (
+          <Text color={'#1b77fd'} mb={'8px !important'} textAlign={"center"}>
             Connect wallet to see your boost rate
           </Text>
         )}

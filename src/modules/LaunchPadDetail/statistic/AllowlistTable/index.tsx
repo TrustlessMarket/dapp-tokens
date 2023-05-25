@@ -49,10 +49,11 @@ const AllowlistTable = ({poolDetail, isFull = true, handleViewMore}: any) => {
 
   const fetchDepositInfo = async () => {
     try {
-      const [res] = await Promise.all([
+      const [deposits, userDeposit] = await Promise.all([
         getLaunchpadDepositInfo({pool_address: poolDetail?.launchpad}),
+        getLaunchpadUserDepositInfo({pool_address: poolDetail?.launchpad, address: account}),
       ]);
-      const list = res?.map((item: any, index: number) => ({
+      const list = deposits?.map((item: any, index: number) => ({
         ...item,
         index: index + 1,
         isCurrentUser: compareString(item?.userAddress, account),

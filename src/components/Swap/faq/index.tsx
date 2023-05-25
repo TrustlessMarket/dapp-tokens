@@ -1,9 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import {useState} from 'react'
+import React, {useState} from 'react'
 import {Accordion, AccordionButton, AccordionItem, AccordionPanel, Box, Button, Flex, Text} from '@chakra-ui/react'
 import styles from './styles.module.scss'
 import IconPlusToMinus from "@/components/Swap/iconPlusToMinus";
 import cx from 'classnames';
+import Empty from "@/components/Empty";
 
 const Item = ({ data } : {data: any}) => {
   const [open, setOpen] = useState(false)
@@ -36,15 +37,19 @@ const Section = ({title, data}: {title?: any, data: any}) => {
         <Flex gap={2} direction='column' mt={4}>
           {renderData.map((e: any , i: number ) => <Item key={i} data={e} />)}
         </Flex>
-        <Button
-          color={"#FFFFFF"} mt={4} fontSize='md' fontWeight='medium'
-          variant={"outline"} borderRadius={"8px"} h={"56px"}
-          border={"1px solid #1b77fd"}
-          _hover={{
-            backgroundColor: '#1E1E22',
-          }}
-          onClick={() => setViewAll(!viewAll)}>{viewAll ? 'View Less' : 'View All'}
-        </Button>
+        {
+          data?.length > 5 && (
+            <Button
+              color={"#FFFFFF"} mt={4} fontSize='md' fontWeight='medium'
+              variant={"outline"} borderRadius={"8px"} h={"56px"}
+              border={"1px solid #1b77fd"}
+              _hover={{
+                backgroundColor: '#1E1E22',
+              }}
+              onClick={() => setViewAll(!viewAll)}>{viewAll ? 'View Less' : 'View All'}
+            </Button>
+          )
+        }
       </Flex>
   )
 }
@@ -54,7 +59,13 @@ const FAQs = ({data} : {data: any, desc?: any}) => {
     <Flex direction='column' alignItems='center'>
       {/*<Heading><Flex alignItems={"center"} gap={4}>FAQs</Flex></Heading>*/}
       {/*<Text my={desc ? 8 : 5} maxW='800px' textAlign={['left', 'center']} color='#FFFFFF'>{desc}</Text>*/}
-      <Section data={data}/>
+      {
+        data?.length > 0 ? (
+          <Section data={data}/>
+        ) : (
+          <Empty isTable={false} />
+        )
+      }
     </Flex>
   )
 }
