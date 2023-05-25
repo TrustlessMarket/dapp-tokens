@@ -27,6 +27,7 @@ import { useDispatch } from 'react-redux';
 import web3 from 'web3';
 import LaunchpadStatus, { useLaunchPadStatus } from './Launchpad.Status';
 import { StyledIdoContainer } from './Launchpad.styled';
+import InfoTooltip from '@/components/Swap/infoTooltip';
 
 const LaunchpadContainer = () => {
   const [data, setData] = useState<any[]>();
@@ -127,7 +128,14 @@ const LaunchpadContainer = () => {
       },
       {
         id: 'ratio',
-        label: 'Liquidity reserve',
+        label: (
+          <InfoTooltip
+            showIcon={true}
+            label="Liquidity Reserve refers to a percentage of the funds that are used to add initial liquidity for trading purposes after the crowdfunding ends"
+          >
+            Liquidity reserve
+          </InfoTooltip>
+        ),
         labelConfig: {
           fontSize: '12px',
           fontWeight: '500',
@@ -299,10 +307,9 @@ const LaunchpadContainer = () => {
         Launchpad
       </Text>
       <Text className="desc">
-        Welcome to our decentralized crowdfunding platform! We're excited to
-        introduce the Kickstarter model deployed on Bitcoin. With our platform, you
-        can support innovative projects and ideas while leveraging the power of
-        blockchain. Join us in revolutionizing the future of crowdfunding!
+        Welcome to DeFi crowdfunding on Bitcoin. A place where you can support
+        innovative projects and ideas all while leveraging the power of blockchain.
+        Join us as we revolutionize the future of crowdfunding!
       </Text>
 
       <Flex mb={'24px'} mt={'24px'} justifyContent={'center'}>

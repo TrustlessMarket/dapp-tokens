@@ -13,7 +13,6 @@ import 'react-datepicker/dist/react-datepicker.css';
 
 import cx from 'classnames';
 
-import moment from 'moment';
 import { BsCalendar2 } from 'react-icons/bs';
 import styles from './styles.module.scss';
 
@@ -25,6 +24,10 @@ interface FieldDateProps {
   placeholder?: string;
   errorMessage?: any;
   appendComp?: any;
+  minDate?: any;
+  maxDate?: any;
+  minTime?: any;
+  maxTime?: any;
   errorPlacement?: string;
   disabled?: boolean;
   inputType?: 'text' | 'textarea';
@@ -39,6 +42,10 @@ const FieldDate = (props: FieldDateProps) => {
     meta,
     fieldChanged,
     disabled,
+    minDate = undefined,
+    maxDate = undefined,
+    minTime = undefined,
+    maxTime = undefined,
     // disabledInput, errorPlacement, zIndex, anchorAppend,
     // ...restProps
   } = props;
@@ -76,7 +83,10 @@ const FieldDate = (props: FieldDateProps) => {
           selected={value}
           showTimeSelect
           // dateFormat="Pp"
-          minDate={new Date(moment().format())}
+          minDate={minDate}
+          maxDate={maxDate}
+          minTime={minTime}
+          maxTime={maxTime}
           // dateFormatCalendar="yyyy/MM/dd"
           timeFormat="HH:mm"
           dateFormat="MMMM d, yyyy h:mm aa"
