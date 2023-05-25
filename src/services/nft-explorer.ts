@@ -11,15 +11,11 @@ const API_PATH = API_URL + '/nft-explorer';
 export const getCollections = (
   page: number,
   limit: number,
-  isShowAll: boolean,
   owner = '',
 ): Promise<ICollection[]> =>
-  swrFetcher(
-    `${API_PATH}/collections?limit=${limit}&page=${page}&allow_empty=${isShowAll}&owner=${owner}`,
-    {
-      method: 'GET',
-    },
-  );
+  swrFetcher(`${API_PATH}/collections?limit=${limit}&page=${page}&owner=${owner}`, {
+    method: 'GET',
+  });
 
 export const getCollectionByWallet = (
   page: number,

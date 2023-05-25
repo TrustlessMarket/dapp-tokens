@@ -1,11 +1,11 @@
-import { Heading, Text } from '@chakra-ui/react';
+import { Box, Heading, Text } from '@chakra-ui/react';
 import { UploadFileContainer } from '../Tokens/Tokens.styled';
 import px2rem from '@/utils/px2rem';
 import CollectionList from './Collection/List';
 
 const NFTsPage = () => {
   return (
-    <div>
+    <Box>
       <Heading as="h3" color="white" textAlign={'center'} mt={px2rem(32)}>
         Smart BRC-20
       </Heading>
@@ -28,7 +28,7 @@ const NFTsPage = () => {
         </div>
       </UploadFileContainer>
       <CollectionList />
-    </div>
+    </Box>
   );
 };
 
