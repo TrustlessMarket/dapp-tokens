@@ -26,8 +26,11 @@ import toast from "react-hot-toast";
 import {getLaunchpadDepositInfo, getLaunchpadUserDepositInfo} from "@/services/launchpad";
 import {useWeb3React} from "@web3-react/core";
 import Empty from "@/components/Empty";
+import {useAppSelector} from "@/state/hooks";
+import {selectPnftExchange} from "@/state/pnftExchange";
 
 const AllowlistTable = ({poolDetail, isFull = true}: any) => {
+  const needReload = useAppSelector(selectPnftExchange).needReload;
   const [depositList, setDepositList] = useState<any[]>(
     []
   );
@@ -42,7 +45,7 @@ const AllowlistTable = ({poolDetail, isFull = true}: any) => {
     if(poolDetail?.id) {
       fetchDepositInfo();
     }
-  }, [account, poolDetail?.id]);
+  }, [account, poolDetail?.id, needReload]);
 
   const fetchDepositInfo = async () => {
     try {
