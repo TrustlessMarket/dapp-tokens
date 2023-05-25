@@ -1177,7 +1177,14 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         <HorizontalItem
           label={
             <Text fontSize={'sm'} fontWeight={'medium'} color={'rgba(255, 255, 255, 0.7)'}>
-              FEE: {FEE * (swapRoutes?.length || 1)}%
+              Fee: {FEE * (swapRoutes?.length || 1)}%
+            </Text>
+          }
+        />
+        <HorizontalItem
+          label={
+            <Text fontSize={'sm'} fontWeight={'medium'} color={'rgba(255, 255, 255, 0.7)'}>
+              Reward: +0.02TC & +0.1TM
             </Text>
           }
         />
