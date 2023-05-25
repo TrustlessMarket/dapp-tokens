@@ -371,9 +371,6 @@ export const MakeFormSwap = forwardRef((props, ref) => {
 
   return (
     <form onSubmit={onSubmit} style={{ height: '100%' }}>
-      {isAuthenticated && (
-        <Text color={'#1b77fd'} mb={"8px !important"}>Connect wallet to see your boost rate</Text>
-      )}
       <Flex direction={"column"}>
         <Box className={styles.progressBar}>
           <Progress
