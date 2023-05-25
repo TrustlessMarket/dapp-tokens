@@ -8,17 +8,15 @@ const IdoFaqs = ({poolDetail}: any) => {
   const data = useMemo(() => {
     if (poolDetail?.qandA) {
       const res = JSON.parse(poolDetail?.qandA);
-      return res?.map(r => ({
+      return res?.map((r: any) => ({
         q: r?.value,
         a: r?.label,
       }))
-      console.log('res', res);
     }
 
     return [];
   }, [poolDetail?.qandA]);
 
-  console.log('data', data);
   return (
     <Box bgColor="transparent" className={styles.container}>
       <Faq data={data}/>

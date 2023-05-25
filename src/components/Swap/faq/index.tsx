@@ -1,16 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {useState} from 'react'
-import {
-  Accordion,
-  AccordionButton,
-  AccordionItem,
-  AccordionPanel,
-  Box,
-  Button,
-  Flex,
-  Heading,
-  Text
-} from '@chakra-ui/react'
+import {Accordion, AccordionButton, AccordionItem, AccordionPanel, Box, Button, Flex, Text} from '@chakra-ui/react'
 import styles from './styles.module.scss'
 import IconPlusToMinus from "@/components/Swap/iconPlusToMinus";
 import cx from 'classnames';
@@ -59,7 +49,7 @@ const Section = ({title, data}: {title?: any, data: any}) => {
   )
 }
 
-const FAQs = ({data, desc} : {data: any, desc?: any}) => {
+const FAQs = ({data} : {data: any, desc?: any}) => {
   return (
     <Flex direction='column' alignItems='center'>
       {/*<Heading><Flex alignItems={"center"} gap={4}>FAQs</Flex></Heading>*/}
