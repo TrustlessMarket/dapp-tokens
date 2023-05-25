@@ -162,7 +162,7 @@ const AllowlistTable = ({poolDetail, isFull = true}: any) => {
                         fontWeight={700}
                         lineHeight={1.5}
                       >
-                        {item.boost}%
+                        {formatCurrency(item.boost, 2)}%
                       </Text>
                     </Box>
                   )}
@@ -195,7 +195,7 @@ const AllowlistTable = ({poolDetail, isFull = true}: any) => {
                       whiteSpace={'nowrap'}
                       color={'#4185EC'}
                     >
-                      {item.boost}%
+                      {formatCurrency(item.boost, 2)}%
                     </Text>{' '}
                     boost.
                   </Text>

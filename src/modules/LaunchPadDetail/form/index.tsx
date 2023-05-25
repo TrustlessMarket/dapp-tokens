@@ -182,7 +182,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         pool_address: router?.query?.pool_address,
       });
       setBoostInfo(response);
-      change('boostInfo', boostInfo);
+      change('boostInfo', response);
     } catch (err) {
       throw err;
     }
@@ -753,7 +753,7 @@ const BuyForm = ({ poolDetail }: any) => {
       };
 
       if(boostInfo) {
-        data.boostRatio = boostInfo.boost.toString();
+        data.boostRatio = boostInfo.boostSign;
         data.signature = boostInfo.adminSignature;
       }
 
