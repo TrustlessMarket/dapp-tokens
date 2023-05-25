@@ -49,6 +49,8 @@ import { IoRemoveCircle } from 'react-icons/io5';
 import { useDispatch } from 'react-redux';
 import web3 from 'web3';
 import { MAX_FILE_SIZE } from '../UpdateTokenInfo/form';
+import InfoTooltip from '@/components/Swap/infoTooltip';
+import moment from 'moment';
 
 interface IdoTokenManageFormProps {
   handleSubmit?: (_: any) => void;
@@ -85,6 +87,7 @@ const IdoTokenManageForm: React.FC<IdoTokenManageFormProps> = ({
   const [balanceToken, setBalanceToken] = useState<string>('0');
   const [uploading, setUploading] = useState(false);
   const [faqs, setFaqs] = useState<any[]>(defaultFaqs);
+  const [needLiquidBalance, setNeedLiquidBalance] = useState<string>('0');
 
   const { values } = useFormState();
   const { change, initialize } = useForm();
@@ -125,11 +128,13 @@ const IdoTokenManageForm: React.FC<IdoTokenManageFormProps> = ({
     getTokens();
   }, [isActive, account]);
 
+  console.log('tokenSelected', tokenSelected);
+
   useEffect(() => {
     if (tokenSelected) {
       checkTokenApprove(tokenSelected);
     }
-  }, [tokenSelected]);
+  }, [JSON.stringify(tokenSelected), detail]);
 
   useEffect(() => {
     if (tokenSelected && Number(values?.launchpadBalance) > 0) {
@@ -139,11 +144,28 @@ const IdoTokenManageForm: React.FC<IdoTokenManageFormProps> = ({
     }
   }, [values?.launchpadBalance, tokenSelected]);
 
+  useEffect(() => {
+    const multiX = new BigNumber(launchpadConfigs.liquidityPriceMultiple)
+      .dividedBy(1000000)
+      .toString();
+    const launchpadBalance = values?.launchpadBalance || 0;
+    const liquidityRatio = values?.liquidityRatioArg || 0;
+
+    const _needLiquidBalance = new BigNumber(liquidityRatio)
+      .dividedBy(100)
+      .multipliedBy(launchpadBalance)
+      .dividedBy(multiX)
+      .toString();
+    setNeedLiquidBalance(_needLiquidBalance);
+  }, [values?.launchpadBalance, values?.liquidityRatioArg]);
+
   const checkBalanceIsApprove = (required: any = 0, amount: any = 0) => {
     return required > 0 && new BigNumber(required).minus(amount).toNumber() >= 0;
   };
 
   const checkTokenApprove = async (token: IToken | any) => {
+    console.log('token.address', token.address);
+
     try {
       const [_isApprove, _tokenBalance] = await Promise.all([
         isApproved({
@@ -200,13 +222,23 @@ const IdoTokenManageForm: React.FC<IdoTokenManageFormProps> = ({
 
   const validateMaxRatio = useCallback(
     (_amount: any) => {
-      if (!detail && Number(_amount) > Number(90)) {
-        return `Max ratio is ${90}%`;
+      if (!detail) {
+        if (Number(_amount) > Number(100)) {
+          return `Max liquidity reserve is ${100}%`;
+        } else if (
+          new BigNumber(needLiquidBalance)
+            .plus(values.launchpadBalance)
+            .gt(balanceToken)
+        ) {
+          return `Liquidity balance is ${formatCurrency(
+            new BigNumber(balanceToken).minus(values.launchpadBalance).toString(),
+          )} ${tokenSelected?.symbol || ''}`;
+        }
       }
 
       return undefined;
     },
-    [values.launchpadBalance, tokenSelected, detail],
+    [values.launchpadBalance, tokenSelected, detail, needLiquidBalance],
   );
 
   const validateYoutubeLink = useCallback((_link: any) => {
@@ -415,7 +447,32 @@ const IdoTokenManageForm: React.FC<IdoTokenManageFormProps> = ({
                   name="liquidityRatioArg"
                   decimals={18}
                   children={FieldAmount}
-                  label={`Ratio (%)`}
+                  rightLabel={
+                    !isEmpty(tokenSelected) &&
+                    !detail && (
+                      <Flex
+                        alignItems={'center'}
+                        gap={2}
+                        fontSize={px2rem(14)}
+                        color={'#FFFFFF'}
+                        mb={2}
+                      >
+                        <Flex gap={1} alignItems={'center'}>
+                          Liquidity balance: {formatCurrency(needLiquidBalance)}{' '}
+                          {tokenSelected ? `${tokenSelected.symbol}` : ''}
+                        </Flex>
+                      </Flex>
+                    )
+                  }
+                  label={
+                    <InfoTooltip
+                      showIcon={true}
+                      label="Liquidity Reserve refers to a percentage of the funds that are used to add initial liquidity for trading purposes after the crowdfunding ends"
+                      iconColor={colors.white500}
+                    >
+                      Liquidity reserve
+                    </InfoTooltip>
+                  }
                   disabled={detail}
                   validate={composeValidators(requiredAmount, validateMaxRatio)}
                 />
@@ -441,6 +498,12 @@ const IdoTokenManageForm: React.FC<IdoTokenManageFormProps> = ({
                     children={FieldDate}
                     label="Start Date"
                     disabled={detail}
+                    minDate={new Date(moment().format())}
+                    maxDate={
+                      values?.endTimeArg
+                        ? new Date(moment(values?.endTimeArg).format())
+                        : undefined
+                    }
                   />
                 </Box>
                 <Box flex={1}>
@@ -450,6 +513,11 @@ const IdoTokenManageForm: React.FC<IdoTokenManageFormProps> = ({
                     children={FieldDate}
                     label="End Date"
                     disabled={detail}
+                    minDate={
+                      values?.startTimeArg
+                        ? new Date(moment(values?.startTimeArg).format())
+                        : new Date(moment().format())
+                    }
                   />
                 </Box>
               </Flex>
