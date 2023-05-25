@@ -28,7 +28,7 @@ const IdoDetailContainer = () => {
   }
 
   useEffect(() => {
-    if(router?.query?.pool_address) {
+    if (router?.query?.pool_address) {
       getPoolInfo();
     }
   }, [router?.query?.pool_address, needReload]);
@@ -36,7 +36,7 @@ const IdoDetailContainer = () => {
   return (
     <Box className={styles.wrapper}>
       <AboveTheFold poolDetail={poolDetail}/>
-      <Usp />
+      <Usp/>
       <BodyContainer>
         <Tabs className={cx(styles.tabContainer, "max-content")}>
           <TabList mb={6} mt={6}>

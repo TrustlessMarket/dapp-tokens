@@ -14,7 +14,7 @@ const LaunchpadStarting = ({poolDetail}: any) => {
 
   return (
     <BodyContainer className={styles.wrapper}>
-      <SimpleGrid className={"max-content"} columns={[1, 2]} spacingX={10}>
+      <SimpleGrid className={"max-content"} columns={[1, 2]} spacingX={8}>
         <GridItem>
           <Card bgColor={"#1E1E22"} paddingX={8} paddingY={6}>
             <BuyForm poolDetail={poolDetail}/>
