@@ -1,4 +1,5 @@
 import { ICollection } from '@/interfaces/api/collection';
+import { getCollections } from '@/services/nft-explorer';
 import { debounce } from 'lodash';
 import { useEffect, useState } from 'react';
 
@@ -11,7 +12,7 @@ const CollectionList = () => {
   const fetchCollections = async (page = 1, isFetchMore = false) => {
     try {
       setIsFetching(true);
-      const data = await getCollections(page, LIMIT_PAGE, isShowAll);
+      const data = await getCollections(page, LIMIT_PAGE);
       if (isFetchMore) {
         setCollections((prev) => [...prev, ...data]);
       } else {
@@ -29,7 +30,7 @@ const CollectionList = () => {
     fetchCollections(page, true);
   };
 
-  const debounceLoadMore = debounce(onLoadMoreCollections, 300);
+  //   const debounceLoadMore = debounce(onLoadMoreCollections, 300);
 
   useEffect(() => {
     fetchCollections();
