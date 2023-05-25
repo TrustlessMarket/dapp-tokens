@@ -29,7 +29,7 @@ import Empty from "@/components/Empty";
 import {useAppSelector} from "@/state/hooks";
 import {selectPnftExchange} from "@/state/pnftExchange";
 
-const AllowlistTable = ({poolDetail, isFull = true}: any) => {
+const AllowlistTable = ({poolDetail, isFull = true, handleViewMore}: any) => {
   const needReload = useAppSelector(selectPnftExchange).needReload;
   const [depositList, setDepositList] = useState<any[]>(
     []
@@ -279,6 +279,11 @@ const AllowlistTable = ({poolDetail, isFull = true}: any) => {
                 )
               }
             </>
+          )
+        }
+        {
+          depositList.length > 0 && !isFull && (
+            <Text onClick={handleViewMore} textAlign={"center"} textDecoration={"underline"} cursor={"pointer"}>View more</Text>
           )
         }
       </div>

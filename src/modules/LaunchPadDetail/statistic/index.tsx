@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import styles from './styles.module.scss';
-import {Box, Button, Flex, Text} from "@chakra-ui/react";
+import {Box, Flex, Text} from "@chakra-ui/react";
 import Card from "@/components/Swap/card";
 import React from "react";
 import {useDispatch, useSelector} from "react-redux";
@@ -43,10 +43,7 @@ const Statistic = ({poolDetail} : any) => {
         {!isAuthenticated && (
           <Text color={'#1b77fd'} mb={"8px !important"}>Connect wallet to see your boost rate</Text>
         )}
-        <AllowlistTable poolDetail={poolDetail} isFull={false}/>
-        <Button
-          onClick={handleShowDepositList}
-        >View more</Button>
+        <AllowlistTable poolDetail={poolDetail} isFull={false} handleViewMore={handleShowDepositList}/>
       </Card>
     </Box>
   )
