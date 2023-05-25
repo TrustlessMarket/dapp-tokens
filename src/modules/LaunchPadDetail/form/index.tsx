@@ -684,7 +684,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           </FiledButton>
         )}
       </WrapperConnected>
-      <Flex justifyContent={'flex-end'}>
+      <Flex justifyContent={'flex-end'} mt={4}>
         <SocialToken socials={poolDetail?.launchpadToken?.social} />
       </Flex>
       <Text mt={4} fontSize={'sm'} color={'#FFFFFF'}>

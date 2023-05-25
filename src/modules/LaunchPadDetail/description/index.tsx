@@ -3,6 +3,7 @@ import {Box, GridItem, SimpleGrid, Text} from "@chakra-ui/react";
 import styles from './styles.module.scss';
 import Intro from "@/modules/LaunchPadDetail/aboveTheFold/intro";
 import React from "react";
+import Empty from "@/components/Empty";
 
 const IdoDescription = ({poolDetail} : any) => {
   return (
@@ -10,7 +11,11 @@ const IdoDescription = ({poolDetail} : any) => {
       <SimpleGrid className={"max-content"} columns={[1, 2]} spacingX={10}>
         <GridItem>
           <Text whiteSpace={"pre-line"}>
-            {poolDetail?.description}
+            {poolDetail?.description ? (
+              <>{poolDetail?.description}</>
+            ) : (
+              <Empty isTable={false} />
+            )}
           </Text>
         </GridItem>
         <GridItem>
