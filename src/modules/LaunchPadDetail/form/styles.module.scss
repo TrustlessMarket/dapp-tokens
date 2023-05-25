@@ -1,6 +1,12 @@
 .container {
   height: 100%;
   width: 100%;
+
+  .chakra-stat {
+    > dl {
+      margin-bottom: 0;
+    }
+  }
 }
 
 .inputAmountWrap {
@@ -59,13 +65,6 @@
   //  border-top-left-radius: 0;
   //  border-top-right-radius: 0;
   //}
-}
-
-.leverageWrap {
-  margin-top: 8px;
-  :global .labelWrapper {
-    margin-bottom: 0;
-  }
 }
 
 .inputAmount {

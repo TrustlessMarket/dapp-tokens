@@ -2,9 +2,9 @@
 import {Box, Grid, GridItem} from "@chakra-ui/react";
 import BuyForm from "@/modules/LaunchPadDetail/form";
 import Card from "@/components/Swap/card";
-import AllowlistTable from "@/modules/LaunchPadDetail/statistic/AllowlistTable";
 import React from "react";
 import Intro from "@/modules/LaunchPadDetail/aboveTheFold/intro";
+import Statistic from "@/modules/LaunchPadDetail/statistic";
 
 const LaunchpadStarting = ({poolDetail}: any) => {
   return (
@@ -18,7 +18,7 @@ const LaunchpadStarting = ({poolDetail}: any) => {
             <BuyForm poolDetail={poolDetail}/>
           </Card>
           <Card bgColor={"#1E1E22"} paddingX={8} paddingY={6} mt={8}>
-            <AllowlistTable poolDetail={poolDetail}/>
+            <Statistic poolDetail={poolDetail}/>
           </Card>
         </GridItem>
       </Grid>

@@ -2,7 +2,10 @@
   color: #FFFFFF;
   padding-top: 48px;
   padding-bottom: 48px;
+  min-height: unset !important;
+}
 
+.introWrapper {
   :global .home-video {
     position: relative;
     display: flex;
@@ -40,6 +43,13 @@
           display: block;
         }
       }
+    }
+  }
+
+  :global .youtube-video {
+    iframe {
+      min-height: 400px;
+      border-radius: 16px;
     }
   }
 
