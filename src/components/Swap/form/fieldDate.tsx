@@ -76,7 +76,7 @@ const FieldDate = (props: FieldDateProps) => {
           selected={value}
           showTimeSelect
           // dateFormat="Pp"
-          minDate={new Date(moment().add('days', 1).format())}
+          minDate={new Date(moment().format())}
           // dateFormatCalendar="yyyy/MM/dd"
           timeFormat="HH:mm"
           dateFormat="MMMM d, yyyy h:mm aa"

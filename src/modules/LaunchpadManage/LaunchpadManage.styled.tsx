@@ -46,12 +46,15 @@ export const StyledLaunchpadManage = styled(BodyContainer)`
     position: unset;
 
     input {
-      color: ${colors.white};
+      color: ${colors.white}!important;
       border-radius: 0;
       border: none;
       font-weight: 500;
       font-size: 16px;
       height: 100%;
+      &:disabled {
+        color: ${colors.white500}!important;
+      }
       &::placeholder {
         color: #898989 !important;
         font-weight: 500;

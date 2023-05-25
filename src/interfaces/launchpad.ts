@@ -24,5 +24,7 @@ export interface ILaunchpad {
   totalValueUsd: string;
   txHash: string;
   description: string;
-  qand_a: string;
+  qandA: string;
+  video: string;
+  image: string;
 }
