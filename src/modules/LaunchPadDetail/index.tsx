@@ -9,7 +9,6 @@ import {useEffect, useState} from "react";
 import {useRouter} from "next/router";
 import BodyContainer from "@/components/Swap/bodyContainer";
 import cx from 'classnames';
-import Usp from "@/modules/LaunchPadDetail/ups";
 import {useAppSelector} from "@/state/hooks";
 import {selectPnftExchange} from "@/state/pnftExchange";
 

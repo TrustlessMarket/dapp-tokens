@@ -8,7 +8,6 @@ import useCountDownTimer from "@/hooks/useCountdown";
 import moment from "moment/moment";
 import {useDispatch} from "react-redux";
 import {requestReload} from "@/state/pnftExchange";
-import AllowlistTable from "@/modules/LaunchPadDetail/statistic/AllowlistTable";
 
 const Statistic = ({poolDetail} : any) => {
   const [endTime, setEndTime] = useState(0);
