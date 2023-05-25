@@ -51,7 +51,6 @@ const AllowlistTable = ({poolDetail, isFull = true, handleViewMore}: any) => {
     try {
       const [res] = await Promise.all([
         getLaunchpadDepositInfo({pool_address: poolDetail?.launchpad}),
-        getLaunchpadUserDepositInfo({pool_address: poolDetail?.launchpad, address: account})
       ]);
       const list = res?.map((item: any, index: number) => ({
         ...item,
@@ -65,14 +64,13 @@ const AllowlistTable = ({poolDetail, isFull = true, handleViewMore}: any) => {
         if(you) {
           setDepositList([you]);
         } else if(list?.length > 0) {
-          setDepositList(res[0]);
+          setDepositList([list[0]]);
         }
       }
     } catch (err: unknown) {
       console.log(err);
     }
   };
-
 
   const getRowHeight = () => {
     if (mobileScreen) {
