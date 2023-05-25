@@ -38,20 +38,30 @@ export const getBgColorStatus = (status: string) => {
 
 const VerifiedBadge: React.FC<any> = ({token} : {token: IToken}): React.ReactElement => {
   return token?.status ? (
-    <Flex
-      bgColor={getBgColorStatus(token.status)}
-      color={getTextColorStatus(token.status)}
-      gap={1}
-      alignItems={"center"}
-      paddingX={2}
-      paddingY={0}
-      borderRadius={"8px"}
-      fontSize={"xs"}
-      fontWeight={"medium"}
-    >
-      <Text textTransform={"capitalize"}>{token?.status}</Text>
-      <Icon as={token?.status === VERIFIED_STATUS.PREMIUM ? HiBadgeCheck : ImWarning} fontSize={"12px"}/>
-    </Flex>
+    <>
+      {
+        token?.status === VERIFIED_STATUS.PREMIUM ? (
+          <Flex alignItems={"center"}>
+            <Icon as={HiBadgeCheck} fontSize={"14px"} color={getTextColorStatus(token.status)}/>
+          </Flex>
+        ) : (
+          <Flex
+            bgColor={getBgColorStatus(token.status)}
+            color={getTextColorStatus(token.status)}
+            gap={1}
+            alignItems={"center"}
+            paddingX={2}
+            paddingY={0}
+            borderRadius={"8px"}
+            fontSize={"xs"}
+            fontWeight={"medium"}
+          >
+            <Text textTransform={"capitalize"}>{token?.status}</Text>
+            <Icon as={ImWarning} fontSize={"12px"}/>
+          </Flex>
+        )
+      }
+    </>
   ) : <div/>;
 };
 

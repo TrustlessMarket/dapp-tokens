@@ -1,18 +1,22 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { colors } from '@/theme/colors';
 import px2rem from '@/utils/px2rem';
 import { Box, Grid, GridItem } from '@chakra-ui/react';
 import styled from 'styled-components';
 
 export const StyledTokenDetailContainer = styled(Grid)`
+  overflow: hidden;
   background-color: inherit;
   border: 1px solid ${colors.darkBorderColor};
   grid-gap: 1px;
   grid-template-columns: minmax(350px, 350px) 1fr;
-  grid-template-rows: minmax(64px, 130px) 1fr minmax(100px, 300px);
+  grid-template-rows: ${(props: any) =>
+    `minmax(64px, 130px) minmax(100px, calc((100vh - 130px - ${props?.topSpacing}px) / 2)) minmax(100px,calc((100vh - 130px - ${props?.topSpacing}px) / 2))`};
   grid-template-areas:
     'topinfo topinfo'
     'left chart'
     'left history';
+  min-height: ${(props: any) => `calc(100vh - ${props?.topSpacing}px)`};
   .avatar {
     width: 40px;
     height: 40px;
@@ -28,6 +32,9 @@ export const StyledTokenDetailContainer = styled(Grid)`
       'chart'
       'history'
       'left';
+    min-height: ${(props: any) => `calc(100vh - ${props?.topSpacing}px)`};
+    height: unset;
+    overflow: auto;
   }
   &.loading-container,
   &.token-notfound-container {
@@ -278,6 +285,7 @@ export const StyledHistoryContentContainer = styled(GridItem)`
       thead {
         position: sticky;
         background-color: ${colors.dark};
+        top: 0;
         td {
           color: ${colors.white500};
         }

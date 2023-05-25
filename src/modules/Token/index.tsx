@@ -33,6 +33,7 @@ import TokenHistory from './Token.History';
 import TokenLeftInfo from './Token.LeftInfo';
 import TokenTopInfo from './Token.TopInfo';
 import { useWeb3React } from '@web3-react/core';
+import { useScreenLayout } from '@/hooks/useScreenLayout';
 
 const TokenChart = dynamic(() => import('./Token.Chart'), {
   ssr: false,
@@ -45,6 +46,8 @@ const TokenDetail = () => {
 
   const [data, setData] = useState<IToken>();
   const [chartData, setChartData] = useState<any[]>([]);
+
+  const { headerHeight } = useScreenLayout();
 
   const { account, isActive } = useWeb3React();
 
@@ -97,14 +100,12 @@ const TokenDetail = () => {
     }
   };
 
-  const topSpacing = 0;
+  const topSpacing = headerHeight;
 
   if (loading) {
     return (
       <StyledTokenDetailContainer
-        style={{
-          minHeight: `calc(100vh - ${topSpacing}px)`,
-        }}
+        topSpacing={topSpacing}
         className="loading-container"
       >
         <Spinner size={'lg'} color="#FFFFFF" style={{ margin: '0 auto' }} />
@@ -114,12 +115,7 @@ const TokenDetail = () => {
 
   if (!data || !address) {
     return (
-      <StyledTokenDetailContainer
-        style={{
-          minHeight: `calc(100vh - ${topSpacing}px)`,
-        }}
-        className="token-notfound-container"
-      >
+      <StyledTokenDetailContainer className="token-notfound-container">
         <div className="token-notfound">
           <img src={`${CDN_URL}/images/crying.svg`} alt="token-detail" />
           <Text>Opps.... Token not found</Text>
@@ -132,11 +128,7 @@ const TokenDetail = () => {
   }
 
   return (
-    <StyledTokenDetailContainer
-      style={{
-        minHeight: `calc(100vh - ${topSpacing}px)`,
-      }}
-    >
+    <StyledTokenDetailContainer topSpacing={topSpacing}>
       <StyledTokenTopInfo area={'topinfo'}>
         <TokenTopInfo data={data} />
       </StyledTokenTopInfo>

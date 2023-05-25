@@ -72,12 +72,13 @@ const TokenTopInfo = ({ data }: { data: IToken }) => {
         </Flex>
 
         <Box className="block-info">
-          <Text className="desc mobile">#{data.index}</Text>
           <Text className="title">
             {data.name} ({data.symbol})
           </Text>
-          <Text className="desc">{data?.network}</Text>
-          <Text className="desc desktop">#{data.index}</Text>
+          <Text className="desc">
+            #{data.index} | {data?.network}
+          </Text>
+          {/* <Text className="desc desktop">#{data.index}</Text> */}
         </Box>
         <Flex className="block-info diver-right price">
           <Text className="title">
