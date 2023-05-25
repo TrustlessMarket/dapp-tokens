@@ -33,10 +33,10 @@ const useDepositPool: ContractOperationHook<IDepositPoolParams, boolean> = () =>
           .connect(provider.getSigner())
           .deposit(
             web3.utils.toWei(amount),
-            new BigNumber(boostRatio || 0).multipliedBy(10000).toString(),
+            boostRatio,
             signature || Buffer.from([]),
             {
-              gasLimit: '1500000',
+              gasLimit: '250000',
               // gasPrice: getDefaultGasPrice(),
             },
           );
@@ -45,7 +45,7 @@ const useDepositPool: ContractOperationHook<IDepositPoolParams, boolean> = () =>
           type: 'logs',
           address: account,
           error: JSON.stringify(transaction),
-          message: "gasLimit: '150000'",
+          message: "gasLimit: '250000'",
         });
 
         // store.dispatch(

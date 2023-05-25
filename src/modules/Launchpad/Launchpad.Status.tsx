@@ -9,31 +9,38 @@ export enum LAUNCHPAD_STATUS {
   Completed,
   Failed,
   Closed,
+  Starting,
+  End,
 }
 
 export const LabelStatus = {
   upcoming: {
-    key: 0,
+    key: LAUNCHPAD_STATUS.Created,
     value: 'upcoming',
     label: 'Upcoming',
   },
   starting: {
-    key: 4,
+    key: LAUNCHPAD_STATUS.Starting,
     value: 'crowing-funding',
     label: 'Crowing',
   },
   end: {
-    key: 1,
+    key: LAUNCHPAD_STATUS.End,
     value: 'ending',
     label: 'Ending',
   },
+  closed: {
+    key: LAUNCHPAD_STATUS.Closed,
+    value: 'closed',
+    label: 'Closed',
+  },
   success: {
-    key: 3,
+    key: LAUNCHPAD_STATUS.Completed,
     value: 'success',
     label: 'Success',
   },
   failed: {
-    key: 2,
+    key: LAUNCHPAD_STATUS.Failed,
     value: 'failed',
     label: 'Failed',
   },
@@ -46,8 +53,12 @@ export const useLaunchPadStatus = ({ row }: { row: ILaunchpad }) => {
 
   let status = LabelStatus.upcoming;
 
-  if (state === LAUNCHPAD_STATUS.Failed) {
+  if (state === LAUNCHPAD_STATUS.Completed) {
+    status = LabelStatus.success;
+  } else if (state === LAUNCHPAD_STATUS.Failed) {
     status = LabelStatus.failed;
+  } else if (state === LAUNCHPAD_STATUS.Closed) {
+    status = LabelStatus.closed;
   } else if (
     moment(startTime).unix() <= moment().unix() &&
     moment().unix() < moment(endTime).unix()
@@ -56,6 +67,8 @@ export const useLaunchPadStatus = ({ row }: { row: ILaunchpad }) => {
   } else if (moment().unix() >= moment(endTime).unix()) {
     status = LabelStatus.end;
   }
+
+  console.log('status', status);
 
   return [status];
 

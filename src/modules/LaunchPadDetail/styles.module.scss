@@ -1,15 +1,22 @@
 .wrapper {
-  background: #0F0F0F;
+  background: #0f0f0f;
   padding-top: 48px;
   padding-bottom: 48px;
+  &.loadingContainer {
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+  }
 }
 
 .tabContainer {
   :global {
     .chakra-tabs__tab {
       color: #898989;
-      &[aria-selected="true"], &:focus-visible {
-        color: #FFFFFF;
+      &[aria-selected='true'],
+      &:focus-visible {
+        color: #ffffff;
         box-shadow: none;
         background: none;
       }

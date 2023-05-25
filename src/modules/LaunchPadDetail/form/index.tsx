@@ -1,36 +1,40 @@
 /* eslint-disable react/no-children-prop */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import {transactionType} from '@/components/Swap/alertInfoProcessing/types';
+import { transactionType } from '@/components/Swap/alertInfoProcessing/types';
 import FiledButton from '@/components/Swap/button/filedButton';
 import FieldAmount from '@/components/Swap/form/fieldAmount';
 import InputWrapper from '@/components/Swap/form/inputWrapper';
 import HorizontalItem from '@/components/Swap/horizontalItem';
 import TokenBalance from '@/components/Swap/tokenBalance';
 import WrapperConnected from '@/components/WrapperConnected';
-import {CDN_URL} from '@/configs';
-import {BRIDGE_SUPPORT_TOKEN, TRUSTLESS_BRIDGE, TRUSTLESS_FAUCET,} from '@/constants/common';
-import {toastError} from '@/constants/error';
-import {AssetsContext} from '@/contexts/assets-context';
+import { CDN_URL } from '@/configs';
+import {
+  BRIDGE_SUPPORT_TOKEN,
+  TRUSTLESS_BRIDGE,
+  TRUSTLESS_FAUCET,
+} from '@/constants/common';
+import { toastError } from '@/constants/error';
+import { AssetsContext } from '@/contexts/assets-context';
 import useApproveERC20Token from '@/hooks/contract-operations/token/useApproveERC20Token';
 import useBalanceERC20Token from '@/hooks/contract-operations/token/useBalanceERC20Token';
 import useIsApproveERC20Token from '@/hooks/contract-operations/token/useIsApproveERC20Token';
 import useContractOperation from '@/hooks/contract-operations/useContractOperation';
-import {IToken} from '@/interfaces/token';
-import {TransactionStatus} from '@/interfaces/walletTransaction';
-import {logErrorToServer} from '@/services/swap';
-import {useAppDispatch, useAppSelector} from '@/state/hooks';
+import { IToken } from '@/interfaces/token';
+import { TransactionStatus } from '@/interfaces/walletTransaction';
+import { logErrorToServer } from '@/services/swap';
+import { useAppDispatch, useAppSelector } from '@/state/hooks';
 import {
   requestReload,
   requestReloadRealtime,
   selectPnftExchange,
   updateCurrentTransaction,
 } from '@/state/pnftExchange';
-import {getIsAuthenticatedSelector} from '@/state/user/selector';
-import {formatCurrency,} from '@/utils';
-import {composeValidators, required} from '@/utils/formValidate';
+import { getIsAuthenticatedSelector } from '@/state/user/selector';
+import { formatCurrency } from '@/utils';
+import { composeValidators, required } from '@/utils/formValidate';
 import px2rem from '@/utils/px2rem';
-import {showError} from '@/utils/toast';
+import { showError } from '@/utils/toast';
 import {
   Box,
   Center,
@@ -45,31 +49,53 @@ import {
   StatNumber,
   Text,
 } from '@chakra-ui/react';
-import {useWeb3React} from '@web3-react/core';
+import { useWeb3React } from '@web3-react/core';
 import BigNumber from 'bignumber.js';
 import cx from 'classnames';
 import debounce from 'lodash/debounce';
 import Link from 'next/link';
-import {useRouter} from 'next/router';
-import React, {useCallback, useContext, useEffect, useImperativeHandle, useMemo, useRef, useState,} from 'react';
-import {Field, Form, useForm, useFormState} from 'react-final-form';
+import { useRouter } from 'next/router';
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useImperativeHandle,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
+import { Field, Form, useForm, useFormState } from 'react-final-form';
 import toast from 'react-hot-toast';
-import {useDispatch, useSelector} from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import Web3 from 'web3';
 import styles from './styles.module.scss';
-import {BiBell} from 'react-icons/bi';
-import {closeModal, openModal} from '@/state/modal';
-import {useWindowSize} from '@trustless-computer/dapp-core';
+import { BiBell } from 'react-icons/bi';
+import { closeModal, openModal } from '@/state/modal';
+import { useWindowSize } from '@trustless-computer/dapp-core';
 import ModalConfirmApprove from '@/components/ModalConfirmApprove';
-import {getUserBoost} from "@/services/launchpad";
+import { getUserBoost } from '@/services/launchpad';
 import useDepositLaunchpad from '@/hooks/contract-operations/launchpad/useDeposit';
-import SocialToken from "@/components/Social";
-import moment from "moment";
-import useCountDownTimer from "@/hooks/useCountdown";
+import SocialToken from '@/components/Social';
+import moment from 'moment';
+import useCountDownTimer from '@/hooks/useCountdown';
+import {
+  LAUNCHPAD_STATUS,
+  useLaunchPadStatus,
+} from '@/modules/Launchpad/Launchpad.Status';
+import useEndLaunchPad from '@/hooks/contract-operations/launchpad/useEnd';
+import { colors } from '@/theme/colors';
+import useClaimLaunchPad from '@/hooks/contract-operations/launchpad/useClaim';
 
 const FEE = 2;
 export const MakeFormSwap = forwardRef((props, ref) => {
-  const { onSubmit, submitting, poolDetail } = props;
+  const {
+    onSubmit,
+    submitting,
+    poolDetail,
+    isStarting,
+    isEndLaunchpad,
+    isClaimLaunchpad,
+  } = props;
   const [loading, setLoading] = useState(false);
   const [baseToken, setBaseToken] = useState<any>();
   const [quoteToken, setQuoteToken] = useState<any>();
@@ -89,14 +115,16 @@ export const MakeFormSwap = forwardRef((props, ref) => {
 
   const [endTime, setEndTime] = useState(0);
   const [days, hours, minutes, seconds, expired] = useCountDownTimer(
-    moment.unix(endTime).format("YYYY/MM/DD HH:mm:ss")
+    moment.unix(endTime).format('YYYY/MM/DD HH:mm:ss'),
   );
 
+  const [status] = useLaunchPadStatus({ row: poolDetail });
+
   useEffect(() => {
-    if(poolDetail?.id) {
+    if (poolDetail?.id) {
       setEndTime(moment(poolDetail?.endTime).unix());
     }
-  }, [poolDetail?.id])
+  }, [poolDetail?.id]);
 
   useEffect(() => {
     if (expired && endTime) {
@@ -140,8 +168,11 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   }, [isAuthenticated, amountBaseTokenApproved, values?.baseAmount]);
 
   const percent = useMemo(() => {
-    if(poolDetail?.id) {
-      return new BigNumber(poolDetail?.totalValue).div(poolDetail?.goalBalance).multipliedBy(100).toNumber();
+    if (poolDetail?.id) {
+      return new BigNumber(poolDetail?.totalValue)
+        .div(poolDetail?.goalBalance)
+        .multipliedBy(100)
+        .toNumber();
     }
 
     return 0;
@@ -182,7 +213,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         pool_address: router?.query?.pool_address,
       });
       setBoostInfo(response);
-      change('boostInfo', boostInfo);
+      change('boostInfo', response);
     } catch (err) {
       throw err;
     }
@@ -195,7 +226,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   }, [account, router?.query?.pool_address, needReload]);
 
   useEffect(() => {
-    if(poolDetail?.id) {
+    if (poolDetail?.id) {
       setBaseToken(poolDetail?.liquidityToken);
       setQuoteToken(poolDetail?.launchpadToken);
       change('baseToken', poolDetail?.liquidityToken);
@@ -292,25 +323,23 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const onChangeValueBaseAmount = (amount: any) => {
     onBaseAmountChange({
       amount,
-      poolDetail
+      poolDetail,
     });
   };
 
   const handleBaseAmountChange = ({
     amount,
-    poolDetail
+    poolDetail,
   }: {
     amount: any;
     poolDetail: any;
   }) => {
     try {
-      if (
-        !amount ||
-        isNaN(Number(amount))
-      )
-        return;
+      if (!amount || isNaN(Number(amount))) return;
 
-      const quoteAmount = new BigNumber(amount).div(new BigNumber(poolDetail?.totalValue || 0).plus(amount)).multipliedBy(poolDetail?.launchpadBalance || 0);
+      const quoteAmount = new BigNumber(amount)
+        .div(new BigNumber(poolDetail?.totalValue || 0).plus(amount))
+        .multipliedBy(poolDetail?.launchpadBalance || 0);
       change('quoteAmount', quoteAmount.toFixed());
     } catch (err: any) {
       logErrorToServer({
@@ -371,10 +400,10 @@ export const MakeFormSwap = forwardRef((props, ref) => {
 
   return (
     <form onSubmit={onSubmit} style={{ height: '100%' }}>
-      <Flex direction={"column"}>
+      <Flex direction={'column'}>
         <Box className={styles.progressBar}>
           <Progress
-            w={["100%", "100%"]}
+            w={['100%', '100%']}
             h="16px"
             value={percent < 15 ? 15 : percent}
             borderRadius={12}
@@ -385,24 +414,31 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           </Progress>
           {/*<Image src={fireImg} className={styles.fireImg} />*/}
         </Box>
-        <Flex direction={"column"} mt={1}>
-          <Text color={"brand.success.400"} fontSize={"xl"} fontWeight={"medium"}>{formatCurrency(poolDetail?.totalValue || 0)} {baseToken?.symbol}</Text>
-          <Text color={"#FFFFFF"} fontSize={"xs"}>pledged of {formatCurrency(poolDetail?.goalBalance || 0)} {baseToken?.symbol} goal</Text>
+        <Flex direction={'column'} mt={1}>
+          <Text color={'brand.success.400'} fontSize={'xl'} fontWeight={'medium'}>
+            {formatCurrency(poolDetail?.totalValue || 0)} {baseToken?.symbol}
+          </Text>
+          <Text color={'#FFFFFF'} fontSize={'xs'}>
+            pledged of {formatCurrency(poolDetail?.goalBalance || 0)}{' '}
+            {baseToken?.symbol} goal
+          </Text>
         </Flex>
       </Flex>
-      <Flex gap={0} color={'#FFFFFF'} mt={4} direction={"column"}>
+      <Flex gap={0} color={'#FFFFFF'} mt={4} direction={'column'}>
         <SimpleGrid columns={3} spacingX={6}>
           <GridItem>
             <Stat>
               <StatLabel>Launchpad Balance</StatLabel>
-              <StatNumber>{formatCurrency(poolDetail?.launchpadBalance || 0)}</StatNumber>
+              <StatNumber>
+                {formatCurrency(poolDetail?.launchpadBalance || 0)}
+              </StatNumber>
             </Stat>
           </GridItem>
           <GridItem>
             <Stat>
               <StatLabel>Funded</StatLabel>
               <StatNumber>
-                ${formatCurrency(poolDetail?.totalValueUsd || 0,2)}
+                ${formatCurrency(poolDetail?.totalValueUsd || 0, 2)}
               </StatNumber>
             </Stat>
           </GridItem>
@@ -416,74 +452,93 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           </GridItem>
         </SimpleGrid>
         <Stat>
-          <StatLabel>Ends in</StatLabel>
+          <StatLabel>
+            {[
+              LAUNCHPAD_STATUS.Closed,
+              LAUNCHPAD_STATUS.Completed,
+              LAUNCHPAD_STATUS.Failed,
+            ].includes(status.key)
+              ? 'Ended at'
+              : 'Ends in'}
+          </StatLabel>
           <StatNumber>
-            <Text>{Number(days) > 0 && `${days}d :`} {hours}h : {minutes}m : {seconds}s</Text>
+            <Text>
+              {isEndLaunchpad
+                ? moment(poolDetail.endTime).format('LLL')
+                : `${
+                    Number(days) > 0 && `${days}d :`
+                  } ${hours}h : ${minutes}m : ${seconds}s`}
+            </Text>
           </StatNumber>
         </Stat>
       </Flex>
-      <InputWrapper
-        className={cx(styles.inputAmountWrap, styles.inputBaseAmountWrap)}
-        theme="light"
-        label={
-          <Text fontSize={px2rem(14)} color={'#FFFFFF'}>
-            Amount
-          </Text>
-        }
-        rightLabel={
-          baseToken && (
-            <Flex gap={2} fontSize={px2rem(14)} color={'#FFFFFF'}>
-              <Flex gap={1} alignItems={'center'}>
-                Balance:
-                <TokenBalance
-                  token={baseToken}
-                  onBalanceChange={(_amount) => setBaseBalance(_amount)}
-                />
-                {baseToken?.symbol}
-              </Flex>
-              <Text
-                cursor={'pointer'}
-                color={'#3385FF'}
-                onClick={handleChangeMaxBaseAmount}
-                bgColor={'rgba(51, 133, 255, 0.2)'}
-                borderRadius={'4px'}
-                padding={'1px 12px'}
-              >
-                MAX
-              </Text>
-            </Flex>
-          )
-        }
-      >
-        <Flex gap={4} direction={'column'}>
-          <Field
-            name="baseAmount"
-            children={FieldAmount}
-            validate={composeValidators(required, validateBaseAmount)}
-            fieldChanged={onChangeValueBaseAmount}
-            disabled={submitting}
-            // placeholder={"Enter number of tokens"}
-            decimals={baseToken?.decimal || 18}
-            className={styles.inputAmount}
-            prependComp={
-              baseToken && (
-                <Flex gap={1} alignItems={'center'} color={'#FFFFFF'} paddingX={2}>
-                  <img
-                    src={
-                      baseToken?.thumbnail ||
-                      `${CDN_URL}/upload/1683530065704444020-1683530065-default-coin.svg`
-                    }
-                    alt={baseToken?.thumbnail || 'default-icon'}
-                    className={'avatar'}
+      {isStarting && (
+        <InputWrapper
+          className={cx(styles.inputAmountWrap, styles.inputBaseAmountWrap)}
+          theme="light"
+          label={
+            <Text fontSize={px2rem(14)} color={'#FFFFFF'}>
+              Amount
+            </Text>
+          }
+          rightLabel={
+            baseToken && (
+              <Flex gap={2} fontSize={px2rem(14)} color={'#FFFFFF'}>
+                <Flex gap={1} alignItems={'center'}>
+                  Balance:
+                  <TokenBalance
+                    token={baseToken}
+                    onBalanceChange={(_amount) => setBaseBalance(_amount)}
                   />
-                  <Text fontSize={'sm'}>{baseToken?.symbol}</Text>
+                  {baseToken?.symbol}
                 </Flex>
-              )
-            }
-            borderColor={'#353945'}
-          />
-        </Flex>
-      </InputWrapper>
+                {isStarting && (
+                  <Text
+                    cursor={'pointer'}
+                    color={'#3385FF'}
+                    onClick={handleChangeMaxBaseAmount}
+                    bgColor={'rgba(51, 133, 255, 0.2)'}
+                    borderRadius={'4px'}
+                    padding={'1px 12px'}
+                  >
+                    MAX
+                  </Text>
+                )}
+              </Flex>
+            )
+          }
+        >
+          <Flex gap={4} direction={'column'}>
+            <Field
+              name="baseAmount"
+              children={FieldAmount}
+              validate={composeValidators(required, validateBaseAmount)}
+              fieldChanged={onChangeValueBaseAmount}
+              disabled={submitting || !isStarting}
+              // placeholder={"Enter number of tokens"}
+              decimals={baseToken?.decimal || 18}
+              className={styles.inputAmount}
+              prependComp={
+                baseToken && (
+                  <Flex gap={1} alignItems={'center'} color={'#FFFFFF'} paddingX={2}>
+                    <img
+                      src={
+                        baseToken?.thumbnail ||
+                        `${CDN_URL}/upload/1683530065704444020-1683530065-default-coin.svg`
+                      }
+                      alt={baseToken?.thumbnail || 'default-icon'}
+                      className={'avatar'}
+                    />
+                    <Text fontSize={'sm'}>{baseToken?.symbol}</Text>
+                  </Flex>
+                )
+              }
+              borderColor={'#353945'}
+            />
+          </Flex>
+        </InputWrapper>
+      )}
+
       {/*<Box mt={1}>
         <HorizontalItem
           label={
@@ -506,25 +561,25 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           />
         </Box>
       )}*/}
-      {
-        values?.baseAmount && (
-          <Box mt={1}>
-            <HorizontalItem
-              label={
-                <Text fontSize={'sm'} color={'#B1B5C3'}>
-                  Estimate receive amount
-                </Text>
-              }
-              value={
-                <Text fontSize={'sm'} color={"#FFFFFF"}>
-                  {formatCurrency(values?.quoteAmount, 6)} {poolDetail?.launchpadToken?.symbol}
-                </Text>
-              }
-            />
-          </Box>
-        )
-      }
+      {values?.baseAmount && (
+        <Box mt={1}>
+          <HorizontalItem
+            label={
+              <Text fontSize={'sm'} color={'#B1B5C3'}>
+                Estimate receive amount
+              </Text>
+            }
+            value={
+              <Text fontSize={'sm'} color={'#FFFFFF'}>
+                {formatCurrency(values?.quoteAmount, 6)}{' '}
+                {poolDetail?.launchpadToken?.symbol}
+              </Text>
+            }
+          />
+        </Box>
+      )}
       {isAuthenticated &&
+        isStarting &&
         isLoadedAssets &&
         new BigNumber(juiceBalance || 0).lte(0) && (
           <Flex gap={3} mt={2}>
@@ -552,6 +607,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           </Flex>
         )}
       {isAuthenticated &&
+        isStarting &&
         baseToken &&
         BRIDGE_SUPPORT_TOKEN.includes(baseToken?.symbol) &&
         new BigNumber(baseBalance || 0).lte(0) && (
@@ -612,15 +668,29 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             processInfo={{
               id: transactionType.createPoolApprove,
             }}
+            style={{
+              backgroundColor: isEndLaunchpad
+                ? isClaimLaunchpad
+                  ? colors.greenPrimary
+                  : colors.redPrimary
+                : colors.bluePrimary,
+            }}
           >
-            BACK THIS PROJECT
+            {isEndLaunchpad
+              ? isClaimLaunchpad
+                ? 'CLAIM THIS PROJECT'
+                : 'END THIS PROJECT'
+              : 'BACK THIS PROJECT'}
           </FiledButton>
         )}
       </WrapperConnected>
-      <Flex justifyContent={"flex-end"}>
+      <Flex justifyContent={'flex-end'}>
         <SocialToken socials={poolDetail?.launchpadToken?.social} />
       </Flex>
-      <Text mt={4} fontSize={"sm"} color={"#FFFFFF"}>All or nothing. This project will only be funded if it reaches its goal by {moment.utc(poolDetail?.endTime).format('ddd, MMMM Do YYYY HH:mm:ss Z')}.</Text>
+      <Text mt={4} fontSize={'sm'} color={'#FFFFFF'}>
+        All or nothing. This project will only be funded if it reaches its goal by{' '}
+        {moment.utc(poolDetail?.endTime).format('ddd, MMMM Do YYYY HH:mm:ss Z')}.
+      </Text>
     </form>
   );
 });
@@ -633,7 +703,27 @@ const BuyForm = ({ poolDetail }: any) => {
   const { run: depositLaunchpad } = useContractOperation({
     operation: useDepositLaunchpad,
   });
+  const { run: endLaunchpad } = useContractOperation({
+    operation: useEndLaunchPad,
+  });
+  const { run: claimLaunchpad } = useContractOperation({
+    operation: useClaimLaunchPad,
+  });
   const { mobileScreen } = useWindowSize();
+  const [status] = useLaunchPadStatus({ row: poolDetail });
+
+  const isEndLaunchpad = [
+    LAUNCHPAD_STATUS.End,
+    LAUNCHPAD_STATUS.Completed,
+    LAUNCHPAD_STATUS.Failed,
+  ].includes(status.key);
+
+  const isClaimLaunchpad = [
+    LAUNCHPAD_STATUS.Completed,
+    LAUNCHPAD_STATUS.Failed,
+  ].includes(status.key);
+
+  const isStarting = [LAUNCHPAD_STATUS.Starting].includes(status.key);
 
   const confirmDeposit = (values: any) => {
     const { baseAmount, quoteAmount, onConfirm } = values;
@@ -643,7 +733,11 @@ const BuyForm = ({ poolDetail }: any) => {
       openModal({
         id,
         theme: 'dark',
-        title: 'Confirm deposit',
+        title: isEndLaunchpad
+          ? isClaimLaunchpad
+            ? 'Confirm claim this project'
+            : 'Confirm end this project'
+          : 'Confirm deposit',
         className: styles.modalContent,
         modalProps: {
           centered: true,
@@ -660,7 +754,8 @@ const BuyForm = ({ poolDetail }: any) => {
               }
               value={
                 <Text fontSize={'sm'}>
-                  {formatCurrency(baseAmount, 6)} {poolDetail?.liquidityToken?.symbol}
+                  {formatCurrency(baseAmount, 6)}{' '}
+                  {poolDetail?.liquidityToken?.symbol}
                 </Text>
               }
             />
@@ -672,7 +767,8 @@ const BuyForm = ({ poolDetail }: any) => {
               }
               value={
                 <Text fontSize={'sm'}>
-                  {formatCurrency(quoteAmount, 6)} {poolDetail?.launchpadToken?.symbol}
+                  {formatCurrency(quoteAmount, 6)}{' '}
+                  {poolDetail?.launchpadToken?.symbol}
                 </Text>
               }
             />
@@ -748,18 +844,27 @@ const BuyForm = ({ poolDetail }: any) => {
       const data = {
         amount: baseAmount,
         launchpadAddress: poolDetail?.launchpad,
-        boostRatio: "0",
-        signature: ''
+        boostRatio: '0',
+        signature: '',
       };
 
       if(boostInfo) {
-        data.boostRatio = boostInfo.boost.toString();
+        data.boostRatio = boostInfo.boostSign;
         data.signature = boostInfo.adminSignature;
       }
 
-      console.log('dataaaaa', data);
-
-      const response = await depositLaunchpad(data);
+      let response;
+      if (isClaimLaunchpad) {
+        response = await claimLaunchpad({
+          launchpadAddress: poolDetail?.launchpad,
+        });
+      } else if (isEndLaunchpad) {
+        response = await endLaunchpad({
+          launchpadAddress: poolDetail?.launchpad,
+        });
+      } else {
+        response = await depositLaunchpad(data);
+      }
 
       toast.success('Transaction has been created. Please wait for few minutes.');
       refForm.current?.reset();
@@ -792,6 +897,9 @@ const BuyForm = ({ poolDetail }: any) => {
             onSubmit={handleSubmit}
             submitting={submitting}
             poolDetail={poolDetail}
+            isEndLaunchpad={isEndLaunchpad}
+            isClaimLaunchpad={isClaimLaunchpad}
+            isStarting={isStarting}
           />
         )}
       </Form>
