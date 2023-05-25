@@ -14,7 +14,7 @@ import { useAppSelector } from '@/state/hooks';
 import { selectPnftExchange } from '@/state/pnftExchange';
 import { colors } from '@/theme/colors';
 import { compareString, formatCurrency } from '@/utils';
-import { Box, Flex, Text } from '@chakra-ui/react';
+import { Box, Flex, Progress, Text } from '@chakra-ui/react';
 import { px2rem } from '@trustless-computer/dapp-core';
 import { useWeb3React } from '@web3-react/core';
 import BigNumber from 'bignumber.js';
@@ -25,7 +25,10 @@ import { BsPencil, BsTrash } from 'react-icons/bs';
 import { ImClock2 } from 'react-icons/im';
 import { useDispatch } from 'react-redux';
 import web3 from 'web3';
-import LaunchpadStatus, { useLaunchPadStatus } from './Launchpad.Status';
+import LaunchpadStatus, {
+  LAUNCHPAD_STATUS,
+  useLaunchPadStatus,
+} from './Launchpad.Status';
 import { StyledIdoContainer } from './Launchpad.styled';
 import InfoTooltip from '@/components/Swap/infoTooltip';
 
@@ -145,17 +148,62 @@ const LaunchpadContainer = () => {
           borderBottom: 'none',
         },
         render(row: ILaunchpad) {
+          const token: IToken = row.launchpadToken;
           return (
-            <Text>{`${
-              row.liquidityRatio
-                ? `${formatCurrency(
-                    new BigNumber(web3.utils.toWei(row.liquidityRatio).toString())
-                      .dividedBy(10000)
-                      .toString(),
-                    18,
-                  )}%`
-                : 'N/A'
-            }`}</Text>
+            <Box>
+              <Text>{`${
+                row.liquidityRatio
+                  ? `${formatCurrency(
+                      new BigNumber(web3.utils.toWei(row.liquidityRatio).toString())
+                        .dividedBy(10000)
+                        .toString(),
+                      18,
+                    )}%`
+                  : 'N/A'
+              }`}</Text>
+              <Text>{`${
+                token.totalSupply
+                  ? `${formatCurrency(row.liquidityBalance, 18)} ${token?.symbol}`
+                  : 'N/A'
+              }`}</Text>
+            </Box>
+          );
+        },
+      },
+      {
+        id: 'goal',
+        label: 'Goal balance',
+        labelConfig: {
+          fontSize: '12px',
+          fontWeight: '500',
+          color: '#B1B5C3',
+        },
+        config: {
+          borderBottom: 'none',
+        },
+        render(row: ILaunchpad) {
+          const [status] = useLaunchPadStatus({ row });
+          let color = colors.white;
+          if (status.value !== 'upcoming') {
+            if (Number(row.totalValue) >= Number(row.goalBalance)) {
+              color = colors.greenPrimary;
+            } else if (Number(row.totalValue) < Number(row.goalBalance)) {
+              color = colors.redPrimary;
+            }
+          }
+          return (
+            <Box>
+              <Text
+                color={color}
+              >{`${row.totalValue} / ${row.goalBalance} ${row.liquidityToken.symbol}`}</Text>
+              <Box mb={2} />
+              <Progress
+                max={100}
+                value={(Number(row.totalValue) / Number(row.goalBalance)) * 100}
+                size="xs"
+              />
+              <Text mt={2}>${formatCurrency(row.totalValueUsd, 2)}</Text>
+            </Box>
           );
         },
       },
@@ -205,6 +253,21 @@ const LaunchpadContainer = () => {
                   <Text>
                     <CountDownTimer end_time={row.endTime} />
                   </Text>
+                </Flex>
+              </Box>
+            );
+          }
+          if (status.value === 'success' && status.key !== LAUNCHPAD_STATUS.Closed) {
+            return (
+              <Box>
+                <Text>
+                  <span style={{ color: colors.white500, fontSize: px2rem(14) }}>
+                    Release time:
+                  </span>{' '}
+                </Text>
+                <Flex mt={1} alignItems={'center'} gap={2}>
+                  <ImClock2 />
+                  <Text>{moment(row.lpTokenReleaseTime).format('LL')}</Text>
                 </Flex>
               </Box>
             );
