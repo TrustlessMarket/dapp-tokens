@@ -1,8 +1,7 @@
-import {Flex, Text} from "@chakra-ui/react";
+import {Box, Flex, Text} from "@chakra-ui/react";
 import {CDN_URL} from "@/configs";
 import React from "react";
 import styles from "./styles.module.scss";
-import BodyContainer from "@/components/Swap/bodyContainer";
 
 const DATA = [
   {
@@ -21,7 +20,7 @@ const DATA = [
 
 const Usp = () => {
   return (
-    <BodyContainer className={styles.wrapper}>
+    <Box className={styles.wrapper} mt={20}>
       <Flex className={"max-content"} gap={8}>
         {
           DATA.map((d => {
@@ -40,7 +39,7 @@ const Usp = () => {
           }))
         }
       </Flex>
-    </BodyContainer>
+    </Box>
   )
 };
 export default Usp;

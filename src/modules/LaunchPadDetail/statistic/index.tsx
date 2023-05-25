@@ -8,7 +8,6 @@ import useCountDownTimer from "@/hooks/useCountdown";
 import moment from "moment/moment";
 import {useDispatch} from "react-redux";
 import {requestReload} from "@/state/pnftExchange";
-import AllowlistTable from "@/modules/LaunchPadDetail/statistic/AllowlistTable";
 
 const Statistic = ({poolDetail} : any) => {
   const [endTime, setEndTime] = useState(0);
@@ -60,9 +59,6 @@ const Statistic = ({poolDetail} : any) => {
           </GridItem>
         </SimpleGrid>
         <Text mt={4} fontSize={"sm"} color={"#FFFFFF"}>All or nothing. This project will only be funded if it reaches its goal by {moment.utc(poolDetail?.endTime).format('ddd, MMMM Do YYYY HH:mm:ss Z')}.</Text>
-      </Card>
-      <Card bgColor={"#1E1E22"} paddingX={8} paddingY={6} mt={8}>
-        <AllowlistTable poolDetail={poolDetail}/>
       </Card>
     </Box>
   )

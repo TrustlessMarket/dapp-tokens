@@ -9,7 +9,6 @@ import {useEffect, useState} from "react";
 import {useRouter} from "next/router";
 import BodyContainer from "@/components/Swap/bodyContainer";
 import cx from 'classnames';
-import Usp from "@/modules/LaunchPadDetail/ups";
 import {useAppSelector} from "@/state/hooks";
 import {selectPnftExchange} from "@/state/pnftExchange";
 
@@ -36,7 +35,6 @@ const IdoDetailContainer = () => {
   return (
     <Box className={styles.wrapper}>
       <AboveTheFold poolDetail={poolDetail}/>
-      <Usp/>
       <BodyContainer>
         <Tabs className={cx(styles.tabContainer, "max-content")}>
           <TabList mb={6} mt={6}>
