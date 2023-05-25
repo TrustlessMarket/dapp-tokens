@@ -22,8 +22,6 @@ export interface ICreateLaunchpadParams {
   endTimeArg: string;
   launchpadBalance: string;
   goalBalance: string;
-  faq: string;
-  description: string;
 }
 
 const useCreateLaunchpad: ContractOperationHook<

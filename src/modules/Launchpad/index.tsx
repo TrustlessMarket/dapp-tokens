@@ -7,6 +7,7 @@ import FiledButton from '@/components/Swap/button/filedButton';
 import ListTable, { ColumnProp } from '@/components/Swap/listTable';
 import { TOKEN_ICON_DEFAULT } from '@/constants/common';
 import { ROUTE_PATH } from '@/constants/route-path';
+import { ILaunchpad } from '@/interfaces/launchpad';
 import { IToken } from '@/interfaces/token';
 import { getListLaunchpad } from '@/services/launchpad';
 import { useAppSelector } from '@/state/hooks';
@@ -14,17 +15,18 @@ import { selectPnftExchange } from '@/state/pnftExchange';
 import { colors } from '@/theme/colors';
 import { compareString, formatCurrency } from '@/utils';
 import { Box, Flex, Text } from '@chakra-ui/react';
+import { px2rem } from '@trustless-computer/dapp-core';
 import { useWeb3React } from '@web3-react/core';
 import BigNumber from 'bignumber.js';
 import moment from 'moment';
 import { useRouter } from 'next/router';
 import { useEffect, useMemo, useState } from 'react';
 import { BsPencil, BsTrash } from 'react-icons/bs';
+import { ImClock2 } from 'react-icons/im';
 import { useDispatch } from 'react-redux';
 import web3 from 'web3';
 import LaunchpadStatus, { useLaunchPadStatus } from './Launchpad.Status';
 import { StyledIdoContainer } from './Launchpad.styled';
-import { ILaunchpad } from '@/interfaces/launchpad';
 
 const LaunchpadContainer = () => {
   const [data, setData] = useState<any[]>();
@@ -166,20 +168,36 @@ const LaunchpadContainer = () => {
           if (status.value === 'upcoming') {
             return (
               <Box>
-                <Text>{moment(row.startTime).format('MMM, DD')}</Text>
                 <Text>
-                  Start at: <CountDownTimer end_time={row.startTime} />
+                  <span style={{ color: colors.white500, fontSize: px2rem(14) }}>
+                    Starts at:
+                  </span>{' '}
+                  {moment(row.startTime).format('MMM, DD')}
                 </Text>
+                <Flex mt={1} alignItems={'center'} gap={2}>
+                  <ImClock2 />
+                  <Text>
+                    <CountDownTimer end_time={row.startTime} />
+                  </Text>
+                </Flex>
               </Box>
             );
           }
           if (status.value === 'crowing-funding') {
             return (
               <Box>
-                <Text>{moment(row.endTime).format('MMM, DD')}</Text>
                 <Text>
-                  Ends at: <CountDownTimer end_time={row.endTime} />
+                  <span style={{ color: colors.white500, fontSize: px2rem(14) }}>
+                    Ends at:
+                  </span>{' '}
+                  {moment(row.endTime).format('MMM, DD')}
                 </Text>
+                <Flex mt={1} alignItems={'center'} gap={2}>
+                  <ImClock2 />
+                  <Text>
+                    <CountDownTimer end_time={row.endTime} />
+                  </Text>
+                </Flex>
               </Box>
             );
           }
@@ -230,17 +248,20 @@ const LaunchpadContainer = () => {
           borderBottom: 'none',
         },
         render(row: ILaunchpad) {
-          const token: IToken = row.launchpadToken;
-
           if (compareString(row.creatorAddress, account)) {
             return (
               <Flex alignItems={'center'} gap={4}>
-                <Box cursor={'pointer'} onClick={() => onShowCreateIDO(row)}>
+                <Box
+                  cursor={'pointer'}
+                  onClick={() =>
+                    router.push(`${ROUTE_PATH.LAUNCHPAD_MANAGE}?id=${row.launchpad}`)
+                  }
+                >
                   <BsPencil />
                 </Box>
-                <Box cursor={'pointer'} onClick={() => onShowCreateIDO(row, true)}>
+                {/* <Box cursor={'pointer'} onClick={() => onShowCreateIDO(row, true)}>
                   <BsTrash style={{ color: colors.redPrimary }} />
-                </Box>
+                </Box> */}
               </Flex>
             );
           }

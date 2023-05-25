@@ -14,6 +14,7 @@ export interface ILaunchpad {
   launchpadTokenAddress: string;
   liquidityBalance: string;
   liquidityRatio: string;
+  goalBalance: string;
   liquidityTokenAddress: string;
   lpTokenReleaseTime: string;
   protocolRatio: string;
@@ -22,4 +23,6 @@ export interface ILaunchpad {
   totalValue: string;
   totalValueUsd: string;
   txHash: string;
+  description: string;
+  qand_a: string;
 }

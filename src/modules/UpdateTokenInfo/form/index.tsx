@@ -4,54 +4,71 @@
 import FiledButton from '@/components/Swap/button/filedButton';
 import InputWrapper from '@/components/Swap/form/inputWrapper';
 import WrapperConnected from '@/components/WrapperConnected';
-import {toastError} from '@/constants/error';
-import {IToken} from '@/interfaces/token';
-import {logErrorToServer} from '@/services/swap';
-import {useAppDispatch, useAppSelector} from '@/state/hooks';
-import {requestReload, requestReloadRealtime, selectPnftExchange,} from '@/state/pnftExchange';
-import {getIsAuthenticatedSelector} from '@/state/user/selector';
+import { toastError } from '@/constants/error';
+import { IToken } from '@/interfaces/token';
+import { logErrorToServer } from '@/services/swap';
+import { useAppDispatch, useAppSelector } from '@/state/hooks';
+import {
+  requestReload,
+  requestReloadRealtime,
+  selectPnftExchange,
+} from '@/state/pnftExchange';
+import { getIsAuthenticatedSelector } from '@/state/user/selector';
 import px2rem from '@/utils/px2rem';
-import {showError} from '@/utils/toast';
-import {Box, Center, Flex, forwardRef, Grid, GridItem, Text} from '@chakra-ui/react';
-import {useWeb3React} from '@web3-react/core';
+import { showError } from '@/utils/toast';
+import {
+  Box,
+  Center,
+  Flex,
+  forwardRef,
+  Grid,
+  GridItem,
+  Text,
+} from '@chakra-ui/react';
+import { useWeb3React } from '@web3-react/core';
 import cx from 'classnames';
-import {useRouter} from 'next/router';
-import {useEffect, useImperativeHandle, useRef, useState,} from 'react';
-import {Field, Form, useForm, useFormState} from 'react-final-form';
+import { useRouter } from 'next/router';
+import { useEffect, useImperativeHandle, useRef, useState } from 'react';
+import { Field, Form, useForm, useFormState } from 'react-final-form';
 import toast from 'react-hot-toast';
-import {useSelector} from 'react-redux';
+import { useSelector } from 'react-redux';
 import styles from './styles.module.scss';
-import {getTokenDetail, IUpdateTokenPayload, updateTokenInfo} from "@/services/token-explorer";
-import FieldText from "@/components/Swap/form/fieldText";
-import FileDropzoneUpload from "@/components/Swap/form/fileDropzoneUpload";
-import {uploadFile} from "@/services/file";
-import {compareString, formatCurrency, shortenAddress} from "@/utils";
-import BigNumber from "bignumber.js";
-import {decimalToExponential} from "@/utils/format";
-import {ROUTE_PATH} from "@/constants/route-path";
+import {
+  getTokenDetail,
+  IUpdateTokenPayload,
+  updateTokenInfo,
+} from '@/services/token-explorer';
+import FieldText from '@/components/Swap/form/fieldText';
+import FileDropzoneUpload from '@/components/Swap/form/fileDropzoneUpload';
+import { uploadFile } from '@/services/file';
+import { compareString, formatCurrency, shortenAddress } from '@/utils';
+import BigNumber from 'bignumber.js';
+import { decimalToExponential } from '@/utils/format';
+import { ROUTE_PATH } from '@/constants/route-path';
 
-const MAX_FILE_SIZE = 393216000; // 375 MB
+export const MAX_FILE_SIZE = 393216000; // 375 MB
 
-const Avatar = ({img, alt}: {img: string | any, alt: string | undefined}) => {
+const Avatar = ({ img, alt }: { img: string | any; alt: string | undefined }) => {
   return (
-    <Center w={50} h={50} bg={"#FFFFFF10"} borderRadius={"50%"}>
-      <img
-        width={30}
-        height={30}
-        src={img}
-        alt={alt}
-      />
+    <Center w={50} h={50} bg={'#FFFFFF10'} borderRadius={'50%'}>
+      <img width={30} height={30} src={img} alt={alt} />
     </Center>
-  )
+  );
 };
 
-const HorizontalItem = ({label, value} : {label: string | any, value: string | any}) => {
+const HorizontalItem = ({
+  label,
+  value,
+}: {
+  label: string | any;
+  value: string | any;
+}) => {
   return (
-    <Flex gap={2} alignItems={"center"} justifyContent={"space-between"}>
+    <Flex gap={2} alignItems={'center'} justifyContent={'space-between'}>
       {label}
       {value}
     </Flex>
-  )
+  );
 };
 
 export const MakeFormSwap = forwardRef((props, ref) => {
@@ -85,13 +102,12 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   });
 
   const reset = async () => {
-    restart({
-    });
+    restart({});
     setFile(null);
   };
 
   useEffect(() => {
-    if(router?.query?.address) {
+    if (router?.query?.address) {
       fetchTokenDetail(router?.query?.address);
     }
   }, [needReload, router?.query?.address]);
@@ -110,7 +126,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   };
 
   useEffect(() => {
-    if(tokenInfo) {
+    if (tokenInfo) {
       change('description', tokenInfo?.description);
       change('website', tokenInfo?.social?.website);
       change('discord', tokenInfo?.social?.discord);
@@ -128,14 +144,14 @@ export const MakeFormSwap = forwardRef((props, ref) => {
 
     setFile(file);
 
-    if(!file) {
+    if (!file) {
       change('thumbnail', file);
     }
 
     try {
       setUploading(true);
-      if(file) {
-        const res = await uploadFile({file: file});
+      if (file) {
+        const res = await uploadFile({ file: file });
         change('thumbnail', res?.url);
       }
     } catch (err) {
@@ -159,7 +175,11 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           <InputWrapper
             className={cx(styles.submitVideo)}
             theme="light"
-            label={<Text fontSize={px2rem(14)} color={"#FFFFFF"}>Token icon</Text>}
+            label={
+              <Text fontSize={px2rem(14)} color={'#FFFFFF'}>
+                Token icon
+              </Text>
+            }
           >
             <FileDropzoneUpload
               className={styles.uploader}
@@ -173,7 +193,11 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           <InputWrapper
             className={cx(styles.inputAmountWrap, styles.inputBaseAmountWrap)}
             theme="light"
-            label={<Text fontSize={px2rem(14)} color={"#FFFFFF"}>Description</Text>}
+            label={
+              <Text fontSize={px2rem(14)} color={'#FFFFFF'}>
+                Description
+              </Text>
+            }
           >
             <Flex gap={4} direction={'column'}>
               <Field
@@ -182,7 +206,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
                 // validate={composeValidators(required, validateQuoteAmount)}
                 // fieldChanged={onChangeValueQuoteAmount}
                 disabled={submitting}
-                placeholder={"Enter description"}
+                placeholder={'Enter description'}
                 className={cx(styles.inputDescription)}
                 // hideError={true}
                 inputType={'textarea'}
@@ -194,14 +218,18 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           <InputWrapper
             className={cx(styles.inputAmountWrap, styles.inputQuoteAmountWrap)}
             theme="light"
-            label={<Text fontSize={px2rem(14)} color={"#FFFFFF"}>Reference</Text>}
+            label={
+              <Text fontSize={px2rem(14)} color={'#FFFFFF'}>
+                Reference
+              </Text>
+            }
           >
             <Flex gap={4} direction={'column'}>
               <Field
                 name="website"
                 children={FieldText}
                 disabled={submitting}
-                placeholder={"Enter Website"}
+                placeholder={'Enter Website'}
                 className={cx(styles.inputAmount, styles.collateralAmount)}
                 borderColor={'#353945'}
               />
@@ -209,7 +237,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
                 name="discord"
                 children={FieldText}
                 disabled={submitting}
-                placeholder={"Enter Discord"}
+                placeholder={'Enter Discord'}
                 className={cx(styles.inputAmount, styles.collateralAmount)}
                 borderColor={'#353945'}
               />
@@ -233,7 +261,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
                 name="telegram"
                 children={FieldText}
                 disabled={submitting}
-                placeholder={"Enter Telegram"}
+                placeholder={'Enter Telegram'}
                 className={cx(styles.inputAmount, styles.collateralAmount)}
                 borderColor={'#353945'}
               />
@@ -241,16 +269,13 @@ export const MakeFormSwap = forwardRef((props, ref) => {
                 name="twitter"
                 children={FieldText}
                 disabled={submitting}
-                placeholder={"Enter Twitter"}
+                placeholder={'Enter Twitter'}
                 className={cx(styles.inputAmount, styles.collateralAmount)}
                 borderColor={'#353945'}
               />
             </Flex>
           </InputWrapper>
-          <WrapperConnected
-            type={'submit'}
-            className={styles.submitButton}
-          >
+          <WrapperConnected type={'submit'} className={styles.submitButton}>
             <FiledButton
               isDisabled={submitting || btnDisabled}
               isLoading={submitting}
@@ -266,52 +291,111 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           </WrapperConnected>
         </GridItem>
         <GridItem>
-          <Flex direction={"column"} className={styles.staticInfo} p={6} borderRadius={px2rem(12)} gap={8}>
+          <Flex
+            direction={'column'}
+            className={styles.staticInfo}
+            p={6}
+            borderRadius={px2rem(12)}
+            gap={8}
+          >
             <HorizontalItem
               label={
-                <Flex gap={2} alignItems={"center"}>
-                  <Avatar img={"https://cdn.trustless.computer/upload/1683279635705685769-1683279635-name.png"} alt={"Name"} />
-                  <Text fontSize={px2rem(16)} color={"#FFFFFF"} whiteSpace={"nowrap"}>Name</Text>
+                <Flex gap={2} alignItems={'center'}>
+                  <Avatar
+                    img={
+                      'https://cdn.trustless.computer/upload/1683279635705685769-1683279635-name.png'
+                    }
+                    alt={'Name'}
+                  />
+                  <Text
+                    fontSize={px2rem(16)}
+                    color={'#FFFFFF'}
+                    whiteSpace={'nowrap'}
+                  >
+                    Name
+                  </Text>
                 </Flex>
               }
               value={
-                <Text fontSize={px2rem(16)} color={"#FFFFFFAA"}>{tokenInfo?.name}</Text>
-              }
-            />
-            <HorizontalItem
-              label={
-                <Flex gap={2} alignItems={"center"}>
-                  <Avatar img={"https://cdn.trustless.computer/upload/1683280318769782896-1683280318-symbol.png"} alt={"Symbol"} />
-                  <Text fontSize={px2rem(16)} color={"#FFFFFF"} whiteSpace={"nowrap"}>Symbol</Text>
-                </Flex>
-              }
-              value={
-                <Text fontSize={px2rem(16)} color={"#FFFFFFAA"}>{tokenInfo?.symbol}</Text>
-              }
-            />
-            <HorizontalItem
-              label={
-                <Flex gap={2} alignItems={"center"}>
-                  <Avatar img={"https://cdn.trustless.computer/upload/1683280358912483737-1683280358-total-supply.png"} alt={"Total supply"} />
-                  <Text fontSize={px2rem(16)} color={"#FFFFFF"} whiteSpace={"nowrap"}>Total supply</Text>
-                </Flex>
-              }
-              value={
-                <Text fontSize={px2rem(16)} color={"#FFFFFFAA"}>
-                  {formatCurrency(new BigNumber(tokenInfo?.totalSupply || 0).div(
-                    decimalToExponential(Number(tokenInfo?.decimal || 18))).toString())}
+                <Text fontSize={px2rem(16)} color={'#FFFFFFAA'}>
+                  {tokenInfo?.name}
                 </Text>
               }
             />
             <HorizontalItem
               label={
-                <Flex gap={2} alignItems={"center"}>
-                  <Avatar img={"https://cdn.trustless.computer/upload/1683280338812466905-1683280338-owner.png"} alt={"Owner"} />
-                  <Text fontSize={px2rem(16)} color={"#FFFFFF"} whiteSpace={"nowrap"}>Owner</Text>
+                <Flex gap={2} alignItems={'center'}>
+                  <Avatar
+                    img={
+                      'https://cdn.trustless.computer/upload/1683280318769782896-1683280318-symbol.png'
+                    }
+                    alt={'Symbol'}
+                  />
+                  <Text
+                    fontSize={px2rem(16)}
+                    color={'#FFFFFF'}
+                    whiteSpace={'nowrap'}
+                  >
+                    Symbol
+                  </Text>
                 </Flex>
               }
               value={
-                <Text fontSize={px2rem(16)} color={"#FFFFFFAA"}>{shortenAddress(tokenInfo?.owner || '')}</Text>
+                <Text fontSize={px2rem(16)} color={'#FFFFFFAA'}>
+                  {tokenInfo?.symbol}
+                </Text>
+              }
+            />
+            <HorizontalItem
+              label={
+                <Flex gap={2} alignItems={'center'}>
+                  <Avatar
+                    img={
+                      'https://cdn.trustless.computer/upload/1683280358912483737-1683280358-total-supply.png'
+                    }
+                    alt={'Total supply'}
+                  />
+                  <Text
+                    fontSize={px2rem(16)}
+                    color={'#FFFFFF'}
+                    whiteSpace={'nowrap'}
+                  >
+                    Total supply
+                  </Text>
+                </Flex>
+              }
+              value={
+                <Text fontSize={px2rem(16)} color={'#FFFFFFAA'}>
+                  {formatCurrency(
+                    new BigNumber(tokenInfo?.totalSupply || 0)
+                      .div(decimalToExponential(Number(tokenInfo?.decimal || 18)))
+                      .toString(),
+                  )}
+                </Text>
+              }
+            />
+            <HorizontalItem
+              label={
+                <Flex gap={2} alignItems={'center'}>
+                  <Avatar
+                    img={
+                      'https://cdn.trustless.computer/upload/1683280338812466905-1683280338-owner.png'
+                    }
+                    alt={'Owner'}
+                  />
+                  <Text
+                    fontSize={px2rem(16)}
+                    color={'#FFFFFF'}
+                    whiteSpace={'nowrap'}
+                  >
+                    Owner
+                  </Text>
+                </Flex>
+              }
+              value={
+                <Text fontSize={px2rem(16)} color={'#FFFFFFAA'}>
+                  {shortenAddress(tokenInfo?.owner || '')}
+                </Text>
               }
             />
           </Flex>
@@ -346,12 +430,12 @@ const TradingForm = () => {
           telegram: values?.telegram,
           twitter: values?.twitter,
           website: values?.website,
-        }
+        },
       };
 
       const response = await updateTokenInfo(tokenInfo?.address, data);
 
-      router.push(`${ROUTE_PATH.TOKEN}?address=${tokenInfo?.address}`)
+      router.push(`${ROUTE_PATH.TOKEN}?address=${tokenInfo?.address}`);
       toast.success('Update token info successfully!');
       refForm.current?.reset();
       dispatch(requestReload());

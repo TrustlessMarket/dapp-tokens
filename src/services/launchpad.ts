@@ -23,6 +23,17 @@ export const getListOwnerToken = async (
   });
 };
 
+export const scanLaunchpadTxHash = async (params: { tx_hash: string }) => {
+  const qs = '?network=tc' + queryString.stringify(params);
+  return swrFetcher(
+    `${API_EXCHANGE_URL}/sync${API_PATH}/scan-transaction-hash${qs}`,
+    {
+      method: 'GET',
+      error: 'getListLiquidityToken',
+    },
+  );
+};
+
 export const getListLaunchpad = async (
   params: { address?: string } & IPagingParams,
 ) => {
@@ -48,6 +59,22 @@ export const getUserBoost = async (params: {
   const qs = '?network=tc&' + queryString.stringify(params);
   return swrFetcher(`${API_EXCHANGE_URL}/users/boost${qs}`, {
     method: 'GET',
+    error: 'getListLiquidityToken',
+  });
+};
+
+export const updateLaunchpadDescription = async (data: {
+  launchpad: string;
+  user_address: string;
+  video: string;
+  image: string;
+  description: string;
+  qand_a: string;
+  signature: string;
+}) => {
+  return swrFetcher(`${API_EXCHANGE_URL}${API_PATH}/update-description`, {
+    method: 'POST',
+    data,
     error: 'getListLiquidityToken',
   });
 };

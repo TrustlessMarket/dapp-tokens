@@ -9,23 +9,30 @@ import FieldAmount from '@/components/Swap/form/fieldAmount';
 import FieldDate from '@/components/Swap/form/fieldDate';
 import FieldSelect from '@/components/Swap/form/fieldDropdown';
 import FieldMDEditor from '@/components/Swap/form/fieldMDEditor';
+import FieldText from '@/components/Swap/form/fieldText';
+import FileDropzoneUpload from '@/components/Swap/form/fileDropzoneUpload';
+import InputWrapper from '@/components/Swap/form/inputWrapper';
 import HorizontalItem from '@/components/Swap/horizontalItem';
 import WrapperConnected from '@/components/WrapperConnected';
 import { LAUNCHPAD_FACTORY_ADDRESS } from '@/configs';
 import { TOKEN_ICON_DEFAULT } from '@/constants/common';
 import { toastError } from '@/constants/error';
 import { ROUTE_PATH } from '@/constants/route-path';
+import useGetConfigLaunchpad, {
+  ConfigLaunchpadResponse,
+} from '@/hooks/contract-operations/launchpad/useGetConfigLaunchpad';
 import useApproveERC20Token from '@/hooks/contract-operations/token/useApproveERC20Token';
 import useBalanceERC20Token from '@/hooks/contract-operations/token/useBalanceERC20Token';
 import useIsApproveERC20Token from '@/hooks/contract-operations/token/useIsApproveERC20Token';
+import { ILaunchpad } from '@/interfaces/launchpad';
 import { IToken } from '@/interfaces/token';
 import { TransactionStatus } from '@/interfaces/walletTransaction';
+import { uploadFile } from '@/services/file';
 import { getListLiquidityToken, getListOwnerToken } from '@/services/launchpad';
 import { logErrorToServer } from '@/services/swap';
 import { closeModal, openModal } from '@/state/modal';
 import { updateCurrentTransaction } from '@/state/pnftExchange';
-import { colors } from '@/theme/colors';
-import { formatCurrency } from '@/utils';
+import { formatCurrency, getLiquidityRatio } from '@/utils';
 import { composeValidators, required, requiredAmount } from '@/utils/formValidate';
 import { showError } from '@/utils/toast';
 import { Box, Flex, FormLabel, Text } from '@chakra-ui/react';
@@ -38,38 +45,57 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { Field, useForm, useFormState } from 'react-final-form';
 import { useDispatch } from 'react-redux';
 import web3 from 'web3';
+import { MAX_FILE_SIZE } from '../UpdateTokenInfo/form';
+import { IoRemoveCircle } from 'react-icons/io5';
+import { FaRemoveFormat } from 'react-icons/fa';
+import { colors } from '@/theme/colors';
+import { BiPlus } from 'react-icons/bi';
 
 interface IdoTokenManageFormProps {
   handleSubmit?: (_: any) => void;
   setLoading: (_: any) => void;
   loading?: boolean;
-  detail?: any;
-  isRemove?: boolean;
+  detail?: ILaunchpad;
 }
+
+const defaultFaqs = [
+  {
+    id: 1,
+  },
+  {
+    id: 2,
+  },
+];
 
 const IdoTokenManageForm: React.FC<IdoTokenManageFormProps> = ({
   handleSubmit,
   loading,
   detail,
-  isRemove,
   setLoading,
 }) => {
   const router = useRouter();
 
   const [tokens, setTokens] = useState<IToken[]>([]);
   const [liquidTokens, setLiquidTokens] = useState<IToken[]>([]);
+  const [launchpadConfigs, setLaunchpadConfigs] = useState<
+    ConfigLaunchpadResponse | any
+  >({});
+
   const { account, isActive } = useWeb3React();
   const dispatch = useDispatch();
 
   const [isApproveToken, setIsApproveToken] = useState<boolean>(true);
   const [isApproveAmountToken, setIsApproveAmountToken] = useState<string>('0');
   const [balanceToken, setBalanceToken] = useState<string>('0');
+  const [uploading, setUploading] = useState(false);
+  const [faqs, setFaqs] = useState<any[]>(defaultFaqs);
 
   const { values, submitting } = useFormState();
   const { change } = useForm();
   const { call: isApproved } = useIsApproveERC20Token();
   const { call: approveToken } = useApproveERC20Token();
   const { call: tokenBalance } = useBalanceERC20Token();
+  const { call: getConfigLaunchpad } = useGetConfigLaunchpad();
 
   const tokenSelected: IToken | undefined = values?.launchpadTokenArg;
   const liquidityTokenSelected: IToken | undefined = values?.liquidityTokenArg;
@@ -77,9 +103,15 @@ const IdoTokenManageForm: React.FC<IdoTokenManageFormProps> = ({
   useEffect(() => {
     if (detail) {
       change('id', detail.id);
-      change('token', detail.token);
-      change('price', detail.price);
-      change('start_at', new Date(detail.startAt));
+      change('launchpadTokenArg', detail.launchpadToken);
+      change('liquidityTokenArg', detail.liquidityToken);
+      change('launchpadBalance', detail.launchpadBalance);
+      change('liquidityRatioArg', getLiquidityRatio(detail.liquidityRatio));
+      change('goalBalance', detail.goalBalance);
+      change('startTimeArg', new Date(detail.startTime));
+      change('endTimeArg', new Date(detail.endTime));
+      change('description', detail.description);
+      change('qand_a', detail.qand_a);
     }
   }, [detail]);
 
@@ -138,10 +170,12 @@ const IdoTokenManageForm: React.FC<IdoTokenManageFormProps> = ({
           limit: 9999,
         }),
         getListLiquidityToken(),
+        getConfigLaunchpad({}),
       ]);
 
       setTokens(response[0]);
       setLiquidTokens(response[1]);
+      setLaunchpadConfigs(response[2]);
     } catch (error) {
       console.log('error', error);
     }
@@ -252,6 +286,46 @@ const IdoTokenManageForm: React.FC<IdoTokenManageFormProps> = ({
     );
   };
 
+  const onFileChange = async (file: File) => {
+    // setFile(file);
+
+    if (!file) {
+      change('image', file);
+    }
+
+    try {
+      setUploading(true);
+      if (file) {
+        const res = await uploadFile({ file: file });
+        change('image', res?.url);
+      }
+    } catch (err) {
+      const message =
+        (err as Error).message || 'Something went wrong. Please try again later.';
+      logErrorToServer({
+        type: 'error',
+        address: account,
+        error: JSON.stringify(err),
+        message: message,
+      });
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const onAddChoice = () => {
+    setFaqs((value) => [
+      ...value,
+      {
+        id: value.length + 1,
+      },
+    ]);
+  };
+
+  const onRemoveChoose = (i: any) => {
+    setFaqs((value: any[]) => value.filter((v) => v.id !== i.id));
+  };
+
   return (
     <form onSubmit={handleSubmit}>
       <Box className="form-container">
@@ -268,7 +342,7 @@ const IdoTokenManageForm: React.FC<IdoTokenManageFormProps> = ({
                     options={tokens}
                     children={FieldSelect}
                     validate={required}
-                    disabled={detail || isRemove}
+                    disabled={detail}
                   />
                 </Box>
                 <Box flex={1}>
@@ -280,7 +354,7 @@ const IdoTokenManageForm: React.FC<IdoTokenManageFormProps> = ({
                     options={liquidTokens}
                     children={FieldSelect}
                     validate={required}
-                    disabled={detail || isRemove}
+                    disabled={detail}
                   />
                 </Box>
               </Flex>
@@ -294,10 +368,11 @@ const IdoTokenManageForm: React.FC<IdoTokenManageFormProps> = ({
                   label={`Balance ${
                     tokenSelected ? `(${tokenSelected.symbol})` : ''
                   }`}
-                  disabled={isRemove}
+                  disabled={detail}
                   validate={composeValidators(requiredAmount, validateAmount)}
                   rightLabel={
-                    !isEmpty(tokenSelected) && (
+                    !isEmpty(tokenSelected) &&
+                    !detail && (
                       <Flex
                         alignItems={'center'}
                         gap={2}
@@ -327,7 +402,7 @@ const IdoTokenManageForm: React.FC<IdoTokenManageFormProps> = ({
                   decimals={18}
                   children={FieldAmount}
                   label={`Ratio (%)`}
-                  disabled={isRemove}
+                  disabled={detail}
                   validate={composeValidators(requiredAmount, validateMaxRatio)}
                 />
               </Flex>
@@ -339,7 +414,7 @@ const IdoTokenManageForm: React.FC<IdoTokenManageFormProps> = ({
                 label={`Goal balance ${
                   liquidityTokenSelected ? `(${liquidityTokenSelected.symbol})` : ''
                 }`}
-                disabled={isRemove}
+                disabled={detail}
                 validate={composeValidators(requiredAmount, validateMaxRatio)}
               />
 
@@ -351,7 +426,7 @@ const IdoTokenManageForm: React.FC<IdoTokenManageFormProps> = ({
                     name="startTimeArg"
                     children={FieldDate}
                     label="Start Date"
-                    disabled={isRemove}
+                    disabled={detail}
                   />
                 </Box>
                 <Box flex={1}>
@@ -360,7 +435,7 @@ const IdoTokenManageForm: React.FC<IdoTokenManageFormProps> = ({
                     name="endTimeArg"
                     children={FieldDate}
                     label="End Date"
-                    disabled={isRemove}
+                    disabled={detail}
                   />
                 </Box>
               </Flex>
@@ -435,21 +510,80 @@ const IdoTokenManageForm: React.FC<IdoTokenManageFormProps> = ({
             )}
           </Box>
         </Flex>
+        <Box mt={6} />
+        <InputWrapper theme="dark" label={<Text>Image</Text>}>
+          <FileDropzoneUpload
+            className="image-drop-container"
+            accept="image/*"
+            maxSize={MAX_FILE_SIZE}
+            onChange={onFileChange}
+            url={values?.image}
+            loading={uploading}
+          />
+        </InputWrapper>
+        <Box mt={6} />
+        <Field
+          validate={required}
+          name="video"
+          children={FieldText}
+          label="Youtube link"
+        />
+        <Box mt={6} />
         <Field
           validate={required}
           name="description"
           children={FieldMDEditor}
           label="Description"
-          disabled={isRemove}
         />
         <Box mt={6} />
-        <Field
-          validate={required}
-          name="faqs"
-          children={FieldMDEditor}
-          label="Faqs"
-          disabled={isRemove}
-        />
+        <InputWrapper theme="dark" label={<Text>Faqs</Text>}>
+          {faqs.map((v, i) => (
+            <Flex alignItems={'center'} gap={6} key={i}>
+              <InputWrapper
+                className="item-faq-container"
+                key={`q-${i}`}
+                label={`Q. ${v.id}`}
+                theme="dark"
+              >
+                <Field
+                  name={`faq_q_${v.id}`}
+                  placeholder="Question"
+                  children={FieldText}
+                  validate={required}
+                />
+              </InputWrapper>
+              <InputWrapper
+                className="item-faq-container"
+                key={`a${i}`}
+                label={`A. ${v.id}`}
+                theme="dark"
+              >
+                <Field
+                  name={`faq_a_${v.id}`}
+                  placeholder="Answer"
+                  children={FieldText}
+                  validate={required}
+                />
+              </InputWrapper>
+              {i > 0 ? (
+                <Box
+                  onClick={() => onRemoveChoose(v)}
+                  // className={styles.btnRemoveChoose}
+                  color={colors.redPrimary}
+                >
+                  <IoRemoveCircle />
+                </Box>
+              ) : (
+                <Box minW={`16px`} />
+              )}
+            </Flex>
+          ))}
+        </InputWrapper>
+        <Box>
+          <Flex className="btn-add-faq" onClick={onAddChoice}>
+            <BiPlus /> <Text>Add Faq</Text>
+          </Flex>
+        </Box>
         <Box mt={6} />
         <WrapperConnected
           type={isApproveToken ? 'button' : 'submit'}
@@ -474,15 +608,12 @@ const IdoTokenManageForm: React.FC<IdoTokenManageFormProps> = ({
               isLoading={loading}
               isDisabled={loading}
               type="submit"
-              style={{
-                backgroundColor: isRemove ? colors.redPrimary : colors.bluePrimary,
-              }}
               processInfo={{
                 id: transactionType.createLaunchpad,
               }}
               btnSize="h"
             >
-              {isRemove ? 'Remove' : detail ? 'Update' : 'Submit'}
+              {detail ? 'Update' : 'Submit'}
             </FiledButton>
           )}
         </WrapperConnected>
