@@ -43,6 +43,13 @@
     }
   }
 
+  :global .youtube-video {
+    iframe {
+      min-height: 400px;
+      border-radius: 16px;
+    }
+  }
+
   :global .home-image {
     border-radius: 16px;
     box-shadow: 0px 0px 24px rgba(0, 0, 0, 0.04);
