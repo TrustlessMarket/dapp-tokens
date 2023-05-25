@@ -87,3 +87,11 @@ export const getLaunchpadDepositInfo = async (params: { pool_address?: any }) =>
     error: 'Fail to get deposit address',
   });
 };
+
+export const getLaunchpadUserDepositInfo = async (params: { pool_address?: any, address?: any }) => {
+  const qs = '?' + queryString.stringify(params);
+  return swrFetcher(`${API_EXCHANGE_URL}${API_PATH}/user-result${qs}`, {
+    method: 'GET',
+    error: 'Fail to get deposit address',
+  });
+};

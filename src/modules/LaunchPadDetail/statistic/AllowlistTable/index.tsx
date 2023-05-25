@@ -20,12 +20,14 @@ import Jazzicon, {jsNumberForAddress} from 'react-jazzicon';
 import s from './styles.module.scss';
 import {CDN_URL} from '@/configs';
 import SvgInset from '@/components/SvgInset';
-import {formatCurrency, shortenAddress} from "@/utils";
+import {abbreviateNumber, compareString, formatCurrency, shortenAddress} from "@/utils";
 import Search from "@/modules/LaunchPadDetail/statistic/Search";
 import toast from "react-hot-toast";
-import {getLaunchpadDepositInfo} from "@/services/launchpad";
+import {getLaunchpadDepositInfo, getLaunchpadUserDepositInfo} from "@/services/launchpad";
+import {useWeb3React} from "@web3-react/core";
+import Empty from "@/components/Empty";
 
-const AllowlistTable = ({poolDetail}: any) => {
+const AllowlistTable = ({poolDetail, isFull = true}: any) => {
   const [depositList, setDepositList] = useState<any[]>(
     []
   );
@@ -34,6 +36,41 @@ const AllowlistTable = ({poolDetail}: any) => {
   );
   const { mobileScreen, tabletScreen } = useWindowSize();
 
+  const { account } = useWeb3React();
+
+  useEffect(() => {
+    if(poolDetail?.id) {
+      fetchDepositInfo();
+    }
+  }, [account, poolDetail?.id]);
+
+  const fetchDepositInfo = async () => {
+    try {
+      const [res] = await Promise.all([
+        getLaunchpadDepositInfo({pool_address: poolDetail?.launchpad}),
+        getLaunchpadUserDepositInfo({pool_address: poolDetail?.launchpad, address: account})
+      ]);
+      const list = res?.map((item: any, index: number) => ({
+        ...item,
+        index: index + 1,
+        isCurrentUser: compareString(item?.userAddress, account),
+      }))
+      if(isFull) {
+        setDepositList(list);
+      } else {
+        const you = list.find((item: any) => item?.isCurrentUser);
+        if(you) {
+          setDepositList([you]);
+        } else if(list?.length > 0) {
+          setDepositList(res[0]);
+        }
+      }
+    } catch (err: unknown) {
+      console.log(err);
+    }
+  };
+
+
   const getRowHeight = () => {
     if (mobileScreen) {
       return 120;
@@ -41,15 +78,6 @@ const AllowlistTable = ({poolDetail}: any) => {
       return 80;
     }
     return 110;
-  };
-
-  const fetchDepositInfo = async () => {
-    try {
-      const res = await getLaunchpadDepositInfo({pool_address: poolDetail?.launchpad});
-      setDepositList(res);
-    } catch (err: unknown) {
-      console.log(err);
-    }
   };
 
   const RowRenderer = ({ index, key, style, data }: any) => {
@@ -66,7 +94,7 @@ const AllowlistTable = ({poolDetail}: any) => {
         <div
           className={cs(s.dataItemInner, item.isCurrentUser && s.currentUser)}
         >
-          <div className={s.dataId}>{index + 1}</div>
+          <div className={s.dataId}>{item?.index}</div>
           <div className={s.dataUserInfo}>
             {item.avatar ? (
               <Image
@@ -85,7 +113,7 @@ const AllowlistTable = ({poolDetail}: any) => {
 
             <Text
               as="span"
-              className={s.userWallet}
+              className={cs(s.userWallet, item.isCurrentUser ? s.userWallet__black : s.userWallet__white)}
               title={item.userAddress}
               maxWidth={
                 item.isCurrentUser ? { 'min-pc': '6ch', lg: '10ch' } : 'unset'
@@ -99,11 +127,11 @@ const AllowlistTable = ({poolDetail}: any) => {
           </div>
           <div className={s.dataContribute}>
             <span className={s.dataLabel}>Contribution</span>
-            <span className={cs(s.dataValue, s.dataValue__black)}>
+            <span className={cs(s.dataValue, item.isCurrentUser ? s.dataValue__black : s.dataValue__white)}>
               ${formatCurrency(item.amountUsd, 2)}
               {/*<span className={s.dataContribute_divider}></span>*/}
               <span className={s.percentage}>
-                ${formatCurrency(item.amount)} {poolDetail?.liquidityToken?.symbol}
+                {formatCurrency(item.amount)} {poolDetail?.liquidityToken?.symbol}
               </span>
             </span>
           </div>
@@ -112,7 +140,7 @@ const AllowlistTable = ({poolDetail}: any) => {
               <div className={s.dataToken}>
                 <span className={s.dataLabel}>
                   Allocation
-                  {item.isCurrentUser && item.extraPercent > 0 && (
+                  {item.isCurrentUser && item.boost >= 0 && (
                     <Box
                       display={'inline-flex'}
                       p={`${px2rem(2)} ${px2rem(6)}`}
@@ -134,14 +162,14 @@ const AllowlistTable = ({poolDetail}: any) => {
                         fontWeight={700}
                         lineHeight={1.5}
                       >
-                        {item.extraPercent}%
+                        {item.boost}%
                       </Text>
                     </Box>
                   )}
                 </span>
                 <span className={s.dataValue}>
-                  {`${formatCurrency(item.userLaunchpadBalance)} ${poolDetail?.launchpadToken?.symbol}`}{' '}
-                  <span className={s.percentage}>
+                  {`${abbreviateNumber(item.userLaunchpadBalance)} ${poolDetail?.launchpadToken?.symbol}`}{' '}
+                  <span className={cs(s.percentage, item.isCurrentUser ? s.dataValue__black : s.dataValue__white)}>
                     {`(${item.percentHolding.toFixed(2)}%)`}
                   </span>
                 </span>
@@ -156,6 +184,7 @@ const AllowlistTable = ({poolDetail}: any) => {
                     lineHeight={2.2}
                     fontWeight={500}
                     whiteSpace={'nowrap'}
+                    color={"#000000"}
                   >
                     Your allocation includes a{' '}
                     <Text
@@ -166,7 +195,7 @@ const AllowlistTable = ({poolDetail}: any) => {
                       whiteSpace={'nowrap'}
                       color={'#4185EC'}
                     >
-                      {item.extraPercent}%
+                      {item.boost}%
                     </Text>{' '}
                     boost.
                   </Text>
@@ -221,24 +250,34 @@ const AllowlistTable = ({poolDetail}: any) => {
     );
   };
 
-  useEffect(() => {
-    if(poolDetail?.id) {
-      fetchDepositInfo();
-    }
-  }, [poolDetail?.id]);
-
   return (
     <div className={cs(s.allowListTable)}>
       <div className={s.allowListTableWrapper}>
-        <Search onSearch={onSearchAddress} />
-        <div className={cs(s.dataListWrapper)}>
-          {depositList.length === 0 && (
-            <div className={s.loadingWrapper}>
-              <Spinner size={'xl'} />
-            </div>
-          )}
-          {depositList.length > 0 && <DataTable />}
-        </div>
+        {
+          isFull ? (
+            <>
+              <Search onSearch={onSearchAddress} />
+              <div className={cs(s.dataListWrapper)}>
+                {depositList.length === 0 && (
+                  <div className={s.loadingWrapper}>
+                    <Spinner size={'xl'} />
+                  </div>
+                )}
+                {depositList.length > 0 && <DataTable />}
+              </div>
+            </>
+          ) : (
+            <>
+              {
+                depositList.length === 0 ? (
+                  <Empty isTable={false} />
+                ) : (
+                  <RowRenderer index={0} key={"you"} data={depositList} />
+                )
+              }
+            </>
+          )
+        }
       </div>
     </div>
   );

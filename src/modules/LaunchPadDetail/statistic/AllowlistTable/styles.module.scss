@@ -1,4 +1,5 @@
 .allowListTable {
+  width: 100%;
   .allowListTableWrapper {
     //background: #1E1E22;
     //border-radius: 16px;
@@ -105,7 +106,7 @@
   }
 
   .dataListWrapper {
-    height: 432px;
+      height: 432px;
 
     @include max-tablet {
       height: 400px;
@@ -117,7 +118,8 @@
 
     &__currentUser {
       .dataId {
-        // width: 13%;
+        width: 15%;
+        color: #000000;
       }
 
       .dataItemInner {
@@ -210,7 +212,7 @@
   }
 
   .dataId {
-    width: 10%;
+    width: 15%;
     font-weight: 600;
     font-size: rem(20);
     //line-height: 150%;
@@ -252,6 +254,14 @@
       // @include max-tablet {
       //   max-width: rem(110);
       // }
+
+      &__black {
+        color: #000000;
+      }
+
+      &__white {
+        color: #FFFFFF;
+      }
     }
   }
 
@@ -309,10 +319,22 @@
     .percentage {
       font-size: rem(12);
       font-weight: 500;
-      color: #FFFFFF;
+      //color: #FFFFFF;
+
+      &__black {
+        color: #000000;
+      }
+
+      &__white {
+        color: #FFFFFF;
+      }
     }
 
     &__black {
+      color: #000000;
+    }
+
+    &__white {
       color: #FFFFFF;
     }
   }
