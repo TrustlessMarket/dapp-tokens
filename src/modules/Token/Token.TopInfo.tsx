@@ -72,7 +72,6 @@ const TokenTopInfo = ({ data }: { data: IToken }) => {
         </Flex>
 
         <Box className="block-info">
-          <Text className="desc mobile">#{data.index}</Text>
           <Text className="title">
             {data.name} ({data.symbol})
           </Text>
