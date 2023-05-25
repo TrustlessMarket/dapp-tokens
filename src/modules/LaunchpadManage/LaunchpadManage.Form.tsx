@@ -652,6 +652,7 @@ const IdoTokenManageForm: React.FC<IdoTokenManageFormProps> = ({
                   onClick={() => onRemoveChoose(v)}
                   // className={styles.btnRemoveChoose}
                   color={colors.redPrimary}
+                  cursor={"pointer"}
                 >
                   <IoRemoveCircle />
                 </Box>
