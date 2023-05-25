@@ -12,7 +12,6 @@ import {CDN_URL} from '@/configs';
 import {BRIDGE_SUPPORT_TOKEN, TRUSTLESS_BRIDGE, TRUSTLESS_FAUCET,} from '@/constants/common';
 import {toastError} from '@/constants/error';
 import {AssetsContext} from '@/contexts/assets-context';
-import useGetReserves from '@/hooks/contract-operations/swap/useReserves';
 import useApproveERC20Token from '@/hooks/contract-operations/token/useApproveERC20Token';
 import useBalanceERC20Token from '@/hooks/contract-operations/token/useBalanceERC20Token';
 import useIsApproveERC20Token from '@/hooks/contract-operations/token/useIsApproveERC20Token';
@@ -27,7 +26,7 @@ import {
   selectPnftExchange,
   updateCurrentTransaction,
 } from '@/state/pnftExchange';
-import {getIsAuthenticatedSelector, getUserSelector} from '@/state/user/selector';
+import {getIsAuthenticatedSelector} from '@/state/user/selector';
 import {formatCurrency,} from '@/utils';
 import {composeValidators, required} from '@/utils/formValidate';
 import px2rem from '@/utils/px2rem';
@@ -37,8 +36,10 @@ import {
   Center,
   Flex,
   forwardRef,
+  GridItem,
   Progress,
   ProgressLabel,
+  SimpleGrid,
   Stat,
   StatLabel,
   StatNumber,
@@ -393,32 +394,30 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         </Flex>
       </Flex>
       <Flex gap={0} color={'#FFFFFF'} mt={4} direction={"column"}>
-        <Flex justifyContent={"space-between"}>
-          <Stat>
-            <StatLabel>Launchpad Balance</StatLabel>
-            <StatNumber>{formatCurrency(poolDetail?.launchpadBalance || 0)}</StatNumber>
-          </Stat>
-          <Stat>
-            <StatLabel>Funded</StatLabel>
-            <StatNumber>
-              ${formatCurrency(poolDetail?.totalValueUsd || 0,2)}
-            </StatNumber>
-          </Stat>
-        </Flex>
-        <Flex justifyContent={"space-between"}>
-          {isAuthenticated && boostInfo && (
+        <SimpleGrid columns={3} spacingX={6}>
+          <GridItem>
             <Stat>
-              <StatLabel>Boost rate</StatLabel>
-              <StatNumber>{boostInfo.boost}%</StatNumber>
+              <StatLabel>Launchpad Balance</StatLabel>
+              <StatNumber>{formatCurrency(poolDetail?.launchpadBalance || 0)}</StatNumber>
             </Stat>
-          )}
-          <Stat>
-            <StatLabel>Backers</StatLabel>
-            <StatNumber>
-              {formatCurrency(poolDetail?.contributors || 0, 0)}
-            </StatNumber>
-          </Stat>
-        </Flex>
+          </GridItem>
+          <GridItem>
+            <Stat>
+              <StatLabel>Funded</StatLabel>
+              <StatNumber>
+                ${formatCurrency(poolDetail?.totalValueUsd || 0,2)}
+              </StatNumber>
+            </Stat>
+          </GridItem>
+          <GridItem>
+            <Stat>
+              <StatLabel>Backers</StatLabel>
+              <StatNumber>
+                {formatCurrency(poolDetail?.contributors || 0, 0)}
+              </StatNumber>
+            </Stat>
+          </GridItem>
+        </SimpleGrid>
         <Stat>
           <StatLabel>Ends in</StatLabel>
           <StatNumber>
