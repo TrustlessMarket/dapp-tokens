@@ -2,12 +2,16 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { transactionType } from '@/components/Swap/alertInfoProcessing/types';
 import { toastError } from '@/constants/error';
-import { ROUTE_PATH } from '@/constants/route-path';
 import { WalletContext } from '@/contexts/wallet-context';
 import useCreateLaunchpad from '@/hooks/contract-operations/launchpad/useCreate';
 import useContractOperation from '@/hooks/contract-operations/useContractOperation';
+import { ILaunchpad } from '@/interfaces/launchpad';
 import { TransactionStatus } from '@/interfaces/walletTransaction';
-import { getDetailLaunchpad, scanLaunchpadTxHash } from '@/services/launchpad';
+import {
+  getDetailLaunchpad,
+  scanLaunchpadTxHash,
+  updateLaunchpadDescription,
+} from '@/services/launchpad';
 import { requestReload, updateCurrentTransaction } from '@/state/pnftExchange';
 import { showError } from '@/utils/toast';
 import { Text } from '@chakra-ui/react';
@@ -25,7 +29,7 @@ const LaunchManage = () => {
   const { account } = useWeb3React();
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
-  const [detail, setDetail] = useState<any>(null);
+  const [detail, setDetail] = useState<ILaunchpad | undefined>(undefined);
 
   const { run: createLaunchpad } = useContractOperation({
     operation: useCreateLaunchpad,
@@ -72,23 +76,29 @@ const LaunchManage = () => {
         }),
       );
 
-      if (id) {
-        // await removeIdo({
-        //   id: ido.id,
-        //   signature: signature,
-        //   address: account,
-        // });
-        toast.success(`Removed IDO successfully.`);
+      const faqs = filter(Object.keys(values), (v) => v?.includes('faq_q')).map(
+        (v, i) => ({
+          value: values?.[v],
+          label: values?.[`faq_a_${i + 1}`],
+        }),
+      );
+
+      const signature = await getSignature(account);
+
+      if (detail) {
+        await updateLaunchpadDescription({
+          launchpad: detail.launchpad,
+          user_address: account,
+          video: values?.video,
+          image: values?.image,
+          description: values?.description,
+          signature,
+          qand_a: JSON.stringify(faqs),
+        });
+
+        toast.success(`Updated launchpad successfully.`);
+        dispatch(updateCurrentTransaction(null));
       } else {
-        const faqs = filter(Object.keys(values), (v) => v?.includes('faq_q')).map(
-          (v, i) => ({
-            value: values?.[v],
-            label: values?.[`faq_a_${i + 1}`],
-          }),
-        );
-
-        const signature = await getSignature(account);
-
         const response: any = await createLaunchpad({
           launchpadTokenArg: tokenAddress,
           liquidityTokenArg: liquidAddress,
@@ -98,7 +108,16 @@ const LaunchManage = () => {
           launchpadBalance: values.launchpadBalance,
           goalBalance: values.goalBalance,
         });
-        console.log('response', response);
+
+        updateLaunchpadDescription({
+          tx_hash: response.hash,
+          user_address: account,
+          video: values?.video,
+          image: values?.image,
+          description: values?.description,
+          signature,
+          qand_a: JSON.stringify(faqs),
+        });
 
         dispatch(
           updateCurrentTransaction({
@@ -106,7 +125,7 @@ const LaunchManage = () => {
             id: transactionType.createLaunchpad,
             hash: response.hash,
             infoTexts: {
-              success: `Created ${values?.launchpadTokenArg?.symbol} - ${values?.liquidityTokenArg?.symbol} launchpad successfully. You can <a href='${ROUTE_PATH.LAUNCHPAD_DETAIL}' >check now!</a>`,
+              success: `Created ${values?.launchpadTokenArg?.symbol} - ${values?.liquidityTokenArg?.symbol} launchpad successfully.`,
             },
           }),
         );

@@ -32,6 +32,7 @@ import { getListLiquidityToken, getListOwnerToken } from '@/services/launchpad';
 import { logErrorToServer } from '@/services/swap';
 import { closeModal, openModal } from '@/state/modal';
 import { updateCurrentTransaction } from '@/state/pnftExchange';
+import { colors } from '@/theme/colors';
 import { formatCurrency, getLiquidityRatio } from '@/utils';
 import { composeValidators, required, requiredAmount } from '@/utils/formValidate';
 import { showError } from '@/utils/toast';
@@ -43,13 +44,11 @@ import { isEmpty, truncate } from 'lodash';
 import { useRouter } from 'next/router';
 import React, { useCallback, useEffect, useState } from 'react';
 import { Field, useForm, useFormState } from 'react-final-form';
+import { BiPlus } from 'react-icons/bi';
+import { IoRemoveCircle } from 'react-icons/io5';
 import { useDispatch } from 'react-redux';
 import web3 from 'web3';
 import { MAX_FILE_SIZE } from '../UpdateTokenInfo/form';
-import { IoRemoveCircle } from 'react-icons/io5';
-import { FaRemoveFormat } from 'react-icons/fa';
-import { colors } from '@/theme/colors';
-import { BiPlus } from 'react-icons/bi';
 
 interface IdoTokenManageFormProps {
   handleSubmit?: (_: any) => void;
@@ -61,9 +60,6 @@ interface IdoTokenManageFormProps {
 const defaultFaqs = [
   {
     id: 1,
-  },
-  {
-    id: 2,
   },
 ];
 
@@ -90,8 +86,8 @@ const IdoTokenManageForm: React.FC<IdoTokenManageFormProps> = ({
   const [uploading, setUploading] = useState(false);
   const [faqs, setFaqs] = useState<any[]>(defaultFaqs);
 
-  const { values, submitting } = useFormState();
-  const { change } = useForm();
+  const { values } = useFormState();
+  const { change, initialize } = useForm();
   const { call: isApproved } = useIsApproveERC20Token();
   const { call: approveToken } = useApproveERC20Token();
   const { call: tokenBalance } = useBalanceERC20Token();
@@ -102,16 +98,26 @@ const IdoTokenManageForm: React.FC<IdoTokenManageFormProps> = ({
 
   useEffect(() => {
     if (detail) {
-      change('id', detail.id);
-      change('launchpadTokenArg', detail.launchpadToken);
-      change('liquidityTokenArg', detail.liquidityToken);
-      change('launchpadBalance', detail.launchpadBalance);
-      change('liquidityRatioArg', getLiquidityRatio(detail.liquidityRatio));
-      change('goalBalance', detail.goalBalance);
-      change('startTimeArg', new Date(detail.startTime));
-      change('endTimeArg', new Date(detail.endTime));
-      change('description', detail.description);
-      change('qand_a', detail.qand_a);
+      setFaqs(JSON.parse(detail.qandA).map((v: any, i: number) => ({ id: i + 1 })));
+      const _faqs: any = {};
+      for (let i = 0; i < JSON.parse(detail.qandA).length; i++) {
+        const element = JSON.parse(detail.qandA)[i];
+        _faqs[`faq_q_${i + 1}`] = element.value;
+        _faqs[`faq_a_${i + 1}`] = element.label;
+      }
+      initialize({
+        launchpadTokenArg: detail.launchpadToken,
+        liquidityTokenArg: detail.liquidityToken,
+        launchpadBalance: detail.launchpadBalance,
+        liquidityRatioArg: getLiquidityRatio(detail.liquidityRatio),
+        goalBalance: detail.goalBalance,
+        startTimeArg: new Date(detail.startTime),
+        endTimeArg: new Date(detail.endTime),
+        description: detail.description,
+        video: detail.video,
+        image: detail.image,
+        ..._faqs,
+      });
     }
   }, [detail]);
 
@@ -183,25 +189,33 @@ const IdoTokenManageForm: React.FC<IdoTokenManageFormProps> = ({
 
   const validateAmount = useCallback(
     (_amount: any) => {
-      if (Number(_amount) > Number(balanceToken)) {
+      if (!detail && Number(_amount) > Number(balanceToken)) {
         return `Max amount is ${formatCurrency(balanceToken)}`;
       }
 
       return undefined;
     },
-    [values.launchpadBalance, tokenSelected, balanceToken],
+    [values.launchpadBalance, tokenSelected, balanceToken, detail],
   );
 
   const validateMaxRatio = useCallback(
     (_amount: any) => {
-      if (Number(_amount) > Number(90)) {
+      if (!detail && Number(_amount) > Number(90)) {
         return `Max ratio is ${90}%`;
       }
 
       return undefined;
     },
-    [values.launchpadBalance, tokenSelected],
+    [values.launchpadBalance, tokenSelected, detail],
   );
+
+  const validateYoutubeLink = useCallback((_link: any) => {
+    if (!_link && !values.image) {
+      return `Image or Youtube link is Required`;
+    }
+
+    return undefined;
+  }, []);
 
   const requestApproveToken = async (
     token: IToken | any,
@@ -443,7 +457,7 @@ const IdoTokenManageForm: React.FC<IdoTokenManageFormProps> = ({
             </Box>
           </Flex>
           <Box className="token-info" flex={1}>
-            <Text as={'h6'}>Token information</Text>
+            <Text as={'h6'}>Token information's</Text>
             {tokenSelected && (
               <Flex
                 justifyContent={'space-between'}
@@ -523,7 +537,7 @@ const IdoTokenManageForm: React.FC<IdoTokenManageFormProps> = ({
         </InputWrapper>
         <Box mt={6} />
         <Field
-          validate={required}
+          validate={composeValidators(validateYoutubeLink, validateYoutubeLink)}
           name="video"
           children={FieldText}
           label="Youtube link"
@@ -581,7 +595,7 @@ const IdoTokenManageForm: React.FC<IdoTokenManageFormProps> = ({
         </InputWrapper>
         <Box>
           <Flex className="btn-add-faq" onClick={onAddChoice}>
-            <BiPlus /> <Text>Add Faq</Text>
+            <BiPlus /> <Text>Add more faq</Text>
           </Flex>
         </Box>
         <Box mt={6} />
