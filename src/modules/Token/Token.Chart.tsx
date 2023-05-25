@@ -173,8 +173,8 @@ const TokenChart: React.FC<TokenChartProps> = ({ chartData, dataSymbol }) => {
       const { width, height } = entries[0].contentRect;
       chart.current.applyOptions({ width, height });
       setTimeout(() => {
-        chart.current.timeScale().fitContent();
-        // chart.current.timeScale().scrollToRealTime();
+        // chart.current.timeScale().fitContent();
+        chart.current.timeScale().scrollToRealTime();
       }, 0);
     });
 
