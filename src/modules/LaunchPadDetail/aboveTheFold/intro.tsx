@@ -4,6 +4,7 @@ import {CDN_URL} from "@/configs";
 import cx from "classnames";
 import React, {useRef, useState} from "react";
 import ReactPlayer from 'react-player';
+import styles from './styles.module.scss';
 
 const Intro = ({poolDetail}: any) => {
   const refVideo = useRef<any>();
@@ -21,7 +22,7 @@ const Intro = ({poolDetail}: any) => {
   };
 
   return (
-    <Box>
+    <Box className={styles.introWrapper}>
       {
         poolDetail?.video ? (
           <>
