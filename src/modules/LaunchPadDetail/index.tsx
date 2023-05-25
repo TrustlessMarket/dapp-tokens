@@ -1,7 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import styles from './styles.module.scss';
-import IdoFaqs from './faqs';
+import BodyContainer from '@/components/Swap/bodyContainer';
+import FiledButton from '@/components/Swap/button/filedButton';
+import { ROUTE_PATH } from '@/constants/route-path';
+import { ILaunchpad } from '@/interfaces/launchpad';
+import AboveTheFold from '@/modules/LaunchPadDetail/aboveTheFold';
 import IdoDescription from '@/modules/LaunchPadDetail/description';
+import { getDetailLaunchpad } from '@/services/launchpad';
+import { useAppSelector } from '@/state/hooks';
+import { selectPnftExchange } from '@/state/pnftExchange';
+import { colors } from '@/theme/colors';
 import {
   Box,
   Spinner,
@@ -12,32 +19,27 @@ import {
   Tabs,
   Text,
 } from '@chakra-ui/react';
-import AboveTheFold from '@/modules/LaunchPadDetail/aboveTheFold';
-import { getDetailLaunchpad } from '@/services/launchpad';
-import { useEffect, useState } from 'react';
+import { default as cs, default as cx } from 'classnames';
 import { useRouter } from 'next/router';
-import BodyContainer from '@/components/Swap/bodyContainer';
-import cx from 'classnames';
-import { useAppSelector } from '@/state/hooks';
-import { selectPnftExchange } from '@/state/pnftExchange';
-import { ILaunchpad } from '@/interfaces/launchpad';
-import { colors } from '@/theme/colors';
-import cs from 'classnames';
-import FiledButton from '@/components/Swap/button/filedButton';
-import { ROUTE_PATH } from '@/constants/route-path';
+import { useEffect, useState } from 'react';
+import IdoFaqs from './faqs';
+import styles from './styles.module.scss';
 
 const IdoDetailContainer = () => {
   const router = useRouter();
   const [poolDetail, setPoolDetail] = useState<ILaunchpad | any>(undefined);
   const needReload = useAppSelector(selectPnftExchange).needReload;
+
   const [loading, setLoading] = useState(true);
 
   const getPoolInfo = async () => {
     try {
-      const response: any = await getDetailLaunchpad({
-        pool_address: router?.query?.pool_address as string,
-      });
-      setPoolDetail(response);
+      const response: any = await [
+        getDetailLaunchpad({
+          pool_address: router?.query?.pool_address as string,
+        }),
+      ];
+      setPoolDetail(response[0]);
     } catch (err) {
       throw err;
     } finally {

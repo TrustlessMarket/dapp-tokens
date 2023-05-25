@@ -85,6 +85,8 @@ import {
 import useEndLaunchPad from '@/hooks/contract-operations/launchpad/useEnd';
 import { colors } from '@/theme/colors';
 import useClaimLaunchPad from '@/hooks/contract-operations/launchpad/useClaim';
+import useIsAbleRedeem from '@/hooks/contract-operations/launchpad/useIsAbleRedeem';
+import { ILaunchpad } from '@/interfaces/launchpad';
 
 const FEE = 2;
 export const MakeFormSwap = forwardRef((props, ref) => {
@@ -95,6 +97,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     isStarting,
     isEndLaunchpad,
     isClaimLaunchpad,
+    canClaim,
   } = props;
   const [loading, setLoading] = useState(false);
   const [baseToken, setBaseToken] = useState<any>();
@@ -657,11 +660,9 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           </FiledButton>
         ) : (
           <FiledButton
-            isDisabled={submitting || btnDisabled}
+            isDisabled={submitting || btnDisabled || (!canClaim && isClaimLaunchpad)}
             isLoading={submitting}
             type="submit"
-            // borderRadius={'100px !important'}
-            // className="btn-submit"
             btnSize={'h'}
             containerConfig={{ flex: 1, mt: 6 }}
             loadingText={submitting ? 'Processing' : ' '}
@@ -695,11 +696,11 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   );
 });
 
-const BuyForm = ({ poolDetail }: any) => {
+const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
   const refForm = useRef<any>();
   const [submitting, setSubmitting] = useState(false);
   const dispatch = useAppDispatch();
-  const { account } = useWeb3React();
+  const { account, isActive } = useWeb3React();
   const { run: depositLaunchpad } = useContractOperation({
     operation: useDepositLaunchpad,
   });
@@ -709,8 +710,11 @@ const BuyForm = ({ poolDetail }: any) => {
   const { run: claimLaunchpad } = useContractOperation({
     operation: useClaimLaunchPad,
   });
+  const { call: isAbleRedeem } = useIsAbleRedeem();
+
   const { mobileScreen } = useWindowSize();
   const [status] = useLaunchPadStatus({ row: poolDetail });
+  const [canClaim, setCanClaim] = useState(false);
 
   const isEndLaunchpad = [
     LAUNCHPAD_STATUS.End,
@@ -724,6 +728,22 @@ const BuyForm = ({ poolDetail }: any) => {
   ].includes(status.key);
 
   const isStarting = [LAUNCHPAD_STATUS.Starting].includes(status.key);
+
+  useEffect(() => {
+    fetchData();
+  }, [account, isActive, poolDetail]);
+
+  const fetchData = async () => {
+    try {
+      const response: any = await [
+        isAbleRedeem({
+          owner_address: account,
+          launchpad_address: poolDetail.launchpad,
+        }),
+      ];
+      setCanClaim(response[1]);
+    } catch (error) {}
+  };
 
   const confirmDeposit = (values: any) => {
     const { baseAmount, quoteAmount, onConfirm } = values;
@@ -848,7 +868,7 @@ const BuyForm = ({ poolDetail }: any) => {
         signature: '',
       };
 
-      if(boostInfo) {
+      if (boostInfo) {
         data.boostRatio = boostInfo.boostSign;
         data.signature = boostInfo.adminSignature;
       }
@@ -900,6 +920,7 @@ const BuyForm = ({ poolDetail }: any) => {
             isEndLaunchpad={isEndLaunchpad}
             isClaimLaunchpad={isClaimLaunchpad}
             isStarting={isStarting}
+            canClaim={canClaim}
           />
         )}
       </Form>

@@ -102,7 +102,8 @@ export const StyledIdoStatus = styled(Badge)`
     font-size: 12px;
     font-weight: 500;
   }
-  &.finished {
+  &.finished,
+  &.success {
     color: rgba(4, 197, 127, 1);
     background-color: rgba(4, 197, 127, 0.2);
     padding: 6px 12px;
@@ -110,7 +111,9 @@ export const StyledIdoStatus = styled(Badge)`
     font-size: 12px;
     font-weight: 500;
   }
-  &.ending {
+  &.ending,
+  &.failed,
+  &.closed {
     color: rgba(255, 71, 71, 1);
     background-color: rgba(255, 71, 71, 0.2);
     padding: 6px 12px;
