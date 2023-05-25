@@ -13,14 +13,17 @@ import { updateCurrentTransaction } from '@/state/pnftExchange';
 import { transactionType } from '@/components/Swap/alertInfoProcessing/types';
 import { TransactionStatus } from '@/interfaces/walletTransaction';
 
-interface IEndLaunchPoolParams {
+interface IClaimLaunchPoolParams {
   launchpadAddress: string;
 }
 
-const useEndLaunchPad: ContractOperationHook<IEndLaunchPoolParams, boolean> = () => {
+const useClaimLaunchPad: ContractOperationHook<
+  IClaimLaunchPoolParams,
+  boolean
+> = () => {
   const { account, provider } = useWeb3React();
   const call = useCallback(
-    async (params: IEndLaunchPoolParams): Promise<boolean> => {
+    async (params: IClaimLaunchPoolParams): Promise<boolean> => {
       const { launchpadAddress } = params;
       if (account && provider && launchpadAddress) {
         const contract = getContract(
@@ -30,8 +33,8 @@ const useEndLaunchPad: ContractOperationHook<IEndLaunchPoolParams, boolean> = ()
           account,
         );
 
-        const transaction = await contract.connect(provider.getSigner()).end({
-          gasLimit: '1000000',
+        const transaction = await contract.connect(provider.getSigner()).redeem({
+          gasLimit: '200000',
           // gasPrice: getDefaultGasPrice(),
         });
 
@@ -39,7 +42,7 @@ const useEndLaunchPad: ContractOperationHook<IEndLaunchPoolParams, boolean> = ()
           type: 'logs',
           address: account,
           error: JSON.stringify(transaction),
-          message: "gasLimit: '1000000'",
+          message: "gasLimit: '200000'",
         });
 
         store.dispatch(
@@ -67,4 +70,4 @@ const useEndLaunchPad: ContractOperationHook<IEndLaunchPoolParams, boolean> = ()
   };
 };
 
-export default useEndLaunchPad;
+export default useClaimLaunchPad;

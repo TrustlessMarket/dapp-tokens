@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import styles from './styles.module.scss';
 import {Box, Flex, Text} from "@chakra-ui/react";
@@ -9,10 +10,10 @@ import {openModal} from "@/state/modal";
 import {useWindowSize} from "@trustless-computer/dapp-core";
 import AllowlistTable from "@/modules/LaunchPadDetail/statistic/AllowlistTable";
 
-const Statistic = ({poolDetail} : any) => {
+const Statistic = ({poolDetail}: any) => {
   const isAuthenticated = useSelector(getIsAuthenticatedSelector);
   const dispatch = useDispatch();
-  const { mobileScreen } = useWindowSize();
+  const {mobileScreen} = useWindowSize();
 
   const handleShowDepositList = () => {
     const id = 'modalContributionList';
@@ -39,14 +40,16 @@ const Statistic = ({poolDetail} : any) => {
 
   return (
     <Box className={styles.wrapper}>
-      <Card bgColor={"#1E1E22"}>
-        {!isAuthenticated && (
-          <Text color={'#1b77fd'} mb={"8px !important"}>Connect wallet to see your boost rate</Text>
+      <Card bgColor={'#1E1E22'} paddingX={8} paddingY={6}>
+        {isAuthenticated && (
+          <Text color={'#1b77fd'} mb={'8px !important'}>
+            Connect wallet to see your boost rate
+          </Text>
         )}
         <AllowlistTable poolDetail={poolDetail} isFull={false} handleViewMore={handleShowDepositList}/>
       </Card>
     </Box>
-  )
+  );
 };
 
 export default Statistic;
