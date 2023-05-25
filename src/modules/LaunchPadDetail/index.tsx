@@ -36,7 +36,6 @@ const IdoDetailContainer = () => {
   return (
     <Box className={styles.wrapper}>
       <AboveTheFold poolDetail={poolDetail}/>
-      <Usp/>
       <BodyContainer>
         <Tabs className={cx(styles.tabContainer, "max-content")}>
           <TabList mb={6} mt={6}>

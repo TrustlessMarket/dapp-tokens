@@ -63,6 +63,8 @@ import ModalConfirmApprove from '@/components/ModalConfirmApprove';
 import {getUserBoost} from "@/services/launchpad";
 import useDepositLaunchpad from '@/hooks/contract-operations/launchpad/useDeposit';
 import SocialToken from "@/components/Social";
+import moment from "moment";
+import useCountDownTimer from "@/hooks/useCountdown";
 
 const FEE = 2;
 export const MakeFormSwap = forwardRef((props, ref) => {
@@ -71,27 +73,35 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const [baseToken, setBaseToken] = useState<any>();
   const [quoteToken, setQuoteToken] = useState<any>();
   const [amountBaseTokenApproved, setAmountBaseTokenApproved] = useState('0');
-  const [baseTokensList, setBaseTokensList] = useState<IToken[]>([]);
   const { call: isApproved } = useIsApproveERC20Token();
   const { call: tokenBalance } = useBalanceERC20Token();
   const { call: approveToken } = useApproveERC20Token();
-  const { call: getReserves } = useGetReserves();
   const [baseBalance, setBaseBalance] = useState<any>('0');
   const { juiceBalance, isLoadedAssets } = useContext(AssetsContext);
   const isAuthenticated = useSelector(getIsAuthenticatedSelector);
   const dispatch = useDispatch();
-  const [isChangeBaseToken, setIsChangeBaseToken] = useState(false);
   const router = useRouter();
 
   const { account } = useWeb3React();
   const needReload = useAppSelector(selectPnftExchange).needReload;
   const [boostInfo, setBoostInfo] = useState<any>();
 
-  // console.log('baseToken', baseToken);
-  // console.log('quoteToken', quoteToken);
-  // console.log('poolDetail', poolDetail);
-  // console.log('boostInfo', boostInfo);
-  // console.log('======');
+  const [endTime, setEndTime] = useState(0);
+  const [days, hours, minutes, seconds, expired] = useCountDownTimer(
+    moment.unix(endTime).format("YYYY/MM/DD HH:mm:ss")
+  );
+
+  useEffect(() => {
+    if(poolDetail?.id) {
+      setEndTime(moment(poolDetail?.endTime).unix());
+    }
+  }, [poolDetail?.id])
+
+  useEffect(() => {
+    if (expired && endTime) {
+      dispatch(requestReload());
+    }
+  }, [expired]);
 
   const { values } = useFormState();
   const { change, restart } = useForm();
@@ -361,31 +371,13 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   return (
     <form onSubmit={onSubmit} style={{ height: '100%' }}>
       {isAuthenticated && (
-        <Text color={'#1b77fd'}>Connect wallet to see your boost rate</Text>
+        <Text color={'#1b77fd'} mb={"8px !important"}>Connect wallet to see your boost rate</Text>
       )}
-      <Flex gap={2} color={'#FFFFFF'} mt={1}>
-        {poolDetail && (
-          <Stat>
-            <StatLabel>Launchpad Balance</StatLabel>
-            <StatNumber>{formatCurrency(poolDetail.launchpadBalance)}</StatNumber>
-          </Stat>
-        )}
-        {isAuthenticated && boostInfo && (
-          <Stat>
-            <StatLabel>Boost rate</StatLabel>
-            <StatNumber>{boostInfo.boost}%</StatNumber>
-          </Stat>
-        )}
-        <Stat>
-          <StatLabel>Socials</StatLabel>
-          <StatNumber><SocialToken socials={poolDetail?.launchpadToken?.social} /></StatNumber>
-        </Stat>
-      </Flex>
       <Flex direction={"column"}>
         <Box className={styles.progressBar}>
           <Progress
             w={["100%", "100%"]}
-            h="24px"
+            h="16px"
             value={percent < 15 ? 15 : percent}
             borderRadius={12}
           >
@@ -399,6 +391,40 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           <Text color={"brand.success.400"} fontSize={"xl"} fontWeight={"medium"}>{formatCurrency(poolDetail?.totalValue || 0)} {baseToken?.symbol}</Text>
           <Text color={"#FFFFFF"} fontSize={"xs"}>pledged of {formatCurrency(poolDetail?.goalBalance || 0)} {baseToken?.symbol} goal</Text>
         </Flex>
+      </Flex>
+      <Flex gap={0} color={'#FFFFFF'} mt={4} direction={"column"}>
+        <Flex justifyContent={"space-between"}>
+          <Stat>
+            <StatLabel>Launchpad Balance</StatLabel>
+            <StatNumber>{formatCurrency(poolDetail?.launchpadBalance || 0)}</StatNumber>
+          </Stat>
+          <Stat>
+            <StatLabel>Funded</StatLabel>
+            <StatNumber>
+              ${formatCurrency(poolDetail?.totalValueUsd || 0,2)}
+            </StatNumber>
+          </Stat>
+        </Flex>
+        <Flex justifyContent={"space-between"}>
+          {isAuthenticated && boostInfo && (
+            <Stat>
+              <StatLabel>Boost rate</StatLabel>
+              <StatNumber>{boostInfo.boost}%</StatNumber>
+            </Stat>
+          )}
+          <Stat>
+            <StatLabel>Backers</StatLabel>
+            <StatNumber>
+              {formatCurrency(poolDetail?.contributors || 0, 0)}
+            </StatNumber>
+          </Stat>
+        </Flex>
+        <Stat>
+          <StatLabel>Ends in</StatLabel>
+          <StatNumber>
+            <Text>{Number(days) > 0 && `${days}d :`} {hours}h : {minutes}m : {seconds}s</Text>
+          </StatNumber>
+        </Stat>
       </Flex>
       <InputWrapper
         className={cx(styles.inputAmountWrap, styles.inputBaseAmountWrap)}
@@ -594,6 +620,10 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             BACK THIS PROJECT
           </FiledButton>
         )}
+        <Flex justifyContent={"flex-end"}>
+          <SocialToken socials={poolDetail?.launchpadToken?.social} />
+        </Flex>
+        <Text mt={4} fontSize={"sm"} color={"#FFFFFF"}>All or nothing. This project will only be funded if it reaches its goal by {moment.utc(poolDetail?.endTime).format('ddd, MMMM Do YYYY HH:mm:ss Z')}.</Text>
       </WrapperConnected>
     </form>
   );
@@ -607,8 +637,6 @@ const BuyForm = ({ poolDetail }: any) => {
   const { run: depositLaunchpad } = useContractOperation({
     operation: useDepositLaunchpad,
   });
-  const user = useSelector(getUserSelector);
-  const slippage = useAppSelector(selectPnftExchange).slippage;
   const { mobileScreen } = useWindowSize();
 
   const confirmDeposit = (values: any) => {

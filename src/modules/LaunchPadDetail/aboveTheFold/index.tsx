@@ -2,18 +2,24 @@
 import {useLaunchPadStatus} from "@/modules/Launchpad/Launchpad.Status";
 import LaunchpadUpComing from "@/modules/LaunchPadDetail/aboveTheFold/upComing";
 import LaunchpadStarting from "@/modules/LaunchPadDetail/aboveTheFold/starting";
+import BodyContainer from "@/components/Swap/bodyContainer";
+import Usp from "@/modules/LaunchPadDetail/ups";
+import styles from "@/modules/LaunchPadDetail/aboveTheFold/styles.module.scss";
 
 const AboveTheFold = ({poolDetail}: any) => {
   const [status] = useLaunchPadStatus({ row: poolDetail });
 
-  console.log('statusstatusstatus', status);
-
   return (
-    status?.value === 'upcoming' ? (
-      <LaunchpadUpComing poolDetail={poolDetail}/>
-    ) : (
-      <LaunchpadStarting poolDetail={poolDetail}/>
-    )
+    <BodyContainer className={styles.wrapper}>
+      {
+        status?.value === 'upcoming' ? (
+          <LaunchpadUpComing poolDetail={poolDetail}/>
+        ) : (
+          <LaunchpadStarting poolDetail={poolDetail}/>
+        )
+      }
+      <Usp/>
+    </BodyContainer>
   )
 };
 
