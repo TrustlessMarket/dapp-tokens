@@ -110,9 +110,9 @@ export const StyledIdoStatus = styled(Badge)`
     font-size: 12px;
     font-weight: 500;
   }
-  &.finished {
-    color: rgba(4, 197, 127, 1);
-    background-color: rgba(4, 197, 127, 0.2);
+  &.ending {
+    color: rgba(255, 71, 71, 1);
+    background-color: rgba(255, 71, 71, 0.2);
     padding: 6px 12px;
     border-radius: 4px;
     font-size: 12px;

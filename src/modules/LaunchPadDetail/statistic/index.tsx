@@ -1,15 +1,16 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import styles from './styles.module.scss';
-import {Box, Button, Flex, Text} from "@chakra-ui/react";
-import Card from "@/components/Swap/card";
-import React from "react";
-import {useDispatch, useSelector} from "react-redux";
-import {getIsAuthenticatedSelector} from "@/state/user/selector";
-import {openModal} from "@/state/modal";
-import {useWindowSize} from "@trustless-computer/dapp-core";
-import AllowlistTable from "@/modules/LaunchPadDetail/statistic/AllowlistTable";
+import { Box, Button, Flex, Text } from '@chakra-ui/react';
+import Card from '@/components/Swap/card';
+import React from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { getIsAuthenticatedSelector } from '@/state/user/selector';
+import { useWindowSize } from '@trustless-computer/dapp-core';
+import { openModal } from '@/state/modal';
+import AllowlistTable from './AllowlistTable';
 
-const Statistic = ({poolDetail} : any) => {
+const Statistic = ({ poolDetail }: any) => {
   const isAuthenticated = useSelector(getIsAuthenticatedSelector);
   const dispatch = useDispatch();
   const { mobileScreen } = useWindowSize();
@@ -30,7 +31,7 @@ const Statistic = ({poolDetail} : any) => {
         },
         render: () => (
           <Flex>
-            <AllowlistTable poolDetail={poolDetail}/>
+            <AllowlistTable poolDetail={poolDetail} />
           </Flex>
         ),
       }),
@@ -39,17 +40,17 @@ const Statistic = ({poolDetail} : any) => {
 
   return (
     <Box className={styles.wrapper}>
-      <Card bgColor={"#1E1E22"}>
-        {!isAuthenticated && (
-          <Text color={'#1b77fd'} mb={"8px !important"}>Connect wallet to see your boost rate</Text>
+      <Card bgColor={'#1E1E22'} paddingX={8} paddingY={6}>
+        {isAuthenticated && (
+          <Text color={'#1b77fd'} mb={'8px !important'}>
+            Connect wallet to see your boost rate
+          </Text>
         )}
-        <AllowlistTable poolDetail={poolDetail} isFull={false}/>
-        <Button
-          onClick={handleShowDepositList}
-        >View more</Button>
+        <AllowlistTable poolDetail={poolDetail} isFull={false} />
+        <Button onClick={handleShowDepositList}>View more</Button>
       </Card>
     </Box>
-  )
+  );
 };
 
 export default Statistic;
