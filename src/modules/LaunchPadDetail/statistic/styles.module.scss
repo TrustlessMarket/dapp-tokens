@@ -1,3 +1,15 @@
 .wrapper {
   color: #FFFFFF;
 }
+
+.modalContent {
+  min-width: 50vw;
+  :global {
+    .modal-header-wrap {
+      margin-bottom: 0;
+    }
+    .chakra-modal__body {
+      //padding: 0;
+    }
+  }
+}
