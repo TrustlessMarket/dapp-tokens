@@ -15,4 +15,6 @@ export enum TransactionEventType {
   END_LAUNCHPAD = 'end launchpad pool',
   LIST_FOR_SALE = 'list for sale',
   CANCEL_LISTING = 'cancel listing',
+  MAKE_TOKEN_OFFER = 'make token offer',
+  PURCHASE_TOKEN = 'purchase token',
 }
