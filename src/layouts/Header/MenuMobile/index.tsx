@@ -10,11 +10,11 @@ import { useRouter } from 'next/router';
 import React, { ForwardedRef, useContext } from 'react';
 import { useSelector } from 'react-redux';
 import { HEADER_MENUS } from '..';
-import { ConnectWalletButton, StyledLink, WalletBalance } from '../Header.styled';
 import { Wrapper } from './MenuMobile.styled';
 import { Box, Flex, Text } from '@chakra-ui/react';
 import { GENERATIVE_DISCORD, TRUSTLESS_COMPUTER } from '@/constants/common';
 import { RiArrowRightUpLine } from 'react-icons/ri';
+import { StyledLink } from '../Header.styled';
 
 interface IProp {
   onCloseMenu: () => void;

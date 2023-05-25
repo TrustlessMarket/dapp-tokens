@@ -22,12 +22,12 @@ import { toast } from 'react-hot-toast';
 import Jazzicon, { jsNumberForAddress } from 'react-jazzicon';
 import { useSelector } from 'react-redux';
 import { isScreenDarkMode } from '..';
-import { ConnectWalletButton, WalletBalance } from '../Header.styled';
 import { WalletPopover } from './Wallet.styled';
 import useBalanceERC20Token from '@/hooks/contract-operations/token/useBalanceERC20Token';
 import web3 from 'web3';
 import { ROUTE_PATH } from '@/constants/route-path';
 import { useWindowSize } from '@trustless-computer/dapp-core';
+import { ConnectWalletButton, WalletBalance } from '../Header.styled';
 
 const WalletHeader = () => {
   const router = useRouter();

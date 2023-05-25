@@ -4,7 +4,6 @@ import { ROUTE_PATH } from '@/constants/route-path';
 import { gsap } from 'gsap';
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
-import { Wrapper } from './Header.styled';
 import MenuMobile from './MenuMobile';
 import WalletHeader from './Wallet';
 import { useWindowSize } from '@trustless-computer/dapp-core';
@@ -20,6 +19,7 @@ import { defaultProvider } from '@/contexts/screen-context';
 import { compareString } from '@/utils';
 import { Flex, Link as LinkText, Text } from '@chakra-ui/react';
 import { RiArrowRightUpLine } from 'react-icons/ri';
+import { Wrapper } from './Header.styled';
 
 export const isScreenDarkMode = () => {
   return true;
@@ -56,6 +56,12 @@ export const HEADER_MENUS = [
     key: ROUTE_PATH.LAUNCHPAD,
     route: ROUTE_PATH.LAUNCHPAD,
     name: 'Launchpad',
+  },
+  {
+    key: ROUTE_PATH.NFTS,
+    route: ROUTE_PATH.NFTS,
+    name: 'NFTS',
+    isDevelopment: true,
   },
 ];
 
@@ -99,15 +105,20 @@ const Header = () => {
           {!mobileScreen && (
             <div className={'leftContainer'}>
               <div className="external-link">
-                {HEADER_MENUS.map((m) => (
-                  <Link
-                    key={m.route}
-                    href={m.route}
-                    className={router?.pathname?.includes(m.key) ? 'isSelected' : ''}
-                  >
-                    {m.name}
-                  </Link>
-                ))}
+                {HEADER_MENUS.map((m) => {
+                  if (m.isDevelopment) return;
+                  return (
+                    <Link
+                      key={m.route}
+                      href={m.route}
+                      className={
+                        router?.pathname?.includes(m.key) ? 'isSelected' : ''
+                      }
+                    >
+                      {m.name}
+                    </Link>
+                  );
+                })}
               </div>
             </div>
           )}

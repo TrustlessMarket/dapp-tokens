@@ -22,4 +22,5 @@ export const ROUTE_PATH = {
   LAUNCHPAD: '/launchpad',
   LAUNCHPAD_DETAIL: '/launchpad/detail',
   LAUNCHPAD_MANAGE: '/launchpad/manage',
+  NFTS: '/nfts',
 };
