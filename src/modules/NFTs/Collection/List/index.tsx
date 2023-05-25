@@ -35,7 +35,7 @@ const CollectionList = () => {
   const fetchCollections = async (page = 1, isFetchMore = false) => {
     try {
       setIsFetching(true);
-      const data = await getCollections(page, LIMIT_PAGE);
+      const data = await getCollections(page, LIMIT_PAGE, 'false');
       if (isFetchMore) {
         setCollections((prev) => [...prev, ...data]);
       } else {

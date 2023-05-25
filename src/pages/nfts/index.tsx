@@ -2,7 +2,7 @@ import Layout from '@/layouts';
 import NFTsPage from '@/modules/NFTs';
 import { Box } from '@chakra-ui/react';
 
-const Token = () => {
+const CollectionListPage = () => {
   return (
     <>
       <Box bgColor={'#0F0F0F'}>
@@ -14,4 +14,4 @@ const Token = () => {
   );
 };
 
-export default Token;
+export default CollectionListPage;
