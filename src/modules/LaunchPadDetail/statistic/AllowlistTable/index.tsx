@@ -58,7 +58,7 @@ const AllowlistTable = ({poolDetail, isFull = true}: any) => {
       if(isFull) {
         setDepositList(list);
       } else {
-        const you = list.find(item => item?.isCurrentUser);
+        const you = list.find((item: any) => item?.isCurrentUser);
         if(you) {
           setDepositList([you]);
         } else if(list?.length > 0) {
