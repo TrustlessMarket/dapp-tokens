@@ -10,12 +10,13 @@ import {useRouter} from "next/router";
 import BodyContainer from "@/components/Swap/bodyContainer";
 import cx from 'classnames';
 import Usp from "@/modules/LaunchPadDetail/ups";
+import {useAppSelector} from "@/state/hooks";
+import {selectPnftExchange} from "@/state/pnftExchange";
 
 const IdoDetailContainer = () => {
   const router = useRouter();
   const [poolDetail, setPoolDetail] = useState<any>();
-
-  console.log('poolDetail', poolDetail);
+  const needReload = useAppSelector(selectPnftExchange).needReload;
 
   const getPoolInfo = async () => {
     try {
@@ -27,15 +28,15 @@ const IdoDetailContainer = () => {
   }
 
   useEffect(() => {
-    if(router?.query?.pool_address) {
+    if (router?.query?.pool_address) {
       getPoolInfo();
     }
-  }, [router?.query?.pool_address]);
+  }, [router?.query?.pool_address, needReload]);
 
   return (
     <Box className={styles.wrapper}>
       <AboveTheFold poolDetail={poolDetail}/>
-      <Usp />
+      <Usp/>
       <BodyContainer>
         <Tabs className={cx(styles.tabContainer, "max-content")}>
           <TabList mb={6} mt={6}>

@@ -210,7 +210,7 @@
   }
 
   .dataId {
-    width: 13%;
+    width: 10%;
     font-weight: 600;
     font-size: rem(20);
     //line-height: 150%;
@@ -220,7 +220,7 @@
   }
 
   .dataUserInfo {
-    width: calc(45% - rem(8));
+    width: calc(40% - rem(8));
     margin-left: rem(8);
     display: flex;
     align-items: center;
@@ -264,12 +264,12 @@
   }
 
   .dataContribute {
-    width: 15%;
+    width: 18%;
 
     .dataValue {
       display: flex;
-      align-items: center;
-      gap: rem(4);
+      align-items: flex-end;
+      //gap: rem(4);
     }
 
     &_divider {
@@ -284,7 +284,7 @@
   }
 
   .dataToken {
-    width: calc(26% - rem(8));
+    width: calc(28% - rem(8));
     align-items: flex-end;
   }
 
@@ -298,13 +298,14 @@
   .dataValue {
     font-weight: 600;
     font-size: rem(16);
-    line-height: 150%;
+    //line-height: 150%;
     color: #1588ff;
     letter-spacing: -0.01em;
     text-align: right;
     white-space: nowrap;
     display: flex;
-    align-items: center;
+    align-items: flex-end;
+    flex-direction: column;
     .percentage {
       font-size: rem(12);
       font-weight: 500;

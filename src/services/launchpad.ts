@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { API_EXCHANGE_URL } from '@/configs';
-import { IPagingParams } from '@/interfaces/api/query';
-import { swrFetcher } from '@/utils/swr';
+import {API_EXCHANGE_URL} from '@/configs';
+import {IPagingParams} from '@/interfaces/api/query';
+import {swrFetcher} from '@/utils/swr';
 import queryString from 'query-string';
 
 const API_PATH = '/launchpad';
@@ -77,4 +77,12 @@ export const updateLaunchpadDescription = async (data: {
     data,
     error: 'getListLiquidityToken',
   });
+};
+
+export const getLaunchpadDepositInfo = async (params: { pool_address?: any }) => {
+  const qs = '?' + queryString.stringify(params);
+  return swrFetcher(`${API_EXCHANGE_URL}${API_PATH}/result${qs}`, {
+    method: 'GET',
+    error: 'Fail to get deposit address',
+  })
 };
