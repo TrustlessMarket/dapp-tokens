@@ -3,23 +3,19 @@ import { ICollection, IUpdateCollectionPayload } from '@/interfaces/api/collecti
 import { IInscription } from '@/interfaces/api/inscription';
 import { IPagingParams } from '@/interfaces/api/query';
 import { swrFetcher } from '@/utils/swr';
-import { apiClient } from '..';
 import { camelCaseKeys } from '@/utils/helpers';
+import { apiClient } from '.';
 
 const API_PATH = API_URL + '/nft-explorer';
 
 export const getCollections = (
   page: number,
   limit: number,
-  isShowAll: boolean,
   owner = '',
 ): Promise<ICollection[]> =>
-  swrFetcher(
-    `${API_PATH}/collections?limit=${limit}&page=${page}&allow_empty=${isShowAll}&owner=${owner}`,
-    {
-      method: 'GET',
-    },
-  );
+  swrFetcher(`${API_PATH}/collections?limit=${limit}&page=${page}&owner=${owner}`, {
+    method: 'GET',
+  });
 
 export const getCollectionByWallet = (
   page: number,
