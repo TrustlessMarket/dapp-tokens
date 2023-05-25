@@ -1,15 +1,27 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import {apiClient} from '@/services';
-import {Box, Flex, Spinner, Table, TableContainer, Tbody, Td, Tfoot, Th, Thead, Tr,} from '@chakra-ui/react';
-import React, {Fragment, memo, ReactNode, useEffect, useState} from 'react';
+import { apiClient } from '@/services';
+import {
+  Box,
+  Flex,
+  Spinner,
+  Table,
+  TableContainer,
+  Tbody,
+  Td,
+  Tfoot,
+  Th,
+  Thead,
+  Tr,
+} from '@chakra-ui/react';
+import React, { Fragment, memo, ReactNode, useEffect, useState } from 'react';
 // import { useCurrentWallet } from "app/hooks/useCurrentWallet";
 import EmptyList from '@/components/Swap/emptyList';
 import Pagination from '@/components/Swap/pagination';
-import {useAppSelector} from '@/state/hooks';
-import {selectPnftExchange} from '@/state/pnftExchange';
-import {compareString} from '@/utils';
+import { useAppSelector } from '@/state/hooks';
+import { selectPnftExchange } from '@/state/pnftExchange';
+import { compareString } from '@/utils';
 import cx from 'classnames';
-import {AiFillCaretDown, AiFillCaretUp} from 'react-icons/ai';
+import { AiFillCaretDown, AiFillCaretUp } from 'react-icons/ai';
 import styles from './styles.module.scss';
 
 export interface ColumnProp {
@@ -39,8 +51,8 @@ interface ListTableProps {
   selectedItem?: any;
   needUpdate?: any;
   initialLoading?: boolean;
-  className?: any,
-  showEmpty?: boolean
+  className?: any;
+  showEmpty?: boolean;
 }
 
 const ItemTable = ({
@@ -85,12 +97,15 @@ const ItemTable = ({
   } else {
     return (
       <Tr
-        onClick={onClick}
-        cursor={onItemClick ? 'pointer' : 'default'}
         className={cx(selectedItem?.id === item?.id ? 'selected' : '', 'notOnTdRow')}
       >
         {columns.map((v) => (
-          <Td {...v.config} key={v.id}>
+          <Td
+            {...v.config}
+            key={v.id}
+            onClick={v.id === 'action' ? undefined : onClick}
+            cursor={onItemClick ? 'pointer' : 'default'}
+          >
             {v.render ? v.render(item, extraData, index) : item[v?.id]}
           </Td>
         ))}
@@ -246,29 +261,25 @@ const ListTable: React.FC<ListTableProps> = ({
                       {v.label}
                       {v.onSort && (
                         <Box>
-                          {
-                            v.sort === `-${v?.id}` && (
+                          {v.sort === `-${v?.id}` && (
                             <AiFillCaretDown
-                                style={{
-                                color: '#FFFFFF'
+                              style={{
+                                color: '#FFFFFF',
                               }}
                             />
-                            )
-                          }
-                          {
-                            v.sort === `${v?.id}` && (
-                              <AiFillCaretUp
-                                style={{
-                                  color: '#FFFFFF'
-                                }}
-                              />
-                            )
-                          }
+                          )}
+                          {v.sort === `${v?.id}` && (
+                            <AiFillCaretUp
+                              style={{
+                                color: '#FFFFFF',
+                              }}
+                            />
+                          )}
                         </Box>
                       )}
                     </Flex>
                   </Th>
-                )
+                );
               })}
             </Tr>
           </Thead>

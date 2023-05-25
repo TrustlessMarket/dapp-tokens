@@ -1,23 +1,27 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { transactionType } from '@/components/Swap/alertInfoProcessing/types';
 import { toastError } from '@/constants/error';
+import { ROUTE_PATH } from '@/constants/route-path';
+import { WalletContext } from '@/contexts/wallet-context';
 import useCreateLaunchpad from '@/hooks/contract-operations/launchpad/useCreate';
 import useContractOperation from '@/hooks/contract-operations/useContractOperation';
-import { getDetailIdo } from '@/services/ido';
+import { TransactionStatus } from '@/interfaces/walletTransaction';
+import { getDetailLaunchpad, scanLaunchpadTxHash } from '@/services/launchpad';
 import { requestReload, updateCurrentTransaction } from '@/state/pnftExchange';
 import { showError } from '@/utils/toast';
 import { Text } from '@chakra-ui/react';
 import { useWeb3React } from '@web3-react/core';
-import { useEffect, useState } from 'react';
+import { filter } from 'lodash';
+import { useRouter } from 'next/router';
+import { useContext, useEffect, useState } from 'react';
 import { Form } from 'react-final-form';
 import { toast } from 'react-hot-toast';
 import { useDispatch } from 'react-redux';
 import LaunchManageForm from './LaunchpadManage.Form';
 import { StyledLaunchpadManage } from './LaunchpadManage.styled';
-import { transactionType } from '@/components/Swap/alertInfoProcessing/types';
-import { TransactionStatus } from '@/interfaces/walletTransaction';
-import { ROUTE_PATH } from '@/constants/route-path';
 
-const LaunchManage = ({ ido, isRemove }: { ido: any; isRemove?: boolean }) => {
+const LaunchManage = () => {
   const { account } = useWeb3React();
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
@@ -27,7 +31,11 @@ const LaunchManage = ({ ido, isRemove }: { ido: any; isRemove?: boolean }) => {
     operation: useCreateLaunchpad,
   });
 
-  const id = ido?.id;
+  const { getSignature } = useContext(WalletContext);
+
+  const router = useRouter();
+
+  const id = router.query?.id;
 
   useEffect(() => {
     getData();
@@ -39,7 +47,9 @@ const LaunchManage = ({ ido, isRemove }: { ido: any; isRemove?: boolean }) => {
     }
 
     try {
-      const response: any = await Promise.all([getDetailIdo({ id })]);
+      const response: any = await Promise.all([
+        getDetailLaunchpad({ pool_address: id }),
+      ]);
       setDetail(response[0]);
     } catch (error) {}
   };
@@ -62,7 +72,7 @@ const LaunchManage = ({ ido, isRemove }: { ido: any; isRemove?: boolean }) => {
         }),
       );
 
-      if (isRemove) {
+      if (id) {
         // await removeIdo({
         //   id: ido.id,
         //   signature: signature,
@@ -70,6 +80,15 @@ const LaunchManage = ({ ido, isRemove }: { ido: any; isRemove?: boolean }) => {
         // });
         toast.success(`Removed IDO successfully.`);
       } else {
+        const faqs = filter(Object.keys(values), (v) => v?.includes('faq_q')).map(
+          (v, i) => ({
+            value: values?.[v],
+            label: values?.[`faq_a_${i + 1}`],
+          }),
+        );
+
+        const signature = await getSignature(account);
+
         const response: any = await createLaunchpad({
           launchpadTokenArg: tokenAddress,
           liquidityTokenArg: liquidAddress,
@@ -78,8 +97,6 @@ const LaunchManage = ({ ido, isRemove }: { ido: any; isRemove?: boolean }) => {
           endTimeArg: values.endTimeArg,
           launchpadBalance: values.launchpadBalance,
           goalBalance: values.goalBalance,
-          faq: '',
-          description: values.description,
         });
         console.log('response', response);
 
@@ -93,6 +110,7 @@ const LaunchManage = ({ ido, isRemove }: { ido: any; isRemove?: boolean }) => {
             },
           }),
         );
+        await scanLaunchpadTxHash({ tx_hash: response.hash });
       }
 
       dispatch(requestReload());
@@ -114,7 +132,6 @@ const LaunchManage = ({ ido, isRemove }: { ido: any; isRemove?: boolean }) => {
             loading={loading}
             setLoading={setLoading}
             detail={detail}
-            isRemove={isRemove}
           />
         )}
       </Form>

@@ -123,4 +123,25 @@ export const StyledLaunchpadManage = styled(BodyContainer)`
     padding-right: ${px2rem(8)};
     align-items: center;
   }
+
+  .image-drop-container {
+    overflow: hidden;
+    border: 1px dashed ${colors.darkBorderColor};
+    .dropzone {
+      background-color: ${colors.dark};
+      color: ${colors.white500};
+    }
+  }
+
+  .item-faq-container {
+    flex: 1;
+  }
+
+  .btn-add-faq {
+    color: ${colors.bluePrimary};
+    align-items: center;
+    gap: 8;
+    cursor: pointer;
+    opacity: 0.8;
+  }
 `;
