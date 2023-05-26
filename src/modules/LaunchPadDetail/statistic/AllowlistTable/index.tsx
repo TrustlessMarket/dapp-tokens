@@ -139,7 +139,7 @@ const AllowlistTable = ({poolDetail, isFull = true, handleViewMore}: any) => {
               ${formatCurrency(item.amountUsd, 2)}
               {/*<span className={s.dataContribute_divider}></span>*/}
               <span className={s.percentage}>
-                {formatCurrency(item.amount)} {poolDetail?.liquidityToken?.symbol}
+                ({formatCurrency(item.amount)} {poolDetail?.liquidityToken?.symbol})
               </span>
             </span>
           </div>
@@ -296,7 +296,7 @@ const AllowlistTable = ({poolDetail, isFull = true, handleViewMore}: any) => {
         }
         {
           rawDepositList.length > 1 && !isFull && (
-            <Text onClick={handleViewMore} textAlign={"center"} textDecoration={"underline"} cursor={"pointer"}>View more</Text>
+            <Text color={"#1588FF"} fontWeight={"500"} fontSize={px2rem(20)} onClick={handleViewMore} textAlign={"center"} cursor={"pointer"}>View more</Text>
           )
         }
       </div>
