@@ -14,10 +14,10 @@ const LaunchpadStarting = ({poolDetail}: any) => {
           <Intro poolDetail={poolDetail}/>
         </GridItem>
         <GridItem>
-          <Card bgColor={"#1E1E22"} paddingX={8} paddingY={6}>
+          <Card bgColor={"#1E1E22"} paddingX={6} paddingY={6}>
             <BuyForm poolDetail={poolDetail}/>
           </Card>
-          <Card bgColor={"#1E1E22"} paddingX={8} paddingY={6} mt={8}>
+          <Card bgColor={"#1E1E22"} paddingX={6} paddingY={6} mt={8}>
             <Statistic poolDetail={poolDetail}/>
           </Card>
         </GridItem>
