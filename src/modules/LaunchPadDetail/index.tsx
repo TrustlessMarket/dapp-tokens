@@ -34,11 +34,11 @@ const IdoDetailContainer = () => {
 
   const getPoolInfo = async () => {
     try {
-      const response: any = await [
+      const response: any = await Promise.all([
         getDetailLaunchpad({
           pool_address: router?.query?.pool_address as string,
         }),
-      ];
+      ]);
       setPoolDetail(response[0]);
     } catch (err) {
       throw err;
