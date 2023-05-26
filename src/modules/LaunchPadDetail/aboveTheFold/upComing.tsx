@@ -31,7 +31,7 @@ const LaunchpadUpComing = ({poolDetail}: any) => {
   }, [expired]);
 
   return (
-    <Box className={"max-content"}>
+    <Box>
       <Grid templateColumns={['1.75fr 1fr']} gap={[8]}>
         <GridItem>
           <Intro poolDetail={poolDetail}/>

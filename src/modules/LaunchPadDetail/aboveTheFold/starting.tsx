@@ -8,7 +8,7 @@ import Statistic from "@/modules/LaunchPadDetail/statistic";
 
 const LaunchpadStarting = ({poolDetail}: any) => {
   return (
-    <Box className={"max-content"}>
+    <Box>
       <Grid templateColumns={['1.75fr 1fr']} gap={[8]}>
         <GridItem>
           <Intro poolDetail={poolDetail}/>
