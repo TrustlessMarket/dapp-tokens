@@ -4,16 +4,26 @@ import React from 'react';
 import {FaDiscord, FaInstagram, FaMedium, FaTelegram, FaTwitter,} from 'react-icons/fa';
 import {RiEarthFill} from 'react-icons/ri';
 import {StyledSocial} from './Social.styled';
+import {colors} from '@/theme/colors';
 
 interface SocialTokenProps {
   socials?: any;
   theme?: 'light' | 'dark';
+  isShowEmpty?: boolean;
 }
 
-const SocialToken: React.FC<SocialTokenProps> = ({ socials, theme = 'dark' }) => {
+const SocialToken: React.FC<SocialTokenProps> = ({
+  socials,
+  theme = 'dark',
+  isShowEmpty = false,
+}) => {
   const color = theme === 'light' ? colors.dark : colors.white;
   return (
-    <StyledSocial className={'token-socials'} gap={4}>
+    <StyledSocial
+      className={'social-container'}
+      gap={4}
+      style={{ height: isShowEmpty ? '100%' : 'auto' }}
+    >
       {socials?.twitter && (
         <Flex
           onClick={() => window.open(socials?.twitter, '_blank')}
