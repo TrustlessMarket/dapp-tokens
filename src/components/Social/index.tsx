@@ -4,16 +4,20 @@ import React from 'react';
 import {FaDiscord, FaInstagram, FaMedium, FaTelegram, FaTwitter,} from 'react-icons/fa';
 import {RiEarthFill} from 'react-icons/ri';
 import {StyledSocial} from './Social.styled';
+import {colors} from '@/theme/colors';
 
 interface SocialTokenProps {
   socials?: any;
+  theme?: 'light' | 'dark';
   isShowEmpty?: boolean;
 }
 
 const SocialToken: React.FC<SocialTokenProps> = ({
   socials,
+  theme,
   isShowEmpty = false,
 }) => {
+  const color = theme === 'light' ? colors.dark : colors.white;
   return (
     <StyledSocial
       className={'social-container'}
