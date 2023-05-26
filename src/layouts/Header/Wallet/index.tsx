@@ -234,7 +234,7 @@ const WalletHeader = () => {
               >
                 <WalletBalance className={isTokenPage ? 'isTokenPage' : ''}>
                   <div className="balance">
-                    <p>{formatBTCPrice(btcBalance)} BTC</p>
+                    <p>{formatCurrency(formatBTCPrice(btcBalance))} BTC</p>
                     <span className="divider"></span>
                     <p>{formatCurrency(web3.utils.fromWei(juiceBalance), 5)} TC</p>
                   </div>
