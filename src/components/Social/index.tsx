@@ -14,13 +14,19 @@ import { StyledSocial } from './Social.styled';
 
 interface SocialTokenProps {
   socials?: any;
-  theme?: 'light' | 'dark';
+  isShowEmpty?: boolean;
 }
 
-const SocialToken: React.FC<SocialTokenProps> = ({ socials, theme = 'dark' }) => {
-  const color = theme === 'light' ? colors.dark : colors.white;
+const SocialToken: React.FC<SocialTokenProps> = ({
+  socials,
+  isShowEmpty = false,
+}) => {
   return (
-    <StyledSocial className={'token-socials'} gap={4}>
+    <StyledSocial
+      className={'social-container'}
+      gap={4}
+      style={{ height: isShowEmpty ? '100%' : 'auto' }}
+    >
       {socials?.twitter && (
         <Flex
           onClick={() => window.open(socials?.twitter, '_blank')}
