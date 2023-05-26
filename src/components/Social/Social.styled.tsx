@@ -1,7 +1,7 @@
-import { SimpleGrid } from '@chakra-ui/react';
+import { Flex } from '@chakra-ui/react';
 import styled from 'styled-components';
 
-export const StyledSocial = styled(SimpleGrid)`
+export const StyledSocial = styled(Flex)`
   .item-social {
     cursor: pointer;
     align-items: center;

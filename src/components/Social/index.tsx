@@ -24,7 +24,6 @@ const SocialToken: React.FC<SocialTokenProps> = ({
   return (
     <StyledSocial
       className={'social-container'}
-      columns={3}
       gap={4}
       style={{ height: isShowEmpty ? '100%' : 'auto' }}
     >
