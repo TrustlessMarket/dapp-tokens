@@ -31,13 +31,13 @@ import {selectPnftExchange} from "@/state/pnftExchange";
 
 const AllowlistTable = ({poolDetail, isFull = true, handleViewMore}: any) => {
   const needReload = useAppSelector(selectPnftExchange).needReload;
-  const [depositList, setDepositList] = useState<any[]>(
-    []
-  );
+  const [depositList, setDepositList] = useState<any[]>([]);
+  const [rawDepositList, setRawDepositList] = useState<any[]>([]);
   const [scrollToIndex, setScrollToIndex] = useState<any>(
     undefined
   );
   const { mobileScreen, tabletScreen } = useWindowSize();
+  const [isLoadingDepositList, setIsLoadingDepositList] = useState(true);
 
   const { account } = useWeb3React();
 
@@ -49,6 +49,7 @@ const AllowlistTable = ({poolDetail, isFull = true, handleViewMore}: any) => {
 
   const fetchDepositInfo = async () => {
     try {
+      setIsLoadingDepositList(true);
       const [deposits, userDeposit] = await Promise.all([
         getLaunchpadDepositInfo({pool_address: poolDetail?.launchpad}),
         getLaunchpadUserDepositInfo({pool_address: poolDetail?.launchpad, address: account}),
@@ -57,19 +58,24 @@ const AllowlistTable = ({poolDetail, isFull = true, handleViewMore}: any) => {
         ...item,
         index: index + 1,
         isCurrentUser: compareString(item?.userAddress, account),
-      }))
+      }));
+      setRawDepositList(list);
       if(isFull) {
         setDepositList(list);
       } else {
         const you = list.find((item: any) => item?.isCurrentUser);
         if(you) {
           setDepositList([you]);
+        } else if (userDeposit?.userAddress) {
+          setDepositList([{...userDeposit, index: 1, isCurrentUser: true}]);
         } else if(list?.length > 0) {
           setDepositList([list[0]]);
         }
       }
     } catch (err: unknown) {
       console.log(err);
+    } finally {
+      setIsLoadingDepositList(false);
     }
   };
 
@@ -256,32 +262,40 @@ const AllowlistTable = ({poolDetail, isFull = true, handleViewMore}: any) => {
     <div className={cs(s.allowListTable)}>
       <div className={s.allowListTableWrapper}>
         {
-          isFull ? (
-            <>
-              <Search onSearch={onSearchAddress} />
-              <div className={cs(s.dataListWrapper)}>
-                {depositList.length === 0 && (
-                  <div className={s.loadingWrapper}>
-                    <Spinner size={'xl'} />
-                  </div>
-                )}
-                {depositList.length > 0 && <DataTable />}
-              </div>
-            </>
+          isLoadingDepositList ? (
+            <div className={s.loadingWrapper}>
+              <Spinner size={'xl'} />
+            </div>
           ) : (
             <>
               {
-                depositList.length === 0 ? (
-                  <Empty isTable={false} />
+                isFull ? (
+                  <>
+                    <Search onSearch={onSearchAddress} />
+                    <div className={cs(s.dataListWrapper)}>
+                      {depositList.length === 0 && (
+                        <Empty isTable={false} />
+                      )}
+                      {depositList.length > 0 && <DataTable />}
+                    </div>
+                  </>
                 ) : (
-                  <RowRenderer index={0} key={"you"} data={depositList} />
+                  <>
+                    {
+                      depositList.length === 0 ? (
+                        <Empty isTable={false} />
+                      ) : (
+                        <RowRenderer index={0} key={"you"} data={depositList} />
+                      )
+                    }
+                  </>
                 )
               }
             </>
           )
         }
         {
-          depositList.length > 0 && !isFull && (
+          rawDepositList.length > 1 && !isFull && (
             <Text onClick={handleViewMore} textAlign={"center"} textDecoration={"underline"} cursor={"pointer"}>View more</Text>
           )
         }
