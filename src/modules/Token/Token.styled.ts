@@ -12,7 +12,7 @@ export const StyledTokenDetailContainer = styled(Grid)`
   grid-gap: 1px;
   grid-template-columns: minmax(350px, 350px) 1fr;
   grid-template-rows: ${(props: any) =>
-    `minmax(64px, 130px) 1fr minmax(100px,calc((100vh - 130px - ${props?.topSpacing}px) / 2))`};
+    `minmax(64px, 130px) 1fr minmax(100px, calc((100vh - 130px - ${props?.topSpacing}px) / 1.5))`};
   grid-template-areas:
     'topinfo topinfo'
     'left chart'
@@ -243,7 +243,7 @@ export const StyledLeftContentContainer = styled(GridItem)`
       border-radius: 0;
       .label,
       .value {
-        font-size: ${px2rem(16)} !important;
+        font-size: ${px2rem(13)} !important;
         font-weight: 400;
       }
       .label {
