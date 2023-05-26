@@ -69,7 +69,7 @@ const TokenDetail = () => {
         }),
         getChartToken({
           contract_address: address,
-          chart_type: 'hour',
+          chart_type: 'minute',
         }),
       ]);
       if (resToken.length === 0) {

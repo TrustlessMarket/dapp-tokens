@@ -3,7 +3,7 @@ import { memo, useEffect, useRef } from 'react';
 
 import { colors } from '@/theme/colors';
 import { compareString, formatCurrency } from '@/utils';
-import BigNumber from 'bignumber.js';
+import { useWindowSize } from '@trustless-computer/dapp-core';
 import {
   CrosshairMode,
   LastPriceAnimationMode,
@@ -15,7 +15,6 @@ import {
 import moment from 'moment';
 import useAsyncEffect from 'use-async-effect';
 import { StyledTokenChartContainer } from './Token.styled';
-import { useWindowSize } from '@trustless-computer/dapp-core';
 
 interface TokenChartProps {
   chartData: any[];
@@ -38,7 +37,7 @@ const TokenChart: React.FC<TokenChartProps> = ({ chartData, dataSymbol }) => {
         height: chartContainerRef.current.clientHeight,
         localization: {
           priceFormatter: (p: any) => {
-            return new BigNumber(p).toFixed(18);
+            return formatCurrency(p);
           },
           timeFormatter: (t: any) => {
             return moment.unix(t).format('lll');
@@ -173,8 +172,8 @@ const TokenChart: React.FC<TokenChartProps> = ({ chartData, dataSymbol }) => {
       const { width, height } = entries[0].contentRect;
       chart.current.applyOptions({ width, height });
       setTimeout(() => {
-        chart.current.timeScale().fitContent();
-        // chart.current.timeScale().scrollToRealTime();
+        // chart.current.timeScale().fitContent();
+        chart.current.timeScale().scrollToRealTime();
       }, 0);
     });
 
