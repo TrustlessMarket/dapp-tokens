@@ -104,10 +104,10 @@
 .progressBar {
   position: relative;
   > div {
-    background: #DBFFF3;
+    background: #1C1C1C;
 
     > div:first-child {
-      background: #28f0a2;
+      background: linear-gradient(90deg, #3385FF 0%, #96C0FF 100%);
     }
   }
 
@@ -126,4 +126,19 @@
   color: #ff831a !important;
   font-weight: 500 !important;
   font-size: 14px !important;
+}
+
+.infoColumn {
+  flex: unset !important;
+  :global {
+    .chakra-stat__label {
+      color: #B6B6B6;
+      font-weight: 300;
+      font-size: rem(16);
+    }
+    .chakra-stat__number {
+      font-weight: 500;
+      font-size: rem(32);
+    }
+  }
 }
