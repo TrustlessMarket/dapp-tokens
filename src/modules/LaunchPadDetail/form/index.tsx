@@ -735,12 +735,13 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
 
   const fetchData = async () => {
     try {
-      const response: any = await [
-        isAbleRedeem({
-          owner_address: account,
-          launchpad_address: poolDetail.launchpad,
-        }),
-      ];
+      const response: any = await Promise.all(
+        [
+          isAbleRedeem({
+            owner_address: account,
+            launchpad_address: poolDetail.launchpad,
+          }),
+        ]);
       setCanClaim(response[1]);
     } catch (error) {}
   };

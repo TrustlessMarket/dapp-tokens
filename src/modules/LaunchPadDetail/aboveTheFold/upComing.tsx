@@ -37,7 +37,7 @@ const LaunchpadUpComing = ({poolDetail}: any) => {
           <Intro poolDetail={poolDetail}/>
         </GridItem>
         <GridItem>
-          <Card bgColor={"#1E1E22"} paddingX={8} paddingY={6} minH={"400px"}>
+          <Card bgColor={"#1E1E22"} paddingX={6} paddingY={6} minH={"400px"}>
             <SimpleGrid columns={1} spacingX={6}>
               <GridItem>
                 <Stat>
