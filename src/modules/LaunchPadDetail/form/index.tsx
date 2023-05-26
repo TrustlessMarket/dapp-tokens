@@ -408,7 +408,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           <Progress
             w={['100%', '100%']}
             h="16px"
-            value={percent < 15 ? 15 : percent}
+            value={percent}
             borderRadius={12}
           >
             <ProgressLabel className={styles.progressLabel}>
@@ -431,7 +431,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         <SimpleGrid columns={3} spacingX={6}>
           <GridItem>
             <Stat>
-              <StatLabel>Launchpad Balance</StatLabel>
+              <StatLabel>Rewards</StatLabel>
               <StatNumber>
                 {formatCurrency(poolDetail?.launchpadBalance || 0)}
               </StatNumber>
