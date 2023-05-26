@@ -742,7 +742,7 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
             launchpad_address: poolDetail.launchpad,
           }),
         ]);
-      setCanClaim(response[1]);
+      setCanClaim(response[0]);
     } catch (error) {}
   };
 
