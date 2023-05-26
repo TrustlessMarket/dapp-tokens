@@ -1,16 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { colors } from '@/theme/colors';
-import { Flex } from '@chakra-ui/react';
+import {Flex} from '@chakra-ui/react';
 import React from 'react';
-import {
-  FaDiscord,
-  FaInstagram,
-  FaMedium,
-  FaTelegram,
-  FaTwitter,
-} from 'react-icons/fa';
-import { RiEarthFill } from 'react-icons/ri';
-import { StyledSocial } from './Social.styled';
+import {FaDiscord, FaInstagram, FaMedium, FaTelegram, FaTwitter,} from 'react-icons/fa';
+import {RiEarthFill} from 'react-icons/ri';
+import {StyledSocial} from './Social.styled';
 
 interface SocialTokenProps {
   socials?: any;
