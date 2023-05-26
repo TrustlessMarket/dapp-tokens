@@ -18,6 +18,7 @@ export const BASE_TOKEN_ETH_PAIR = '0x74B033e56434845E02c9bc4F0caC75438033b00D';
 const TokenHistory = ({ data, isOwner }: { data: IToken; isOwner?: boolean }) => {
   const [list, setList] = useState<any[]>([]);
   const { account, isActive } = useWeb3React();
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     getList();
@@ -32,7 +33,10 @@ const TokenHistory = ({ data, isOwner }: { data: IToken; isOwner?: boolean }) =>
         user_address: isOwner ? account : '',
       });
       setList(response);
-    } catch (error) {}
+    } catch (error) {
+    } finally {
+      setLoading(false);
+    }
   };
 
   const checkIsSell = (row: any) => {
@@ -197,7 +201,12 @@ const TokenHistory = ({ data, isOwner }: { data: IToken; isOwner?: boolean }) =>
 
   return (
     <StyledTokenTrading>
-      <ListTable data={list} columns={columns} />
+      <ListTable
+        data={list}
+        columns={columns}
+        showEmpty={true}
+        initialLoading={loading}
+      />
     </StyledTokenTrading>
   );
 };
