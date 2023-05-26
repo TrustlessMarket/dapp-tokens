@@ -41,7 +41,7 @@ const LaunchpadUpComing = ({poolDetail}: any) => {
             <SimpleGrid columns={1} spacingX={6}>
               <GridItem>
                 <Stat>
-                  <StatLabel>Launchpad Balance</StatLabel>
+                  <StatLabel>Rewards</StatLabel>
                   <StatNumber>{formatCurrency(poolDetail?.launchpadBalance)} {poolDetail?.launchpadToken?.symbol}</StatNumber>
                 </Stat>
               </GridItem>
