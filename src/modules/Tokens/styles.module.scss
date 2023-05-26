@@ -1,4 +1,7 @@
 .wrapper {
   width: 100%;
-  background: #0F0F0F;
+  background: #0f0f0f;
+  & > div {
+    padding: 0px;
+  }
 }

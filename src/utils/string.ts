@@ -36,9 +36,28 @@ export const compareString = (a: unknown, b: unknown) => {
 
 export function formatCurrency(value: any = 0, decimalNumber = 6) {
   if (isNaN(Number(value))) return 0;
-  return new Intl.NumberFormat('en-US', {
+
+  let config: any = {
     maximumSignificantDigits: 4,
-  }).format(value);
+  };
+
+  if (Number(value) < 1) {
+    config = {
+      maximumSignificantDigits: 4,
+      maximumFractionDigits: 2,
+    };
+  } else if (Number(value) > 100 && Number(value) < 1000) {
+    config = {
+      maximumSignificantDigits: 5,
+    };
+  } else if (Number(value) > 1000) {
+    config = {
+      maximumSignificantDigits: 6,
+    };
+  }
+
+  const result = new Intl.NumberFormat('en-US', config);
+  return result.format(value);
   // return new BigNumber(value)
   //   .decimalPlaces(decimalNumber, 1)
   //   .toFormat(decimalNumber)

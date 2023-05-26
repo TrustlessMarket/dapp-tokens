@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export interface IToken {
   btcPrice?: number | string;
   ownerSupply?: string | number;
@@ -18,8 +19,8 @@ export interface IToken {
   usdPrice?: number;
   usdVolume?: number;
   usdTotalVolume?: number;
-  percent?: number;
-  percent7Day?: number;
+  percent?: any;
+  percent7Day?: any;
   volume?: number;
   thumbnail?: string;
   description?: string;

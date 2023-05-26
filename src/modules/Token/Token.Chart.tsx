@@ -44,8 +44,8 @@ const TokenChart: React.FC<TokenChartProps> = ({ chartData, dataSymbol }) => {
           },
         },
         layout: {
-          textColor: '#B1B5C3',
-          background: { type: 'solid', color: 'transparent' } as any,
+          textColor: '#777E90',
+          background: { type: 'solid', color: colors.dark } as any,
         },
         rightPriceScale: {
           borderColor: colors.darkBorderColor,
@@ -74,7 +74,7 @@ const TokenChart: React.FC<TokenChartProps> = ({ chartData, dataSymbol }) => {
         watermark: {
           text: 'trustless.market',
           fontSize: 50,
-          color: 'rgba(255, 255, 255, 0.04)',
+          color: colors.white50,
           visible: true,
         },
         trackingMode: {

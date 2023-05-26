@@ -20,16 +20,19 @@ const TokenLeftInfo = ({ data }: { data: IToken }) => {
     <>
       <Box className="token-info dive-bottom">
         <Text className="title">Token info</Text>
+        <Box mb={`16px`} />
         <HorizontalItem
           className="item-info"
           label="Max supply"
           value={`${formatCurrency(totalSupply.toString())}`}
         />
+        <Box mb={`8px`} />
         <HorizontalItem
           className="item-info"
           label="Volume"
           value={`$${formatCurrency(tokenVolume)}`}
         />
+        <Box mb={`8px`} />
         <HorizontalItem
           className="item-info"
           label="Market cap"

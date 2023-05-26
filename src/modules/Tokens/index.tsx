@@ -520,7 +520,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           </Link>
         </div>
       </UploadFileContainer>
-      <Flex mb={4} justifyContent={'flex-end'}>
+      <Flex mb={4} justifyContent={'flex-end'} mr={[0, 15]}>
         <Field
           component={FieldText}
           name="search_text"

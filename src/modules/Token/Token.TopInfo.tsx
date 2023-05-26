@@ -8,7 +8,6 @@ import { compareString, formatCurrency } from '@/utils';
 import { Box, Flex, Text } from '@chakra-ui/react';
 import { useWeb3React } from '@web3-react/core';
 import { useRouter } from 'next/router';
-import { AiOutlineCaretDown, AiOutlineCaretUp } from 'react-icons/ai';
 
 const TokenTopInfo = ({ data }: { data: IToken }) => {
   const router = useRouter();
@@ -71,16 +70,14 @@ const TokenTopInfo = ({ data }: { data: IToken }) => {
           </Flex>
         </Flex>
 
-        <Box className="block-info">
+        <Box className="block-info padding-32">
           <Text className="title">
             {data.name} ({data.symbol})
           </Text>
-          <Text className="desc">
-            #{data.index} | {data?.network}
-          </Text>
-          {/* <Text className="desc desktop">#{data.index}</Text> */}
+          <Text className="desc">{data?.network}</Text>
         </Box>
-        <Flex className="block-info diver-right price">
+
+        <Flex className="block-info padding-40 diver-right price">
           <Text className="title">
             {formatCurrency(Number(data.btcPrice || 0).toFixed(18), 18)}{' '}
             {data?.baseTokenSymbol || 'WBTC'}
@@ -90,40 +87,45 @@ const TokenTopInfo = ({ data }: { data: IToken }) => {
           </Text>
         </Flex>
         <Flex className="percent-up-down-container">
-          <Flex className="block-info diver-right percent">
-            <Text className="desc">24H %</Text>
+          <Flex className="block-info percent padding-40">
+            <Text className="desc small">TOKEN</Text>
             <Flex className="percent-up-down" alignItems={'center'} gap={1}>
-              {Number(data?.percent) > 0 && (
-                <AiOutlineCaretUp color={colors.greenPrimary} />
-              )}
-              {Number(data?.percent) < 0 && (
-                <AiOutlineCaretDown color={colors.redPrimary} />
-              )}
+              <Text
+                className="desc"
+                style={{
+                  color: colors.white,
+                }}
+              >
+                #{data.index}
+              </Text>
+            </Flex>
+          </Flex>
+          <Flex className="block-info percent padding-40">
+            <Text className="desc small">24H %</Text>
+            <Flex className="percent-up-down" alignItems={'center'} gap={1}>
               <Text
                 className="desc"
                 style={{
                   color:
-                    Number(data?.percent) > 0
+                    Number(data.percent) > 0
                       ? colors.greenPrimary
-                      : Number(data?.percent) < 0
+                      : Number(data.percent) < 0
                       ? colors.redPrimary
                       : colors.white500,
-                  fontWeight: 'normal',
                 }}
               >
-                {formatCurrency(data?.percent, 2)}%
+                {Number(data.percent) > 0
+                  ? '+ '
+                  : Number(data.percent) < 0
+                  ? '- '
+                  : ''}
+                {formatCurrency(Math.abs(parseFloat(data.percent)), 2)}%
               </Text>
             </Flex>
           </Flex>
-          <Flex className="block-info diver-right percent">
-            <Text className="desc">7D %</Text>
+          <Flex className="block-info percent padding-40">
+            <Text className="desc small">7D %</Text>
             <Flex className="percent-up-down" alignItems={'center'} gap={1}>
-              {Number(data?.percent7Day) > 0 && (
-                <AiOutlineCaretUp color={colors.greenPrimary} />
-              )}
-              {Number(data?.percent7Day) < 0 && (
-                <AiOutlineCaretDown color={colors.redPrimary} />
-              )}
               <Text
                 className="desc"
                 style={{
@@ -136,15 +138,20 @@ const TokenTopInfo = ({ data }: { data: IToken }) => {
                   fontWeight: 'normal',
                 }}
               >
-                {formatCurrency(data?.percent7Day, 2)}%
+                {Number(data.percent7Day) > 0
+                  ? '+ '
+                  : Number(data.percent7Day) < 0
+                  ? '- '
+                  : ''}
+                {formatCurrency(Math.abs(parseFloat(data.percent7Day)), 2)}%
               </Text>
             </Flex>
           </Flex>
         </Flex>
 
         <Flex className="block-info">
-          <Text className="desc">SOCIALS</Text>
-          <SocialToken socials={data.social} />
+          <Text className="desc small">SOCIALS</Text>
+          <SocialToken socials={data.social} isShowEmpty />
         </Flex>
       </Flex>
       <Flex

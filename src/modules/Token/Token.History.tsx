@@ -6,12 +6,12 @@ import { getTradeHistory } from '@/services/swap';
 import { colors } from '@/theme/colors';
 import { compareString, formatCurrency } from '@/utils';
 import { Flex, Text } from '@chakra-ui/react';
+import { useWeb3React } from '@web3-react/core';
 import moment from 'moment';
 import { useEffect, useMemo, useState } from 'react';
-import { RxExternalLink } from 'react-icons/rx';
+import { RxArrowTopRight } from 'react-icons/rx';
 import { DEFAULT_FROM_TOKEN_ADDRESS } from '../Pools';
 import { StyledTokenTrading } from './Token.styled';
-import { useWeb3React } from '@web3-react/core';
 
 export const BASE_TOKEN_ETH_PAIR = '0x74B033e56434845E02c9bc4F0caC75438033b00D';
 
@@ -105,7 +105,7 @@ const TokenHistory = ({ data, isOwner }: { data: IToken; isOwner?: boolean }) =>
 
           if (checkIsSell(row)) {
             type = 'Sell';
-            color = colors.redPrimary;
+            color = colors.redSecondary;
           }
 
           return <Text style={{ color }}>{type}</Text>;
@@ -150,21 +150,6 @@ const TokenHistory = ({ data, isOwner }: { data: IToken; isOwner?: boolean }) =>
           );
         },
       },
-      //   {
-      //     id: 'maker',
-      //     label: 'Maker',
-      //     labelConfig: {
-      //       fontSize: '12px',
-      //       fontWeight: '500',
-      //       color: '#B1B5C3',
-      //     },
-      //     config: {
-      //       borderBottom: 'none',
-      //     },
-      //     render(row: any) {
-      //       return <Text>{shortCryptoAddress(row.sender, 8)}</Text>;
-      //     },
-      //   },
       {
         id: 'date',
         label: 'Date',
@@ -198,8 +183,9 @@ const TokenHistory = ({ data, isOwner }: { data: IToken; isOwner?: boolean }) =>
                 title="explorer"
                 href={`${TC_EXPLORER}/tx/${row.txHash}`}
                 target="_blank"
+                className="link-explorer"
               >
-                <RxExternalLink />
+                <RxArrowTopRight style={{ fontSize: 18 }} />
               </a>
             </Flex>
           );
