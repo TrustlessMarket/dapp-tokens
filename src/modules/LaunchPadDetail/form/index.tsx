@@ -404,33 +404,38 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   return (
     <form onSubmit={onSubmit} style={{ height: '100%' }}>
       <Flex direction={'column'}>
+        <Flex justifyContent={"space-between"}>
+          <Stat className={styles.infoColumn}>
+            <StatLabel>Funded</StatLabel>
+            <StatNumber>
+              <Flex gap={1} alignItems={"center"}>
+                <Text>{formatCurrency(poolDetail?.totalValue || 0)} {baseToken?.symbol}</Text>
+                <Text fontSize={"20px"} fontWeight={"300"}>({formatCurrency(percent, 2)}% funded)</Text>
+              </Flex>
+            </StatNumber>
+          </Stat>
+          <Stat className={styles.infoColumn} textAlign={"left"}>
+            <StatLabel>Target</StatLabel>
+            <StatNumber>
+              {formatCurrency(poolDetail?.goalBalance || 0)} {baseToken?.symbol}
+            </StatNumber>
+          </Stat>
+        </Flex>
         <Box className={styles.progressBar}>
           <Progress
             w={['100%', '100%']}
-            h="16px"
+            h="12px"
             value={percent}
-            borderRadius={12}
+            borderRadius={20}
           >
-            <ProgressLabel className={styles.progressLabel}>
-              ({formatCurrency(percent, 2)}%)
-            </ProgressLabel>
           </Progress>
           {/*<Image src={fireImg} className={styles.fireImg} />*/}
         </Box>
-        <Flex direction={'column'} mt={1}>
-          <Text color={'brand.success.400'} fontSize={'xl'} fontWeight={'medium'}>
-            {formatCurrency(poolDetail?.totalValue || 0)} {baseToken?.symbol}
-          </Text>
-          <Text color={'#FFFFFF'} fontSize={'xs'}>
-            pledged of {formatCurrency(poolDetail?.goalBalance || 0)}{' '}
-            {baseToken?.symbol} goal
-          </Text>
-        </Flex>
       </Flex>
       <Flex gap={0} color={'#FFFFFF'} mt={4} direction={'column'}>
         <SimpleGrid columns={3} spacingX={6}>
           <GridItem>
-            <Stat>
+            <Stat className={styles.infoColumn}>
               <StatLabel>Rewards</StatLabel>
               <StatNumber>
                 {formatCurrency(poolDetail?.launchpadBalance || 0)}
@@ -438,7 +443,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             </Stat>
           </GridItem>
           <GridItem>
-            <Stat>
+            <Stat className={styles.infoColumn}>
               <StatLabel>Funded</StatLabel>
               <StatNumber>
                 ${formatCurrency(poolDetail?.totalValueUsd || 0, 2)}
@@ -446,7 +451,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             </Stat>
           </GridItem>
           <GridItem>
-            <Stat>
+            <Stat className={styles.infoColumn}>
               <StatLabel>Backers</StatLabel>
               <StatNumber>
                 {formatCurrency(poolDetail?.contributors || 0, 0)}
@@ -454,7 +459,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             </Stat>
           </GridItem>
         </SimpleGrid>
-        <Stat>
+        <Stat className={styles.infoColumn}>
           <StatLabel>
             {[
               LAUNCHPAD_STATUS.Closed,
