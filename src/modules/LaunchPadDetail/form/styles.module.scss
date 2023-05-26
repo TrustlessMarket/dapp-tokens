@@ -129,7 +129,7 @@
 }
 
 .infoColumn {
-  flex: unset;
+  flex: unset !important;
   :global {
     .chakra-stat__label {
       color: #B6B6B6;

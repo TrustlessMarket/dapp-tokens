@@ -1,11 +1,11 @@
 .searchBarWrapper {
   .searchTitle {
     font-weight: 500;
-    font-size: rem(18);
-    line-height: rem(30);
-    letter-spacing: -0.02em;
-    color: #1c1c1c;
-    margin-bottom: rem(4);
+    font-size: rem(16);
+    line-height: 150%;
+    //letter-spacing: -0.02em;
+    color: #CECECE;
+    margin-bottom: rem(4) !important;
   }
 
   .formWrapper {
@@ -33,13 +33,17 @@
     padding-bottom: rem(12);
     padding-left: rem(18);
     padding-right: rem(48);
-    border: 1px solid #cecece;
-    border-radius: 40px;
+    border: 1px solid #5B5B5B;
+    border-radius: 8px;
     font-weight: 400;
     font-size: rem(16);
     line-height: rem(26);
-    color: #000000;
+    color: #FFFFFF;
     height: rem(48);
+
+    &::placeholder {
+      color: #898989;
+    }
 
     &:disabled {
       opacity: 1;
@@ -65,13 +69,14 @@
   }
 
   .submitBtn {
-    width: rem(200);
+    width: rem(160);
     min-width: rem(100);
     font-weight: 600;
     font-size: rem(16);
     line-height: rem(26);
     height: rem(48);
-    background: #1588FF;
+    background: #3385FF;
+    border-radius: 8px;
 
     @include max-tablet {
       width: 100%;

@@ -693,7 +693,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       <Flex justifyContent={'flex-end'} mt={4}>
         <SocialToken socials={poolDetail?.launchpadToken?.social} />
       </Flex>
-      <Text mt={4} fontSize={'sm'} color={'#FFFFFF'}>
+      <Text mt={4} fontSize={px2rem(20)} fontWeight={"300"} color={'#FFFFFF'}>
         All or nothing. This project will only be funded if it reaches its goal by{' '}
         {moment.utc(poolDetail?.endTime).format('ddd, MMMM Do YYYY HH:mm:ss Z')}.
       </Text>
