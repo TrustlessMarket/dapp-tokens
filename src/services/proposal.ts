@@ -23,3 +23,14 @@ export const getDetailProposal = async (params: {
     error: 'getDetailProposal fail',
   });
 };
+
+export const getVoteSignatureProposal = async (params: {
+  proposal_id?: any;
+  address: any
+}) => {
+  const qs = '?' + queryString.stringify(params);
+  return swrFetcher(`${API_EXCHANGE_URL}${API_PATH}/vote${qs}`, {
+    method: 'GET',
+    error: 'getVoteSignatureProposal fail',
+  });
+};
