@@ -398,7 +398,7 @@ const ProposalList = () => {
           initialLoading={loading}
           onItemClick={(e) => {
             return router.push(
-              `${ROUTE_PATH.LAUNCHPAD_DETAIL}?pool_address=${e.launchpad}`,
+              `${ROUTE_PATH.PROPOSAL_DETAIL}?proposal_id=${e.proposalId}`,
             );
           }}
         />

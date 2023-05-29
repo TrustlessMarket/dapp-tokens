@@ -13,3 +13,13 @@ export const getListProposals = async (params: IPagingParams) => {
     error: 'getListProposals fail',
   });
 };
+
+export const getDetailProposal = async (params: {
+  proposal_id?: any;
+}) => {
+  const qs = '?' + queryString.stringify(params);
+  return swrFetcher(`${API_EXCHANGE_URL}${API_PATH}/detail${qs}`, {
+    method: 'GET',
+    error: 'getDetailProposal fail',
+  });
+};
