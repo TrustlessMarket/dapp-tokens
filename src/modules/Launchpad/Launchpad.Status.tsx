@@ -22,7 +22,7 @@ export const LabelStatus = {
   starting: {
     key: LAUNCHPAD_STATUS.Starting,
     value: 'crowing-funding',
-    label: 'Crowing',
+    label: 'On going',
   },
   end: {
     key: LAUNCHPAD_STATUS.End,

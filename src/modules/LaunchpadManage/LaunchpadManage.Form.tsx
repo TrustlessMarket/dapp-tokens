@@ -411,7 +411,7 @@ const IdoTokenManageForm: React.FC<IdoTokenManageFormProps> = ({
                   name="launchpadBalance"
                   decimals={18}
                   children={FieldAmount}
-                  label={`Balance ${
+                  label={`Rewards ${
                     tokenSelected ? `(${tokenSelected.symbol})` : ''
                   }`}
                   disabled={detail}
@@ -482,7 +482,7 @@ const IdoTokenManageForm: React.FC<IdoTokenManageFormProps> = ({
                 name="goalBalance"
                 decimals={18}
                 children={FieldAmount}
-                label={`Goal balance ${
+                label={`Funding goal ${
                   liquidityTokenSelected ? `(${liquidityTokenSelected.symbol})` : ''
                 }`}
                 disabled={detail}

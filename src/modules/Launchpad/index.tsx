@@ -87,7 +87,7 @@ const LaunchpadContainer = () => {
       },
       {
         id: 'price',
-        label: 'Balance',
+        label: 'Rewards',
         labelConfig: {
           fontSize: '12px',
           fontWeight: '500',
@@ -98,12 +98,19 @@ const LaunchpadContainer = () => {
         },
         render(row: ILaunchpad) {
           const token: IToken = row.launchpadToken;
+          let percent = 0;
+          if(Number(row.launchpadBalance) > 0 && Number(token.totalSupply) > 0) {
+            percent = new BigNumber(row.launchpadBalance).div(token.totalSupply).multipliedBy(100);
+          }
+
           return (
-            <Text>{`${
-              row.launchpadBalance
-                ? `${formatCurrency(row.launchpadBalance, 18)} ${token?.symbol}`
-                : 'N/A'
-            }`}</Text>
+            row.launchpadBalance
+              ? (<Flex direction={"column"}>
+                  <Text>{formatCurrency(row.launchpadBalance, 18)} {token?.symbol}</Text>
+                  <Text fontSize={"xs"} color={"rgba(255,255,255,0.7)"}>{formatCurrency(percent, 2)}% of Supply</Text>
+                </Flex>
+              )
+              : 'N/A'
           );
         },
       },
@@ -172,7 +179,7 @@ const LaunchpadContainer = () => {
       },
       {
         id: 'goal',
-        label: 'Goal balance',
+        label: 'Funding Goal',
         labelConfig: {
           fontSize: '12px',
           fontWeight: '500',
@@ -377,7 +384,7 @@ const LaunchpadContainer = () => {
 
       <Flex mb={'24px'} mt={'24px'} justifyContent={'center'}>
         <FiledButton btnSize="h" onClick={onShowCreateIDO}>
-          <Text>Submit Launchpad</Text>
+          <Text>Submit Your Launchpad</Text>
         </FiledButton>
       </Flex>
 
