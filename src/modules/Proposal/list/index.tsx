@@ -275,7 +275,7 @@ const ProposalList = () => {
               </Flex>
               <Flex gap={1}>
                 <Text color={colors.white500} fontSize={px2rem(14)}>
-                  Starts at:
+                  Ends at:
                 </Text>
                 <Text color={colors.white}>{moment(row.voteEnd).format('LLL')}</Text>
               </Flex>
@@ -387,7 +387,7 @@ const ProposalList = () => {
 
       <Flex mb={'24px'} mt={'24px'} justifyContent={'center'}>
         <FiledButton btnSize="h" onClick={onShowCreateIDO}>
-          <Text>Submit Your Launchpad</Text>
+          <Text>Submit Your Proposal</Text>
         </FiledButton>
       </Flex>
 

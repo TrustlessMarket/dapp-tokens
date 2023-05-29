@@ -3,7 +3,7 @@ import BodyContainer from '@/components/Swap/bodyContainer';
 import FiledButton from '@/components/Swap/button/filedButton';
 import {ROUTE_PATH} from '@/constants/route-path';
 import {Box, Spinner, Tab, TabList, TabPanel, TabPanels, Tabs, Text,} from '@chakra-ui/react';
-import AboveTheFold from '@/modules/LaunchPadDetail/aboveTheFold';
+import AboveTheFold from '@/modules/Proposal/detail/aboveTheFold';
 import {useAppSelector} from '@/state/hooks';
 import {selectPnftExchange} from '@/state/pnftExchange';
 import {colors} from '@/theme/colors';
@@ -71,7 +71,7 @@ const IdoDetailContainer = () => {
 
   return (
     <Box className={styles.wrapper}>
-      <AboveTheFold poolDetail={proposalDetail}/>
+      <AboveTheFold proposalDetail={proposalDetail}/>
       <BodyContainer>
         <Tabs className={cx(styles.tabContainer, 'max-content')}>
           <TabList mb={6} mt={6}>

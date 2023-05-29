@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useLaunchPadStatus } from '@/modules/Launchpad/Launchpad.Status';
+import {LAUNCHPAD_STATUS, useLaunchPadStatus} from '@/modules/Launchpad/Launchpad.Status';
 import LaunchpadUpComing from '@/modules/LaunchPadDetail/aboveTheFold/upComing';
 import LaunchpadStarting from '@/modules/LaunchPadDetail/aboveTheFold/starting';
 import BodyContainer from '@/components/Swap/bodyContainer';
@@ -12,7 +12,7 @@ const AboveTheFold = ({ poolDetail }: ILaunchpad | any) => {
 
   return (
     <BodyContainer className={styles.wrapper}>
-      {status?.value === 'upcoming' ? (
+      {[LAUNCHPAD_STATUS.Created].includes(status.key) ? (
         <LaunchpadUpComing poolDetail={poolDetail} />
       ) : (
         <LaunchpadStarting poolDetail={poolDetail} />
