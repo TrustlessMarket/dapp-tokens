@@ -15,7 +15,7 @@ import {
   DEV_ADDRESS,
   GM_ADDRESS,
   TRUSTLESS_BRIDGE,
-  TRUSTLESS_FAUCET,
+  TRUSTLESS_GASSTATION,
   WBTC_ADDRESS,
   WETH_ADDRESS,
 } from '@/constants/common';
@@ -1225,7 +1225,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
               Your TC balance is insufficient. You can receive free TC on our faucet
               site{' '}
               <Link
-                href={TRUSTLESS_FAUCET}
+                href={TRUSTLESS_GASSTATION}
                 target={'_blank'}
                 style={{ textDecoration: 'underline' }}
               >

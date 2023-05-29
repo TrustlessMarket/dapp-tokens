@@ -11,7 +11,7 @@ import copy from 'copy-to-clipboard';
 import SelectedNetwork from '@/components/Swap/selectNetwork';
 import Text from '@/components/Text';
 import { SupportedChainId } from '@/constants/chains';
-import { TRUSTLESS_BRIDGE, TRUSTLESS_FAUCET } from '@/constants/common';
+import { TRUSTLESS_BRIDGE, TRUSTLESS_GASSTATION } from '@/constants/common';
 import { WalletContext } from '@/contexts/wallet-context';
 import { compareString, formatCurrency, formatLongAddress } from '@/utils';
 import { showError } from '@/utils/toast';
@@ -169,9 +169,9 @@ const WalletHeader = () => {
           />
           <Text size="medium">Wallet</Text>
         </div>
-        <div className="wallet-link" onClick={() => window.open(TRUSTLESS_FAUCET)}>
+        <div className="wallet-link" onClick={() => window.open(TRUSTLESS_GASSTATION)}>
           <IconSVG src={`/faucet.svg`} maxWidth="20" color="black" />
-          <Text size="medium">Faucet</Text>
+          <Text size="medium">Get TC</Text>
         </div>
         <div className="wallet-link" onClick={() => gotoBridge('deposit', 'btc')}>
           <IconSVG src={`/wrapbtc.svg`} maxWidth="20" color="black" type="fill" />

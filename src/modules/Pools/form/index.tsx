@@ -11,7 +11,7 @@ import { UNIV2_ROUTER_ADDRESS } from '@/configs';
 import {
   BRIDGE_SUPPORT_TOKEN,
   TRUSTLESS_BRIDGE,
-  TRUSTLESS_FAUCET,
+  TRUSTLESS_GASSTATION,
 } from '@/constants/common';
 import { getMessageError, toastError } from '@/constants/error';
 import { ROUTE_PATH } from '@/constants/route-path';
@@ -935,7 +935,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             Your TC balance is insufficient. You can receive free TC on our faucet
             site{' '}
             <Link
-              href={TRUSTLESS_FAUCET}
+              href={TRUSTLESS_GASSTATION}
               target={'_blank'}
               style={{ textDecoration: 'underline' }}
             >
