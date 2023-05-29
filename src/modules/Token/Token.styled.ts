@@ -5,23 +5,19 @@ import { Box, Grid, GridItem } from '@chakra-ui/react';
 import styled from 'styled-components';
 
 export const StyledTokenDetailContainer = styled(Grid)`
-  overflow: hidden;
-  background-color: inherit;
+  /* overflow: hidden; */
+  background-color: ${colors.dark};
+  height: 100vh;
   border: 1px solid ${colors.darkBorderColor};
   grid-gap: 1px;
   grid-template-columns: minmax(350px, 350px) 1fr;
   grid-template-rows: ${(props: any) =>
-    `minmax(64px, 130px) minmax(100px, calc((100vh - 130px - ${props?.topSpacing}px) / 2)) minmax(100px,calc((100vh - 130px - ${props?.topSpacing}px) / 2))`};
+    `minmax(64px, 130px) 1fr minmax(100px, calc((100vh - 130px - ${props?.topSpacing}px) / 1.5))`};
   grid-template-areas:
     'topinfo topinfo'
     'left chart'
     'left history';
-  min-height: ${(props: any) => `calc(100vh - ${props?.topSpacing}px)`};
-  .avatar {
-    width: 40px;
-    height: 40px;
-    border-radius: 100%;
-  }
+
   @media screen and (max-width: 768px) {
     grid-template-columns: 100vw;
     grid-template-rows:
@@ -68,15 +64,27 @@ export const StyledTokenTopInfo = styled(GridItem)`
   justify-content: space-between;
   display: flex;
 
-  .avatar {
-    width: 50px;
-    height: 50px;
+  .avatar-container {
+    .avatar {
+      width: 48px;
+      height: 48px;
+    }
+    margin-right: 16px;
   }
+
+  .padding-32 {
+    padding-right: 32px;
+  }
+  .padding-40 {
+    padding-right: 40px;
+  }
+
   .block-info {
     height: 70px;
     flex-direction: column;
     justify-content: space-around;
-    padding-left: 25px;
+
+    /* padding-left: 25px; */
     .title {
       color: white;
       font-weight: 600;
@@ -85,13 +93,18 @@ export const StyledTokenTopInfo = styled(GridItem)`
     .desc {
       font-weight: 500;
       font-size: ${px2rem(16)};
+      line-height: ${px2rem(28)};
       color: ${colors.white500};
+      /* margin-top: ${px2rem(4)}; */
+      &.small {
+        font-size: ${px2rem(14)};
+      }
     }
   }
 
   .diver-right {
     border-right: 1px solid ${colors.darkBorderColor};
-    padding-right: 30px;
+    margin-right: 40px;
   }
 
   .mobile {
@@ -147,6 +160,7 @@ export const StyledTokenTopInfo = styled(GridItem)`
       align-items: center;
       justify-content: space-between;
       width: 100%;
+      margin-right: 0px;
     }
     .percent {
       width: 100%;
@@ -168,29 +182,44 @@ export const StyledTokenTopInfo = styled(GridItem)`
       margin-left: ${px2rem(16)};
       margin-top: ${px2rem(10)};
     }
+
+    .padding-32,
+    .padding-40 {
+      padding-right: 0px;
+    }
   }
 `;
 
 export const StyledLeftContentContainer = styled(GridItem)`
   border-right: 1px solid ${colors.darkBorderColor};
-  height: calc(100vh - 130px);
+  /* height: calc(100vh - 130px); */
   overflow-y: auto;
-  .title {
-    color: ${colors.white};
-    font-size: 12px;
-    font-weight: bold;
-  }
+
   .token-info {
-    padding: ${px2rem(10)};
+    padding: 24px;
     width: 100%;
+    .title {
+      color: ${colors.white};
+      font-size: ${px2rem(16)};
+      font-weight: 500;
+    }
     .item-info {
       p {
-        color: ${colors.white};
+        font-size: ${px2rem(16)} !important;
+        font-weight: 400;
+        &.label {
+          color: ${colors.hLabelColor};
+        }
+        &.value {
+          color: ${colors.white};
+        }
       }
     }
   }
   .dive-bottom {
     border-bottom: 1px solid ${colors.darkBorderColor};
+    padding-bottom: 24px;
+    margin-bottom: 24px;
   }
 
   .empty-pool {
@@ -201,28 +230,48 @@ export const StyledLeftContentContainer = styled(GridItem)`
   }
 
   .btn-add-liquid {
-    margin-top: ${px2rem(10)};
-    max-width: 50%;
-    color: ${colors.white};
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
   }
 
   .accordion-container {
     .chakra-accordion__button,
     .chakra-accordion__panel {
-      background-color: ${colors.darkBorderColor};
+      background-color: #1b1e26;
       color: ${colors.white};
       border-radius: 0;
       .label,
       .value {
+        font-size: ${px2rem(13)} !important;
+        font-weight: 400;
+      }
+      .label {
+        color: ${colors.hLabelColor};
+      }
+      .value {
         color: ${colors.white};
+      }
+    }
+    .chakra-accordion__button {
+      background-color: #283353;
+      margin-bottom: 0px;
+      span {
+        font-size: ${px2rem(16)};
+        font-weight: 500;
+      }
+    }
+    .chakra-accordion__panel {
+      padding: 20px;
+      & > div {
+        padding-top: 0px;
+        margin-bottom: 8px;
       }
     }
   }
 
   .list-paired-container {
-    /* max-height: 100%;
-    overflow-y: auto;
-    padding-bottom: ${px2rem(50)}; */
+    padding-top: 0px;
   }
 `;
 
@@ -250,6 +299,9 @@ export const StyledHistoryContentContainer = styled(GridItem)`
       height: 100%;
       overflow-y: unset;
     }
+    .chakra-tabs {
+      overflow: hidden;
+    }
     .chakra-tabs,
     .chakra-table__container {
       height: 100%;
@@ -259,8 +311,7 @@ export const StyledHistoryContentContainer = styled(GridItem)`
       height: calc(100% - 50px);
     }
     .chakra-tabs__tab-panel {
-      padding: 10px;
-      padding-bottom: 0px;
+      padding: 0px;
       max-height: inherit;
       > div {
         max-height: inherit;
@@ -270,6 +321,9 @@ export const StyledHistoryContentContainer = styled(GridItem)`
       button {
         font-size: ${px2rem(16)};
         color: ${colors.white500};
+        padding: 20px;
+        text-transform: uppercase;
+        font-weight: 400;
       }
     }
     .chakra-tabs__tab {
@@ -284,17 +338,47 @@ export const StyledHistoryContentContainer = styled(GridItem)`
       position: relative;
       thead {
         position: sticky;
-        background-color: ${colors.dark};
+        background-color: #1e1e22;
         top: 0;
-        td {
+        th {
+          padding: 12px;
+          text-transform: uppercase;
           color: ${colors.white500};
+          font-size: ${px2rem(12)};
+          font-weight: 400;
         }
       }
       tbody {
         overflow: auto;
         max-height: 400px;
+        tr {
+          &:hover {
+            background-color: #1e1e22;
+            .link-explorer {
+              background-color: #ffffff;
+              svg {
+                color: #1e1e22;
+              }
+            }
+          }
+          border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+          &:last-child {
+            td {
+              padding-bottom: 30px;
+            }
+          }
+        }
         td {
           color: ${colors.white};
+          font-size: ${px2rem(16)};
+          font-weight: 500;
+          padding: 16px 12px;
+          vertical-align: middle;
+          .link-explorer {
+            padding: 8px;
+            background-color: #1e1e22;
+            border-radius: 4px;
+          }
         }
       }
     }

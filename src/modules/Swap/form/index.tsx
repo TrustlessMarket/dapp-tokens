@@ -15,7 +15,7 @@ import {
   DEV_ADDRESS,
   GM_ADDRESS,
   TRUSTLESS_BRIDGE,
-  TRUSTLESS_FAUCET,
+  TRUSTLESS_GASSTATION,
   WBTC_ADDRESS,
   WETH_ADDRESS,
 } from '@/constants/common';
@@ -43,7 +43,7 @@ import {isDevelop} from '@/utils/commons';
 import {composeValidators, required} from '@/utils/formValidate';
 import px2rem from '@/utils/px2rem';
 import {showError} from '@/utils/toast';
-import {Box, Center, Flex, forwardRef, Text} from '@chakra-ui/react';
+import {Box, Center, Flex, forwardRef, Text, Tooltip} from '@chakra-ui/react';
 import {useWeb3React} from '@web3-react/core';
 import BigNumber from 'bignumber.js';
 import cx from 'classnames';
@@ -65,6 +65,7 @@ import {closeModal, openModal} from "@/state/modal";
 import {useWindowSize} from '@trustless-computer/dapp-core';
 import InfoTooltip from '@/components/Swap/infoTooltip';
 import ModalConfirmApprove from '@/components/ModalConfirmApprove';
+import {MdHelpOutline} from "react-icons/md";
 
 const LIMIT_PAGE = 50;
 const FEE = 2;
@@ -1183,9 +1184,13 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         />
         <HorizontalItem
           label={
-            <Text fontSize={'sm'} fontWeight={'medium'} color={'rgba(255, 255, 255, 0.7)'}>
-              Reward: +0.02TC & +0.1TM
-            </Text>
+            <Flex fontSize={'sm'} fontWeight={'medium'} color={'rgba(255, 255, 255, 0.7)'}>
+              Reward&nbsp;<Tooltip hasArrow label={"For every successful swap you make, you will be rewarded 0.02 TC. This reward is distributed every 4 hours"} className="popup-tooltip">
+              <Flex>
+                <MdHelpOutline color={'inherit'} />
+              </Flex>
+            </Tooltip>: +0.02TC & +0.1TM
+            </Flex>
           }
         />
       </Box>
@@ -1217,10 +1222,9 @@ export const MakeFormSwap = forwardRef((props, ref) => {
               <BiBell color="#FF7E21" />
             </Center>
             <Text fontSize="sm" color="#FF7E21" textAlign={'left'}>
-              Your TC balance is insufficient. You can receive free TC on our faucet
-              site{' '}
+              Your TC balance is insufficient. Buy more TC{' '}
               <Link
-                href={TRUSTLESS_FAUCET}
+                href={TRUSTLESS_GASSTATION}
                 target={'_blank'}
                 style={{ textDecoration: 'underline' }}
               >

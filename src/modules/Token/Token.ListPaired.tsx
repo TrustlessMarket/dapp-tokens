@@ -129,11 +129,7 @@ const TokenPoolDetail = ({ paired }: { paired: any }) => {
           <FiledButton
             btnSize="l"
             variant={'outline'}
-            style={{
-              backgroundColor: 'transparent',
-              borderColor: 'white',
-              color: 'white',
-            }}
+            className="btn-add-liquid"
             onClick={() =>
               router.push(
                 `${ROUTE_PATH.POOLS}?type=${ScreenType.add_liquid}&f=${token0.address}&t=${token1.address}`,
