@@ -377,7 +377,7 @@ const LaunchpadContainer = () => {
 
       <Flex mb={'24px'} mt={'24px'} justifyContent={'center'}>
         <FiledButton btnSize="h" onClick={onShowCreateIDO}>
-          <Text>Submit Launchpad</Text>
+          <Text>Submit Your Launchpad</Text>
         </FiledButton>
       </Flex>
 
