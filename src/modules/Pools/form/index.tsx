@@ -932,8 +932,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         isLoadedAssets &&
         new BigNumber(juiceBalance || 0).lte(0) && (
           <Text fontSize="md" color="brand.warning.400" textAlign={'left'}>
-            Your TC balance is insufficient. You can receive free TC on our faucet
-            site{' '}
+            Your TC balance is insufficient. Buy more TC{' '}
             <Link
               href={TRUSTLESS_GASSTATION}
               target={'_blank'}
