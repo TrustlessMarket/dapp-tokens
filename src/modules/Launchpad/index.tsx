@@ -100,7 +100,7 @@ const LaunchpadContainer = () => {
           const token: IToken = row.launchpadToken;
           let percent = 0;
           if(Number(row.launchpadBalance) > 0 && Number(token.totalSupply) > 0) {
-            percent = new BigNumber(row.launchpadBalance).div(token.totalSupply).multipliedBy(100);
+            percent = new BigNumber(row.launchpadBalance).div(token.totalSupply).multipliedBy(100).toNumber();
           }
 
           return (
