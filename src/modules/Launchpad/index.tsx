@@ -98,12 +98,19 @@ const LaunchpadContainer = () => {
         },
         render(row: ILaunchpad) {
           const token: IToken = row.launchpadToken;
+          let percent = 0;
+          if(Number(row.launchpadBalance) > 0 && Number(token.totalSupply) > 0) {
+            percent = new BigNumber(row.launchpadBalance).div(token.totalSupply).multipliedBy(100);
+          }
+
           return (
-            <Text>{`${
-              row.launchpadBalance
-                ? `${formatCurrency(row.launchpadBalance, 18)} ${token?.symbol}`
-                : 'N/A'
-            }`}</Text>
+            row.launchpadBalance
+              ? (<Flex direction={"column"}>
+                  <Text>{formatCurrency(row.launchpadBalance, 18)} {token?.symbol}</Text>
+                  <Text fontSize={"xs"} color={"rgba(255,255,255,0.7)"}>{formatCurrency(percent, 2)}% of Supply</Text>
+                </Flex>
+              )
+              : 'N/A'
           );
         },
       },
