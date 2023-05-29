@@ -46,7 +46,12 @@ const WrapperConnected: React.FC<WrapperConnectedProps> = ({
   }
 
   return (
-    <StyledWrapperConnected {...children?.props} type={isAuthenticated ? type : 'button'} onClick={handleClick} className={className}>
+    <StyledWrapperConnected
+      {...children?.props}
+      type={isAuthenticated ? type : 'button'}
+      onClick={handleClick}
+      className={className}
+    >
       {children?.props?.children}
     </StyledWrapperConnected>
   );

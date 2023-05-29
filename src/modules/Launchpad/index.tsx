@@ -42,13 +42,14 @@ const LaunchpadContainer = () => {
 
   useEffect(() => {
     getData();
-  }, [needReload]);
+  }, [needReload, account]);
 
   const getData = async () => {
     try {
       const response: any = await getListLaunchpad({
         page: 1,
         limit: 50,
+        address: account,
       });
       setData(response);
     } catch (error) {
@@ -332,7 +333,7 @@ const LaunchpadContainer = () => {
                 <Box
                   cursor={'pointer'}
                   onClick={() =>
-                    router.push(`${ROUTE_PATH.LAUNCHPAD_MANAGE}?id=${row.launchpad}`)
+                    router.push(`${ROUTE_PATH.LAUNCHPAD_MANAGE}?id=${row.id}`)
                   }
                 >
                   <BsPencil />
@@ -394,6 +395,9 @@ const LaunchpadContainer = () => {
           columns={columns}
           initialLoading={loading}
           onItemClick={(e) => {
+            if (!e.launchpad) {
+              return null;
+            }
             return router.push(
               `${ROUTE_PATH.LAUNCHPAD_DETAIL}?pool_address=${e.launchpad}`,
             );

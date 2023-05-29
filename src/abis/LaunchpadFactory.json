@@ -17,6 +17,12 @@
     "inputs": [
       {
         "indexed": false,
+        "internalType": "uint256",
+        "name": "proposalId",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
         "internalType": "address",
         "name": "launchpad",
         "type": "address"
@@ -75,12 +81,7 @@
       },
       {
         "internalType": "uint256",
-        "name": "startTimeArg",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "endTimeArg",
+        "name": "durationArg",
         "type": "uint256"
       },
       {
@@ -108,6 +109,19 @@
   {
     "inputs": [],
     "name": "getFeeTo",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getGovernor",
     "outputs": [
       {
         "internalType": "address",
@@ -192,6 +206,25 @@
     "type": "function"
   },
   {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "launchpadPoolArg",
+        "type": "address"
+      }
+    ],
+    "name": "getProposalId",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [],
     "name": "getUniswapV2Factory",
     "outputs": [
@@ -259,6 +292,42 @@
       }
     ],
     "name": "setFeeTo",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "governorArg",
+        "type": "address"
+      }
+    ],
+    "name": "setGovernor",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "protocolRatioArg",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "liquidityPriceMultipleArg",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "lpTokenReleaseDurationArg",
+        "type": "uint256"
+      }
+    ],
+    "name": "setLaunchpadConfigs",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
