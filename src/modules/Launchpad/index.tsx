@@ -87,7 +87,7 @@ const LaunchpadContainer = () => {
       },
       {
         id: 'price',
-        label: 'Balance',
+        label: 'Rewards',
         labelConfig: {
           fontSize: '12px',
           fontWeight: '500',
@@ -172,7 +172,7 @@ const LaunchpadContainer = () => {
       },
       {
         id: 'goal',
-        label: 'Goal balance',
+        label: 'Funding Goal',
         labelConfig: {
           fontSize: '12px',
           fontWeight: '500',
