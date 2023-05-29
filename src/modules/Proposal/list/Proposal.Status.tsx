@@ -15,48 +15,52 @@ export enum PROPOSAL_STATUS {
   Closed,
 };
 
-export const LabelStatus = {
-  pending: {
+interface LabelStatusMap {
+  [name: string]: any
+}
+
+export const LabelStatus : LabelStatusMap = {
+  'pending': {
     key: PROPOSAL_STATUS.Pending,
     value: 'pending',
     label: 'Pending',
   },
-  active: {
+  'active': {
     key: PROPOSAL_STATUS.Active,
     value: 'active',
     label: 'Active',
   },
-  canceled: {
+  'canceled': {
     key: PROPOSAL_STATUS.Canceled,
     value: 'canceled',
     label: 'Canceled',
   },
-  defeated: {
+  'defeated': {
     key: PROPOSAL_STATUS.Defeated,
     value: 'defeated',
     label: 'Defeated',
   },
-  succeeded: {
+  'succeeded': {
     key: PROPOSAL_STATUS.Succeeded,
     value: 'succeeded',
     label: 'Succeeded',
   },
-  queued: {
+  'queued': {
     key: PROPOSAL_STATUS.Queued,
     value: 'queued',
     label: 'Queued',
   },
-  expired: {
+  'expired': {
     key: PROPOSAL_STATUS.Expired,
     value: 'expired',
     label: 'Expired',
   },
-  executed: {
+  'executed': {
     key: PROPOSAL_STATUS.Executed,
     value: 'executed',
     label: 'Executed',
   },
-  closed: {
+  'closed': {
     key: PROPOSAL_STATUS.Closed,
     value: 'closed',
     label: 'Closed',

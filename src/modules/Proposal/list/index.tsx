@@ -7,7 +7,6 @@ import ListTable, {ColumnProp} from "@/components/Swap/listTable";
 import {ROUTE_PATH} from "@/constants/route-path";
 import {useEffect, useMemo, useState} from "react";
 import {useWeb3React} from "@web3-react/core";
-import {useDispatch} from "react-redux";
 import {useAppSelector} from "@/state/hooks";
 import {selectPnftExchange} from "@/state/pnftExchange";
 import {useRouter} from "next/router";
@@ -21,13 +20,13 @@ import web3 from "web3";
 import SocialToken from "@/components/Social";
 import {BsPencil} from "react-icons/bs";
 import {getListProposals} from "@/services/proposal";
-import ProposalStatus, {useProposalStatus} from "@/modules/Proposal/list/Proposal.Status";
+import ProposalStatus from "@/modules/Proposal/list/Proposal.Status";
 
 const ProposalList = () => {
   const [data, setData] = useState<any[]>();
   const [loading, setLoading] = useState(true);
   const { account } = useWeb3React();
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
   const needReload = useAppSelector(selectPnftExchange).needReload;
   const router = useRouter();
 
@@ -40,8 +39,8 @@ const ProposalList = () => {
   const getData = async () => {
     try {
       const response: any = await getListProposals({
-        // page: 1,
-        // limit: 50,
+        page: 1,
+        limit: 50,
       });
       setData(response);
     } catch (error) {
@@ -204,9 +203,10 @@ const ProposalList = () => {
           borderBottom: 'none',
         },
         render(row: IProposal) {
-          const [status] = useProposalStatus({ row });
+          console.log('row', row);
+          // const [status] = useProposalStatus({ row });
 
-          console.log('useProposalStatus', status);
+          // console.log('useProposalStatus', status);
 
           // if (status.value === 'upcoming') {
           //   return (
@@ -330,7 +330,7 @@ const ProposalList = () => {
     ];
   }, [account]);
 
-  const onShowCreateIDO = async (_ido?: any, isRemove?: boolean) => {
+  const onShowCreateIDO = async (_ido?: any) => {
     return router.push(`${ROUTE_PATH.LAUNCHPAD_MANAGE}`);
     // const id = 'manageIdo';
     // const close = () => dispatch(closeModal({ id }));
