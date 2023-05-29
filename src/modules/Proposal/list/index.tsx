@@ -21,6 +21,9 @@ import SocialToken from "@/components/Social";
 import {BsPencil} from "react-icons/bs";
 import {getListProposals} from "@/services/proposal";
 import ProposalStatus from "@/modules/Proposal/list/Proposal.Status";
+import px2rem from "@/utils/px2rem";
+import {colors} from '@/theme/colors';
+import moment from "moment";
 
 const ProposalList = () => {
   const [data, setData] = useState<any[]>();
@@ -90,15 +93,16 @@ const ProposalList = () => {
         },
         render(row: IProposal) {
           const token: IToken = row?.userPool?.launchpadToken;
+          const userPool = row?.userPool;
           let percent = 0;
-          if(Number(row.launchpadBalance) > 0 && Number(token.totalSupply) > 0) {
-            percent = new BigNumber(row.launchpadBalance).div(token.totalSupply).multipliedBy(100).toNumber();
+          if(Number(userPool.launchpadBalance) > 0 && Number(token.totalSupply) > 0) {
+            percent = new BigNumber(userPool.launchpadBalance).div(token.totalSupply).multipliedBy(100).toNumber();
           }
 
           return (
-            row.launchpadBalance
+            userPool.launchpadBalance
               ? (<Flex direction={"column"} color={"#FFFFFF"}>
-                  <Text>{formatCurrency(row.launchpadBalance, 18)} {token?.symbol}</Text>
+                  <Text>{formatCurrency(userPool.launchpadBalance, 18)} {token?.symbol}</Text>
                   <Text fontSize={"xs"} color={"rgba(255,255,255,0.7)"}>{formatCurrency(percent, 2)}% of Supply</Text>
                 </Flex>
               )
@@ -148,12 +152,13 @@ const ProposalList = () => {
         },
         render(row: IProposal) {
           const token: IToken = row?.userPool?.launchpadToken;
+          const userPool = row?.userPool;
           return (
             <Box color={"#FFFFFF"}>
               <Text>{`${
-                row.liquidityRatio
+                userPool.liquidityRatio
                   ? `${formatCurrency(
-                    new BigNumber(web3.utils.toWei(row.liquidityRatio).toString())
+                    new BigNumber(web3.utils.toWei(userPool.liquidityRatio).toString())
                       .dividedBy(10000)
                       .toString(),
                     18,
@@ -162,7 +167,7 @@ const ProposalList = () => {
               }`}</Text>
               <Text>{`${
                 token.totalSupply
-                  ? `${formatCurrency(row.liquidityBalance, 18)} ${token?.symbol}`
+                  ? `${formatCurrency(userPool.liquidityBalance, 18)} ${token?.symbol}`
                   : 'N/A'
               }`}</Text>
             </Box>
@@ -260,6 +265,23 @@ const ProposalList = () => {
           //   );
           // }
 
+          return (
+            <Box>
+              <Flex gap={1}>
+                <Text color={colors.white500} fontSize={px2rem(14)}>
+                  Starts at:
+                </Text>
+                <Text color={colors.white}>{moment(row.voteStart).format('LLL')}</Text>
+              </Flex>
+              <Flex gap={1}>
+                <Text color={colors.white500} fontSize={px2rem(14)}>
+                  Starts at:
+                </Text>
+                <Text color={colors.white}>{moment(row.voteEnd).format('LLL')}</Text>
+              </Flex>
+            </Box>
+          );
+
           return <></>;
         },
       },
@@ -306,13 +328,14 @@ const ProposalList = () => {
           borderBottom: 'none',
         },
         render(row: IProposal) {
-          if (compareString(row.creatorAddress, account)) {
+          const userPool = row?.userPool;
+          if (compareString(userPool.creatorAddress, account)) {
             return (
               <Flex alignItems={'center'} gap={4}>
                 <Box
                   cursor={'pointer'}
                   onClick={() =>
-                    router.push(`${ROUTE_PATH.LAUNCHPAD_MANAGE}?id=${row.launchpad}`)
+                    router.push(`${ROUTE_PATH.LAUNCHPAD_MANAGE}?id=${userPool.launchpad}`)
                   }
                 >
                   <BsPencil />
