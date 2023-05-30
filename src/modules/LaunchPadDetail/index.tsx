@@ -27,7 +27,7 @@ const IdoDetailContainer = () => {
     try {
       const response: any = await Promise.all([
         getDetailLaunchpad({
-          pool_address: router?.query?.pool_address as string,
+          id: router?.query?.id as string,
         }),
       ]);
       setPoolDetail(response[0]);
@@ -39,10 +39,10 @@ const IdoDetailContainer = () => {
   };
 
   useEffect(() => {
-    if (router?.query?.pool_address) {
+    if (router?.query?.id) {
       getPoolInfo();
     }
-  }, [router?.query?.pool_address, needReload]);
+  }, [router?.query?.id, needReload]);
 
   if (loading) {
     return (
