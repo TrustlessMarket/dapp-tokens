@@ -157,7 +157,7 @@ const IdoTokenManageForm: React.FC<IdoTokenManageFormProps> = ({
       .toString();
     change('liquidityBalance', _needLiquidBalance);
     setNeedLiquidBalance(_needLiquidBalance);
-  }, [values?.launchpadBalance, values?.liquidityRatioArg]);
+  }, [values?.launchpadBalance, values?.liquidityRatioArg, launchpadConfigs.liquidityPriceMultiple]);
 
   const checkBalanceIsApprove = (required: any = 0, amount: any = 0) => {
     return required > 0 && new BigNumber(required).minus(amount).toNumber() >= 0;
