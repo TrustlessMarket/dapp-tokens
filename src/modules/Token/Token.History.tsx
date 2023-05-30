@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import ListTable, { ColumnProp } from '@/components/Swap/listTable';
 import { TC_EXPLORER } from '@/configs';
+import useTCWallet from '@/hooks/useTCWallet';
 import { IToken } from '@/interfaces/token';
 import { getTradeHistory } from '@/services/swap';
 import { colors } from '@/theme/colors';
 import { compareString, formatCurrency } from '@/utils';
 import { Flex, Text } from '@chakra-ui/react';
-import { useWeb3React } from '@web3-react/core';
 import moment from 'moment';
 import { useEffect, useMemo, useState } from 'react';
 import { RxArrowTopRight } from 'react-icons/rx';
@@ -17,12 +17,12 @@ export const BASE_TOKEN_ETH_PAIR = '0x74B033e56434845E02c9bc4F0caC75438033b00D';
 
 const TokenHistory = ({ data, isOwner }: { data: IToken; isOwner?: boolean }) => {
   const [list, setList] = useState<any[]>([]);
-  const { account, isActive } = useWeb3React();
+  const { tcWalletAddress: account, isAuthenticated } = useTCWallet();
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     getList();
-  }, [account, isActive]);
+  }, [account, isAuthenticated]);
 
   const getList = async () => {
     try {

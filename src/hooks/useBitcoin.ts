@@ -1,15 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { TC_NETWORK_RPC } from '@/configs';
-import { ConnectionType, getConnection } from '@/connection';
+import { ConnectionType, getConnector } from '@/connection';
 import { AssetsContext } from '@/contexts/assets-context';
 import { getUserSelector } from '@/state/user/selector';
+import { isProduction } from '@/utils/commons';
 import { generateBitcoinTaprootKey } from '@/utils/derive-key';
-import { useWeb3React } from '@web3-react/core';
+import BigNumber from 'bignumber.js';
+import { Buffer } from 'buffer';
 import { useContext } from 'react';
 import { useSelector } from 'react-redux';
 import * as TC_SDK from 'trustless-computer-sdk';
-import BigNumber from 'bignumber.js';
-import { Buffer } from 'buffer';
 
 export interface ISendInsProps {
   receiverAddress: string;
@@ -49,12 +49,18 @@ export interface ICreateInscribeResponse {
 
 const useBitcoin = () => {
   const user = useSelector(getUserSelector);
-  const tcClient = new TC_SDK.TcClient(TC_SDK.Mainnet, TC_NETWORK_RPC);
+  const tcClient = new TC_SDK.TcClient(
+    isProduction() ? TC_SDK.Mainnet : TC_SDK.Regtest,
+    TC_NETWORK_RPC,
+  );
   const { getAvailableAssetsCreateTx } = useContext(AssetsContext);
-  const { account: evmAddress, connector } = useWeb3React();
+
+  const evmAddress = user?.walletAddress;
+
+  const connector = getConnector();
 
   const signKey = async (): Promise<ISignKeyResp> => {
-    const connection = getConnection(connector);
+    const connection = connector;
     if (connection?.type === ConnectionType.METAMASK) {
       const error = 'Can not sign with metamask';
       const tpAddress = user?.walletAddressBtcTaproot;
@@ -152,17 +158,6 @@ const useBitcoin = () => {
     return res;
   };
 
-  const getNonceInscribeable = async (
-    tcAddress: string,
-  ): Promise<{
-    nonce: number;
-    gasPrice: number;
-  }> => {
-    if (!tcAddress) throw Error('Address not found');
-    const { nonce, gasPrice } = await tcClient.getNonceInscribeable(tcAddress);
-    return { nonce, gasPrice };
-  };
-
   const getUnInscribedTransactionByAddress = async (
     tcAddress: string,
   ): Promise<Array<string>> => {
@@ -217,12 +212,12 @@ const useBitcoin = () => {
     createInscribeTx,
     createBatchInscribeTxs,
     signKey,
-    getNonceInscribeable,
     getUnInscribedTransactionByAddress,
     getUnInscribedTransactionDetailByAddress,
     getTCTxByHash,
     getPendingInscribeTxsDetail,
     getTCTxReceipt,
+    tcClient,
   };
 };
 
