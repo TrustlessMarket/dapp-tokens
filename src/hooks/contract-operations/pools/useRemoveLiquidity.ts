@@ -78,6 +78,7 @@ const useRemoveLiquidity: ContractOperationHook<
           functionType: functionABI.functionType,
           functionName: functionABI.functionName,
           isExecuteTransaction: false,
+          from: account,
         });
 
         let isPendingTx = false;

@@ -1020,7 +1020,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             isDisabled={loading}
             loadingText="Processing"
             btnSize={'h'}
-            onClick={onShowModalApprove}
+            onClick={onApprove}
             type="button"
             processInfo={{
               id: transactionType.createPoolApprove,

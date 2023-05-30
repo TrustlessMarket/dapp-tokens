@@ -10072,7 +10072,7 @@ tar@^4.0.2:
 
 "tc-connect@https://github.com/TrustlessComputer/tc-connect":
   version "0.0.1"
-  resolved "https://github.com/TrustlessComputer/tc-connect#465be7fb3bfb521aa68783387198875ae737635c"
+  resolved "https://github.com/TrustlessComputer/tc-connect#4b723d2fcf0d7eddce9638d58b691f6e8dd56b9b"
   dependencies:
     axios "^1.4.0"
     jsontokens "^4.0.1"

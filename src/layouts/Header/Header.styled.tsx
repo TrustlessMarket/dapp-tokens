@@ -3,6 +3,7 @@ import px2rem from '@/utils/px2rem';
 import { Tooltip } from 'react-bootstrap';
 import styled, { DefaultTheme } from 'styled-components';
 import Link from 'next/link';
+import { colors } from '@/theme/colors';
 
 const Wrapper = styled.div`
   /* max-width: 1920px; */
@@ -148,6 +149,40 @@ const Wrapper = styled.div`
       }
     }
   }
+
+  .btn-select-account {
+    background-color: transparent;
+    background-image: none;
+  }
+  .chakra-menu__menu-list {
+    padding: 0px;
+    overflow: hidden;
+  }
+  .chakra-menu__menuitem {
+    border-bottom: 1px solid ${colors.hLabelColor};
+    &:last-child {
+      border-bottom: none;
+    }
+    .tc-item-container {
+      align-items: center;
+      gap: 10px;
+      justify-content: space-between;
+      width: 100%;
+    }
+    .tc-account-name {
+      font-size: ${px2rem(16)};
+      font-weight: 500;
+      span {
+        font-size: ${px2rem(12)};
+        opacity: 0.5;
+      }
+    }
+    .tc-account-balance {
+      font-weight: bold;
+      font-size: ${px2rem(18)};
+      color: ${colors.redSecondary};
+    }
+  }
 `;
 
 const StyledLink = styled(Link)<{ active: boolean; activeColor?: string }>`
@@ -250,11 +285,13 @@ const WalletAdress = styled(Tooltip)`
 
 const ConnectWalletButton = styled(Button)`
   padding: ${px2rem(8)} ${px2rem(16)};
-  color: #1c1c1c;
+  color: ${(props) => (props.disabled ? colors.redSecondary : colors.dark)};
   font-size: ${px2rem(14)};
   line-height: ${px2rem(24)};
   font-weight: 500;
-  background: #ffffff;
+  background: ${(props) => (props.disabled ? 'transparent' : colors.white)};
+  border: ${(props) =>
+    props.disabled ? `1px solid ${colors.darkBorderColor}` : 'unset'};
   text-transform: uppercase;
   border-radius: 8px !important;
   letter-spacing: 0.01em;

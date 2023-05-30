@@ -51,6 +51,7 @@ const useApproveERC20Token: ContractOperationHook<
           gasPrice: getDefaultGasPrice(),
           functionType: functionABI.functionType,
           functionName: functionABI.functionName,
+          from: account,
         });
 
         logErrorToServer({

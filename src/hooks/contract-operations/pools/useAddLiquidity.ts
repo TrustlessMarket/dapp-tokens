@@ -76,6 +76,8 @@ const useAddLiquidity: ContractOperationHook<IAddLiquidityParams, boolean> = () 
           gasPrice: getDefaultGasPrice(),
           functionType: functionABI.functionType,
           functionName: functionABI.functionName,
+          isExecuteTransaction: false,
+          from: account,
         });
 
         logErrorToServer({

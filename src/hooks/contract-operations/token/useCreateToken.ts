@@ -47,6 +47,7 @@ const useCreateToken: ContractOperationHook<
           isInscribe: true,
           functionType: 'Contract Deployment',
           functionName: 'constructor(bytes32[])',
+          from: account,
         });
 
         return {
