@@ -64,6 +64,8 @@ const Header = () => {
   //   return isScreenDarkMode();
   // }, [router?.pathname]);
 
+  console.log('aaaa');
+
   useEffect(() => {
     if (refMenu.current) {
       if (isOpenMenu) {
