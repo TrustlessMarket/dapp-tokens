@@ -57,6 +57,8 @@ export const remakeFunctionName: any = {
   removeLiquidity: 'Remove Liquidity',
   approve: 'Approve Token',
   createLaunchpadPool: 'Created Launchpad Proposal',
+  defeat: 'Defeated Launchpad Proposal',
+  execute: 'Executed Launchpad Proposal',
 };
 
 export const getFunctionABI = (abi: any[] = [], name: string) => {

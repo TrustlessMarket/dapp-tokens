@@ -1,22 +1,16 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import LaunchpadFactoryJson from '@/abis/LaunchpadFactory.json';
 import { LAUNCHPAD_FACTORY_ADDRESS } from '@/configs';
+import { getConnector } from '@/connection';
 import { TransactionEventType } from '@/enums/transaction';
 import useTCWallet from '@/hooks/useTCWallet';
 import { ContractOperationHook, DAppType } from '@/interfaces/contract-operation';
 import { logErrorToServer } from '@/services/swap';
-import {
-  getContract,
-  getDefaultGasPrice,
-  getDefaultProvider,
-  getFunctionABI,
-} from '@/utils';
-import { useWeb3React } from '@web3-react/core';
+import { getDefaultGasPrice, getDefaultProvider, getFunctionABI } from '@/utils';
 import BigNumber from 'bignumber.js';
+import { ethers } from 'ethers';
 import { useCallback } from 'react';
 import web3 from 'web3';
-import { ethers } from 'ethers';
-import { getConnector } from '@/connection';
 
 export interface ICreateLaunchpadParams {
   launchpadTokenArg: string;
@@ -70,13 +64,6 @@ const useCreateLaunchpad: ContractOperationHook<
           ],
         );
 
-        const contract = getContract(
-          LAUNCHPAD_FACTORY_ADDRESS,
-          LaunchpadFactoryJson,
-          provider,
-          account,
-        );
-
         const transaction = await connector.requestSign({
           target: '_blank',
           calldata: encodeAbi,
@@ -84,11 +71,10 @@ const useCreateLaunchpad: ContractOperationHook<
           value: '',
           redirectURL: window.location.href,
           isInscribe: true,
-          gasLimit: '1500000',
+          gasLimit: '1100000',
           gasPrice: getDefaultGasPrice(),
           functionType: functionABI.functionType,
           functionName: functionABI.functionName,
-          isExecuteTransaction: false,
           from: account,
         });
 
@@ -96,7 +82,7 @@ const useCreateLaunchpad: ContractOperationHook<
           type: 'logs',
           address: account,
           error: JSON.stringify(transaction),
-          message: "gasLimit: '150000'",
+          message: "gasLimit: '1100000'",
         });
 
         return transaction;

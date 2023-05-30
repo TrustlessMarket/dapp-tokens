@@ -1,33 +1,39 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import GovernorJson from '@/abis/Gevernor.json';
-import { GOVERNOR_ADDRESS } from '@/configs';
-import { getConnector } from '@/connection';
 import { TransactionEventType } from '@/enums/transaction';
-import useTCWallet from '@/hooks/useTCWallet';
 import { ContractOperationHook, DAppType } from '@/interfaces/contract-operation';
 import { logErrorToServer } from '@/services/swap';
-import { getDefaultGasPrice, getDefaultProvider, getFunctionABI } from '@/utils';
-import { ethers } from 'ethers';
+import {
+  getContract,
+  getDefaultGasPrice,
+  getDefaultProvider,
+  getFunctionABI,
+} from '@/utils';
+import { useWeb3React } from '@web3-react/core';
 import { useCallback } from 'react';
+import { GOVERNOR_ADDRESS } from '@/configs';
+import useTCWallet from '@/hooks/useTCWallet';
+import { ethers } from 'ethers';
+import { getConnector } from '@/connection';
 
-interface IExecuteParams {
+interface IDefeatParams {
   proposalId: string;
 }
 
-const useExecuteProposal: ContractOperationHook<IExecuteParams, boolean> = () => {
+const useDefeatProposal: ContractOperationHook<IDefeatParams, boolean> = () => {
   const { tcWalletAddress: account } = useTCWallet();
   const provider = getDefaultProvider();
   const connector = getConnector();
 
   const call = useCallback(
-    async (params: IExecuteParams): Promise<boolean> => {
+    async (params: IDefeatParams): Promise<boolean> => {
       const { proposalId } = params;
-      if (account && provider && proposalId) {
-        const functionABI = getFunctionABI(GovernorJson, 'execute');
+      if (account && provider) {
+        const functionABI = getFunctionABI(GovernorJson, 'defeat');
 
         const ContractInterface = new ethers.utils.Interface(functionABI.abi);
 
-        const encodeAbi = ContractInterface.encodeFunctionData('execute', [
+        const encodeAbi = ContractInterface.encodeFunctionData('defeat', [
           proposalId,
         ]);
 
@@ -66,4 +72,4 @@ const useExecuteProposal: ContractOperationHook<IExecuteParams, boolean> = () =>
   };
 };
 
-export default useExecuteProposal;
+export default useDefeatProposal;

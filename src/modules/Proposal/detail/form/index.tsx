@@ -61,7 +61,7 @@ import {
 } from '@/modules/Proposal/list/Proposal.Status';
 import { getVoteSignatureProposal } from '@/services/proposal';
 import useContractOperation from '@/hooks/contract-operations/useContractOperation';
-import useDefeatProposal from '@/hooks/contract-operations/proposal/useDefeate';
+import useDefeatProposal from '@/hooks/contract-operations/proposal/useDefeat';
 import useExecuteProposal from '@/hooks/contract-operations/proposal/useExecute';
 import useCastVoteProposal from '@/hooks/contract-operations/proposal/useCastVote';
 import useTCWallet from '@/hooks/useTCWallet';
