@@ -225,58 +225,64 @@ const LaunchpadContainer = () => {
           borderBottom: 'none',
         },
         render(row: ILaunchpad) {
-          const [status] = useLaunchPadStatus({ row });
+          if(row?.launchpad || !row?.proposalId) {
+            const [status] = useLaunchPadStatus({ row });
 
-          if (status.value === 'upcoming') {
-            return (
-              <Box>
-                <Text>
+            console.log('row', row);
+            console.log('status', status);
+            console.log('=====');
+
+            if (status.value === 'upcoming') {
+              return (
+                <Box>
+                  <Text>
                   <span style={{ color: colors.white500, fontSize: px2rem(14) }}>
                     Starts at:
                   </span>{' '}
-                  {moment(row.startTime).format('MMM, DD')}
-                </Text>
-                <Flex mt={1} alignItems={'center'} gap={2}>
-                  <ImClock2 />
-                  <Text>
-                    <CountDownTimer end_time={row.startTime} />
+                    {moment(row.startTime).format('MMM, DD')}
                   </Text>
-                </Flex>
-              </Box>
-            );
-          }
-          if (status.value === 'crowing-funding') {
-            return (
-              <Box>
-                <Text>
+                  <Flex mt={1} alignItems={'center'} gap={2}>
+                    <ImClock2 />
+                    <Text>
+                      <CountDownTimer end_time={row.startTime} />
+                    </Text>
+                  </Flex>
+                </Box>
+              );
+            }
+            if (status.value === 'crowing-funding') {
+              return (
+                <Box>
+                  <Text>
                   <span style={{ color: colors.white500, fontSize: px2rem(14) }}>
                     Ends at:
                   </span>{' '}
-                  {moment(row.endTime).format('MMM, DD')}
-                </Text>
-                <Flex mt={1} alignItems={'center'} gap={2}>
-                  <ImClock2 />
-                  <Text>
-                    <CountDownTimer end_time={row.endTime} />
+                    {moment(row.endTime).format('MMM, DD')}
                   </Text>
-                </Flex>
-              </Box>
-            );
-          }
-          if (status.value === 'success' && status.key !== LAUNCHPAD_STATUS.Closed) {
-            return (
-              <Box>
-                <Text>
+                  <Flex mt={1} alignItems={'center'} gap={2}>
+                    <ImClock2 />
+                    <Text>
+                      <CountDownTimer end_time={row.endTime} />
+                    </Text>
+                  </Flex>
+                </Box>
+              );
+            }
+            if (status.value === 'success' && status.key !== LAUNCHPAD_STATUS.Closed) {
+              return (
+                <Box>
+                  <Text>
                   <span style={{ color: colors.white500, fontSize: px2rem(14) }}>
                     Release time:
                   </span>{' '}
-                </Text>
-                <Flex mt={1} alignItems={'center'} gap={2}>
-                  <ImClock2 />
-                  <Text>{moment(row.lpTokenReleaseTime).format('LL')}</Text>
-                </Flex>
-              </Box>
-            );
+                  </Text>
+                  <Flex mt={1} alignItems={'center'} gap={2}>
+                    <ImClock2 />
+                    <Text>{moment(row.lpTokenReleaseTime).format('LL')}</Text>
+                  </Flex>
+                </Box>
+              );
+            }
           }
 
           return <></>;
@@ -294,7 +300,6 @@ const LaunchpadContainer = () => {
           borderBottom: 'none',
         },
         render(row: ILaunchpad) {
-          console.log('row', row);
           return row?.launchpad || !row?.proposalId ? <LaunchpadStatus row={row} /> : <ProposalStatus row={row?.userProposal} />;
         },
       },
