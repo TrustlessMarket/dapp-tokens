@@ -11,21 +11,33 @@ const useTCWallet = (): {
   btcAddress?: string;
   tcBalance: string;
   btcBalance: string;
+  loading: boolean;
 } => {
   const isAuthenticated = useSelector(getIsAuthenticatedSelector);
   const user = useSelector(getUserSelector);
 
   const [tcBalance, setTCBalance] = useState('0');
   const [btcBalance, setBTCBalance] = useState('0');
+  const [loading, setLoading] = useState(true);
 
   const provider = getDefaultProvider();
 
   const { tcClient } = useBitcoin();
 
   useEffect(() => {
-    getTCBalance();
-    getBTCBalance();
+    getData();
   }, [isAuthenticated, user?.walletAddress, user?.walletAddressBtcTaproot]);
+
+  const getData = async () => {
+    try {
+      setLoading(true);
+      await Promise.all([getTCBalance(), getBTCBalance()]);
+    } catch (error) {
+      // throw error;
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const getTCBalance = async () => {
     if (!user?.walletAddress) {
@@ -34,7 +46,9 @@ const useTCWallet = (): {
     try {
       const response = await provider.getBalance(user?.walletAddress);
       setTCBalance(response.toString());
-    } catch (error) {}
+    } catch (error) {
+      throw error;
+    }
   };
 
   const getBTCBalance = async () => {
@@ -47,10 +61,9 @@ const useTCWallet = (): {
         tcClient: tcClient,
         tcAddress: user.walletAddress,
       });
-      console.log('getBTCBalance', response);
       setBTCBalance(response?.availableBalance?.toFixed());
     } catch (error) {
-      console.log('error', error);
+      throw error;
     }
   };
 
@@ -60,6 +73,7 @@ const useTCWallet = (): {
     btcAddress: user?.walletAddressBtcTaproot,
     tcBalance,
     btcBalance,
+    loading,
   };
 };
 
