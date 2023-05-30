@@ -1,25 +1,26 @@
 /* eslint-disable react-hooks/rules-of-hooks */
-import { CDN_URL } from '@/configs';
-import { ROUTE_PATH } from '@/constants/route-path';
-import { gsap } from 'gsap';
+import {CDN_URL} from '@/configs';
+import {ROUTE_PATH} from '@/constants/route-path';
+import {gsap} from 'gsap';
 import Link from 'next/link';
-import { useEffect, useRef, useState } from 'react';
-import { Wrapper } from './Header.styled';
+import {useEffect, useRef, useState} from 'react';
+import {Wrapper} from './Header.styled';
 import MenuMobile from './MenuMobile';
 import WalletHeader from './Wallet';
-import { useWindowSize } from '@trustless-computer/dapp-core';
-import { useRouter } from 'next/router';
+import {useWindowSize} from '@trustless-computer/dapp-core';
+import {useRouter} from 'next/router';
 import {
   GENERATIVE_DISCORD,
   GM_ADDRESS,
   TRUSTLESS_COMPUTER,
+  TRUSTLESS_GASSTATION,
   WETH_ADDRESS,
 } from '@/constants/common';
-import { useScreenLayout } from '@/hooks/useScreenLayout';
-import { defaultProvider } from '@/contexts/screen-context';
-import { compareString } from '@/utils';
-import { Flex, Link as LinkText, Text } from '@chakra-ui/react';
-import { RiArrowRightUpLine } from 'react-icons/ri';
+import {useScreenLayout} from '@/hooks/useScreenLayout';
+import {defaultProvider} from '@/contexts/screen-context';
+import {compareString} from '@/utils';
+import {Flex, Link as LinkText, Text} from '@chakra-ui/react';
+import {RiArrowRightUpLine} from 'react-icons/ri';
 
 export const isScreenDarkMode = () => {
   return true;
@@ -117,6 +118,12 @@ const Header = () => {
           ) : (
             <>
               <div className="external-link">
+                <Link href={TRUSTLESS_GASSTATION} target={'_blank'}>
+                  <Flex gap={1} alignItems={'center'}>
+                    <Text>GET TC</Text>
+                    <RiArrowRightUpLine fontSize={'20px'} />
+                  </Flex>
+                </Link>
                 <Link href={GENERATIVE_DISCORD} target={'_blank'}>
                   <Flex gap={1} alignItems={'center'}>
                     <Text>DISCORD</Text>

@@ -169,10 +169,6 @@ const WalletHeader = () => {
           />
           <Text size="medium">Wallet</Text>
         </div>
-        <div className="wallet-link" onClick={() => window.open(TRUSTLESS_GASSTATION)}>
-          <IconSVG src={`/faucet.svg`} maxWidth="20" color="black" />
-          <Text size="medium">Get TC</Text>
-        </div>
         <div className="wallet-link" onClick={() => gotoBridge('deposit', 'btc')}>
           <IconSVG src={`/wrapbtc.svg`} maxWidth="20" color="black" type="fill" />
           <Text size="medium">Wrap BTC</Text>
