@@ -401,7 +401,7 @@ const IdoTokenManageForm: React.FC<IdoTokenManageFormProps> = ({
                     options={liquidTokens}
                     children={FieldSelect}
                     validate={required}
-                    disabled={detail}
+                    disabled={detail?.launchpad}
                   />
                 </Box>
               </Flex>
@@ -415,7 +415,7 @@ const IdoTokenManageForm: React.FC<IdoTokenManageFormProps> = ({
                   label={`Rewards ${
                     tokenSelected ? `(${tokenSelected.symbol})` : ''
                   }`}
-                  disabled={detail}
+                  disabled={detail?.launchpad}
                   validate={composeValidators(requiredAmount, validateAmount)}
                   rightLabel={
                     !isEmpty(tokenSelected) &&
@@ -474,7 +474,7 @@ const IdoTokenManageForm: React.FC<IdoTokenManageFormProps> = ({
                       Liquidity reserve
                     </InfoTooltip>
                   }
-                  disabled={detail}
+                  disabled={detail?.launchpad}
                   validate={composeValidators(requiredAmount, validateMaxRatio)}
                 />
               </Flex>
@@ -486,7 +486,7 @@ const IdoTokenManageForm: React.FC<IdoTokenManageFormProps> = ({
                 label={`Funding goal ${
                   liquidityTokenSelected ? `(${liquidityTokenSelected.symbol})` : ''
                 }`}
-                disabled={detail}
+                disabled={detail?.launchpad}
                 validate={composeValidators(requiredAmount, validateMaxRatio)}
               />
 
