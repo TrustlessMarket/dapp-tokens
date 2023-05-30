@@ -94,6 +94,7 @@ const useSwapERC20Token: ContractOperationHook<
           functionType: functionABI.functionType,
           functionName: functionABI.functionName,
           isExecuteTransaction: false,
+          from: account,
         });
 
         logErrorToServer({
