@@ -112,13 +112,14 @@ const IdoTokenManageForm: React.FC<IdoTokenManageFormProps> = ({
         launchpadTokenArg: detail.launchpadToken,
         liquidityTokenArg: detail.liquidityToken,
         launchpadBalance: detail.launchpadBalance,
-        liquidityRatioArg: getLiquidityRatio(detail.liquidityRatio),
+        liquidityRatioArg: detail.liquidityRatio,
         goalBalance: detail.goalBalance,
         startTimeArg: new Date(detail.startTime),
         endTimeArg: new Date(detail.endTime),
         description: detail.description,
         video: detail.video,
         image: detail.image,
+        duration: detail.duration,
         ..._faqs,
       });
     }
@@ -128,13 +129,11 @@ const IdoTokenManageForm: React.FC<IdoTokenManageFormProps> = ({
     getTokens();
   }, [isActive, account]);
 
-  console.log('tokenSelected', tokenSelected);
-
   useEffect(() => {
     if (tokenSelected) {
       checkTokenApprove(tokenSelected);
     }
-  }, [JSON.stringify(tokenSelected), detail]);
+  }, [JSON.stringify(tokenSelected), detail, values?.launchpadBalance]);
 
   useEffect(() => {
     if (tokenSelected && Number(values?.launchpadBalance) > 0) {
@@ -142,7 +141,7 @@ const IdoTokenManageForm: React.FC<IdoTokenManageFormProps> = ({
         checkBalanceIsApprove(isApproveAmountToken, values?.launchpadBalance),
       );
     }
-  }, [values?.launchpadBalance, tokenSelected]);
+  }, [values?.launchpadBalance, tokenSelected, isApproveAmountToken]);
 
   useEffect(() => {
     const multiX = new BigNumber(launchpadConfigs.liquidityPriceMultiple)
@@ -156,6 +155,7 @@ const IdoTokenManageForm: React.FC<IdoTokenManageFormProps> = ({
       .multipliedBy(launchpadBalance)
       .dividedBy(multiX)
       .toString();
+    change('liquidityBalance', _needLiquidBalance);
     setNeedLiquidBalance(_needLiquidBalance);
   }, [values?.launchpadBalance, values?.liquidityRatioArg]);
 
@@ -164,8 +164,6 @@ const IdoTokenManageForm: React.FC<IdoTokenManageFormProps> = ({
   };
 
   const checkTokenApprove = async (token: IToken | any) => {
-    console.log('token.address', token.address);
-
     try {
       const [_isApprove, _tokenBalance] = await Promise.all([
         isApproved({
@@ -241,13 +239,16 @@ const IdoTokenManageForm: React.FC<IdoTokenManageFormProps> = ({
     [values.launchpadBalance, tokenSelected, detail, needLiquidBalance],
   );
 
-  const validateYoutubeLink = useCallback((_link: any) => {
-    if (!_link && !values.image) {
-      return `Image or Youtube link is Required`;
-    }
+  const validateYoutubeLink = useCallback(
+    (_link: any) => {
+      if (!_link && !values.image) {
+        return `Image or Youtube link is Required`;
+      }
 
-    return undefined;
-  }, []);
+      return undefined;
+    },
+    [values.image],
+  );
 
   const requestApproveToken = async (
     token: IToken | any,
@@ -490,7 +491,14 @@ const IdoTokenManageForm: React.FC<IdoTokenManageFormProps> = ({
               />
 
               <Box mb={6} />
-              <Flex gap={6} flexDirection={['column', 'column', 'row']}>
+              <Field
+                name="duration"
+                decimals={18}
+                children={FieldAmount}
+                label={`Duration`}
+                validate={composeValidators(requiredAmount, validateMaxRatio)}
+              />
+              {/* <Flex gap={6} flexDirection={['column', 'column', 'row']}>
                 <Box flex={1}>
                   <Field
                     validate={required}
@@ -520,7 +528,7 @@ const IdoTokenManageForm: React.FC<IdoTokenManageFormProps> = ({
                     }
                   />
                 </Box>
-              </Flex>
+              </Flex> */}
               <Box mb={6} />
             </Box>
           </Flex>
@@ -652,7 +660,7 @@ const IdoTokenManageForm: React.FC<IdoTokenManageFormProps> = ({
                   onClick={() => onRemoveChoose(v)}
                   // className={styles.btnRemoveChoose}
                   color={colors.redPrimary}
-                  cursor={"pointer"}
+                  cursor={'pointer'}
                 >
                   <IoRemoveCircle />
                 </Box>
@@ -668,10 +676,7 @@ const IdoTokenManageForm: React.FC<IdoTokenManageFormProps> = ({
           </Flex>
         </Box>
         <Box mt={6} />
-        <WrapperConnected
-          type={isApproveToken ? 'button' : 'submit'}
-          className="btn-submit"
-        >
+        <WrapperConnected className="btn-submit">
           {!isApproveToken && tokenSelected ? (
             <FiledButton
               isLoading={loading}
@@ -687,17 +692,43 @@ const IdoTokenManageForm: React.FC<IdoTokenManageFormProps> = ({
               {`APPROVE USE OF ${tokenSelected?.symbol}`}
             </FiledButton>
           ) : (
-            <FiledButton
-              isLoading={loading}
-              isDisabled={loading}
-              type="submit"
-              processInfo={{
-                id: transactionType.createLaunchpad,
-              }}
-              btnSize="h"
-            >
-              {detail ? 'Update' : 'Submit'}
-            </FiledButton>
+            <Flex width={'100%'} justifyContent={'center'} gap={6}>
+              <FiledButton
+                isLoading={loading}
+                isDisabled={loading}
+                type="submit"
+                btnSize="h"
+                containerConfig={{
+                  style: {
+                    width: '100%',
+                  },
+                }}
+                className={
+                  detail && !detail.launchpad ? 'btn-secondary' : 'btn-primary'
+                }
+              >
+                {detail ? 'Update' : 'Submit'}
+              </FiledButton>
+              {detail && !detail.launchpad && (
+                <FiledButton
+                  isLoading={loading}
+                  isDisabled={loading}
+                  type="submit"
+                  // processInfo={{
+                  //   id: transactionType.createLaunchpad,
+                  // }}
+                  btnSize="h"
+                  containerConfig={{
+                    style: {
+                      width: '100%',
+                    },
+                  }}
+                  onClick={() => change('isCreateProposal', true)}
+                >
+                  {'Submit proposal'}
+                </FiledButton>
+              )}
+            </Flex>
           )}
         </WrapperConnected>
       </Box>

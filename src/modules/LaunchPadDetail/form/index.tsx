@@ -87,6 +87,7 @@ import { colors } from '@/theme/colors';
 import useClaimLaunchPad from '@/hooks/contract-operations/launchpad/useClaim';
 import useIsAbleRedeem from '@/hooks/contract-operations/launchpad/useIsAbleRedeem';
 import { ILaunchpad } from '@/interfaces/launchpad';
+import InfoTooltip from "@/components/Swap/infoTooltip";
 
 const FEE = 2;
 export const MakeFormSwap = forwardRef((props, ref) => {
@@ -408,10 +409,12 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           <Stat className={styles.infoColumn}>
             <StatLabel>Funded</StatLabel>
             <StatNumber>
-              <Flex gap={1} alignItems={"center"}>
-                <Text>{formatCurrency(poolDetail?.totalValue || 0)} {baseToken?.symbol}</Text>
-                <Text fontSize={"20px"} fontWeight={"300"}>({formatCurrency(percent, 2)}% funded)</Text>
-              </Flex>
+              <InfoTooltip label={`$${formatCurrency(poolDetail?.totalValueUsd || 0, 2)}`}>
+                <Flex gap={1} alignItems={"center"}>
+                  <Text>{formatCurrency(poolDetail?.totalValue || 0)} {baseToken?.symbol}</Text>
+                  <Text fontSize={"20px"} fontWeight={"300"}>({formatCurrency(percent, 2)}% funded)</Text>
+                </Flex>
+              </InfoTooltip>
             </StatNumber>
           </Stat>
           <Stat className={styles.infoColumn} textAlign={"left"}>
@@ -439,14 +442,6 @@ export const MakeFormSwap = forwardRef((props, ref) => {
               <StatLabel>Rewards</StatLabel>
               <StatNumber>
                 {formatCurrency(poolDetail?.launchpadBalance || 0)}
-              </StatNumber>
-            </Stat>
-          </GridItem>
-          <GridItem>
-            <Stat className={styles.infoColumn}>
-              <StatLabel>Funded</StatLabel>
-              <StatNumber>
-                ${formatCurrency(poolDetail?.totalValueUsd || 0, 2)}
               </StatNumber>
             </Stat>
           </GridItem>

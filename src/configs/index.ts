@@ -9,8 +9,7 @@ export const TC_EXPLORER: string = process.env.NEXT_PUBLIC_TC_EXPLORER!;
 export const CDN_URL: string = process.env.NEXT_PUBLIC_CDN_URL!;
 export const API_FAUCET: string = process.env.NEXT_PUBLIC_API_FAUCET!;
 export const WALLET_URL: string = process.env.NEXT_PUBLIC_WALLET_URL!;
-export const TRUSTLESS_MARKET_URL: string =
-  process.env.NEXT_PUBLIC_TRUSTLESS_MARKET_URL!;
+export const TRUSTLESS_MARKET_URL: string = process.env.NEXT_PUBLIC_TRUSTLESS_MARKET_URL!;
 
 // Contract configs
 export const ARTIFACT_CONTRACT: string = process.env.NEXT_PUBLIC_ARTIFACT_CONTRACT!;
@@ -19,8 +18,8 @@ export const BFS_ADDRESS: string = process.env.NEXT_PUBLIC_BFS_CONTRACT!;
 export const UNIV2_FACTORY_ADDRESS: string = process.env.NEXT_PUBLIC_UNIV2_FACTORY!;
 export const UNIV2_ROUTER_ADDRESS: string = process.env.NEXT_PUBLIC_UNIV2_ROUTER!;
 export const TM_ADDRESS: string = process.env.NEXT_PUBLIC_TM_ADDRESS!;
-export const LAUNCHPAD_FACTORY_ADDRESS: string =
-  process.env.NEXT_PUBLIC_LAUNCHPAD_FACTORY!;
+export const LAUNCHPAD_FACTORY_ADDRESS: string = process.env.NEXT_PUBLIC_LAUNCHPAD_FACTORY!;
+export const GOVERNOR_ADDRESS: string = process.env.NEXT_PUBLIC_GOVERNOR!;
 
 export const TC_WEB_URL: string = process.env.NEXT_PUBLIC_TC_WEB_URL!;
 export const TRANSFER_TX_SIZE = 1000!;

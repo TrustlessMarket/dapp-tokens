@@ -3,11 +3,10 @@
 import { transactionType } from '@/components/Swap/alertInfoProcessing/types';
 import { toastError } from '@/constants/error';
 import { WalletContext } from '@/contexts/wallet-context';
-import useCreateLaunchpad from '@/hooks/contract-operations/launchpad/useCreate';
-import useContractOperation from '@/hooks/contract-operations/useContractOperation';
 import { ILaunchpad } from '@/interfaces/launchpad';
 import { TransactionStatus } from '@/interfaces/walletTransaction';
 import {
+  createLaunchpad,
   getDetailLaunchpad,
   scanLaunchpadTxHash,
   updateLaunchpadDescription,
@@ -24,6 +23,8 @@ import { toast } from 'react-hot-toast';
 import { useDispatch } from 'react-redux';
 import LaunchManageForm from './LaunchpadManage.Form';
 import { StyledLaunchpadManage } from './LaunchpadManage.styled';
+import useCreateLaunchpad from '@/hooks/contract-operations/launchpad/useCreate';
+import useContractOperation from '@/hooks/contract-operations/useContractOperation';
 
 const LaunchManage = () => {
   const { account } = useWeb3React();
@@ -31,11 +32,11 @@ const LaunchManage = () => {
   const dispatch = useDispatch();
   const [detail, setDetail] = useState<ILaunchpad | undefined>(undefined);
 
-  const { run: createLaunchpad } = useContractOperation({
+  const { getSignature } = useContext(WalletContext);
+
+  const { run: createProposalLaunchpad } = useContractOperation({
     operation: useCreateLaunchpad,
   });
-
-  const { getSignature } = useContext(WalletContext);
 
   const router = useRouter();
 
@@ -51,14 +52,14 @@ const LaunchManage = () => {
     }
 
     try {
-      const response: any = await Promise.all([
-        getDetailLaunchpad({ pool_address: id }),
-      ]);
+      const response: any = await Promise.all([getDetailLaunchpad({ id: id })]);
       setDetail(response[0]);
     } catch (error) {}
   };
 
   const onSubmit = async (values: any) => {
+    console.log('account', account);
+
     if (!account) {
       return;
     }
@@ -69,12 +70,12 @@ const LaunchManage = () => {
       const tokenAddress = values?.launchpadTokenArg?.address;
       const liquidAddress = values?.liquidityTokenArg?.address;
 
-      dispatch(
-        updateCurrentTransaction({
-          id: transactionType.createLaunchpad,
-          status: TransactionStatus.info,
-        }),
-      );
+      // dispatch(
+      //   updateCurrentTransaction({
+      //     id: transactionType.createLaunchpad,
+      //     status: TransactionStatus.info,
+      //   }),
+      // );
 
       const faqs = filter(Object.keys(values), (v) => v?.includes('faq_q')).map(
         (v, i) => ({
@@ -85,52 +86,35 @@ const LaunchManage = () => {
 
       const signature = await getSignature(account);
 
-      if (detail) {
-        await updateLaunchpadDescription({
-          launchpad: detail.launchpad,
-          user_address: account,
-          video: values?.video,
-          image: values?.image,
-          description: values?.description,
-          signature,
-          qand_a: JSON.stringify(faqs),
-        });
+      createLaunchpad({
+        user_address: account,
+        video: values?.video,
+        image: values?.image,
+        description: values?.description,
+        signature,
+        qand_a: JSON.stringify(faqs),
+        id: detail?.id,
+        launchpad_token: tokenAddress,
+        liquidity_token: liquidAddress,
+        launchpad_balance: values.launchpadBalance,
+        liquidity_balance: values.liquidityBalance,
+        liquidity_ratio: values.liquidityRatioArg,
+        goal_balance: values.goalBalance,
+        duration: Number(values.duration),
+      });
 
-        toast.success(`Updated launchpad successfully.`);
-        dispatch(updateCurrentTransaction(null));
-      } else {
-        const response: any = await createLaunchpad({
+      if (values.isCreateProposal) {
+        await createProposalLaunchpad({
           launchpadTokenArg: tokenAddress,
           liquidityTokenArg: liquidAddress,
           liquidityRatioArg: values.liquidityRatioArg,
-          startTimeArg: values.startTimeArg,
-          endTimeArg: values.endTimeArg,
+          durationArg: values.duration,
           launchpadBalance: values.launchpadBalance,
           goalBalance: values.goalBalance,
         });
-
-        updateLaunchpadDescription({
-          tx_hash: response.hash,
-          user_address: account,
-          video: values?.video,
-          image: values?.image,
-          description: values?.description,
-          signature,
-          qand_a: JSON.stringify(faqs),
-        });
-
-        dispatch(
-          updateCurrentTransaction({
-            status: TransactionStatus.success,
-            id: transactionType.createLaunchpad,
-            hash: response.hash,
-            infoTexts: {
-              success: `Created ${values?.launchpadTokenArg?.symbol} - ${values?.liquidityTokenArg?.symbol} launchpad successfully.`,
-            },
-          }),
-        );
-        await scanLaunchpadTxHash({ tx_hash: response.hash });
       }
+
+      toast.success(`Submitted proposals successfully.`);
 
       dispatch(requestReload());
     } catch (err) {

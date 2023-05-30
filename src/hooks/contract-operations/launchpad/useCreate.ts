@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { LAUNCHPAD_FACTORY_ADDRESS } from '@/configs';
 import { TransactionEventType } from '@/enums/transaction';
 import { ContractOperationHook, DAppType } from '@/interfaces/contract-operation';
@@ -18,8 +19,7 @@ export interface ICreateLaunchpadParams {
   launchpadTokenArg: string;
   liquidityTokenArg: string;
   liquidityRatioArg: string; // 100% = 1000000
-  startTimeArg: string;
-  endTimeArg: string;
+  durationArg: string;
   launchpadBalance: string;
   goalBalance: string;
 }
@@ -36,8 +36,7 @@ const useCreateLaunchpad: ContractOperationHook<
         launchpadTokenArg,
         liquidityTokenArg,
         liquidityRatioArg,
-        startTimeArg,
-        endTimeArg,
+        durationArg,
         launchpadBalance,
         goalBalance,
       } = params;
@@ -60,8 +59,7 @@ const useCreateLaunchpad: ContractOperationHook<
             launchpadTokenArg,
             liquidityTokenArg,
             ratio,
-            moment(startTimeArg).unix(),
-            moment(endTimeArg).unix(),
+            web3.utils.toWei(durationArg.toString()),
             web3.utils.toWei(launchpadBalance),
             web3.utils.toWei(goalBalance),
             {
@@ -77,16 +75,16 @@ const useCreateLaunchpad: ContractOperationHook<
           message: "gasLimit: '150000'",
         });
 
-        store.dispatch(
-          updateCurrentTransaction({
-            id: transactionType.createLaunchpad,
-            status: TransactionStatus.pending,
-            hash: transaction.hash,
-            infoTexts: {
-              pending: `Transaction confirmed. Please wait for it to be processed on the Bitcoin. Note that it may take up to 10 minutes for a block confirmation on the Bitcoin blockchain.`,
-            },
-          }),
-        );
+        // store.dispatch(
+        //   updateCurrentTransaction({
+        //     id: transactionType.createLaunchpad,
+        //     status: TransactionStatus.pending,
+        //     hash: transaction.hash,
+        //     infoTexts: {
+        //       pending: `Transaction confirmed. Please wait for it to be processed on the Bitcoin. Note that it may take up to 10 minutes for a block confirmation on the Bitcoin blockchain.`,
+        //     },
+        //   }),
+        // );
 
         return transaction;
       }

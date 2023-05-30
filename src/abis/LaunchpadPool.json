@@ -121,6 +121,13 @@
   },
   {
     "inputs": [],
+    "name": "cancel",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "close",
     "outputs": [],
     "stateMutability": "nonpayable",
@@ -317,17 +324,12 @@
           },
           {
             "internalType": "uint256",
-            "name": "startTime",
+            "name": "duration",
             "type": "uint256"
           },
           {
             "internalType": "uint256",
-            "name": "endTime",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "lpTokenReleaseTime",
+            "name": "lpTokenReleaseDuration",
             "type": "uint256"
           },
           {
@@ -398,6 +400,13 @@
   {
     "inputs": [],
     "name": "renounceOwnership",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "start",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

@@ -147,4 +147,9 @@ export const StyledLaunchpadManage = styled(BodyContainer)`
     cursor: pointer;
     opacity: 0.8;
   }
+
+  .btn-secondary {
+    background-color: transparent;
+    border: 1px solid ${colors.white};
+  }
 `;

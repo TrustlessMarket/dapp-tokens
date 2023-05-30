@@ -10,17 +10,18 @@ import {requestReload} from "@/state/pnftExchange";
 import Intro from "@/modules/LaunchPadDetail/aboveTheFold/intro";
 import SocialToken from "@/components/Social";
 
-const LaunchpadUpComing = ({poolDetail}: any) => {
+const ProposalPending = ({proposalDetail}: any) => {
   const [endTime, setEndTime] = useState(0);
   const [days, hours, minutes, seconds, expired] = useCountDownTimer(
     moment.unix(endTime).format("YYYY/MM/DD HH:mm:ss")
   );
+  const poolDetail = proposalDetail?.userPool;
 
   useEffect(() => {
-    if(poolDetail?.id) {
-      setEndTime(moment(poolDetail?.startTime).unix());
+    if(proposalDetail?.id) {
+      setEndTime(moment(proposalDetail?.voteStart).unix());
     }
-  }, [poolDetail?.id])
+  }, [proposalDetail?.id])
 
   const dispatch = useDispatch();
 
@@ -65,7 +66,7 @@ const LaunchpadUpComing = ({poolDetail}: any) => {
             <Flex justifyContent={"flex-start"}>
               <SocialToken socials={poolDetail?.launchpadToken?.social} />
             </Flex>
-            <Text mt={4} fontSize={"sm"} color={"#FFFFFF"}>All or nothing. This project will only be funded if it reaches its goal by {moment.utc(poolDetail?.endTime).format('ddd, MMMM Do YYYY HH:mm:ss Z')}.</Text>
+            <Text mt={4} fontSize={"sm"} color={"#FFFFFF"}>The voting will end by {moment.utc(proposalDetail?.voteEnd).format('ddd, MMMM Do YYYY HH:mm:ss Z')}.</Text>
           </Card>
         </GridItem>
       </Grid>
@@ -73,4 +74,4 @@ const LaunchpadUpComing = ({poolDetail}: any) => {
   )
 };
 
-export default LaunchpadUpComing;
+export default ProposalPending;
