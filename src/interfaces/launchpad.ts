@@ -28,4 +28,6 @@ export interface ILaunchpad {
   video: string;
   image: string;
   duration: string;
+  proposalId: string;
+  userProposal: any;
 }

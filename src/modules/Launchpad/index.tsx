@@ -4,33 +4,31 @@
 import CountDownTimer from '@/components/Countdown';
 import SocialToken from '@/components/Social';
 import FiledButton from '@/components/Swap/button/filedButton';
-import ListTable, { ColumnProp } from '@/components/Swap/listTable';
-import { TOKEN_ICON_DEFAULT } from '@/constants/common';
-import { ROUTE_PATH } from '@/constants/route-path';
-import { ILaunchpad } from '@/interfaces/launchpad';
-import { IToken } from '@/interfaces/token';
-import { getListLaunchpad } from '@/services/launchpad';
-import { useAppSelector } from '@/state/hooks';
-import { selectPnftExchange } from '@/state/pnftExchange';
-import { colors } from '@/theme/colors';
-import { compareString, formatCurrency } from '@/utils';
-import { Box, Flex, Progress, Text } from '@chakra-ui/react';
-import { px2rem } from '@trustless-computer/dapp-core';
-import { useWeb3React } from '@web3-react/core';
+import ListTable, {ColumnProp} from '@/components/Swap/listTable';
+import {TOKEN_ICON_DEFAULT} from '@/constants/common';
+import {ROUTE_PATH} from '@/constants/route-path';
+import {ILaunchpad} from '@/interfaces/launchpad';
+import {IToken} from '@/interfaces/token';
+import {getListLaunchpad} from '@/services/launchpad';
+import {useAppSelector} from '@/state/hooks';
+import {selectPnftExchange} from '@/state/pnftExchange';
+import {colors} from '@/theme/colors';
+import {compareString, formatCurrency} from '@/utils';
+import {Box, Flex, Progress, Text} from '@chakra-ui/react';
+import {px2rem} from '@trustless-computer/dapp-core';
+import {useWeb3React} from '@web3-react/core';
 import BigNumber from 'bignumber.js';
 import moment from 'moment';
-import { useRouter } from 'next/router';
-import { useEffect, useMemo, useState } from 'react';
-import { BsPencil, BsTrash } from 'react-icons/bs';
-import { ImClock2 } from 'react-icons/im';
-import { useDispatch } from 'react-redux';
+import {useRouter} from 'next/router';
+import {useEffect, useMemo, useState} from 'react';
+import {BsPencil} from 'react-icons/bs';
+import {ImClock2} from 'react-icons/im';
+import {useDispatch} from 'react-redux';
 import web3 from 'web3';
-import LaunchpadStatus, {
-  LAUNCHPAD_STATUS,
-  useLaunchPadStatus,
-} from './Launchpad.Status';
-import { StyledIdoContainer } from './Launchpad.styled';
+import LaunchpadStatus, {LAUNCHPAD_STATUS, useLaunchPadStatus,} from './Launchpad.Status';
+import {StyledIdoContainer} from './Launchpad.styled';
 import InfoTooltip from '@/components/Swap/infoTooltip';
+import ProposalStatus from "@/modules/Proposal/list/Proposal.Status";
 
 const LaunchpadContainer = () => {
   const [data, setData] = useState<any[]>();
@@ -296,7 +294,8 @@ const LaunchpadContainer = () => {
           borderBottom: 'none',
         },
         render(row: ILaunchpad) {
-          return <LaunchpadStatus row={row} />;
+          console.log('row', row);
+          return row?.launchpad || !row?.proposalId ? <LaunchpadStatus row={row} /> : <ProposalStatus row={row?.userProposal} />;
         },
       },
       {
@@ -327,7 +326,7 @@ const LaunchpadContainer = () => {
           borderBottom: 'none',
         },
         render(row: ILaunchpad) {
-          if (compareString(row.creatorAddress, account)) {
+          if (compareString(row.creatorAddress, account) && !row?.proposalId) {
             return (
               <Flex alignItems={'center'} gap={4}>
                 <Box
