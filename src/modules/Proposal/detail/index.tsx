@@ -2,35 +2,37 @@
 import BodyContainer from '@/components/Swap/bodyContainer';
 import FiledButton from '@/components/Swap/button/filedButton';
 import {ROUTE_PATH} from '@/constants/route-path';
-import {ILaunchpad} from '@/interfaces/launchpad';
-import AboveTheFold from '@/modules/LaunchPadDetail/aboveTheFold';
-import IdoDescription from '@/modules/LaunchPadDetail/description';
-import {getDetailLaunchpad} from '@/services/launchpad';
+import {Box, Spinner, Tab, TabList, TabPanel, TabPanels, Tabs, Text,} from '@chakra-ui/react';
+import AboveTheFold from '@/modules/Proposal/detail/aboveTheFold';
 import {useAppSelector} from '@/state/hooks';
 import {selectPnftExchange} from '@/state/pnftExchange';
 import {colors} from '@/theme/colors';
-import {Box, Spinner, Tab, TabList, TabPanel, TabPanels, Tabs, Text,} from '@chakra-ui/react';
 import cx from 'classnames';
 import {useRouter} from 'next/router';
 import {useEffect, useState} from 'react';
-import IdoFaqs from './faqs';
 import styles from './styles.module.scss';
+import {getDetailProposal} from "@/services/proposal";
+import {IProposal} from "@/interfaces/proposal";
+import IdoDescription from "@/modules/LaunchPadDetail/description";
+import IdoFaqs from "@/modules/LaunchPadDetail/faqs";
 
 const IdoDetailContainer = () => {
   const router = useRouter();
-  const [poolDetail, setPoolDetail] = useState<ILaunchpad | any>(undefined);
+  const [proposalDetail, setProposalDetail] = useState<IProposal | any>(undefined);
   const needReload = useAppSelector(selectPnftExchange).needReload;
+
+  console.log('proposalDetail', proposalDetail);
 
   const [loading, setLoading] = useState(true);
 
   const getPoolInfo = async () => {
     try {
       const response: any = await Promise.all([
-        getDetailLaunchpad({
-          id: router?.query?.id as string,
+        getDetailProposal({
+          proposal_id: router?.query?.proposal_id as string,
         }),
       ]);
-      setPoolDetail(response[0]);
+      setProposalDetail(response[0]);
     } catch (err) {
       throw err;
     } finally {
@@ -39,10 +41,10 @@ const IdoDetailContainer = () => {
   };
 
   useEffect(() => {
-    if (router?.query?.id) {
+    if (router?.query?.proposal_id) {
       getPoolInfo();
     }
-  }, [router?.query?.id, needReload]);
+  }, [router?.query?.proposal_id, needReload]);
 
   if (loading) {
     return (
@@ -52,16 +54,16 @@ const IdoDetailContainer = () => {
     );
   }
 
-  if (!poolDetail) {
+  if (!proposalDetail) {
     return (
       <BodyContainer className={cx(styles.wrapper, styles.loadingContainer)}>
-        <Text style={{color: colors.white}}>Opps... This project not found!</Text>
+        <Text style={{color: colors.white}}>Opps... This proposal not found!</Text>
         <Box mt={6}/>
         <FiledButton
-          onClick={() => router.replace(ROUTE_PATH.LAUNCHPAD)}
+          onClick={() => router.replace(ROUTE_PATH.PROPOSAL)}
           btnSize="h"
         >
-          Back to Launchpad
+          Back to Proposal
         </FiledButton>
       </BodyContainer>
     );
@@ -69,7 +71,7 @@ const IdoDetailContainer = () => {
 
   return (
     <Box className={styles.wrapper}>
-      <AboveTheFold poolDetail={poolDetail}/>
+      <AboveTheFold proposalDetail={proposalDetail}/>
       <BodyContainer>
         <Tabs className={cx(styles.tabContainer, 'max-content')}>
           <TabList mb={6} mt={6}>
@@ -78,10 +80,10 @@ const IdoDetailContainer = () => {
           </TabList>
           <TabPanels>
             <TabPanel>
-              <IdoDescription poolDetail={poolDetail}/>
+              <IdoDescription poolDetail={proposalDetail?.userPool}/>
             </TabPanel>
             <TabPanel>
-              <IdoFaqs poolDetail={poolDetail}/>
+              <IdoFaqs poolDetail={proposalDetail?.userPool}/>
             </TabPanel>
           </TabPanels>
         </Tabs>

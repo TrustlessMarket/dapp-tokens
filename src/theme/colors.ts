@@ -1,9 +1,9 @@
 export const colors = {
   white: '#FFFFFF',
+  dark: '#0F0F0F',
   white50: 'rgba(255, 255, 255, 0.05)',
   white100: 'rgba(255, 255, 255, 0.1)',
   white500: 'rgba(255, 255, 255, 0.5)',
-  dark: '#0F0F0F',
   black: '#000000',
   greenPrimary: '#16c784',
   redPrimary: '#ea3943',

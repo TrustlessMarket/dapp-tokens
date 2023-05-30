@@ -27,4 +27,5 @@ export interface ILaunchpad {
   qandA: string;
   video: string;
   image: string;
+  duration: string;
 }

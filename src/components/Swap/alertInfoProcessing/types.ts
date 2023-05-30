@@ -5,4 +5,5 @@ export const transactionType = {
   idoManage: 'idoManage',
   createLaunchpad: 'createLaunchpad',
   depositLaunchpad: 'depositLaunchpad',
+  votingProposal: 'votingProposal',
 };

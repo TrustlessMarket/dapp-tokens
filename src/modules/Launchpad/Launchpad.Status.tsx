@@ -68,8 +68,6 @@ export const useLaunchPadStatus = ({ row }: { row: ILaunchpad }) => {
     status = LabelStatus.end;
   }
 
-  console.log('status', status);
-
   return [status];
 
   //

@@ -44,7 +44,10 @@ export const getListLaunchpad = async (
   });
 };
 
-export const getDetailLaunchpad = async (params: { pool_address?: any }) => {
+export const getDetailLaunchpad = async (params: {
+  pool_address?: any;
+  id?: any;
+}) => {
   const qs = '?' + queryString.stringify(params);
   return swrFetcher(`${API_EXCHANGE_URL}${API_PATH}/detail${qs}`, {
     method: 'GET',
@@ -80,6 +83,29 @@ export const updateLaunchpadDescription = async (data: {
   });
 };
 
+export const createLaunchpad = async (data: {
+  user_address: string;
+  video: string;
+  image: string;
+  description: string;
+  qand_a: string;
+  signature: string;
+  liquidity_token: string;
+  launchpad_token: string;
+  launchpad_balance: string;
+  liquidity_balance: string;
+  liquidity_ratio: string;
+  goal_balance: string;
+  id?: string;
+  duration: number;
+}) => {
+  return swrFetcher(`${API_EXCHANGE_URL}${API_PATH}/create-update-launchpad`, {
+    method: 'POST',
+    data,
+    error: 'getListLiquidityToken',
+  });
+};
+
 export const getLaunchpadDepositInfo = async (params: { pool_address?: any }) => {
   const qs = '?' + queryString.stringify(params);
   return swrFetcher(`${API_EXCHANGE_URL}${API_PATH}/result${qs}`, {
@@ -88,7 +114,10 @@ export const getLaunchpadDepositInfo = async (params: { pool_address?: any }) =>
   });
 };
 
-export const getLaunchpadUserDepositInfo = async (params: { pool_address?: any, address?: any }) => {
+export const getLaunchpadUserDepositInfo = async (params: {
+  pool_address?: any;
+  address?: any;
+}) => {
   const qs = '?' + queryString.stringify(params);
   return swrFetcher(`${API_EXCHANGE_URL}${API_PATH}/user-result${qs}`, {
     method: 'GET',
