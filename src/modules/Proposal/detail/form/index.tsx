@@ -79,10 +79,9 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const [loading, setLoading] = useState(false);
   const [baseBalance, setBaseBalance] = useState<any>('0');
   const { juiceBalance, isLoadedAssets } = useContext(AssetsContext);
-  const isAuthenticated = useSelector(getIsAuthenticatedSelector);
   const dispatch = useDispatch();
   const poolDetail = proposalDetail?.userPool;
-  const { tcWalletAddress: account } = useTCWallet();
+  const { tcWalletAddress: account, isAuthenticated } = useTCWallet();
 
   console.log('proposalDetail', proposalDetail);
 
@@ -162,11 +161,11 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             <Text>
               {isPendingProposal
                 ? `${
-                    Number(days) > 0 && `${days}d :`
+                    Number(days) > 0 ? `${days}d :` : ''
                   } ${hours}h : ${minutes}m : ${seconds}s`
                 : isStartingProposal
                 ? `${
-                    Number(days) > 0 && `${days}d :`
+                    Number(days) > 0 ? `${days}d :` : ''
                   } ${hours}h : ${minutes}m : ${seconds}s`
                 : moment(proposalDetail.voteEnd).format('LLL')}
             </Text>
@@ -222,63 +221,65 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             </Text>
           </Flex>
         )}
-      <WrapperConnected type={'submit'} className={styles.submitButton}>
-        {compareString(poolDetail.creatorAddress, account) ? (
-          <>
-            {proposalDetail?.state === PROPOSAL_STATUS.Defeated && (
-              <FiledButton
-                isDisabled={submitting || btnDisabled}
-                isLoading={submitting}
-                type="submit"
-                btnSize={'h'}
-                containerConfig={{ flex: 1, mt: 6 }}
-                loadingText={submitting ? 'Processing' : ' '}
-                processInfo={{
-                  id: transactionType.votingProposal,
-                }}
-                className={styles.btnDefeat}
-              >
-                DEFEAT THIS PROPOSAL
-              </FiledButton>
+      {
+        isAuthenticated && (
+          <WrapperConnected type={'submit'} className={styles.submitButton}>
+            {compareString(poolDetail.creatorAddress, account) ? (
+              <>
+                {proposalDetail?.state === PROPOSAL_STATUS.Defeated && (
+                  <FiledButton
+                    isDisabled={submitting || btnDisabled}
+                    isLoading={submitting}
+                    type="submit"
+                    btnSize={'h'}
+                    containerConfig={{ flex: 1, mt: 6 }}
+                    loadingText={submitting ? 'Processing' : ' '}
+                    processInfo={{
+                      id: transactionType.votingProposal,
+                    }}
+                    className={styles.btnDefeat}
+                  >
+                    DEFEAT THIS PROPOSAL
+                  </FiledButton>
+                )}
+                {proposalDetail?.state === PROPOSAL_STATUS.Succeeded && (
+                  <FiledButton
+                    isDisabled={submitting || btnDisabled}
+                    isLoading={submitting}
+                    type="submit"
+                    btnSize={'h'}
+                    containerConfig={{ flex: 1, mt: 6 }}
+                    loadingText={submitting ? 'Processing' : ' '}
+                    processInfo={{
+                      id: transactionType.votingProposal,
+                    }}
+                    className={styles.btnExecute}
+                  >
+                    EXECUTE THIS PROPOSAL
+                  </FiledButton>
+                )}
+              </>
+            ) : (
+              <>
+                {proposalDetail?.state === PROPOSAL_STATUS.Active && (
+                  <FiledButton
+                    isDisabled={submitting || btnDisabled || !canVote}
+                    isLoading={submitting}
+                    type="submit"
+                    btnSize={'h'}
+                    containerConfig={{ flex: 1, mt: 6 }}
+                    loadingText={submitting ? 'Processing' : ' '}
+                    processInfo={{
+                      id: transactionType.votingProposal,
+                    }}
+                    className={styles.btnExecute}
+                  >
+                    VOTE THIS PROPOSAL
+                  </FiledButton>
+                )}
+              </>
             )}
-            {proposalDetail?.state === PROPOSAL_STATUS.Succeeded && (
-              <FiledButton
-                isDisabled={submitting || btnDisabled}
-                isLoading={submitting}
-                type="submit"
-                btnSize={'h'}
-                containerConfig={{ flex: 1, mt: 6 }}
-                loadingText={submitting ? 'Processing' : ' '}
-                processInfo={{
-                  id: transactionType.votingProposal,
-                }}
-                className={styles.btnExecute}
-              >
-                EXECUTE THIS PROPOSAL
-              </FiledButton>
-            )}
-          </>
-        ) : (
-          <>
-            {proposalDetail?.state === PROPOSAL_STATUS.Active && (
-              <FiledButton
-                isDisabled={submitting || btnDisabled || !canVote}
-                isLoading={submitting}
-                type="submit"
-                btnSize={'h'}
-                containerConfig={{ flex: 1, mt: 6 }}
-                loadingText={submitting ? 'Processing' : ' '}
-                processInfo={{
-                  id: transactionType.votingProposal,
-                }}
-                className={styles.btnExecute}
-              >
-                VOTE THIS PROPOSAL
-              </FiledButton>
-            )}
-          </>
-        )}
-        {/*<FiledButton
+            {/*<FiledButton
           isDisabled={submitting || btnDisabled}
           isLoading={submitting}
           type="submit"
@@ -291,7 +292,9 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         >
           VOTE THIS PROPOSAL
         </FiledButton>*/}
-      </WrapperConnected>
+          </WrapperConnected>
+        )
+      }
       <Flex justifyContent={'flex-end'} mt={4}>
         <SocialToken socials={poolDetail?.launchpadToken?.social} />
       </Flex>
@@ -316,6 +319,8 @@ const BuyForm = ({ proposalDetail }: { proposalDetail: IProposal }) => {
   const router = useRouter();
   const [voteSignatureProposal, setVoteSignatureProposal] = useState<any>();
   const [canVote, setCanVote] = useState(false);
+
+  console.log('voteSignatureProposal', voteSignatureProposal);
 
   const { run: defeatProposal } = useContractOperation({
     operation: useDefeatProposal,

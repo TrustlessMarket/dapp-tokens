@@ -225,7 +225,7 @@ const IdoTokenManageForm: React.FC<IdoTokenManageFormProps> = ({
 
   const validateMaxRatio = useCallback(
     (_amount: any) => {
-      if (!detail) {
+      if (!detail || !detail.launchpad) {
         if (Number(_amount) > Number(90)) {
           return `Max liquidity reserve is ${90}%`;
         } else if (
