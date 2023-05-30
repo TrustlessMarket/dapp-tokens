@@ -16,7 +16,7 @@ interface ICastVoteParams {
   signature?: string;
 }
 
-const useCastVote: ContractOperationHook<ICastVoteParams, boolean> = () => {
+const useCastVoteProposal: ContractOperationHook<ICastVoteParams, boolean> = () => {
   const { account } = useWeb3React();
   const provider = getDefaultProvider();
 
@@ -76,4 +76,4 @@ const useCastVote: ContractOperationHook<ICastVoteParams, boolean> = () => {
   };
 };
 
-export default useCastVote;
+export default useCastVoteProposal;

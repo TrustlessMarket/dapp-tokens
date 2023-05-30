@@ -18,7 +18,7 @@ import {
   updateCurrentTransaction,
 } from '@/state/pnftExchange';
 import {getIsAuthenticatedSelector} from '@/state/user/selector';
-import {formatCurrency} from '@/utils';
+import {compareString, formatCurrency} from '@/utils';
 import px2rem from '@/utils/px2rem';
 import {showError} from '@/utils/toast';
 import {
@@ -51,6 +51,10 @@ import useCountDownTimer from '@/hooks/useCountdown';
 import {IProposal} from "@/interfaces/proposal";
 import {PROPOSAL_STATUS, useProposalStatus} from "@/modules/Proposal/list/Proposal.Status";
 import {getVoteSignatureProposal} from "@/services/proposal";
+import useContractOperation from "@/hooks/contract-operations/useContractOperation";
+import useDefeatProposal from "@/hooks/contract-operations/proposal/useDefeate";
+import useExecuteProposal from "@/hooks/contract-operations/proposal/useExecute";
+import useCastVoteProposal from "@/hooks/contract-operations/proposal/useCastVote";
 
 export const MakeFormSwap = forwardRef((props, ref) => {
   const {
@@ -68,6 +72,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const isAuthenticated = useSelector(getIsAuthenticatedSelector);
   const dispatch = useDispatch();
   const poolDetail = proposalDetail?.userPool;
+  const { account } = useWeb3React();
 
   console.log('proposalDetail', proposalDetail);
 
@@ -93,7 +98,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   }, [expired]);
 
   const { change, restart } = useForm();
-  const btnDisabled = loading || !canVote;
+  const btnDisabled = loading;
 
   useImperativeHandle(ref, () => {
     return {
@@ -215,7 +220,67 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         type={'submit'}
         className={styles.submitButton}
       >
-        <FiledButton
+        {
+          compareString(poolDetail.creatorAddress, account) ? (
+            <>
+              {
+                proposalDetail?.state === PROPOSAL_STATUS.Defeated && (
+                  <FiledButton
+                    isDisabled={submitting || btnDisabled}
+                    isLoading={submitting}
+                    type="submit"
+                    btnSize={'h'}
+                    containerConfig={{ flex: 1, mt: 6 }}
+                    loadingText={submitting ? 'Processing' : ' '}
+                    processInfo={{
+                      id: transactionType.votingProposal,
+                    }}
+                    className={styles.btnDefeat}
+                  >
+                    DEFEAT THIS PROPOSAL
+                  </FiledButton>
+                )}
+              {
+                proposalDetail?.state === PROPOSAL_STATUS.Succeeded && (
+                  <FiledButton
+                    isDisabled={submitting || btnDisabled}
+                    isLoading={submitting}
+                    type="submit"
+                    btnSize={'h'}
+                    containerConfig={{ flex: 1, mt: 6 }}
+                    loadingText={submitting ? 'Processing' : ' '}
+                    processInfo={{
+                      id: transactionType.votingProposal,
+                    }}
+                    className={styles.btnExecute}
+                  >
+                    EXECUTE THIS PROPOSAL
+                  </FiledButton>
+                )}
+            </>
+          ) : (
+            <>
+              {
+                proposalDetail?.state === PROPOSAL_STATUS.Active && (
+                  <FiledButton
+                    isDisabled={submitting || btnDisabled || !canVote}
+                    isLoading={submitting}
+                    type="submit"
+                    btnSize={'h'}
+                    containerConfig={{ flex: 1, mt: 6 }}
+                    loadingText={submitting ? 'Processing' : ' '}
+                    processInfo={{
+                      id: transactionType.votingProposal,
+                    }}
+                    className={styles.btnExecute}
+                  >
+                    VOTE THIS PROPOSAL
+                  </FiledButton>
+                )}
+            </>
+          )
+        }
+        {/*<FiledButton
           isDisabled={submitting || btnDisabled}
           isLoading={submitting}
           type="submit"
@@ -227,7 +292,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           }}
         >
           VOTE THIS PROPOSAL
-        </FiledButton>
+        </FiledButton>*/}
       </WrapperConnected>
       <Flex justifyContent={'flex-end'} mt={4}>
         <SocialToken socials={poolDetail?.launchpadToken?.social} />
@@ -253,6 +318,18 @@ const BuyForm = ({ proposalDetail }: { proposalDetail: IProposal }) => {
   const router = useRouter();
   const [voteSignatureProposal, setVoteSignatureProposal] = useState<any>();
   const [canVote, setCanVote] = useState(false);
+
+  const { run: defeatProposal } = useContractOperation({
+    operation: useDefeatProposal,
+  });
+
+  const { run: executeProposal } = useContractOperation({
+    operation: useExecuteProposal,
+  });
+
+  const { run: castVoteProposal } = useContractOperation({
+    operation: useCastVoteProposal,
+  });
 
   const isEndProposal = [
     PROPOSAL_STATUS.Canceled,
@@ -291,80 +368,7 @@ const BuyForm = ({ proposalDetail }: { proposalDetail: IProposal }) => {
     }
   }, [account, isActive, router?.query?.proposal_id, proposalDetail?.id, proposalDetail?.state, needReload]);
 
-  const confirmDeposit = (values: any) => {
-    const { baseAmount, quoteAmount, onConfirm } = values;
-    const id = 'modalDepositConfirm';
-    // const close = () => dispatch(closeModal({id}));
-    dispatch(
-      openModal({
-        id,
-        theme: 'dark',
-        title: 'Confirm voting',
-        className: styles.modalContent,
-        modalProps: {
-          centered: true,
-          size: mobileScreen ? 'full' : 'xl',
-          zIndex: 9999999,
-        },
-        render: () => (
-          <Flex direction={'column'} gap={2}>
-            <HorizontalItem
-              label={
-                <Text fontSize={'sm'} color={'#B1B5C3'}>
-                  Deposit amount
-                </Text>
-              }
-              value={
-                <Text fontSize={'sm'}>
-                  {formatCurrency(baseAmount, 6)}{' '}
-                  {poolDetail?.liquidityToken?.symbol}
-                </Text>
-              }
-            />
-            <HorizontalItem
-              label={
-                <Text fontSize={'sm'} color={'#B1B5C3'}>
-                  Estimate receive amount
-                </Text>
-              }
-              value={
-                <Text fontSize={'sm'}>
-                  {formatCurrency(quoteAmount, 6)}{' '}
-                  {poolDetail?.launchpadToken?.symbol}
-                </Text>
-              }
-            />
-            <FiledButton
-              loadingText="Processing"
-              btnSize={'h'}
-              onClick={onConfirm}
-              mt={4}
-            >
-              Confirm
-            </FiledButton>
-          </Flex>
-        ),
-      }),
-    );
-  };
-
   const handleSubmit = async (values: any) => {
-    console.log('handleSubmit', values);
-    const id = 'modalDepositConfirm';
-    const close = () => dispatch(closeModal({ id }));
-
-    confirmDeposit({
-      ...values,
-      onConfirm: () => {
-        close();
-        handleDeposit(values);
-      },
-    });
-  };
-
-  const handleDeposit = async (values: any) => {
-    const { boostInfo, baseAmount, quoteAmount, swapRoutes } = values;
-
     try {
       setSubmitting(true);
       dispatch(
@@ -374,30 +378,32 @@ const BuyForm = ({ proposalDetail }: { proposalDetail: IProposal }) => {
         }),
       );
 
-      const data = {
-        amount: baseAmount,
-        launchpadAddress: poolDetail?.launchpad,
-        boostRatio: '0',
-        signature: '',
-      };
-
-      if (boostInfo) {
-        data.boostRatio = boostInfo.boostSign;
-        data.signature = boostInfo.adminSignature;
-      }
-
-      // let response;
-      // if (isClaimLaunchpad) {
-      //   response = await claimLaunchpad({
-      //     launchpadAddress: poolDetail?.launchpad,
-      //   });
-      // } else if (isEndLaunchpad) {
-      //   response = await endLaunchpad({
-      //     launchpadAddress: poolDetail?.launchpad,
-      //   });
-      // } else {
-      //   response = await depositLaunchpad(data);
+      // const data = {
+      //   amount: baseAmount,
+      //   launchpadAddress: poolDetail?.launchpad,
+      //   boostRatio: '0',
+      //   signature: '',
+      // };
+      //
+      // if (boostInfo) {
+      //   data.boostRatio = boostInfo.boostSign;
+      //   data.signature = boostInfo.adminSignature;
       // }
+
+      let response;
+      if(compareString(poolDetail?.creatorAddress, account)) {
+        if(proposalDetail?.state === PROPOSAL_STATUS.Defeated) {
+          response = await defeatProposal({
+            proposalId: proposalDetail?.proposalId,
+          });
+        } else if (proposalDetail?.state === PROPOSAL_STATUS.Succeeded) {
+          response = await executeProposal({
+            proposalId: proposalDetail?.proposalId,
+          });
+        }
+      } else if (canVote) {
+
+      }
 
       toast.success('Transaction has been created. Please wait for few minutes.');
       refForm.current?.reset();

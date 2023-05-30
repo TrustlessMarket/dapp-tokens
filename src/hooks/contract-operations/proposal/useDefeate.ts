@@ -12,7 +12,7 @@ interface IDefeatParams {
   proposalId: string;
 }
 
-const useCastVote: ContractOperationHook<IDefeatParams, boolean> = () => {
+const useDefeatProposal: ContractOperationHook<IDefeatParams, boolean> = () => {
   const { account } = useWeb3React();
   const provider = getDefaultProvider();
 
@@ -69,4 +69,4 @@ const useCastVote: ContractOperationHook<IDefeatParams, boolean> = () => {
   };
 };
 
-export default useCastVote;
+export default useDefeatProposal;

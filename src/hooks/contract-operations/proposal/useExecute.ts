@@ -12,7 +12,7 @@ interface IExecuteParams {
   proposalId: string;
 }
 
-const useCastVote: ContractOperationHook<IExecuteParams, boolean> = () => {
+const useExecuteProposal: ContractOperationHook<IExecuteParams, boolean> = () => {
   const { account } = useWeb3React();
   const provider = getDefaultProvider();
 
@@ -69,4 +69,4 @@ const useCastVote: ContractOperationHook<IExecuteParams, boolean> = () => {
   };
 };
 
-export default useCastVote;
+export default useExecuteProposal;
