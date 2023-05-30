@@ -27,6 +27,8 @@ const useIsAbleRedeem: ContractOperationHook<IIsAbleRedeemProps, boolean> = () =
           .connect(provider)
           .isAbleRedeem(owner_address);
 
+        console.log('transaction', transaction);
+
         return transaction;
       }
       return false;

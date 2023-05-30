@@ -75,6 +75,7 @@ const useCreateLaunchpad: ContractOperationHook<
           gasPrice: getDefaultGasPrice(),
           functionType: functionABI.functionType,
           functionName: functionABI.functionName,
+          isExecuteTransaction: false,
           from: account,
         });
 
