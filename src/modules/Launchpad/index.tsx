@@ -395,11 +395,11 @@ const LaunchpadContainer = () => {
           columns={columns}
           initialLoading={loading}
           onItemClick={(e) => {
-            if (!e.launchpad) {
+            if (!e.id) {
               return null;
             }
             return router.push(
-              `${ROUTE_PATH.LAUNCHPAD_DETAIL}?pool_address=${e.launchpad}`,
+              `${ROUTE_PATH.LAUNCHPAD_DETAIL}?id=${e.id}`,
             );
           }}
         />
