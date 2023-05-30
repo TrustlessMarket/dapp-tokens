@@ -28,7 +28,7 @@ import web3 from 'web3';
 import LaunchpadStatus, {LAUNCHPAD_STATUS, useLaunchPadStatus,} from './Launchpad.Status';
 import {StyledIdoContainer} from './Launchpad.styled';
 import InfoTooltip from '@/components/Swap/infoTooltip';
-import ProposalStatus from "@/modules/Proposal/list/Proposal.Status";
+import ProposalStatus, {PROPOSAL_STATUS} from "@/modules/Proposal/list/Proposal.Status";
 
 const LaunchpadContainer = () => {
   const [data, setData] = useState<any[]>();
@@ -300,18 +300,11 @@ const LaunchpadContainer = () => {
           borderBottom: 'none',
         },
         render(row: ILaunchpad) {
-          if(!row?.proposalId) {
+          if(row?.userProposal?.state === PROPOSAL_STATUS.Executed) {
             return <LaunchpadStatus row={row} />;
-          } else if (
-            moment(row?.userProposal?.voteStart).unix() > moment().unix() ||
-            moment(row?.userProposal?.voteEnd).unix() < moment().unix() ||
-            (moment(row?.userProposal?.voteStart).unix() <= moment().unix() &&
-            moment().unix() < moment(row?.userProposal?.voteEnd).unix())
-          ) {
+          } else {
             return <ProposalStatus row={row?.userProposal} />
           }
-
-          return <LaunchpadStatus row={row} />;
         },
       },
       {
@@ -342,7 +335,9 @@ const LaunchpadContainer = () => {
           borderBottom: 'none',
         },
         render(row: ILaunchpad) {
-          if (compareString(row.creatorAddress, account) && !row?.proposalId) {
+          if (compareString(row.creatorAddress, account) &&
+            (!row?.proposalId || (moment(row?.userProposal?.voteStart).unix() > moment().unix()))
+          ) {
             return (
               <Flex alignItems={'center'} gap={4}>
                 <Box
@@ -409,13 +404,21 @@ const LaunchpadContainer = () => {
           data={data}
           columns={columns}
           initialLoading={loading}
-          onItemClick={(e) => {
+          onItemClick={(e: ILaunchpad) => {
             if (!e.id) {
               return null;
             }
-            return router.push(
-              `${ROUTE_PATH.LAUNCHPAD_DETAIL}?id=${e.id}`,
-            );
+            if(e?.userProposal?.state === PROPOSAL_STATUS.Executed) {
+              return router.push(
+                `${ROUTE_PATH.LAUNCHPAD_DETAIL}?id=${e.id}`,
+              );
+            } else if (e.proposalId) {
+              return router.push(
+                `${ROUTE_PATH.PROPOSAL_DETAIL}?proposal_id=${e.proposalId}`,
+              );
+            } else {
+              return router.push(`${ROUTE_PATH.LAUNCHPAD_MANAGE}?id=${e.id}`)
+            }
           }}
         />
       </Box>
