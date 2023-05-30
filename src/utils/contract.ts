@@ -51,11 +51,18 @@ export const isConnectedTrustChain = () => {
   return false;
 };
 
+export const remakeFunctionName: any = {
+  swapExactTokensForTokens: 'Swap Tokens',
+  addLiquidity: 'Add Liquidity',
+  removeLiquidity: 'Remove Liquidity',
+  approve: 'Approve Token',
+};
+
 export const getFunctionABI = (abi: any[] = [], name: string) => {
   const _abi = abi.find((v) => compareString(v.name, name));
   return {
     abi: [_abi],
-    functionType: name,
+    functionType: remakeFunctionName[name],
     functionName: `${name}(${_abi.inputs.map((v: any) => v.type)})`,
   };
 };
