@@ -1,26 +1,26 @@
 /* eslint-disable react/no-children-prop */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import {transactionType} from '@/components/Swap/alertInfoProcessing/types';
+import { transactionType } from '@/components/Swap/alertInfoProcessing/types';
 import FiledButton from '@/components/Swap/button/filedButton';
 import HorizontalItem from '@/components/Swap/horizontalItem';
 import WrapperConnected from '@/components/WrapperConnected';
-import {TRUSTLESS_GASSTATION,} from '@/constants/common';
-import {toastError} from '@/constants/error';
-import {AssetsContext} from '@/contexts/assets-context';
-import {TransactionStatus} from '@/interfaces/walletTransaction';
-import {logErrorToServer} from '@/services/swap';
-import {useAppDispatch, useAppSelector} from '@/state/hooks';
+import { TRUSTLESS_GASSTATION } from '@/constants/common';
+import { toastError } from '@/constants/error';
+import { AssetsContext } from '@/contexts/assets-context';
+import { TransactionStatus } from '@/interfaces/walletTransaction';
+import { logErrorToServer } from '@/services/swap';
+import { useAppDispatch, useAppSelector } from '@/state/hooks';
 import {
   requestReload,
   requestReloadRealtime,
   selectPnftExchange,
   updateCurrentTransaction,
 } from '@/state/pnftExchange';
-import {getIsAuthenticatedSelector} from '@/state/user/selector';
-import {compareString, formatCurrency} from '@/utils';
+import { getIsAuthenticatedSelector } from '@/state/user/selector';
+import { compareString, formatCurrency } from '@/utils';
 import px2rem from '@/utils/px2rem';
-import {showError} from '@/utils/toast';
+import { showError } from '@/utils/toast';
 import {
   Box,
   Center,
@@ -33,28 +33,38 @@ import {
   StatNumber,
   Text,
 } from '@chakra-ui/react';
-import {useWeb3React} from '@web3-react/core';
+import { useWeb3React } from '@web3-react/core';
 import BigNumber from 'bignumber.js';
 import Link from 'next/link';
-import {useRouter} from 'next/router';
-import React, {useContext, useEffect, useImperativeHandle, useRef, useState,} from 'react';
-import {Form, useForm} from 'react-final-form';
+import { useRouter } from 'next/router';
+import React, {
+  useContext,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from 'react';
+import { Form, useForm } from 'react-final-form';
 import toast from 'react-hot-toast';
-import {useDispatch, useSelector} from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import styles from './styles.module.scss';
-import {BiBell} from 'react-icons/bi';
-import {closeModal, openModal} from '@/state/modal';
-import {useWindowSize} from '@trustless-computer/dapp-core';
+import { BiBell } from 'react-icons/bi';
+import { closeModal, openModal } from '@/state/modal';
+import { useWindowSize } from '@trustless-computer/dapp-core';
 import SocialToken from '@/components/Social';
 import moment from 'moment';
 import useCountDownTimer from '@/hooks/useCountdown';
-import {IProposal} from "@/interfaces/proposal";
-import {PROPOSAL_STATUS, useProposalStatus} from "@/modules/Proposal/list/Proposal.Status";
-import {getVoteSignatureProposal} from "@/services/proposal";
-import useContractOperation from "@/hooks/contract-operations/useContractOperation";
-import useDefeatProposal from "@/hooks/contract-operations/proposal/useDefeate";
-import useExecuteProposal from "@/hooks/contract-operations/proposal/useExecute";
-import useCastVoteProposal from "@/hooks/contract-operations/proposal/useCastVote";
+import { IProposal } from '@/interfaces/proposal';
+import {
+  PROPOSAL_STATUS,
+  useProposalStatus,
+} from '@/modules/Proposal/list/Proposal.Status';
+import { getVoteSignatureProposal } from '@/services/proposal';
+import useContractOperation from '@/hooks/contract-operations/useContractOperation';
+import useDefeatProposal from '@/hooks/contract-operations/proposal/useDefeate';
+import useExecuteProposal from '@/hooks/contract-operations/proposal/useExecute';
+import useCastVoteProposal from '@/hooks/contract-operations/proposal/useCastVote';
+import useTCWallet from '@/hooks/useTCWallet';
 
 export const MakeFormSwap = forwardRef((props, ref) => {
   const {
@@ -72,7 +82,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const isAuthenticated = useSelector(getIsAuthenticatedSelector);
   const dispatch = useDispatch();
   const poolDetail = proposalDetail?.userPool;
-  const { account } = useWeb3React();
+  const { tcWalletAddress: account } = useTCWallet();
 
   console.log('proposalDetail', proposalDetail);
 
@@ -83,7 +93,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
 
   useEffect(() => {
     if (poolDetail?.id) {
-      if(isPendingProposal) {
+      if (isPendingProposal) {
         setEndTime(moment(proposalDetail?.voteStart).unix());
       } else {
         setEndTime(moment(proposalDetail?.voteEnd).unix());
@@ -124,45 +134,41 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           <GridItem>
             <Stat>
               <StatLabel>Rewards</StatLabel>
-              <StatNumber>{formatCurrency(poolDetail?.launchpadBalance)} {poolDetail?.launchpadToken?.symbol}</StatNumber>
+              <StatNumber>
+                {formatCurrency(poolDetail?.launchpadBalance)}{' '}
+                {poolDetail?.launchpadToken?.symbol}
+              </StatNumber>
             </Stat>
           </GridItem>
           <GridItem>
             <Stat>
               <StatLabel>Funding Goal</StatLabel>
               <StatNumber>
-                {formatCurrency(poolDetail?.goalBalance || 0)} {poolDetail?.liquidityToken?.symbol}
+                {formatCurrency(poolDetail?.goalBalance || 0)}{' '}
+                {poolDetail?.liquidityToken?.symbol}
               </StatNumber>
             </Stat>
           </GridItem>
         </SimpleGrid>
         <Stat className={styles.infoColumn}>
           <StatLabel>
-            {
-              isPendingProposal ? (
-                'Starts in'
-              ) : isStartingProposal ? (
-                'Ends in'
-              ) : (
-                'Ended at'
-              )
-            }
+            {isPendingProposal
+              ? 'Starts in'
+              : isStartingProposal
+              ? 'Ends in'
+              : 'Ended at'}
           </StatLabel>
           <StatNumber>
             <Text>
-              {
-                isPendingProposal ? (
-                  `${
+              {isPendingProposal
+                ? `${
                     Number(days) > 0 && `${days}d :`
                   } ${hours}h : ${minutes}m : ${seconds}s`
-                ) : isStartingProposal ? (
-                  `${
+                : isStartingProposal
+                ? `${
                     Number(days) > 0 && `${days}d :`
                   } ${hours}h : ${minutes}m : ${seconds}s`
-                ) : (
-                  moment(proposalDetail.voteEnd).format('LLL')
-                )
-              }
+                : moment(proposalDetail.voteEnd).format('LLL')}
             </Text>
           </StatNumber>
         </Stat>
@@ -216,70 +222,62 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             </Text>
           </Flex>
         )}
-      <WrapperConnected
-        type={'submit'}
-        className={styles.submitButton}
-      >
-        {
-          compareString(poolDetail.creatorAddress, account) ? (
-            <>
-              {
-                proposalDetail?.state === PROPOSAL_STATUS.Defeated && (
-                  <FiledButton
-                    isDisabled={submitting || btnDisabled}
-                    isLoading={submitting}
-                    type="submit"
-                    btnSize={'h'}
-                    containerConfig={{ flex: 1, mt: 6 }}
-                    loadingText={submitting ? 'Processing' : ' '}
-                    processInfo={{
-                      id: transactionType.votingProposal,
-                    }}
-                    className={styles.btnDefeat}
-                  >
-                    DEFEAT THIS PROPOSAL
-                  </FiledButton>
-                )}
-              {
-                proposalDetail?.state === PROPOSAL_STATUS.Succeeded && (
-                  <FiledButton
-                    isDisabled={submitting || btnDisabled}
-                    isLoading={submitting}
-                    type="submit"
-                    btnSize={'h'}
-                    containerConfig={{ flex: 1, mt: 6 }}
-                    loadingText={submitting ? 'Processing' : ' '}
-                    processInfo={{
-                      id: transactionType.votingProposal,
-                    }}
-                    className={styles.btnExecute}
-                  >
-                    EXECUTE THIS PROPOSAL
-                  </FiledButton>
-                )}
-            </>
-          ) : (
-            <>
-              {
-                proposalDetail?.state === PROPOSAL_STATUS.Active && (
-                  <FiledButton
-                    isDisabled={submitting || btnDisabled || !canVote}
-                    isLoading={submitting}
-                    type="submit"
-                    btnSize={'h'}
-                    containerConfig={{ flex: 1, mt: 6 }}
-                    loadingText={submitting ? 'Processing' : ' '}
-                    processInfo={{
-                      id: transactionType.votingProposal,
-                    }}
-                    className={styles.btnExecute}
-                  >
-                    VOTE THIS PROPOSAL
-                  </FiledButton>
-                )}
-            </>
-          )
-        }
+      <WrapperConnected type={'submit'} className={styles.submitButton}>
+        {compareString(poolDetail.creatorAddress, account) ? (
+          <>
+            {proposalDetail?.state === PROPOSAL_STATUS.Defeated && (
+              <FiledButton
+                isDisabled={submitting || btnDisabled}
+                isLoading={submitting}
+                type="submit"
+                btnSize={'h'}
+                containerConfig={{ flex: 1, mt: 6 }}
+                loadingText={submitting ? 'Processing' : ' '}
+                processInfo={{
+                  id: transactionType.votingProposal,
+                }}
+                className={styles.btnDefeat}
+              >
+                DEFEAT THIS PROPOSAL
+              </FiledButton>
+            )}
+            {proposalDetail?.state === PROPOSAL_STATUS.Succeeded && (
+              <FiledButton
+                isDisabled={submitting || btnDisabled}
+                isLoading={submitting}
+                type="submit"
+                btnSize={'h'}
+                containerConfig={{ flex: 1, mt: 6 }}
+                loadingText={submitting ? 'Processing' : ' '}
+                processInfo={{
+                  id: transactionType.votingProposal,
+                }}
+                className={styles.btnExecute}
+              >
+                EXECUTE THIS PROPOSAL
+              </FiledButton>
+            )}
+          </>
+        ) : (
+          <>
+            {proposalDetail?.state === PROPOSAL_STATUS.Active && (
+              <FiledButton
+                isDisabled={submitting || btnDisabled || !canVote}
+                isLoading={submitting}
+                type="submit"
+                btnSize={'h'}
+                containerConfig={{ flex: 1, mt: 6 }}
+                loadingText={submitting ? 'Processing' : ' '}
+                processInfo={{
+                  id: transactionType.votingProposal,
+                }}
+                className={styles.btnExecute}
+              >
+                VOTE THIS PROPOSAL
+              </FiledButton>
+            )}
+          </>
+        )}
         {/*<FiledButton
           isDisabled={submitting || btnDisabled}
           isLoading={submitting}
@@ -297,7 +295,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       <Flex justifyContent={'flex-end'} mt={4}>
         <SocialToken socials={poolDetail?.launchpadToken?.social} />
       </Flex>
-      <Text mt={4} fontSize={px2rem(20)} fontWeight={"300"} color={'#FFFFFF'}>
+      <Text mt={4} fontSize={px2rem(20)} fontWeight={'300'} color={'#FFFFFF'}>
         The voting will end by{' '}
         {moment.utc(proposalDetail?.voteEnd).format('ddd, MMMM Do YYYY HH:mm:ss Z')}.
       </Text>
@@ -309,7 +307,7 @@ const BuyForm = ({ proposalDetail }: { proposalDetail: IProposal }) => {
   const refForm = useRef<any>();
   const [submitting, setSubmitting] = useState(false);
   const dispatch = useAppDispatch();
-  const { account, isActive } = useWeb3React();
+  const { tcWalletAddress: account, isAuthenticated: isActive } = useTCWallet();
 
   const { mobileScreen } = useWindowSize();
   const [status] = useProposalStatus({ row: proposalDetail });
@@ -366,7 +364,14 @@ const BuyForm = ({ proposalDetail }: { proposalDetail: IProposal }) => {
     if (account && router?.query?.proposal_id) {
       getVoteSignatureProposalInfo();
     }
-  }, [account, isActive, router?.query?.proposal_id, proposalDetail?.id, proposalDetail?.state, needReload]);
+  }, [
+    account,
+    isActive,
+    router?.query?.proposal_id,
+    proposalDetail?.id,
+    proposalDetail?.state,
+    needReload,
+  ]);
 
   const handleSubmit = async (values: any) => {
     try {
@@ -391,8 +396,8 @@ const BuyForm = ({ proposalDetail }: { proposalDetail: IProposal }) => {
       // }
 
       let response;
-      if(compareString(poolDetail?.creatorAddress, account)) {
-        if(proposalDetail?.state === PROPOSAL_STATUS.Defeated) {
+      if (compareString(poolDetail?.creatorAddress, account)) {
+        if (proposalDetail?.state === PROPOSAL_STATUS.Defeated) {
           response = await defeatProposal({
             proposalId: proposalDetail?.proposalId,
           });
@@ -402,7 +407,6 @@ const BuyForm = ({ proposalDetail }: { proposalDetail: IProposal }) => {
           });
         }
       } else if (canVote) {
-
       }
 
       toast.success('Transaction has been created. Please wait for few minutes.');

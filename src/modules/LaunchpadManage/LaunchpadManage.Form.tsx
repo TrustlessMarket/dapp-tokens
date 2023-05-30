@@ -51,6 +51,7 @@ import web3 from 'web3';
 import { MAX_FILE_SIZE } from '../UpdateTokenInfo/form';
 import InfoTooltip from '@/components/Swap/infoTooltip';
 import moment from 'moment';
+import useTCWallet from '@/hooks/useTCWallet';
 
 interface IdoTokenManageFormProps {
   handleSubmit?: (_: any) => void;
@@ -79,7 +80,7 @@ const IdoTokenManageForm: React.FC<IdoTokenManageFormProps> = ({
     ConfigLaunchpadResponse | any
   >({});
 
-  const { account, isActive } = useWeb3React();
+  const { tcWalletAddress: account, isAuthenticated: isActive } = useTCWallet();
   const dispatch = useDispatch();
 
   const [isApproveToken, setIsApproveToken] = useState<boolean>(true);
@@ -157,7 +158,11 @@ const IdoTokenManageForm: React.FC<IdoTokenManageFormProps> = ({
       .toString();
     change('liquidityBalance', _needLiquidBalance);
     setNeedLiquidBalance(_needLiquidBalance);
-  }, [values?.launchpadBalance, values?.liquidityRatioArg, launchpadConfigs.liquidityPriceMultiple]);
+  }, [
+    values?.launchpadBalance,
+    values?.liquidityRatioArg,
+    launchpadConfigs.liquidityPriceMultiple,
+  ]);
 
   const checkBalanceIsApprove = (required: any = 0, amount: any = 0) => {
     return required > 0 && new BigNumber(required).minus(amount).toNumber() >= 0;
@@ -683,7 +688,7 @@ const IdoTokenManageForm: React.FC<IdoTokenManageFormProps> = ({
               isDisabled={loading}
               loadingText="Processing"
               btnSize={'h'}
-              onClick={onShowModalApprove}
+              onClick={onApprove}
               type="button"
               processInfo={{
                 id: transactionType.idoManage,

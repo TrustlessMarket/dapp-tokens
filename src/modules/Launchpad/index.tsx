@@ -4,36 +4,42 @@
 import CountDownTimer from '@/components/Countdown';
 import SocialToken from '@/components/Social';
 import FiledButton from '@/components/Swap/button/filedButton';
-import ListTable, {ColumnProp} from '@/components/Swap/listTable';
-import {TOKEN_ICON_DEFAULT} from '@/constants/common';
-import {ROUTE_PATH} from '@/constants/route-path';
-import {ILaunchpad} from '@/interfaces/launchpad';
-import {IToken} from '@/interfaces/token';
-import {getListLaunchpad} from '@/services/launchpad';
-import {useAppSelector} from '@/state/hooks';
-import {selectPnftExchange} from '@/state/pnftExchange';
-import {colors} from '@/theme/colors';
-import {compareString, formatCurrency} from '@/utils';
-import {Box, Flex, Progress, Text} from '@chakra-ui/react';
-import {px2rem} from '@trustless-computer/dapp-core';
-import {useWeb3React} from '@web3-react/core';
+import ListTable, { ColumnProp } from '@/components/Swap/listTable';
+import { TOKEN_ICON_DEFAULT } from '@/constants/common';
+import { ROUTE_PATH } from '@/constants/route-path';
+import { ILaunchpad } from '@/interfaces/launchpad';
+import { IToken } from '@/interfaces/token';
+import { getListLaunchpad } from '@/services/launchpad';
+import { useAppSelector } from '@/state/hooks';
+import { selectPnftExchange } from '@/state/pnftExchange';
+import { colors } from '@/theme/colors';
+import { compareString, formatCurrency } from '@/utils';
+import { Box, Flex, Progress, Text } from '@chakra-ui/react';
+import { px2rem } from '@trustless-computer/dapp-core';
+import { useWeb3React } from '@web3-react/core';
 import BigNumber from 'bignumber.js';
 import moment from 'moment';
-import {useRouter} from 'next/router';
-import {useEffect, useMemo, useState} from 'react';
-import {BsPencil} from 'react-icons/bs';
-import {ImClock2} from 'react-icons/im';
-import {useDispatch} from 'react-redux';
+import { useRouter } from 'next/router';
+import { useEffect, useMemo, useState } from 'react';
+import { BsPencil } from 'react-icons/bs';
+import { ImClock2 } from 'react-icons/im';
+import { useDispatch } from 'react-redux';
 import web3 from 'web3';
-import LaunchpadStatus, {LAUNCHPAD_STATUS, useLaunchPadStatus,} from './Launchpad.Status';
-import {StyledIdoContainer} from './Launchpad.styled';
+import LaunchpadStatus, {
+  LAUNCHPAD_STATUS,
+  useLaunchPadStatus,
+} from './Launchpad.Status';
+import { StyledIdoContainer } from './Launchpad.styled';
 import InfoTooltip from '@/components/Swap/infoTooltip';
-import ProposalStatus, {PROPOSAL_STATUS} from "@/modules/Proposal/list/Proposal.Status";
+import ProposalStatus, {
+  PROPOSAL_STATUS,
+} from '@/modules/Proposal/list/Proposal.Status';
+import useTCWallet from '@/hooks/useTCWallet';
 
 const LaunchpadContainer = () => {
   const [data, setData] = useState<any[]>();
   const [loading, setLoading] = useState(true);
-  const { account } = useWeb3React();
+  const { tcWalletAddress: account } = useTCWallet();
   const dispatch = useDispatch();
   const needReload = useAppSelector(selectPnftExchange).needReload;
   const router = useRouter();
@@ -98,18 +104,24 @@ const LaunchpadContainer = () => {
         render(row: ILaunchpad) {
           const token: IToken = row.launchpadToken;
           let percent = 0;
-          if(Number(row.launchpadBalance) > 0 && Number(token.totalSupply) > 0) {
-            percent = new BigNumber(row.launchpadBalance).div(token.totalSupply).multipliedBy(100).toNumber();
+          if (Number(row.launchpadBalance) > 0 && Number(token.totalSupply) > 0) {
+            percent = new BigNumber(row.launchpadBalance)
+              .div(token.totalSupply)
+              .multipliedBy(100)
+              .toNumber();
           }
 
-          return (
-            row.launchpadBalance
-              ? (<Flex direction={"column"}>
-                  <Text>{formatCurrency(row.launchpadBalance, 18)} {token?.symbol}</Text>
-                  <Text fontSize={"xs"} color={"rgba(255,255,255,0.7)"}>{formatCurrency(percent, 2)}% of Supply</Text>
-                </Flex>
-              )
-              : 'N/A'
+          return row.launchpadBalance ? (
+            <Flex direction={'column'}>
+              <Text>
+                {formatCurrency(row.launchpadBalance, 18)} {token?.symbol}
+              </Text>
+              <Text fontSize={'xs'} color={'rgba(255,255,255,0.7)'}>
+                {formatCurrency(percent, 2)}% of Supply
+              </Text>
+            </Flex>
+          ) : (
+            'N/A'
           );
         },
       },
@@ -225,7 +237,7 @@ const LaunchpadContainer = () => {
           borderBottom: 'none',
         },
         render(row: ILaunchpad) {
-          if(row?.launchpad || !row?.proposalId) {
+          if (row?.launchpad || !row?.proposalId) {
             const [status] = useLaunchPadStatus({ row });
 
             console.log('row', row);
@@ -236,9 +248,9 @@ const LaunchpadContainer = () => {
               return (
                 <Box>
                   <Text>
-                  <span style={{ color: colors.white500, fontSize: px2rem(14) }}>
-                    Starts at:
-                  </span>{' '}
+                    <span style={{ color: colors.white500, fontSize: px2rem(14) }}>
+                      Starts at:
+                    </span>{' '}
                     {moment(row.startTime).format('MMM, DD')}
                   </Text>
                   <Flex mt={1} alignItems={'center'} gap={2}>
@@ -254,9 +266,9 @@ const LaunchpadContainer = () => {
               return (
                 <Box>
                   <Text>
-                  <span style={{ color: colors.white500, fontSize: px2rem(14) }}>
-                    Ends at:
-                  </span>{' '}
+                    <span style={{ color: colors.white500, fontSize: px2rem(14) }}>
+                      Ends at:
+                    </span>{' '}
                     {moment(row.endTime).format('MMM, DD')}
                   </Text>
                   <Flex mt={1} alignItems={'center'} gap={2}>
@@ -268,13 +280,16 @@ const LaunchpadContainer = () => {
                 </Box>
               );
             }
-            if (status.value === 'success' && status.key !== LAUNCHPAD_STATUS.Closed) {
+            if (
+              status.value === 'success' &&
+              status.key !== LAUNCHPAD_STATUS.Closed
+            ) {
               return (
                 <Box>
                   <Text>
-                  <span style={{ color: colors.white500, fontSize: px2rem(14) }}>
-                    Release time:
-                  </span>{' '}
+                    <span style={{ color: colors.white500, fontSize: px2rem(14) }}>
+                      Release time:
+                    </span>{' '}
                   </Text>
                   <Flex mt={1} alignItems={'center'} gap={2}>
                     <ImClock2 />
@@ -300,10 +315,10 @@ const LaunchpadContainer = () => {
           borderBottom: 'none',
         },
         render(row: ILaunchpad) {
-          if(row?.userProposal?.state === PROPOSAL_STATUS.Executed) {
+          if (row?.userProposal?.state === PROPOSAL_STATUS.Executed) {
             return <LaunchpadStatus row={row} />;
           } else {
-            return <ProposalStatus row={row?.userProposal} />
+            return <ProposalStatus row={row?.userProposal} />;
           }
         },
       },
@@ -335,8 +350,10 @@ const LaunchpadContainer = () => {
           borderBottom: 'none',
         },
         render(row: ILaunchpad) {
-          if (compareString(row.creatorAddress, account) &&
-            (!row?.proposalId || (moment(row?.userProposal?.voteStart).unix() > moment().unix()))
+          if (
+            compareString(row.creatorAddress, account) &&
+            (!row?.proposalId ||
+              moment(row?.userProposal?.voteStart).unix() > moment().unix())
           ) {
             return (
               <Flex alignItems={'center'} gap={4}>
@@ -408,16 +425,14 @@ const LaunchpadContainer = () => {
             if (!e.id) {
               return null;
             }
-            if(e?.userProposal?.state === PROPOSAL_STATUS.Executed) {
-              return router.push(
-                `${ROUTE_PATH.LAUNCHPAD_DETAIL}?id=${e.id}`,
-              );
+            if (e?.userProposal?.state === PROPOSAL_STATUS.Executed) {
+              return router.push(`${ROUTE_PATH.LAUNCHPAD_DETAIL}?id=${e.id}`);
             } else if (e.proposalId) {
               return router.push(
                 `${ROUTE_PATH.PROPOSAL_DETAIL}?proposal_id=${e.proposalId}`,
               );
             } else {
-              return router.push(`${ROUTE_PATH.LAUNCHPAD_MANAGE}?id=${e.id}`)
+              return router.push(`${ROUTE_PATH.LAUNCHPAD_MANAGE}?id=${e.id}`);
             }
           }}
         />

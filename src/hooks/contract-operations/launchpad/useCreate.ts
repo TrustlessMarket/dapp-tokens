@@ -1,19 +1,22 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+import LaunchpadFactoryJson from '@/abis/LaunchpadFactory.json';
 import { LAUNCHPAD_FACTORY_ADDRESS } from '@/configs';
 import { TransactionEventType } from '@/enums/transaction';
+import useTCWallet from '@/hooks/useTCWallet';
 import { ContractOperationHook, DAppType } from '@/interfaces/contract-operation';
-import { getContract } from '@/utils';
-import { useWeb3React } from '@web3-react/core';
-import { useCallback } from 'react';
-import LaunchpadFactoryJson from '@/abis/LaunchpadFactory.json';
 import { logErrorToServer } from '@/services/swap';
-import store from '@/state';
-import { updateCurrentTransaction } from '@/state/pnftExchange';
-import { TransactionStatus } from '@/interfaces/walletTransaction';
-import { transactionType } from '@/components/Swap/alertInfoProcessing/types';
-import moment from 'moment';
-import web3 from 'web3';
+import {
+  getContract,
+  getDefaultGasPrice,
+  getDefaultProvider,
+  getFunctionABI,
+} from '@/utils';
+import { useWeb3React } from '@web3-react/core';
 import BigNumber from 'bignumber.js';
+import { useCallback } from 'react';
+import web3 from 'web3';
+import { ethers } from 'ethers';
+import { getConnector } from '@/connection';
 
 export interface ICreateLaunchpadParams {
   launchpadTokenArg: string;
@@ -28,7 +31,9 @@ const useCreateLaunchpad: ContractOperationHook<
   ICreateLaunchpadParams,
   boolean
 > = () => {
-  const { account, provider } = useWeb3React();
+  const provider = getDefaultProvider();
+  const connector = getConnector();
+  const { tcWalletAddress: account } = useTCWallet();
 
   const call = useCallback(
     async (params: ICreateLaunchpadParams): Promise<boolean> => {
@@ -42,6 +47,29 @@ const useCreateLaunchpad: ContractOperationHook<
       } = params;
 
       if (account && provider) {
+        const functionABI = getFunctionABI(
+          LaunchpadFactoryJson,
+          'createLaunchpadPool',
+        );
+
+        const ContractInterface = new ethers.utils.Interface(functionABI.abi);
+
+        const ratio = new BigNumber(Number(liquidityRatioArg))
+          .multipliedBy(10000)
+          .toString();
+
+        const encodeAbi = ContractInterface.encodeFunctionData(
+          'createLaunchpadPool',
+          [
+            launchpadTokenArg,
+            liquidityTokenArg,
+            ratio,
+            web3.utils.toWei(durationArg.toString()),
+            web3.utils.toWei(launchpadBalance),
+            web3.utils.toWei(goalBalance),
+          ],
+        );
+
         const contract = getContract(
           LAUNCHPAD_FACTORY_ADDRESS,
           LaunchpadFactoryJson,
@@ -49,24 +77,20 @@ const useCreateLaunchpad: ContractOperationHook<
           account,
         );
 
-        const ratio = new BigNumber(Number(liquidityRatioArg))
-          .multipliedBy(10000)
-          .toString();
-
-        const transaction = await contract
-          .connect(provider.getSigner())
-          .createLaunchpadPool(
-            launchpadTokenArg,
-            liquidityTokenArg,
-            ratio,
-            web3.utils.toWei(durationArg.toString()),
-            web3.utils.toWei(launchpadBalance),
-            web3.utils.toWei(goalBalance),
-            {
-              gasLimit: '1500000',
-              // gasPrice: getDefaultGasPrice(),
-            },
-          );
+        const transaction = await connector.requestSign({
+          target: '_blank',
+          calldata: encodeAbi,
+          to: LAUNCHPAD_FACTORY_ADDRESS,
+          value: '',
+          redirectURL: window.location.href,
+          isInscribe: true,
+          gasLimit: '1500000',
+          gasPrice: getDefaultGasPrice(),
+          functionType: functionABI.functionType,
+          functionName: functionABI.functionName,
+          isExecuteTransaction: false,
+          from: account,
+        });
 
         logErrorToServer({
           type: 'logs',
@@ -75,23 +99,12 @@ const useCreateLaunchpad: ContractOperationHook<
           message: "gasLimit: '150000'",
         });
 
-        // store.dispatch(
-        //   updateCurrentTransaction({
-        //     id: transactionType.createLaunchpad,
-        //     status: TransactionStatus.pending,
-        //     hash: transaction.hash,
-        //     infoTexts: {
-        //       pending: `Transaction confirmed. Please wait for it to be processed on the Bitcoin. Note that it may take up to 10 minutes for a block confirmation on the Bitcoin blockchain.`,
-        //     },
-        //   }),
-        // );
-
         return transaction;
       }
 
       return false;
     },
-    [account, provider],
+    [account],
   );
 
   return {

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-hooks/exhaustive-deps */
 import { ConnectionType, getConnector } from '@/connection';
@@ -30,14 +31,21 @@ import { IAccount } from '@/state/wallets/types';
 export interface IWalletContext {
   onDisconnect: () => Promise<void>;
   onConnect: () => Promise<string | null>;
-  getSignature: (_n: any) => Promise<string>;
+  getSignature: ({
+    message,
+    account,
+  }: {
+    message: string;
+    account: string;
+  }) => Promise<string>;
   onChangeAccount: (r: IAccount) => any;
 }
 
 const initialValue: IWalletContext = {
   onDisconnect: () => new Promise<void>((r) => r()),
   onConnect: () => new Promise<null>((r) => r(null)),
-  getSignature: (_n: any) => new Promise<string>((r) => r('')),
+  getSignature: ({ message, account }: { message: string; account: string }) =>
+    new Promise<string>((r) => r('')),
   onChangeAccount: (_r: IAccount) => void ((r: () => any) => r()),
 };
 
@@ -54,11 +62,12 @@ export const WalletProvider: React.FC<PropsWithChildren> = ({
 
   const getSignature = React.useCallback(
     async ({ message, account }: { message: string; account: string }) => {
-      return await connector.requestSignMessage({
+      const response = await connector.requestSignMessage({
         target: '_blank',
         signMessage: message,
         fromAddress: account,
       });
+      return response.signature;
     },
     [user, connector],
   );

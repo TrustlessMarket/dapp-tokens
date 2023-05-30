@@ -1,27 +1,28 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import {toastError} from '@/constants/error';
-import {WalletContext} from '@/contexts/wallet-context';
-import {ILaunchpad} from '@/interfaces/launchpad';
-import {createLaunchpad, getDetailLaunchpad,} from '@/services/launchpad';
-import {requestReload, updateCurrentTransaction} from '@/state/pnftExchange';
-import {showError} from '@/utils/toast';
-import {Text} from '@chakra-ui/react';
-import {useWeb3React} from '@web3-react/core';
-import {filter} from 'lodash';
-import {useRouter} from 'next/router';
-import {useContext, useEffect, useState} from 'react';
-import {Form} from 'react-final-form';
-import {toast} from 'react-hot-toast';
-import {useDispatch} from 'react-redux';
+import { toastError } from '@/constants/error';
+import { WalletContext } from '@/contexts/wallet-context';
+import { ILaunchpad } from '@/interfaces/launchpad';
+import { createLaunchpad, getDetailLaunchpad } from '@/services/launchpad';
+import { requestReload, updateCurrentTransaction } from '@/state/pnftExchange';
+import { showError } from '@/utils/toast';
+import { Text } from '@chakra-ui/react';
+import { useWeb3React } from '@web3-react/core';
+import { filter } from 'lodash';
+import { useRouter } from 'next/router';
+import { useContext, useEffect, useState } from 'react';
+import { Form } from 'react-final-form';
+import { toast } from 'react-hot-toast';
+import { useDispatch } from 'react-redux';
 import LaunchManageForm from './LaunchpadManage.Form';
-import {StyledLaunchpadManage} from './LaunchpadManage.styled';
+import { StyledLaunchpadManage } from './LaunchpadManage.styled';
 import useCreateLaunchpad from '@/hooks/contract-operations/launchpad/useCreate';
 import useContractOperation from '@/hooks/contract-operations/useContractOperation';
-import {ROUTE_PATH} from "@/constants/route-path";
+import { ROUTE_PATH } from '@/constants/route-path';
+import useTCWallet from '@/hooks/useTCWallet';
 
 const LaunchManage = () => {
-  const { account } = useWeb3React();
+  const { tcWalletAddress: account } = useTCWallet();
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
   const [detail, setDetail] = useState<ILaunchpad | undefined>(undefined);
@@ -78,7 +79,10 @@ const LaunchManage = () => {
         }),
       );
 
-      const signature = await getSignature(account);
+      const signature = await getSignature({
+        message: account,
+        account,
+      });
 
       const res = await createLaunchpad({
         user_address: account,
@@ -97,7 +101,7 @@ const LaunchManage = () => {
         duration: Number(values.duration),
       });
 
-      if(!id) {
+      if (!id) {
         router.replace(`${ROUTE_PATH.LAUNCHPAD_MANAGE}?id=${res?.id}`);
       }
 

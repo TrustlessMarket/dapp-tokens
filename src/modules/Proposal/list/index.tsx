@@ -1,34 +1,34 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import BodyContainer from "@/components/Swap/bodyContainer";
+import SocialToken from '@/components/Social';
+import BodyContainer from '@/components/Swap/bodyContainer';
+import FiledButton from '@/components/Swap/button/filedButton';
+import InfoTooltip from '@/components/Swap/infoTooltip';
+import ListTable, { ColumnProp } from '@/components/Swap/listTable';
+import { TOKEN_ICON_DEFAULT } from '@/constants/common';
+import { ROUTE_PATH } from '@/constants/route-path';
+import useTCWallet from '@/hooks/useTCWallet';
+import { IProposal } from '@/interfaces/proposal';
+import { IToken } from '@/interfaces/token';
+import ProposalStatus from '@/modules/Proposal/list/Proposal.Status';
+import { getListProposals } from '@/services/proposal';
+import { useAppSelector } from '@/state/hooks';
+import { selectPnftExchange } from '@/state/pnftExchange';
+import { colors } from '@/theme/colors';
+import { compareString, formatCurrency } from '@/utils';
+import px2rem from '@/utils/px2rem';
+import { Box, Flex, Text } from '@chakra-ui/react';
+import BigNumber from 'bignumber.js';
+import moment from 'moment';
+import { useRouter } from 'next/router';
+import { useEffect, useMemo, useState } from 'react';
+import { BsPencil } from 'react-icons/bs';
+import web3 from 'web3';
 import styles from './styles.module.scss';
-import {Box, Flex, Text} from "@chakra-ui/react";
-import FiledButton from "@/components/Swap/button/filedButton";
-import ListTable, {ColumnProp} from "@/components/Swap/listTable";
-import {ROUTE_PATH} from "@/constants/route-path";
-import {useEffect, useMemo, useState} from "react";
-import {useWeb3React} from "@web3-react/core";
-import {useAppSelector} from "@/state/hooks";
-import {selectPnftExchange} from "@/state/pnftExchange";
-import {useRouter} from "next/router";
-import {IProposal} from "@/interfaces/proposal";
-import {IToken} from "@/interfaces/token";
-import {TOKEN_ICON_DEFAULT} from "@/constants/common";
-import BigNumber from "bignumber.js";
-import {compareString, formatCurrency} from "@/utils";
-import InfoTooltip from "@/components/Swap/infoTooltip";
-import web3 from "web3";
-import SocialToken from "@/components/Social";
-import {BsPencil} from "react-icons/bs";
-import {getListProposals} from "@/services/proposal";
-import ProposalStatus from "@/modules/Proposal/list/Proposal.Status";
-import px2rem from "@/utils/px2rem";
-import {colors} from '@/theme/colors';
-import moment from "moment";
 
 const ProposalList = () => {
   const [data, setData] = useState<any[]>();
   const [loading, setLoading] = useState(true);
-  const { account } = useWeb3React();
+  const { tcWalletAddress: account } = useTCWallet();
   // const dispatch = useDispatch();
   const needReload = useAppSelector(selectPnftExchange).needReload;
   const router = useRouter();
@@ -68,7 +68,7 @@ const ProposalList = () => {
         render(row: IProposal) {
           const token: IToken = row?.userPool?.launchpadToken;
           return (
-            <Flex gap={4} color={"#FFFFFF"} alignItems={"center"}>
+            <Flex gap={4} color={'#FFFFFF'} alignItems={'center'}>
               <img src={token.thumbnail || TOKEN_ICON_DEFAULT} />
               <Box>
                 <Text className="record-title">
@@ -95,18 +95,27 @@ const ProposalList = () => {
           const token: IToken = row?.userPool?.launchpadToken;
           const userPool = row?.userPool;
           let percent = 0;
-          if(Number(userPool.launchpadBalance) > 0 && Number(token.totalSupply) > 0) {
-            percent = new BigNumber(userPool.launchpadBalance).div(token.totalSupply).multipliedBy(100).toNumber();
+          if (
+            Number(userPool.launchpadBalance) > 0 &&
+            Number(token.totalSupply) > 0
+          ) {
+            percent = new BigNumber(userPool.launchpadBalance)
+              .div(token.totalSupply)
+              .multipliedBy(100)
+              .toNumber();
           }
 
-          return (
-            userPool.launchpadBalance
-              ? (<Flex direction={"column"} color={"#FFFFFF"}>
-                  <Text>{formatCurrency(userPool.launchpadBalance, 18)} {token?.symbol}</Text>
-                  <Text fontSize={"xs"} color={"rgba(255,255,255,0.7)"}>{formatCurrency(percent, 2)}% of Supply</Text>
-                </Flex>
-              )
-              : <Text color={"#FFFFFF"}>N/A</Text>
+          return userPool.launchpadBalance ? (
+            <Flex direction={'column'} color={'#FFFFFF'}>
+              <Text>
+                {formatCurrency(userPool.launchpadBalance, 18)} {token?.symbol}
+              </Text>
+              <Text fontSize={'xs'} color={'rgba(255,255,255,0.7)'}>
+                {formatCurrency(percent, 2)}% of Supply
+              </Text>
+            </Flex>
+          ) : (
+            <Text color={'#FFFFFF'}>N/A</Text>
           );
         },
       },
@@ -124,10 +133,12 @@ const ProposalList = () => {
         render(row: IProposal) {
           const token: IToken = row?.userPool?.launchpadToken;
           return (
-            <Text color={"#FFFFFF"}>{`${
-              token.totalSupply
-                ? `${formatCurrency(token.totalSupply, 18)} ${token?.symbol}`
-                : <Text color={"#FFFFFF"}>N/A</Text>
+            <Text color={'#FFFFFF'}>{`${
+              token.totalSupply ? (
+                `${formatCurrency(token.totalSupply, 18)} ${token?.symbol}`
+              ) : (
+                <Text color={'#FFFFFF'}>N/A</Text>
+              )
             }`}</Text>
           );
         },
@@ -154,20 +165,24 @@ const ProposalList = () => {
           const token: IToken = row?.userPool?.launchpadToken;
           const userPool = row?.userPool;
           return (
-            <Box color={"#FFFFFF"}>
+            <Box color={'#FFFFFF'}>
               <Text>{`${
                 userPool.liquidityRatio
                   ? `${formatCurrency(
-                    new BigNumber(web3.utils.toWei(userPool.liquidityRatio).toString())
-                      .dividedBy(10000)
-                      .toString(),
-                    18,
-                  )}%`
+                      new BigNumber(
+                        web3.utils.toWei(userPool.liquidityRatio).toString(),
+                      )
+                        .dividedBy(10000)
+                        .toString(),
+                      18,
+                    )}%`
                   : 'N/A'
               }`}</Text>
               <Text>{`${
                 token.totalSupply
-                  ? `${formatCurrency(userPool.liquidityBalance, 18)} ${token?.symbol}`
+                  ? `${formatCurrency(userPool.liquidityBalance, 18)} ${
+                      token?.symbol
+                    }`
                   : 'N/A'
               }`}</Text>
             </Box>
@@ -188,9 +203,8 @@ const ProposalList = () => {
         render(row: IProposal) {
           const userPool = row?.userPool;
           return (
-            <Flex direction={"column"} color={"#FFFFFF"}>
-              <Text
-              >{`${userPool.goalBalance} ${userPool?.liquidityToken.symbol}`}</Text>
+            <Flex direction={'column'} color={'#FFFFFF'}>
+              <Text>{`${userPool.goalBalance} ${userPool?.liquidityToken.symbol}`}</Text>
               <Text mt={2}>${formatCurrency(userPool.totalValueUsd, 2)}</Text>
             </Flex>
           );
@@ -271,7 +285,9 @@ const ProposalList = () => {
                 <Text color={colors.white500} fontSize={px2rem(14)}>
                   Starts at:
                 </Text>
-                <Text color={colors.white}>{moment(row.voteStart).format('LLL')}</Text>
+                <Text color={colors.white}>
+                  {moment(row.voteStart).format('LLL')}
+                </Text>
               </Flex>
               <Flex gap={1}>
                 <Text color={colors.white500} fontSize={px2rem(14)}>
@@ -335,7 +351,9 @@ const ProposalList = () => {
                 <Box
                   cursor={'pointer'}
                   onClick={() =>
-                    router.push(`${ROUTE_PATH.LAUNCHPAD_MANAGE}?id=${userPool.launchpad}`)
+                    router.push(
+                      `${ROUTE_PATH.LAUNCHPAD_MANAGE}?id=${userPool.launchpad}`,
+                    )
                   }
                 >
                   <BsPencil />
@@ -376,10 +394,16 @@ const ProposalList = () => {
 
   return (
     <BodyContainer className={styles.wrapper}>
-      <Text as={'h1'} className="title" color={"#FFFFFF"} textAlign={"center"}>
+      <Text as={'h1'} className="title" color={'#FFFFFF'} textAlign={'center'}>
         Proposal
       </Text>
-      <Text className="desc" color={"#FFFFFF"} textAlign={"center"} maxWidth={"1024px"} marginX={"auto"}>
+      <Text
+        className="desc"
+        color={'#FFFFFF'}
+        textAlign={'center'}
+        maxWidth={'1024px'}
+        marginX={'auto'}
+      >
         Welcome to DeFi crowdfunding on Bitcoin. A place where you can support
         innovative projects and ideas all while leveraging the power of blockchain.
         Join us as we revolutionize the future of crowdfunding!
