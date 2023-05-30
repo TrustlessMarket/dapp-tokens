@@ -1,17 +1,23 @@
 import UniswapV2Router from '@/abis/UniswapV2Router.json';
 import { transactionType } from '@/components/Swap/alertInfoProcessing/types';
 import { APP_ENV, UNIV2_ROUTER_ADDRESS } from '@/configs';
+import { getConnector } from '@/connection';
 import { MaxUint256 } from '@/constants/url';
-import { AssetsContext } from '@/contexts/assets-context';
 import { TransactionEventType } from '@/enums/transaction';
+import useTCWallet from '@/hooks/useTCWallet';
 import { ContractOperationHook, DAppType } from '@/interfaces/contract-operation';
 import { TransactionStatus } from '@/interfaces/walletTransaction';
 import { logErrorToServer, scanTrx } from '@/services/swap';
 import store from '@/state';
 import { updateCurrentTransaction } from '@/state/pnftExchange';
-import { compareString, getContract, getDefaultGasPrice } from '@/utils';
-import { useWeb3React } from '@web3-react/core';
-import { useCallback, useContext } from 'react';
+import {
+  compareString,
+  getDefaultGasPrice,
+  getDefaultProvider,
+  getFunctionABI,
+} from '@/utils';
+import { ethers } from 'ethers';
+import { useCallback } from 'react';
 import Web3 from 'web3';
 
 export interface IAddLiquidityParams {
@@ -27,8 +33,9 @@ export interface IAddLiquidityParams {
 }
 
 const useAddLiquidity: ContractOperationHook<IAddLiquidityParams, boolean> = () => {
-  const { account, provider } = useWeb3React();
-  const { btcBalance, feeRate } = useContext(AssetsContext);
+  const { tcWalletAddress: account } = useTCWallet();
+  const provider = getDefaultProvider();
+  const connector = getConnector();
 
   const call = useCallback(
     async (params: IAddLiquidityParams): Promise<boolean> => {
@@ -42,87 +49,34 @@ const useAddLiquidity: ContractOperationHook<IAddLiquidityParams, boolean> = () 
         isPaired,
       } = params;
 
-      if (account && provider && tokenA && tokenB) {
-        const contract = getContract(
-          UNIV2_ROUTER_ADDRESS,
-          UniswapV2Router,
-          provider,
+      if (account && provider && tokenA && tokenB && connector) {
+        const functionABI = getFunctionABI(UniswapV2Router, 'addLiquidity');
+
+        const ContractInterface = new ethers.utils.Interface(functionABI.abi);
+
+        const encodeAbi = ContractInterface.encodeFunctionData('addLiquidity', [
+          tokenA,
+          tokenB,
+          Web3.utils.toWei(amountADesired, 'ether'),
+          Web3.utils.toWei(amountBDesired, 'ether'),
+          Web3.utils.toWei(amountAMin, 'ether'),
+          Web3.utils.toWei(amountBMin, 'ether'),
           account,
-        );
+          MaxUint256,
+        ]);
 
-        // const [amountApproveA, amountApproveB] = await Promise.all([
-        //   isApproveERC20Token({
-        //     address: UNIV2_ROUTER_ADDRESS,
-        //     erc20TokenAddress: tokenA,
-        //   }),
-        //   isApproveERC20Token({
-        //     address: UNIV2_ROUTER_ADDRESS,
-        //     erc20TokenAddress: tokenB,
-        //   }),
-        // ]);
-
-        // console.log('amountApproveA', amountApproveA);
-        // console.log('amountApproveB', amountApproveB);
-
-        // let isPendingTx = false;
-
-        // const unInscribedTxIDs = await getUnInscribedTransactionDetailByAddress(
-        //   account,
-        // );
-
-        // for await (const unInscribedTxID of unInscribedTxIDs) {
-        //   const _getTxDetail = await getTCTxByHash(unInscribedTxID.Hash);
-        //   const _inputStart = _getTxDetail.input.slice(0, 10);
-
-        //   if (compareString(funcLiquidHex, _inputStart)) {
-        //     isPendingTx = true;
-        //   }
-        // }
-
-        // if (isPendingTx) {
-        //   throw Error(ERROR_CODE.PENDING);
-        // }
-
-        // if (compareString(APP_ENV, 'production')) {
-        //   const estimatedFee = TC_SDK.estimateInscribeFee({
-        //     tcTxSizeByte: TRANSFER_TX_SIZE,
-        //     feeRatePerByte: feeRate.fastestFee,
-        //   });
-        //   const balanceInBN = new BigNumber(btcBalance);
-        //   if (balanceInBN.isLessThan(estimatedFee.totalFee)) {
-        //     throw Error(
-        //       `Your balance is insufficient. Please top up at least ${formatBTCPrice(
-        //         estimatedFee.totalFee.toString(),
-        //       )} BTC to pay network fee.`,
-        //     );
-        //   }
-        // }
-
-        const transaction = await contract
-          .connect(provider.getSigner())
-          .addLiquidity(
-            tokenA,
-            tokenB,
-            Web3.utils.toWei(amountADesired, 'ether'),
-            Web3.utils.toWei(amountBDesired, 'ether'),
-            Web3.utils.toWei(amountAMin, 'ether'),
-            Web3.utils.toWei(amountBMin, 'ether'),
-            account,
-            MaxUint256,
-            {
-              gasLimit: isPaired ? '300000' : '800000',
-              gasPrice: getDefaultGasPrice(),
-            },
-          );
-
-        // TC_SDK.signTransaction({
-        //   method: `${DAppType.ERC20} - ${TransactionEventType.CREATE}`,
-        //   hash: transaction.hash,
-        //   dappURL: window.location.origin,
-        //   isRedirect: true,
-        //   target: '_blank',
-        //   isMainnet: isProduction(),
-        // });
+        const transaction = await connector.requestSign({
+          target: '_blank',
+          calldata: encodeAbi,
+          to: UNIV2_ROUTER_ADDRESS,
+          value: '',
+          redirectURL: window.location.href,
+          isInscribe: true,
+          gasLimit: isPaired ? '300000' : '800000',
+          gasPrice: getDefaultGasPrice(),
+          functionType: functionABI.functionType,
+          functionName: functionABI.functionName,
+        });
 
         logErrorToServer({
           type: 'logs',
@@ -155,7 +109,7 @@ const useAddLiquidity: ContractOperationHook<IAddLiquidityParams, boolean> = () 
 
       return false;
     },
-    [account, provider, btcBalance, feeRate],
+    [account, provider],
   );
 
   return {

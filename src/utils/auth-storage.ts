@@ -1,4 +1,9 @@
-import { ACCESS_TOKEN, REFRESH_TOKEN } from '@/constants/storage-key';
+import {
+  ACCESS_TOKEN,
+  REFRESH_TOKEN,
+  TAPROOT_WALLET_ADDRESS,
+  TC_WALLET_ADDRESS,
+} from '@/constants/storage-key';
 import localStorage from '@/utils/localstorage';
 // import { User } from '@interfaces/user';
 // import { isBrowser } from '@utils/common';
@@ -22,6 +27,8 @@ export const clearAccessTokenStorage = (): void => {
 export const clearAuthStorage = (): void => {
   localStorage.remove(ACCESS_TOKEN);
   localStorage.remove(REFRESH_TOKEN);
+  localStorage.remove(TC_WALLET_ADDRESS);
+  localStorage.remove(TAPROOT_WALLET_ADDRESS);
   // walletBTCStorage.removeWallet();
 };
 

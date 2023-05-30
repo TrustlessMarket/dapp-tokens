@@ -2,11 +2,21 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import FiledButton from '@/components/Swap/button/filedButton';
+import FieldText from '@/components/Swap/form/fieldText';
+import FileDropzoneUpload from '@/components/Swap/form/fileDropzoneUpload';
 import InputWrapper from '@/components/Swap/form/inputWrapper';
 import WrapperConnected from '@/components/WrapperConnected';
 import { toastError } from '@/constants/error';
+import { ROUTE_PATH } from '@/constants/route-path';
+import useTCWallet from '@/hooks/useTCWallet';
 import { IToken } from '@/interfaces/token';
+import { uploadFile } from '@/services/file';
 import { logErrorToServer } from '@/services/swap';
+import {
+  IUpdateTokenPayload,
+  getTokenDetail,
+  updateTokenInfo,
+} from '@/services/token-explorer';
 import { useAppDispatch, useAppSelector } from '@/state/hooks';
 import {
   requestReload,
@@ -14,18 +24,20 @@ import {
   selectPnftExchange,
 } from '@/state/pnftExchange';
 import { getIsAuthenticatedSelector } from '@/state/user/selector';
+import { compareString, formatCurrency, shortenAddress } from '@/utils';
+import { decimalToExponential } from '@/utils/format';
 import px2rem from '@/utils/px2rem';
 import { showError } from '@/utils/toast';
 import {
   Box,
   Center,
   Flex,
-  forwardRef,
   Grid,
   GridItem,
   Text,
+  forwardRef,
 } from '@chakra-ui/react';
-import { useWeb3React } from '@web3-react/core';
+import BigNumber from 'bignumber.js';
 import cx from 'classnames';
 import { useRouter } from 'next/router';
 import { useEffect, useImperativeHandle, useRef, useState } from 'react';
@@ -33,18 +45,6 @@ import { Field, Form, useForm, useFormState } from 'react-final-form';
 import toast from 'react-hot-toast';
 import { useSelector } from 'react-redux';
 import styles from './styles.module.scss';
-import {
-  getTokenDetail,
-  IUpdateTokenPayload,
-  updateTokenInfo,
-} from '@/services/token-explorer';
-import FieldText from '@/components/Swap/form/fieldText';
-import FileDropzoneUpload from '@/components/Swap/form/fileDropzoneUpload';
-import { uploadFile } from '@/services/file';
-import { compareString, formatCurrency, shortenAddress } from '@/utils';
-import BigNumber from 'bignumber.js';
-import { decimalToExponential } from '@/utils/format';
-import { ROUTE_PATH } from '@/constants/route-path';
 
 export const MAX_FILE_SIZE = 393216000; // 375 MB
 
@@ -80,7 +80,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const [file, setFile] = useState<any>();
   const [uploading, setUploading] = useState(false);
 
-  const { account } = useWeb3React();
+  const { tcWalletAddress: account } = useTCWallet();
   const needReload = useAppSelector(selectPnftExchange).needReload;
 
   const { values } = useFormState();
@@ -409,7 +409,7 @@ const TradingForm = () => {
   const refForm = useRef<any>();
   const [submitting, setSubmitting] = useState(false);
   const dispatch = useAppDispatch();
-  const { account } = useWeb3React();
+  const { tcWalletAddress: account } = useTCWallet();
   const router = useRouter();
 
   const handleSubmit = async (values: any) => {

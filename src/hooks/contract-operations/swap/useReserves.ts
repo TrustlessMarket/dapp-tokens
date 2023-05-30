@@ -1,8 +1,8 @@
 import UniswapV2PairJson from '@/abis/UniswapV2Pair.json';
 import { TransactionEventType } from '@/enums/transaction';
+import useTCWallet from '@/hooks/useTCWallet';
 import { ContractOperationHook, DAppType } from '@/interfaces/contract-operation';
 import { getContract, getDefaultProvider } from '@/utils';
-import { useWeb3React } from '@web3-react/core';
 import { useCallback } from 'react';
 
 export interface IGetReservesParams {
@@ -16,7 +16,7 @@ const useGetReserves: ContractOperationHook<
     _reserve1: string;
   }
 > = () => {
-  const { account } = useWeb3React();
+  const { tcWalletAddress: account } = useTCWallet();
 
   const provider = getDefaultProvider();
 
