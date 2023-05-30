@@ -300,7 +300,18 @@ const LaunchpadContainer = () => {
           borderBottom: 'none',
         },
         render(row: ILaunchpad) {
-          return row?.launchpad || !row?.proposalId ? <LaunchpadStatus row={row} /> : <ProposalStatus row={row?.userProposal} />;
+          if(!row?.proposalId) {
+            return <LaunchpadStatus row={row} />;
+          } else if (
+            moment(row?.userProposal?.voteStart).unix() > moment().unix() ||
+            moment(row?.userProposal?.voteEnd).unix() < moment().unix() ||
+            (moment(row?.userProposal?.voteStart).unix() <= moment().unix() &&
+            moment().unix() < moment(row?.userProposal?.voteEnd).unix())
+          ) {
+            return <ProposalStatus row={row?.userProposal} />
+          }
+
+          return <LaunchpadStatus row={row} />;
         },
       },
       {
