@@ -86,7 +86,7 @@ const LaunchManage = () => {
 
       const signature = await getSignature(account);
 
-      createLaunchpad({
+      await createLaunchpad({
         user_address: account,
         video: values?.video,
         image: values?.image,
