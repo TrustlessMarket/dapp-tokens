@@ -1,20 +1,26 @@
 import UniswapV2RouterJson from '@/abis/UniswapV2Router.json';
 import { transactionType } from '@/components/Swap/alertInfoProcessing/types';
-import { TRANSFER_TX_SIZE, UNIV2_ROUTER_ADDRESS } from '@/configs';
+import { UNIV2_ROUTER_ADDRESS } from '@/configs';
+import { getConnector } from '@/connection';
 import { ERROR_CODE } from '@/constants/error';
 import { CONTRACT_METHOD_IDS } from '@/constants/methodId';
 import { MaxUint256 } from '@/constants/url';
-import { AssetsContext } from '@/contexts/assets-context';
 import { TransactionEventType } from '@/enums/transaction';
 import useBitcoin from '@/hooks/useBitcoin';
+import useTCWallet from '@/hooks/useTCWallet';
 import { ContractOperationHook, DAppType } from '@/interfaces/contract-operation';
 import { TransactionStatus } from '@/interfaces/walletTransaction';
-import { logErrorToServer, scanTrx } from '@/services/swap';
+import { logErrorToServer } from '@/services/swap';
 import store from '@/state';
 import { updateCurrentTransaction } from '@/state/pnftExchange';
-import { compareString, getContract, getDefaultGasPrice } from '@/utils';
-import { useWeb3React } from '@web3-react/core';
-import { useCallback, useContext } from 'react';
+import {
+  compareString,
+  getDefaultGasPrice,
+  getDefaultProvider,
+  getFunctionABI,
+} from '@/utils';
+import { ethers } from 'ethers';
+import { useCallback } from 'react';
 import Web3 from 'web3';
 
 export interface ISwapERC20TokenParams {
@@ -28,24 +34,32 @@ const useSwapERC20Token: ContractOperationHook<
   ISwapERC20TokenParams,
   boolean
 > = () => {
-  const { account, provider } = useWeb3React();
-  const { btcBalance, feeRate } = useContext(AssetsContext);
+  const { tcWalletAddress: account } = useTCWallet();
+  const provider = getDefaultProvider();
+  const connector = getConnector();
   const { getUnInscribedTransactionDetailByAddress, getTCTxByHash } = useBitcoin();
 
   const call = useCallback(
     async (params: ISwapERC20TokenParams): Promise<boolean> => {
       const { addresses, address, amount, amountOutMin } = params;
       if (account && provider) {
-        const contract = getContract(
-          UNIV2_ROUTER_ADDRESS,
+        const functionABI = getFunctionABI(
           UniswapV2RouterJson,
-          provider,
-          account,
+          'swapExactTokensForTokens',
         );
-        console.log({
-          tcTxSizeByte: TRANSFER_TX_SIZE,
-          feeRatePerByte: feeRate.fastestFee,
-        });
+
+        const ContractInterface = new ethers.utils.Interface(functionABI.abi);
+
+        const encodeAbi = ContractInterface.encodeFunctionData(
+          'swapExactTokensForTokens',
+          [
+            Web3.utils.toWei(amount, 'ether'),
+            Web3.utils.toWei(amountOutMin, 'ether'),
+            addresses,
+            address,
+            MaxUint256,
+          ],
+        );
 
         let isPendingTx = false;
 
@@ -70,19 +84,20 @@ const useSwapERC20Token: ContractOperationHook<
 
         const gasLimit = 50000 + addresses.length * 100000;
 
-        const transaction = await contract
-          .connect(provider.getSigner())
-          .swapExactTokensForTokens(
-            Web3.utils.toWei(amount, 'ether'),
-            Web3.utils.toWei(amountOutMin, 'ether'),
-            addresses,
-            address,
-            MaxUint256,
-            {
-              gasLimit,
-              gasPrice: getDefaultGasPrice(),
-            },
-          );
+        const transaction = await await connector.requestSign({
+          target: '_blank',
+          calldata: encodeAbi,
+          to: UNIV2_ROUTER_ADDRESS,
+          value: '',
+          redirectURL: window.location.href,
+          isInscribe: true,
+          gasLimit,
+          gasPrice: getDefaultGasPrice(),
+          functionType: functionABI.functionType,
+          functionName: functionABI.functionName,
+          isExecuteTransaction: false,
+          from: account,
+        });
 
         logErrorToServer({
           type: 'logs',
@@ -90,15 +105,6 @@ const useSwapERC20Token: ContractOperationHook<
           error: JSON.stringify(transaction),
           message: `gasLimit: '${gasLimit}'`,
         });
-
-        // TC_SDK.signTransaction({
-        //   method: `${DAppType.ERC20} - ${TransactionEventType.CREATE}`,
-        //   hash: transaction.hash,
-        //   dappURL: window.location.origin,
-        //   isRedirect: true,
-        //   target: '_blank',
-        //   isMainnet: isProduction(),
-        // });
 
         store.dispatch(
           updateCurrentTransaction({
@@ -111,18 +117,12 @@ const useSwapERC20Token: ContractOperationHook<
           }),
         );
 
-        // await transaction.wait();
-
-        await scanTrx({
-          tx_hash: transaction.hash,
-        });
-
         return transaction;
       }
 
       return false;
     },
-    [account, provider, btcBalance, feeRate],
+    [account, provider],
   );
 
   return {

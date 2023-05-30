@@ -2,16 +2,16 @@ import SocialToken from '@/components/Social';
 import FiledButton from '@/components/Swap/button/filedButton';
 import { WBTC_ADDRESS, WETH_ADDRESS } from '@/constants/common';
 import { ROUTE_PATH } from '@/constants/route-path';
+import useTCWallet from '@/hooks/useTCWallet';
 import { IToken } from '@/interfaces/token';
 import { colors } from '@/theme/colors';
 import { compareString, formatCurrency } from '@/utils';
 import { Box, Flex, Text } from '@chakra-ui/react';
-import { useWeb3React } from '@web3-react/core';
 import { useRouter } from 'next/router';
 
 const TokenTopInfo = ({ data }: { data: IToken }) => {
   const router = useRouter();
-  const { account } = useWeb3React();
+  const { tcWalletAddress: account } = useTCWallet();
 
   return (
     <>

@@ -1,39 +1,27 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import { CDN_URL } from '@/configs';
-import { ROUTE_PATH } from '@/constants/route-path';
-import { gsap } from 'gsap';
-import Link from 'next/link';
-import { useEffect, useRef, useState } from 'react';
-import { Wrapper } from './Header.styled';
-import MenuMobile from './MenuMobile';
-import WalletHeader from './Wallet';
-import { useWindowSize } from '@trustless-computer/dapp-core';
-import { useRouter } from 'next/router';
 import {
   GENERATIVE_DISCORD,
   GM_ADDRESS,
   TRUSTLESS_COMPUTER,
   WETH_ADDRESS,
 } from '@/constants/common';
-import { useScreenLayout } from '@/hooks/useScreenLayout';
+import { ROUTE_PATH } from '@/constants/route-path';
 import { defaultProvider } from '@/contexts/screen-context';
-import { compareString } from '@/utils';
+import { useScreenLayout } from '@/hooks/useScreenLayout';
 import { Flex, Link as LinkText, Text } from '@chakra-ui/react';
+import { useWindowSize } from '@trustless-computer/dapp-core';
+import { gsap } from 'gsap';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
+import { useEffect, useRef, useState } from 'react';
 import { RiArrowRightUpLine } from 'react-icons/ri';
+import { Wrapper } from './Header.styled';
+import MenuMobile from './MenuMobile';
+import WalletHeader from './Wallet';
 
 export const isScreenDarkMode = () => {
   return true;
-  const router = useRouter();
-  return (
-    compareString(router?.pathname, ROUTE_PATH.HOME) ||
-    compareString(router?.pathname, ROUTE_PATH.MARKETS) ||
-    compareString(router?.pathname, ROUTE_PATH.IDO) ||
-    compareString(router?.pathname, ROUTE_PATH.IDO_MANAGE) ||
-    compareString(router?.pathname, ROUTE_PATH.TOKEN) ||
-    compareString(router?.pathname, ROUTE_PATH.GET_STARTED) ||
-    compareString(router?.pathname, ROUTE_PATH.TM_TRANSFER_HISTORY) ||
-    compareString(router?.pathname, ROUTE_PATH.SWAP_HISTORY)
-  );
 };
 
 export const HEADER_MENUS = [
