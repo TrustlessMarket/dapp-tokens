@@ -111,6 +111,7 @@ export const StyledIdoStatus = styled(Badge)`
     font-size: 12px;
     font-weight: 500;
   }
+  &.cancelled,
   &.ending,
   &.failed,
   &.closed {
