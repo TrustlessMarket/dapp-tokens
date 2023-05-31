@@ -1,27 +1,26 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import SocialToken from '@/components/Social';
 import BodyContainer from '@/components/Swap/bodyContainer';
-import FiledButton from '@/components/Swap/button/filedButton';
 import InfoTooltip from '@/components/Swap/infoTooltip';
-import ListTable, { ColumnProp } from '@/components/Swap/listTable';
-import { TOKEN_ICON_DEFAULT } from '@/constants/common';
-import { ROUTE_PATH } from '@/constants/route-path';
+import ListTable, {ColumnProp} from '@/components/Swap/listTable';
+import {TOKEN_ICON_DEFAULT} from '@/constants/common';
+import {ROUTE_PATH} from '@/constants/route-path';
 import useTCWallet from '@/hooks/useTCWallet';
-import { IProposal } from '@/interfaces/proposal';
-import { IToken } from '@/interfaces/token';
+import {IProposal} from '@/interfaces/proposal';
+import {IToken} from '@/interfaces/token';
 import ProposalStatus from '@/modules/Proposal/Proposal.Status';
-import { getListProposals } from '@/services/proposal';
-import { useAppSelector } from '@/state/hooks';
-import { selectPnftExchange } from '@/state/pnftExchange';
-import { colors } from '@/theme/colors';
-import { compareString, formatCurrency } from '@/utils';
+import {getListProposals} from '@/services/proposal';
+import {useAppSelector} from '@/state/hooks';
+import {selectPnftExchange} from '@/state/pnftExchange';
+import {colors} from '@/theme/colors';
+import {compareString, formatCurrency} from '@/utils';
 import px2rem from '@/utils/px2rem';
-import { Box, Flex, Text } from '@chakra-ui/react';
+import {Box, Flex, Text} from '@chakra-ui/react';
 import BigNumber from 'bignumber.js';
 import moment from 'moment';
-import { useRouter } from 'next/router';
-import { useEffect, useMemo, useState } from 'react';
-import { BsPencil } from 'react-icons/bs';
+import {useRouter} from 'next/router';
+import {useEffect, useMemo, useState} from 'react';
+import {BsPencil} from 'react-icons/bs';
 import web3 from 'web3';
 import styles from './styles.module.scss';
 
@@ -369,26 +368,9 @@ const ProposalList = () => {
     ];
   }, [account]);
 
-  const onShowCreateIDO = async (_ido?: any) => {
-    return router.push(`${ROUTE_PATH.LAUNCHPAD_MANAGE}`);
-    // const id = 'manageIdo';
-    // const close = () => dispatch(closeModal({ id }));
-    // dispatch(
-    //   openModal({
-    //     id,
-    //     theme: 'dark',
-    //     title: isRemove ? 'Remove IDO Token' : 'Submit Launchpad',
-    //     modalProps: {
-    //       centered: true,
-    //       size: 'xl',
-    //       // contentClassName: styles.modalContent,
-    //     },
-    //     render: () => (
-    //       <IdoTokenManage ido={_ido} onClose={close} isRemove={isRemove} />
-    //     ),
-    //   }),
-    // );
-  };
+  // const onShowCreateIDO = async (_ido?: any) => {
+  //   return router.push(`${ROUTE_PATH.LAUNCHPAD_MANAGE}`);
+  // };
 
   return (
     <BodyContainer className={styles.wrapper}>
