@@ -200,7 +200,7 @@ const LaunchpadContainer = () => {
         render(row: ILaunchpad) {
           const isLaunchPad = checkIsLaunchpad(row);
           const [status] = useLaunchPadStatus({row});
-          let color = colors.white;
+          const color = colors.white;
 
           if (isLaunchPad) {
             // if (status.value !== 'upcoming') {
@@ -221,7 +221,7 @@ const LaunchpadContainer = () => {
               >
                 {`${row.totalValue} / ${row.goalBalance} `}
                 <Flex className={"liquidity-token"} alignItems={"center"} gap={1}>
-                  <img src={row.liquidityToken.thumbnail || TOKEN_ICON_DEFAULT} w={16} h={16}/>
+                  <img src={row.liquidityToken.thumbnail || TOKEN_ICON_DEFAULT}/>
                   {row.liquidityToken.symbol}
                 </Flex>
               </Flex>
