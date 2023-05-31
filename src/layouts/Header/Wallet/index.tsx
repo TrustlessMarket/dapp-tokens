@@ -1,35 +1,43 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import IconSVG from '@/components/IconSVG';
-import {CDN_URL, TM_ADDRESS, WALLET_URL} from '@/configs';
+import { CDN_URL, TM_ADDRESS, WALLET_URL } from '@/configs';
 // import { ROUTE_PATH } from '@/constants/route-path';
-import {getUserSelector} from '@/state/user/selector';
-import {formatBTCPrice} from '@/utils/format';
+import { getUserSelector } from '@/state/user/selector';
+import { formatBTCPrice } from '@/utils/format';
 import copy from 'copy-to-clipboard';
 // import { useRouter } from 'next/router';
 import Text from '@/components/Text';
-import {TRUSTLESS_BRIDGE} from '@/constants/common';
-import {WalletContext} from '@/contexts/wallet-context';
-import {ROUTE_PATH} from '@/constants/route-path';
+import { TRUSTLESS_BRIDGE, TRUSTLESS_FAUCET } from '@/constants/common';
+import { WalletContext } from '@/contexts/wallet-context';
+import { ROUTE_PATH } from '@/constants/route-path';
 import useBalanceERC20Token from '@/hooks/contract-operations/token/useBalanceERC20Token';
 import useTCWallet from '@/hooks/useTCWallet';
-import {getWalletSelector} from '@/state/wallets/selector';
-import {IAccount} from '@/state/wallets/types';
-import {formatCurrency, shortCryptoAddress} from '@/utils';
-import {showError} from '@/utils/toast';
-import {Flex, IconButton, Menu, MenuButton, MenuItem, MenuList, Skeleton, Spinner,} from '@chakra-ui/react';
-import {useWindowSize} from '@trustless-computer/dapp-core';
-import {useRouter} from 'next/router';
-import {useContext, useEffect, useMemo, useRef, useState} from 'react';
-import {OverlayTrigger} from 'react-bootstrap';
-import {toast} from 'react-hot-toast';
-import {AiOutlineSwap} from 'react-icons/ai';
-import Jazzicon, {jsNumberForAddress} from 'react-jazzicon';
-import {useSelector} from 'react-redux';
+import { getWalletSelector } from '@/state/wallets/selector';
+import { IAccount } from '@/state/wallets/types';
+import { formatCurrency, shortCryptoAddress } from '@/utils';
+import { showError } from '@/utils/toast';
+import {
+  Flex,
+  IconButton,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
+  Skeleton,
+  Spinner,
+} from '@chakra-ui/react';
+import { useWindowSize } from '@trustless-computer/dapp-core';
+import { useRouter } from 'next/router';
+import { useContext, useEffect, useMemo, useRef, useState } from 'react';
+import { OverlayTrigger } from 'react-bootstrap';
+import { toast } from 'react-hot-toast';
+import Jazzicon, { jsNumberForAddress } from 'react-jazzicon';
+import { useSelector } from 'react-redux';
 import web3 from 'web3';
-import {isScreenDarkMode} from '..';
-import {ConnectWalletButton, WalletBalance} from '../Header.styled';
+import { isScreenDarkMode } from '..';
+import { ConnectWalletButton, WalletBalance } from '../Header.styled';
 import ChangeAccountWalletItem from './ChangeAccountWalletItem';
-import {WalletPopover} from './Wallet.styled';
+import { WalletPopover } from './Wallet.styled';
 
 const WalletHeader = () => {
   const router = useRouter();
@@ -124,12 +132,11 @@ const WalletHeader = () => {
       <div className="wallet-tc">
         <div className="wallet-item">
           <IconSVG
-            src={`${CDN_URL}/icons/ic-penguin.svg`}
+            src={`${CDN_URL}/icons/ic-penguin-white.svg`}
             maxWidth="24"
             maxHeight="24"
-            type="fill"
           />
-          <Text size={'regular'} className="address" fontWeight="regular">
+          <Text className="address">
             {shortCryptoAddress(user?.walletAddress || '', 10)}
           </Text>
         </div>
@@ -137,12 +144,7 @@ const WalletHeader = () => {
           className="icCopy"
           onClick={() => onClickCopy(user?.walletAddress || '')}
         >
-          <IconSVG
-            src={`${CDN_URL}/icons/ic-copy.svg`}
-            color="black"
-            maxWidth="16"
-            type="stroke"
-          ></IconSVG>
+          <IconSVG src={`${CDN_URL}/icons/ic-coppy-white.svg`}></IconSVG>
         </div>
       </div>
 
@@ -154,7 +156,7 @@ const WalletHeader = () => {
             maxWidth="24"
             maxHeight="24"
           />
-          <Text size={'regular'} className="address" fontWeight="regular">
+          <Text className="address">
             {shortCryptoAddress(user?.walletAddressBtcTaproot || '', 10)}
           </Text>
         </div>
@@ -162,32 +164,30 @@ const WalletHeader = () => {
           className="icCopy"
           onClick={() => onClickCopy(user?.walletAddressBtcTaproot || '')}
         >
-          <IconSVG
-            src={`${CDN_URL}/icons/ic-copy.svg`}
-            color="black"
-            maxWidth="16"
-            type="stroke"
-          ></IconSVG>
+          <IconSVG src={`${CDN_URL}/icons/ic-coppy-white.svg`}></IconSVG>
         </div>
       </div>
       <div className="divider"></div>
       <div className="cta">
         <div className="wallet-link" onClick={() => window.open(WALLET_URL)}>
-          <IconSVG
-            src={`${CDN_URL}/icons/ic-wallet.svg`}
-            maxWidth="20"
-            color="black"
-            type="fill"
-          />
-          <Text size="medium">Wallet</Text>
+          <IconSVG src={`${CDN_URL}/icons/ic-menu-wallet.svg`} maxWidth="20" />
+          <Text className="label">Wallet</Text>
+        </div>
+        <div className="wallet-link" onClick={() => window.open(TRUSTLESS_FAUCET)}>
+          <IconSVG src={`${CDN_URL}/icons/ic-menu-faucet.svg`} />
+          <Text className="label">Faucet</Text>
         </div>
         <div className="wallet-link" onClick={() => gotoBridge('deposit', 'btc')}>
-          <IconSVG src={`/wrapbtc.svg`} maxWidth="20" color="black" type="fill" />
-          <Text size="medium">Wrap BTC</Text>
+          <IconSVG src={`${CDN_URL}/icons/ic-menu-convert.svg`} />
+          <Text className="label">Wrap BTC</Text>
         </div>
         <div className="wallet-link" onClick={() => gotoBridge('deposit', 'eth')}>
-          <IconSVG src={`/wrapbtc.svg`} maxWidth="20" color="black" type="fill" />
-          <Text size="medium">Wrap ETH</Text>
+          <IconSVG src={`${CDN_URL}/icons/ic-menu-convert.svg`} />
+          <Text className="label">Wrap ETH</Text>
+        </div>
+        <div className="wallet-link" onClick={() => gotoBridge('deposit', 'usdc')}>
+          <IconSVG src={`${CDN_URL}/icons/ic-menu-convert.svg`} />
+          <Text className="label">Wrap USDC</Text>
         </div>
         {user?.walletAddress && (
           <div
@@ -195,7 +195,7 @@ const WalletHeader = () => {
             onClick={() => window.open(ROUTE_PATH.TM_TRANSFER_HISTORY, '_self')}
           >
             <img width={20} height={20} src={`${CDN_URL}/icons/tm_icon.png`} />
-            <Text size="medium">{formatCurrency(balanceTM, 5)} TM</Text>
+            <Text className="label">{formatCurrency(balanceTM, 5)} TM</Text>
           </div>
         )}
 
@@ -265,7 +265,7 @@ const WalletHeader = () => {
                 title="Change account"
                 className="btn-select-account"
                 as={IconButton}
-                icon={<AiOutlineSwap fontSize={'1.5rem'} />}
+                icon={<img src={`${CDN_URL}/icons/ic-swap-acc.svg`} />}
               />
               <MenuList>
                 {accounts.map((acc: IAccount) => (

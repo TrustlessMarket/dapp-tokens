@@ -11,6 +11,8 @@ import {
 import { Box, Flex, Text } from '@chakra-ui/react';
 import { useContext, useEffect, useState } from 'react';
 import { BsCheck } from 'react-icons/bs';
+import { jsNumberForAddress } from 'react-jazzicon';
+import Jazzicon from 'react-jazzicon/dist/Jazzicon';
 import web3 from 'web3';
 
 const ChangeAccountWalletItem = ({ account }: { account: IAccount }) => {
@@ -35,17 +37,30 @@ const ChangeAccountWalletItem = ({ account }: { account: IAccount }) => {
   };
 
   return (
-    <Flex onClick={onSelectAccount} className="tc-item-container">
-      <Box>
-        <Text className="tc-account-name">
-          {account.name} <span>({shortCryptoAddress(account.tcAddress, 8)})</span>
-        </Text>
-        <Text className="tc-account-balance">
-          {formatCurrency(web3.utils.fromWei(tcBalance))} TC
-        </Text>
-      </Box>
+    <Flex
+      onClick={onSelectAccount}
+      className={`tc-item-container ${
+        compareString(tcWalletAddress, account.tcAddress)
+          ? 'tc-item-container-active'
+          : ''
+      }`}
+    >
+      <Flex gap={`8px`}>
+        <Jazzicon diameter={32} seed={jsNumberForAddress(account.tcAddress)} />
+        <Box>
+          <Text className="tc-account-name">
+            {account.name} <span>({shortCryptoAddress(account.tcAddress, 8)})</span>
+          </Text>
+          <Text className="tc-account-balance">
+            {formatCurrency(web3.utils.fromWei(tcBalance))} TC
+          </Text>
+        </Box>
+      </Flex>
+
       {compareString(tcWalletAddress, account.tcAddress) && (
-        <BsCheck fontSize={'1.5rem'} color={colors.redSecondary} />
+        <Box className="check-circle">
+          <BsCheck color={colors.white} />
+        </Box>
       )}
     </Flex>
   );
