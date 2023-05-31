@@ -58,7 +58,7 @@ const useCreateLaunchpad: ContractOperationHook<
             launchpadTokenArg,
             liquidityTokenArg,
             ratio,
-            web3.utils.toWei(durationArg.toString()),
+            durationArg,
             web3.utils.toWei(launchpadBalance),
             web3.utils.toWei(goalBalance),
           ],
