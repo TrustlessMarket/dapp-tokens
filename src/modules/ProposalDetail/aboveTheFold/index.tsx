@@ -7,6 +7,7 @@ import Card from "@/components/Swap/card";
 import React from "react";
 import ProposalInfo from "@/modules/ProposalDetail/info";
 import ProposalResult from "@/modules/ProposalDetail/result";
+import {Box} from "@chakra-ui/react";
 
 const AboveTheFold = ({ proposalDetail }: IProposal | any) => {
   // const [status] = useProposalStatus({ row: proposalDetail });
@@ -24,7 +25,9 @@ const AboveTheFold = ({ proposalDetail }: IProposal | any) => {
       <Card bgColor={"#1E1E22"} paddingX={6} paddingY={6} mt={6}>
         <ProposalInfo proposalDetail={proposalDetail}/>
       </Card>
-      <ProposalResult />
+      <Box mt={6}>
+        <ProposalResult />
+      </Box>
     </BodyContainer>
   );
 };
