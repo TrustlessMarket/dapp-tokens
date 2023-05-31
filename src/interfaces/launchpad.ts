@@ -1,5 +1,6 @@
 import { LAUNCHPAD_STATUS } from '@/modules/Launchpad/Launchpad.Status';
 import { IToken } from './token';
+import {IProposal} from "@/interfaces/proposal";
 
 export interface ILaunchpad {
   id: string;
@@ -28,4 +29,6 @@ export interface ILaunchpad {
   video: string;
   image: string;
   duration: string;
+  proposalId: string;
+  userProposal: IProposal;
 }

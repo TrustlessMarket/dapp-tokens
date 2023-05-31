@@ -2,6 +2,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {StyledIdoStatus} from './Proposal.styled';
 import {IProposal} from "@/interfaces/proposal";
+import moment from "moment/moment";
 
 export enum PROPOSAL_STATUS {
   Pending,
@@ -68,7 +69,39 @@ export const LabelStatus : LabelStatusMap = {
 };
 
 export const useProposalStatus = ({ row }: { row: IProposal }) => {
-  return [LabelStatus[PROPOSAL_STATUS[row?.state]?.toLowerCase()]];
+  const state = row?.state;
+  const startTime = row?.voteStart;
+  const endTime = row?.voteEnd;
+
+  let status = LabelStatus.pending;
+
+  if (state === PROPOSAL_STATUS.Active) {
+    status = LabelStatus.active;
+  } else if (state === PROPOSAL_STATUS.Canceled) {
+    status = LabelStatus.canceled;
+  } else if (state === PROPOSAL_STATUS.Defeated) {
+    status = LabelStatus.defeated;
+  } else if (state === PROPOSAL_STATUS.Succeeded) {
+    status = LabelStatus.succeeded;
+  } else if (state === PROPOSAL_STATUS.Queued) {
+    status = LabelStatus.queued;
+  } else if (state === PROPOSAL_STATUS.Expired) {
+    status = LabelStatus.expired;
+  } else if (state === PROPOSAL_STATUS.Executed) {
+    status = LabelStatus.executed;
+  } else if (
+    moment(startTime).unix() <= moment().unix() &&
+    moment().unix() < moment(endTime).unix()
+  ) {
+    status = LabelStatus.active;
+  } else if (
+    moment().unix() >= moment(endTime).unix() ||
+    state === PROPOSAL_STATUS.Closed
+  ) {
+    status = LabelStatus.closed;
+  }
+
+  return [status];
 };
 
 const ProposalStatus = ({ row }: { row: IProposal }) => {

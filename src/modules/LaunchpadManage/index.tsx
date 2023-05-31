@@ -1,16 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { transactionType } from '@/components/Swap/alertInfoProcessing/types';
 import { toastError } from '@/constants/error';
 import { WalletContext } from '@/contexts/wallet-context';
 import { ILaunchpad } from '@/interfaces/launchpad';
-import { TransactionStatus } from '@/interfaces/walletTransaction';
-import {
-  createLaunchpad,
-  getDetailLaunchpad,
-  scanLaunchpadTxHash,
-  updateLaunchpadDescription,
-} from '@/services/launchpad';
+import { createLaunchpad, getDetailLaunchpad } from '@/services/launchpad';
 import { requestReload, updateCurrentTransaction } from '@/state/pnftExchange';
 import { showError } from '@/utils/toast';
 import { Text } from '@chakra-ui/react';
@@ -25,9 +18,11 @@ import LaunchManageForm from './LaunchpadManage.Form';
 import { StyledLaunchpadManage } from './LaunchpadManage.styled';
 import useCreateLaunchpad from '@/hooks/contract-operations/launchpad/useCreate';
 import useContractOperation from '@/hooks/contract-operations/useContractOperation';
+import { ROUTE_PATH } from '@/constants/route-path';
+import useTCWallet from '@/hooks/useTCWallet';
 
 const LaunchManage = () => {
-  const { account } = useWeb3React();
+  const { tcWalletAddress: account } = useTCWallet();
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
   const [detail, setDetail] = useState<ILaunchpad | undefined>(undefined);
@@ -84,9 +79,12 @@ const LaunchManage = () => {
         }),
       );
 
-      const signature = await getSignature(account);
+      const signature = await getSignature({
+        message: account,
+        account,
+      });
 
-      createLaunchpad({
+      const res = await createLaunchpad({
         user_address: account,
         video: values?.video,
         image: values?.image,
@@ -102,6 +100,10 @@ const LaunchManage = () => {
         goal_balance: values.goalBalance,
         duration: Number(values.duration),
       });
+
+      if (!id) {
+        router.replace(`${ROUTE_PATH.LAUNCHPAD_MANAGE}?id=${res?.id}`);
+      }
 
       if (values.isCreateProposal) {
         await createProposalLaunchpad({

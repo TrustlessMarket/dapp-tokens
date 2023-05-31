@@ -21,7 +21,7 @@ import BigNumber from 'bignumber.js';
 import moment from 'moment';
 import { useRouter } from 'next/router';
 import { useEffect, useMemo, useState } from 'react';
-import { BsPencil, BsTrash } from 'react-icons/bs';
+import { BsPencil } from 'react-icons/bs';
 import { ImClock2 } from 'react-icons/im';
 import { useDispatch } from 'react-redux';
 import web3 from 'web3';
@@ -31,11 +31,15 @@ import LaunchpadStatus, {
 } from './Launchpad.Status';
 import { StyledIdoContainer } from './Launchpad.styled';
 import InfoTooltip from '@/components/Swap/infoTooltip';
+import ProposalStatus, {
+  PROPOSAL_STATUS,
+} from '@/modules/Proposal/list/Proposal.Status';
+import useTCWallet from '@/hooks/useTCWallet';
 
 const LaunchpadContainer = () => {
   const [data, setData] = useState<any[]>();
   const [loading, setLoading] = useState(true);
-  const { account } = useWeb3React();
+  const { tcWalletAddress: account } = useTCWallet();
   const dispatch = useDispatch();
   const needReload = useAppSelector(selectPnftExchange).needReload;
   const router = useRouter();
@@ -57,6 +61,10 @@ const LaunchpadContainer = () => {
       setLoading(false);
     }
   };
+
+  const checkIsLaunchpad = (row: ILaunchpad) => {
+    return row?.userProposal?.state === PROPOSAL_STATUS.Executed;
+  }
 
   const columns: ColumnProp[] = useMemo(() => {
     return [
@@ -100,18 +108,24 @@ const LaunchpadContainer = () => {
         render(row: ILaunchpad) {
           const token: IToken = row.launchpadToken;
           let percent = 0;
-          if(Number(row.launchpadBalance) > 0 && Number(token.totalSupply) > 0) {
-            percent = new BigNumber(row.launchpadBalance).div(token.totalSupply).multipliedBy(100).toNumber();
+          if (Number(row.launchpadBalance) > 0 && Number(token.totalSupply) > 0) {
+            percent = new BigNumber(row.launchpadBalance)
+              .div(token.totalSupply)
+              .multipliedBy(100)
+              .toNumber();
           }
 
-          return (
-            row.launchpadBalance
-              ? (<Flex direction={"column"}>
-                  <Text>{formatCurrency(row.launchpadBalance, 18)} {token?.symbol}</Text>
-                  <Text fontSize={"xs"} color={"rgba(255,255,255,0.7)"}>{formatCurrency(percent, 2)}% of Supply</Text>
-                </Flex>
-              )
-              : 'N/A'
+          return row.launchpadBalance ? (
+            <Flex direction={'column'}>
+              <Text>
+                {formatCurrency(row.launchpadBalance, 18)} {token?.symbol}
+              </Text>
+              <Text fontSize={'xs'} color={'rgba(255,255,255,0.7)'}>
+                {formatCurrency(percent, 2)}% of Supply
+              </Text>
+            </Flex>
+          ) : (
+            'N/A'
           );
         },
       },
@@ -190,16 +204,21 @@ const LaunchpadContainer = () => {
           borderBottom: 'none',
         },
         render(row: ILaunchpad) {
+          const isLaunchPad = checkIsLaunchpad(row);
           const [status] = useLaunchPadStatus({ row });
           let color = colors.white;
-          if (status.value !== 'upcoming') {
-            if (Number(row.totalValue) >= Number(row.goalBalance)) {
-              color = colors.greenPrimary;
-            } else if (Number(row.totalValue) < Number(row.goalBalance)) {
-              color = colors.redPrimary;
+
+          if(isLaunchPad) {
+            if (status.value !== 'upcoming') {
+              if (Number(row.totalValue) >= Number(row.goalBalance)) {
+                color = colors.greenPrimary;
+              } else if (Number(row.totalValue) < Number(row.goalBalance)) {
+                color = colors.redPrimary;
+              }
             }
           }
-          return (
+
+          return isLaunchPad ? (
             <Box>
               <Text
                 color={color}
@@ -212,6 +231,12 @@ const LaunchpadContainer = () => {
               />
               <Text mt={2}>${formatCurrency(row.totalValueUsd, 2)}</Text>
             </Box>
+          ) : (
+              <Box>
+                <Text
+                    color={color}
+                >{`${row.goalBalance} ${row.liquidityToken.symbol}`}</Text>
+              </Box>
           );
         },
       },
@@ -227,58 +252,67 @@ const LaunchpadContainer = () => {
           borderBottom: 'none',
         },
         render(row: ILaunchpad) {
-          const [status] = useLaunchPadStatus({ row });
+          if (row?.launchpad || !row?.proposalId) {
+            const [status] = useLaunchPadStatus({ row });
 
-          if (status.value === 'upcoming') {
-            return (
-              <Box>
-                <Text>
-                  <span style={{ color: colors.white500, fontSize: px2rem(14) }}>
-                    Starts at:
-                  </span>{' '}
-                  {moment(row.startTime).format('MMM, DD')}
-                </Text>
-                <Flex mt={1} alignItems={'center'} gap={2}>
-                  <ImClock2 />
+            console.log('row', row);
+            console.log('status', status);
+            console.log('=====');
+
+            if (status.value === 'upcoming') {
+              return (
+                <Box>
                   <Text>
-                    <CountDownTimer end_time={row.startTime} />
+                    <span style={{ color: colors.white500, fontSize: px2rem(14) }}>
+                      Starts at:
+                    </span>{' '}
+                    {moment(row.startTime).format('MMM, DD')}
                   </Text>
-                </Flex>
-              </Box>
-            );
-          }
-          if (status.value === 'crowing-funding') {
-            return (
-              <Box>
-                <Text>
-                  <span style={{ color: colors.white500, fontSize: px2rem(14) }}>
-                    Ends at:
-                  </span>{' '}
-                  {moment(row.endTime).format('MMM, DD')}
-                </Text>
-                <Flex mt={1} alignItems={'center'} gap={2}>
-                  <ImClock2 />
+                  <Flex mt={1} alignItems={'center'} gap={2}>
+                    <ImClock2 />
+                    <Text>
+                      <CountDownTimer end_time={row.startTime} />
+                    </Text>
+                  </Flex>
+                </Box>
+              );
+            }
+            if (status.value === 'crowing-funding') {
+              return (
+                <Box>
                   <Text>
-                    <CountDownTimer end_time={row.endTime} />
+                    <span style={{ color: colors.white500, fontSize: px2rem(14) }}>
+                      Ends at:
+                    </span>{' '}
+                    {moment(row.endTime).format('MMM, DD')}
                   </Text>
-                </Flex>
-              </Box>
-            );
-          }
-          if (status.value === 'success' && status.key !== LAUNCHPAD_STATUS.Closed) {
-            return (
-              <Box>
-                <Text>
-                  <span style={{ color: colors.white500, fontSize: px2rem(14) }}>
-                    Release time:
-                  </span>{' '}
-                </Text>
-                <Flex mt={1} alignItems={'center'} gap={2}>
-                  <ImClock2 />
-                  <Text>{moment(row.lpTokenReleaseTime).format('LL')}</Text>
-                </Flex>
-              </Box>
-            );
+                  <Flex mt={1} alignItems={'center'} gap={2}>
+                    <ImClock2 />
+                    <Text>
+                      <CountDownTimer end_time={row.endTime} />
+                    </Text>
+                  </Flex>
+                </Box>
+              );
+            }
+            if (
+              status.value === 'success' &&
+              status.key !== LAUNCHPAD_STATUS.Closed
+            ) {
+              return (
+                <Box>
+                  <Text>
+                    <span style={{ color: colors.white500, fontSize: px2rem(14) }}>
+                      Release time:
+                    </span>{' '}
+                  </Text>
+                  <Flex mt={1} alignItems={'center'} gap={2}>
+                    <ImClock2 />
+                    <Text>{moment(row.lpTokenReleaseTime).format('LL')}</Text>
+                  </Flex>
+                </Box>
+              );
+            }
           }
 
           return <></>;
@@ -296,7 +330,12 @@ const LaunchpadContainer = () => {
           borderBottom: 'none',
         },
         render(row: ILaunchpad) {
-          return <LaunchpadStatus row={row} />;
+          const isLaunchPad = checkIsLaunchpad(row);
+          if (isLaunchPad) {
+            return <LaunchpadStatus row={row} />;
+          } else {
+            return <ProposalStatus row={row?.userProposal} />;
+          }
         },
       },
       {
@@ -327,7 +366,11 @@ const LaunchpadContainer = () => {
           borderBottom: 'none',
         },
         render(row: ILaunchpad) {
-          if (compareString(row.creatorAddress, account)) {
+          if (
+            compareString(row.creatorAddress, account) &&
+            (!row?.proposalId ||
+              moment(row?.userProposal?.voteStart).unix() > moment().unix())
+          ) {
             return (
               <Flex alignItems={'center'} gap={4}>
                 <Box
@@ -394,13 +437,20 @@ const LaunchpadContainer = () => {
           data={data}
           columns={columns}
           initialLoading={loading}
-          onItemClick={(e) => {
+          onItemClick={(e: ILaunchpad) => {
             if (!e.id) {
               return null;
             }
-            return router.push(
-              `${ROUTE_PATH.LAUNCHPAD_DETAIL}?id=${e.id}`,
-            );
+            const isLaunchPad = checkIsLaunchpad(e);
+            if (isLaunchPad) {
+              return router.push(`${ROUTE_PATH.LAUNCHPAD_DETAIL}?id=${e.id}`);
+            } else if (e.proposalId) {
+              return router.push(
+                `${ROUTE_PATH.PROPOSAL_DETAIL}?proposal_id=${e.proposalId}`,
+              );
+            } else {
+              return router.push(`${ROUTE_PATH.LAUNCHPAD_MANAGE}?id=${e.id}`);
+            }
           }}
         />
       </Box>

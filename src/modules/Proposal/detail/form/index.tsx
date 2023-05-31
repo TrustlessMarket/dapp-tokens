@@ -1,26 +1,26 @@
 /* eslint-disable react/no-children-prop */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import {transactionType} from '@/components/Swap/alertInfoProcessing/types';
+import { transactionType } from '@/components/Swap/alertInfoProcessing/types';
 import FiledButton from '@/components/Swap/button/filedButton';
 import HorizontalItem from '@/components/Swap/horizontalItem';
 import WrapperConnected from '@/components/WrapperConnected';
-import {TRUSTLESS_GASSTATION,} from '@/constants/common';
-import {toastError} from '@/constants/error';
-import {AssetsContext} from '@/contexts/assets-context';
-import {TransactionStatus} from '@/interfaces/walletTransaction';
-import {logErrorToServer} from '@/services/swap';
-import {useAppDispatch, useAppSelector} from '@/state/hooks';
+import { TRUSTLESS_GASSTATION } from '@/constants/common';
+import { toastError } from '@/constants/error';
+import { AssetsContext } from '@/contexts/assets-context';
+import { TransactionStatus } from '@/interfaces/walletTransaction';
+import { logErrorToServer } from '@/services/swap';
+import { useAppDispatch, useAppSelector } from '@/state/hooks';
 import {
   requestReload,
   requestReloadRealtime,
   selectPnftExchange,
   updateCurrentTransaction,
 } from '@/state/pnftExchange';
-import {getIsAuthenticatedSelector} from '@/state/user/selector';
-import {formatCurrency} from '@/utils';
+import { getIsAuthenticatedSelector } from '@/state/user/selector';
+import { compareString, formatCurrency } from '@/utils';
 import px2rem from '@/utils/px2rem';
-import {showError} from '@/utils/toast';
+import { showError } from '@/utils/toast';
 import {
   Box,
   Center,
@@ -33,24 +33,38 @@ import {
   StatNumber,
   Text,
 } from '@chakra-ui/react';
-import {useWeb3React} from '@web3-react/core';
+import { useWeb3React } from '@web3-react/core';
 import BigNumber from 'bignumber.js';
 import Link from 'next/link';
-import {useRouter} from 'next/router';
-import React, {useContext, useEffect, useImperativeHandle, useRef, useState,} from 'react';
-import {Form, useForm} from 'react-final-form';
+import { useRouter } from 'next/router';
+import React, {
+  useContext,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from 'react';
+import { Form, useForm } from 'react-final-form';
 import toast from 'react-hot-toast';
-import {useDispatch, useSelector} from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import styles from './styles.module.scss';
-import {BiBell} from 'react-icons/bi';
-import {closeModal, openModal} from '@/state/modal';
-import {useWindowSize} from '@trustless-computer/dapp-core';
+import { BiBell } from 'react-icons/bi';
+import { closeModal, openModal } from '@/state/modal';
+import { useWindowSize } from '@trustless-computer/dapp-core';
 import SocialToken from '@/components/Social';
 import moment from 'moment';
 import useCountDownTimer from '@/hooks/useCountdown';
-import {IProposal} from "@/interfaces/proposal";
-import {PROPOSAL_STATUS, useProposalStatus} from "@/modules/Proposal/list/Proposal.Status";
-import {getVoteSignatureProposal} from "@/services/proposal";
+import { IProposal } from '@/interfaces/proposal';
+import {
+  PROPOSAL_STATUS,
+  useProposalStatus,
+} from '@/modules/Proposal/list/Proposal.Status';
+import { getVoteSignatureProposal } from '@/services/proposal';
+import useContractOperation from '@/hooks/contract-operations/useContractOperation';
+import useDefeatProposal from '@/hooks/contract-operations/proposal/useDefeat';
+import useExecuteProposal from '@/hooks/contract-operations/proposal/useExecute';
+import useCastVoteProposal from '@/hooks/contract-operations/proposal/useCastVote';
+import useTCWallet from '@/hooks/useTCWallet';
 
 export const MakeFormSwap = forwardRef((props, ref) => {
   const {
@@ -65,9 +79,9 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const [loading, setLoading] = useState(false);
   const [baseBalance, setBaseBalance] = useState<any>('0');
   const { juiceBalance, isLoadedAssets } = useContext(AssetsContext);
-  const isAuthenticated = useSelector(getIsAuthenticatedSelector);
   const dispatch = useDispatch();
   const poolDetail = proposalDetail?.userPool;
+  const { tcWalletAddress: account, isAuthenticated } = useTCWallet();
 
   console.log('proposalDetail', proposalDetail);
 
@@ -78,7 +92,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
 
   useEffect(() => {
     if (poolDetail?.id) {
-      if(isPendingProposal) {
+      if (isPendingProposal) {
         setEndTime(moment(proposalDetail?.voteStart).unix());
       } else {
         setEndTime(moment(proposalDetail?.voteEnd).unix());
@@ -93,7 +107,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   }, [expired]);
 
   const { change, restart } = useForm();
-  const btnDisabled = loading || !canVote;
+  const btnDisabled = loading;
 
   useImperativeHandle(ref, () => {
     return {
@@ -119,45 +133,41 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           <GridItem>
             <Stat>
               <StatLabel>Rewards</StatLabel>
-              <StatNumber>{formatCurrency(poolDetail?.launchpadBalance)} {poolDetail?.launchpadToken?.symbol}</StatNumber>
+              <StatNumber>
+                {formatCurrency(poolDetail?.launchpadBalance)}{' '}
+                {poolDetail?.launchpadToken?.symbol}
+              </StatNumber>
             </Stat>
           </GridItem>
           <GridItem>
             <Stat>
               <StatLabel>Funding Goal</StatLabel>
               <StatNumber>
-                {formatCurrency(poolDetail?.goalBalance || 0)} {poolDetail?.liquidityToken?.symbol}
+                {formatCurrency(poolDetail?.goalBalance || 0)}{' '}
+                {poolDetail?.liquidityToken?.symbol}
               </StatNumber>
             </Stat>
           </GridItem>
         </SimpleGrid>
         <Stat className={styles.infoColumn}>
           <StatLabel>
-            {
-              isPendingProposal ? (
-                'Starts in'
-              ) : isStartingProposal ? (
-                'Ends in'
-              ) : (
-                'Ended at'
-              )
-            }
+            {isPendingProposal
+              ? 'Starts in'
+              : isStartingProposal
+              ? 'Ends in'
+              : 'Ended at'}
           </StatLabel>
           <StatNumber>
             <Text>
-              {
-                isPendingProposal ? (
-                  `${
-                    Number(days) > 0 && `${days}d :`
+              {isPendingProposal
+                ? `${
+                    Number(days) > 0 ? `${days}d :` : ''
                   } ${hours}h : ${minutes}m : ${seconds}s`
-                ) : isStartingProposal ? (
-                  `${
-                    Number(days) > 0 && `${days}d :`
+                : isStartingProposal
+                ? `${
+                    Number(days) > 0 ? `${days}d :` : ''
                   } ${hours}h : ${minutes}m : ${seconds}s`
-                ) : (
-                  moment(proposalDetail.voteEnd).format('LLL')
-                )
-              }
+                : moment(proposalDetail.voteEnd).format('LLL')}
             </Text>
           </StatNumber>
         </Stat>
@@ -211,11 +221,65 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             </Text>
           </Flex>
         )}
-      <WrapperConnected
-        type={'submit'}
-        className={styles.submitButton}
-      >
-        <FiledButton
+      {
+        isAuthenticated && (
+          <WrapperConnected type={'submit'} className={styles.submitButton}>
+            {compareString(poolDetail.creatorAddress, account) ? (
+              <>
+                {proposalDetail?.state === PROPOSAL_STATUS.Defeated && (
+                  <FiledButton
+                    isDisabled={submitting || btnDisabled}
+                    isLoading={submitting}
+                    type="submit"
+                    btnSize={'h'}
+                    containerConfig={{ flex: 1, mt: 6 }}
+                    loadingText={submitting ? 'Processing' : ' '}
+                    processInfo={{
+                      id: transactionType.votingProposal,
+                    }}
+                    className={styles.btnDefeat}
+                  >
+                    DEFEAT THIS PROPOSAL
+                  </FiledButton>
+                )}
+                {proposalDetail?.state === PROPOSAL_STATUS.Succeeded && (
+                  <FiledButton
+                    isDisabled={submitting || btnDisabled}
+                    isLoading={submitting}
+                    type="submit"
+                    btnSize={'h'}
+                    containerConfig={{ flex: 1, mt: 6 }}
+                    loadingText={submitting ? 'Processing' : ' '}
+                    processInfo={{
+                      id: transactionType.votingProposal,
+                    }}
+                    className={styles.btnExecute}
+                  >
+                    EXECUTE THIS PROPOSAL
+                  </FiledButton>
+                )}
+              </>
+            ) : (
+              <>
+                {proposalDetail?.state === PROPOSAL_STATUS.Active && (
+                  <FiledButton
+                    isDisabled={submitting || btnDisabled || !canVote}
+                    isLoading={submitting}
+                    type="submit"
+                    btnSize={'h'}
+                    containerConfig={{ flex: 1, mt: 6 }}
+                    loadingText={submitting ? 'Processing' : ' '}
+                    processInfo={{
+                      id: transactionType.votingProposal,
+                    }}
+                    className={styles.btnExecute}
+                  >
+                    VOTE THIS PROPOSAL
+                  </FiledButton>
+                )}
+              </>
+            )}
+            {/*<FiledButton
           isDisabled={submitting || btnDisabled}
           isLoading={submitting}
           type="submit"
@@ -227,12 +291,14 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           }}
         >
           VOTE THIS PROPOSAL
-        </FiledButton>
-      </WrapperConnected>
+        </FiledButton>*/}
+          </WrapperConnected>
+        )
+      }
       <Flex justifyContent={'flex-end'} mt={4}>
         <SocialToken socials={poolDetail?.launchpadToken?.social} />
       </Flex>
-      <Text mt={4} fontSize={px2rem(20)} fontWeight={"300"} color={'#FFFFFF'}>
+      <Text mt={4} fontSize={px2rem(20)} fontWeight={'300'} color={'#FFFFFF'}>
         The voting will end by{' '}
         {moment.utc(proposalDetail?.voteEnd).format('ddd, MMMM Do YYYY HH:mm:ss Z')}.
       </Text>
@@ -244,7 +310,7 @@ const BuyForm = ({ proposalDetail }: { proposalDetail: IProposal }) => {
   const refForm = useRef<any>();
   const [submitting, setSubmitting] = useState(false);
   const dispatch = useAppDispatch();
-  const { account, isActive } = useWeb3React();
+  const { tcWalletAddress: account, isAuthenticated: isActive } = useTCWallet();
 
   const { mobileScreen } = useWindowSize();
   const [status] = useProposalStatus({ row: proposalDetail });
@@ -253,6 +319,20 @@ const BuyForm = ({ proposalDetail }: { proposalDetail: IProposal }) => {
   const router = useRouter();
   const [voteSignatureProposal, setVoteSignatureProposal] = useState<any>();
   const [canVote, setCanVote] = useState(false);
+
+  console.log('voteSignatureProposal', voteSignatureProposal);
+
+  const { run: defeatProposal } = useContractOperation({
+    operation: useDefeatProposal,
+  });
+
+  const { run: executeProposal } = useContractOperation({
+    operation: useExecuteProposal,
+  });
+
+  const { run: castVoteProposal } = useContractOperation({
+    operation: useCastVoteProposal,
+  });
 
   const isEndProposal = [
     PROPOSAL_STATUS.Canceled,
@@ -289,82 +369,16 @@ const BuyForm = ({ proposalDetail }: { proposalDetail: IProposal }) => {
     if (account && router?.query?.proposal_id) {
       getVoteSignatureProposalInfo();
     }
-  }, [account, isActive, router?.query?.proposal_id, proposalDetail?.id, proposalDetail?.state, needReload]);
-
-  const confirmDeposit = (values: any) => {
-    const { baseAmount, quoteAmount, onConfirm } = values;
-    const id = 'modalDepositConfirm';
-    // const close = () => dispatch(closeModal({id}));
-    dispatch(
-      openModal({
-        id,
-        theme: 'dark',
-        title: 'Confirm voting',
-        className: styles.modalContent,
-        modalProps: {
-          centered: true,
-          size: mobileScreen ? 'full' : 'xl',
-          zIndex: 9999999,
-        },
-        render: () => (
-          <Flex direction={'column'} gap={2}>
-            <HorizontalItem
-              label={
-                <Text fontSize={'sm'} color={'#B1B5C3'}>
-                  Deposit amount
-                </Text>
-              }
-              value={
-                <Text fontSize={'sm'}>
-                  {formatCurrency(baseAmount, 6)}{' '}
-                  {poolDetail?.liquidityToken?.symbol}
-                </Text>
-              }
-            />
-            <HorizontalItem
-              label={
-                <Text fontSize={'sm'} color={'#B1B5C3'}>
-                  Estimate receive amount
-                </Text>
-              }
-              value={
-                <Text fontSize={'sm'}>
-                  {formatCurrency(quoteAmount, 6)}{' '}
-                  {poolDetail?.launchpadToken?.symbol}
-                </Text>
-              }
-            />
-            <FiledButton
-              loadingText="Processing"
-              btnSize={'h'}
-              onClick={onConfirm}
-              mt={4}
-            >
-              Confirm
-            </FiledButton>
-          </Flex>
-        ),
-      }),
-    );
-  };
+  }, [
+    account,
+    isActive,
+    router?.query?.proposal_id,
+    proposalDetail?.id,
+    proposalDetail?.state,
+    needReload,
+  ]);
 
   const handleSubmit = async (values: any) => {
-    console.log('handleSubmit', values);
-    const id = 'modalDepositConfirm';
-    const close = () => dispatch(closeModal({ id }));
-
-    confirmDeposit({
-      ...values,
-      onConfirm: () => {
-        close();
-        handleDeposit(values);
-      },
-    });
-  };
-
-  const handleDeposit = async (values: any) => {
-    const { boostInfo, baseAmount, quoteAmount, swapRoutes } = values;
-
     try {
       setSubmitting(true);
       dispatch(
@@ -374,30 +388,31 @@ const BuyForm = ({ proposalDetail }: { proposalDetail: IProposal }) => {
         }),
       );
 
-      const data = {
-        amount: baseAmount,
-        launchpadAddress: poolDetail?.launchpad,
-        boostRatio: '0',
-        signature: '',
-      };
-
-      if (boostInfo) {
-        data.boostRatio = boostInfo.boostSign;
-        data.signature = boostInfo.adminSignature;
-      }
-
-      // let response;
-      // if (isClaimLaunchpad) {
-      //   response = await claimLaunchpad({
-      //     launchpadAddress: poolDetail?.launchpad,
-      //   });
-      // } else if (isEndLaunchpad) {
-      //   response = await endLaunchpad({
-      //     launchpadAddress: poolDetail?.launchpad,
-      //   });
-      // } else {
-      //   response = await depositLaunchpad(data);
+      // const data = {
+      //   amount: baseAmount,
+      //   launchpadAddress: poolDetail?.launchpad,
+      //   boostRatio: '0',
+      //   signature: '',
+      // };
+      //
+      // if (boostInfo) {
+      //   data.boostRatio = boostInfo.boostSign;
+      //   data.signature = boostInfo.adminSignature;
       // }
+
+      let response;
+      if (compareString(poolDetail?.creatorAddress, account)) {
+        if (proposalDetail?.state === PROPOSAL_STATUS.Defeated) {
+          response = await defeatProposal({
+            proposalId: proposalDetail?.proposalId,
+          });
+        } else if (proposalDetail?.state === PROPOSAL_STATUS.Succeeded) {
+          response = await executeProposal({
+            proposalId: proposalDetail?.proposalId,
+          });
+        }
+      } else if (canVote) {
+      }
 
       toast.success('Transaction has been created. Please wait for few minutes.');
       refForm.current?.reset();

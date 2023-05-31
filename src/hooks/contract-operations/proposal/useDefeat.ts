@@ -1,41 +1,40 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import GovernorJson from '@/abis/Gevernor.json';
-import { GOVERNOR_ADDRESS } from '@/configs';
-import { getConnector } from '@/connection';
 import { TransactionEventType } from '@/enums/transaction';
-import useTCWallet from '@/hooks/useTCWallet';
 import { ContractOperationHook, DAppType } from '@/interfaces/contract-operation';
 import { logErrorToServer } from '@/services/swap';
-import { getDefaultGasPrice, getDefaultProvider, getFunctionABI } from '@/utils';
-import { ethers } from 'ethers';
+import {
+  getContract,
+  getDefaultGasPrice,
+  getDefaultProvider,
+  getFunctionABI,
+} from '@/utils';
+import { useWeb3React } from '@web3-react/core';
 import { useCallback } from 'react';
-import web3 from 'web3';
+import { GOVERNOR_ADDRESS } from '@/configs';
+import useTCWallet from '@/hooks/useTCWallet';
+import { ethers } from 'ethers';
+import { getConnector } from '@/connection';
 
-interface ICastVoteParams {
+interface IDefeatParams {
   proposalId: string;
-  weight: string;
-  support?: string;
-  signature?: string;
 }
 
-const useCastVoteProposal: ContractOperationHook<ICastVoteParams, boolean> = () => {
+const useDefeatProposal: ContractOperationHook<IDefeatParams, boolean> = () => {
   const { tcWalletAddress: account } = useTCWallet();
   const provider = getDefaultProvider();
   const connector = getConnector();
 
   const call = useCallback(
-    async (params: ICastVoteParams): Promise<boolean> => {
-      const { proposalId, weight, support, signature } = params;
+    async (params: IDefeatParams): Promise<boolean> => {
+      const { proposalId } = params;
       if (account && provider) {
-        const functionABI = getFunctionABI(GovernorJson, 'castVote');
+        const functionABI = getFunctionABI(GovernorJson, 'defeat');
 
         const ContractInterface = new ethers.utils.Interface(functionABI.abi);
 
-        const encodeAbi = ContractInterface.encodeFunctionData('castVote', [
+        const encodeAbi = ContractInterface.encodeFunctionData('defeat', [
           proposalId,
-          web3.utils.toWei(weight),
-          support,
-          signature || Buffer.from([]),
         ]);
 
         const transaction = await connector.requestSign({
@@ -45,7 +44,7 @@ const useCastVoteProposal: ContractOperationHook<ICastVoteParams, boolean> = () 
           value: '',
           redirectURL: window.location.href,
           isInscribe: true,
-          gasLimit: '150000',
+          gasLimit: '250000',
           gasPrice: getDefaultGasPrice(),
           functionType: functionABI.functionType,
           functionName: functionABI.functionName,
@@ -56,7 +55,7 @@ const useCastVoteProposal: ContractOperationHook<ICastVoteParams, boolean> = () 
           type: 'logs',
           address: account,
           error: JSON.stringify(transaction),
-          message: "gasLimit: '150000'",
+          message: "gasLimit: '250000'",
         });
 
         return transaction;
@@ -73,4 +72,4 @@ const useCastVoteProposal: ContractOperationHook<ICastVoteParams, boolean> = () 
   };
 };
 
-export default useCastVoteProposal;
+export default useDefeatProposal;

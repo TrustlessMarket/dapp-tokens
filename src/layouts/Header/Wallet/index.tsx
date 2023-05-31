@@ -1,44 +1,35 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import IconSVG from '@/components/IconSVG';
-import { CDN_URL, TM_ADDRESS, WALLET_URL } from '@/configs';
+import {CDN_URL, TM_ADDRESS, WALLET_URL} from '@/configs';
 // import { ROUTE_PATH } from '@/constants/route-path';
-import { getUserSelector } from '@/state/user/selector';
-import { formatBTCPrice } from '@/utils/format';
+import {getUserSelector} from '@/state/user/selector';
+import {formatBTCPrice} from '@/utils/format';
 import copy from 'copy-to-clipboard';
 // import { useRouter } from 'next/router';
 import Text from '@/components/Text';
-import { TRUSTLESS_BRIDGE, TRUSTLESS_GASSTATION } from '@/constants/common';
-import { WalletContext } from '@/contexts/wallet-context';
+import {TRUSTLESS_BRIDGE} from '@/constants/common';
+import {WalletContext} from '@/contexts/wallet-context';
+import {ROUTE_PATH} from '@/constants/route-path';
 import useBalanceERC20Token from '@/hooks/contract-operations/token/useBalanceERC20Token';
 import useTCWallet from '@/hooks/useTCWallet';
-import { getWalletSelector } from '@/state/wallets/selector';
-import { IAccount } from '@/state/wallets/types';
-import { formatCurrency, shortCryptoAddress } from '@/utils';
-import { showError } from '@/utils/toast';
-import {
-  Flex,
-  IconButton,
-  Menu,
-  MenuButton,
-  MenuItem,
-  MenuList,
-  Skeleton,
-  Spinner,
-} from '@chakra-ui/react';
-import { useWindowSize } from '@trustless-computer/dapp-core';
-import { useRouter } from 'next/router';
-import { useContext, useEffect, useMemo, useRef, useState } from 'react';
-import { OverlayTrigger } from 'react-bootstrap';
-import { toast } from 'react-hot-toast';
-import { AiOutlineSwap } from 'react-icons/ai';
-import Jazzicon, { jsNumberForAddress } from 'react-jazzicon';
-import { useSelector } from 'react-redux';
+import {getWalletSelector} from '@/state/wallets/selector';
+import {IAccount} from '@/state/wallets/types';
+import {formatCurrency, shortCryptoAddress} from '@/utils';
+import {showError} from '@/utils/toast';
+import {Flex, IconButton, Menu, MenuButton, MenuItem, MenuList, Skeleton, Spinner,} from '@chakra-ui/react';
+import {useWindowSize} from '@trustless-computer/dapp-core';
+import {useRouter} from 'next/router';
+import {useContext, useEffect, useMemo, useRef, useState} from 'react';
+import {OverlayTrigger} from 'react-bootstrap';
+import {toast} from 'react-hot-toast';
+import {AiOutlineSwap} from 'react-icons/ai';
+import Jazzicon, {jsNumberForAddress} from 'react-jazzicon';
+import {useSelector} from 'react-redux';
 import web3 from 'web3';
-import { isScreenDarkMode } from '..';
-import { ConnectWalletButton, WalletBalance } from '../Header.styled';
+import {isScreenDarkMode} from '..';
+import {ConnectWalletButton, WalletBalance} from '../Header.styled';
 import ChangeAccountWalletItem from './ChangeAccountWalletItem';
-import { WalletPopover } from './Wallet.styled';
-import { ROUTE_PATH } from '@/constants/route-path';
+import {WalletPopover} from './Wallet.styled';
 
 const WalletHeader = () => {
   const router = useRouter();
@@ -120,7 +111,7 @@ const WalletHeader = () => {
   };
 
   const gotoBridge = (tab: string, tokenSymbol: string) => {
-    window.open(`${TRUSTLESS_BRIDGE}?tab=${tab}&tokenSymbol=${tokenSymbol}`);
+    window.open(`${TRUSTLESS_BRIDGE}${tokenSymbol}`);
   };
 
   const walletPopover = (
@@ -190,13 +181,6 @@ const WalletHeader = () => {
           />
           <Text size="medium">Wallet</Text>
         </div>
-        <div
-          className="wallet-link"
-          onClick={() => window.open(TRUSTLESS_GASSTATION)}
-        >
-          <IconSVG src={`/faucet.svg`} maxWidth="20" color="black" />
-          <Text size="medium">Get TC</Text>
-        </div>
         <div className="wallet-link" onClick={() => gotoBridge('deposit', 'btc')}>
           <IconSVG src={`/wrapbtc.svg`} maxWidth="20" color="black" type="fill" />
           <Text size="medium">Wrap BTC</Text>
@@ -204,10 +188,6 @@ const WalletHeader = () => {
         <div className="wallet-link" onClick={() => gotoBridge('deposit', 'eth')}>
           <IconSVG src={`/wrapbtc.svg`} maxWidth="20" color="black" type="fill" />
           <Text size="medium">Wrap ETH</Text>
-        </div>
-        <div className="wallet-link" onClick={() => gotoBridge('deposit', 'usdc')}>
-          <IconSVG src={`/wrapbtc.svg`} maxWidth="20" color="black" type="fill" />
-          <Text size="medium">Wrap USDC</Text>
         </div>
         {user?.walletAddress && (
           <div
