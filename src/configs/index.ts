@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 
 // App configs
 export const APP_ENV: string = process.env.NEXT_PUBLIC_MODE!;
@@ -26,6 +27,10 @@ export const TRANSFER_TX_SIZE = 1000!;
 
 export const DEFAULT_FROM_ADDRESS = process.env.NEXT_PUBLIC_DEFAULT_FROM_ADDRESS!;
 export const DEFAULT_TO_ADDRESS = process.env.NEXT_PUBLIC_DEFAULT_ADDRESS!;
+
+// Wallet V2 Config
+export const V2_CONNECT_URL: string = process.env.NEXT_PUBLIC_V2_CONNECT_URL!;
+export const V2_WALLET_URL: string = process.env.NEXT_PUBLIC_V2_WALLET_URL!;
 
 export const MEMPOOL_URL = 'https://mempool.space';
 /* eslint-enable @typescript-eslint/no-non-null-assertion */

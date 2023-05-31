@@ -3,13 +3,13 @@ import { Popover } from 'react-bootstrap';
 import styled from 'styled-components';
 
 export const WalletPopover = styled(Popover)`
-  /* background-color: #17171a; */
-  border: 1px solid #ececed;
   width: ${px2rem(200)};
-  color: ${({ theme }) => theme.black};
-  padding: ${px2rem(12)} ${px2rem(20)};
-  box-shadow: 0px 0px 24px -6px rgba(0, 0, 0, 0.12);
-  border-radius: 4px;
+  /* color: ${({ theme }) => theme.black};
+  padding: ${px2rem(12)} ${px2rem(20)}; */
+
+  background: #17171a;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
 
   * {
     color: ${({ theme }) => theme.black} !important;
@@ -24,7 +24,14 @@ export const WalletPopover = styled(Popover)`
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: ${px2rem(16)};
+    padding: 20px;
+    .address {
+      color: #ffffff !important;
+      font-style: normal;
+      font-weight: 400;
+      font-size: ${px2rem(13)};
+      line-height: 120%;
+    }
   }
 
   .wallet-item {
@@ -37,8 +44,9 @@ export const WalletPopover = styled(Popover)`
   .wallet-disconnect {
     display: flex;
     align-items: center;
-    gap: ${px2rem(12)};
+    gap: ${px2rem(14)};
     cursor: pointer;
+    padding: 20px;
     :hover {
       opacity: 0.6;
     }
@@ -49,13 +57,17 @@ export const WalletPopover = styled(Popover)`
   }
 
   .wallet-link {
-    margin-top: ${px2rem(20)};
-    margin-bottom: ${px2rem(20)};
+    .label {
+      color: #ffffff !important;
+      font-style: normal;
+      font-weight: 400;
+      font-size: ${px2rem(16)};
+      line-height: 140%;
+    }
   }
 
   .divider {
-    margin-bottom: ${px2rem(16)};
-    background-color: #ececed;
+    background-color: rgba(255, 255, 255, 0.1);
   }
 
   &.popover {

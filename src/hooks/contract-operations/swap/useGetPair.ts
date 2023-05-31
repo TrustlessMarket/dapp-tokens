@@ -2,10 +2,10 @@ import UniswapV2FactoryJson from '@/abis/UniswapV2Factory.json';
 import { UNIV2_FACTORY_ADDRESS } from '@/configs';
 import { NULL_ADDRESS } from '@/constants/url';
 import { TransactionEventType } from '@/enums/transaction';
+import useTCWallet from '@/hooks/useTCWallet';
 import { ContractOperationHook, DAppType } from '@/interfaces/contract-operation';
 import { IToken } from '@/interfaces/token';
-import { getContract, getProviderProvider, sortAddressPair } from '@/utils';
-import { useWeb3React } from '@web3-react/core';
+import { getContract, getDefaultProvider, sortAddressPair } from '@/utils';
 import { useCallback } from 'react';
 
 export interface IGetPairParams {
@@ -14,9 +14,9 @@ export interface IGetPairParams {
 }
 
 const useGetPair: ContractOperationHook<IGetPairParams, string> = () => {
-  const { account } = useWeb3React();
+  const { tcWalletAddress: account } = useTCWallet();
 
-  const provider = getProviderProvider();
+  const provider = getDefaultProvider();
 
   const call = useCallback(
     async (params: IGetPairParams): Promise<string> => {

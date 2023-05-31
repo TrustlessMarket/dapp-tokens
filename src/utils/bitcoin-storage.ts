@@ -1,9 +1,9 @@
-import { TAPROOT_ADDRESS } from '@/constants/storage-key';
+import { TAPROOT_WALLET_ADDRESS } from '@/constants/storage-key';
 import localStorage from '@/utils/localstorage';
 
 class BitCoinStorage {
   private getUserTaprootKey = (evmAddress: string) => {
-    return `${TAPROOT_ADDRESS}-${evmAddress.toLowerCase()}`;
+    return `${TAPROOT_WALLET_ADDRESS}-${evmAddress.toLowerCase()}`;
   };
 
   getUserTaprootAddress = (evmAddress: string): string | null => {
