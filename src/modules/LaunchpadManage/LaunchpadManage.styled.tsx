@@ -1,10 +1,14 @@
 import BodyContainer from '@/components/Swap/bodyContainer';
 import { colors } from '@/theme/colors';
+import { Flex } from '@chakra-ui/react';
 import { px2rem } from '@trustless-computer/dapp-core';
 import styled from 'styled-components';
 
 export const StyledLaunchpadManage = styled(BodyContainer)`
   padding: ${px2rem(60)};
+  & > div {
+    padding: 0px;
+  }
 
   h4 {
     color: white;
@@ -151,5 +155,100 @@ export const StyledLaunchpadManage = styled(BodyContainer)`
   .btn-secondary {
     background-color: transparent;
     border: 1px solid ${colors.white};
+  }
+`;
+
+export const StyledLaunchpadManageHeader = styled(Flex)`
+  .btn-back-container {
+    align-items: center;
+    gap: ${px2rem(20)};
+    align-items: center;
+    flex: 1;
+    .back-title {
+      color: #ffffff;
+      font-style: normal;
+      font-weight: 500;
+      font-size: ${px2rem(24)};
+    }
+    .btn-back {
+      background-color: transparent;
+      border-radius: 6px;
+      width: 30px;
+      height: 30px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      transition: background-color 0.1s ease-in-out;
+      .btn-back-icon {
+        font-size: ${px2rem(16)};
+        color: ${colors.white};
+        transition: color 0.1s ease-in-out;
+      }
+      &:hover {
+        background-color: #ffffff;
+        .btn-back-icon {
+          color: ${colors.black};
+        }
+      }
+    }
+  }
+
+  .step-container {
+    flex: 2;
+
+    .step-item {
+      gap: 12px;
+      flex: unset;
+    }
+
+    .step-title {
+      color: ${colors.white};
+      opacity: 0.4;
+      margin-bottom: 0px;
+      font-style: normal;
+      font-weight: 400;
+      font-size: ${px2rem(16)};
+      line-height: 140%;
+    }
+
+    .separator {
+      margin-inline-start: 0;
+      max-width: 48px;
+    }
+
+    [data-status='complete'] {
+      .indicator,
+      .separator {
+        background: ${colors.bluePrimary};
+      }
+      .step-title {
+        opacity: 1;
+        color: ${colors.bluePrimary};
+      }
+    }
+    [data-status='active'] {
+      .indicator,
+      .separator {
+        background: ${colors.white};
+      }
+      .step-title {
+        opacity: 1;
+        color: ${colors.white};
+      }
+    }
+    [data-status='incomplete'] {
+      .indicator,
+      .separator {
+        background: ${colors.white100};
+      }
+      .step-title {
+        opacity: 0.4;
+      }
+    }
+  }
+
+  .btn-submit-container {
+    flex: 1;
   }
 `;
