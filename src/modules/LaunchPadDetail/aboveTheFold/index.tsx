@@ -12,7 +12,7 @@ const AboveTheFold = ({ poolDetail }: ILaunchpad | any) => {
 
   return (
     <BodyContainer className={styles.wrapper}>
-      {[LAUNCHPAD_STATUS.Created].includes(status.key) ? (
+      {[LAUNCHPAD_STATUS.Pending].includes(status.key) ? (
         <LaunchpadUpComing poolDetail={poolDetail} />
       ) : (
         <LaunchpadStarting poolDetail={poolDetail} />
