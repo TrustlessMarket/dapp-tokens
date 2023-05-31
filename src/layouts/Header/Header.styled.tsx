@@ -153,34 +153,66 @@ const Wrapper = styled.div`
   .btn-select-account {
     background-color: transparent;
     background-image: none;
+    border: 1px solid #ffffff;
+    max-height: 40px;
+    max-width: 40px;
   }
   .chakra-menu__menu-list {
     padding: 0px;
     overflow: hidden;
+    background: #17171a;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
   }
   .chakra-menu__menuitem {
-    border-bottom: 1px solid ${colors.hLabelColor};
+    border-bottom: 1px solid ${colors.white100};
+    background-color: #17171a;
+    padding: 0px;
+    &:hover,
+    &:focus,
+    &:active,
+    &::selection,
+    .tc-item-container-active {
+      background-color: #1e1e22 !important;
+    }
     &:last-child {
       border-bottom: none;
     }
     .tc-item-container {
       align-items: center;
-      gap: 10px;
+      gap: 8px;
       justify-content: space-between;
       width: 100%;
+      padding: 20px;
     }
     .tc-account-name {
-      font-size: ${px2rem(16)};
+      font-size: ${px2rem(14)};
+      font-style: normal;
       font-weight: 500;
+      line-height: 120%;
+      color: ${colors.white};
       span {
-        font-size: ${px2rem(12)};
-        opacity: 0.5;
+        opacity: 0.7;
       }
     }
     .tc-account-balance {
-      font-weight: bold;
-      font-size: ${px2rem(18)};
-      color: ${colors.redSecondary};
+      font-size: ${px2rem(12)};
+      color: ${colors.white};
+      font-style: normal;
+      font-weight: 400;
+      line-height: 120%;
+      opacity: 0.7;
+      margin-top: 4px;
+    }
+    .check-circle {
+      background-color: ${colors.greenPrimary};
+      width: 16px;
+      height: 16px;
+      border-radius: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-left: 17px;
     }
   }
 `;
