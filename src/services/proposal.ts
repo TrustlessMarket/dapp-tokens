@@ -34,3 +34,13 @@ export const getVoteSignatureProposal = async (params: {
     error: 'getVoteSignatureProposal fail',
   });
 };
+
+export const getVoteResultProposal = async (params: {
+  proposal_id?: any;
+}) => {
+  const qs = '?' + queryString.stringify(params);
+  return swrFetcher(`${API_EXCHANGE_URL}${API_PATH}/vote-result${qs}`, {
+    method: 'GET',
+    error: 'getVoteResultProposal fail',
+  });
+};

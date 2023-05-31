@@ -327,12 +327,6 @@ const BuyForm = ({proposalDetail}: any) => {
     if (account && router?.query?.proposal_id) {
       getVoteSignatureProposalInfo();
     }
-  }, [account, router?.query?.proposal_id, needReload]);
-
-  useEffect(() => {
-    if (account && router?.query?.proposal_id) {
-      getVoteSignatureProposalInfo();
-    }
   }, [
     account,
     isActive,
