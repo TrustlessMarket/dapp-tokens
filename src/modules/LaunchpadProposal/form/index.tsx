@@ -20,7 +20,7 @@ import {useWindowSize} from '@trustless-computer/dapp-core';
 import moment from 'moment';
 import useCountDownTimer from '@/hooks/useCountdown';
 import {IProposal} from '@/interfaces/proposal';
-import {PROPOSAL_STATUS, useProposalStatus,} from '@/modules/Launchpad/Proposal.Status';
+import {PROPOSAL_STATUS, useProposalStatus,} from '@/modules/Proposal/Proposal.Status';
 import {getVoteSignatureProposal} from '@/services/proposal';
 import useContractOperation from '@/hooks/contract-operations/useContractOperation';
 import useDefeatProposal from '@/hooks/contract-operations/proposal/useDefeat';

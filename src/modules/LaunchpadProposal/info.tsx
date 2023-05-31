@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import {useProposalStatus} from "@/modules/Launchpad/Proposal.Status";
+import {useProposalStatus} from "@/modules/Proposal/Proposal.Status";
 import {IProposal} from "@/interfaces/proposal";
 import {Box, Flex, GridItem, SimpleGrid, Stat, StatLabel, StatNumber, Text} from "@chakra-ui/react";
 import {formatCurrency} from "@/utils";

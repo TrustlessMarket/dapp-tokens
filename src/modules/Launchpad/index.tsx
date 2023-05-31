@@ -27,7 +27,7 @@ import web3 from 'web3';
 import LaunchpadStatus, {LAUNCHPAD_STATUS, useLaunchPadStatus,} from './Launchpad.Status';
 import {StyledIdoContainer} from './Launchpad.styled';
 import InfoTooltip from '@/components/Swap/infoTooltip';
-import ProposalStatus, {PROPOSAL_STATUS, useProposalStatus,} from '@/modules/Launchpad/Proposal.Status';
+import ProposalStatus, {PROPOSAL_STATUS, useProposalStatus,} from '@/modules/Proposal/Proposal.Status';
 import useTCWallet from '@/hooks/useTCWallet';
 
 const LaunchpadContainer = () => {
