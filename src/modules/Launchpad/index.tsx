@@ -62,6 +62,10 @@ const LaunchpadContainer = () => {
     }
   };
 
+  const checkIsLaunchpad = (row: ILaunchpad) => {
+    return row?.userProposal?.state === PROPOSAL_STATUS.Executed;
+  }
+
   const columns: ColumnProp[] = useMemo(() => {
     return [
       {
@@ -200,16 +204,21 @@ const LaunchpadContainer = () => {
           borderBottom: 'none',
         },
         render(row: ILaunchpad) {
+          const isLaunchPad = checkIsLaunchpad(row);
           const [status] = useLaunchPadStatus({ row });
           let color = colors.white;
-          if (status.value !== 'upcoming') {
-            if (Number(row.totalValue) >= Number(row.goalBalance)) {
-              color = colors.greenPrimary;
-            } else if (Number(row.totalValue) < Number(row.goalBalance)) {
-              color = colors.redPrimary;
+
+          if(isLaunchPad) {
+            if (status.value !== 'upcoming') {
+              if (Number(row.totalValue) >= Number(row.goalBalance)) {
+                color = colors.greenPrimary;
+              } else if (Number(row.totalValue) < Number(row.goalBalance)) {
+                color = colors.redPrimary;
+              }
             }
           }
-          return (
+
+          return isLaunchPad ? (
             <Box>
               <Text
                 color={color}
@@ -222,6 +231,12 @@ const LaunchpadContainer = () => {
               />
               <Text mt={2}>${formatCurrency(row.totalValueUsd, 2)}</Text>
             </Box>
+          ) : (
+              <Box>
+                <Text
+                    color={color}
+                >{`${row.goalBalance} ${row.liquidityToken.symbol}`}</Text>
+              </Box>
           );
         },
       },
@@ -315,7 +330,8 @@ const LaunchpadContainer = () => {
           borderBottom: 'none',
         },
         render(row: ILaunchpad) {
-          if (row?.userProposal?.state === PROPOSAL_STATUS.Executed) {
+          const isLaunchPad = checkIsLaunchpad(row);
+          if (isLaunchPad) {
             return <LaunchpadStatus row={row} />;
           } else {
             return <ProposalStatus row={row?.userProposal} />;
@@ -425,7 +441,8 @@ const LaunchpadContainer = () => {
             if (!e.id) {
               return null;
             }
-            if (e?.userProposal?.state === PROPOSAL_STATUS.Executed) {
+            const isLaunchPad = checkIsLaunchpad(e);
+            if (isLaunchPad) {
               return router.push(`${ROUTE_PATH.LAUNCHPAD_DETAIL}?id=${e.id}`);
             } else if (e.proposalId) {
               return router.push(
