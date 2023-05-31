@@ -41,8 +41,7 @@ import styles from './styles.module.scss';
 import {BiBell} from 'react-icons/bi';
 import moment from 'moment';
 import useCountDownTimer from '@/hooks/useCountdown';
-import {IProposal} from '@/interfaces/proposal';
-import {PROPOSAL_STATUS, useProposalStatus,} from '@/modules/Launchpad/Proposal.Status';
+import {PROPOSAL_STATUS, useProposalStatus,} from '@/modules/Proposal/Proposal.Status';
 import {getVoteSignatureProposal} from '@/services/proposal';
 import useContractOperation from '@/hooks/contract-operations/useContractOperation';
 import useCastVoteProposal from '@/hooks/contract-operations/proposal/useCastVote';
@@ -323,12 +322,6 @@ const BuyForm = ({proposalDetail}: any) => {
       throw err;
     }
   };
-
-  useEffect(() => {
-    if (account && router?.query?.proposal_id) {
-      getVoteSignatureProposalInfo();
-    }
-  }, [account, router?.query?.proposal_id, needReload]);
 
   useEffect(() => {
     if (account && router?.query?.proposal_id) {

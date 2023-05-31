@@ -1,11 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import ProposalStarting from '@/modules/LaunchpadProposal/aboveTheFold/starting';
+import ProposalStarting from '@/modules/ProposalDetail/aboveTheFold/starting';
 import BodyContainer from '@/components/Swap/bodyContainer';
-import styles from '@/modules/LaunchpadProposal/aboveTheFold/styles.module.scss';
+import styles from '@/modules/ProposalDetail/aboveTheFold/styles.module.scss';
 import {IProposal} from "@/interfaces/proposal";
 import Card from "@/components/Swap/card";
 import React from "react";
-import ProposalInfo from "@/modules/LaunchpadProposal/info";
+import ProposalInfo from "@/modules/ProposalDetail/info";
+import ProposalResult from "@/modules/ProposalDetail/result";
+import {Box} from "@chakra-ui/react";
 
 const AboveTheFold = ({ proposalDetail }: IProposal | any) => {
   // const [status] = useProposalStatus({ row: proposalDetail });
@@ -23,6 +25,9 @@ const AboveTheFold = ({ proposalDetail }: IProposal | any) => {
       <Card bgColor={"#1E1E22"} paddingX={6} paddingY={6} mt={6}>
         <ProposalInfo proposalDetail={proposalDetail}/>
       </Card>
+      <Box mt={6}>
+        <ProposalResult />
+      </Box>
     </BodyContainer>
   );
 };

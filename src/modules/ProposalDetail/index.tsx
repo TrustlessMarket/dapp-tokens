@@ -3,7 +3,7 @@ import BodyContainer from '@/components/Swap/bodyContainer';
 import FiledButton from '@/components/Swap/button/filedButton';
 import {ROUTE_PATH} from '@/constants/route-path';
 import {Box, Heading, Spinner, Text,} from '@chakra-ui/react';
-import AboveTheFold from '@/modules/LaunchpadProposal/aboveTheFold';
+import AboveTheFold from '@/modules/ProposalDetail/aboveTheFold';
 import {useAppSelector} from '@/state/hooks';
 import {selectPnftExchange} from '@/state/pnftExchange';
 import {colors} from '@/theme/colors';

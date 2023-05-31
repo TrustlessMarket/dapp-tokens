@@ -465,6 +465,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
               LAUNCHPAD_STATUS.Closed,
               LAUNCHPAD_STATUS.Completed,
               LAUNCHPAD_STATUS.Failed,
+              LAUNCHPAD_STATUS.Cancelled,
             ].includes(status.key)
               ? 'Ended at'
               : 'Ends in'}
@@ -474,7 +475,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
               {isEndLaunchpad
                 ? moment(poolDetail.endTime).format('LLL')
                 : `${
-                    Number(days) > 0 && `${days}d :`
+                    Number(days) > 0 ? `${days}d :` : ''
                   } ${hours}h : ${minutes}m : ${seconds}s`}
             </Text>
           </StatNumber>
@@ -732,7 +733,7 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
     LAUNCHPAD_STATUS.Failed,
   ].includes(status.key);
 
-  const isStarting = [LAUNCHPAD_STATUS.Starting].includes(status.key);
+  const isStarting = [LAUNCHPAD_STATUS.Created].includes(status.key);
 
   useEffect(() => {
     fetchData();

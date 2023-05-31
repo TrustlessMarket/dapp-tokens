@@ -20,14 +20,14 @@ import BigNumber from 'bignumber.js';
 import moment from 'moment';
 import {useRouter} from 'next/router';
 import {useEffect, useMemo, useState} from 'react';
-import {BsPencil} from 'react-icons/bs';
+import {BsBoxArrowUpRight, BsPencil} from 'react-icons/bs';
 import {ImClock2} from 'react-icons/im';
 import {useDispatch} from 'react-redux';
 import web3 from 'web3';
 import LaunchpadStatus, {LAUNCHPAD_STATUS, useLaunchPadStatus,} from './Launchpad.Status';
 import {StyledIdoContainer} from './Launchpad.styled';
 import InfoTooltip from '@/components/Swap/infoTooltip';
-import ProposalStatus, {PROPOSAL_STATUS, useProposalStatus,} from '@/modules/Launchpad/Proposal.Status';
+import ProposalStatus, {PROPOSAL_STATUS, useProposalStatus,} from '@/modules/Proposal/Proposal.Status';
 import useTCWallet from '@/hooks/useTCWallet';
 
 const LaunchpadContainer = () => {
@@ -306,7 +306,6 @@ const LaunchpadContainer = () => {
             }
           } else {
             const [status] = useProposalStatus({row: row?.userProposal});
-            console.log('proposal status', status);
 
             if (status.value === 'pending') {
               return (
@@ -398,6 +397,8 @@ const LaunchpadContainer = () => {
           borderBottom: 'none',
         },
         render(row: ILaunchpad) {
+          const isLaunchPad = checkIsLaunchpad(row);
+
           if (
             compareString(row.creatorAddress, account) &&
             (!row?.proposalId ||
@@ -420,7 +421,38 @@ const LaunchpadContainer = () => {
             );
           }
 
-          return <></>;
+          return (<Flex alignItems={'center'} gap={4}>
+            {
+              compareString(row.creatorAddress, account) &&
+              (!row?.proposalId ||
+                moment(row?.userProposal?.voteStart).unix() > moment().unix()) && (
+                <InfoTooltip label={'Edit Proposal'}>
+                  <Box
+                    cursor={'pointer'}
+                    onClick={() =>
+                      router.push(`${ROUTE_PATH.LAUNCHPAD_MANAGE}?id=${row.id}`)
+                    }
+                  >
+                    <BsPencil/>
+                  </Box>
+                </InfoTooltip>
+              )
+            }
+            {
+              !isLaunchPad && row.proposalId && (
+                <InfoTooltip label={'Proposal Detail'}>
+                  <Box
+                    cursor={'pointer'}
+                    onClick={() =>
+                      router.push(`${ROUTE_PATH.LAUNCHPAD_PROPOSAL}?proposal_id=${row?.proposalId}`)
+                    }
+                  >
+                    <BsBoxArrowUpRight/>
+                  </Box>
+                </InfoTooltip>
+              )
+            }
+          </Flex>);
         },
       },
     ];
@@ -473,16 +505,17 @@ const LaunchpadContainer = () => {
             if (!e.id) {
               return null;
             }
-            const isLaunchPad = checkIsLaunchpad(e);
-            if (isLaunchPad) {
-              return router.push(`${ROUTE_PATH.LAUNCHPAD_DETAIL}?id=${e.id}`);
-            } else if (e.proposalId) {
-              return router.push(
-                `${ROUTE_PATH.LAUNCHPAD_PROPOSAL}?proposal_id=${e.proposalId}`,
-              );
-            } else {
-              return router.push(`${ROUTE_PATH.LAUNCHPAD_MANAGE}?id=${e.id}`);
-            }
+            return router.push(`${ROUTE_PATH.LAUNCHPAD_DETAIL}?id=${e.id}`);
+            // const isLaunchPad = checkIsLaunchpad(e);
+            // if (isLaunchPad) {
+            //   return router.push(`${ROUTE_PATH.LAUNCHPAD_DETAIL}?id=${e.id}`);
+            // } else if (e.proposalId) {
+            //   return router.push(
+            //     `${ROUTE_PATH.LAUNCHPAD_PROPOSAL}?proposal_id=${e.proposalId}`,
+            //   );
+            // } else {
+            //   return router.push(`${ROUTE_PATH.LAUNCHPAD_MANAGE}?id=${e.id}`);
+            // }
           }}
         />
       </Box>

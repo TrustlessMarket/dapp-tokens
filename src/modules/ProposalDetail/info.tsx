@@ -1,11 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import {useProposalStatus} from "@/modules/Launchpad/Proposal.Status";
+import {useProposalStatus} from "@/modules/Proposal/Proposal.Status";
 import {IProposal} from "@/interfaces/proposal";
 import {Box, Flex, GridItem, SimpleGrid, Stat, StatLabel, StatNumber, Text} from "@chakra-ui/react";
 import {formatCurrency} from "@/utils";
 import React from "react";
 import {ImClock2} from "react-icons/im";
 import CountDownTimer from "@/components/Countdown";
+import moment from "moment/moment";
 
 const ProposalInfo = ({ proposalDetail }: IProposal | any) => {
   const [status] = useProposalStatus({ row: proposalDetail });
@@ -29,7 +30,7 @@ const ProposalInfo = ({ proposalDetail }: IProposal | any) => {
           </Stat>
         </GridItem>
         {
-          status.value === 'pending' && (
+          status.value === 'pending' ? (
             <GridItem>
               <Stat>
                 <StatLabel>Starts at</StatLabel>
@@ -43,10 +44,7 @@ const ProposalInfo = ({ proposalDetail }: IProposal | any) => {
                 </StatNumber>
               </Stat>
             </GridItem>
-          )
-        }
-        {
-          status.value === 'active' && (
+          ) : status.value === 'active' ? (
             <GridItem>
               <Stat>
                 <StatLabel>Ends at</StatLabel>
@@ -60,16 +58,20 @@ const ProposalInfo = ({ proposalDetail }: IProposal | any) => {
                 </StatNumber>
               </Stat>
             </GridItem>
+          ) : (
+            <GridItem>
+              <Stat>
+                <StatLabel>Ends at</StatLabel>
+                <StatNumber>
+                  <Flex mt={1} alignItems={'center'} gap={2}>
+                    <ImClock2/>
+                    <Text>{moment(proposalDetail.voteEnd).format('LL')}</Text>
+                  </Flex>
+                </StatNumber>
+              </Stat>
+            </GridItem>
           )
         }
-        {/*<GridItem>
-            <Stat>
-              <StatLabel>Starts in</StatLabel>
-              <StatNumber>
-                <Text>{Number(days) > 0 && `${days}d :`} {hours}h : {minutes}m : {seconds}s</Text>
-              </StatNumber>
-            </Stat>
-          </GridItem>*/}
       </SimpleGrid>
     </Box>
   );

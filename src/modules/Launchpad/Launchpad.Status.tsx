@@ -5,8 +5,10 @@ import { StyledIdoStatus } from './Launchpad.styled';
 import moment from 'moment';
 
 export enum LAUNCHPAD_STATUS {
+  Pending,
   Created,
   Completed,
+  Cancelled,
   Failed,
   Closed,
   Starting,
@@ -15,34 +17,39 @@ export enum LAUNCHPAD_STATUS {
 
 export const LabelStatus = {
   upcoming: {
-    key: LAUNCHPAD_STATUS.Created,
+    key: LAUNCHPAD_STATUS.Pending,
     value: 'upcoming',
     label: 'Upcoming',
   },
   starting: {
-    key: LAUNCHPAD_STATUS.Starting,
+    key: LAUNCHPAD_STATUS.Created,
     value: 'crowing-funding',
     label: 'On going',
-  },
-  end: {
-    key: LAUNCHPAD_STATUS.End,
-    value: 'ending',
-    label: 'Ending',
-  },
-  closed: {
-    key: LAUNCHPAD_STATUS.Closed,
-    value: 'closed',
-    label: 'Closed',
   },
   success: {
     key: LAUNCHPAD_STATUS.Completed,
     value: 'success',
     label: 'Success',
   },
+  cancelled: {
+    key: LAUNCHPAD_STATUS.Cancelled,
+    value: 'cancelled',
+    label: 'Cancelled',
+  },
   failed: {
     key: LAUNCHPAD_STATUS.Failed,
     value: 'failed',
     label: 'Failed',
+  },
+  closed: {
+    key: LAUNCHPAD_STATUS.Closed,
+    value: 'closed',
+    label: 'Closed',
+  },
+  end: {
+    key: LAUNCHPAD_STATUS.End,
+    value: 'ending',
+    label: 'Ending',
   },
 };
 
@@ -59,11 +66,15 @@ export const useLaunchPadStatus = ({ row }: { row: ILaunchpad }) => {
     status = LabelStatus.failed;
   } else if (state === LAUNCHPAD_STATUS.Closed) {
     status = LabelStatus.closed;
-  } else if (
-    moment(startTime).unix() <= moment().unix() &&
-    moment().unix() < moment(endTime).unix()
-  ) {
+  } else if (state === LAUNCHPAD_STATUS.Created) {
     status = LabelStatus.starting;
+  } else if (state === LAUNCHPAD_STATUS.Cancelled) {
+    status = LabelStatus.cancelled;
+  // } else if (
+  //   moment(startTime).unix() <= moment().unix() &&
+  //   moment().unix() < moment(endTime).unix()
+  // ) {
+  //   status = LabelStatus.starting;
   } else if (moment().unix() >= moment(endTime).unix() && row?.proposalId) {
     status = LabelStatus.end;
   }
