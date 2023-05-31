@@ -39,6 +39,10 @@ const usePendingSwapTransactions: ContractOperationHook<
 
         const response = [];
 
+        console.log('unInscribedTxIDs', account);
+        console.log('unInscribedTxIDs', unInscribedTxIDs);
+        console.log('unInscribedTxIDs', pendingTxIds);
+
         for await (const unInscribedTxID of unInscribedTxIDs) {
           const [_getTxDetail, _getTxDetail2] = await Promise.all([
             getTCTxByHash(unInscribedTxID.Hash),
@@ -184,7 +188,7 @@ const usePendingSwapTransactions: ContractOperationHook<
       }
       return [];
     },
-    [account, provider],
+    [account],
   );
 
   return {

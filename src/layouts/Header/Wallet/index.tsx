@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import IconSVG from '@/components/IconSVG';
-import {CDN_URL, TM_ADDRESS, WALLET_URL} from '@/configs';
+import { CDN_URL, TM_ADDRESS, WALLET_URL } from '@/configs';
 // import { ROUTE_PATH } from '@/constants/route-path';
 import { getUserSelector } from '@/state/user/selector';
 import { formatBTCPrice } from '@/utils/format';
@@ -267,7 +267,13 @@ const WalletHeader = () => {
                 as={IconButton}
                 icon={<img src={`${CDN_URL}/icons/ic-swap-acc.svg`} />}
               />
-              <MenuList>
+              <MenuList
+                zIndex={99999}
+                style={{
+                  overflow: 'auto',
+                }}
+                maxHeight={'300px'}
+              >
                 {accounts.map((acc: IAccount) => (
                   <MenuItem key={acc.tcAddress}>
                     <ChangeAccountWalletItem account={acc} />
