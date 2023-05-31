@@ -3,7 +3,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import ModalConfirmApprove from '@/components/ModalConfirmApprove';
 import SocialToken from '@/components/Social';
-import { transactionType } from '@/components/Swap/alertInfoProcessing/types';
+import {transactionType} from '@/components/Swap/alertInfoProcessing/types';
 import FiledButton from '@/components/Swap/button/filedButton';
 import FieldAmount from '@/components/Swap/form/fieldAmount';
 import InputWrapper from '@/components/Swap/form/inputWrapper';
@@ -11,14 +11,10 @@ import HorizontalItem from '@/components/Swap/horizontalItem';
 import InfoTooltip from '@/components/Swap/infoTooltip';
 import TokenBalance from '@/components/Swap/tokenBalance';
 import WrapperConnected from '@/components/WrapperConnected';
-import { CDN_URL } from '@/configs';
-import {
-  BRIDGE_SUPPORT_TOKEN,
-  TRUSTLESS_BRIDGE,
-  TRUSTLESS_FAUCET,
-} from '@/constants/common';
-import { toastError } from '@/constants/error';
-import { AssetsContext } from '@/contexts/assets-context';
+import {CDN_URL} from '@/configs';
+import {BRIDGE_SUPPORT_TOKEN, TRUSTLESS_BRIDGE, TRUSTLESS_FAUCET,} from '@/constants/common';
+import {toastError} from '@/constants/error';
+import {AssetsContext} from '@/contexts/assets-context';
 import useClaimLaunchPad from '@/hooks/contract-operations/launchpad/useClaim';
 import useDepositPool from '@/hooks/contract-operations/launchpad/useDeposit';
 import useEndLaunchPad from '@/hooks/contract-operations/launchpad/useEnd';
@@ -29,63 +25,39 @@ import useIsApproveERC20Token from '@/hooks/contract-operations/token/useIsAppro
 import useContractOperation from '@/hooks/contract-operations/useContractOperation';
 import useCountDownTimer from '@/hooks/useCountdown';
 import useTCWallet from '@/hooks/useTCWallet';
-import { ILaunchpad } from '@/interfaces/launchpad';
-import { IToken } from '@/interfaces/token';
-import { TransactionStatus } from '@/interfaces/walletTransaction';
-import {
-  LAUNCHPAD_STATUS,
-  useLaunchPadStatus,
-} from '@/modules/Launchpad/Launchpad.Status';
-import { getUserBoost } from '@/services/launchpad';
-import { logErrorToServer } from '@/services/swap';
-import { useAppDispatch, useAppSelector } from '@/state/hooks';
-import { closeModal, openModal } from '@/state/modal';
+import {ILaunchpad} from '@/interfaces/launchpad';
+import {IToken} from '@/interfaces/token';
+import {TransactionStatus} from '@/interfaces/walletTransaction';
+import {LAUNCHPAD_STATUS, useLaunchPadStatus,} from '@/modules/Launchpad/Launchpad.Status';
+import {getUserBoost} from '@/services/launchpad';
+import {logErrorToServer} from '@/services/swap';
+import {useAppDispatch, useAppSelector} from '@/state/hooks';
+import {closeModal, openModal} from '@/state/modal';
 import {
   requestReload,
   requestReloadRealtime,
   selectPnftExchange,
   updateCurrentTransaction,
 } from '@/state/pnftExchange';
-import { getIsAuthenticatedSelector } from '@/state/user/selector';
-import { colors } from '@/theme/colors';
-import { formatCurrency } from '@/utils';
-import { composeValidators, required } from '@/utils/formValidate';
+import {getIsAuthenticatedSelector} from '@/state/user/selector';
+import {colors} from '@/theme/colors';
+import {formatCurrency} from '@/utils';
+import {composeValidators, required} from '@/utils/formValidate';
 import px2rem from '@/utils/px2rem';
-import { showError } from '@/utils/toast';
-import {
-  Box,
-  Center,
-  Flex,
-  GridItem,
-  Progress,
-  SimpleGrid,
-  Stat,
-  StatLabel,
-  StatNumber,
-  Text,
-  forwardRef,
-} from '@chakra-ui/react';
-import { useWindowSize } from '@trustless-computer/dapp-core';
-import { useWeb3React } from '@web3-react/core';
+import {showError} from '@/utils/toast';
+import {Box, Center, Flex, forwardRef, Progress, Stat, StatLabel, StatNumber, Text,} from '@chakra-ui/react';
+import {useWindowSize} from '@trustless-computer/dapp-core';
 import BigNumber from 'bignumber.js';
 import cx from 'classnames';
 import debounce from 'lodash/debounce';
 import moment from 'moment';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
-import {
-  useCallback,
-  useContext,
-  useEffect,
-  useImperativeHandle,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
-import { Field, Form, useForm, useFormState } from 'react-final-form';
+import {useRouter} from 'next/router';
+import {useCallback, useContext, useEffect, useImperativeHandle, useMemo, useRef, useState,} from 'react';
+import {Field, Form, useForm, useFormState} from 'react-final-form';
 import toast from 'react-hot-toast';
-import { BiBell } from 'react-icons/bi';
-import { useDispatch, useSelector } from 'react-redux';
+import {BiBell} from 'react-icons/bi';
+import {useDispatch, useSelector} from 'react-redux';
 import Web3 from 'web3';
 import styles from './styles.module.scss';
 
