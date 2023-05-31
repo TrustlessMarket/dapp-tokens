@@ -10,7 +10,7 @@ const DATA = [
   },
   {
     img: ``,
-    desc: 'Reward values aren’t guaranteed, but creators must regularly update backers.'
+    desc: 'The value of your reward tokens fluctuate with the market. However, creators will always keep you up to date.'
   },
   {
     img: ``,

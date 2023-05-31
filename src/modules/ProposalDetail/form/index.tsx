@@ -28,7 +28,7 @@ import useExecuteProposal from '@/hooks/contract-operations/proposal/useExecute'
 import useCastVoteProposal from '@/hooks/contract-operations/proposal/useCastVote';
 import useTCWallet from '@/hooks/useTCWallet';
 import {closeModal, openModal} from "@/state/modal";
-import VoteForm from "@/modules/LaunchpadProposal/voteForm";
+import VoteForm from "@/modules/ProposalDetail/voteForm";
 
 export const MakeFormSwap = forwardRef((props, ref) => {
   const {

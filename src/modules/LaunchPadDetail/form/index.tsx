@@ -733,7 +733,7 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
     LAUNCHPAD_STATUS.Failed,
   ].includes(status.key);
 
-  const isStarting = [LAUNCHPAD_STATUS.Starting].includes(status.key);
+  const isStarting = [LAUNCHPAD_STATUS.Created].includes(status.key);
 
   useEffect(() => {
     fetchData();
