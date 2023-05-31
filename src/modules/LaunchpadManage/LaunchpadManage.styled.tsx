@@ -1,10 +1,14 @@
 import BodyContainer from '@/components/Swap/bodyContainer';
 import { colors } from '@/theme/colors';
+import { Flex } from '@chakra-ui/react';
 import { px2rem } from '@trustless-computer/dapp-core';
 import styled from 'styled-components';
 
 export const StyledLaunchpadManage = styled(BodyContainer)`
-  padding: ${px2rem(60)};
+  padding: 0px ${px2rem(60)};
+  & > div {
+    padding: 0px;
+  }
 
   h4 {
     color: white;
@@ -65,19 +69,167 @@ export const StyledLaunchpadManage = styled(BodyContainer)`
     }
   }
 
+  .append-input {
+    border-left: 1px solid ${colors.darkBorderColor};
+    height: 100%;
+    padding-left: ${px2rem(12)};
+    padding-right: ${px2rem(8)};
+    align-items: center;
+  }
+
+  .image-drop-container {
+    overflow: hidden;
+    border: 1px dashed ${colors.darkBorderColor};
+    .dropzone {
+      background-color: ${colors.dark};
+      color: ${colors.white500};
+    }
+  }
+
+  .item-faq-container {
+    flex: 1;
+  }
+
+  .btn-add-faq {
+    color: ${colors.bluePrimary};
+    align-items: center;
+    gap: 8;
+    cursor: pointer;
+    opacity: 0.8;
+  }
+
+  .btn-secondary {
+    background-color: transparent;
+    border: 1px solid ${colors.white};
+  }
+`;
+
+export const StyledLaunchpadManageHeader = styled(Flex)`
+  border-width: 0px 1px 1px 1px;
+  border-style: solid;
+  border-color: #353945;
+
+  padding: ${px2rem(36)} ${px2rem(41)};
+
+  .btn-back-container {
+    align-items: center;
+    gap: ${px2rem(20)};
+    align-items: center;
+    flex: 1;
+    .back-title {
+      color: #ffffff;
+      font-style: normal;
+      font-weight: 500;
+      font-size: ${px2rem(24)};
+    }
+    .btn-back {
+      background-color: transparent;
+      border-radius: 6px;
+      width: 30px;
+      height: 30px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      transition: background-color 0.1s ease-in-out;
+      .btn-back-icon {
+        font-size: ${px2rem(16)};
+        color: ${colors.white};
+        transition: color 0.1s ease-in-out;
+      }
+      &:hover {
+        background-color: #ffffff;
+        .btn-back-icon {
+          color: ${colors.black};
+        }
+      }
+    }
+  }
+
+  .step-container {
+    flex: 2;
+
+    .step-item {
+      gap: 12px;
+      flex: unset;
+    }
+
+    .step-title {
+      color: ${colors.white};
+      opacity: 0.4;
+      margin-bottom: 0px;
+      font-style: normal;
+      font-weight: 400;
+      font-size: ${px2rem(16)};
+      line-height: 140%;
+    }
+
+    .step-content {
+      justify-content: center;
+    }
+
+    .separator {
+      margin-inline-start: 0;
+      width: 48px;
+    }
+
+    [data-status='complete'] {
+      .indicator {
+        background: rgba(4, 197, 127, 0.2);
+        svg {
+          color: #04c57f;
+        }
+      }
+      .separator {
+        background: ${colors.white100};
+      }
+      /* .step-title {
+        opacity: 1;
+        color: ${colors.bluePrimary};
+      } */
+    }
+
+    [data-status='active'] {
+      .indicator,
+      .separator {
+        background: ${colors.white100};
+      }
+      .step-title {
+        opacity: 1;
+        color: ${colors.white};
+      }
+    }
+
+    [data-status='incomplete'] {
+      .indicator,
+      .separator {
+        background: ${colors.white100};
+      }
+      .step-title {
+        opacity: 0.4;
+      }
+    }
+  }
+
+  .btn-submit-container {
+    flex: 1;
+  }
+`;
+
+export const StyledLaunchpadFormStep1 = styled(Flex)`
+  border: 1px solid #353945;
+  gap: 24px;
+  margin-top: ${px2rem(32)};
   .token-info {
     display: flex;
     flex-direction: column;
-    background: ${colors.darkBorderColor};
-    box-shadow: 0px 4px 24px 8px ${colors.dark};
-    border-radius: 12px;
-    padding: 24px;
-    min-width: 350px;
+    padding: ${px2rem(40)};
+    border-left: 1px solid #353945;
 
     h6 {
       color: ${colors.white};
       font-weight: 500;
-      font-size: 18px;
+      font-size: ${px2rem(18)};
       line-height: 28px;
       text-align: left;
     }
@@ -119,37 +271,7 @@ export const StyledLaunchpadManage = styled(BodyContainer)`
       color: #1c1c1c;
     }
   }
-  .append-input {
-    border-left: 1px solid ${colors.darkBorderColor};
-    height: 100%;
-    padding-left: ${px2rem(12)};
-    padding-right: ${px2rem(8)};
-    align-items: center;
-  }
-
-  .image-drop-container {
-    overflow: hidden;
-    border: 1px dashed ${colors.darkBorderColor};
-    .dropzone {
-      background-color: ${colors.dark};
-      color: ${colors.white500};
-    }
-  }
-
-  .item-faq-container {
-    flex: 1;
-  }
-
-  .btn-add-faq {
-    color: ${colors.bluePrimary};
-    align-items: center;
-    gap: 8;
-    cursor: pointer;
-    opacity: 0.8;
-  }
-
-  .btn-secondary {
-    background-color: transparent;
-    border: 1px solid ${colors.white};
+  .fields-left-container {
+    padding: ${px2rem(40)};
   }
 `;

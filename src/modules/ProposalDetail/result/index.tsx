@@ -6,6 +6,10 @@ import {useRouter} from "next/router";
 import {useAppSelector} from "@/state/hooks";
 import {selectPnftExchange} from "@/state/pnftExchange";
 import SectionContainer from "@/components/Swap/sectionContainer";
+import Side from "@/modules/ProposalDetail/result/side";
+import {Card, GridItem, SimpleGrid} from "@chakra-ui/react";
+import styles from './styles.module.scss';
+import cx from 'classnames';
 
 const ProposalResult = () => {
   const router = useRouter();
@@ -36,7 +40,18 @@ const ProposalResult = () => {
 
   return (
     <SectionContainer>
-      ProposalResult
+      <SimpleGrid columns={2} gap={6}>
+        <GridItem>
+          <Card bgColor={"#2E2E2E"} paddingX={6} paddingY={6}>
+            <Side data={voteResult?.forVote} className={cx(styles.sideWrapper)}/>
+          </Card>
+        </GridItem>
+        <GridItem>
+          <Card bgColor={"#2E2E2E"} paddingX={6} paddingY={6}>
+            <Side data={voteResult?.againstVote} className={cx(styles.sideWrapper)}/>
+          </Card>
+        </GridItem>
+      </SimpleGrid>
     </SectionContainer>
   );
 }

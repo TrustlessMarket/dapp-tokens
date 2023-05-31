@@ -20,7 +20,7 @@ import {
 import { toastError } from '@/constants/error';
 import { AssetsContext } from '@/contexts/assets-context';
 import useClaimLaunchPad from '@/hooks/contract-operations/launchpad/useClaim';
-import useDepositLaunchpad from '@/hooks/contract-operations/launchpad/useDeposit';
+import useDepositPool from '@/hooks/contract-operations/launchpad/useDeposit';
 import useEndLaunchPad from '@/hooks/contract-operations/launchpad/useEnd';
 import useIsAbleRedeem from '@/hooks/contract-operations/launchpad/useIsAbleRedeem';
 import useApproveERC20Token from '@/hooks/contract-operations/token/useApproveERC20Token';
@@ -708,7 +708,7 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
   const dispatch = useAppDispatch();
   const { tcWalletAddress: account, isAuthenticated: isActive } = useTCWallet();
   const { run: depositLaunchpad } = useContractOperation({
-    operation: useDepositLaunchpad,
+    operation: useDepositPool,
   });
   const { run: endLaunchpad } = useContractOperation({
     operation: useEndLaunchPad,
