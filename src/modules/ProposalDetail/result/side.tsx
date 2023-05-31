@@ -37,6 +37,7 @@ const ProposalResult = ({title, result, className, data}: any) => {
                   value={formatCurrency(d.weight)}
                 />
               </Box>}
+                 key={d.voter}
               >
                 <Box flex={1} maxW={"25%"} key={d.voter}>
                   <Jazzicon
