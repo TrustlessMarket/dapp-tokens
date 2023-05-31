@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import {PROPOSAL_STATUS} from "@/modules/Proposal/list/Proposal.Status";
+import {PROPOSAL_STATUS} from "@/modules/Launchpad/Proposal.Status";
 import {ILaunchpad} from "@/interfaces/launchpad";
 
 export interface IProposal {

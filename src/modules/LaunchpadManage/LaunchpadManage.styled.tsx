@@ -5,7 +5,7 @@ import { px2rem } from '@trustless-computer/dapp-core';
 import styled from 'styled-components';
 
 export const StyledLaunchpadManage = styled(BodyContainer)`
-  padding: ${px2rem(60)};
+  padding: 0px ${px2rem(60)};
   & > div {
     padding: 0px;
   }
@@ -69,60 +69,6 @@ export const StyledLaunchpadManage = styled(BodyContainer)`
     }
   }
 
-  .token-info {
-    display: flex;
-    flex-direction: column;
-    background: ${colors.darkBorderColor};
-    box-shadow: 0px 4px 24px 8px ${colors.dark};
-    border-radius: 12px;
-    padding: 24px;
-    min-width: 350px;
-
-    h6 {
-      color: ${colors.white};
-      font-weight: 500;
-      font-size: 18px;
-      line-height: 28px;
-      text-align: left;
-    }
-
-    img {
-      border-radius: 100%;
-      width: 80px;
-      height: 80px;
-      border: 1px solid rgba(0, 0, 0, 0.08);
-      margin: 16px 0px;
-    }
-
-    p {
-      color: ${colors.white};
-      margin-top: 10px;
-    }
-
-    .horizontal-item {
-      div {
-        :first-child {
-          color: ${colors.white500};
-        }
-        :last-child {
-          color: ${colors.white};
-        }
-      }
-    }
-
-    .token-socials {
-      margin-top: 10px;
-    }
-
-    .btn-update-info {
-      background-color: #f7f7fa;
-      border-radius: 8px;
-      border: none;
-      padding: 16px;
-      height: 40px;
-      color: #1c1c1c;
-    }
-  }
   .append-input {
     border-left: 1px solid ${colors.darkBorderColor};
     height: 100%;
@@ -159,6 +105,12 @@ export const StyledLaunchpadManage = styled(BodyContainer)`
 `;
 
 export const StyledLaunchpadManageHeader = styled(Flex)`
+  border-width: 0px 1px 1px 1px;
+  border-style: solid;
+  border-color: #353945;
+
+  padding: ${px2rem(36)} ${px2rem(41)};
+
   .btn-back-container {
     align-items: center;
     gap: ${px2rem(20)};
@@ -212,31 +164,42 @@ export const StyledLaunchpadManageHeader = styled(Flex)`
       line-height: 140%;
     }
 
+    .step-content {
+      justify-content: center;
+    }
+
     .separator {
       margin-inline-start: 0;
-      max-width: 48px;
+      width: 48px;
     }
 
     [data-status='complete'] {
-      .indicator,
-      .separator {
-        background: ${colors.bluePrimary};
+      .indicator {
+        background: rgba(4, 197, 127, 0.2);
+        svg {
+          color: #04c57f;
+        }
       }
-      .step-title {
+      .separator {
+        background: ${colors.white100};
+      }
+      /* .step-title {
         opacity: 1;
         color: ${colors.bluePrimary};
-      }
+      } */
     }
+
     [data-status='active'] {
       .indicator,
       .separator {
-        background: ${colors.white};
+        background: ${colors.white100};
       }
       .step-title {
         opacity: 1;
         color: ${colors.white};
       }
     }
+
     [data-status='incomplete'] {
       .indicator,
       .separator {
@@ -250,5 +213,65 @@ export const StyledLaunchpadManageHeader = styled(Flex)`
 
   .btn-submit-container {
     flex: 1;
+  }
+`;
+
+export const StyledLaunchpadFormStep1 = styled(Flex)`
+  border: 1px solid #353945;
+  gap: 24px;
+  margin-top: ${px2rem(32)};
+  .token-info {
+    display: flex;
+    flex-direction: column;
+    padding: ${px2rem(40)};
+    border-left: 1px solid #353945;
+
+    h6 {
+      color: ${colors.white};
+      font-weight: 500;
+      font-size: ${px2rem(18)};
+      line-height: 28px;
+      text-align: left;
+    }
+
+    img {
+      border-radius: 100%;
+      width: 80px;
+      height: 80px;
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      margin: 16px 0px;
+    }
+
+    p {
+      color: ${colors.white};
+      margin-top: 10px;
+    }
+
+    .horizontal-item {
+      div {
+        :first-child {
+          color: ${colors.white500};
+        }
+        :last-child {
+          color: ${colors.white};
+        }
+      }
+    }
+
+    .token-socials {
+      margin-top: 10px;
+    }
+
+    .btn-update-info {
+      background-color: #f7f7fa;
+      border-radius: 8px;
+      border: none;
+      padding: 16px;
+      height: 40px;
+      color: #1c1c1c;
+    }
+  }
+  .fields-left-container {
+    padding: ${px2rem(40)};
   }
 `;

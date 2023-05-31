@@ -1,4 +1,11 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import FiledButton from '@/components/Swap/button/filedButton';
+import WrapperConnected from '@/components/WrapperConnected';
 import { ROUTE_PATH } from '@/constants/route-path';
+import { ILaunchpad } from '@/interfaces/launchpad';
+import { IToken } from '@/interfaces/token';
+import { colors } from '@/theme/colors';
 import {
   Box,
   Flex,
@@ -13,16 +20,34 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
+import { useForm, useFormState } from 'react-final-form';
 import { FiChevronLeft } from 'react-icons/fi';
 import { StyledLaunchpadManageHeader } from './LaunchpadManage.styled';
 
-interface LaunchpadManageHeaderProps {
+export interface LaunchpadManageHeaderProps {
   step: number;
+  loading: boolean;
+  isApproveToken: boolean;
+  setLoading: (_: boolean) => void;
+  onApprove: () => void;
+  detail?: ILaunchpad;
 }
 
-const steps = [{ title: 'First' }, { title: 'Second' }, { title: 'Third' }];
+const steps = [{ title: 'Setup token' }, { title: 'Fill information' }];
 
-const LaunchpadManageHeader: React.FC<LaunchpadManageHeaderProps> = ({ step }) => {
+const LaunchpadManageHeader: React.FC<LaunchpadManageHeaderProps> = ({
+  step,
+  loading,
+  setLoading,
+  detail,
+  isApproveToken,
+  onApprove,
+}) => {
+  const { values } = useFormState();
+  const { change } = useForm();
+
+  const tokenSelected: IToken | undefined = values?.launchpadTokenArg;
+
   const router = useRouter();
 
   return (
@@ -34,14 +59,14 @@ const LaunchpadManageHeader: React.FC<LaunchpadManageHeaderProps> = ({ step }) =
         <Text className="back-title">Create Launchpad</Text>
       </Flex>
       <Box className="step-container">
-        <Stepper size="md" index={step}>
+        <Stepper className="step-content" size="md" index={step}>
           {steps.map((step, index) => (
             <Step className="step-item" key={index}>
               <StepIndicator className="indicator">
                 <StepStatus
                   complete={<StepIcon />}
-                  incomplete={<StepNumber />}
-                  active={<StepNumber />}
+                  incomplete={<StepNumber style={{ color: colors.white500 }} />}
+                  active={<StepNumber style={{ color: colors.white }} />}
                 />
               </StepIndicator>
 
@@ -54,7 +79,60 @@ const LaunchpadManageHeader: React.FC<LaunchpadManageHeaderProps> = ({ step }) =
           ))}
         </Stepper>
       </Box>
-      <Box className="btn-submit-container"></Box>
+      <Box className="btn-submit-container">
+        <WrapperConnected className="btn-submit">
+          {!isApproveToken && tokenSelected ? (
+            <FiledButton
+              isLoading={loading}
+              isDisabled={loading}
+              loadingText="Processing"
+              // btnSize={'h'}
+              onClick={onApprove}
+              type="button"
+            >
+              {`APPROVE USE OF ${tokenSelected?.symbol}`}
+            </FiledButton>
+          ) : (
+            <Flex width={'100%'} justifyContent={'flex-end'} gap={6}>
+              <FiledButton
+                isLoading={loading}
+                isDisabled={loading}
+                type="submit"
+                // btnSize="h"
+                // containerConfig={{
+                //   style: {
+                //     width: '100%',
+                //   },
+                // }}
+                className={
+                  detail && !detail.launchpad ? 'btn-secondary' : 'btn-primary'
+                }
+              >
+                {detail ? 'Update' : 'Submit'}
+              </FiledButton>
+              {detail && !detail.launchpad && (
+                <FiledButton
+                  isLoading={loading}
+                  isDisabled={loading}
+                  type="submit"
+                  // processInfo={{
+                  //   id: transactionType.createLaunchpad,
+                  // }}
+                  // btnSize="h"
+                  // containerConfig={{
+                  //   style: {
+                  //     width: '100%',
+                  //   },
+                  // }}
+                  onClick={() => change('isCreateProposal', true)}
+                >
+                  {'Submit proposal'}
+                </FiledButton>
+              )}
+            </Flex>
+          )}
+        </WrapperConnected>
+      </Box>
     </StyledLaunchpadManageHeader>
   );
 };
