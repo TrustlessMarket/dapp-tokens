@@ -3,7 +3,7 @@ import BodyContainer from '@/components/Swap/bodyContainer';
 import FiledButton from '@/components/Swap/button/filedButton';
 import {ROUTE_PATH} from '@/constants/route-path';
 import {Box, Spinner, Tab, TabList, TabPanel, TabPanels, Tabs, Text,} from '@chakra-ui/react';
-import AboveTheFold from '@/modules/Proposal/detail/aboveTheFold';
+import AboveTheFold from '@/modules/LaunchpadProposal/aboveTheFold';
 import {useAppSelector} from '@/state/hooks';
 import {selectPnftExchange} from '@/state/pnftExchange';
 import {colors} from '@/theme/colors';
@@ -60,7 +60,7 @@ const IdoDetailContainer = () => {
         <Text style={{color: colors.white}}>Opps... This proposal not found!</Text>
         <Box mt={6}/>
         <FiledButton
-          onClick={() => router.replace(ROUTE_PATH.PROPOSAL)}
+          onClick={() => router.replace(ROUTE_PATH.LAUNCHPAD)}
           btnSize="h"
         >
           Back to Proposal

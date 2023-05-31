@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import ProposalPending from '@/modules/Proposal/detail/aboveTheFold/upComing';
-import ProposalStarting from '@/modules/Proposal/detail/aboveTheFold/starting';
+import ProposalPending from '@/modules/LaunchpadProposal/aboveTheFold/upComing';
+import ProposalStarting from '@/modules/LaunchpadProposal/aboveTheFold/starting';
 import BodyContainer from '@/components/Swap/bodyContainer';
 import Usp from '@/modules/LaunchPadDetail/usp';
-import styles from '@/modules/Proposal/detail/aboveTheFold/styles.module.scss';
-import {PROPOSAL_STATUS, useProposalStatus} from "@/modules/Proposal/list/Proposal.Status";
+import styles from '@/modules/LaunchpadProposal/aboveTheFold/styles.module.scss';
+import {PROPOSAL_STATUS, useProposalStatus} from "@/modules/Launchpad/Proposal.Status";
 import {IProposal} from "@/interfaces/proposal";
 
 const AboveTheFold = ({ proposalDetail }: IProposal | any) => {

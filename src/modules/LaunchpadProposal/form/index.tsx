@@ -45,7 +45,7 @@ import SocialToken from '@/components/Social';
 import moment from 'moment';
 import useCountDownTimer from '@/hooks/useCountdown';
 import {IProposal} from '@/interfaces/proposal';
-import {PROPOSAL_STATUS, useProposalStatus,} from '@/modules/Proposal/list/Proposal.Status';
+import {PROPOSAL_STATUS, useProposalStatus,} from '@/modules/Launchpad/Proposal.Status';
 import {getVoteSignatureProposal} from '@/services/proposal';
 import useContractOperation from '@/hooks/contract-operations/useContractOperation';
 import useDefeatProposal from '@/hooks/contract-operations/proposal/useDefeat';
@@ -209,85 +209,87 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       {
         isAuthenticated && (
           <WrapperConnected type={'submit'} className={styles.submitButton}>
-            {compareString(poolDetail.creatorAddress, account) ? (
-              <>
-                {proposalDetail?.state === PROPOSAL_STATUS.Defeated && (
+            <>
+              {compareString(poolDetail.creatorAddress, account) ? (
+                <>
+                  {proposalDetail?.state === PROPOSAL_STATUS.Defeated && (
+                    <FiledButton
+                      isDisabled={submitting || btnDisabled}
+                      isLoading={submitting}
+                      type="submit"
+                      btnSize={'h'}
+                      containerConfig={{flex: 1, mt: 6}}
+                      loadingText={submitting ? 'Processing' : ' '}
+                      processInfo={{
+                        id: transactionType.votingProposal,
+                      }}
+                      className={styles.btnDefeat}
+                    >
+                      DEFEAT THIS PROPOSAL
+                    </FiledButton>
+                  )}
+                  {proposalDetail?.state === PROPOSAL_STATUS.Succeeded && (
+                    <FiledButton
+                      isDisabled={submitting || btnDisabled}
+                      isLoading={submitting}
+                      type="submit"
+                      btnSize={'h'}
+                      containerConfig={{flex: 1, mt: 6}}
+                      loadingText={submitting ? 'Processing' : ' '}
+                      processInfo={{
+                        id: transactionType.votingProposal,
+                      }}
+                      className={styles.btnExecute}
+                    >
+                      EXECUTE THIS PROPOSAL
+                    </FiledButton>
+                  )}
+                </>
+              ) : (
+                <>
+                </>
+              )}
+              {proposalDetail?.state === PROPOSAL_STATUS.Active && canVote && (
+                <Flex width={'100%'} justifyContent={'center'} gap={6}>
                   <FiledButton
-                    isDisabled={submitting || btnDisabled}
                     isLoading={submitting}
+                    isDisabled={submitting || btnDisabled || !canVote}
                     type="submit"
-                    btnSize={'h'}
-                    containerConfig={{flex: 1, mt: 6}}
-                    loadingText={submitting ? 'Processing' : ' '}
                     processInfo={{
                       id: transactionType.votingProposal,
                     }}
-                    className={styles.btnDefeat}
+                    btnSize="h"
+                    containerConfig={{
+                      style: {
+                        width: '100%',
+                      },
+                    }}
+                    className={styles.btnVoteUp}
+                    onClick={() => change('isVoteUp', true)}
                   >
-                    DEFEAT THIS PROPOSAL
+                    Vote Up
                   </FiledButton>
-                )}
-                {proposalDetail?.state === PROPOSAL_STATUS.Succeeded && (
                   <FiledButton
-                    isDisabled={submitting || btnDisabled}
                     isLoading={submitting}
+                    isDisabled={submitting || btnDisabled || !canVote}
                     type="submit"
-                    btnSize={'h'}
-                    containerConfig={{flex: 1, mt: 6}}
-                    loadingText={submitting ? 'Processing' : ' '}
                     processInfo={{
                       id: transactionType.votingProposal,
                     }}
-                    className={styles.btnExecute}
+                    btnSize="h"
+                    containerConfig={{
+                      style: {
+                        width: '100%',
+                      },
+                    }}
+                    className={styles.btnVoteDown}
+                    onClick={() => change('isVoteDown', true)}
                   >
-                    EXECUTE THIS PROPOSAL
+                    Vote down
                   </FiledButton>
-                )}
-              </>
-            ) : (
-              <>
-              </>
-            )}
-            {proposalDetail?.state === PROPOSAL_STATUS.Active && canVote && (
-              <Flex width={'100%'} justifyContent={'center'} gap={6}>
-                <FiledButton
-                  isLoading={submitting}
-                  isDisabled={submitting || btnDisabled || !canVote}
-                  type="submit"
-                  processInfo={{
-                    id: transactionType.votingProposal,
-                  }}
-                  btnSize="h"
-                  containerConfig={{
-                    style: {
-                      width: '100%',
-                    },
-                  }}
-                  className={styles.btnVoteUp}
-                  onClick={() => change('isVoteUp', true)}
-                >
-                  Vote Up
-                </FiledButton>
-                <FiledButton
-                  isLoading={submitting}
-                  isDisabled={submitting || btnDisabled || !canVote}
-                  type="submit"
-                  processInfo={{
-                    id: transactionType.votingProposal,
-                  }}
-                  btnSize="h"
-                  containerConfig={{
-                    style: {
-                      width: '100%',
-                    },
-                  }}
-                  className={styles.btnVoteDown}
-                  onClick={() => change('isVoteDown', true)}
-                >
-                  Vote down
-                </FiledButton>
-              </Flex>
-            )}
+                </Flex>
+              )}
+            </>
           </WrapperConnected>
         )
       }

@@ -2,7 +2,7 @@ import {CDN_URL} from '@/configs';
 import Layout from '@/layouts';
 import Head from 'next/head';
 import React from 'react';
-import ProposalList from "@/modules/Proposal/list";
+import ProposalDetailContainer from "@/modules/LaunchpadProposal";
 
 const IdoToken = () => {
   return (
@@ -11,7 +11,7 @@ const IdoToken = () => {
         <link rel="icon" href={`${CDN_URL}/icons/logo-tc-market.svg`} />
       </Head>
       <Layout>
-        <ProposalList />
+        <ProposalDetailContainer />
       </Layout>
     </>
   );
