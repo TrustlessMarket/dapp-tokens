@@ -426,26 +426,30 @@ const LaunchpadContainer = () => {
               compareString(row.creatorAddress, account) &&
               (!row?.proposalId ||
                 moment(row?.userProposal?.voteStart).unix() > moment().unix()) && (
-                <Box
-                  cursor={'pointer'}
-                  onClick={() =>
-                    router.push(`${ROUTE_PATH.LAUNCHPAD_MANAGE}?id=${row.id}`)
-                  }
-                >
-                  <BsPencil/>
-                </Box>
+                <InfoTooltip label={'Edit Proposal'}>
+                  <Box
+                    cursor={'pointer'}
+                    onClick={() =>
+                      router.push(`${ROUTE_PATH.LAUNCHPAD_MANAGE}?id=${row.id}`)
+                    }
+                  >
+                    <BsPencil/>
+                  </Box>
+                </InfoTooltip>
               )
             }
             {
               !isLaunchPad && row.proposalId && (
-                <Box
-                  cursor={'pointer'}
-                  onClick={() =>
-                    router.push(`${ROUTE_PATH.LAUNCHPAD_PROPOSAL}?proposal_id=${row?.proposalId}`)
-                  }
-                >
-                  <BsBoxArrowUpRight/>
-                </Box>
+                <InfoTooltip label={'Proposal Detail'}>
+                  <Box
+                    cursor={'pointer'}
+                    onClick={() =>
+                      router.push(`${ROUTE_PATH.LAUNCHPAD_PROPOSAL}?proposal_id=${row?.proposalId}`)
+                    }
+                  >
+                    <BsBoxArrowUpRight/>
+                  </Box>
+                </InfoTooltip>
               )
             }
           </Flex>);
