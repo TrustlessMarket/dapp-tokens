@@ -20,7 +20,7 @@ import BigNumber from 'bignumber.js';
 import moment from 'moment';
 import {useRouter} from 'next/router';
 import {useEffect, useMemo, useState} from 'react';
-import {BsPencil} from 'react-icons/bs';
+import {BsBoxArrowUpRight, BsPencil} from 'react-icons/bs';
 import {ImClock2} from 'react-icons/im';
 import {useDispatch} from 'react-redux';
 import web3 from 'web3';
@@ -397,6 +397,8 @@ const LaunchpadContainer = () => {
           borderBottom: 'none',
         },
         render(row: ILaunchpad) {
+          const isLaunchPad = checkIsLaunchpad(row);
+
           if (
             compareString(row.creatorAddress, account) &&
             (!row?.proposalId ||
@@ -419,7 +421,34 @@ const LaunchpadContainer = () => {
             );
           }
 
-          return <></>;
+          return (<Flex alignItems={'center'} gap={4}>
+            {
+              compareString(row.creatorAddress, account) &&
+              (!row?.proposalId ||
+                moment(row?.userProposal?.voteStart).unix() > moment().unix()) && (
+                <Box
+                  cursor={'pointer'}
+                  onClick={() =>
+                    router.push(`${ROUTE_PATH.LAUNCHPAD_MANAGE}?id=${row.id}`)
+                  }
+                >
+                  <BsPencil/>
+                </Box>
+              )
+            }
+            {
+              !isLaunchPad && row.proposalId && (
+                <Box
+                  cursor={'pointer'}
+                  onClick={() =>
+                    router.push(`${ROUTE_PATH.LAUNCHPAD_PROPOSAL}?proposal_id=${row?.proposalId}`)
+                  }
+                >
+                  <BsBoxArrowUpRight/>
+                </Box>
+              )
+            }
+          </Flex>);
         },
       },
     ];
