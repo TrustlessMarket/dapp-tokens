@@ -388,28 +388,23 @@ const BuyForm = ({proposalDetail}: { proposalDetail: IProposal }) => {
       );
 
       let response;
-      if (compareString(poolDetail?.creatorAddress, account)) {
-        if (proposalDetail?.state === PROPOSAL_STATUS.Defeated) {
-          response = await defeatProposal({
-            proposalId: proposalDetail?.proposalId,
-          });
-        } else if (proposalDetail?.state === PROPOSAL_STATUS.Succeeded) {
-          response = await executeProposal({
-            proposalId: proposalDetail?.proposalId,
-          });
-        }
+      if (compareString(poolDetail?.creatorAddress, account) && proposalDetail?.state === PROPOSAL_STATUS.Defeated) {
+        response = await defeatProposal({
+          proposalId: proposalDetail?.proposalId,
+        });
+      } else if (compareString(poolDetail?.creatorAddress, account) && proposalDetail?.state === PROPOSAL_STATUS.Succeeded) {
+        response = await executeProposal({
+          proposalId: proposalDetail?.proposalId,
+        });
       } else if (canVote) {
         const data = {
           proposalId: proposalDetail?.proposalId,
-          weight: voteSignatureProposal?.weightSign,
+          weight: voteSignatureProposal?.weigthSign,
           support: values?.isVoteUp ? "1" : "0",
           signature: voteSignatureProposal?.adminSignature
         }
-        console.log('dataaaaaa', data);
         response = await castVoteProposal(data);
       }
-
-      console.log('response', response);
 
       toast.success('Transaction has been created. Please wait for few minutes.');
       refForm.current?.reset();
