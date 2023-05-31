@@ -59,7 +59,7 @@ export const remakeFunctionName: any = {
 };
 
 export const getFunctionABI = (abi: any[] = [], name: string) => {
-  const _abi = abi.find((v) => compareString(v.name, name));
+  const _abi = abi.find((v) => compareString(v.name, name) && v.type === 'function');
   return {
     abi: [_abi],
     functionType: remakeFunctionName[name],
