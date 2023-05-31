@@ -317,7 +317,7 @@ const AllowlistTable = ({ poolDetail, isFull = true, handleViewMore }: any) => {
             textAlign={'center'}
             cursor={'pointer'}
           >
-            View more
+            View all
           </Text>
         )}
       </div>
