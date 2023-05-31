@@ -2,7 +2,6 @@
 import ProposalPending from '@/modules/LaunchpadProposal/aboveTheFold/upComing';
 import ProposalStarting from '@/modules/LaunchpadProposal/aboveTheFold/starting';
 import BodyContainer from '@/components/Swap/bodyContainer';
-import Usp from '@/modules/LaunchPadDetail/usp';
 import styles from '@/modules/LaunchpadProposal/aboveTheFold/styles.module.scss';
 import {PROPOSAL_STATUS, useProposalStatus} from "@/modules/Launchpad/Proposal.Status";
 import {IProposal} from "@/interfaces/proposal";
@@ -17,7 +16,6 @@ const AboveTheFold = ({ proposalDetail }: IProposal | any) => {
       ) : (
         <ProposalStarting proposalDetail={proposalDetail} />
       )}
-      <Usp />
     </BodyContainer>
   );
 };

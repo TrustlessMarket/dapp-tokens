@@ -2,19 +2,20 @@
 import BodyContainer from '@/components/Swap/bodyContainer';
 import FiledButton from '@/components/Swap/button/filedButton';
 import {ROUTE_PATH} from '@/constants/route-path';
-import {Box, Spinner, Tab, TabList, TabPanel, TabPanels, Tabs, Text,} from '@chakra-ui/react';
+import {Box, Heading, Spinner, Text,} from '@chakra-ui/react';
 import AboveTheFold from '@/modules/LaunchpadProposal/aboveTheFold';
 import {useAppSelector} from '@/state/hooks';
 import {selectPnftExchange} from '@/state/pnftExchange';
 import {colors} from '@/theme/colors';
 import cx from 'classnames';
 import {useRouter} from 'next/router';
-import {useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import styles from './styles.module.scss';
 import {getDetailProposal} from "@/services/proposal";
 import {IProposal} from "@/interfaces/proposal";
 import IdoDescription from "@/modules/LaunchPadDetail/description";
 import IdoFaqs from "@/modules/LaunchPadDetail/faqs";
+import SectionContainer from "@/components/Swap/sectionContainer";
 
 const IdoDetailContainer = () => {
   const router = useRouter();
@@ -72,22 +73,12 @@ const IdoDetailContainer = () => {
   return (
     <Box className={styles.wrapper}>
       <AboveTheFold proposalDetail={proposalDetail}/>
-      <BodyContainer>
-        <Tabs className={cx(styles.tabContainer, 'max-content')}>
-          <TabList mb={6} mt={6}>
-            <Tab>Story</Tab>
-            <Tab>Faqs</Tab>
-          </TabList>
-          <TabPanels>
-            <TabPanel>
-              <IdoDescription poolDetail={proposalDetail?.userPool}/>
-            </TabPanel>
-            <TabPanel>
-              <IdoFaqs poolDetail={proposalDetail?.userPool}/>
-            </TabPanel>
-          </TabPanels>
-        </Tabs>
-      </BodyContainer>
+      <SectionContainer>
+        <Heading as={'h6'} color={"#FFFFFF"}>Description</Heading>
+        <IdoDescription poolDetail={proposalDetail?.userPool}/>
+        <Heading as={'h6'} color={"#FFFFFF"}>Faqs</Heading>
+        <IdoFaqs poolDetail={proposalDetail?.userPool}/>
+      </SectionContainer>
     </Box>
   );
 };
