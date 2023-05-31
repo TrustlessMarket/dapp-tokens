@@ -45,7 +45,7 @@ const Usp = () => {
                     alt={d?.img || 'default-icon'}
                   />
                 </Center>
-                <Flex direction={"column"}>
+                <Flex direction={"column"} gap={1}>
                   <Text fontSize={px2rem(16)} fontWeight={"500"}>{d?.title}</Text>
                   <Text fontSize={px2rem(14)} fontWeight={"400"} color={'rgba(255, 255, 255, 0.7)'}>{d?.desc}</Text>
                 </Flex>
