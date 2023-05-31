@@ -109,6 +109,9 @@ const IdoTokenManageForm: React.FC<IdoTokenManageFormProps> = ({
         _faqs[`faq_q_${i + 1}`] = element.value;
         _faqs[`faq_a_${i + 1}`] = element.label;
       }
+
+      const duration = new BigNumber(detail.duration).div(24).div(3600).toFixed(2);
+
       initialize({
         launchpadTokenArg: detail.launchpadToken,
         liquidityTokenArg: detail.liquidityToken,
@@ -120,8 +123,8 @@ const IdoTokenManageForm: React.FC<IdoTokenManageFormProps> = ({
         description: detail.description,
         video: detail.video,
         image: detail.image,
-        duration: detail.duration,
         ..._faqs,
+        duration: duration,
       });
     }
   }, [detail]);

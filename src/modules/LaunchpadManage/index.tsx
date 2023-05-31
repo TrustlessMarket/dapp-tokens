@@ -20,6 +20,7 @@ import useCreateLaunchpad from '@/hooks/contract-operations/launchpad/useCreate'
 import useContractOperation from '@/hooks/contract-operations/useContractOperation';
 import { ROUTE_PATH } from '@/constants/route-path';
 import useTCWallet from '@/hooks/useTCWallet';
+import BigNumber from "bignumber.js";
 
 const LaunchManage = () => {
   const { tcWalletAddress: account } = useTCWallet();
@@ -53,8 +54,6 @@ const LaunchManage = () => {
   };
 
   const onSubmit = async (values: any) => {
-    console.log('account', account);
-
     if (!account) {
       return;
     }
@@ -84,6 +83,8 @@ const LaunchManage = () => {
         account,
       });
 
+      const seconds = new BigNumber(values.duration).multipliedBy(24).multipliedBy(3600).toFixed(0);
+
       const res = await createLaunchpad({
         user_address: account,
         video: values?.video,
@@ -98,7 +99,7 @@ const LaunchManage = () => {
         liquidity_balance: values.liquidityBalance,
         liquidity_ratio: values.liquidityRatioArg,
         goal_balance: values.goalBalance,
-        duration: Number(values.duration),
+        duration: Number(seconds),
       });
 
       if (!id) {
@@ -110,7 +111,7 @@ const LaunchManage = () => {
           launchpadTokenArg: tokenAddress,
           liquidityTokenArg: liquidAddress,
           liquidityRatioArg: values.liquidityRatioArg,
-          durationArg: values.duration,
+          durationArg: seconds,
           launchpadBalance: values.launchpadBalance,
           goalBalance: values.goalBalance,
         });

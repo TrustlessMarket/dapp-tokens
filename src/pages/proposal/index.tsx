@@ -2,7 +2,7 @@ import {CDN_URL} from '@/configs';
 import Layout from '@/layouts';
 import Head from 'next/head';
 import React from 'react';
-import ProposalList from "@/modules/Proposal/list";
+import ProposalList from "@/modules/Proposal";
 
 const IdoToken = () => {
   return (

@@ -22,6 +22,6 @@ export const ROUTE_PATH = {
   LAUNCHPAD: '/launchpad',
   LAUNCHPAD_DETAIL: '/launchpad/detail',
   LAUNCHPAD_MANAGE: '/launchpad/manage',
-  PROPOSAL: '/proposal',
-  PROPOSAL_DETAIL: '/proposal/detail',
+  LAUNCHPAD_PROPOSAL: 'launchpad/proposal',
+  PROPOSAL: 'proposal',
 };

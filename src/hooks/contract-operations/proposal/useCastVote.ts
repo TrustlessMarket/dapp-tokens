@@ -33,7 +33,7 @@ const useCastVoteProposal: ContractOperationHook<ICastVoteParams, boolean> = () 
 
         const encodeAbi = ContractInterface.encodeFunctionData('castVote', [
           proposalId,
-          web3.utils.toWei(weight),
+          weight,
           support,
           signature || Buffer.from([]),
         ]);

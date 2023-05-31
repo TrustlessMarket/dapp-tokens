@@ -9,7 +9,7 @@ import { ROUTE_PATH } from '@/constants/route-path';
 import useTCWallet from '@/hooks/useTCWallet';
 import { IProposal } from '@/interfaces/proposal';
 import { IToken } from '@/interfaces/token';
-import ProposalStatus from '@/modules/Proposal/list/Proposal.Status';
+import ProposalStatus from '@/modules/Proposal/Proposal.Status';
 import { getListProposals } from '@/services/proposal';
 import { useAppSelector } from '@/state/hooks';
 import { selectPnftExchange } from '@/state/pnftExchange';
@@ -32,8 +32,6 @@ const ProposalList = () => {
   // const dispatch = useDispatch();
   const needReload = useAppSelector(selectPnftExchange).needReload;
   const router = useRouter();
-
-  console.log('ProposalList', data);
 
   useEffect(() => {
     getData();
@@ -169,20 +167,20 @@ const ProposalList = () => {
               <Text>{`${
                 userPool.liquidityRatio
                   ? `${formatCurrency(
-                      new BigNumber(
-                        web3.utils.toWei(userPool.liquidityRatio).toString(),
-                      )
-                        .dividedBy(10000)
-                        .toString(),
-                      18,
-                    )}%`
+                    new BigNumber(
+                      web3.utils.toWei(userPool.liquidityRatio).toString(),
+                    )
+                      .dividedBy(10000)
+                      .toString(),
+                    18,
+                  )}%`
                   : 'N/A'
               }`}</Text>
               <Text>{`${
                 token.totalSupply
                   ? `${formatCurrency(userPool.liquidityBalance, 18)} ${
-                      token?.symbol
-                    }`
+                    token?.symbol
+                  }`
                   : 'N/A'
               }`}</Text>
             </Box>
@@ -410,9 +408,9 @@ const ProposalList = () => {
       </Text>
 
       <Flex mb={'24px'} mt={'24px'} justifyContent={'center'}>
-        <FiledButton btnSize="h" onClick={onShowCreateIDO}>
+        {/*<FiledButton btnSize="h" onClick={onShowCreateIDO}>
           <Text>Submit Your Proposal</Text>
-        </FiledButton>
+        </FiledButton>*/}
       </Flex>
 
       <Box className="content">
@@ -422,7 +420,7 @@ const ProposalList = () => {
           initialLoading={loading}
           onItemClick={(e) => {
             return router.push(
-              `${ROUTE_PATH.PROPOSAL_DETAIL}?proposal_id=${e.proposalId}`,
+              `${ROUTE_PATH.LAUNCHPAD_PROPOSAL}?proposal_id=${e.proposalId}`,
             );
           }}
         />

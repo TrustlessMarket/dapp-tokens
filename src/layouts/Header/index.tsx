@@ -46,6 +46,11 @@ export const HEADER_MENUS = [
     route: ROUTE_PATH.LAUNCHPAD,
     name: 'Launchpad',
   },
+  {
+    key: ROUTE_PATH.PROPOSAL,
+    route: ROUTE_PATH.PROPOSAL,
+    name: 'Proposal',
+  },
 ];
 
 const Header = () => {
