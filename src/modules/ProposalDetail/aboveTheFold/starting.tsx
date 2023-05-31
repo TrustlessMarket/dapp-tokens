@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {Box, Flex, Grid, GridItem, Text} from "@chakra-ui/react";
-import BuyForm from "@/modules/LaunchpadProposal/form";
+import BuyForm from "@/modules/ProposalDetail/form";
 import Card from "@/components/Swap/card";
 import React from "react";
 import Intro from "@/modules/LaunchPadDetail/aboveTheFold/intro";

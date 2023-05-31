@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import ProposalStarting from '@/modules/LaunchpadProposal/aboveTheFold/starting';
+import ProposalStarting from '@/modules/ProposalDetail/aboveTheFold/starting';
 import BodyContainer from '@/components/Swap/bodyContainer';
-import styles from '@/modules/LaunchpadProposal/aboveTheFold/styles.module.scss';
+import styles from '@/modules/ProposalDetail/aboveTheFold/styles.module.scss';
 import {IProposal} from "@/interfaces/proposal";
 import Card from "@/components/Swap/card";
 import React from "react";
-import ProposalInfo from "@/modules/LaunchpadProposal/info";
+import ProposalInfo from "@/modules/ProposalDetail/info";
 
 const AboveTheFold = ({ proposalDetail }: IProposal | any) => {
   // const [status] = useProposalStatus({ row: proposalDetail });
