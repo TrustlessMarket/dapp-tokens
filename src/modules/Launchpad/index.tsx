@@ -306,7 +306,6 @@ const LaunchpadContainer = () => {
             }
           } else {
             const [status] = useProposalStatus({row: row?.userProposal});
-            console.log('proposal status', status);
 
             if (status.value === 'pending') {
               return (
@@ -473,16 +472,17 @@ const LaunchpadContainer = () => {
             if (!e.id) {
               return null;
             }
-            const isLaunchPad = checkIsLaunchpad(e);
-            if (isLaunchPad) {
-              return router.push(`${ROUTE_PATH.LAUNCHPAD_DETAIL}?id=${e.id}`);
-            } else if (e.proposalId) {
-              return router.push(
-                `${ROUTE_PATH.LAUNCHPAD_PROPOSAL}?proposal_id=${e.proposalId}`,
-              );
-            } else {
-              return router.push(`${ROUTE_PATH.LAUNCHPAD_MANAGE}?id=${e.id}`);
-            }
+            return router.push(`${ROUTE_PATH.LAUNCHPAD_DETAIL}?id=${e.id}`);
+            // const isLaunchPad = checkIsLaunchpad(e);
+            // if (isLaunchPad) {
+            //   return router.push(`${ROUTE_PATH.LAUNCHPAD_DETAIL}?id=${e.id}`);
+            // } else if (e.proposalId) {
+            //   return router.push(
+            //     `${ROUTE_PATH.LAUNCHPAD_PROPOSAL}?proposal_id=${e.proposalId}`,
+            //   );
+            // } else {
+            //   return router.push(`${ROUTE_PATH.LAUNCHPAD_MANAGE}?id=${e.id}`);
+            // }
           }}
         />
       </Box>
