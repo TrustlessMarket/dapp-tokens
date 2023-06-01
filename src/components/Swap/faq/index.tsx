@@ -11,7 +11,7 @@ const Item = ({ data } : {data: any}) => {
 
   return (
     <Accordion allowToggle onChange={i => setOpen(i === 0)}>
-      <AccordionItem border='none' borderRadius={12} w={['100%', '760px']} bgColor='#1E1E22'>
+      <AccordionItem border='none' borderRadius={12} w={['100%', '100%']} bgColor='#1E1E22'>
         <AccordionButton px={[6,6]} pt={6} pb={open ? 4 : 6}>
           <Flex w='100%' alignItems='center'>
             <IconPlusToMinus open={open} size='16px' color='#1b77fd' />
@@ -32,7 +32,7 @@ const Section = ({title, data}: {title?: any, data: any}) => {
   const renderData = viewAll || data?.length < 5 ? data : [data[0], data[1], data[2], data[3], data[4]];
 
   return (
-      <Flex direction='column'>
+      <Flex direction='column' w={"100%"}>
         {title && <Text fontSize='lg' fontWeight='medium' textAlign={"left"}>{title}</Text>}
         <Flex gap={2} direction='column' mt={4}>
           {renderData.map((e: any , i: number ) => <Item key={i} data={e} />)}
