@@ -45,7 +45,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const [isFetching, setIsFetching] = useState(false);
 
   const isAuthenticated = useSelector(getIsAuthenticatedSelector);
-  const { onDisconnect, onConnect, requestBtcAddress } = useContext(WalletContext);
+  const { onDisconnect, onConnect } = useContext(WalletContext);
   const [tokensList, setTokensList] = useState<IToken[]>([]);
   const [sort, setSort] = useState({ sort: '' });
   const { values } = useFormState();
@@ -53,7 +53,6 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const handleConnectWallet = async () => {
     try {
       await onConnect();
-      await requestBtcAddress();
     } catch (err) {
       showError({
         message: (err as Error).message,

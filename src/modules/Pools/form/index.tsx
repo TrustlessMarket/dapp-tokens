@@ -1,6 +1,7 @@
 /* eslint-disable react/no-children-prop */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import ModalConfirmApprove from '@/components/ModalConfirmApprove';
 import { transactionType } from '@/components/Swap/alertInfoProcessing/types';
 import FiledButton from '@/components/Swap/button/filedButton';
 import FilterButton from '@/components/Swap/filterToken';
@@ -13,7 +14,7 @@ import {
   TRUSTLESS_BRIDGE,
   TRUSTLESS_GASSTATION,
 } from '@/constants/common';
-import { getMessageError, toastError } from '@/constants/error';
+import { toastError } from '@/constants/error';
 import { ROUTE_PATH } from '@/constants/route-path';
 import { IMPORTED_TOKENS, LIQUID_PAIRS } from '@/constants/storage-key';
 import { NULL_ADDRESS } from '@/constants/url';
@@ -34,19 +35,20 @@ import useInfoERC20Token, {
 import useIsApproveERC20Token from '@/hooks/contract-operations/token/useIsApproveERC20Token';
 import useSupplyERC20Liquid from '@/hooks/contract-operations/token/useSupplyERC20Liquid';
 import useContractOperation from '@/hooks/contract-operations/useContractOperation';
+import useTCWallet from '@/hooks/useTCWallet';
 import { IToken } from '@/interfaces/token';
 import { TransactionStatus } from '@/interfaces/walletTransaction';
 import { getPairAPR } from '@/services/pool';
 import { logErrorToServer } from '@/services/swap';
 import { getTokens } from '@/services/token-explorer';
 import { useAppDispatch, useAppSelector } from '@/state/hooks';
+import { closeModal, openModal } from '@/state/modal';
 import {
   requestReload,
   requestReloadRealtime,
   selectPnftExchange,
   updateCurrentTransaction,
 } from '@/state/pnftExchange';
-import { getIsAuthenticatedSelector } from '@/state/user/selector';
 import {
   camelCaseKeys,
   compareString,
@@ -60,15 +62,14 @@ import px2rem from '@/utils/px2rem';
 import { showError } from '@/utils/toast';
 import {
   Box,
+  Center,
   Flex,
   Stat,
   StatHelpText,
   StatNumber,
   Text,
   forwardRef,
-  Center,
 } from '@chakra-ui/react';
-import { useWeb3React } from '@web3-react/core';
 import BigNumber from 'bignumber.js';
 import cx from 'classnames';
 import { isEmpty } from 'lodash';
@@ -76,7 +77,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import Slider from 'rc-slider';
 import 'rc-slider/assets/index.css';
-import React, {
+import {
   useCallback,
   useContext,
   useEffect,
@@ -86,14 +87,12 @@ import React, {
 } from 'react';
 import { Field, Form, useForm, useFormState } from 'react-final-form';
 import toast from 'react-hot-toast';
+import { BiBell } from 'react-icons/bi';
 import { BsPlus } from 'react-icons/bs';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { default as Web3, default as web3 } from 'web3';
 import { ScreenType } from '..';
 import styles from './styles.module.scss';
-import { closeModal, openModal } from '@/state/modal';
-import ModalConfirmApprove from '@/components/ModalConfirmApprove';
-import { BiBell } from 'react-icons/bi';
 
 const LIMIT_PAGE = 50;
 
@@ -141,7 +140,6 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const [apr, setApr] = useState(0);
 
   const { juiceBalance, isLoadedAssets } = useContext(AssetsContext);
-  const isAuthenticated = useSelector(getIsAuthenticatedSelector);
 
   const router = useRouter();
   const type = router.query.type;
@@ -153,7 +151,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const refTokensList = useRef<IToken[]>([]);
 
   const dispatch = useDispatch();
-  const { account } = useWeb3React();
+  const { tcWalletAddress: account, isAuthenticated } = useTCWallet();
   const { values } = useFormState();
   const { change, restart } = useForm();
   const btnDisabled = loading || (isScreenRemove && !isPaired);
@@ -1003,6 +1001,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             </Text>
           </Flex>
         )}
+      <Box mt={6} />
       <WrapperConnected
         type={
           !Boolean(isApproveBaseToken) ||
@@ -1021,12 +1020,11 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             isDisabled={loading}
             loadingText="Processing"
             btnSize={'h'}
-            onClick={onShowModalApprove}
+            onClick={onApprove}
             type="button"
             processInfo={{
               id: transactionType.createPoolApprove,
             }}
-            mt={6}
           >
             {!isScreenRemove
               ? `APPROVE USE OF ${
@@ -1048,7 +1046,6 @@ export const MakeFormSwap = forwardRef((props, ref) => {
               id: transactionType.createPoolApprove,
             }}
             style={{ backgroundColor: renderContentTitle().btnBgColor }}
-            mt={6}
           >
             {renderContentTitle().btnTitle}
           </FiledButton>
@@ -1070,7 +1067,7 @@ const CreateMarket = ({
   const refForm = useRef<any>();
   const [submitting, setSubmitting] = useState(false);
   const dispatch = useAppDispatch();
-  const { account } = useWeb3React();
+  const { tcWalletAddress: account } = useTCWallet();
 
   // const {run} = useContractOperation()
   const { run: addLiquidity } = useContractOperation<IAddLiquidityParams, boolean>({

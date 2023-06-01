@@ -36,14 +36,8 @@ export function getContract(
   return new Contract(address, ABI, getProviderOrSigner(provider, account) as any);
 }
 
-export const getProviderProvider = () => {
-  const { provider: defaultProvider } = useWeb3React();
-
-  let provider: any = defaultProvider;
-  if ((!provider && window.ethereum) || !isConnectedTrustChain()) {
-    provider = new ethers.providers.JsonRpcProvider(TC_NETWORK_RPC);
-  }
-
+export const getDefaultProvider = (): JsonRpcProvider => {
+  const provider = new ethers.providers.JsonRpcProvider(TC_NETWORK_RPC);
   return provider;
 };
 
@@ -55,4 +49,20 @@ export const isConnectedTrustChain = () => {
   }
 
   return false;
+};
+
+export const remakeFunctionName: any = {
+  swapExactTokensForTokens: 'Swap Tokens',
+  addLiquidity: 'Add Liquidity',
+  removeLiquidity: 'Remove Liquidity',
+  approve: 'Approve Token',
+};
+
+export const getFunctionABI = (abi: any[] = [], name: string) => {
+  const _abi = abi.find((v) => compareString(v.name, name) && v.type === 'function');
+  return {
+    abi: [_abi],
+    functionType: remakeFunctionName[name],
+    functionName: `${name}(${_abi.inputs.map((v: any) => v.type)})`,
+  };
 };

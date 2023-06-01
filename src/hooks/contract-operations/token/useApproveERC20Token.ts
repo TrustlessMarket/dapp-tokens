@@ -1,16 +1,17 @@
 import ERC20ABIJson from '@/abis/erc20.json';
 import { transactionType } from '@/components/Swap/alertInfoProcessing/types';
+import { getConnector } from '@/connection';
 import { MaxUint256 } from '@/constants/url';
-import { AssetsContext } from '@/contexts/assets-context';
 import { TransactionEventType } from '@/enums/transaction';
+import useTCWallet from '@/hooks/useTCWallet';
 import { ContractOperationHook, DAppType } from '@/interfaces/contract-operation';
 import { TransactionStatus } from '@/interfaces/walletTransaction';
 import { logErrorToServer } from '@/services/swap';
 import store from '@/state';
 import { updateCurrentTransaction } from '@/state/pnftExchange';
-import { getContract, getDefaultGasPrice } from '@/utils';
-import { useWeb3React } from '@web3-react/core';
-import { useCallback, useContext } from 'react';
+import { getDefaultGasPrice, getDefaultProvider, getFunctionABI } from '@/utils';
+import { ethers } from 'ethers';
+import { useCallback } from 'react';
 
 export interface IApproveERC20TokenParams {
   address: string;
@@ -21,27 +22,37 @@ const useApproveERC20Token: ContractOperationHook<
   IApproveERC20TokenParams,
   boolean
 > = () => {
-  const { account, provider } = useWeb3React();
-  const { btcBalance, feeRate } = useContext(AssetsContext);
+  const { tcWalletAddress: account } = useTCWallet();
+  const provider = getDefaultProvider();
+  const connector = getConnector();
 
   const call = useCallback(
     async (params: IApproveERC20TokenParams): Promise<boolean> => {
       const { address, erc20TokenAddress } = params;
 
       if (account && provider && erc20TokenAddress) {
-        const contract = getContract(
-          erc20TokenAddress,
-          ERC20ABIJson.abi,
-          provider,
-          account,
-        );
+        const functionABI = getFunctionABI(ERC20ABIJson.abi, 'approve');
 
-        const transaction = await contract
-          .connect(provider.getSigner())
-          .approve(address, MaxUint256, {
-            gasLimit: '150000',
-            gasPrice: getDefaultGasPrice(),
-          });
+        const ContractInterface = new ethers.utils.Interface(functionABI.abi);
+
+        const encodeAbi = ContractInterface.encodeFunctionData('approve', [
+          address,
+          MaxUint256,
+        ]);
+
+        const transaction = await connector.requestSign({
+          target: '_blank',
+          calldata: encodeAbi,
+          to: erc20TokenAddress,
+          value: '',
+          redirectURL: window.location.href,
+          isInscribe: false,
+          gasLimit: '150000',
+          gasPrice: getDefaultGasPrice(),
+          functionType: functionABI.functionType,
+          functionName: functionABI.functionName,
+          from: account,
+        });
 
         logErrorToServer({
           type: 'logs',
@@ -61,14 +72,12 @@ const useApproveERC20Token: ContractOperationHook<
           }),
         );
 
-        // await transaction.wait();
-
         return transaction;
       }
 
       return false;
     },
-    [account, provider, btcBalance, feeRate],
+    [account, provider],
   );
 
   return {
