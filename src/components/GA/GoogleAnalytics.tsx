@@ -1,8 +1,7 @@
 //components/GoogleAnalytics.tsx
-import {useRouter} from "next/router";
+import { useRouter } from "next/router";
 import Script from "next/script";
-import {memo, useEffect} from "react";
-
+import { memo, useEffect } from "react";
 const TRACKING_ID = process.env.NEXT_PUBLIC_GA4_TRACKING_ID!;
 const GoogleAnalytics = () => {
     const router = useRouter();
@@ -40,18 +39,20 @@ const GoogleAnalytics = () => {
     }
     return (
         <>
-            <Script async src="https://www.googletagmanager.com/gtag/js?id=${TRACKING_ID}"></Script>
-            <Script id="gtag-init"
-                    dangerouslySetInnerHTML={{
-                        __html: `
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', '${TRACKING_ID}');
-`,
-                    }}
+            <Script
+                src={`https://www.googletagmanager.com/gtag/js?id=${TRACKING_ID}`}
+            ></Script>
+            {/* 👇 gtag function definition. notice that we don't send page views at this point.  */}
+            <Script
+                id="gtag-init"
+                dangerouslySetInnerHTML={{
+                    __html: `
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+          `,
+                }}
             />
-
         </>
     );
 };

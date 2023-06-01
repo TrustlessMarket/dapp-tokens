@@ -1,10 +1,10 @@
-import useTCWallet from '@/hooks/useTCWallet';
-import { useAppSelector } from '@/state/hooks';
-import { selectPnftExchange } from '@/state/pnftExchange';
-import { useMediaQuery } from '@chakra-ui/react';
-import { useWindowSize } from '@trustless-computer/dapp-core';
-import { useRouter } from 'next/router';
-import React, { createContext, useEffect, useMemo, useState } from 'react';
+import React, {createContext, useEffect, useMemo, useState} from "react";
+import {useRouter} from "next/router";
+import {useMediaQuery} from "@chakra-ui/react";
+import {useWindowSize} from "@trustless-computer/dapp-core";
+import {useWeb3React} from "@web3-react/core";
+import {useAppSelector} from "@/state/hooks";
+import {selectPnftExchange} from "@/state/pnftExchange";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export const defaultProvider = {
@@ -17,16 +17,16 @@ export const defaultProvider = {
   footerTradingHeightMobile: 60,
   showGetStarted: false,
   bannerHeight: 40,
-  bannerHeightMobile: 40,
+  bannerHeightMobile: 40
 };
 
 const ScreenLayoutContext = createContext(defaultProvider);
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const ScreenLayoutProvider: React.FC<any> = ({ children }) => {
-  const [screen800] = useMediaQuery('(max-width: 768px)');
+  const [screen800] = useMediaQuery("(max-width: 768px)");
   const { mobileScreen } = useWindowSize();
-  const { tcWalletAddress: account } = useTCWallet();
+  const { account } = useWeb3React();
   const showBanner = useAppSelector(selectPnftExchange).showBanner;
 
   const _isMobile = mobileScreen || screen800;
@@ -34,21 +34,21 @@ const ScreenLayoutProvider: React.FC<any> = ({ children }) => {
   const router = useRouter();
 
   const [headerHeight, setHeaderHeight] = useState(
-    _isMobile ? defaultProvider.headerHeightMobile : defaultProvider.headerHeight,
+    _isMobile
+      ? defaultProvider.headerHeightMobile
+      : defaultProvider.headerHeight
   );
 
   const footerHeight = useMemo(() => {
     return _isMobile
       ? defaultProvider.footerHeightMobile
-      : defaultProvider.footerHeight;
+      : defaultProvider.footerHeight
   }, [_isMobile]);
 
   const bannerHeight = useMemo(() => {
-    return showBanner
-      ? _isMobile
-        ? defaultProvider.bannerHeightMobile
-        : defaultProvider.bannerHeight
-      : 0;
+    return showBanner ? _isMobile
+      ? defaultProvider.bannerHeightMobile
+      : defaultProvider.bannerHeight : 0;
   }, [_isMobile, showBanner]);
 
   const showGetStarted = true;
@@ -62,11 +62,18 @@ const ScreenLayoutProvider: React.FC<any> = ({ children }) => {
     // }
 
     // if (!_isMobile) {
-    height += showGetStarted ? bannerHeight : 0;
+      height +=
+        (showGetStarted ? bannerHeight : 0)
+      ;
     // }
 
     setHeaderHeight(height);
-  }, [_isMobile, account, router?.pathname, showBanner]);
+  }, [
+    _isMobile,
+    account,
+    router?.pathname,
+    showBanner
+  ]);
 
   const values = {
     ...defaultProvider,

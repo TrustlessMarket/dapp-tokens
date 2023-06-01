@@ -25,8 +25,6 @@ import {
 } from './Token.styled';
 // import TokenChart from './Token.Chart';
 import { CDN_URL } from '@/configs';
-import { useScreenLayout } from '@/hooks/useScreenLayout';
-import useTCWallet from '@/hooks/useTCWallet';
 import { IToken } from '@/interfaces/token';
 import { getChartToken, getTokenRp } from '@/services/swap';
 import { sortBy } from 'lodash';
@@ -34,6 +32,8 @@ import dynamic from 'next/dynamic';
 import TokenHistory from './Token.History';
 import TokenLeftInfo from './Token.LeftInfo';
 import TokenTopInfo from './Token.TopInfo';
+import { useWeb3React } from '@web3-react/core';
+import { useScreenLayout } from '@/hooks/useScreenLayout';
 
 const TokenChart = dynamic(() => import('./Token.Chart'), {
   ssr: false,
@@ -49,7 +49,7 @@ const TokenDetail = () => {
 
   const { headerHeight } = useScreenLayout();
 
-  const { tcWalletAddress: account, isAuthenticated } = useTCWallet();
+  const { account, isActive } = useWeb3React();
 
   useEffect(() => {
     if (address) {
@@ -145,9 +145,9 @@ const TokenDetail = () => {
         <Tabs isManual>
           <TabList>
             <Tab>Trade History</Tab>
-            <Tab isDisabled={!Boolean(account && isAuthenticated)}>
+            <Tab isDisabled={!Boolean(account && isActive)}>
               <Tooltip
-                isDisabled={Boolean(account && isAuthenticated)}
+                isDisabled={Boolean(account && isActive)}
                 label="Connect your wallet to see your swaps"
               >
                 My swaps
@@ -158,7 +158,7 @@ const TokenDetail = () => {
             <TabPanel>
               <TokenHistory data={data} />
             </TabPanel>
-            {account && isAuthenticated && (
+            {account && isActive && (
               <TabPanel>
                 <TokenHistory data={data} isOwner={true} />
               </TabPanel>

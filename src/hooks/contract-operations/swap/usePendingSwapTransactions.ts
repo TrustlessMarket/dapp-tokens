@@ -1,17 +1,17 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-empty-interface */
-import { CONTRACT_METHOD_IDS } from '@/constants/methodId';
 import { TransactionEventType } from '@/enums/transaction';
 import useBitcoin from '@/hooks/useBitcoin';
-import useTCWallet from '@/hooks/useTCWallet';
 import { ContractOperationHook, DAppType } from '@/interfaces/contract-operation';
 import { IToken } from '@/interfaces/token';
-import { getTCTxDetailByHash } from '@/services/swap';
 import { getTokenDetail } from '@/services/token-explorer';
-import { compareString, getDefaultProvider, sortAddressPair } from '@/utils';
+import { compareString, sortAddressPair } from '@/utils';
+import { useWeb3React } from '@web3-react/core';
 import { useCallback } from 'react';
 import Web3 from 'web3';
 import web3Eth from 'web3-eth-abi';
+import {getTCTxDetailByHash} from "@/services/swap";
+import {CONTRACT_METHOD_IDS} from "@/constants/methodId";
 
 export interface IPendingSwapTransactionsParams {}
 
@@ -19,10 +19,7 @@ const usePendingSwapTransactions: ContractOperationHook<
   IPendingSwapTransactionsParams,
   string
 > = () => {
-  const { tcWalletAddress: account } = useTCWallet();
-
-  const provider = getDefaultProvider();
-
+  const { account, provider } = useWeb3React();
   const {
     getUnInscribedTransactionDetailByAddress,
     getTCTxByHash,
@@ -39,14 +36,10 @@ const usePendingSwapTransactions: ContractOperationHook<
 
         const response = [];
 
-        console.log('unInscribedTxIDs', account);
-        console.log('unInscribedTxIDs', unInscribedTxIDs);
-        console.log('unInscribedTxIDs', pendingTxIds);
-
         for await (const unInscribedTxID of unInscribedTxIDs) {
           const [_getTxDetail, _getTxDetail2] = await Promise.all([
             getTCTxByHash(unInscribedTxID.Hash),
-            getTCTxDetailByHash({ tx_hash: unInscribedTxID.Hash }),
+            getTCTxDetailByHash({tx_hash: unInscribedTxID.Hash})
           ]);
 
           const _inputStart = _getTxDetail.input.slice(0, 10);
@@ -88,8 +81,7 @@ const usePendingSwapTransactions: ContractOperationHook<
               path: value['2'],
               to: value['3'],
               // deadline: value['4'],
-              created_at:
-                _getTxDetail2?.length > 0 ? _getTxDetail2[0].createdAt : null,
+              created_at: _getTxDetail2?.length > 0 ? _getTxDetail2[0].createdAt : null,
               amount0_in,
               amount1_in,
               amount0_out,
@@ -110,7 +102,7 @@ const usePendingSwapTransactions: ContractOperationHook<
         for await (const pendingTxID of pendingTxIds) {
           const [_getTxDetail, _getTxDetail2] = await Promise.all([
             getTCTxByHash(pendingTxID.TCHash),
-            getTCTxDetailByHash({ tx_hash: pendingTxID.TCHash }),
+            getTCTxDetailByHash({tx_hash: pendingTxID.TCHash})
           ]);
 
           const _inputStart = _getTxDetail.input.slice(0, 10);
@@ -165,8 +157,7 @@ const usePendingSwapTransactions: ContractOperationHook<
               path: value['2'],
               to: value['3'],
               // deadline: value['4'],
-              created_at:
-                _getTxDetail2?.length > 0 ? _getTxDetail2[0].createdAt : null,
+              created_at: _getTxDetail2?.length > 0 ? _getTxDetail2[0].createdAt : null,
               amount0_in,
               amount1_in,
               amount0_out,
@@ -188,7 +179,7 @@ const usePendingSwapTransactions: ContractOperationHook<
       }
       return [];
     },
-    [account],
+    [account, provider],
   );
 
   return {

@@ -1,9 +1,8 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { createSlice } from '@reduxjs/toolkit';
 import { ConnectionType } from '@/connection';
 
 interface ConnectionState {
-  errorByConnectionType: any;
+  errorByConnectionType: Record<ConnectionType, string | undefined>;
 }
 
 const initialState: ConnectionState = {

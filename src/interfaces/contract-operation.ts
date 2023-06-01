@@ -18,5 +18,5 @@ export type ContractOperationHook<P, R> = (arg?: any) => {
 export type DeployContractResponse = {
   hash: string;
   contractAddress: string;
-  deployTransaction?: TransactionResponse;
+  deployTransaction: TransactionResponse;
 };

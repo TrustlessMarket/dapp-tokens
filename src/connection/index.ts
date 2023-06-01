@@ -1,14 +1,10 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Web3ReactHooks } from '@web3-react/core';
 import { Connector } from '@web3-react/types';
 import { metaMask, hooks as metaMaskHooks } from '@/connectors/metaMask';
 import { useCallback } from 'react';
-import * as TC_CONNECT from 'tc-connect';
-import { V2_CONNECT_URL, V2_WALLET_URL } from '@/configs';
 
 export enum ConnectionType {
   METAMASK = 'METAMASK',
-  TC_NETWORK = 'TC_NETWORK',
 }
 
 export interface Connection {
@@ -60,7 +56,3 @@ export function useGetConnection() {
     }
   }, []);
 }
-
-export const getConnector = (): any => {
-  return new TC_CONNECT.DappConnect(V2_CONNECT_URL, V2_WALLET_URL);
-};

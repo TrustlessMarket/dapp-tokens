@@ -19,24 +19,7 @@ import Head from 'next/head';
 import { useEffect, useState } from 'react';
 import { Toaster } from 'react-hot-toast';
 import { Provider } from 'react-redux';
-import GoogleAnalytics from '../components/GA/GoogleAnalytics';
-import { IBTCNetwork } from 'tc-connect';
-import * as TC_SDK from 'trustless-computer-sdk';
-import { isProduction } from '@/utils/commons';
-
-type BTCNetworkNumbType = {
-  [key in IBTCNetwork]: number;
-};
-
-export const BTCNetworkNumber: BTCNetworkNumbType = {
-  mainnet: 1,
-  testnet: 2,
-  regtest: 3,
-};
-
-TC_SDK.setBTCNetwork(
-  isProduction() ? BTCNetworkNumber.mainnet : BTCNetworkNumber.regtest,
-);
+import GoogleAnalytics from "../components/GA/GoogleAnalytics";
 
 export default function App({ Component, pageProps }: AppProps) {
   const { seoInfo = {} } = pageProps;
