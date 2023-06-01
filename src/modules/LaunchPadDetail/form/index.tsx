@@ -29,7 +29,7 @@ import {ILaunchpad} from '@/interfaces/launchpad';
 import {IToken} from '@/interfaces/token';
 import {TransactionStatus} from '@/interfaces/walletTransaction';
 import {LAUNCHPAD_STATUS, useLaunchPadStatus,} from '@/modules/Launchpad/Launchpad.Status';
-import {getUserBoost} from '@/services/launchpad';
+import {getLaunchpadUserDepositInfo, getUserBoost} from '@/services/launchpad';
 import {logErrorToServer} from '@/services/swap';
 import {useAppDispatch, useAppSelector} from '@/state/hooks';
 import {closeModal, openModal} from '@/state/modal';
@@ -41,7 +41,7 @@ import {
 } from '@/state/pnftExchange';
 import {getIsAuthenticatedSelector} from '@/state/user/selector';
 import {colors} from '@/theme/colors';
-import {formatCurrency} from '@/utils';
+import {abbreviateNumber, formatCurrency} from '@/utils';
 import {composeValidators, required} from '@/utils/formValidate';
 import px2rem from '@/utils/px2rem';
 import {showError} from '@/utils/toast';
@@ -60,6 +60,7 @@ import {BiBell} from 'react-icons/bi';
 import {useDispatch, useSelector} from 'react-redux';
 import Web3 from 'web3';
 import styles from './styles.module.scss';
+import CountDownTimer from "@/components/Countdown";
 
 const FEE = 2;
 export const MakeFormSwap = forwardRef((props, ref) => {
@@ -70,7 +71,6 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     isStarting,
     isEndLaunchpad,
     isClaimLaunchpad,
-    canClaim,
   } = props;
   const [loading, setLoading] = useState(false);
   const [baseToken, setBaseToken] = useState<any>();
@@ -439,11 +439,15 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             </StatLabel>
             <StatNumber>
               <Text>
-                {isEndLaunchpad
+                {[
+                  LAUNCHPAD_STATUS.Closed,
+                  LAUNCHPAD_STATUS.Completed,
+                  LAUNCHPAD_STATUS.Failed,
+                  LAUNCHPAD_STATUS.Cancelled,
+                ].includes(status.key)
                   ? moment(poolDetail.endTime).format('LLL')
-                  : `${
-                    Number(days) > 0 ? `${days}d :` : ''
-                  } ${hours}h : ${minutes}m : ${seconds}s`}
+                  : <CountDownTimer end_time={poolDetail.endTime}/>
+                }
               </Text>
             </StatNumber>
           </Stat>
@@ -635,7 +639,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
               </FiledButton>
             ) : (
               <FiledButton
-                isDisabled={submitting || btnDisabled || (!canClaim && isClaimLaunchpad)}
+                isDisabled={submitting || btnDisabled}
                 isLoading={submitting}
                 type="submit"
                 btnSize={'h'}
@@ -645,18 +649,20 @@ export const MakeFormSwap = forwardRef((props, ref) => {
                   id: transactionType.createPoolApprove,
                 }}
                 style={{
-                  backgroundColor: isEndLaunchpad
-                    ? isClaimLaunchpad
+                  backgroundColor: isClaimLaunchpad
                       ? colors.greenPrimary
-                      : colors.redPrimary
-                    : colors.bluePrimary,
+                      : isEndLaunchpad
+                      ? colors.redPrimary
+                      : colors.bluePrimary,
                 }}
               >
-                {isEndLaunchpad
-                  ? isClaimLaunchpad
+                {
+                  isClaimLaunchpad
                     ? 'CLAIM THIS PROJECT'
-                    : 'END THIS PROJECT'
-                  : 'BACK THIS PROJECT'}
+                    : isEndLaunchpad
+                      ? 'END THIS PROJECT'
+                      : 'BACK THIS PROJECT'
+                }
               </FiledButton>
             )}
           </WrapperConnected>
@@ -692,17 +698,19 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
   const { mobileScreen } = useWindowSize();
   const [status] = useLaunchPadStatus({ row: poolDetail });
   const [canClaim, setCanClaim] = useState(false);
+  const [userDeposit, setUserDeposit] = useState();
 
-  const isEndLaunchpad = [
+  const canEnd = [
     LAUNCHPAD_STATUS.End,
     LAUNCHPAD_STATUS.Completed,
     LAUNCHPAD_STATUS.Failed,
+    LAUNCHPAD_STATUS.Cancelled,
   ].includes(status.key);
 
-  const isClaimLaunchpad = [
-    LAUNCHPAD_STATUS.Completed,
-    LAUNCHPAD_STATUS.Failed,
-  ].includes(status.key);
+  // const isClaimLaunchpad = [
+  //   LAUNCHPAD_STATUS.Completed,
+  //   LAUNCHPAD_STATUS.Failed,
+  // ].includes(status.key);
 
   const isStarting = [LAUNCHPAD_STATUS.Created].includes(status.key);
 
@@ -717,9 +725,16 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
           owner_address: account,
           launchpad_address: poolDetail.launchpad,
         }),
+        getLaunchpadUserDepositInfo({
+          pool_address: poolDetail?.launchpad,
+          address: account,
+        }),
       ]);
       setCanClaim(response[0]);
-    } catch (error) {}
+      setUserDeposit(response[1]);
+    } catch (error) {
+      console.log('eeeee', error);
+    }
   };
 
   const confirmDeposit = (values: any) => {
@@ -730,11 +745,9 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
       openModal({
         id,
         theme: 'dark',
-        title: isEndLaunchpad
-          ? isClaimLaunchpad
-            ? 'Confirm claim this project'
-            : 'Confirm end this project'
-          : 'Confirm deposit',
+        title: canClaim ? 'Confirm claim this project'
+          : canEnd ? 'Confirm end this project'
+            : 'Confirm deposit',
         className: styles.modalContent,
         modalProps: {
           centered: true,
@@ -743,32 +756,70 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
         },
         render: () => (
           <Flex direction={'column'} gap={2}>
-            <HorizontalItem
-              label={
-                <Text fontSize={'sm'} color={'#B1B5C3'}>
-                  Deposit amount
-                </Text>
-              }
-              value={
-                <Text fontSize={'sm'}>
-                  {formatCurrency(baseAmount, 6)}{' '}
-                  {poolDetail?.liquidityToken?.symbol}
-                </Text>
-              }
-            />
-            <HorizontalItem
-              label={
-                <Text fontSize={'sm'} color={'#B1B5C3'}>
-                  Estimate receive amount
-                </Text>
-              }
-              value={
-                <Text fontSize={'sm'}>
-                  {formatCurrency(quoteAmount, 6)}{' '}
-                  {poolDetail?.launchpadToken?.symbol}
-                </Text>
-              }
-            />
+            {
+              canClaim ? (
+                <>
+                  <HorizontalItem
+                    label={
+                      <Text fontSize={'sm'} color={'#B1B5C3'}>
+                        Deposit amount
+                      </Text>
+                    }
+                    value={
+                      <Text fontSize={'sm'}>
+                        {formatCurrency(userDeposit?.amount || 0, 6)}{' '}
+                        {poolDetail?.liquidityToken?.symbol}
+                      </Text>
+                    }
+                  />
+                  <HorizontalItem
+                    label={
+                      <Text fontSize={'sm'} color={'#B1B5C3'}>
+                        Estimate receive amount
+                      </Text>
+                    }
+                    value={
+                      <Text fontSize={'sm'}>
+                        {abbreviateNumber(userDeposit?.userLaunchpadBalance || 0)}{' '}
+                        {poolDetail?.launchpadToken?.symbol}
+                      </Text>
+                    }
+                  />
+                </>
+              ) : canEnd ? (
+                <Text>End this project?</Text>
+              ) : (
+                <>
+                  <HorizontalItem
+                    label={
+                      <Text fontSize={'sm'} color={'#B1B5C3'}>
+                        Deposit amount
+                      </Text>
+                    }
+                    value={
+                      <Text fontSize={'sm'}>
+                        {formatCurrency(baseAmount, 6)}{' '}
+                        {poolDetail?.liquidityToken?.symbol}
+                      </Text>
+                    }
+                  />
+                  <HorizontalItem
+                    label={
+                      <Text fontSize={'sm'} color={'#B1B5C3'}>
+                        Estimate receive amount
+                      </Text>
+                    }
+                    value={
+                      <Text fontSize={'sm'}>
+                        {formatCurrency(quoteAmount, 6)}{' '}
+                        {poolDetail?.launchpadToken?.symbol}
+                      </Text>
+                    }
+                  />
+                </>
+              )
+            }
+
             {/*<HorizontalItem
               label={
                 <Text fontSize={'sm'} color={'#B1B5C3'}>
@@ -851,11 +902,11 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
       }
 
       let response;
-      if (isClaimLaunchpad) {
+      if (canClaim) {
         response = await claimLaunchpad({
           launchpadAddress: poolDetail?.launchpad,
         });
-      } else if (isEndLaunchpad) {
+      } else if (canEnd) {
         response = await endLaunchpad({
           launchpadAddress: poolDetail?.launchpad,
         });
@@ -894,10 +945,9 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
             onSubmit={handleSubmit}
             submitting={submitting}
             poolDetail={poolDetail}
-            isEndLaunchpad={isEndLaunchpad}
-            isClaimLaunchpad={isClaimLaunchpad}
+            isEndLaunchpad={canEnd}
+            isClaimLaunchpad={canClaim}
             isStarting={isStarting}
-            canClaim={canClaim}
           />
         )}
       </Form>
