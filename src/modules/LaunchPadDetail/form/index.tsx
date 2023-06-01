@@ -29,7 +29,7 @@ import {ILaunchpad} from '@/interfaces/launchpad';
 import {IToken} from '@/interfaces/token';
 import {TransactionStatus} from '@/interfaces/walletTransaction';
 import {LAUNCHPAD_STATUS, useLaunchPadStatus,} from '@/modules/Launchpad/Launchpad.Status';
-import {getUserBoost} from '@/services/launchpad';
+import {getLaunchpadUserDepositInfo, getUserBoost} from '@/services/launchpad';
 import {logErrorToServer} from '@/services/swap';
 import {useAppDispatch, useAppSelector} from '@/state/hooks';
 import {closeModal, openModal} from '@/state/modal';
@@ -693,6 +693,7 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
   const { mobileScreen } = useWindowSize();
   const [status] = useLaunchPadStatus({ row: poolDetail });
   const [canClaim, setCanClaim] = useState(false);
+  const [userDeposit, setUserDeposit] = useState();
 
   const canEnd = [
     LAUNCHPAD_STATUS.End,
@@ -719,9 +720,16 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
           owner_address: account,
           launchpad_address: poolDetail.launchpad,
         }),
+        getLaunchpadUserDepositInfo({
+          pool_address: poolDetail?.launchpad,
+          address: account,
+        }),
       ]);
       setCanClaim(response[0]);
-    } catch (error) {}
+      setUserDeposit(response[1]);
+    } catch (error) {
+      console.log('eeeee', error);
+    }
   };
 
   const confirmDeposit = (values: any) => {
