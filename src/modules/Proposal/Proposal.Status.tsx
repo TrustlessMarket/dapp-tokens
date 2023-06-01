@@ -24,12 +24,12 @@ export const LabelStatus : LabelStatusMap = {
   'pending': {
     key: PROPOSAL_STATUS.Pending,
     value: 'pending',
-    label: 'Pending',
+    label: 'Voting Preparation',
   },
   'active': {
     key: PROPOSAL_STATUS.Active,
     value: 'active',
-    label: 'Active',
+    label: 'Voting',
   },
   'canceled': {
     key: PROPOSAL_STATUS.Canceled,
