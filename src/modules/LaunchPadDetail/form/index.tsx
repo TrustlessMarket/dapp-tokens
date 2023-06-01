@@ -465,7 +465,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
               children={FieldAmount}
               validate={composeValidators(required, validateBaseAmount)}
               fieldChanged={onChangeValueBaseAmount}
-              disabled={submitting || !isStarting}
+              disabled={submitting}
               // placeholder={"Enter number of tokens"}
               decimals={baseToken?.decimal || 18}
               className={styles.inputAmount}
@@ -495,19 +495,17 @@ export const MakeFormSwap = forwardRef((props, ref) => {
                       />
                       {baseToken?.symbol}
                     </Flex>
-                    {isStarting && (
-                      <Text
-                        cursor={'pointer'}
-                        color={'#3385FF'}
-                        onClick={handleChangeMaxBaseAmount}
-                        bgColor={'#2E2E2E'}
-                        borderRadius={'4px'}
-                        padding={'1px 12px'}
-                        fontSize={px2rem(16)} fontWeight={"600"}
-                      >
-                        Max
-                      </Text>
-                    )}
+                    <Text
+                      cursor={'pointer'}
+                      color={'#3385FF'}
+                      onClick={handleChangeMaxBaseAmount}
+                      bgColor={'#2E2E2E'}
+                      borderRadius={'4px'}
+                      padding={'1px 12px'}
+                      fontSize={px2rem(16)} fontWeight={"600"}
+                    >
+                      Max
+                    </Text>
                   </Flex>
                 )
               }
@@ -615,51 +613,55 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             </Text>
           </Flex>
         )}
-      <WrapperConnected
-        type={isRequireApprove ? 'button' : 'submit'}
-        className={styles.submitButton}
-      >
-        {isRequireApprove ? (
-          <FiledButton
-            isLoading={loading}
-            isDisabled={loading}
-            loadingText="Processing"
-            btnSize={'h'}
-            containerConfig={{ flex: 1, mt: 6 }}
-            onClick={onApprove}
-            processInfo={{
-              id: transactionType.createPoolApprove,
-            }}
+      {
+        (isStarting || isEndLaunchpad || isClaimLaunchpad) && (
+          <WrapperConnected
+            type={isRequireApprove ? 'button' : 'submit'}
+            className={styles.submitButton}
           >
-            APPROVE USE OF {baseToken?.symbol}
-          </FiledButton>
-        ) : (
-          <FiledButton
-            isDisabled={submitting || btnDisabled || (!canClaim && isClaimLaunchpad)}
-            isLoading={submitting}
-            type="submit"
-            btnSize={'h'}
-            containerConfig={{ flex: 1, mt: 6 }}
-            loadingText={submitting ? 'Processing' : ' '}
-            processInfo={{
-              id: transactionType.createPoolApprove,
-            }}
-            style={{
-              backgroundColor: isEndLaunchpad
-                ? isClaimLaunchpad
-                  ? colors.greenPrimary
-                  : colors.redPrimary
-                : colors.bluePrimary,
-            }}
-          >
-            {isEndLaunchpad
-              ? isClaimLaunchpad
-                ? 'CLAIM THIS PROJECT'
-                : 'END THIS PROJECT'
-              : 'BACK THIS PROJECT'}
-          </FiledButton>
-        )}
-      </WrapperConnected>
+            {isRequireApprove ? (
+              <FiledButton
+                isLoading={loading}
+                isDisabled={loading}
+                loadingText="Processing"
+                btnSize={'h'}
+                containerConfig={{ flex: 1, mt: 6 }}
+                onClick={onApprove}
+                processInfo={{
+                  id: transactionType.createPoolApprove,
+                }}
+              >
+                APPROVE USE OF {baseToken?.symbol}
+              </FiledButton>
+            ) : (
+              <FiledButton
+                isDisabled={submitting || btnDisabled || (!canClaim && isClaimLaunchpad)}
+                isLoading={submitting}
+                type="submit"
+                btnSize={'h'}
+                containerConfig={{ flex: 1, mt: 6 }}
+                loadingText={submitting ? 'Processing' : ' '}
+                processInfo={{
+                  id: transactionType.createPoolApprove,
+                }}
+                style={{
+                  backgroundColor: isEndLaunchpad
+                    ? isClaimLaunchpad
+                      ? colors.greenPrimary
+                      : colors.redPrimary
+                    : colors.bluePrimary,
+                }}
+              >
+                {isEndLaunchpad
+                  ? isClaimLaunchpad
+                    ? 'CLAIM THIS PROJECT'
+                    : 'END THIS PROJECT'
+                  : 'BACK THIS PROJECT'}
+              </FiledButton>
+            )}
+          </WrapperConnected>
+        )
+      }
       <Flex justifyContent={'flex-end'} mt={4}>
         <SocialToken socials={poolDetail?.launchpadToken?.social} />
       </Flex>
