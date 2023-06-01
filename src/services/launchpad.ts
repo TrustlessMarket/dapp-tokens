@@ -88,7 +88,7 @@ export const createLaunchpad = async (data: {
   video: string;
   image: string;
   description: string;
-  qand_a: string;
+  qand_a?: string;
   signature: string;
   liquidity_token: string;
   launchpad_token: string;

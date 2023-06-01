@@ -50,6 +50,8 @@ const LaunchpadFormStep1: React.FC<ILaunchpadFormStep1> = ({
   const liquidityTokenSelected: IToken | undefined = values?.liquidityTokenArg;
   const [needLiquidBalance, setNeedLiquidBalance] = useState<string>('0');
 
+  console.log('_values balanceToken', balanceToken);
+
   const validateAmount = useCallback(
     (_amount: any) => {
       if (!detail && Number(_amount) > Number(balanceToken)) {
@@ -89,6 +91,8 @@ const LaunchpadFormStep1: React.FC<ILaunchpadFormStep1> = ({
     const launchpadBalance = values?.launchpadBalance || 0;
     const liquidityRatio = values?.liquidityRatioArg || 0;
 
+    console.log('_values liquidityRatio', liquidityRatio);
+
     const _needLiquidBalance = new BigNumber(liquidityRatio)
       .dividedBy(100)
       .multipliedBy(launchpadBalance)
@@ -101,6 +105,8 @@ const LaunchpadFormStep1: React.FC<ILaunchpadFormStep1> = ({
     values?.liquidityRatioArg,
     launchpadConfigs.liquidityPriceMultiple,
   ]);
+
+  console.log('tokens', tokens);
 
   return (
     <StyledLaunchpadFormStep1>
@@ -270,9 +276,7 @@ const LaunchpadFormStep1: React.FC<ILaunchpadFormStep1> = ({
               <HorizontalItem
                 label={'Total Supply'}
                 className="horizontal-item"
-                value={formatCurrency(
-                  web3.utils.fromWei(tokenSelected?.totalSupply),
-                )}
+                value={formatCurrency(tokenSelected?.totalSupply)}
               />
               <Box mt={3} />
               <HorizontalItem

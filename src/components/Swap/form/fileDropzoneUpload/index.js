@@ -23,7 +23,7 @@ const FileDropzoneUpload = (props) => {
     <div className={cx(styles.wrapper, className)}>
       {file
         ? <>
-          <div className={styles.file}>
+          <div className={cx(styles.file, 'uploaded')}>
             {!loading && <img alt="img-upload" src={url} />}
             <div>
               <span>{file?.name}</span>

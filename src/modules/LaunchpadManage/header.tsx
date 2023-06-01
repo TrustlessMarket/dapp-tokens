@@ -29,11 +29,11 @@ export interface LaunchpadManageHeaderProps {
   loading: boolean;
   isApproveToken: boolean;
   setLoading: (_: boolean) => void;
+  setStep: (_: any) => void;
   onApprove: () => void;
   detail?: ILaunchpad;
+  steps: any[];
 }
-
-export const steps = [{ title: 'Setup token' }, { title: 'Fill information' }];
 
 const LaunchpadManageHeader: React.FC<LaunchpadManageHeaderProps> = ({
   step,
@@ -42,6 +42,8 @@ const LaunchpadManageHeader: React.FC<LaunchpadManageHeaderProps> = ({
   detail,
   isApproveToken,
   onApprove,
+  setStep,
+  steps,
 }) => {
   const { values } = useFormState();
   const { change } = useForm();
@@ -51,7 +53,8 @@ const LaunchpadManageHeader: React.FC<LaunchpadManageHeaderProps> = ({
   const router = useRouter();
 
   const renderButton = () => {
-    const lastStep = step === steps.length - 1;
+    const lastStep = step >= steps.length - 1;
+
     if (!isApproveToken && tokenSelected) {
       return (
         <FiledButton
@@ -66,19 +69,15 @@ const LaunchpadManageHeader: React.FC<LaunchpadManageHeaderProps> = ({
         </FiledButton>
       );
     }
+
     return (
       <Flex width={'100%'} justifyContent={'flex-end'} gap={6}>
         <FiledButton
           isLoading={loading}
           isDisabled={loading}
           type="submit"
-          // btnSize="h"
-          // containerConfig={{
-          //   style: {
-          //     width: '100%',
-          //   },
-          // }}
           className={detail && !detail.launchpad ? 'btn-secondary' : 'btn-primary'}
+          onClick={() => change('isLastStep', lastStep)}
         >
           {detail ? 'Update' : lastStep ? 'Submit' : 'Next'}
         </FiledButton>
@@ -96,7 +95,10 @@ const LaunchpadManageHeader: React.FC<LaunchpadManageHeaderProps> = ({
             //     width: '100%',
             //   },
             // }}
-            onClick={() => change('isCreateProposal', true)}
+            onClick={() => {
+              change('isCreateProposal', true);
+              change('isLastStep', lastStep);
+            }}
           >
             {'Submit proposal'}
           </FiledButton>
@@ -105,17 +107,25 @@ const LaunchpadManageHeader: React.FC<LaunchpadManageHeaderProps> = ({
     );
   };
 
+  const onBack = () => {
+    if (step > 0 && step < steps.length) {
+      setStep((n: any) => n - 1);
+    } else {
+      router.push(ROUTE_PATH.LAUNCHPAD);
+    }
+  };
+
   return (
     <StyledLaunchpadManageHeader>
       <Flex className="btn-back-container">
-        <Box onClick={() => router.push(ROUTE_PATH.LAUNCHPAD)} className="btn-back">
+        <Box onClick={onBack} className="btn-back">
           <FiChevronLeft className="btn-back-icon" />
         </Box>
-        <Text className="back-title">Create Launchpad</Text>
+        <Text className="back-title">{steps?.[step]?.title}</Text>
       </Flex>
       <Box className="step-container">
         <Stepper className="step-content" size="md" index={step}>
-          {steps.map((step, index) => (
+          {steps.map((step: any, index: any) => (
             <Step className="step-item" key={index}>
               <StepIndicator className="indicator">
                 <StepStatus

@@ -1,6 +1,12 @@
 [
   {
     "anonymous": false,
+    "inputs": [],
+    "name": "Cancelled",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
     "inputs": [
       {
         "indexed": false,
@@ -16,6 +22,12 @@
       }
     ],
     "name": "Closed",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [],
+    "name": "Created",
     "type": "event"
   },
   {
@@ -121,13 +133,6 @@
   },
   {
     "inputs": [],
-    "name": "cancel",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [],
     "name": "close",
     "outputs": [],
     "stateMutability": "nonpayable",
@@ -168,64 +173,101 @@
     "name": "getBasicInfo",
     "outputs": [
       {
-        "internalType": "address",
-        "name": "creator",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "launchpadToken",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "liquidityToken",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "protocolRatio",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "creatorRatio",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "liquidityRatio",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "launchpadBalance",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "liquidityBalance",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "goalBalance",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "startTime",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "endTime",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "lpTokenReleaseTime",
-        "type": "uint256"
+        "components": [
+          {
+            "internalType": "address",
+            "name": "creator",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "launchpadToken",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "liquidityToken",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "protocolRatio",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "creatorRatio",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "liquidityRatio",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "launchpadBalance",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "liquidityBalance",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "rewardVoteBalance",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "goalBalance",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "thresholdBalance",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "voteStart",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "voteEnd",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "voteGoal",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "voteReleaseTime",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "launchStart",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "launchEnd",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "lpTokenReleaseTime",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct ILaunchpadPool.BasicInfoResp",
+        "name": "resp",
+        "type": "tuple"
       }
     ],
     "stateMutability": "view",
@@ -236,7 +278,7 @@
     "name": "getGrowthInfo",
     "outputs": [
       {
-        "internalType": "enum LaunchpadPoolStorage.State",
+        "internalType": "enum ILaunchpadPool.State",
         "name": "state",
         "type": "uint8"
       },
@@ -249,6 +291,19 @@
         "internalType": "uint256",
         "name": "totalBoostValue",
         "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getState",
+    "outputs": [
+      {
+        "internalType": "enum ILaunchpadPool.State",
+        "name": "state",
+        "type": "uint8"
       }
     ],
     "stateMutability": "view",
@@ -324,7 +379,7 @@
           },
           {
             "internalType": "uint256",
-            "name": "duration",
+            "name": "launchDuration",
             "type": "uint256"
           },
           {
@@ -339,12 +394,42 @@
           },
           {
             "internalType": "uint256",
+            "name": "rewardVoteBalance",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
             "name": "liquidityBalance",
             "type": "uint256"
           },
           {
             "internalType": "uint256",
             "name": "goalBalance",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "thresholdBalance",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "voteStart",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "voteDuration",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "voteGoal",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "voteReleaseDuration",
             "type": "uint256"
           }
         ],
@@ -400,13 +485,6 @@
   {
     "inputs": [],
     "name": "renounceOwnership",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "start",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

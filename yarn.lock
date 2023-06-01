@@ -10071,8 +10071,8 @@ tar@^4.0.2:
     yallist "^3.1.1"
 
 "tc-connect@https://github.com/TrustlessComputer/tc-connect":
-  version "0.0.1"
-  resolved "https://github.com/TrustlessComputer/tc-connect#4b723d2fcf0d7eddce9638d58b691f6e8dd56b9b"
+  version "0.0.2"
+  resolved "https://github.com/TrustlessComputer/tc-connect#27789c6557c5f021c9909f0911c79f79643a4e6b"
   dependencies:
     axios "^1.4.0"
     jsontokens "^4.0.1"

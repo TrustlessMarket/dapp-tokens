@@ -2,39 +2,24 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react/no-children-prop */
-import SocialToken from '@/components/Social';
-import FiledButton from '@/components/Swap/button/filedButton';
-import FieldAmount from '@/components/Swap/form/fieldAmount';
-import FieldSelect from '@/components/Swap/form/fieldDropdown';
-import HorizontalItem from '@/components/Swap/horizontalItem';
-import { TOKEN_ICON_DEFAULT } from '@/constants/common';
-import { ROUTE_PATH } from '@/constants/route-path';
-import { IToken } from '@/interfaces/token';
-import { compareString, formatCurrency, validateYoutubeLink } from '@/utils';
-import { composeValidators, required, requiredAmount } from '@/utils/formValidate';
-import { Box, Flex, FormLabel, Spinner, Text } from '@chakra-ui/react';
-import { px2rem } from '@trustless-computer/dapp-core';
-import BigNumber from 'bignumber.js';
-import { isEmpty, truncate } from 'lodash';
-import { useRouter } from 'next/router';
-import React, { useCallback, useEffect, useState } from 'react';
-import { Field, useForm, useFormState } from 'react-final-form';
-import web3 from 'web3';
-import { StyledLaunchpadFormStep1 } from './LaunchpadManage.styled';
-import { LaunchpadManageHeaderProps } from './header';
-import InfoTooltip from '@/components/Swap/infoTooltip';
-import { colors } from '@/theme/colors';
-import { ILaunchpad } from '@/interfaces/launchpad';
-import tokenIcons from '@/constants/tokenIcons';
-import InputWrapper from '@/components/Swap/form/inputWrapper';
-import FileDropzoneUpload from '@/components/Swap/form/fileDropzoneUpload';
-import { MAX_FILE_SIZE } from '../UpdateTokenInfo/form';
-import { logErrorToServer } from '@/services/swap';
-import { uploadFile } from '@/services/file';
-import useTCWallet from '@/hooks/useTCWallet';
-import { CDN_URL } from '@/configs';
 import FieldMDEditor from '@/components/Swap/form/fieldMDEditor';
 import FieldText from '@/components/Swap/form/fieldText';
+import FileDropzoneUpload from '@/components/Swap/form/fileDropzoneUpload';
+import InputWrapper from '@/components/Swap/form/inputWrapper';
+import { CDN_URL } from '@/configs';
+import useTCWallet from '@/hooks/useTCWallet';
+import { ILaunchpad } from '@/interfaces/launchpad';
+import { IToken } from '@/interfaces/token';
+import { uploadFile } from '@/services/file';
+import { logErrorToServer } from '@/services/swap';
+import { validateYoutubeLink } from '@/utils';
+import { composeValidators, required } from '@/utils/formValidate';
+import { Text } from '@chakra-ui/react';
+import { useRouter } from 'next/router';
+import React, { useCallback, useState } from 'react';
+import { Field, useForm, useFormState } from 'react-final-form';
+import { MAX_FILE_SIZE } from '../UpdateTokenInfo/form';
+import { StyledLaunchpadFormStep1 } from './LaunchpadManage.styled';
 
 interface ILaunchpadFormStep2 {
   detail?: ILaunchpad;
@@ -60,8 +45,6 @@ const LaunchpadFormStep2: React.FC<ILaunchpadFormStep2> = ({
   const [uploading, setUploading] = useState(false);
 
   const onFileChange = async (file: File) => {
-    // setFile(file);
-
     if (!file) {
       change('image', file);
     }

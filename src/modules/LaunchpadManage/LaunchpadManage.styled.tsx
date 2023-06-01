@@ -336,6 +336,18 @@ export const StyledLaunchpadFormStep1 = styled(Flex)`
             }
           }
         }
+        .uploaded {
+          flex-direction: column;
+          img {
+            max-width: 100px;
+            height: auto;
+            margin-right: 0;
+          }
+          & > div {
+            text-align: center;
+            margin-top: 5px;
+          }
+        }
       }
     }
   }
