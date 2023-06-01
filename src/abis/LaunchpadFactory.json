@@ -16,13 +16,7 @@
     "anonymous": false,
     "inputs": [
       {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "proposalId",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
+        "indexed": true,
         "internalType": "address",
         "name": "launchpad",
         "type": "address"
@@ -91,7 +85,17 @@
       },
       {
         "internalType": "uint256",
+        "name": "liquidityBalance",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
         "name": "goalBalance",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "thresholdBalance",
         "type": "uint256"
       }
     ],
@@ -121,19 +125,6 @@
   },
   {
     "inputs": [],
-    "name": "getGovernor",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
     "name": "getLaunchpadConfigs",
     "outputs": [
       {
@@ -143,7 +134,7 @@
       },
       {
         "internalType": "uint256",
-        "name": "liquidityPriceMultiple",
+        "name": "rewardVoteRatio",
         "type": "uint256"
       },
       {
@@ -206,25 +197,6 @@
     "type": "function"
   },
   {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "launchpadPoolArg",
-        "type": "address"
-      }
-    ],
-    "name": "getProposalId",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
     "inputs": [],
     "name": "getUniswapV2Factory",
     "outputs": [
@@ -240,6 +212,19 @@
   {
     "inputs": [],
     "name": "getUniswapV2Router",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getVoteToken",
     "outputs": [
       {
         "internalType": "address",
@@ -299,26 +284,13 @@
   {
     "inputs": [
       {
-        "internalType": "address",
-        "name": "governorArg",
-        "type": "address"
-      }
-    ],
-    "name": "setGovernor",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
         "internalType": "uint256",
         "name": "protocolRatioArg",
         "type": "uint256"
       },
       {
         "internalType": "uint256",
-        "name": "liquidityPriceMultipleArg",
+        "name": "rewardVoteRatioArg",
         "type": "uint256"
       },
       {
@@ -354,6 +326,19 @@
       }
     ],
     "name": "setPoolAdmin",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "tmTokenArg",
+        "type": "address"
+      }
+    ],
+    "name": "setVoteToken",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

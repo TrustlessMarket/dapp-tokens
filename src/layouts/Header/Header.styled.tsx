@@ -3,7 +3,6 @@ import px2rem from '@/utils/px2rem';
 import { Tooltip } from 'react-bootstrap';
 import styled, { DefaultTheme } from 'styled-components';
 import Link from 'next/link';
-import { colors } from '@/theme/colors';
 
 const Wrapper = styled.div`
   /* max-width: 1920px; */
@@ -149,72 +148,6 @@ const Wrapper = styled.div`
       }
     }
   }
-
-  .btn-select-account {
-    background-color: transparent;
-    background-image: none;
-    border: 1px solid #ffffff;
-    max-height: 40px;
-    max-width: 40px;
-  }
-  .chakra-menu__menu-list {
-    padding: 0px;
-    overflow: hidden;
-    background: #17171a;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 8px;
-  }
-  .chakra-menu__menuitem {
-    border-bottom: 1px solid ${colors.white100};
-    background-color: #17171a;
-    padding: 0px;
-    &:hover,
-    &:focus,
-    &:active,
-    &::selection,
-    .tc-item-container-active {
-      background-color: #1e1e22 !important;
-    }
-    &:last-child {
-      border-bottom: none;
-    }
-    .tc-item-container {
-      align-items: center;
-      gap: 8px;
-      justify-content: space-between;
-      width: 100%;
-      padding: 20px;
-    }
-    .tc-account-name {
-      font-size: ${px2rem(14)};
-      font-style: normal;
-      font-weight: 500;
-      line-height: 120%;
-      color: ${colors.white};
-      span {
-        opacity: 0.7;
-      }
-    }
-    .tc-account-balance {
-      font-size: ${px2rem(12)};
-      color: ${colors.white};
-      font-style: normal;
-      font-weight: 400;
-      line-height: 120%;
-      opacity: 0.7;
-      margin-top: 4px;
-    }
-    .check-circle {
-      background-color: ${colors.greenPrimary};
-      width: 16px;
-      height: 16px;
-      border-radius: 100%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      margin-left: 17px;
-    }
-  }
 `;
 
 const StyledLink = styled(Link)<{ active: boolean; activeColor?: string }>`
@@ -317,13 +250,11 @@ const WalletAdress = styled(Tooltip)`
 
 const ConnectWalletButton = styled(Button)`
   padding: ${px2rem(8)} ${px2rem(16)};
-  color: ${(props) => (props.disabled ? colors.redSecondary : colors.dark)};
+  color: #1c1c1c;
   font-size: ${px2rem(14)};
   line-height: ${px2rem(24)};
   font-weight: 500;
-  background: ${(props) => (props.disabled ? 'transparent' : colors.white)};
-  border: ${(props) =>
-    props.disabled ? `1px solid ${colors.darkBorderColor}` : 'unset'};
+  background: #ffffff;
   text-transform: uppercase;
   border-radius: 8px !important;
   letter-spacing: 0.01em;

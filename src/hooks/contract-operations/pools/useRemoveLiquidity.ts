@@ -1,26 +1,19 @@
 import UniswapV2Router from '@/abis/UniswapV2Router.json';
 import { transactionType } from '@/components/Swap/alertInfoProcessing/types';
-import { APP_ENV, UNIV2_ROUTER_ADDRESS } from '@/configs';
-import { getConnector } from '@/connection';
+import { APP_ENV, TRANSFER_TX_SIZE, UNIV2_ROUTER_ADDRESS } from '@/configs';
 import { ERROR_CODE } from '@/constants/error';
-import { CONTRACT_METHOD_IDS } from '@/constants/methodId';
 import { MaxUint256 } from '@/constants/url';
+import { AssetsContext } from '@/contexts/assets-context';
 import { TransactionEventType } from '@/enums/transaction';
 import useBitcoin from '@/hooks/useBitcoin';
-import useTCWallet from '@/hooks/useTCWallet';
 import { ContractOperationHook, DAppType } from '@/interfaces/contract-operation';
 import { TransactionStatus } from '@/interfaces/walletTransaction';
 import { logErrorToServer, scanTrx } from '@/services/swap';
 import store from '@/state';
 import { updateCurrentTransaction } from '@/state/pnftExchange';
-import {
-  compareString,
-  getDefaultGasPrice,
-  getDefaultProvider,
-  getFunctionABI,
-} from '@/utils';
-import { ethers } from 'ethers';
-import { useCallback } from 'react';
+import { compareString, getContract, getDefaultGasPrice } from '@/utils';
+import { useWeb3React } from '@web3-react/core';
+import { useCallback, useContext } from 'react';
 import Web3 from 'web3';
 
 export interface IRemoveLiquidParams {
@@ -35,10 +28,11 @@ const useRemoveLiquidity: ContractOperationHook<
   IRemoveLiquidParams,
   boolean
 > = () => {
-  const { tcWalletAddress: account } = useTCWallet();
-  const provider = getDefaultProvider();
-  const connector = getConnector();
+  const { account, provider } = useWeb3React();
+  const { btcBalance, feeRate } = useContext(AssetsContext);
   const { getUnInscribedTransactionDetailByAddress, getTCTxByHash } = useBitcoin();
+
+  const funcRemoveLiquidHex = '0xbaa2abde';
 
   const call = useCallback(
     async (params: IRemoveLiquidParams): Promise<boolean> => {
@@ -52,33 +46,15 @@ const useRemoveLiquidity: ContractOperationHook<
       } = params;
 
       if (account && provider) {
-        const functionABI = getFunctionABI(UniswapV2Router, 'removeLiquidity');
-
-        const ContractInterface = new ethers.utils.Interface(functionABI.abi);
-
-        const encodeAbi = ContractInterface.encodeFunctionData('removeLiquidity', [
-          tokenA,
-          tokenB,
-          liquidValue,
-          Web3.utils.toWei(amountAMin, 'ether'),
-          Web3.utils.toWei(amountBMin, 'ether'),
+        const contract = getContract(
+          UNIV2_ROUTER_ADDRESS,
+          UniswapV2Router,
+          provider,
           account,
-          MaxUint256,
-        ]);
-
-        const transaction = await connector.requestSign({
-          target: '_blank',
-          calldata: encodeAbi,
-          to: UNIV2_ROUTER_ADDRESS,
-          value: '',
-          redirectURL: window.location.href,
-          isInscribe: true,
-          gasLimit: '250000',
-          gasPrice: getDefaultGasPrice(),
-          functionType: functionABI.functionType,
-          functionName: functionABI.functionName,
-          isExecuteTransaction: false,
-          from: account,
+        );
+        console.log({
+          tcTxSizeByte: TRANSFER_TX_SIZE,
+          feeRatePerByte: feeRate.fastestFee,
         });
 
         let isPendingTx = false;
@@ -88,10 +64,14 @@ const useRemoveLiquidity: ContractOperationHook<
         );
 
         for await (const unInscribedTxID of unInscribedTxIDs) {
+          console.log('unInscribedTxID', unInscribedTxID);
+
           const _getTxDetail = await getTCTxByHash(unInscribedTxID.Hash);
           const _inputStart = _getTxDetail.input.slice(0, 10);
 
-          if (compareString(CONTRACT_METHOD_IDS.REMOVE_LIQUID, _inputStart)) {
+          console.log('_inputStart', _inputStart);
+
+          if (compareString(funcRemoveLiquidHex, _inputStart)) {
             isPendingTx = true;
           }
         }
@@ -99,6 +79,37 @@ const useRemoveLiquidity: ContractOperationHook<
         if (isPendingTx) {
           throw Error(ERROR_CODE.PENDING);
         }
+
+        // if (compareString(APP_ENV, 'production')) {
+        //   const estimatedFee = TC_SDK.estimateInscribeFee({
+        //     tcTxSizeByte: TRANSFER_TX_SIZE,
+        //     feeRatePerByte: feeRate.fastestFee,
+        //   });
+        //   const balanceInBN = new BigNumber(btcBalance);
+        //   if (balanceInBN.isLessThan(estimatedFee.totalFee)) {
+        //     throw Error(
+        //       `Your balance is insufficient. Please top up at least ${formatBTCPrice(
+        //         estimatedFee.totalFee.toString(),
+        //       )} BTC to pay network fee.`,
+        //     );
+        //   }
+        // }
+
+        const transaction = await contract
+          .connect(provider.getSigner())
+          .removeLiquidity(
+            tokenA,
+            tokenB,
+            liquidValue,
+            Web3.utils.toWei(amountAMin, 'ether'),
+            Web3.utils.toWei(amountBMin, 'ether'),
+            account,
+            MaxUint256,
+            {
+              gasLimit: '250000',
+              gasPrice: getDefaultGasPrice(),
+            },
+          );
 
         logErrorToServer({
           type: 'logs',
@@ -129,7 +140,7 @@ const useRemoveLiquidity: ContractOperationHook<
 
       return false;
     },
-    [account, provider],
+    [account, provider, btcBalance, feeRate],
   );
 
   return {

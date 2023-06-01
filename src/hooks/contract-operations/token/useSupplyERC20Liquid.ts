@@ -1,9 +1,10 @@
 import ERC20ABIJson from '@/abis/erc20.json';
+import { AssetsContext } from '@/contexts/assets-context';
 import { TransactionEventType } from '@/enums/transaction';
-import useTCWallet from '@/hooks/useTCWallet';
 import { ContractOperationHook, DAppType } from '@/interfaces/contract-operation';
 import { getContract, getDefaultProvider } from '@/utils';
-import { useCallback } from 'react';
+import { useWeb3React } from '@web3-react/core';
+import { useCallback, useContext } from 'react';
 
 export interface ISupplyERC20LiquidParams {
   liquidAddress: string;
@@ -18,7 +19,8 @@ const useSupplyERC20Liquid: ContractOperationHook<
   ISupplyERC20LiquidParams,
   ISupplyERC20LiquidResponse
 > = () => {
-  const { tcWalletAddress: account } = useTCWallet();
+  const { account } = useWeb3React();
+  const { btcBalance, feeRate } = useContext(AssetsContext);
 
   const provider = getDefaultProvider();
 
@@ -31,12 +33,18 @@ const useSupplyERC20Liquid: ContractOperationHook<
       if (provider && liquidAddress) {
         const contract = getContract(liquidAddress, ERC20ABIJson.abi, provider);
 
-        const totalSupply = await contract.connect(provider).totalSupply();
+        const totalSupply = await contract
+          .connect(provider.getSigner())
+          .totalSupply();
 
         let ownerSupply = '0';
 
+        console.log('totalSupply', totalSupply);
+
         if (account) {
-          ownerSupply = await contract.connect(provider).balanceOf(account);
+          ownerSupply = await contract
+            .connect(provider.getSigner())
+            .balanceOf(account);
         }
 
         return {
@@ -49,7 +57,7 @@ const useSupplyERC20Liquid: ContractOperationHook<
         ownerSupply: '0',
       };
     },
-    [account, provider],
+    [account, provider, btcBalance, feeRate],
   );
 
   return {

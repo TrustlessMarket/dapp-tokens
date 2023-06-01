@@ -1,26 +1,23 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import GovernorJson from '@/abis/Gevernor.json';
-import {GOVERNOR_ADDRESS} from '@/configs';
-import {getConnector} from '@/connection';
-import {TransactionEventType} from '@/enums/transaction';
-import useTCWallet from '@/hooks/useTCWallet';
-import {ContractOperationHook, DAppType} from '@/interfaces/contract-operation';
-import {logErrorToServer} from '@/services/swap';
-import {compareString, getDefaultGasPrice, getDefaultProvider, getFunctionABI} from '@/utils';
-import {ethers} from 'ethers';
-import {useCallback} from 'react';
-import {CONTRACT_METHOD_IDS} from "@/constants/methodId";
-import {ERROR_CODE} from "@/constants/error";
-import useBitcoin from "@/hooks/useBitcoin";
+import GevernorJson from '@/abis/Gevernor.json';
+import { TransactionEventType } from '@/enums/transaction';
+import { ContractOperationHook, DAppType } from '@/interfaces/contract-operation';
+import { logErrorToServer } from '@/services/swap';
+import { compareString, getContract, getDefaultProvider } from '@/utils';
+import { useWeb3React } from '@web3-react/core';
+import { useCallback } from 'react';
+import { GOVERNOR_ADDRESS } from '@/configs';
+import useBitcoin from '@/hooks/useBitcoin';
+import { CONTRACT_METHOD_IDS } from '@/constants/methodId';
+import { ERROR_CODE } from '@/constants/error';
 
 interface IExecuteParams {
   proposalId: string;
 }
 
 const useExecuteProposal: ContractOperationHook<IExecuteParams, boolean> = () => {
-  const { tcWalletAddress: account } = useTCWallet();
+  const { account } = useWeb3React();
   const provider = getDefaultProvider();
-  const connector = getConnector();
   const { getUnInscribedTransactionDetailByAddress, getTCTxByHash } = useBitcoin();
 
   const call = useCallback(
@@ -47,27 +44,19 @@ const useExecuteProposal: ContractOperationHook<IExecuteParams, boolean> = () =>
           throw Error(ERROR_CODE.PENDING);
         }
 
-        const functionABI = getFunctionABI(GovernorJson, 'execute');
+        const contract = getContract(
+          GOVERNOR_ADDRESS,
+          GevernorJson,
+          provider,
+          account,
+        );
 
-        const ContractInterface = new ethers.utils.Interface(functionABI.abi);
-
-        const encodeAbi = ContractInterface.encodeFunctionData('execute', [
-          proposalId,
-        ]);
-
-        const transaction = await connector.requestSign({
-          target: '_blank',
-          calldata: encodeAbi,
-          to: GOVERNOR_ADDRESS,
-          value: '',
-          redirectURL: window.location.href,
-          isInscribe: true,
-          gasLimit: '250000',
-          gasPrice: getDefaultGasPrice(),
-          functionType: functionABI.functionType,
-          functionName: functionABI.functionName,
-          from: account,
-        });
+        const transaction = await contract
+          .connect(provider.getSigner())
+          .execute(proposalId, {
+            gasLimit: '250000',
+            // gasPrice: getDefaultGasPrice(),
+          });
 
         logErrorToServer({
           type: 'logs',
@@ -76,11 +65,22 @@ const useExecuteProposal: ContractOperationHook<IExecuteParams, boolean> = () =>
           message: "gasLimit: '250000'",
         });
 
+        // store.dispatch(
+        //   updateCurrentTransaction({
+        //     id: transactionType.createLaunchpad,
+        //     status: TransactionStatus.pending,
+        //     hash: transaction.hash,
+        //     infoTexts: {
+        //       pending: `Deposit for launchpad pool ${launchpadAddress}`,
+        //     },
+        //   }),
+        // );
+
         return transaction;
       }
       return false;
     },
-    [account],
+    [account, provider],
   );
 
   return {

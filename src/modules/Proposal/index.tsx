@@ -2,32 +2,32 @@
 import SocialToken from '@/components/Social';
 import BodyContainer from '@/components/Swap/bodyContainer';
 import InfoTooltip from '@/components/Swap/infoTooltip';
-import ListTable, {ColumnProp} from '@/components/Swap/listTable';
-import {TOKEN_ICON_DEFAULT} from '@/constants/common';
-import {ROUTE_PATH} from '@/constants/route-path';
-import useTCWallet from '@/hooks/useTCWallet';
-import {IProposal} from '@/interfaces/proposal';
-import {IToken} from '@/interfaces/token';
+import ListTable, { ColumnProp } from '@/components/Swap/listTable';
+import { TOKEN_ICON_DEFAULT } from '@/constants/common';
+import { ROUTE_PATH } from '@/constants/route-path';
+import { IProposal } from '@/interfaces/proposal';
+import { IToken } from '@/interfaces/token';
 import ProposalStatus from '@/modules/Proposal/Proposal.Status';
-import {getListProposals} from '@/services/proposal';
-import {useAppSelector} from '@/state/hooks';
-import {selectPnftExchange} from '@/state/pnftExchange';
-import {colors} from '@/theme/colors';
-import {compareString, formatCurrency} from '@/utils';
+import { getListProposals } from '@/services/proposal';
+import { useAppSelector } from '@/state/hooks';
+import { selectPnftExchange } from '@/state/pnftExchange';
+import { colors } from '@/theme/colors';
+import { compareString, formatCurrency } from '@/utils';
 import px2rem from '@/utils/px2rem';
-import {Box, Flex, Text} from '@chakra-ui/react';
+import { Box, Flex, Text } from '@chakra-ui/react';
+import { useWeb3React } from '@web3-react/core';
 import BigNumber from 'bignumber.js';
 import moment from 'moment';
-import {useRouter} from 'next/router';
-import {useEffect, useMemo, useState} from 'react';
-import {BsPencil} from 'react-icons/bs';
+import { useRouter } from 'next/router';
+import { useEffect, useMemo, useState } from 'react';
+import { BsPencil } from 'react-icons/bs';
 import web3 from 'web3';
 import styles from './styles.module.scss';
 
 const ProposalList = () => {
   const [data, setData] = useState<any[]>();
   const [loading, setLoading] = useState(true);
-  const { tcWalletAddress: account } = useTCWallet();
+  const { account } = useWeb3React();
   // const dispatch = useDispatch();
   const needReload = useAppSelector(selectPnftExchange).needReload;
   const router = useRouter();
@@ -166,20 +166,20 @@ const ProposalList = () => {
               <Text>{`${
                 userPool.liquidityRatio
                   ? `${formatCurrency(
-                    new BigNumber(
-                      web3.utils.toWei(userPool.liquidityRatio).toString(),
-                    )
-                      .dividedBy(10000)
-                      .toString(),
-                    18,
-                  )}%`
+                      new BigNumber(
+                        web3.utils.toWei(userPool.liquidityRatio).toString(),
+                      )
+                        .dividedBy(10000)
+                        .toString(),
+                      18,
+                    )}%`
                   : 'N/A'
               }`}</Text>
               <Text>{`${
                 token.totalSupply
                   ? `${formatCurrency(userPool.liquidityBalance, 18)} ${
-                    token?.symbol
-                  }`
+                      token?.symbol
+                    }`
                   : 'N/A'
               }`}</Text>
             </Box>

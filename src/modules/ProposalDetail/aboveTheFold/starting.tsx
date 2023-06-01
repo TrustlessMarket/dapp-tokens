@@ -17,7 +17,9 @@ const ProposalStarting = ({proposalDetail}: any) => {
     <Box border={"1px solid #353945"} paddingX={6} paddingY={6}>
       <Flex justifyContent={"space-between"} mb={6}>
         <Flex gap={4} color={'#FFFFFF'} alignItems={'center'}>
-          <img src={token.thumbnail || TOKEN_ICON_DEFAULT} />
+          <Flex alignItems={"flex-start"} h={"100%"}>
+            <img src={token.thumbnail || TOKEN_ICON_DEFAULT} />
+          </Flex>
           <Box>
             <Text fontSize={px2rem(24)} fontWeight={"500"}>
               {token.name} <span>{token.symbol}</span>

@@ -1,7 +1,7 @@
-import { getContract, getDefaultProvider } from '@/utils';
+import { getContract } from '@/utils';
 import { Contract } from '@ethersproject/contracts';
+import { useWeb3React } from '@web3-react/core';
 import { useMemo } from 'react';
-import useTCWallet from './useTCWallet';
 
 export function useContract<T extends Contract = Contract>(
   contractAddress: string | undefined,
@@ -9,21 +9,15 @@ export function useContract<T extends Contract = Contract>(
   ABI: any,
   withSignerIfPossible = true,
 ): T | null {
-  const { tcWalletAddress: account } = useTCWallet();
-  const provider = getDefaultProvider();
+  const { provider, account, chainId } = useWeb3React();
 
   return useMemo(() => {
-    if (!contractAddress || !ABI || !provider) return null;
+    if (!contractAddress || !ABI || !provider || !chainId) return null;
     try {
-      return getContract(
-        contractAddress,
-        ABI,
-        provider,
-        withSignerIfPossible && account ? account : undefined,
-      );
+      return getContract(contractAddress, ABI, provider, withSignerIfPossible && account ? account : undefined);
     } catch (error) {
       console.error('Failed to get contract', error);
       return null;
     }
-  }, [contractAddress, ABI, provider, withSignerIfPossible, account]) as T;
+  }, [contractAddress, ABI, provider, chainId, withSignerIfPossible, account]) as T;
 }

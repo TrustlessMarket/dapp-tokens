@@ -1,17 +1,13 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import GovernorJson from '@/abis/Gevernor.json';
-import {GOVERNOR_ADDRESS} from '@/configs';
-import {getConnector} from '@/connection';
-import {TransactionEventType} from '@/enums/transaction';
-import useTCWallet from '@/hooks/useTCWallet';
-import {ContractOperationHook, DAppType} from '@/interfaces/contract-operation';
-import {logErrorToServer} from '@/services/swap';
-import {compareString, getDefaultGasPrice, getDefaultProvider, getFunctionABI} from '@/utils';
-import {ethers} from 'ethers';
-import {useCallback} from 'react';
-import {CONTRACT_METHOD_IDS} from "@/constants/methodId";
-import {ERROR_CODE} from "@/constants/error";
-import useBitcoin from "@/hooks/useBitcoin";
+import GevernorJson from '@/abis/Gevernor.json';
+import { GOVERNOR_ADDRESS } from '@/configs';
+import { TransactionEventType } from '@/enums/transaction';
+import { ContractOperationHook, DAppType } from '@/interfaces/contract-operation';
+import { logErrorToServer } from '@/services/swap';
+import { getContract, getDefaultGasPrice, getDefaultProvider } from '@/utils';
+import { useWeb3React } from '@web3-react/core';
+import { useCallback } from 'react';
+import web3 from 'web3';
 
 interface ICastVoteParams {
   proposalId: string;
@@ -21,72 +17,56 @@ interface ICastVoteParams {
 }
 
 const useCastVoteProposal: ContractOperationHook<ICastVoteParams, boolean> = () => {
-  const { tcWalletAddress: account } = useTCWallet();
+  const { account } = useWeb3React();
   const provider = getDefaultProvider();
-  const connector = getConnector();
-  const { getUnInscribedTransactionDetailByAddress, getTCTxByHash } = useBitcoin();
 
   const call = useCallback(
     async (params: ICastVoteParams): Promise<boolean> => {
       const { proposalId, weight, support, signature } = params;
       if (account && provider) {
-        let isPendingTx = false;
-
-        const unInscribedTxIDs = await getUnInscribedTransactionDetailByAddress(
+        const contract = getContract(
+          GOVERNOR_ADDRESS,
+          GevernorJson,
+          provider,
           account,
         );
 
-        for await (const unInscribedTxID of unInscribedTxIDs) {
-          const _getTxDetail = await getTCTxByHash(unInscribedTxID.Hash);
-
-          const _inputStart = _getTxDetail.input.slice(0, 10);
-
-          if (compareString(CONTRACT_METHOD_IDS.CAST_VOTE, _inputStart)) {
-            isPendingTx = true;
-          }
-        }
-
-        if (isPendingTx) {
-          throw Error(ERROR_CODE.PENDING);
-        }
-
-        const functionABI = getFunctionABI(GovernorJson, 'castVote');
-
-        const ContractInterface = new ethers.utils.Interface(functionABI.abi);
-
-        const encodeAbi = ContractInterface.encodeFunctionData('castVote', [
-          proposalId,
-          weight,
-          support,
-          signature || Buffer.from([]),
-        ]);
-
-        const transaction = await connector.requestSign({
-          target: '_blank',
-          calldata: encodeAbi,
-          to: GOVERNOR_ADDRESS,
-          value: '',
-          redirectURL: window.location.href,
-          isInscribe: true,
-          gasLimit: '150000',
-          gasPrice: getDefaultGasPrice(),
-          functionType: functionABI.functionType,
-          functionName: functionABI.functionName,
-          from: account,
-        });
+        const transaction = await contract
+          .connect(provider.getSigner())
+          .castVote(
+            proposalId,
+            web3.utils.toWei(weight),
+            support,
+            signature || Buffer.from([]),
+            {
+              gasLimit: '150000',
+              gasPrice: getDefaultGasPrice(),
+            },
+          );
 
         logErrorToServer({
           type: 'logs',
           address: account,
           error: JSON.stringify(transaction),
-          message: "gasLimit: '150000'",
+          message: "gasLimit: '250000'",
         });
+
+        // store.dispatch(
+        //   updateCurrentTransaction({
+        //     id: transactionType.createLaunchpad,
+        //     status: TransactionStatus.pending,
+        //     hash: transaction.hash,
+        //     infoTexts: {
+        //       pending: `Deposit for launchpad pool ${launchpadAddress}`,
+        //     },
+        //   }),
+        // );
 
         return transaction;
       }
       return false;
     },
-    [account],
+    [account, provider],
   );
 
   return {

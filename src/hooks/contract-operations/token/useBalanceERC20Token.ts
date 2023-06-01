@@ -3,9 +3,9 @@ import ERC20ABIJson from '@/abis/erc20.json';
 import { CONTRACT_METHOD_IDS } from '@/constants/methodId';
 import { TransactionEventType } from '@/enums/transaction';
 import useBitcoin from '@/hooks/useBitcoin';
-import useTCWallet from '@/hooks/useTCWallet';
 import { ContractOperationHook, DAppType } from '@/interfaces/contract-operation';
-import { compareString, getContract, getDefaultProvider } from '@/utils';
+import { compareString, getContract, isConnectedTrustChain } from '@/utils';
+import { useWeb3React } from '@web3-react/core';
 import BigNumber from 'bignumber.js';
 import { useCallback } from 'react';
 import web3 from 'web3';
@@ -19,8 +19,8 @@ const useBalanceERC20Token: ContractOperationHook<
   IBalanceERC20TokenParams,
   string
 > = () => {
-  const provider = getDefaultProvider();
-  const { tcWalletAddress: account } = useTCWallet();
+  const { account, provider } = useWeb3React();
+  const isConnected = isConnectedTrustChain();
   const {
     getPendingInscribeTxsDetail,
     getUnInscribedTransactionDetailByAddress,
@@ -30,18 +30,11 @@ const useBalanceERC20Token: ContractOperationHook<
   const call = useCallback(
     async (params: IBalanceERC20TokenParams): Promise<string> => {
       const { erc20TokenAddress } = params;
-      if (account && provider && erc20TokenAddress) {
-        console.log(erc20TokenAddress, account);
-
-        const contract = getContract(
-          erc20TokenAddress,
-          ERC20ABIJson.abi,
-          provider,
-          account,
-        );
+      if (account && provider && erc20TokenAddress && isConnected) {
+        const contract = getContract(erc20TokenAddress, ERC20ABIJson.abi, provider);
 
         const [transaction, pendingTXDs, unInscribedTxIDs] = await Promise.all([
-          contract.connect(provider).balanceOf(account),
+          contract.connect(provider.getSigner()).balanceOf(account),
           getPendingInscribeTxsDetail(account),
           getUnInscribedTransactionDetailByAddress(account),
         ]);
@@ -106,7 +99,7 @@ const useBalanceERC20Token: ContractOperationHook<
       }
       return '0';
     },
-    [account],
+    [account, provider, isConnected],
   );
 
   return {

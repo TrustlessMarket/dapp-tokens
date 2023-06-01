@@ -14,7 +14,7 @@ const ProposalInfo = ({ proposalDetail }: IProposal | any) => {
 
   return (
     <Box color={"#FFFFFF"}>
-      <SimpleGrid columns={3} spacingX={6}>
+      <SimpleGrid columns={4} spacingX={6}>
         <GridItem>
           <Stat>
             <StatLabel>Rewards</StatLabel>
@@ -24,6 +24,14 @@ const ProposalInfo = ({ proposalDetail }: IProposal | any) => {
         <GridItem>
           <Stat>
             <StatLabel>Funding Goal</StatLabel>
+            <StatNumber>
+              {formatCurrency(poolDetail?.goalBalance || 0)} {poolDetail?.liquidityToken?.symbol}
+            </StatNumber>
+          </Stat>
+        </GridItem>
+        <GridItem>
+          <Stat>
+            <StatLabel>Threshold</StatLabel>
             <StatNumber>
               {formatCurrency(poolDetail?.goalBalance || 0)} {poolDetail?.liquidityToken?.symbol}
             </StatNumber>

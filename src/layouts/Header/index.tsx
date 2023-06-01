@@ -1,14 +1,5 @@
 /* eslint-disable react-hooks/rules-of-hooks */
-import {CDN_URL} from '@/configs';
-import {ROUTE_PATH} from '@/constants/route-path';
-import {gsap} from 'gsap';
-import Link from 'next/link';
-import {useEffect, useRef, useState} from 'react';
-import {Wrapper} from './Header.styled';
-import MenuMobile from './MenuMobile';
-import WalletHeader from './Wallet';
-import {useWindowSize} from '@trustless-computer/dapp-core';
-import {useRouter} from 'next/router';
+import { CDN_URL } from '@/configs';
 import {
   GENERATIVE_DISCORD,
   GM_ADDRESS,
@@ -16,10 +7,19 @@ import {
   TRUSTLESS_GASSTATION,
   WETH_ADDRESS,
 } from '@/constants/common';
-import {defaultProvider} from '@/contexts/screen-context';
-import {useScreenLayout} from '@/hooks/useScreenLayout';
-import {Flex, Link as LinkText, Text} from '@chakra-ui/react';
-import {RiArrowRightUpLine} from 'react-icons/ri';
+import { ROUTE_PATH } from '@/constants/route-path';
+import { defaultProvider } from '@/contexts/screen-context';
+import { useScreenLayout } from '@/hooks/useScreenLayout';
+import { Flex, Link as LinkText, Text } from '@chakra-ui/react';
+import { useWindowSize } from '@trustless-computer/dapp-core';
+import { gsap } from 'gsap';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
+import { useEffect, useRef, useState } from 'react';
+import { RiArrowRightUpLine } from 'react-icons/ri';
+import { Wrapper } from './Header.styled';
+import MenuMobile from './MenuMobile';
+import WalletHeader from './Wallet';
 
 export const isScreenDarkMode = () => {
   return true;
@@ -63,6 +63,8 @@ const Header = () => {
   // const isTokensPage = useMemo(() => {
   //   return isScreenDarkMode();
   // }, [router?.pathname]);
+
+  console.log('aaaa');
 
   useEffect(() => {
     if (refMenu.current) {

@@ -1,16 +1,17 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import ERC20ABIJson from '@/abis/erc20.json';
-import { getConnector } from '@/connection';
+import { ERROR_CODE } from '@/constants/error';
+import { AssetsContext } from '@/contexts/assets-context';
 import { TransactionEventType } from '@/enums/transaction';
-import useTCWallet from '@/hooks/useTCWallet';
 import {
   ContractOperationHook,
   DAppType,
   DeployContractResponse,
 } from '@/interfaces/contract-operation';
-import { getDefaultProvider } from '@/utils';
-import { useCallback } from 'react';
-import Web3 from 'web3';
+import { useWeb3React } from '@web3-react/core';
+import BigNumber from 'bignumber.js';
+import { ContractFactory } from 'ethers';
+import { useCallback, useContext } from 'react';
+import * as TC_SDK from 'trustless-computer-sdk';
 
 export interface ICreateTokenParams {
   name: string;
@@ -23,42 +24,56 @@ const useCreateToken: ContractOperationHook<
   ICreateTokenParams,
   DeployContractResponse | null
 > = () => {
-  const { tcWalletAddress: account } = useTCWallet();
-  const provider = getDefaultProvider();
-  const connector = getConnector();
+  const { account, provider } = useWeb3React();
+  const { btcBalance, feeRate } = useContext(AssetsContext);
 
   const call = useCallback(
     async (params: ICreateTokenParams): Promise<DeployContractResponse | null> => {
       if (account && provider) {
-        const { name, symbol, maxSupply } = params;
+        const { name, symbol, maxSupply, selectFee } = params;
 
-        const web3 = new Web3();
-        const ContractInterface = new web3.eth.Contract(ERC20ABIJson.abi as any);
-        const encodeABI = ContractInterface.deploy({
-          data: ERC20ABIJson.bytecode,
-          arguments: [name, symbol, maxSupply],
-        }).encodeABI();
+        const byteCode = ERC20ABIJson.bytecode;
 
-        const factory = await connector.requestSign({
-          target: '_blank',
-          calldata: encodeABI,
-          to: '',
-          value: '',
-          isInscribe: true,
-          functionType: 'Contract Deployment',
-          functionName: 'constructor(bytes32[])',
-          from: account,
+        console.log({
+          tcTxSizeByte: Buffer.byteLength(byteCode),
+          feeRatePerByte: selectFee,
+        });
+        console.log('aaaaaa');
+
+        // TC_SDK.signTransaction({
+
+        // });
+        const estimatedFee = TC_SDK.estimateInscribeFee({
+          tcTxSizeByte: Buffer.byteLength(byteCode),
+          feeRatePerByte: selectFee,
         });
 
+        const balanceInBN = new BigNumber(btcBalance);
+
+        console.log('estimatedFee', estimatedFee.totalFee.toString());
+        console.log('balanceInBN', balanceInBN.toString());
+
+        if (balanceInBN.isLessThan(estimatedFee.totalFee)) {
+          throw Error(ERROR_CODE.INSUFFICIENT_BALANCE);
+        }
+
+        const factory = new ContractFactory(
+          ERC20ABIJson.abi,
+          ERC20ABIJson.bytecode,
+          provider.getSigner(),
+        );
+        const contract = await factory.deploy(name, symbol, maxSupply);
+
         return {
-          hash: factory.tcHash,
-          contractAddress: '',
+          hash: contract.deployTransaction.hash,
+          contractAddress: contract.address,
+          deployTransaction: contract.deployTransaction,
         };
       }
 
       return null;
     },
-    [account, provider],
+    [account, provider, btcBalance, feeRate],
   );
 
   return {

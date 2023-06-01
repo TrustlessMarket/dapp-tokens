@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import LaunchpadFactoryJson from '@/abis/LaunchpadFactory.json';
+import LaunchpadPoolJson from '@/abis/LaunchpadPool.json';
 import { TransactionEventType } from '@/enums/transaction';
 import { ContractOperationHook, DAppType } from '@/interfaces/contract-operation';
 import { getContract, getDefaultProvider } from '@/utils';
@@ -17,17 +17,11 @@ const useIsAbleRedeem: ContractOperationHook<IIsAbleRedeemProps, boolean> = () =
     async (params: IIsAbleRedeemProps): Promise<boolean> => {
       const { owner_address, launchpad_address } = params;
       if (provider && owner_address && launchpad_address) {
-        const contract = getContract(
-          launchpad_address,
-          LaunchpadFactoryJson,
-          provider,
-        );
+        const contract = getContract(launchpad_address, LaunchpadPoolJson, provider);
 
         const transaction = await contract
           .connect(provider)
           .isAbleRedeem(owner_address);
-
-        console.log('transaction', transaction);
 
         return transaction;
       }
