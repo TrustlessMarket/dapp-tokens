@@ -6,28 +6,22 @@ import {useRouter} from "next/router";
 import {useAppSelector} from "@/state/hooks";
 import {selectPnftExchange} from "@/state/pnftExchange";
 import Side from "@/modules/ProposalDetail/result/side";
-import {Box, Card, Flex, GridItem, SimpleGrid, Text} from "@chakra-ui/react";
+import {Box, Card, GridItem, SimpleGrid} from "@chakra-ui/react";
 import styles from './styles.module.scss';
 import cx from 'classnames';
-import px2rem from "@/utils/px2rem";
-import moment from "moment";
-import {useProposalStatus} from "@/modules/Proposal/Proposal.Status";
-import {MdLocalFireDepartment} from "react-icons/md";
-import CountDownTimer from "@/components/Countdown";
 
 const ProposalResult = () => {
   const router = useRouter();
   const needReload = useAppSelector(selectPnftExchange).needReload;
   const [voteResult, setVoteResult] = useState<any>();
-  const [status] = useProposalStatus({ row: voteResult?.userProposal });
+  // const [status] = useProposalStatus({ row: voteResult?.userProposal });
 
-  const forVotes = Number(voteResult?.userProposal?.forVotes || 0);
-  const againstVotes = Number(voteResult?.userProposal?.againstVotes) || 0;
+  // const forVotes = Number(voteResult?.userProposal?.forVotes || 0);
+  // const againstVotes = Number(voteResult?.userProposal?.againstVotes) || 0;
+  // const result = forVotes > againstVotes ? 1 : againstVotes > forVotes ? -1 : 0;
 
-  const result = forVotes > againstVotes ? 1 : againstVotes > forVotes ? -1 : 0;
-
-  console.log('voteResult', voteResult);
-  console.log('status', status);
+  // console.log('voteResult', voteResult);
+  // console.log('status', status);
 
   const getVoteResultProposalInfo = async () => {
     try {
@@ -51,7 +45,7 @@ const ProposalResult = () => {
 
   return (
     <Box>
-      <SimpleGrid columns={2} gap={6}>
+      <SimpleGrid columns={1} gap={6}>
         <GridItem>
           <Card bgColor={"transparent"} paddingX={6} paddingY={6} border={"1px solid #353945"}>
             <Side
@@ -72,7 +66,7 @@ const ProposalResult = () => {
             />
           </Card>
         </GridItem>*/}
-        <GridItem>
+        {/*<GridItem>
           <Card bgColor={"transparent"} paddingX={6} paddingY={6} border={"1px solid #353945"} h={"100%"}>
             <Box color={"#FFFFFF"}>
               <Flex fontSize={px2rem(24)} fontWeight={500} alignItems={"center"} gap={1}>
@@ -113,7 +107,7 @@ const ProposalResult = () => {
               </Box>
             </Box>
           </Card>
-        </GridItem>
+        </GridItem>*/}
       </SimpleGrid>
     </Box>
   );
