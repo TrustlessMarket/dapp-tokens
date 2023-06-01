@@ -13,15 +13,21 @@ const LaunchpadStarting = ({poolDetail}: any) => {
       <Grid templateColumns={['1.25fr 1fr']} gap={[8]}>
         <GridItem>
           <Intro poolDetail={poolDetail}/>
-          <Box mt={12}/>
-          <Divider color={"#353945"}/>
-          <Box mt={12}/>
-          <Usp />
         </GridItem>
         <GridItem>
           <Card bgColor={"#1B1E26"} paddingX={6} paddingY={6}>
             <BuyForm poolDetail={poolDetail}/>
           </Card>
+        </GridItem>
+      </Grid>
+      <Grid templateColumns={['1.25fr 1fr']} gap={[8]}>
+        <GridItem>
+          <Box mt={10}/>
+          <Divider color={"#353945"}/>
+          <Box mt={10}/>
+          <Usp />
+        </GridItem>
+        <GridItem>
           <Card bgColor={"#1B1E26"} paddingX={6} paddingY={6} mt={8}>
             <Statistic poolDetail={poolDetail}/>
           </Card>

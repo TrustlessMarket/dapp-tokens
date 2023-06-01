@@ -2,11 +2,12 @@
   color: #FFFFFF;
   padding-top: 48px;
   padding-bottom: 48px;
-  min-height: unset !important;
 }
 
 .introWrapper {
+  height: 100%;
   :global .home-video {
+    height: 100%;
     position: relative;
     display: flex;
     justify-content: center;
@@ -47,8 +48,9 @@
   }
 
   :global .youtube-video {
+    height: 100%;
     iframe {
-      min-height: 738px;
+      min-height: 100%;
       border-radius: 16px;
     }
   }
