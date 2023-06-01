@@ -41,7 +41,7 @@ import {
 } from '@/state/pnftExchange';
 import {getIsAuthenticatedSelector} from '@/state/user/selector';
 import {colors} from '@/theme/colors';
-import {formatCurrency} from '@/utils';
+import {abbreviateNumber, formatCurrency} from '@/utils';
 import {composeValidators, required} from '@/utils/formValidate';
 import px2rem from '@/utils/px2rem';
 import {showError} from '@/utils/toast';
@@ -751,32 +751,70 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
         },
         render: () => (
           <Flex direction={'column'} gap={2}>
-            <HorizontalItem
-              label={
-                <Text fontSize={'sm'} color={'#B1B5C3'}>
-                  Deposit amount
-                </Text>
-              }
-              value={
-                <Text fontSize={'sm'}>
-                  {formatCurrency(baseAmount, 6)}{' '}
-                  {poolDetail?.liquidityToken?.symbol}
-                </Text>
-              }
-            />
-            <HorizontalItem
-              label={
-                <Text fontSize={'sm'} color={'#B1B5C3'}>
-                  Estimate receive amount
-                </Text>
-              }
-              value={
-                <Text fontSize={'sm'}>
-                  {formatCurrency(quoteAmount, 6)}{' '}
-                  {poolDetail?.launchpadToken?.symbol}
-                </Text>
-              }
-            />
+            {
+              canClaim ? (
+                <>
+                  <HorizontalItem
+                    label={
+                      <Text fontSize={'sm'} color={'#B1B5C3'}>
+                        Deposit amount
+                      </Text>
+                    }
+                    value={
+                      <Text fontSize={'sm'}>
+                        {formatCurrency(userDeposit?.amount || 0, 6)}{' '}
+                        {poolDetail?.liquidityToken?.symbol}
+                      </Text>
+                    }
+                  />
+                  <HorizontalItem
+                    label={
+                      <Text fontSize={'sm'} color={'#B1B5C3'}>
+                        Estimate receive amount
+                      </Text>
+                    }
+                    value={
+                      <Text fontSize={'sm'}>
+                        {abbreviateNumber(userDeposit?.userLaunchpadBalance || 0)}{' '}
+                        {poolDetail?.launchpadToken?.symbol}
+                      </Text>
+                    }
+                  />
+                </>
+              ) : canEnd ? (
+                <Text>End this project?</Text>
+              ) : (
+                <>
+                  <HorizontalItem
+                    label={
+                      <Text fontSize={'sm'} color={'#B1B5C3'}>
+                        Deposit amount
+                      </Text>
+                    }
+                    value={
+                      <Text fontSize={'sm'}>
+                        {formatCurrency(baseAmount, 6)}{' '}
+                        {poolDetail?.liquidityToken?.symbol}
+                      </Text>
+                    }
+                  />
+                  <HorizontalItem
+                    label={
+                      <Text fontSize={'sm'} color={'#B1B5C3'}>
+                        Estimate receive amount
+                      </Text>
+                    }
+                    value={
+                      <Text fontSize={'sm'}>
+                        {formatCurrency(quoteAmount, 6)}{' '}
+                        {poolDetail?.launchpadToken?.symbol}
+                      </Text>
+                    }
+                  />
+                </>
+              )
+            }
+
             {/*<HorizontalItem
               label={
                 <Text fontSize={'sm'} color={'#B1B5C3'}>
