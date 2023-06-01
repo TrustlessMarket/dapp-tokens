@@ -24,7 +24,7 @@ export const LabelStatus = {
   starting: {
     key: LAUNCHPAD_STATUS.Created,
     value: 'crowing-funding',
-    label: 'On going',
+    label: 'Funding',
   },
   success: {
     key: LAUNCHPAD_STATUS.Completed,
@@ -34,12 +34,12 @@ export const LabelStatus = {
   cancelled: {
     key: LAUNCHPAD_STATUS.Cancelled,
     value: 'cancelled',
-    label: 'Cancelled',
+    label: 'Closed',
   },
   failed: {
     key: LAUNCHPAD_STATUS.Failed,
     value: 'failed',
-    label: 'Failed',
+    label: 'Closed',
   },
   closed: {
     key: LAUNCHPAD_STATUS.Closed,
@@ -49,7 +49,7 @@ export const LabelStatus = {
   end: {
     key: LAUNCHPAD_STATUS.End,
     value: 'ending',
-    label: 'Ending',
+    label: 'Closed',
   },
 };
 

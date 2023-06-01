@@ -56,8 +56,8 @@ const LaunchpadContainer = () => {
     }
   };
 
-  const checkIsLaunchpad = (row: ILaunchpad) => {
-    return row?.userProposal?.state === PROPOSAL_STATUS.Executed;
+  const checkIsProposal = (row: ILaunchpad) => {
+    return row?.proposalId && [PROPOSAL_STATUS.Pending, PROPOSAL_STATUS.Active].includes(row?.userProposal?.state);
   }
 
   const columns: ColumnProp[] = useMemo(() => {
@@ -198,21 +198,21 @@ const LaunchpadContainer = () => {
           borderBottom: 'none',
         },
         render(row: ILaunchpad) {
-          const isLaunchPad = checkIsLaunchpad(row);
-          const [status] = useLaunchPadStatus({row});
+          const isProposal = checkIsProposal(row);
+          // const [status] = useLaunchPadStatus({row});
           const color = colors.white;
 
-          if (isLaunchPad) {
-            // if (status.value !== 'upcoming') {
-            //   if (Number(row.totalValue) >= Number(row.goalBalance)) {
-            //     color = colors.greenPrimary;
-            //   } else if (Number(row.totalValue) < Number(row.goalBalance)) {
-            //     color = colors.redPrimary;
-            //   }
-            // }
-          }
+          // if (isLaunchPad) {
+          //   if (status.value !== 'upcoming') {
+          //     if (Number(row.totalValue) >= Number(row.goalBalance)) {
+          //       color = colors.greenPrimary;
+          //     } else if (Number(row.totalValue) < Number(row.goalBalance)) {
+          //       color = colors.redPrimary;
+          //     }
+          //   }
+          // }
 
-          return isLaunchPad ? (
+          return !isProposal ? (
             <Box>
               <Flex
                 color={color}
@@ -255,9 +255,9 @@ const LaunchpadContainer = () => {
           borderBottom: 'none',
         },
         render(row: ILaunchpad) {
-          const isLaunchPad = checkIsLaunchpad(row);
+          const isProposal = checkIsProposal(row);
 
-          if (isLaunchPad) {
+          if (!isProposal) {
             const [status] = useLaunchPadStatus({row});
             if (status.value === 'upcoming') {
               return (
@@ -370,11 +370,11 @@ const LaunchpadContainer = () => {
           borderBottom: 'none',
         },
         render(row: ILaunchpad) {
-          const isLaunchPad = checkIsLaunchpad(row);
-          if (isLaunchPad) {
-            return <LaunchpadStatus row={row}/>;
-          } else {
+          const isProposal = checkIsProposal(row);
+          if (isProposal) {
             return <ProposalStatus row={row?.userProposal}/>;
+          } else {
+            return <LaunchpadStatus row={row}/>;
           }
         },
       },
@@ -406,7 +406,7 @@ const LaunchpadContainer = () => {
           borderBottom: 'none',
         },
         render(row: ILaunchpad) {
-          const isLaunchPad = checkIsLaunchpad(row);
+          const isProposal = checkIsProposal(row);
 
           if (
             compareString(row.creatorAddress, account) &&
@@ -448,7 +448,7 @@ const LaunchpadContainer = () => {
               )
             }
             {
-              !isLaunchPad && row.proposalId && (
+              isProposal && (
                 <InfoTooltip label={'Proposal Detail'}>
                   <Box
                     cursor={'pointer'}
