@@ -60,6 +60,7 @@ import {BiBell} from 'react-icons/bi';
 import {useDispatch, useSelector} from 'react-redux';
 import Web3 from 'web3';
 import styles from './styles.module.scss';
+import CountDownTimer from "@/components/Countdown";
 
 const FEE = 2;
 export const MakeFormSwap = forwardRef((props, ref) => {
@@ -438,11 +439,15 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             </StatLabel>
             <StatNumber>
               <Text>
-                {isEndLaunchpad
+                {[
+                  LAUNCHPAD_STATUS.Closed,
+                  LAUNCHPAD_STATUS.Completed,
+                  LAUNCHPAD_STATUS.Failed,
+                  LAUNCHPAD_STATUS.Cancelled,
+                ].includes(status.key)
                   ? moment(poolDetail.endTime).format('LLL')
-                  : `${
-                    Number(days) > 0 ? `${days}d :` : ''
-                  } ${hours}h : ${minutes}m : ${seconds}s`}
+                  : <CountDownTimer end_time={poolDetail.endTime}/>
+                }
               </Text>
             </StatNumber>
           </Stat>
