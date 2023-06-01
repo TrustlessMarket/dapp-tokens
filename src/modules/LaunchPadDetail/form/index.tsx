@@ -70,7 +70,6 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     isStarting,
     isEndLaunchpad,
     isClaimLaunchpad,
-    canClaim,
   } = props;
   const [loading, setLoading] = useState(false);
   const [baseToken, setBaseToken] = useState<any>();
@@ -635,7 +634,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
               </FiledButton>
             ) : (
               <FiledButton
-                isDisabled={submitting || btnDisabled || (!canClaim && isClaimLaunchpad)}
+                isDisabled={submitting || btnDisabled}
                 isLoading={submitting}
                 type="submit"
                 btnSize={'h'}
@@ -645,18 +644,20 @@ export const MakeFormSwap = forwardRef((props, ref) => {
                   id: transactionType.createPoolApprove,
                 }}
                 style={{
-                  backgroundColor: isEndLaunchpad
-                    ? isClaimLaunchpad
+                  backgroundColor: isClaimLaunchpad
                       ? colors.greenPrimary
-                      : colors.redPrimary
-                    : colors.bluePrimary,
+                      : isEndLaunchpad
+                      ? colors.redPrimary
+                      : colors.bluePrimary,
                 }}
               >
-                {isEndLaunchpad
-                  ? isClaimLaunchpad
+                {
+                  isClaimLaunchpad
                     ? 'CLAIM THIS PROJECT'
-                    : 'END THIS PROJECT'
-                  : 'BACK THIS PROJECT'}
+                    : isEndLaunchpad
+                      ? 'END THIS PROJECT'
+                      : 'BACK THIS PROJECT'
+                }
               </FiledButton>
             )}
           </WrapperConnected>
@@ -693,16 +694,17 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
   const [status] = useLaunchPadStatus({ row: poolDetail });
   const [canClaim, setCanClaim] = useState(false);
 
-  const isEndLaunchpad = [
+  const canEnd = [
     LAUNCHPAD_STATUS.End,
     LAUNCHPAD_STATUS.Completed,
     LAUNCHPAD_STATUS.Failed,
+    LAUNCHPAD_STATUS.Cancelled,
   ].includes(status.key);
 
-  const isClaimLaunchpad = [
-    LAUNCHPAD_STATUS.Completed,
-    LAUNCHPAD_STATUS.Failed,
-  ].includes(status.key);
+  // const isClaimLaunchpad = [
+  //   LAUNCHPAD_STATUS.Completed,
+  //   LAUNCHPAD_STATUS.Failed,
+  // ].includes(status.key);
 
   const isStarting = [LAUNCHPAD_STATUS.Created].includes(status.key);
 
@@ -730,11 +732,9 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
       openModal({
         id,
         theme: 'dark',
-        title: isEndLaunchpad
-          ? isClaimLaunchpad
-            ? 'Confirm claim this project'
-            : 'Confirm end this project'
-          : 'Confirm deposit',
+        title: canClaim ? 'Confirm claim this project'
+          : canEnd ? 'Confirm end this project'
+            : 'Confirm deposit',
         className: styles.modalContent,
         modalProps: {
           centered: true,
@@ -851,11 +851,11 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
       }
 
       let response;
-      if (isClaimLaunchpad) {
+      if (canClaim) {
         response = await claimLaunchpad({
           launchpadAddress: poolDetail?.launchpad,
         });
-      } else if (isEndLaunchpad) {
+      } else if (canEnd) {
         response = await endLaunchpad({
           launchpadAddress: poolDetail?.launchpad,
         });
@@ -894,10 +894,9 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
             onSubmit={handleSubmit}
             submitting={submitting}
             poolDetail={poolDetail}
-            isEndLaunchpad={isEndLaunchpad}
-            isClaimLaunchpad={isClaimLaunchpad}
+            isEndLaunchpad={canEnd}
+            isClaimLaunchpad={canClaim}
             isStarting={isStarting}
-            canClaim={canClaim}
           />
         )}
       </Form>
