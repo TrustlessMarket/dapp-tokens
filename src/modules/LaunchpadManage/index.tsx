@@ -6,24 +6,31 @@ import LaunchpadManageHeader from './header';
 import { Form } from 'react-final-form';
 import LaunchpadFormStep1 from './LaunchpadFormStep1';
 import LaunchpadManageFormContainer from './LauchpadManage.FormContainer';
+import { LAUNCHPAD_FORM_STEP } from '@/constants/storage-key';
 
 const LaunchpadManage = () => {
-  const [step, setStep] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [step, setStep] = useState(1);
 
   const onSubmit = async (values: any) => {
     try {
+      let cachedData = localStorage.getItem(LAUNCHPAD_FORM_STEP);
+
+      if (cachedData) {
+        cachedData = JSON.parse(cachedData);
+      }
+
+      if (step === 0) {
+        localStorage.setItem(
+          LAUNCHPAD_FORM_STEP,
+          JSON.stringify({
+            step,
+            values,
+          }),
+        );
+        setStep(1);
+      }
     } catch (error) {}
-  };
-
-  const renderContentByStep = () => {
-    switch (step) {
-      case 0:
-        return <LaunchpadFormStep1 />;
-
-      default:
-        return null;
-    }
   };
 
   return (
@@ -34,15 +41,9 @@ const LaunchpadManage = () => {
             loading={loading}
             setLoading={setLoading}
             onSubmit={handleSubmit}
+            step={step}
+            setStep={setStep}
           />
-          // <form onSubmit={handleSubmit}>
-          //   <LaunchpadManageHeader
-          //     step={step}
-          //     loading={loading}
-          //     setLoading={setLoading}
-          //   />
-          //   {renderContentByStep()}
-          // </form>
         )}
       </Form>
     </StyledLaunchpadManage>

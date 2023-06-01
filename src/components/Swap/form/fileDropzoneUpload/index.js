@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import Dropzone from 'react-dropzone';
 import cx from 'classnames';
 
@@ -18,7 +18,7 @@ const FileDropzoneUpload = (props) => {
     setFile('');
     if (onChange) onChange('');
   };
-  
+
   return (
     <div className={cx(styles.wrapper, className)}>
       {file
@@ -33,12 +33,12 @@ const FileDropzoneUpload = (props) => {
         </>
         : (
           <Dropzone multiple={false} onDrop={handleOnDrop} accept={accept}>
-            {({getRootProps, getInputProps}) => (
+            {({ getRootProps, getInputProps }) => (
               <div {...getRootProps()}>
                 <input {...getInputProps()} />
                 <div className={cx(styles.dropzone, 'dropzone')}>
-                  <img className={styles.iconFile} alt="" src={url || IconFile} />
-                  <div>Drag files here<br />or click to upload</div>
+                  <img className={cx(styles.iconFile, 'img-upload')} alt="" src={url || IconFile} />
+                  <div>Drag files here<br /> or click to upload</div>
                 </div>
               </div>
             )}

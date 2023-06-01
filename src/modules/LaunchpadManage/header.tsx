@@ -33,7 +33,7 @@ export interface LaunchpadManageHeaderProps {
   detail?: ILaunchpad;
 }
 
-const steps = [{ title: 'Setup token' }, { title: 'Fill information' }];
+export const steps = [{ title: 'Setup token' }, { title: 'Fill information' }];
 
 const LaunchpadManageHeader: React.FC<LaunchpadManageHeaderProps> = ({
   step,
@@ -49,6 +49,61 @@ const LaunchpadManageHeader: React.FC<LaunchpadManageHeaderProps> = ({
   const tokenSelected: IToken | undefined = values?.launchpadTokenArg;
 
   const router = useRouter();
+
+  const renderButton = () => {
+    const lastStep = step === steps.length - 1;
+    if (!isApproveToken && tokenSelected) {
+      return (
+        <FiledButton
+          isLoading={loading}
+          isDisabled={loading}
+          loadingText="Processing"
+          // btnSize={'h'}
+          onClick={onApprove}
+          type="button"
+        >
+          {`APPROVE USE OF ${tokenSelected?.symbol}`}
+        </FiledButton>
+      );
+    }
+    return (
+      <Flex width={'100%'} justifyContent={'flex-end'} gap={6}>
+        <FiledButton
+          isLoading={loading}
+          isDisabled={loading}
+          type="submit"
+          // btnSize="h"
+          // containerConfig={{
+          //   style: {
+          //     width: '100%',
+          //   },
+          // }}
+          className={detail && !detail.launchpad ? 'btn-secondary' : 'btn-primary'}
+        >
+          {detail ? 'Update' : lastStep ? 'Submit' : 'Next'}
+        </FiledButton>
+        {detail && lastStep && !detail.launchpad && (
+          <FiledButton
+            isLoading={loading}
+            isDisabled={loading}
+            type="submit"
+            // processInfo={{
+            //   id: transactionType.createLaunchpad,
+            // }}
+            // btnSize="h"
+            // containerConfig={{
+            //   style: {
+            //     width: '100%',
+            //   },
+            // }}
+            onClick={() => change('isCreateProposal', true)}
+          >
+            {'Submit proposal'}
+          </FiledButton>
+        )}
+      </Flex>
+    );
+  };
 
   return (
     <StyledLaunchpadManageHeader>
@@ -80,58 +135,7 @@ const LaunchpadManageHeader: React.FC<LaunchpadManageHeaderProps> = ({
         </Stepper>
       </Box>
       <Box className="btn-submit-container">
-        <WrapperConnected className="btn-submit">
-          {!isApproveToken && tokenSelected ? (
-            <FiledButton
-              isLoading={loading}
-              isDisabled={loading}
-              loadingText="Processing"
-              // btnSize={'h'}
-              onClick={onApprove}
-              type="button"
-            >
-              {`APPROVE USE OF ${tokenSelected?.symbol}`}
-            </FiledButton>
-          ) : (
-            <Flex width={'100%'} justifyContent={'flex-end'} gap={6}>
-              <FiledButton
-                isLoading={loading}
-                isDisabled={loading}
-                type="submit"
-                // btnSize="h"
-                // containerConfig={{
-                //   style: {
-                //     width: '100%',
-                //   },
-                // }}
-                className={
-                  detail && !detail.launchpad ? 'btn-secondary' : 'btn-primary'
-                }
-              >
-                {detail ? 'Update' : 'Submit'}
-              </FiledButton>
-              {detail && !detail.launchpad && (
-                <FiledButton
-                  isLoading={loading}
-                  isDisabled={loading}
-                  type="submit"
-                  // processInfo={{
-                  //   id: transactionType.createLaunchpad,
-                  // }}
-                  // btnSize="h"
-                  // containerConfig={{
-                  //   style: {
-                  //     width: '100%',
-                  //   },
-                  // }}
-                  onClick={() => change('isCreateProposal', true)}
-                >
-                  {'Submit proposal'}
-                </FiledButton>
-              )}
-            </Flex>
-          )}
-        </WrapperConnected>
+        <WrapperConnected className="btn-submit">{renderButton()}</WrapperConnected>
       </Box>
     </StyledLaunchpadManageHeader>
   );

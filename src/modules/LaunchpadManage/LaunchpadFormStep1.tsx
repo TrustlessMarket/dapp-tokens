@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/alt-text */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react/no-children-prop */
@@ -9,24 +10,38 @@ import HorizontalItem from '@/components/Swap/horizontalItem';
 import { TOKEN_ICON_DEFAULT } from '@/constants/common';
 import { ROUTE_PATH } from '@/constants/route-path';
 import { IToken } from '@/interfaces/token';
-import { formatCurrency } from '@/utils';
+import { compareString, formatCurrency } from '@/utils';
 import { composeValidators, required, requiredAmount } from '@/utils/formValidate';
-import { Box, Flex, FormLabel, Text } from '@chakra-ui/react';
+import { Box, Flex, FormLabel, Spinner, Text } from '@chakra-ui/react';
 import { px2rem } from '@trustless-computer/dapp-core';
 import BigNumber from 'bignumber.js';
 import { isEmpty, truncate } from 'lodash';
 import { useRouter } from 'next/router';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Field, useForm, useFormState } from 'react-final-form';
 import web3 from 'web3';
 import { StyledLaunchpadFormStep1 } from './LaunchpadManage.styled';
 import { LaunchpadManageHeaderProps } from './header';
+import InfoTooltip from '@/components/Swap/infoTooltip';
+import { colors } from '@/theme/colors';
+import { ILaunchpad } from '@/interfaces/launchpad';
+import tokenIcons from '@/constants/tokenIcons';
 
-const LaunchpadFormStep1: React.FC<any> = ({
+interface ILaunchpadFormStep1 {
+  detail?: ILaunchpad;
+  tokens: IToken[];
+  liquidTokens: IToken[];
+  balanceToken: string;
+  step: number;
+  launchpadConfigs: any;
+}
+
+const LaunchpadFormStep1: React.FC<ILaunchpadFormStep1> = ({
   detail,
   tokens,
   balanceToken,
   liquidTokens,
+  launchpadConfigs,
 }) => {
   const router = useRouter();
   const { values } = useFormState();
@@ -66,6 +81,26 @@ const LaunchpadFormStep1: React.FC<any> = ({
     },
     [values.launchpadBalance, tokenSelected, detail, needLiquidBalance],
   );
+
+  useEffect(() => {
+    const multiX = new BigNumber(launchpadConfigs.liquidityPriceMultiple)
+      .dividedBy(1000000)
+      .toString();
+    const launchpadBalance = values?.launchpadBalance || 0;
+    const liquidityRatio = values?.liquidityRatioArg || 0;
+
+    const _needLiquidBalance = new BigNumber(liquidityRatio)
+      .dividedBy(100)
+      .multipliedBy(launchpadBalance)
+      .dividedBy(multiX)
+      .toString();
+    change('liquidityBalance', _needLiquidBalance);
+    setNeedLiquidBalance(_needLiquidBalance);
+  }, [
+    values?.launchpadBalance,
+    values?.liquidityRatioArg,
+    launchpadConfigs.liquidityPriceMultiple,
+  ]);
 
   return (
     <StyledLaunchpadFormStep1>
@@ -129,7 +164,78 @@ const LaunchpadFormStep1: React.FC<any> = ({
           validate={composeValidators(requiredAmount, validateMaxRatio)}
         />
       </Box>
-      <Box flex={1}></Box>
+      <Box className="fields-right-container" flex={1}>
+        <Box>
+          <FormLabel fontSize="xs" fontWeight="medium">
+            Liquidity
+          </FormLabel>
+          <Flex className="liquidity-container">
+            {liquidTokens.length > 0 ? (
+              liquidTokens.map((liq) => (
+                <Flex
+                  onClick={() => change('liquidityTokenArg', liq)}
+                  className={`liquidity-item ${
+                    compareString(liq.symbol, liquidityTokenSelected?.symbol)
+                      ? 'active'
+                      : ''
+                  }`}
+                  key={liq.symbol}
+                >
+                  <img src={tokenIcons[liq.symbol.toLowerCase()]} />
+                  <Text>{liq.symbol}</Text>
+                </Flex>
+              ))
+            ) : (
+              <Flex className="liquidity-item">
+                <Spinner color={colors.white} />
+              </Flex>
+            )}
+          </Flex>
+        </Box>
+
+        <Box mb={6} />
+        <Field
+          name="liquidityRatioArg"
+          decimals={18}
+          children={FieldAmount}
+          rightLabel={
+            !isEmpty(tokenSelected) &&
+            !detail && (
+              <Flex
+                alignItems={'center'}
+                gap={2}
+                fontSize={px2rem(14)}
+                color={'#FFFFFF'}
+                mb={2}
+              >
+                <Flex gap={1} alignItems={'center'}>
+                  Liquidity balance: {formatCurrency(needLiquidBalance)}{' '}
+                  {tokenSelected ? `${tokenSelected.symbol}` : ''}
+                </Flex>
+              </Flex>
+            )
+          }
+          label={
+            <InfoTooltip
+              showIcon={true}
+              label="Liquidity Reserve refers to a percentage of the funds that are used to add initial liquidity for trading purposes after the crowdfunding ends"
+              iconColor={colors.white500}
+            >
+              Liquidity reserve
+            </InfoTooltip>
+          }
+          disabled={detail?.launchpad}
+          validate={composeValidators(requiredAmount, validateMaxRatio)}
+        />
+        <Box mb={6} />
+        <Field
+          name="duration"
+          decimals={18}
+          children={FieldAmount}
+          label={`Duration`}
+          validate={composeValidators(requiredAmount, validateMaxRatio)}
+        />
+      </Box>
       <Box className="token-info" flex={1}>
         <Text as={'h6'}>Token information's</Text>
         {tokenSelected && (

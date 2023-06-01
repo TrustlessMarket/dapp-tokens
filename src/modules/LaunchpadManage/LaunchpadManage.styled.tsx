@@ -273,5 +273,70 @@ export const StyledLaunchpadFormStep1 = styled(Flex)`
   }
   .fields-left-container {
     padding: ${px2rem(40)};
+    padding-right: ${px2rem(20)};
+  }
+  .fields-right-container {
+    padding: ${px2rem(40)};
+    padding-left: ${px2rem(20)};
+  }
+
+  .liquidity-container {
+    gap: ${px2rem(12)};
+    .liquidity-item {
+      flex: 1;
+      border: 1px solid #353945;
+      border-radius: 4px;
+      align-items: center;
+      justify-content: center;
+      gap: ${px2rem(8)};
+      height: 60px;
+      cursor: pointer;
+      &.active {
+        background: #1e1e22;
+        border: 1px solid rgba(255, 255, 255, 0.7);
+      }
+      img {
+        width: 24px;
+        height: 24px;
+      }
+      p {
+        font-style: normal;
+        font-weight: 500;
+        font-size: ${px2rem(16)};
+        line-height: 16px;
+        /* identical to box height, or 100% */
+
+        text-align: center;
+
+        color: #ffffff;
+      }
+    }
+  }
+  &.step-2-container {
+    padding: ${px2rem(40)};
+    flex-direction: column;
+    .field-container {
+      width: 100%;
+      .image-drop-container {
+        border: 1px dashed #353945;
+        border-radius: 4px;
+        overflow: hidden;
+        .dropzone {
+          background: rgba(30, 30, 34, 0.5);
+          .img-upload {
+            height: 82px;
+            width: 92px;
+            margin-right: 0px;
+            margin-bottom: ${px2rem(12)};
+          }
+          & > div {
+            font-weight: 400;
+            br {
+              display: none;
+            }
+          }
+        }
+      }
+    }
   }
 `;

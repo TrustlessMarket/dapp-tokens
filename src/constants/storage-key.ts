@@ -12,3 +12,5 @@ export const SLIPPAGE_VALUE = 'SLIPPAGE_VALUE';
 export const LIQUID_PAIRS = 'LIQUID_PAIRS';
 
 export const IMPORTED_TOKENS = 'imported_tokens';
+
+export const LAUNCHPAD_FORM_STEP = 'launchpad_form_step';

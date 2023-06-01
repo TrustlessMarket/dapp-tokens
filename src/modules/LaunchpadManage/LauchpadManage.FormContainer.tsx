@@ -17,12 +17,15 @@ import { useForm, useFormState } from 'react-final-form';
 import web3 from 'web3';
 import LaunchpadFormStep1 from './LaunchpadFormStep1';
 import LaunchpadManageHeader from './header';
+import LaunchpadFormStep2 from './LaunchpadFormStep2';
 
 export interface LaunchpadManageFormContainerProps {
   loading: boolean;
   setLoading: (_: boolean) => void;
   onSubmit: (_: any) => void;
+  setStep: (_: any) => void;
   detail?: ILaunchpad;
+  step: number;
 }
 
 const LaunchpadManageFormContainer: React.FC<LaunchpadManageFormContainerProps> = ({
@@ -30,8 +33,9 @@ const LaunchpadManageFormContainer: React.FC<LaunchpadManageFormContainerProps> 
   setLoading,
   detail,
   onSubmit,
+  setStep,
+  step,
 }) => {
-  const [step, setStep] = useState(0);
   const [isApproveToken, setIsApproveToken] = useState<boolean>(true);
   const [isApproveAmountToken, setIsApproveAmountToken] = useState<string>('0');
   const [balanceToken, setBalanceToken] = useState<string>('0');
@@ -176,7 +180,25 @@ const LaunchpadManageFormContainer: React.FC<LaunchpadManageFormContainerProps> 
   const renderContentByStep = () => {
     switch (step) {
       case 0:
-        return <LaunchpadFormStep1 tokens={tokens} balanceToken={balanceToken} />;
+        return (
+          <LaunchpadFormStep1
+            tokens={tokens}
+            balanceToken={balanceToken}
+            liquidTokens={liquidTokens}
+            step={step}
+            launchpadConfigs={launchpadConfigs}
+          />
+        );
+      case 1:
+        return (
+          <LaunchpadFormStep2
+            tokens={tokens}
+            balanceToken={balanceToken}
+            liquidTokens={liquidTokens}
+            step={step}
+            launchpadConfigs={launchpadConfigs}
+          />
+        );
 
       default:
         return null;
