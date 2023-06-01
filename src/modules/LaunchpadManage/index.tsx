@@ -103,6 +103,7 @@ const LaunchpadManage = () => {
             launchpadBalance: values.launchpadBalance,
             goalBalance: values.goalBalance,
           });
+          localStorage.removeItem(LAUNCHPAD_FORM_STEP);
         }
 
         toast.success(`Submitted proposals successfully.`);

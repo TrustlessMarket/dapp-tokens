@@ -19,6 +19,7 @@ export interface ICreateLaunchpadParams {
   durationArg: string;
   launchpadBalance: string;
   goalBalance: string;
+  thresholdBalance: string;
 }
 
 const useCreateLaunchpad: ContractOperationHook<
@@ -38,6 +39,7 @@ const useCreateLaunchpad: ContractOperationHook<
         durationArg,
         launchpadBalance,
         goalBalance,
+        thresholdBalance,
       } = params;
 
       if (account && provider) {
@@ -61,6 +63,7 @@ const useCreateLaunchpad: ContractOperationHook<
             durationArg,
             web3.utils.toWei(launchpadBalance),
             web3.utils.toWei(goalBalance),
+            web3.utils.toWei(thresholdBalance),
           ],
         );
 
