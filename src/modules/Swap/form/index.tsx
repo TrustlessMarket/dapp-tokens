@@ -1185,11 +1185,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         <HorizontalItem
           label={
             <Flex fontSize={'sm'} fontWeight={'medium'} color={'rgba(255, 255, 255, 0.7)'}>
-              Reward&nbsp;<Tooltip hasArrow label={"For every successful swap you make, you will be rewarded 0.02 TC. This reward is distributed every 4 hours"} className="popup-tooltip">
-              <Flex>
-                <MdHelpOutline color={'inherit'} />
-              </Flex>
-            </Tooltip>: +0.02TC & +0.1TM
+              Reward: +0.1TM
             </Flex>
           }
         />
