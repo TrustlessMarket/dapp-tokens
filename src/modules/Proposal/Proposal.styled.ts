@@ -86,31 +86,46 @@ export const StyledIdoContainer = styled(BodyContainer)`
 `;
 
 export const StyledIdoStatus = styled(Badge)`
+  border-radius: 100px !important;
+  position: relative;
+  padding: 6px 12px 6px 24px !important;
+  font-size: 12px;
+  font-weight: 500;
+  
+  &::before {
+    content: "";
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    top: 40%;
+    left: 12px;
+    border-radius: 50%;
+  }
   &.pending {
     color: #ff7e21;
     background-color: rgba(255, 126, 33, 0.2);
-    padding: 6px 12px;
-    border-radius: 4px;
-    font-size: 12px;
-    font-weight: 500;
+    
+    &::before {
+      background: #ff7e21;
+    }
   }
   &.active,
   &.queued,
   &.executed {
     color: rgba(51, 133, 255, 1);
     background-color: rgba(51, 133, 255, 0.2);
-    padding: 6px 12px;
-    border-radius: 4px;
-    font-size: 12px;
-    font-weight: 500;
+
+    &::before {
+      background: rgba(51, 133, 255, 1);
+    }
   }
   &.succeeded {
     color: rgba(4, 197, 127, 1);
     background-color: rgba(4, 197, 127, 0.2);
-    padding: 6px 12px;
-    border-radius: 4px;
-    font-size: 12px;
-    font-weight: 500;
+
+    &::before {
+      background: rgba(4, 197, 127, 1);
+    }
   }
   &.canceled,
   &.defeated,
@@ -118,9 +133,9 @@ export const StyledIdoStatus = styled(Badge)`
   &.closed {
     color: rgba(255, 71, 71, 1);
     background-color: rgba(255, 71, 71, 0.2);
-    padding: 6px 12px;
-    border-radius: 4px;
-    font-size: 12px;
-    font-weight: 500;
+
+    &::before {
+      background: rgba(255, 71, 71, 1);
+    }
   }
 `;
