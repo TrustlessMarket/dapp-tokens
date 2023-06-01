@@ -102,6 +102,7 @@ const LaunchpadManage = () => {
             durationArg: seconds,
             launchpadBalance: values.launchpadBalance,
             goalBalance: values.goalBalance,
+            thresholdBalance: values.goalBalance,
           });
           localStorage.removeItem(LAUNCHPAD_FORM_STEP);
         }
