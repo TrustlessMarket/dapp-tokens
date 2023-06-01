@@ -36,9 +36,9 @@ const LaunchpadUpComing = ({poolDetail}: any) => {
       <Grid templateColumns={['1.75fr 1fr']} gap={[8]}>
         <GridItem>
           <Intro poolDetail={poolDetail}/>
-          <Box mt={12}/>
+          <Box mt={10}/>
           <Divider color={"#353945"}/>
-          <Box mt={12}/>
+          <Box mt={10}/>
           <Usp />
         </GridItem>
         <GridItem>

@@ -12,9 +12,12 @@ import {colors} from '@/theme/colors';
 import {Box, Spinner, Tab, TabList, TabPanel, TabPanels, Tabs, Text,} from '@chakra-ui/react';
 import cx from 'classnames';
 import {useRouter} from 'next/router';
-import {useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import IdoFaqs from './faqs';
 import styles from './styles.module.scss';
+import Intro from "@/modules/LaunchPadDetail/aboveTheFold/intro";
+import px2rem from "@/utils/px2rem";
+import SectionContainer from "@/components/Swap/sectionContainer";
 
 const IdoDetailContainer = () => {
   const router = useRouter();
@@ -70,14 +73,17 @@ const IdoDetailContainer = () => {
   return (
     <Box className={styles.wrapper}>
       <AboveTheFold poolDetail={poolDetail}/>
-      <BodyContainer>
-        <Tabs className={cx(styles.tabContainer, 'max-content')}>
+      <SectionContainer>
+        <Tabs className={cx(styles.tabContainer)} variant='soft-rounded'>
           <TabList mb={6} mt={6}>
-            <Tab>Story</Tab>
-            <Tab>Faqs</Tab>
+            <Tab>INFORMATION</Tab>
+            <Tab>FAQS</Tab>
           </TabList>
           <TabPanels>
             <TabPanel>
+              <Intro poolDetail={poolDetail}/>
+              <Text fontSize={px2rem(24)} fontWeight={"500"} color={"#FFFFFF"} mt={8}>Description</Text>
+              <Box mt={8}></Box>
               <IdoDescription poolDetail={poolDetail}/>
             </TabPanel>
             <TabPanel>
@@ -85,7 +91,7 @@ const IdoDetailContainer = () => {
             </TabPanel>
           </TabPanels>
         </Tabs>
-      </BodyContainer>
+      </SectionContainer>
     </Box>
   );
 };

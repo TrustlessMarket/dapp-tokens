@@ -12,13 +12,21 @@
 
 .tabContainer {
   :global {
+    .chakra-tabs__tablist {
+      justify-content: center;
+      border: 1px solid #353945;
+      border-radius: 1000px;
+      width: fit-content;
+      margin: 40px auto;
+      padding: 8px;
+    }
     .chakra-tabs__tab {
-      color: #898989;
+      color: #FFFFFF;
+      font-weight: 500;
       &[aria-selected='true'],
       &:focus-visible {
-        color: #ffffff;
-        box-shadow: none;
-        background: none;
+        color: #000000;
+        background: #FFFFFF;
       }
     }
 
