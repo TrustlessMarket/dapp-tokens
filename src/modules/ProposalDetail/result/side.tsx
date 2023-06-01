@@ -20,7 +20,7 @@ const ProposalResult = ({title, totalVote, className, data}: any) => {
       <Progress
         max={100}
         value={(data?.totalVoter / totalVote) * 100}
-        h="6px"
+        h="20px"
         className={"progress-bar"}
         mt={4}
       />

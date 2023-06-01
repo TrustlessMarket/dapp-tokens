@@ -2,7 +2,7 @@
 import BodyContainer from '@/components/Swap/bodyContainer';
 import FiledButton from '@/components/Swap/button/filedButton';
 import {ROUTE_PATH} from '@/constants/route-path';
-import {Box, Heading, Spinner, Text,} from '@chakra-ui/react';
+import {Box, Grid, GridItem, Heading, Spinner, Text,} from '@chakra-ui/react';
 import AboveTheFold from '@/modules/ProposalDetail/aboveTheFold';
 import {useAppSelector} from '@/state/hooks';
 import {selectPnftExchange} from '@/state/pnftExchange';
@@ -16,6 +16,7 @@ import {IProposal} from "@/interfaces/proposal";
 import IdoDescription from "@/modules/LaunchPadDetail/description";
 import IdoFaqs from "@/modules/LaunchPadDetail/faqs";
 import SectionContainer from "@/components/Swap/sectionContainer";
+import Intro from "@/modules/LaunchPadDetail/aboveTheFold/intro";
 
 const IdoDetailContainer = () => {
   const router = useRouter();
@@ -75,8 +76,20 @@ const IdoDetailContainer = () => {
       <AboveTheFold proposalDetail={proposalDetail}/>
       <SectionContainer>
         <Heading as={'h6'} color={"#FFFFFF"}>Description</Heading>
-        <IdoDescription poolDetail={proposalDetail?.userPool}/>
-        <Heading as={'h6'} color={"#FFFFFF"}>Faqs</Heading>
+        <Grid templateColumns={['1fr']}>
+          <GridItem>
+            <Intro poolDetail={proposalDetail?.userPool}/>
+          </GridItem>
+          {/*<GridItem>
+          <Card bgColor={"#2E2E2E"} paddingX={6} paddingY={6}>
+            <BuyForm proposalDetail={proposalDetail}/>
+          </Card>
+        </GridItem>*/}
+        </Grid>
+        <Box mt={4}>
+          <IdoDescription poolDetail={proposalDetail?.userPool}/>
+        </Box>
+        <Heading as={'h6'} color={"#FFFFFF"} mt={12}>Faqs</Heading>
         <IdoFaqs poolDetail={proposalDetail?.userPool}/>
       </SectionContainer>
     </Box>

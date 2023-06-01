@@ -12,8 +12,6 @@ import {Box} from "@chakra-ui/react";
 const AboveTheFold = ({ proposalDetail }: IProposal | any) => {
   // const [status] = useProposalStatus({ row: proposalDetail });
   // const poolDetail = proposalDetail?.userPool;
-  console.log('proposalDetail', proposalDetail);
-
   return (
     <BodyContainer className={styles.wrapper}>
       {/*{[PROPOSAL_STATUS.Pending].includes(status.key) ? (
@@ -22,12 +20,12 @@ const AboveTheFold = ({ proposalDetail }: IProposal | any) => {
         <ProposalStarting proposalDetail={proposalDetail} />
       )}*/}
       <ProposalStarting proposalDetail={proposalDetail} />
-      <Card bgColor={"#1E1E22"} paddingX={6} paddingY={6} mt={6}>
-        <ProposalInfo proposalDetail={proposalDetail}/>
-      </Card>
       <Box mt={6}>
         <ProposalResult />
       </Box>
+      <Card bgColor={"#1E1E22"} paddingX={6} paddingY={6} mt={6}>
+        <ProposalInfo proposalDetail={proposalDetail}/>
+      </Card>
     </BodyContainer>
   );
 };

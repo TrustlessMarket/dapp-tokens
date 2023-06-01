@@ -246,8 +246,8 @@ const BuyForm = ({proposalDetail}: { proposalDetail: IProposal }) => {
   const [voteSignatureProposal, setVoteSignatureProposal] = useState<any>();
   const [canVote, setCanVote] = useState(false);
 
-  console.log('voteSignatureProposal', voteSignatureProposal);
-  console.log('canVote', canVote);
+  // console.log('voteSignatureProposal', voteSignatureProposal);
+  // console.log('canVote', canVote);
 
   // const {run: defeatProposal} = useContractOperation({
   //   operation: useDefeatProposal,
