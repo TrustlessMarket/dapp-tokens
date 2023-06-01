@@ -64,8 +64,6 @@ const Header = () => {
   //   return isScreenDarkMode();
   // }, [router?.pathname]);
 
-  console.log('aaaa');
-
   useEffect(() => {
     if (refMenu.current) {
       if (isOpenMenu) {
@@ -82,7 +80,10 @@ const Header = () => {
 
   return (
     <Wrapper style={{ height: headerHeight, margin: '0 auto' }}>
-      <div className={'container'} style={{ height: defaultProvider.headerHeight }}>
+      <div
+        className={'header-container'}
+        style={{ height: defaultProvider.headerHeight }}
+      >
         <div className={'leftWrapper'}>
           <Link className="logo" href={ROUTE_PATH.HOME}>
             <img

@@ -9,14 +9,15 @@ const Wrapper = styled.div`
   background: #0f0f0f;
   //border-bottom: 1px solid #353945;
 
-  .container {
-    padding: 0;
+  .header-container {
+    padding: 0px 3.75rem;
     //height: 100%;
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
     position: relative;
+    gap: ${px2rem(20)};
 
     @media screen and (max-width: 767px) {
       overflow-x: auto;
