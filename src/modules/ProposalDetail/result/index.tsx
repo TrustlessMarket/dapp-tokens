@@ -51,7 +51,7 @@ const ProposalResult = () => {
 
   return (
     <Box>
-      <SimpleGrid columns={3} gap={6}>
+      <SimpleGrid columns={2} gap={6}>
         <GridItem>
           <Card bgColor={"transparent"} paddingX={6} paddingY={6} border={"1px solid #353945"}>
             <Side
@@ -62,7 +62,7 @@ const ProposalResult = () => {
             />
           </Card>
         </GridItem>
-        <GridItem>
+        {/*<GridItem>
           <Card bgColor={"transparent"} paddingX={6} paddingY={6} border={"1px solid #353945"}>
             <Side
               title={"Against"}
@@ -71,7 +71,7 @@ const ProposalResult = () => {
               className={cx(styles.sideWrapper, styles.sideAgainst)}
             />
           </Card>
-        </GridItem>
+        </GridItem>*/}
         <GridItem>
           <Card bgColor={"transparent"} paddingX={6} paddingY={6} border={"1px solid #353945"} h={"100%"}>
             <Box color={"#FFFFFF"}>
