@@ -42,7 +42,7 @@ import {BiBell} from 'react-icons/bi';
 import moment from 'moment';
 import useCountDownTimer from '@/hooks/useCountdown';
 import {PROPOSAL_STATUS, useProposalStatus,} from '@/modules/Proposal/Proposal.Status';
-import {getVoteSignatureProposal} from '@/services/proposal';
+import {getUserVoteProposal, getVoteSignatureProposal} from '@/services/proposal';
 import useContractOperation from '@/hooks/contract-operations/useContractOperation';
 import useCastVoteProposal from '@/hooks/contract-operations/proposal/useCastVote';
 import useTCWallet from '@/hooks/useTCWallet';
@@ -285,6 +285,9 @@ const BuyForm = ({proposalDetail}: any) => {
   const [voteSignatureProposal, setVoteSignatureProposal] = useState<any>();
   const [canVote, setCanVote] = useState(false);
 
+  console.log('voteSignatureProposal 2222', voteSignatureProposal);
+  console.log('canVote 2222', canVote);
+
   const {run: defeatProposal} = useContractOperation({
     operation: useDefeatProposal,
   });
@@ -310,14 +313,20 @@ const BuyForm = ({proposalDetail}: any) => {
   const isStarting = [PROPOSAL_STATUS.Active].includes(status.key);
   const isPending = [PROPOSAL_STATUS.Pending].includes(status.key);
 
-  const getVoteSignatureProposalInfo = async () => {
+  const getUserVoteInfo = async () => {
     try {
-      const response = await getVoteSignatureProposal({
-        address: account,
-        proposal_id: router?.query?.proposal_id,
-      });
-      setVoteSignatureProposal(response);
-      setCanVote(!!response);
+      const response = await Promise.all([
+        getVoteSignatureProposal({
+          address: account,
+          proposal_id: router?.query?.proposal_id,
+        }),
+        getUserVoteProposal({
+          address: account,
+          proposal_id: router?.query?.proposal_id,
+        }),
+      ]);
+      setVoteSignatureProposal(response[0]);
+      setCanVote(!!response[0] && !response[1]);
     } catch (err) {
       throw err;
     }
@@ -325,7 +334,7 @@ const BuyForm = ({proposalDetail}: any) => {
 
   useEffect(() => {
     if (account && router?.query?.proposal_id) {
-      getVoteSignatureProposalInfo();
+      getUserVoteInfo();
     }
   }, [
     account,

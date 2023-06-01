@@ -21,7 +21,7 @@ import moment from 'moment';
 import useCountDownTimer from '@/hooks/useCountdown';
 import {IProposal} from '@/interfaces/proposal';
 import {PROPOSAL_STATUS, useProposalStatus,} from '@/modules/Proposal/Proposal.Status';
-import {getVoteSignatureProposal} from '@/services/proposal';
+import {getUserVoteProposal, getVoteSignatureProposal} from '@/services/proposal';
 import useContractOperation from '@/hooks/contract-operations/useContractOperation';
 import useDefeatProposal from '@/hooks/contract-operations/proposal/useDefeat';
 import useExecuteProposal from '@/hooks/contract-operations/proposal/useExecute';
@@ -240,7 +240,7 @@ const BuyForm = ({proposalDetail}: { proposalDetail: IProposal }) => {
 
   const {mobileScreen} = useWindowSize();
   const [status] = useProposalStatus({row: proposalDetail});
-  const poolDetail = proposalDetail?.userPool;
+  // const poolDetail = proposalDetail?.userPool;
   const needReload = useAppSelector(selectPnftExchange).needReload;
   const router = useRouter();
   const [voteSignatureProposal, setVoteSignatureProposal] = useState<any>();
@@ -249,17 +249,17 @@ const BuyForm = ({proposalDetail}: { proposalDetail: IProposal }) => {
   console.log('voteSignatureProposal', voteSignatureProposal);
   console.log('canVote', canVote);
 
-  const {run: defeatProposal} = useContractOperation({
-    operation: useDefeatProposal,
-  });
-
-  const {run: executeProposal} = useContractOperation({
-    operation: useExecuteProposal,
-  });
-
-  const {run: castVoteProposal} = useContractOperation({
-    operation: useCastVoteProposal,
-  });
+  // const {run: defeatProposal} = useContractOperation({
+  //   operation: useDefeatProposal,
+  // });
+  //
+  // const {run: executeProposal} = useContractOperation({
+  //   operation: useExecuteProposal,
+  // });
+  //
+  // const {run: castVoteProposal} = useContractOperation({
+  //   operation: useCastVoteProposal,
+  // });
 
   const isEndProposal = [
     PROPOSAL_STATUS.Canceled,
@@ -274,14 +274,20 @@ const BuyForm = ({proposalDetail}: { proposalDetail: IProposal }) => {
   const isStarting = [PROPOSAL_STATUS.Active].includes(status.key);
   const isPending = [PROPOSAL_STATUS.Pending].includes(status.key);
 
-  const getVoteSignatureProposalInfo = async () => {
+  const getUserVoteInfo = async () => {
     try {
-      const response = await getVoteSignatureProposal({
-        address: account,
-        proposal_id: router?.query?.proposal_id,
-      });
-      setVoteSignatureProposal(response);
-      setCanVote(!!response);
+      const response = await Promise.all([
+        getVoteSignatureProposal({
+          address: account,
+          proposal_id: router?.query?.proposal_id,
+        }),
+        getUserVoteProposal({
+          address: account,
+          proposal_id: router?.query?.proposal_id,
+        }),
+      ]);
+      setVoteSignatureProposal(response[0]);
+      setCanVote(!!response[0] && !response[1]);
     } catch (err) {
       throw err;
     }
@@ -289,13 +295,7 @@ const BuyForm = ({proposalDetail}: { proposalDetail: IProposal }) => {
 
   useEffect(() => {
     if (account && router?.query?.proposal_id) {
-      getVoteSignatureProposalInfo();
-    }
-  }, [account, router?.query?.proposal_id, needReload]);
-
-  useEffect(() => {
-    if (account && router?.query?.proposal_id) {
-      getVoteSignatureProposalInfo();
+      getUserVoteInfo();
     }
   }, [
     account,
