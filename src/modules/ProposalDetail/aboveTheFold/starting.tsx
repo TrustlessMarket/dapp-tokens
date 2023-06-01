@@ -16,7 +16,7 @@ const ProposalStarting = ({proposalDetail}: any) => {
           <Text>Proposed by</Text>
           <a
             title="explorer"
-            href={`${TC_EXPLORER}/tx/${proposalDetail?.proposerAddress}`}
+            href={`${TC_EXPLORER}/address/${proposalDetail?.proposerAddress}`}
             target="_blank"
             style={{ textDecoration: 'underline' }}
           >

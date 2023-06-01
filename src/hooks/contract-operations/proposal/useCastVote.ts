@@ -1,15 +1,17 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import GovernorJson from '@/abis/Gevernor.json';
-import { GOVERNOR_ADDRESS } from '@/configs';
-import { getConnector } from '@/connection';
-import { TransactionEventType } from '@/enums/transaction';
+import {GOVERNOR_ADDRESS} from '@/configs';
+import {getConnector} from '@/connection';
+import {TransactionEventType} from '@/enums/transaction';
 import useTCWallet from '@/hooks/useTCWallet';
-import { ContractOperationHook, DAppType } from '@/interfaces/contract-operation';
-import { logErrorToServer } from '@/services/swap';
-import { getDefaultGasPrice, getDefaultProvider, getFunctionABI } from '@/utils';
-import { ethers } from 'ethers';
-import { useCallback } from 'react';
-import web3 from 'web3';
+import {ContractOperationHook, DAppType} from '@/interfaces/contract-operation';
+import {logErrorToServer} from '@/services/swap';
+import {compareString, getDefaultGasPrice, getDefaultProvider, getFunctionABI} from '@/utils';
+import {ethers} from 'ethers';
+import {useCallback} from 'react';
+import {CONTRACT_METHOD_IDS} from "@/constants/methodId";
+import {ERROR_CODE} from "@/constants/error";
+import useBitcoin from "@/hooks/useBitcoin";
 
 interface ICastVoteParams {
   proposalId: string;
@@ -22,11 +24,32 @@ const useCastVoteProposal: ContractOperationHook<ICastVoteParams, boolean> = () 
   const { tcWalletAddress: account } = useTCWallet();
   const provider = getDefaultProvider();
   const connector = getConnector();
+  const { getUnInscribedTransactionDetailByAddress, getTCTxByHash } = useBitcoin();
 
   const call = useCallback(
     async (params: ICastVoteParams): Promise<boolean> => {
       const { proposalId, weight, support, signature } = params;
       if (account && provider) {
+        let isPendingTx = false;
+
+        const unInscribedTxIDs = await getUnInscribedTransactionDetailByAddress(
+          account,
+        );
+
+        for await (const unInscribedTxID of unInscribedTxIDs) {
+          const _getTxDetail = await getTCTxByHash(unInscribedTxID.Hash);
+
+          const _inputStart = _getTxDetail.input.slice(0, 10);
+
+          if (compareString(CONTRACT_METHOD_IDS.CAST_VOTE, _inputStart)) {
+            isPendingTx = true;
+          }
+        }
+
+        if (isPendingTx) {
+          throw Error(ERROR_CODE.PENDING);
+        }
+
         const functionABI = getFunctionABI(GovernorJson, 'castVote');
 
         const ContractInterface = new ethers.utils.Interface(functionABI.abi);

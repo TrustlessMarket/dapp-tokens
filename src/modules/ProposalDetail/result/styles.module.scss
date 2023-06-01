@@ -1,3 +1,50 @@
 .sideWrapper {
   height: 350px;
+
+  :global {
+    .side-title {
+      font-weight: 500;
+      font-size: rem(16);
+    }
+
+    .side-total {
+      font-weight: 500;
+      font-size: rem(16);
+    }
+  }
+}
+
+.sideFor {
+  :global {
+    .side-title {
+      color: #43b369;
+    }
+
+    .progress-bar {
+      background: rgba(67,179,105,0.1);
+      border-radius: 100px;
+      > div:first-child {
+        background: #43b369;
+        border-radius: 100px;
+      }
+    }
+  }
+}
+
+.sideAgainst {
+  :global {
+    .side-title {
+      color: #e40536;
+    }
+
+    .progress-bar {
+      //background: #1C1C1C;
+      background: rgba(214,60,94,0.1);
+      border-radius: 100px;
+      > div:first-child {
+        background: #e40536;
+        border-radius: 100px;
+      }
+    }
+  }
 }

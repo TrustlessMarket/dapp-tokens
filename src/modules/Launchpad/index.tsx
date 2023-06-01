@@ -89,7 +89,7 @@ const LaunchpadContainer = () => {
         },
       },
       {
-        id: 'price',
+        id: 'rewards',
         label: 'Rewards',
         labelConfig: {
           fontSize: '12px',
@@ -114,7 +114,7 @@ const LaunchpadContainer = () => {
               <Text>
                 {formatCurrency(row.launchpadBalance, 18)} {token?.symbol}
               </Text>
-              <Text fontSize={'xs'} color={'rgba(255,255,255,0.7)'}>
+              <Text className="note">
                 {formatCurrency(percent, 2)}% of Supply
               </Text>
             </Flex>
@@ -177,7 +177,7 @@ const LaunchpadContainer = () => {
                   )}%`
                   : 'N/A'
               }`}</Text>
-              <Text>{`${
+              <Text className="note">{`${
                 token.totalSupply
                   ? `${formatCurrency(row.liquidityBalance, 18)} ${token?.symbol}`
                   : 'N/A'
@@ -200,30 +200,39 @@ const LaunchpadContainer = () => {
         render(row: ILaunchpad) {
           const isLaunchPad = checkIsLaunchpad(row);
           const [status] = useLaunchPadStatus({row});
-          let color = colors.white;
+          const color = colors.white;
 
           if (isLaunchPad) {
-            if (status.value !== 'upcoming') {
-              if (Number(row.totalValue) >= Number(row.goalBalance)) {
-                color = colors.greenPrimary;
-              } else if (Number(row.totalValue) < Number(row.goalBalance)) {
-                color = colors.redPrimary;
-              }
-            }
+            // if (status.value !== 'upcoming') {
+            //   if (Number(row.totalValue) >= Number(row.goalBalance)) {
+            //     color = colors.greenPrimary;
+            //   } else if (Number(row.totalValue) < Number(row.goalBalance)) {
+            //     color = colors.redPrimary;
+            //   }
+            // }
           }
 
           return isLaunchPad ? (
             <Box>
-              <Text
+              <Flex
                 color={color}
-              >{`${row.totalValue} / ${row.goalBalance} ${row.liquidityToken.symbol}`}</Text>
+                alignItems={"center"}
+                gap={1}
+              >
+                {`${row.totalValue} / ${row.goalBalance} `}
+                <Flex className={"liquidity-token"} alignItems={"center"} gap={1}>
+                  <img src={row.liquidityToken.thumbnail || TOKEN_ICON_DEFAULT}/>
+                  {row.liquidityToken.symbol}
+                </Flex>
+              </Flex>
               <Box mb={2}/>
               <Progress
                 max={100}
                 value={(Number(row.totalValue) / Number(row.goalBalance)) * 100}
-                size="xs"
+                h="6px"
+                className={"progress-bar"}
               />
-              <Text mt={2}>${formatCurrency(row.totalValueUsd, 2)}</Text>
+              <Text className="note" mt={1}>${formatCurrency(row.totalValueUsd, 2)}</Text>
             </Box>
           ) : (
             <Box>

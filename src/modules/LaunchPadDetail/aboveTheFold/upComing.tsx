@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import {Box, Flex, Grid, GridItem, SimpleGrid, Stat, StatLabel, StatNumber, Text} from "@chakra-ui/react";
+import {Box, Divider, Flex, Grid, GridItem, SimpleGrid, Stat, StatLabel, StatNumber, Text} from "@chakra-ui/react";
 import {formatCurrency} from "@/utils";
 import moment from "moment";
 import Card from "@/components/Swap/card";
@@ -9,6 +9,7 @@ import {useDispatch} from "react-redux";
 import {requestReload} from "@/state/pnftExchange";
 import Intro from "@/modules/LaunchPadDetail/aboveTheFold/intro";
 import SocialToken from "@/components/Social";
+import Usp from "@/modules/LaunchPadDetail/usp";
 
 const LaunchpadUpComing = ({poolDetail}: any) => {
   const [endTime, setEndTime] = useState(0);
@@ -35,6 +36,10 @@ const LaunchpadUpComing = ({poolDetail}: any) => {
       <Grid templateColumns={['1.75fr 1fr']} gap={[8]}>
         <GridItem>
           <Intro poolDetail={poolDetail}/>
+          <Box mt={12}/>
+          <Divider color={"#353945"}/>
+          <Box mt={12}/>
+          <Usp />
         </GridItem>
         <GridItem>
           <Card bgColor={"#1E1E22"} paddingX={6} paddingY={6} minH={"400px"}>

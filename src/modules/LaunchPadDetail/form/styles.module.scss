@@ -22,6 +22,7 @@
   :global .chakra-input__right-element {
     padding-right: 16px;
     margin: 0;
+    height: 48px !important;
   }
 
   :global .chakra-form__error-message {
@@ -29,7 +30,7 @@
   }
 
   :global .chakra-input__group {
-    background: transparent;
+    background: #000000;
   }
 
   :global {
@@ -131,14 +132,17 @@
 .infoColumn {
   flex: unset !important;
   :global {
+    dl, dd {
+      margin-bottom: 0;
+    }
     .chakra-stat__label {
       color: #B6B6B6;
-      font-weight: 300;
+      font-weight: 400;
       font-size: rem(16);
     }
     .chakra-stat__number {
       font-weight: 500;
-      font-size: rem(32);
+      font-size: rem(28);
     }
   }
 }

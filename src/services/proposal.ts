@@ -44,3 +44,14 @@ export const getVoteResultProposal = async (params: {
     error: 'getVoteResultProposal fail',
   });
 };
+
+export const getUserVoteProposal = async (params: {
+  proposal_id?: any;
+  address: any
+}) => {
+  const qs = '?' + queryString.stringify(params);
+  return swrFetcher(`${API_EXCHANGE_URL}${API_PATH}/user-vote${qs}`, {
+    method: 'GET',
+    error: 'getUserVoteProposal fail',
+  });
+};

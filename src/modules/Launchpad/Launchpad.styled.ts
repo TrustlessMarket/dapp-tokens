@@ -80,6 +80,29 @@ export const StyledIdoContainer = styled(BodyContainer)`
           max-width: 250px;
           white-space: break-spaces;
         }
+        
+        .liquidity-token {
+          font-size: 14px !important;
+          background: rgba(255, 255, 255, 0.1);
+          border: 1px solid rgba(255, 255, 255, 0.1);
+          border-radius: 100px;
+          padding: 2px 4px !important;
+          width: max-content;
+          
+          > img {
+            width: 16px;
+            height: 16px;
+          }
+        }
+        
+        .progress-bar {
+          background: #1C1C1C;
+          border-radius: 100px;
+          > div:first-child {
+            background: #04C57F;
+            border-radius: 100px;
+          }
+        }
       }
     }
   }

@@ -3,7 +3,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import ModalConfirmApprove from '@/components/ModalConfirmApprove';
 import SocialToken from '@/components/Social';
-import { transactionType } from '@/components/Swap/alertInfoProcessing/types';
+import {transactionType} from '@/components/Swap/alertInfoProcessing/types';
 import FiledButton from '@/components/Swap/button/filedButton';
 import FieldAmount from '@/components/Swap/form/fieldAmount';
 import InputWrapper from '@/components/Swap/form/inputWrapper';
@@ -11,14 +11,10 @@ import HorizontalItem from '@/components/Swap/horizontalItem';
 import InfoTooltip from '@/components/Swap/infoTooltip';
 import TokenBalance from '@/components/Swap/tokenBalance';
 import WrapperConnected from '@/components/WrapperConnected';
-import { CDN_URL } from '@/configs';
-import {
-  BRIDGE_SUPPORT_TOKEN,
-  TRUSTLESS_BRIDGE,
-  TRUSTLESS_FAUCET,
-} from '@/constants/common';
-import { toastError } from '@/constants/error';
-import { AssetsContext } from '@/contexts/assets-context';
+import {CDN_URL} from '@/configs';
+import {BRIDGE_SUPPORT_TOKEN, TRUSTLESS_BRIDGE, TRUSTLESS_FAUCET,} from '@/constants/common';
+import {toastError} from '@/constants/error';
+import {AssetsContext} from '@/contexts/assets-context';
 import useClaimLaunchPad from '@/hooks/contract-operations/launchpad/useClaim';
 import useDepositPool from '@/hooks/contract-operations/launchpad/useDeposit';
 import useEndLaunchPad from '@/hooks/contract-operations/launchpad/useEnd';
@@ -29,63 +25,39 @@ import useIsApproveERC20Token from '@/hooks/contract-operations/token/useIsAppro
 import useContractOperation from '@/hooks/contract-operations/useContractOperation';
 import useCountDownTimer from '@/hooks/useCountdown';
 import useTCWallet from '@/hooks/useTCWallet';
-import { ILaunchpad } from '@/interfaces/launchpad';
-import { IToken } from '@/interfaces/token';
-import { TransactionStatus } from '@/interfaces/walletTransaction';
-import {
-  LAUNCHPAD_STATUS,
-  useLaunchPadStatus,
-} from '@/modules/Launchpad/Launchpad.Status';
-import { getUserBoost } from '@/services/launchpad';
-import { logErrorToServer } from '@/services/swap';
-import { useAppDispatch, useAppSelector } from '@/state/hooks';
-import { closeModal, openModal } from '@/state/modal';
+import {ILaunchpad} from '@/interfaces/launchpad';
+import {IToken} from '@/interfaces/token';
+import {TransactionStatus} from '@/interfaces/walletTransaction';
+import {LAUNCHPAD_STATUS, useLaunchPadStatus,} from '@/modules/Launchpad/Launchpad.Status';
+import {getUserBoost} from '@/services/launchpad';
+import {logErrorToServer} from '@/services/swap';
+import {useAppDispatch, useAppSelector} from '@/state/hooks';
+import {closeModal, openModal} from '@/state/modal';
 import {
   requestReload,
   requestReloadRealtime,
   selectPnftExchange,
   updateCurrentTransaction,
 } from '@/state/pnftExchange';
-import { getIsAuthenticatedSelector } from '@/state/user/selector';
-import { colors } from '@/theme/colors';
-import { formatCurrency } from '@/utils';
-import { composeValidators, required } from '@/utils/formValidate';
+import {getIsAuthenticatedSelector} from '@/state/user/selector';
+import {colors} from '@/theme/colors';
+import {formatCurrency} from '@/utils';
+import {composeValidators, required} from '@/utils/formValidate';
 import px2rem from '@/utils/px2rem';
-import { showError } from '@/utils/toast';
-import {
-  Box,
-  Center,
-  Flex,
-  GridItem,
-  Progress,
-  SimpleGrid,
-  Stat,
-  StatLabel,
-  StatNumber,
-  Text,
-  forwardRef,
-} from '@chakra-ui/react';
-import { useWindowSize } from '@trustless-computer/dapp-core';
-import { useWeb3React } from '@web3-react/core';
+import {showError} from '@/utils/toast';
+import {Box, Center, Flex, forwardRef, Progress, Stat, StatLabel, StatNumber, Text,} from '@chakra-ui/react';
+import {useWindowSize} from '@trustless-computer/dapp-core';
 import BigNumber from 'bignumber.js';
 import cx from 'classnames';
 import debounce from 'lodash/debounce';
 import moment from 'moment';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
-import {
-  useCallback,
-  useContext,
-  useEffect,
-  useImperativeHandle,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
-import { Field, Form, useForm, useFormState } from 'react-final-form';
+import {useRouter} from 'next/router';
+import {useCallback, useContext, useEffect, useImperativeHandle, useMemo, useRef, useState,} from 'react';
+import {Field, Form, useForm, useFormState} from 'react-final-form';
 import toast from 'react-hot-toast';
-import { BiBell } from 'react-icons/bi';
-import { useDispatch, useSelector } from 'react-redux';
+import {BiBell} from 'react-icons/bi';
+import {useDispatch, useSelector} from 'react-redux';
 import Web3 from 'web3';
 import styles from './styles.module.scss';
 
@@ -416,7 +388,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
                   <Text>
                     {formatCurrency(poolDetail?.totalValue || 0)} {baseToken?.symbol}
                   </Text>
-                  <Text fontSize={'20px'} fontWeight={'300'}>
+                  <Text fontSize={'20px'} fontWeight={'400'}>
                     ({formatCurrency(percent, 2)}% funded)
                   </Text>
                 </Flex>
@@ -430,56 +402,52 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             </StatNumber>
           </Stat>
         </Flex>
-        <Box className={styles.progressBar}>
+        <Box className={styles.progressBar} mt={4}>
           <Progress
             w={['100%', '100%']}
-            h="12px"
+            h="10px"
             value={percent}
             borderRadius={20}
           ></Progress>
           {/*<Image src={fireImg} className={styles.fireImg} />*/}
         </Box>
       </Flex>
-      <Flex gap={0} color={'#FFFFFF'} mt={4} direction={'column'}>
-        <SimpleGrid columns={3} spacingX={6}>
-          <GridItem>
-            <Stat className={styles.infoColumn}>
-              <StatLabel>Rewards</StatLabel>
-              <StatNumber>
-                {formatCurrency(poolDetail?.launchpadBalance || 0)}
-              </StatNumber>
-            </Stat>
-          </GridItem>
-          <GridItem>
-            <Stat className={styles.infoColumn}>
-              <StatLabel>Backers</StatLabel>
-              <StatNumber>
-                {formatCurrency(poolDetail?.contributors || 0, 0)}
-              </StatNumber>
-            </Stat>
-          </GridItem>
-        </SimpleGrid>
-        <Stat className={styles.infoColumn}>
-          <StatLabel>
-            {[
-              LAUNCHPAD_STATUS.Closed,
-              LAUNCHPAD_STATUS.Completed,
-              LAUNCHPAD_STATUS.Failed,
-              LAUNCHPAD_STATUS.Cancelled,
-            ].includes(status.key)
-              ? 'Ended at'
-              : 'Ends in'}
-          </StatLabel>
-          <StatNumber>
-            <Text>
-              {isEndLaunchpad
-                ? moment(poolDetail.endTime).format('LLL')
-                : `${
+      <Flex gap={0} color={'#FFFFFF'} mt={8} direction={'column'}>
+        <Flex gap={6} justifyContent={"space-between"}>
+          <Stat className={styles.infoColumn} flex={1}>
+            <StatLabel>Rewards</StatLabel>
+            <StatNumber>
+              {formatCurrency(poolDetail?.launchpadBalance || 0)}
+            </StatNumber>
+          </Stat>
+          <Stat className={styles.infoColumn} flex={1}>
+            <StatLabel>Backers</StatLabel>
+            <StatNumber>
+              {formatCurrency(poolDetail?.contributors || 0, 0)}
+            </StatNumber>
+          </Stat>
+          <Stat className={styles.infoColumn} flex={1.5}>
+            <StatLabel>
+              {[
+                LAUNCHPAD_STATUS.Closed,
+                LAUNCHPAD_STATUS.Completed,
+                LAUNCHPAD_STATUS.Failed,
+                LAUNCHPAD_STATUS.Cancelled,
+              ].includes(status.key)
+                ? 'Ended at'
+                : 'Ends in'}
+            </StatLabel>
+            <StatNumber>
+              <Text>
+                {isEndLaunchpad
+                  ? moment(poolDetail.endTime).format('LLL')
+                  : `${
                     Number(days) > 0 ? `${days}d :` : ''
                   } ${hours}h : ${minutes}m : ${seconds}s`}
-            </Text>
-          </StatNumber>
-        </Stat>
+              </Text>
+            </StatNumber>
+          </Stat>
+        </Flex>
       </Flex>
       {isStarting && (
         <InputWrapper
@@ -489,32 +457,6 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             <Text fontSize={px2rem(14)} color={'#FFFFFF'}>
               Amount
             </Text>
-          }
-          rightLabel={
-            baseToken && (
-              <Flex gap={2} fontSize={px2rem(14)} color={'#FFFFFF'}>
-                <Flex gap={1} alignItems={'center'}>
-                  Balance:
-                  <TokenBalance
-                    token={baseToken}
-                    onBalanceChange={(_amount) => setBaseBalance(_amount)}
-                  />
-                  {baseToken?.symbol}
-                </Flex>
-                {isStarting && (
-                  <Text
-                    cursor={'pointer'}
-                    color={'#3385FF'}
-                    onClick={handleChangeMaxBaseAmount}
-                    bgColor={'rgba(51, 133, 255, 0.2)'}
-                    borderRadius={'4px'}
-                    padding={'1px 12px'}
-                  >
-                    MAX
-                  </Text>
-                )}
-              </Flex>
-            )
           }
         >
           <Flex gap={4} direction={'column'}>
@@ -539,6 +481,33 @@ export const MakeFormSwap = forwardRef((props, ref) => {
                       className={'avatar'}
                     />
                     <Text fontSize={'sm'}>{baseToken?.symbol}</Text>
+                  </Flex>
+                )
+              }
+              appendComp={
+                baseToken && (
+                  <Flex gap={2} fontSize={px2rem(14)} color={'#FFFFFF'}>
+                    <Flex gap={1} alignItems={'center'} color={"#B6B6B6"} fontSize={px2rem(16)} fontWeight={"400"}>
+                      Balance:
+                      <TokenBalance
+                        token={baseToken}
+                        onBalanceChange={(_amount) => setBaseBalance(_amount)}
+                      />
+                      {baseToken?.symbol}
+                    </Flex>
+                    {isStarting && (
+                      <Text
+                        cursor={'pointer'}
+                        color={'#3385FF'}
+                        onClick={handleChangeMaxBaseAmount}
+                        bgColor={'#2E2E2E'}
+                        borderRadius={'4px'}
+                        padding={'1px 12px'}
+                        fontSize={px2rem(16)} fontWeight={"600"}
+                      >
+                        Max
+                      </Text>
+                    )}
                   </Flex>
                 )
               }
@@ -694,9 +663,9 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       <Flex justifyContent={'flex-end'} mt={4}>
         <SocialToken socials={poolDetail?.launchpadToken?.social} />
       </Flex>
-      <Text mt={4} fontSize={px2rem(20)} fontWeight={'300'} color={'#FFFFFF'}>
+      <Text mt={4} fontSize={px2rem(16)} fontWeight={'400'} color={'#FFFFFF'}>
         All or nothing. This project will only be funded if it reaches its goal by{' '}
-        {moment.utc(poolDetail?.endTime).format('ddd, MMMM Do YYYY HH:mm:ss Z')}.
+        <Text as={"span"} color={"#FF7E21"}>{moment.utc(poolDetail?.endTime).format('ddd, MMMM Do YYYY HH:mm:ss Z')}</Text>.
       </Text>
     </form>
   );

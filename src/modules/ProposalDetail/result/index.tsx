@@ -42,13 +42,23 @@ const ProposalResult = () => {
     <SectionContainer>
       <SimpleGrid columns={2} gap={6}>
         <GridItem>
-          <Card bgColor={"#2E2E2E"} paddingX={6} paddingY={6}>
-            <Side data={voteResult?.forVote} className={cx(styles.sideWrapper)}/>
+          <Card bgColor={"#1B1E26"} paddingX={6} paddingY={6}>
+            <Side
+              title={"For"}
+              totalVote={voteResult?.forVote?.totalVoter + voteResult?.againstVote?.totalVoter}
+              data={voteResult?.forVote}
+              className={cx(styles.sideWrapper, styles.sideFor)}
+            />
           </Card>
         </GridItem>
         <GridItem>
-          <Card bgColor={"#2E2E2E"} paddingX={6} paddingY={6}>
-            <Side data={voteResult?.againstVote} className={cx(styles.sideWrapper)}/>
+          <Card bgColor={"#1B1E26"} paddingX={6} paddingY={6}>
+            <Side
+              title={"Against"}
+              totalVote={voteResult?.forVote?.totalVoter + voteResult?.againstVote?.totalVoter}
+              data={voteResult?.againstVote}
+              className={cx(styles.sideWrapper, styles.sideAgainst)}
+            />
           </Card>
         </GridItem>
       </SimpleGrid>

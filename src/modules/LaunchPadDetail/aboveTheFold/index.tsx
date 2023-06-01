@@ -3,9 +3,8 @@ import {LAUNCHPAD_STATUS, useLaunchPadStatus} from '@/modules/Launchpad/Launchpa
 import LaunchpadUpComing from '@/modules/LaunchPadDetail/aboveTheFold/upComing';
 import LaunchpadStarting from '@/modules/LaunchPadDetail/aboveTheFold/starting';
 import BodyContainer from '@/components/Swap/bodyContainer';
-import Usp from '@/modules/LaunchPadDetail/usp';
 import styles from '@/modules/LaunchPadDetail/aboveTheFold/styles.module.scss';
-import { ILaunchpad } from '@/interfaces/launchpad';
+import {ILaunchpad} from '@/interfaces/launchpad';
 
 const AboveTheFold = ({ poolDetail }: ILaunchpad | any) => {
   const [status] = useLaunchPadStatus({ row: poolDetail });
@@ -17,7 +16,6 @@ const AboveTheFold = ({ poolDetail }: ILaunchpad | any) => {
       ) : (
         <LaunchpadStarting poolDetail={poolDetail} />
       )}
-      <Usp />
     </BodyContainer>
   );
 };
