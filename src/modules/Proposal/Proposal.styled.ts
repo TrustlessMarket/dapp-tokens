@@ -101,6 +101,7 @@ export const StyledIdoStatus = styled(Badge)`
     left: 12px;
     border-radius: 50%;
   }
+  
   &.pending {
     color: #ff7e21;
     background-color: rgba(255, 126, 33, 0.2);
