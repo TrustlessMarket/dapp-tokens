@@ -3,4 +3,7 @@ export const CONTRACT_METHOD_IDS = {
   ADD_LIQUID: '0xe8e33700',
   REMOVE_LIQUID: '0xbaa2abde',
   APPROVE: '0x095ea7b3',
+  DEFEAT_VOTE: '0x60174010',
+  EXECUTE_VOTE: '0xfe0d94c1',
+  CAST_VOTE: '0x1c69d7d1',
 };
