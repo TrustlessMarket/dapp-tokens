@@ -2,7 +2,7 @@
 import BodyContainer from '@/components/Swap/bodyContainer';
 import FiledButton from '@/components/Swap/button/filedButton';
 import {ROUTE_PATH} from '@/constants/route-path';
-import {Box, Grid, GridItem, Heading, Spinner, Text,} from '@chakra-ui/react';
+import {Box, Spinner, Tab, TabList, TabPanel, TabPanels, Tabs, Text,} from '@chakra-ui/react';
 import AboveTheFold from '@/modules/ProposalDetail/aboveTheFold';
 import {useAppSelector} from '@/state/hooks';
 import {selectPnftExchange} from '@/state/pnftExchange';
@@ -17,6 +17,7 @@ import IdoDescription from "@/modules/LaunchPadDetail/description";
 import IdoFaqs from "@/modules/LaunchPadDetail/faqs";
 import SectionContainer from "@/components/Swap/sectionContainer";
 import Intro from "@/modules/LaunchPadDetail/aboveTheFold/intro";
+import px2rem from "@/utils/px2rem";
 
 const IdoDetailContainer = () => {
   const router = useRouter();
@@ -75,22 +76,23 @@ const IdoDetailContainer = () => {
     <Box className={styles.wrapper}>
       <AboveTheFold proposalDetail={proposalDetail}/>
       <SectionContainer>
-        <Heading as={'h6'} color={"#FFFFFF"}>Description</Heading>
-        <Grid templateColumns={['1fr']}>
-          <GridItem>
-            <Intro poolDetail={proposalDetail?.userPool}/>
-          </GridItem>
-          {/*<GridItem>
-          <Card bgColor={"#2E2E2E"} paddingX={6} paddingY={6}>
-            <BuyForm proposalDetail={proposalDetail}/>
-          </Card>
-        </GridItem>*/}
-        </Grid>
-        <Box mt={4}>
-          <IdoDescription poolDetail={proposalDetail?.userPool}/>
-        </Box>
-        <Heading as={'h6'} color={"#FFFFFF"} mt={12}>Faqs</Heading>
-        <IdoFaqs poolDetail={proposalDetail?.userPool}/>
+        <Tabs className={cx(styles.tabContainer)} variant='soft-rounded'>
+          <TabList mb={6} mt={6}>
+            <Tab>INFORMATION</Tab>
+            <Tab>FAQS</Tab>
+          </TabList>
+          <TabPanels>
+            <TabPanel>
+              <Intro poolDetail={proposalDetail?.userPool}/>
+              <Text fontSize={px2rem(24)} fontWeight={"500"} color={"#FFFFFF"} mt={8}>Description</Text>
+              <Box mt={8}></Box>
+              <IdoDescription poolDetail={proposalDetail?.userPool}/>
+            </TabPanel>
+            <TabPanel>
+              <IdoFaqs poolDetail={proposalDetail?.userPool}/>
+            </TabPanel>
+          </TabPanels>
+        </Tabs>
       </SectionContainer>
     </Box>
   );
