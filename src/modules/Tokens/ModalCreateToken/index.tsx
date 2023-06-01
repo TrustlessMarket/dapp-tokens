@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import ERC20ABIJson from '@/abis/erc20.json';
 import Button from '@/components/Button';
 import IconSVG from '@/components/IconSVG';
@@ -258,7 +257,7 @@ const ModalCreateToken: React.FC<Props> = (props: Props) => {
                 )}
               </WrapInput>
 
-              {/* <div className="est-fee">
+              <div className="est-fee">
                 <Text
                   size="regular"
                   fontWeight="medium"
@@ -284,7 +283,7 @@ const ModalCreateToken: React.FC<Props> = (props: Props) => {
                     feeRate: feeRate.fastestFee,
                   })}
                 </div>
-              </div> */}
+              </div>
 
               <Button disabled={isProcessing} type="submit" className="confirm-btn">
                 <Text size="medium" fontWeight="medium" className="confirm-text">

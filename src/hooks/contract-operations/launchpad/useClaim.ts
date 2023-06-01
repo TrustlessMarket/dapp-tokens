@@ -1,16 +1,14 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import LaunchpadPoolJson from '@/abis/LaunchpadPool.json';
 import { transactionType } from '@/components/Swap/alertInfoProcessing/types';
-import { getConnector } from '@/connection';
 import { TransactionEventType } from '@/enums/transaction';
-import useTCWallet from '@/hooks/useTCWallet';
 import { ContractOperationHook, DAppType } from '@/interfaces/contract-operation';
 import { TransactionStatus } from '@/interfaces/walletTransaction';
 import { logErrorToServer } from '@/services/swap';
 import store from '@/state';
 import { updateCurrentTransaction } from '@/state/pnftExchange';
-import { getDefaultGasPrice, getDefaultProvider, getFunctionABI } from '@/utils';
-import { ethers } from 'ethers';
+import { getContract, getDefaultGasPrice } from '@/utils';
+import { useWeb3React } from '@web3-react/core';
 import { useCallback } from 'react';
 
 interface IClaimLaunchPoolParams {
@@ -21,39 +19,28 @@ const useClaimLaunchPad: ContractOperationHook<
   IClaimLaunchPoolParams,
   boolean
 > = () => {
-  const provider = getDefaultProvider();
-  const connector = getConnector();
-  const { tcWalletAddress: account } = useTCWallet();
-
+  const { account, provider } = useWeb3React();
   const call = useCallback(
     async (params: IClaimLaunchPoolParams): Promise<boolean> => {
       const { launchpadAddress } = params;
       if (account && provider && launchpadAddress) {
-        const functionABI = getFunctionABI(LaunchpadPoolJson, 'redeem');
+        const contract = getContract(
+          launchpadAddress,
+          LaunchpadPoolJson,
+          provider,
+          account,
+        );
 
-        const ContractInterface = new ethers.utils.Interface(functionABI.abi);
-
-        const encodeAbi = ContractInterface.encodeFunctionData('redeem', []);
-
-        const transaction = await connector.requestSign({
-          target: '_blank',
-          calldata: encodeAbi,
-          to: launchpadAddress,
-          value: '',
-          redirectURL: window.location.href,
-          isInscribe: true,
-          gasLimit: '200000',
+        const transaction = await contract.connect(provider.getSigner()).redeem({
+          gasLimit: '150000',
           gasPrice: getDefaultGasPrice(),
-          functionType: functionABI.functionType,
-          functionName: functionABI.functionName,
-          from: account,
         });
 
         logErrorToServer({
           type: 'logs',
           address: account,
           error: JSON.stringify(transaction),
-          message: "gasLimit: '200000'",
+          message: "gasLimit: '150000'",
         });
 
         store.dispatch(
@@ -71,7 +58,7 @@ const useClaimLaunchPad: ContractOperationHook<
       }
       return false;
     },
-    [account],
+    [account, provider],
   );
 
   return {

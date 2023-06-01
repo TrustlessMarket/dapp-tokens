@@ -1,54 +1,46 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import IconSVG from '@/components/IconSVG';
-import {CDN_URL, TM_ADDRESS, WALLET_URL} from '@/configs';
+import { CDN_URL, TM_ADDRESS, WALLET_URL } from '@/configs';
 // import { ROUTE_PATH } from '@/constants/route-path';
-import {getUserSelector} from '@/state/user/selector';
-import {formatBTCPrice} from '@/utils/format';
+import { AssetsContext } from '@/contexts/assets-context';
+import { getIsAuthenticatedSelector, getUserSelector } from '@/state/user/selector';
+import { formatBTCPrice } from '@/utils/format';
+import { useWeb3React } from '@web3-react/core';
 import copy from 'copy-to-clipboard';
 // import { useRouter } from 'next/router';
+import SelectedNetwork from '@/components/Swap/selectNetwork';
 import Text from '@/components/Text';
-import {ROUTE_PATH} from '@/constants/route-path';
-import {TRUSTLESS_BRIDGE} from '@/constants/common';
-import {WalletContext} from '@/contexts/wallet-context';
+import { SupportedChainId } from '@/constants/chains';
+import { TRUSTLESS_BRIDGE } from '@/constants/common';
+import { ROUTE_PATH } from '@/constants/route-path';
+import { WalletContext } from '@/contexts/wallet-context';
 import useBalanceERC20Token from '@/hooks/contract-operations/token/useBalanceERC20Token';
-import useTCWallet from '@/hooks/useTCWallet';
-import {getWalletSelector} from '@/state/wallets/selector';
-import {IAccount} from '@/state/wallets/types';
-import {formatCurrency, shortCryptoAddress} from '@/utils';
-import {showError} from '@/utils/toast';
-import {Flex, IconButton, Menu, MenuButton, MenuItem, MenuList, Skeleton, Spinner,} from '@chakra-ui/react';
-import {useWindowSize} from '@trustless-computer/dapp-core';
-import {useRouter} from 'next/router';
-import {useContext, useEffect, useMemo, useRef, useState} from 'react';
-import {OverlayTrigger} from 'react-bootstrap';
-import {toast} from 'react-hot-toast';
-import {AiOutlineSwap} from 'react-icons/ai';
-import Jazzicon, {jsNumberForAddress} from 'react-jazzicon';
-import {useSelector} from 'react-redux';
+import { compareString, formatCurrency, formatLongAddress } from '@/utils';
+import { showError } from '@/utils/toast';
+import { useWindowSize } from '@trustless-computer/dapp-core';
+import { useRouter } from 'next/router';
+import { useContext, useEffect, useMemo, useRef, useState } from 'react';
+import { OverlayTrigger } from 'react-bootstrap';
+import { toast } from 'react-hot-toast';
+import Jazzicon, { jsNumberForAddress } from 'react-jazzicon';
+import { useSelector } from 'react-redux';
 import web3 from 'web3';
-import {isScreenDarkMode} from '..';
-import {ConnectWalletButton, WalletBalance} from '../Header.styled';
-import ChangeAccountWalletItem from './ChangeAccountWalletItem';
-import {WalletPopover} from './Wallet.styled';
+import { isScreenDarkMode } from '..';
+import { ConnectWalletButton, WalletBalance } from '../Header.styled';
+import { WalletPopover } from './Wallet.styled';
 
 const WalletHeader = () => {
   const router = useRouter();
-  const {
-    isAuthenticated,
-    tcWalletAddress,
-    tcBalance: juiceBalance,
-    btcBalance,
-    loading,
-  } = useTCWallet();
+  const { account, chainId, isActive } = useWeb3React();
   const user = useSelector(getUserSelector);
-  const { onDisconnect, onConnect } = useContext(WalletContext);
+  const { onDisconnect, onConnect, requestBtcAddress } = useContext(WalletContext);
   const { mobileScreen } = useWindowSize();
+
+  const isAuthenticated = useSelector(getIsAuthenticatedSelector);
+  const { btcBalance, juiceBalance } = useContext(AssetsContext);
 
   const { call: getBalanceErc20 } = useBalanceERC20Token();
   const [balanceTM, setBalanceTM] = useState('0');
-  const walletSelector = useSelector(getWalletSelector);
-
-  const accounts = walletSelector?.accounts || [];
 
   const isTokenPage = useMemo(() => {
     return isScreenDarkMode();
@@ -60,6 +52,7 @@ const WalletHeader = () => {
     try {
       setIsConnecting(true);
       await onConnect();
+      await requestBtcAddress();
     } catch (err) {
       showError({
         message: (err as Error).message,
@@ -73,10 +66,10 @@ const WalletHeader = () => {
 
   useEffect(() => {
     getBalanceTM();
-  }, [user?.walletAddress, isAuthenticated]);
+  }, [user?.walletAddress, isActive]);
 
   const getBalanceTM = async () => {
-    if (!isAuthenticated) {
+    if (!user?.walletAddress || !isActive) {
       return;
     }
 
@@ -84,12 +77,8 @@ const WalletHeader = () => {
       const response: any = await getBalanceErc20({
         erc20TokenAddress: TM_ADDRESS,
       });
-      console.log('response', response);
-
       setBalanceTM(response);
-    } catch (error) {
-      console.log('error', error);
-    }
+    } catch (error) {}
   };
 
   const [show, setShow] = useState(false);
@@ -130,7 +119,7 @@ const WalletHeader = () => {
             type="fill"
           />
           <Text size={'regular'} className="address" fontWeight="regular">
-            {shortCryptoAddress(user?.walletAddress || '', 10)}
+            {formatLongAddress(user?.walletAddress || '')}
           </Text>
         </div>
         <div
@@ -145,7 +134,6 @@ const WalletHeader = () => {
           ></IconSVG>
         </div>
       </div>
-
       <div className="divider"></div>
       <div className="wallet-btc">
         <div className="wallet-item">
@@ -155,7 +143,7 @@ const WalletHeader = () => {
             maxHeight="24"
           />
           <Text size={'regular'} className="address" fontWeight="regular">
-            {shortCryptoAddress(user?.walletAddressBtcTaproot || '', 10)}
+            {formatLongAddress(user?.walletAddressBtcTaproot || '')}
           </Text>
         </div>
         <div
@@ -217,80 +205,42 @@ const WalletHeader = () => {
 
   return (
     <>
-      {isAuthenticated && tcWalletAddress ? (
-        <Flex gap={2}>
-          <OverlayTrigger
-            trigger={['hover', 'focus']}
-            placement="bottom"
-            overlay={walletPopover}
-            container={ref}
-            show={show}
-          >
-            <div
-              className={`wallet ${mobileScreen ? 'isMobile' : ''}`}
-              // onClick={() => window.open(TC_WEB_URL)}
-              ref={ref}
-              onMouseEnter={handleOnMouseEnter}
-              onMouseLeave={handleOnMouseLeave}
-            >
-              <WalletBalance className={isTokenPage ? 'isTokenPage' : ''}>
-                <div className="balance">
-                  <Flex alignItems={'center'} gap={1}>
-                    <Skeleton isLoaded={!loading} noOfLines={1}>
-                      {formatCurrency(formatBTCPrice(btcBalance))}
-                    </Skeleton>
-                    BTC
-                  </Flex>
-                  {/* <p>{formatCurrency(formatBTCPrice(btcBalance))} BTC</p> */}
-                  <span className="divider"></span>
-                  <Flex alignItems={'center'} gap={1}>
-                    <Skeleton isLoaded={!loading} noOfLines={1}>
-                      {formatCurrency(web3.utils.fromWei(juiceBalance), 5)}
-                    </Skeleton>
-                    TC
-                  </Flex>
-                </div>
-                <div className="avatar">
-                  <Jazzicon
-                    diameter={32}
-                    seed={jsNumberForAddress(tcWalletAddress)}
-                  />
-                </div>
-              </WalletBalance>
-            </div>
-          </OverlayTrigger>
-          {accounts.length > 1 && (
-            <Menu placement="bottom-end">
-              <MenuButton
-                title="Change account"
-                className="btn-select-account"
-                as={IconButton}
-                icon={<AiOutlineSwap fontSize={'1.5rem'} />}
-              />
-              <MenuList>
-                {accounts.map((acc: IAccount) => (
-                  <MenuItem key={acc.tcAddress}>
-                    <ChangeAccountWalletItem account={acc} />
-                  </MenuItem>
-                ))}
-              </MenuList>
-            </Menu>
-          )}
-        </Flex>
-      ) : (
-        <ConnectWalletButton
-          disabled={isConnecting}
-          className="hideMobile"
-          onClick={handleConnectWallet}
-        >
-          {isConnecting ? (
-            <Flex gap={2} alignItems={'center'}>
-              Connecting
-              <Spinner size={'sm'} />
-            </Flex>
+      {account && isAuthenticated ? (
+        <>
+          {!compareString(chainId, SupportedChainId.TRUSTLESS_COMPUTER) ? (
+            <SelectedNetwork />
           ) : (
-            'Connect wallet'
+            <OverlayTrigger
+              trigger={['hover', 'focus']}
+              placement="bottom"
+              overlay={walletPopover}
+              container={ref}
+              show={show}
+            >
+              <div
+                className={`wallet ${mobileScreen ? 'isMobile' : ''}`}
+                // onClick={() => window.open(TC_WEB_URL)}
+                ref={ref}
+                onMouseEnter={handleOnMouseEnter}
+                onMouseLeave={handleOnMouseLeave}
+              >
+                <WalletBalance className={isTokenPage ? 'isTokenPage' : ''}>
+                  <div className="balance">
+                    <p>{formatCurrency(formatBTCPrice(btcBalance))} BTC</p>
+                    <span className="divider"></span>
+                    <p>{formatCurrency(web3.utils.fromWei(juiceBalance), 5)} TC</p>
+                  </div>
+                  <div className="avatar">
+                    <Jazzicon diameter={32} seed={jsNumberForAddress(account)} />
+                  </div>
+                </WalletBalance>
+              </div>
+            </OverlayTrigger>
           )}
+        </>
+      ) : (
+        <ConnectWalletButton className="hideMobile" onClick={handleConnectWallet}>
+          {isConnecting ? 'Connecting...' : 'Connect wallet'}
         </ConnectWalletButton>
       )}
     </>

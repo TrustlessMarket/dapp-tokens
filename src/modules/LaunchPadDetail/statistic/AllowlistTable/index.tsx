@@ -4,7 +4,6 @@ import Empty from '@/components/Empty';
 import { AutoSizer, List } from '@/components/ReactVirtualized';
 import SvgInset from '@/components/SvgInset';
 import { CDN_URL } from '@/configs';
-import useTCWallet from '@/hooks/useTCWallet';
 import Search from '@/modules/LaunchPadDetail/statistic/Search';
 import {
   getLaunchpadDepositInfo,
@@ -30,6 +29,7 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { useWindowSize } from '@trustless-computer/dapp-core';
+import { useWeb3React } from '@web3-react/core';
 import cs from 'classnames';
 import Image from 'next/image';
 import React, { useEffect, useState } from 'react';
@@ -45,7 +45,7 @@ const AllowlistTable = ({ poolDetail, isFull = true, handleViewMore }: any) => {
   const { mobileScreen, tabletScreen } = useWindowSize();
   const [isLoadingDepositList, setIsLoadingDepositList] = useState(true);
 
-  const { tcWalletAddress: account } = useTCWallet();
+  const { account } = useWeb3React();
 
   useEffect(() => {
     if (poolDetail?.id) {

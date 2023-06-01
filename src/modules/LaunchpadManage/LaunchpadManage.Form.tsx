@@ -6,13 +6,13 @@ import SocialToken from '@/components/Social';
 import { transactionType } from '@/components/Swap/alertInfoProcessing/types';
 import FiledButton from '@/components/Swap/button/filedButton';
 import FieldAmount from '@/components/Swap/form/fieldAmount';
-import FieldDate from '@/components/Swap/form/fieldDate';
 import FieldSelect from '@/components/Swap/form/fieldDropdown';
 import FieldMDEditor from '@/components/Swap/form/fieldMDEditor';
 import FieldText from '@/components/Swap/form/fieldText';
 import FileDropzoneUpload from '@/components/Swap/form/fileDropzoneUpload';
 import InputWrapper from '@/components/Swap/form/inputWrapper';
 import HorizontalItem from '@/components/Swap/horizontalItem';
+import InfoTooltip from '@/components/Swap/infoTooltip';
 import WrapperConnected from '@/components/WrapperConnected';
 import { LAUNCHPAD_FACTORY_ADDRESS } from '@/configs';
 import { TOKEN_ICON_DEFAULT } from '@/constants/common';
@@ -33,7 +33,7 @@ import { logErrorToServer } from '@/services/swap';
 import { closeModal, openModal } from '@/state/modal';
 import { updateCurrentTransaction } from '@/state/pnftExchange';
 import { colors } from '@/theme/colors';
-import { formatCurrency, getLiquidityRatio } from '@/utils';
+import { formatCurrency } from '@/utils';
 import { composeValidators, required, requiredAmount } from '@/utils/formValidate';
 import { showError } from '@/utils/toast';
 import { Box, Flex, FormLabel, Text } from '@chakra-ui/react';
@@ -49,9 +49,6 @@ import { IoRemoveCircle } from 'react-icons/io5';
 import { useDispatch } from 'react-redux';
 import web3 from 'web3';
 import { MAX_FILE_SIZE } from '../UpdateTokenInfo/form';
-import InfoTooltip from '@/components/Swap/infoTooltip';
-import moment from 'moment';
-import useTCWallet from '@/hooks/useTCWallet';
 
 interface IdoTokenManageFormProps {
   handleSubmit?: (_: any) => void;
@@ -80,7 +77,7 @@ const IdoTokenManageForm: React.FC<IdoTokenManageFormProps> = ({
     ConfigLaunchpadResponse | any
   >({});
 
-  const { tcWalletAddress: account, isAuthenticated: isActive } = useTCWallet();
+  const { account, isActive } = useWeb3React();
   const dispatch = useDispatch();
 
   const [isApproveToken, setIsApproveToken] = useState<boolean>(true);

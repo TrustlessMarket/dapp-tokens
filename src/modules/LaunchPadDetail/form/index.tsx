@@ -1,6 +1,7 @@
 /* eslint-disable react/no-children-prop */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
+import CountDownTimer from '@/components/Countdown';
 import ModalConfirmApprove from '@/components/ModalConfirmApprove';
 import SocialToken from '@/components/Social';
 import { transactionType } from '@/components/Swap/alertInfoProcessing/types';
@@ -28,7 +29,6 @@ import useBalanceERC20Token from '@/hooks/contract-operations/token/useBalanceER
 import useIsApproveERC20Token from '@/hooks/contract-operations/token/useIsApproveERC20Token';
 import useContractOperation from '@/hooks/contract-operations/useContractOperation';
 import useCountDownTimer from '@/hooks/useCountdown';
-import useTCWallet from '@/hooks/useTCWallet';
 import { ILaunchpad } from '@/interfaces/launchpad';
 import { IToken } from '@/interfaces/token';
 import { TransactionStatus } from '@/interfaces/walletTransaction';
@@ -56,14 +56,15 @@ import {
   Box,
   Center,
   Flex,
-  forwardRef,
   Progress,
   Stat,
   StatLabel,
   StatNumber,
   Text,
+  forwardRef,
 } from '@chakra-ui/react';
 import { useWindowSize } from '@trustless-computer/dapp-core';
+import { useWeb3React } from '@web3-react/core';
 import BigNumber from 'bignumber.js';
 import cx from 'classnames';
 import debounce from 'lodash/debounce';
@@ -85,7 +86,6 @@ import { BiBell } from 'react-icons/bi';
 import { useDispatch, useSelector } from 'react-redux';
 import Web3 from 'web3';
 import styles from './styles.module.scss';
-import CountDownTimer from '@/components/Countdown';
 
 const FEE = 2;
 export const MakeFormSwap = forwardRef((props, ref) => {
@@ -110,7 +110,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const dispatch = useDispatch();
   const router = useRouter();
 
-  const { tcWalletAddress: account } = useTCWallet();
+  const { account } = useWeb3React();
   const needReload = useAppSelector(selectPnftExchange).needReload;
   const [boostInfo, setBoostInfo] = useState<any>();
 
@@ -715,7 +715,7 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
   const refForm = useRef<any>();
   const [submitting, setSubmitting] = useState(false);
   const dispatch = useAppDispatch();
-  const { tcWalletAddress: account, isAuthenticated: isActive } = useTCWallet();
+  const { account, isActive } = useWeb3React();
   const { run: depositLaunchpad } = useContractOperation({
     operation: useDepositPool,
   });

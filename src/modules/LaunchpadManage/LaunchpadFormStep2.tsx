@@ -7,7 +7,6 @@ import FieldText from '@/components/Swap/form/fieldText';
 import FileDropzoneUpload from '@/components/Swap/form/fileDropzoneUpload';
 import InputWrapper from '@/components/Swap/form/inputWrapper';
 import { CDN_URL } from '@/configs';
-import useTCWallet from '@/hooks/useTCWallet';
 import { ILaunchpad } from '@/interfaces/launchpad';
 import { IToken } from '@/interfaces/token';
 import { uploadFile } from '@/services/file';
@@ -15,6 +14,7 @@ import { logErrorToServer } from '@/services/swap';
 import { validateYoutubeLink } from '@/utils';
 import { composeValidators, required } from '@/utils/formValidate';
 import { Text } from '@chakra-ui/react';
+import { useWeb3React } from '@web3-react/core';
 import { useRouter } from 'next/router';
 import React, { useCallback, useState } from 'react';
 import { Field, useForm, useFormState } from 'react-final-form';
@@ -37,7 +37,7 @@ const LaunchpadFormStep2: React.FC<ILaunchpadFormStep2> = ({
   liquidTokens,
   launchpadConfigs,
 }) => {
-  const { tcWalletAddress: account } = useTCWallet();
+  const { account } = useWeb3React();
 
   const router = useRouter();
   const { values } = useFormState();

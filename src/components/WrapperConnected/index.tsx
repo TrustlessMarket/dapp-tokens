@@ -3,8 +3,8 @@ import { getIsAuthenticatedSelector } from '@/state/user/selector';
 import { showError } from '@/utils/toast';
 import React, { useContext } from 'react';
 import { useSelector } from 'react-redux';
-import { ButtonProps } from '../Button';
 import { StyledWrapperConnected } from './WrapperConnected.styled';
+import { ButtonProps } from '../Button';
 
 interface WrapperConnectedProps extends ButtonProps {
   children?: React.ReactElement;
@@ -19,11 +19,12 @@ const WrapperConnected: React.FC<WrapperConnectedProps> = ({
   type = 'button',
 }) => {
   const isAuthenticated = useSelector(getIsAuthenticatedSelector);
-  const { onDisconnect, onConnect } = useContext(WalletContext);
+  const { onDisconnect, onConnect, requestBtcAddress } = useContext(WalletContext);
 
   const handleConnectWallet = async () => {
     try {
       await onConnect();
+      await requestBtcAddress();
     } catch (err) {
       showError({
         message: (err as Error).message,
@@ -45,12 +46,7 @@ const WrapperConnected: React.FC<WrapperConnectedProps> = ({
   }
 
   return (
-    <StyledWrapperConnected
-      {...children?.props}
-      type={isAuthenticated ? type : 'button'}
-      onClick={handleClick}
-      className={className}
-    >
+    <StyledWrapperConnected {...children?.props} type={isAuthenticated ? type : 'button'} onClick={handleClick} className={className}>
       {children?.props?.children}
     </StyledWrapperConnected>
   );

@@ -1,25 +1,23 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { useContext, useEffect, useState } from 'react';
-import { StyledLaunchpadManage } from './LaunchpadManage.styled';
-import LaunchpadManageHeader from './header';
-import { Form } from 'react-final-form';
-import LaunchpadFormStep1 from './LaunchpadFormStep1';
-import LaunchpadManageFormContainer from './LauchpadManage.FormContainer';
 import { LAUNCHPAD_FORM_STEP } from '@/constants/storage-key';
-import useTCWallet from '@/hooks/useTCWallet';
 import { WalletContext } from '@/contexts/wallet-context';
-import BigNumber from 'bignumber.js';
-import { createLaunchpad, getDetailLaunchpad } from '@/services/launchpad';
-import { toast } from 'react-hot-toast';
-import useContractOperation from '@/hooks/contract-operations/useContractOperation';
 import useCreateLaunchpad from '@/hooks/contract-operations/launchpad/useCreate';
-import { useRouter } from 'next/router';
+import useContractOperation from '@/hooks/contract-operations/useContractOperation';
 import { ILaunchpad } from '@/interfaces/launchpad';
+import { createLaunchpad, getDetailLaunchpad } from '@/services/launchpad';
+import { useWeb3React } from '@web3-react/core';
+import BigNumber from 'bignumber.js';
+import { useRouter } from 'next/router';
+import { useContext, useEffect, useState } from 'react';
+import { Form } from 'react-final-form';
+import { toast } from 'react-hot-toast';
+import LaunchpadManageFormContainer from './LauchpadManage.FormContainer';
+import { StyledLaunchpadManage } from './LaunchpadManage.styled';
 
 const LaunchpadManage = () => {
   const { getSignature } = useContext(WalletContext);
-  const { tcWalletAddress: account } = useTCWallet();
+  const { account } = useWeb3React();
 
   const { run: createProposalLaunchpad } = useContractOperation({
     operation: useCreateLaunchpad,
@@ -67,10 +65,7 @@ const LaunchpadManage = () => {
         setLoading(true);
         const tokenAddress = values?.launchpadTokenArg?.address;
         const liquidAddress = values?.liquidityTokenArg?.address;
-        const signature = await getSignature({
-          message: account,
-          account,
-        });
+        const signature = await getSignature(account);
 
         const seconds = new BigNumber(values.duration)
           .multipliedBy(24)

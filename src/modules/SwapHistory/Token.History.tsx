@@ -1,23 +1,23 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import ListTable, { ColumnProp } from '@/components/Swap/listTable';
-import { MEMPOOL_URL, TC_EXPLORER, WALLET_URL } from '@/configs';
-import usePendingSwapTransactions from '@/hooks/contract-operations/swap/usePendingSwapTransactions';
-import useTCWallet from '@/hooks/useTCWallet';
-import { getUserTradeHistory } from '@/services/swap';
-import { camelCaseKeys, formatCurrency, formatLongAddress } from '@/utils';
-import { Flex, Text } from '@chakra-ui/react';
+import ListTable, {ColumnProp} from '@/components/Swap/listTable';
+import {MEMPOOL_URL, TC_EXPLORER, WALLET_URL} from '@/configs';
+import {getUserTradeHistory} from '@/services/swap';
+import {camelCaseKeys, formatCurrency, formatLongAddress} from '@/utils';
+import {Flex, Text} from '@chakra-ui/react';
 import moment from 'moment';
-import { useEffect, useMemo, useState } from 'react';
+import {useEffect, useMemo, useState} from 'react';
+import {useWeb3React} from "@web3-react/core";
+import usePendingSwapTransactions from "@/hooks/contract-operations/swap/usePendingSwapTransactions";
 
 const TokenHistory = () => {
   const [list, setList] = useState<any[]>([]);
   const [listPending, setListPending] = useState<any[]>([]);
-  const { tcWalletAddress: account } = useTCWallet();
+  const { account } = useWeb3React();
   // const account = '0x07e51AEc82C7163e3237cfbf8C0E6A07413FA18E';
   const { call: getPendingSwapTransactions } = usePendingSwapTransactions();
 
   useEffect(() => {
-    if (account) {
+    if(account) {
       getList();
       getPendingTransactions();
     }
@@ -39,7 +39,7 @@ const TokenHistory = () => {
       const response: any = await getPendingSwapTransactions({});
       setListPending(camelCaseKeys(response));
     } catch (error) {
-      console.log('getPendingTransactions', error);
+      console.log('getPendingTransactions', error)
     }
   };
 
@@ -81,26 +81,18 @@ const TokenHistory = () => {
         render(row: any) {
           console.log('row', row);
           return (
-            <Flex direction={'column'} color={'#FFFFFF'}>
-              <Text fontWeight={'medium'}>{formatLongAddress(row?.txHash)}</Text>
-              <Text>
-                BTC:{' '}
-                {row?.btcHash ? (
-                  <a
-                    title="explorer"
-                    href={`${MEMPOOL_URL}/tx/${row.btcHash}`}
-                    target="_blank"
-                    style={{
-                      textDecoration: 'underline',
-                      color: 'rgb(177, 227, 255)',
-                    }}
-                  >
-                    {formatLongAddress(row?.btcHash)}
-                  </a>
-                ) : (
-                  '--'
-                )}
-              </Text>
+            <Flex direction={"column"} color={"#FFFFFF"}>
+              <Text fontWeight={"medium"}>{formatLongAddress(row?.txHash)}</Text>
+              <Text>BTC: {row?.btcHash ? (
+                <a
+                  title="explorer"
+                  href={`${MEMPOOL_URL}/tx/${row.btcHash}`}
+                  target="_blank"
+                  style={{textDecoration: 'underline', color: 'rgb(177, 227, 255)'}}
+                >
+                  {formatLongAddress(row?.btcHash)}
+                </a>
+              ) : '--'}</Text>
             </Flex>
           );
         },
@@ -118,7 +110,11 @@ const TokenHistory = () => {
         },
         render(row: any) {
           const amount = getAmountIn(row);
-          return <Text color={'#FFFFFF'}>{amount}</Text>;
+          return (
+            <Text color={"#FFFFFF"}>
+              {amount}
+            </Text>
+          );
         },
       },
       {
@@ -134,7 +130,11 @@ const TokenHistory = () => {
         },
         render(row: any) {
           const amount = getAmountOut(row);
-          return <Text color={'#FFFFFF'}>{amount}</Text>;
+          return (
+            <Text color={"#FFFFFF"}>
+              {amount}
+            </Text>
+          );
         },
       },
       {
@@ -149,11 +149,7 @@ const TokenHistory = () => {
           borderBottom: 'none',
         },
         render(row: any) {
-          return (
-            <Text color={'#FFFFFF'}>
-              {row?.createdAt ? moment(row.createdAt).format('lll') : '-'}
-            </Text>
-          );
+          return <Text color={"#FFFFFF"}>{row?.createdAt ? moment(row.createdAt).format('lll') : '-'}</Text>;
         },
       },
       {
@@ -168,36 +164,40 @@ const TokenHistory = () => {
           borderBottom: 'none',
         },
         render(row: any) {
-          return (
-            <Text color={row?.status === 'pending' ? '#FFE899' : 'rgb(0, 170, 108)'}>
-              {row?.status === 'pending' ? (
+          return <Text color={row?.status === 'pending' ? "#FFE899" : "rgb(0, 170, 108)"}>
+            {
+              row?.status === 'pending' ?
+              (
                 <a
                   title="explorer"
                   href={`${WALLET_URL}`}
                   target="_blank"
-                  style={{ textDecoration: 'underline' }}
+                  style={{textDecoration: 'underline'}}
                 >
                   Process
                 </a>
-              ) : (
+              ) :
+              (
                 <a
                   title="explorer"
                   href={`${TC_EXPLORER}/tx/${row.txHash}`}
                   target="_blank"
-                  style={{ textDecoration: 'underline' }}
+                  style={{textDecoration: 'underline'}}
                 >
                   Success
                 </a>
-              )}
-            </Text>
-          );
+              )
+            }
+          </Text>;
         },
       },
     ],
     [],
   );
 
-  return <ListTable data={[...listPending, ...list]} columns={columns} />;
+  return (
+    <ListTable data={[...listPending, ...list]} columns={columns} />
+  );
 };
 
 export default TokenHistory;

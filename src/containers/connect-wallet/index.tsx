@@ -1,16 +1,16 @@
-import { CDN_URL } from '@/configs';
-import { WalletContext } from '@/contexts/wallet-context';
-import { Container } from '@/layouts';
-import { getIsAuthenticatedSelector, getUserSelector } from '@/state/user/selector';
-import { showError } from '@/utils/toast';
-import { useRouter } from 'next/router';
 import React, { useContext, useEffect, useState } from 'react';
+import { Wrapper, ConnectWalletButton } from './ConnectWallet.styled';
+import { WalletContext } from '@/contexts/wallet-context';
 import { useSelector } from 'react-redux';
-import { ConnectWalletButton, Wrapper } from './ConnectWallet.styled';
+import { getIsAuthenticatedSelector, getUserSelector } from '@/state/user/selector';
+import { CDN_URL } from '@/configs';
+import { Container } from '@/layouts';
 import { ROUTE_PATH } from '@/constants/route-path';
+import { useRouter } from 'next/router';
+import { showError } from '@/utils/toast';
 
 const ConnectWallet: React.FC = (): React.ReactElement => {
-  const { onConnect, onDisconnect } = useContext(WalletContext);
+  const { onConnect, requestBtcAddress, onDisconnect } = useContext(WalletContext);
   const isAuthenticated = useSelector(getIsAuthenticatedSelector);
   const user = useSelector(getUserSelector);
   const router = useRouter();
@@ -20,6 +20,7 @@ const ConnectWallet: React.FC = (): React.ReactElement => {
     try {
       setIsConnecting(true);
       await onConnect();
+      await requestBtcAddress();
     } catch (err) {
       showError({
         message: (err as Error).message,

@@ -1,10 +1,11 @@
 import ERC20ABIJson from '@/abis/erc20.json';
+import { AssetsContext } from '@/contexts/assets-context';
 import { TransactionEventType } from '@/enums/transaction';
-import useTCWallet from '@/hooks/useTCWallet';
 import { ContractOperationHook, DAppType } from '@/interfaces/contract-operation';
-import { getContract, getDefaultProvider } from '@/utils';
+import { getContract } from '@/utils';
 import { formatAmountBigNumber } from '@/utils/format';
-import { useCallback } from 'react';
+import { useWeb3React } from '@web3-react/core';
+import { useCallback, useContext } from 'react';
 
 export interface IInfoERC20TokenParams {
   erc20TokenAddress: string;
@@ -23,32 +24,28 @@ const useInfoERC20Token: ContractOperationHook<
   IInfoERC20TokenParams,
   IInfoERC20TokenResponse
 > = () => {
-  const { tcWalletAddress: account } = useTCWallet();
-
-  const provider = getDefaultProvider();
+  const { account, provider } = useWeb3React();
+  const { btcBalance, feeRate } = useContext(AssetsContext);
 
   const call = useCallback(
     async (params: IInfoERC20TokenParams): Promise<IInfoERC20TokenResponse> => {
       const { erc20TokenAddress } = params;
       if (provider && erc20TokenAddress) {
-        const contract = getContract(
-          erc20TokenAddress,
-          ERC20ABIJson.abi,
-          provider,
-          account,
-        );
+        const contract = getContract(erc20TokenAddress, ERC20ABIJson.abi, provider);
 
         const [name, decimals, symbol, totalSupply] = await Promise.all([
-          contract.connect(provider).name(),
-          contract.connect(provider).decimals(),
-          contract.connect(provider).symbol(),
-          contract.connect(provider).totalSupply(),
+          contract.connect(provider.getSigner()).name(),
+          contract.connect(provider.getSigner()).decimals(),
+          contract.connect(provider.getSigner()).symbol(),
+          contract.connect(provider.getSigner()).totalSupply(),
         ]);
 
         let balance = '0';
 
         if (account) {
-          const resBalance = await contract.connect(provider).balanceOf(account);
+          const resBalance = await contract
+            .connect(provider.getSigner())
+            .balanceOf(account);
           balance = formatAmountBigNumber(resBalance.toString(), decimals);
         }
 
@@ -70,7 +67,7 @@ const useInfoERC20Token: ContractOperationHook<
         address: '',
       };
     },
-    [account, provider],
+    [account, provider, btcBalance, feeRate],
   );
 
   return {

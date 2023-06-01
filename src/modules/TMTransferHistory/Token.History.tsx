@@ -1,17 +1,17 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import ListTable, { ColumnProp } from '@/components/Swap/listTable';
-import { CDN_URL, TC_EXPLORER } from '@/configs';
-import useTCWallet from '@/hooks/useTCWallet';
-import { getTMTransferHistory } from '@/services/swap';
-import { colors } from '@/theme/colors';
-import { compareString, formatCurrency } from '@/utils';
-import { Flex, Text } from '@chakra-ui/react';
-import { debounce } from 'lodash';
+import ListTable, {ColumnProp} from '@/components/Swap/listTable';
+import {CDN_URL, TC_EXPLORER} from '@/configs';
+import {getTMTransferHistory} from '@/services/swap';
+import {compareString, formatCurrency} from '@/utils';
+import {Flex, Text} from '@chakra-ui/react';
 import moment from 'moment';
-import { useEffect, useMemo, useState } from 'react';
-import Spinner from 'react-bootstrap/Spinner';
-import { RxExternalLink } from 'react-icons/rx';
-import InfiniteScroll from 'react-infinite-scroll-component';
+import {useEffect, useMemo, useState} from 'react';
+import {RxExternalLink} from 'react-icons/rx';
+import {useWeb3React} from "@web3-react/core";
+import {debounce} from "lodash";
+import Spinner from "react-bootstrap/Spinner";
+import InfiniteScroll from "react-infinite-scroll-component";
+import {colors} from "@/theme/colors";
 import styles from './styles.module.scss';
 
 const LIMIT_PAGE = 30;
@@ -19,10 +19,10 @@ const LIMIT_PAGE = 30;
 const TokenHistory = () => {
   const [isFetching, setIsFetching] = useState(false);
   const [list, setList] = useState<any[]>([]);
-  const { tcWalletAddress: account } = useTCWallet();
+  const { account, } = useWeb3React();
 
   useEffect(() => {
-    if (account) {
+    if(account) {
       getList();
     }
   }, [account]);
@@ -42,6 +42,7 @@ const TokenHistory = () => {
         setList(res);
       }
     } catch (error) {
+
     } finally {
       setIsFetching(false);
     }
@@ -69,7 +70,7 @@ const TokenHistory = () => {
           borderBottom: 'none',
         },
         render(row: any, extraData: any, index: any) {
-          return <Text color={'#FFFFFF'}>{index + 1}</Text>;
+          return <Text color={"#FFFFFF"}>{index + 1}</Text>;
         },
       },
       {
@@ -85,8 +86,12 @@ const TokenHistory = () => {
         },
         render() {
           return (
-            <Flex color={'#FFFFFF'} gap={1} alignItems={'center'}>
-              <img width={20} height={20} src={`${CDN_URL}/icons/tm_icon.png`} />
+            <Flex color={"#FFFFFF"} gap={1} alignItems={"center"}>
+              <img
+                width={20}
+                height={20}
+                src={`${CDN_URL}/icons/tm_icon.png`}
+              />
               TM
             </Flex>
           );
@@ -127,9 +132,7 @@ const TokenHistory = () => {
           borderBottom: 'none',
         },
         render(row: any) {
-          return (
-            <Text color={'#FFFFFF'}>{moment(row.createdAt).format('lll')}</Text>
-          );
+          return <Text color={"#FFFFFF"}>{moment(row.createdAt).format('lll')}</Text>;
         },
       },
       {
@@ -144,7 +147,11 @@ const TokenHistory = () => {
           borderBottom: 'none',
         },
         render(row: any) {
-          return <Text color={'#FFFFFF'}>{formatCurrency(row?.value, 18)}</Text>;
+          return (
+            <Text color={"#FFFFFF"}>
+              {formatCurrency(row?.value, 18)}
+            </Text>
+          );
         },
       },
       {
@@ -160,7 +167,7 @@ const TokenHistory = () => {
         },
         render(row: any) {
           return (
-            <Flex color={'#FFFFFF'}>
+            <Flex color={"#FFFFFF"}>
               <a
                 title="explorer"
                 href={`${TC_EXPLORER}/tx/${row.txHash}`}

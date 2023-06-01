@@ -1,12 +1,10 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import LaunchpadPoolJson from '@/abis/LaunchpadPool.json';
-import { getConnector } from '@/connection';
 import { TransactionEventType } from '@/enums/transaction';
-import useTCWallet from '@/hooks/useTCWallet';
 import { ContractOperationHook, DAppType } from '@/interfaces/contract-operation';
 import { logErrorToServer } from '@/services/swap';
-import { getDefaultGasPrice, getDefaultProvider, getFunctionABI } from '@/utils';
-import { ethers } from 'ethers';
+import { getContract, getDefaultGasPrice } from '@/utils';
+import { useWeb3React } from '@web3-react/core';
 import { useCallback } from 'react';
 import web3 from 'web3';
 
@@ -18,38 +16,29 @@ interface IDepositPoolParams {
 }
 
 const useDepositPool: ContractOperationHook<IDepositPoolParams, boolean> = () => {
-  const provider = getDefaultProvider();
-  const connector = getConnector();
-  const { tcWalletAddress: account } = useTCWallet();
-
+  const { account, provider } = useWeb3React();
   const call = useCallback(
     async (params: IDepositPoolParams): Promise<boolean> => {
       const { amount, launchpadAddress, boostRatio, signature } = params;
       if (account && provider && launchpadAddress) {
-        const functionABI = getFunctionABI(LaunchpadPoolJson, 'deposit');
+        const contract = getContract(
+          launchpadAddress,
+          LaunchpadPoolJson,
+          provider,
+          account,
+        );
 
-        const ContractInterface = new ethers.utils.Interface(functionABI.abi);
-
-        const encodeAbi = ContractInterface.encodeFunctionData('deposit', [
-          web3.utils.toWei(amount),
-          boostRatio,
-          signature || Buffer.from([]),
-        ]);
-
-        const transaction = await connector.requestSign({
-          target: '_blank',
-          calldata: encodeAbi,
-          to: launchpadAddress,
-          value: '',
-          redirectURL: window.location.href,
-          isInscribe: true,
-          gasLimit: '250000',
-          gasPrice: getDefaultGasPrice(),
-          functionType: functionABI.functionType,
-          functionName: functionABI.functionName,
-          isExecuteTransaction: false,
-          from: account,
-        });
+        const transaction = await contract
+          .connect(provider.getSigner())
+          .deposit(
+            web3.utils.toWei(amount),
+            boostRatio,
+            signature || Buffer.from([]),
+            {
+              gasLimit: '250000',
+              gasPrice: getDefaultGasPrice(),
+            },
+          );
 
         logErrorToServer({
           type: 'logs',
@@ -73,7 +62,7 @@ const useDepositPool: ContractOperationHook<IDepositPoolParams, boolean> = () =>
       }
       return false;
     },
-    [account],
+    [account, provider],
   );
 
   return {

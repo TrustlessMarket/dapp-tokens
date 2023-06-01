@@ -4,36 +4,42 @@
 import CountDownTimer from '@/components/Countdown';
 import SocialToken from '@/components/Social';
 import FiledButton from '@/components/Swap/button/filedButton';
-import ListTable, {ColumnProp} from '@/components/Swap/listTable';
-import {TOKEN_ICON_DEFAULT} from '@/constants/common';
-import {ROUTE_PATH} from '@/constants/route-path';
-import {ILaunchpad} from '@/interfaces/launchpad';
-import {IToken} from '@/interfaces/token';
-import {getListLaunchpad} from '@/services/launchpad';
-import {useAppSelector} from '@/state/hooks';
-import {selectPnftExchange} from '@/state/pnftExchange';
-import {colors} from '@/theme/colors';
-import {compareString, formatCurrency} from '@/utils';
-import {Box, Flex, Progress, Text} from '@chakra-ui/react';
-import {px2rem} from '@trustless-computer/dapp-core';
+import InfoTooltip from '@/components/Swap/infoTooltip';
+import ListTable, { ColumnProp } from '@/components/Swap/listTable';
+import { TOKEN_ICON_DEFAULT } from '@/constants/common';
+import { ROUTE_PATH } from '@/constants/route-path';
+import { ILaunchpad } from '@/interfaces/launchpad';
+import { IToken } from '@/interfaces/token';
+import ProposalStatus, {
+  PROPOSAL_STATUS,
+  useProposalStatus,
+} from '@/modules/Proposal/Proposal.Status';
+import { getListLaunchpad } from '@/services/launchpad';
+import { useAppSelector } from '@/state/hooks';
+import { selectPnftExchange } from '@/state/pnftExchange';
+import { colors } from '@/theme/colors';
+import { compareString, formatCurrency } from '@/utils';
+import { Box, Flex, Progress, Text } from '@chakra-ui/react';
+import { px2rem } from '@trustless-computer/dapp-core';
+import { useWeb3React } from '@web3-react/core';
 import BigNumber from 'bignumber.js';
 import moment from 'moment';
-import {useRouter} from 'next/router';
-import {useEffect, useMemo, useState} from 'react';
-import {BsBoxArrowUpRight, BsPencil} from 'react-icons/bs';
-import {ImClock2} from 'react-icons/im';
-import {useDispatch} from 'react-redux';
+import { useRouter } from 'next/router';
+import { useEffect, useMemo, useState } from 'react';
+import { BsBoxArrowUpRight, BsPencil } from 'react-icons/bs';
+import { ImClock2 } from 'react-icons/im';
+import { useDispatch } from 'react-redux';
 import web3 from 'web3';
-import LaunchpadStatus, {LAUNCHPAD_STATUS, useLaunchPadStatus,} from './Launchpad.Status';
-import {StyledIdoContainer} from './Launchpad.styled';
-import InfoTooltip from '@/components/Swap/infoTooltip';
-import ProposalStatus, {PROPOSAL_STATUS, useProposalStatus,} from '@/modules/Proposal/Proposal.Status';
-import useTCWallet from '@/hooks/useTCWallet';
+import LaunchpadStatus, {
+  LAUNCHPAD_STATUS,
+  useLaunchPadStatus,
+} from './Launchpad.Status';
+import { StyledIdoContainer } from './Launchpad.styled';
 
 const LaunchpadContainer = () => {
   const [data, setData] = useState<any[]>();
   const [loading, setLoading] = useState(true);
-  const {tcWalletAddress: account} = useTCWallet();
+  const { account } = useWeb3React();
   const dispatch = useDispatch();
   const needReload = useAppSelector(selectPnftExchange).needReload;
   const router = useRouter();
@@ -57,8 +63,13 @@ const LaunchpadContainer = () => {
   };
 
   const checkIsProposal = (row: ILaunchpad) => {
-    return row?.proposalId && [PROPOSAL_STATUS.Pending, PROPOSAL_STATUS.Active].includes(row?.userProposal?.state);
-  }
+    return (
+      row?.proposalId &&
+      [PROPOSAL_STATUS.Pending, PROPOSAL_STATUS.Active].includes(
+        row?.userProposal?.state,
+      )
+    );
+  };
 
   const columns: ColumnProp[] = useMemo(() => {
     return [
@@ -77,7 +88,7 @@ const LaunchpadContainer = () => {
           const token: IToken = row.launchpadToken;
           return (
             <Flex gap={4}>
-              <img src={token.thumbnail || TOKEN_ICON_DEFAULT}/>
+              <img src={token.thumbnail || TOKEN_ICON_DEFAULT} />
               <Box>
                 <Text className="record-title">
                   {token.name} <span>{token.symbol}</span>
@@ -114,9 +125,7 @@ const LaunchpadContainer = () => {
               <Text>
                 {formatCurrency(row.launchpadBalance, 18)} {token?.symbol}
               </Text>
-              <Text className="note">
-                {formatCurrency(percent, 2)}% of Supply
-              </Text>
+              <Text className="note">{formatCurrency(percent, 2)}% of Supply</Text>
             </Flex>
           ) : (
             'N/A'
@@ -170,11 +179,11 @@ const LaunchpadContainer = () => {
               <Text>{`${
                 row.liquidityRatio
                   ? `${formatCurrency(
-                    new BigNumber(web3.utils.toWei(row.liquidityRatio).toString())
-                      .dividedBy(10000)
-                      .toString(),
-                    18,
-                  )}%`
+                      new BigNumber(web3.utils.toWei(row.liquidityRatio).toString())
+                        .dividedBy(10000)
+                        .toString(),
+                      18,
+                    )}%`
                   : 'N/A'
               }`}</Text>
               <Text className="note">{`${
@@ -214,25 +223,23 @@ const LaunchpadContainer = () => {
 
           return !isProposal ? (
             <Box>
-              <Flex
-                color={color}
-                alignItems={"center"}
-                gap={1}
-              >
+              <Flex color={color} alignItems={'center'} gap={1}>
                 {`${row.totalValue} / ${row.goalBalance} `}
-                <Flex className={"liquidity-token"} alignItems={"center"} gap={1}>
-                  <img src={row.liquidityToken.thumbnail || TOKEN_ICON_DEFAULT}/>
+                <Flex className={'liquidity-token'} alignItems={'center'} gap={1}>
+                  <img src={row.liquidityToken.thumbnail || TOKEN_ICON_DEFAULT} />
                   {row.liquidityToken.symbol}
                 </Flex>
               </Flex>
-              <Box mb={2}/>
+              <Box mb={2} />
               <Progress
                 max={100}
                 value={(Number(row.totalValue) / Number(row.goalBalance)) * 100}
                 h="6px"
-                className={"progress-bar"}
+                className={'progress-bar'}
               />
-              <Text className="note" mt={1}>${formatCurrency(row.totalValueUsd, 2)}</Text>
+              <Text className="note" mt={1}>
+                ${formatCurrency(row.totalValueUsd, 2)}
+              </Text>
             </Box>
           ) : (
             <Box>
@@ -258,20 +265,20 @@ const LaunchpadContainer = () => {
           const isProposal = checkIsProposal(row);
 
           if (!isProposal) {
-            const [status] = useLaunchPadStatus({row});
+            const [status] = useLaunchPadStatus({ row });
             if (status.value === 'upcoming') {
               return (
                 <Box>
                   <Text>
-                    <span style={{color: colors.white500, fontSize: px2rem(14)}}>
+                    <span style={{ color: colors.white500, fontSize: px2rem(14) }}>
                       Starts at:
                     </span>{' '}
                     {moment(row.startTime).format('MMM, DD')}
                   </Text>
                   <Flex mt={1} alignItems={'center'} gap={2}>
-                    <ImClock2/>
+                    <ImClock2 />
                     <Text>
-                      <CountDownTimer end_time={row.startTime}/>
+                      <CountDownTimer end_time={row.startTime} />
                     </Text>
                   </Flex>
                 </Box>
@@ -281,15 +288,15 @@ const LaunchpadContainer = () => {
               return (
                 <Box>
                   <Text>
-                    <span style={{color: colors.white500, fontSize: px2rem(14)}}>
+                    <span style={{ color: colors.white500, fontSize: px2rem(14) }}>
                       Ends at:
                     </span>{' '}
                     {moment(row.endTime).format('MMM, DD')}
                   </Text>
                   <Flex mt={1} alignItems={'center'} gap={2}>
-                    <ImClock2/>
+                    <ImClock2 />
                     <Text>
-                      <CountDownTimer end_time={row.endTime}/>
+                      <CountDownTimer end_time={row.endTime} />
                     </Text>
                   </Flex>
                 </Box>
@@ -302,33 +309,33 @@ const LaunchpadContainer = () => {
               return (
                 <Box>
                   <Text>
-                    <span style={{color: colors.white500, fontSize: px2rem(14)}}>
+                    <span style={{ color: colors.white500, fontSize: px2rem(14) }}>
                       Release time:
                     </span>{' '}
                   </Text>
                   <Flex mt={1} alignItems={'center'} gap={2}>
-                    <ImClock2/>
+                    <ImClock2 />
                     <Text>{moment(row.lpTokenReleaseTime).format('LL')}</Text>
                   </Flex>
                 </Box>
               );
             }
           } else {
-            const [status] = useProposalStatus({row: row?.userProposal});
+            const [status] = useProposalStatus({ row: row?.userProposal });
 
             if (status.value === 'pending') {
               return (
                 <Box>
                   <Text>
-                    <span style={{color: colors.white500, fontSize: px2rem(14)}}>
+                    <span style={{ color: colors.white500, fontSize: px2rem(14) }}>
                       Starts at:
                     </span>{' '}
                     {moment(row?.userProposal.voteStart).format('MMM, DD')}
                   </Text>
                   <Flex mt={1} alignItems={'center'} gap={2}>
-                    <ImClock2/>
+                    <ImClock2 />
                     <Text>
-                      <CountDownTimer end_time={row?.userProposal.voteStart}/>
+                      <CountDownTimer end_time={row?.userProposal.voteStart} />
                     </Text>
                   </Flex>
                 </Box>
@@ -339,15 +346,15 @@ const LaunchpadContainer = () => {
               return (
                 <Box>
                   <Text>
-                    <span style={{color: colors.white500, fontSize: px2rem(14)}}>
+                    <span style={{ color: colors.white500, fontSize: px2rem(14) }}>
                       Ends at:
                     </span>{' '}
                     {moment(row?.userProposal.voteEnd).format('MMM, DD')}
                   </Text>
                   <Flex mt={1} alignItems={'center'} gap={2}>
-                    <ImClock2/>
+                    <ImClock2 />
                     <Text>
-                      <CountDownTimer end_time={row?.userProposal.voteEnd}/>
+                      <CountDownTimer end_time={row?.userProposal.voteEnd} />
                     </Text>
                   </Flex>
                 </Box>
@@ -372,9 +379,9 @@ const LaunchpadContainer = () => {
         render(row: ILaunchpad) {
           const isProposal = checkIsProposal(row);
           if (isProposal) {
-            return <ProposalStatus row={row?.userProposal}/>;
+            return <ProposalStatus row={row?.userProposal} />;
           } else {
-            return <LaunchpadStatus row={row}/>;
+            return <LaunchpadStatus row={row} />;
           }
         },
       },
@@ -391,7 +398,7 @@ const LaunchpadContainer = () => {
         },
         render(row: ILaunchpad) {
           const token: IToken = row.launchpadToken;
-          return <SocialToken socials={token.social}/>;
+          return <SocialToken socials={token.social} />;
         },
       },
       {
@@ -421,7 +428,7 @@ const LaunchpadContainer = () => {
                     router.push(`${ROUTE_PATH.LAUNCHPAD_MANAGE}?id=${row.id}`)
                   }
                 >
-                  <BsPencil/>
+                  <BsPencil />
                 </Box>
                 {/* <Box cursor={'pointer'} onClick={() => onShowCreateIDO(row, true)}>
                   <BsTrash style={{ color: colors.redPrimary }} />
@@ -430,38 +437,38 @@ const LaunchpadContainer = () => {
             );
           }
 
-          return (<Flex alignItems={'center'} gap={4}>
-            {
-              compareString(row.creatorAddress, account) &&
-              (!row?.proposalId ||
-                moment(row?.userProposal?.voteStart).unix() > moment().unix()) && (
-                <InfoTooltip label={'Edit Proposal'}>
-                  <Box
-                    cursor={'pointer'}
-                    onClick={() =>
-                      router.push(`${ROUTE_PATH.LAUNCHPAD_MANAGE}?id=${row.id}`)
-                    }
-                  >
-                    <BsPencil/>
-                  </Box>
-                </InfoTooltip>
-              )
-            }
-            {
-              isProposal && (
+          return (
+            <Flex alignItems={'center'} gap={4}>
+              {compareString(row.creatorAddress, account) &&
+                (!row?.proposalId ||
+                  moment(row?.userProposal?.voteStart).unix() > moment().unix()) && (
+                  <InfoTooltip label={'Edit Proposal'}>
+                    <Box
+                      cursor={'pointer'}
+                      onClick={() =>
+                        router.push(`${ROUTE_PATH.LAUNCHPAD_MANAGE}?id=${row.id}`)
+                      }
+                    >
+                      <BsPencil />
+                    </Box>
+                  </InfoTooltip>
+                )}
+              {isProposal && (
                 <InfoTooltip label={'Proposal Detail'}>
                   <Box
                     cursor={'pointer'}
                     onClick={() =>
-                      router.push(`${ROUTE_PATH.LAUNCHPAD_PROPOSAL}?proposal_id=${row?.proposalId}`)
+                      router.push(
+                        `${ROUTE_PATH.LAUNCHPAD_PROPOSAL}?proposal_id=${row?.proposalId}`,
+                      )
                     }
                   >
-                    <BsBoxArrowUpRight/>
+                    <BsBoxArrowUpRight />
                   </Box>
                 </InfoTooltip>
-              )
-            }
-          </Flex>);
+              )}
+            </Flex>
+          );
         },
       },
     ];

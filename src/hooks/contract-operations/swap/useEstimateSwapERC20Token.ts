@@ -1,11 +1,12 @@
-import UniswapV2RouterJson from '@/abis/UniswapV2Router.json';
-import { UNIV2_ROUTER_ADDRESS } from '@/configs';
-import { TransactionEventType } from '@/enums/transaction';
-import useTCWallet from '@/hooks/useTCWallet';
 import { ContractOperationHook, DAppType } from '@/interfaces/contract-operation';
-import { getContract, getDefaultProvider } from '@/utils';
-import { useCallback } from 'react';
+import UniswapV2RouterJson from '@/abis/UniswapV2Router.json';
+import { useWeb3React } from '@web3-react/core';
+import { useCallback, useContext } from 'react';
+import { AssetsContext } from '@/contexts/assets-context';
+import { getContract } from '@/utils';
+import { UNIV2_ROUTER_ADDRESS } from '@/configs';
 import Web3 from 'web3';
+import { TransactionEventType } from '@/enums/transaction';
 
 export interface IEstimateSwapERC20Token {
   addresses: string[];
@@ -16,9 +17,8 @@ const useEstimateSwapERC20Token: ContractOperationHook<
   IEstimateSwapERC20Token,
   boolean
 > = () => {
-  const { tcWalletAddress: account } = useTCWallet();
-
-  const provider = getDefaultProvider();
+  const { account, provider } = useWeb3React();
+  const { btcBalance, feeRate } = useContext(AssetsContext);
 
   const call = useCallback(
     async (params: IEstimateSwapERC20Token): Promise<boolean> => {
@@ -30,9 +30,26 @@ const useEstimateSwapERC20Token: ContractOperationHook<
           provider,
           account,
         );
+        // console.log({
+        //   tcTxSizeByte: TRANSFER_TX_SIZE,
+        //   feeRatePerByte: feeRate.fastestFee,
+        //   erc20TokenAddress,
+        // });
+        // const estimatedFee = TC_SDK.estimateInscribeFee({
+        //   tcTxSizeByte: TRANSFER_TX_SIZE,
+        //   feeRatePerByte: feeRate.fastestFee,
+        // });
+        // const balanceInBN = new BigNumber(btcBalance);
+        // if (balanceInBN.isLessThan(estimatedFee.totalFee)) {
+        //   throw Error(
+        //     `Your balance is insufficient. Please top up at least ${formatBTCPrice(
+        //       estimatedFee.totalFee.toString(),
+        //     )} BTC to pay network fee.`,
+        //   );
+        // }
 
         const transaction = await contract
-          .connect(provider)
+          .connect(provider.getSigner())
           .getAmountsOut(Web3.utils.toWei(amount, 'ether'), addresses);
 
         return transaction;
@@ -40,7 +57,7 @@ const useEstimateSwapERC20Token: ContractOperationHook<
 
       return false;
     },
-    [account, provider],
+    [account, provider, btcBalance, feeRate],
   );
 
   return {

@@ -1,24 +1,24 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { LAUNCHPAD_FACTORY_ADDRESS } from '@/configs';
+import { LAUNCHPAD_FORM_STEP } from '@/constants/storage-key';
 import useGetConfigLaunchpad, {
   ConfigLaunchpadResponse,
 } from '@/hooks/contract-operations/launchpad/useGetConfigLaunchpad';
 import useApproveERC20Token from '@/hooks/contract-operations/token/useApproveERC20Token';
 import useBalanceERC20Token from '@/hooks/contract-operations/token/useBalanceERC20Token';
 import useIsApproveERC20Token from '@/hooks/contract-operations/token/useIsApproveERC20Token';
-import useTCWallet from '@/hooks/useTCWallet';
 import { ILaunchpad } from '@/interfaces/launchpad';
 import { IToken } from '@/interfaces/token';
 import { getListLiquidityToken, getListOwnerToken } from '@/services/launchpad';
+import { useWeb3React } from '@web3-react/core';
 import BigNumber from 'bignumber.js';
 import React, { useEffect, useRef, useState } from 'react';
 import { useForm, useFormState } from 'react-final-form';
 import web3 from 'web3';
 import LaunchpadFormStep1 from './LaunchpadFormStep1';
-import LaunchpadManageHeader from './header';
 import LaunchpadFormStep2 from './LaunchpadFormStep2';
-import { LAUNCHPAD_FORM_STEP } from '@/constants/storage-key';
+import LaunchpadManageHeader from './header';
 
 export interface LaunchpadManageFormContainerProps {
   loading: boolean;
@@ -50,7 +50,7 @@ const LaunchpadManageFormContainer: React.FC<LaunchpadManageFormContainerProps> 
 
   const { values } = useFormState();
   const { change, initialize } = useForm();
-  const { tcWalletAddress: account, isAuthenticated: isActive } = useTCWallet();
+  const { account, isActive } = useWeb3React();
 
   const { call: isApproved } = useIsApproveERC20Token();
   const { call: approveToken } = useApproveERC20Token();

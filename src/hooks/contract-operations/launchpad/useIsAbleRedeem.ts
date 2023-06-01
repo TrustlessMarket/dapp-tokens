@@ -17,11 +17,7 @@ const useIsAbleRedeem: ContractOperationHook<IIsAbleRedeemProps, boolean> = () =
     async (params: IIsAbleRedeemProps): Promise<boolean> => {
       const { owner_address, launchpad_address } = params;
       if (provider && owner_address && launchpad_address) {
-        const contract = getContract(
-          launchpad_address,
-          LaunchpadPoolJson,
-          provider,
-        );
+        const contract = getContract(launchpad_address, LaunchpadPoolJson, provider);
 
         const transaction = await contract
           .connect(provider)
