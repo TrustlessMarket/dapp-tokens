@@ -14,7 +14,7 @@ export const getListLiquidityToken = async () => {
 };
 
 export const getListOwnerToken = async (
-  params: { address: string } & IPagingParams,
+  params: { address?: string } & IPagingParams,
 ) => {
   const qs = '?' + queryString.stringify(params);
   return swrFetcher(`${API_EXCHANGE_URL}${API_PATH}/launchpad-token${qs}`, {
@@ -122,6 +122,27 @@ export const getLaunchpadUserDepositInfo = async (params: {
   const qs = '?' + queryString.stringify(params);
   return swrFetcher(`${API_EXCHANGE_URL}${API_PATH}/user-result${qs}`, {
     method: 'GET',
+    error: 'Fail to get deposit address',
+  });
+};
+
+export const importBoost = async (
+  params: {
+    pool_address?: any;
+    address?: any;
+  },
+  data: {
+    signature: string;
+    list: {
+      user_address: string;
+      boost: number;
+    }[];
+  },
+) => {
+  const qs = '?network=tc&' + queryString.stringify(params);
+  return swrFetcher(`${API_EXCHANGE_URL}${API_PATH}/import-boost${qs}`, {
+    method: 'POST',
+    data,
     error: 'Fail to get deposit address',
   });
 };
