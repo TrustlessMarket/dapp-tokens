@@ -15,7 +15,7 @@ const AboveTheFold = ({ poolDetail }: ILaunchpad | any) => {
   const [status] = useLaunchPadStatus({ row: poolDetail });
 
   return (
-    <BodyContainer className={styles.wrapper}>
+    <Box className={styles.wrapper}>
       <Grid templateColumns={['1.25fr 1fr']} gap={[8]}>
         <GridItem>
           <Intro poolDetail={poolDetail}/>
@@ -43,7 +43,7 @@ const AboveTheFold = ({ poolDetail }: ILaunchpad | any) => {
           )
         }
       </Grid>
-    </BodyContainer>
+    </Box>
   );
 };
 
