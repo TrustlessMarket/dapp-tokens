@@ -81,9 +81,6 @@ const IdoDetailContainer = () => {
           </TabList>
           <TabPanels>
             <TabPanel>
-              <Box h={"738px"}>
-                <Intro poolDetail={poolDetail}/>
-              </Box>
               <Text fontSize={px2rem(24)} fontWeight={"500"} color={"#FFFFFF"} mt={8}>Description</Text>
               <Box mt={8}></Box>
               <IdoDescription poolDetail={poolDetail}/>
