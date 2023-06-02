@@ -21,7 +21,7 @@ import {useWeb3React} from '@web3-react/core';
 import BigNumber from 'bignumber.js';
 import moment from 'moment';
 import {useRouter} from 'next/router';
-import {useEffect, useMemo, useState} from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 import {BsBoxArrowUpRight, BsPencil} from 'react-icons/bs';
 import {ImClock2} from 'react-icons/im';
 import {useDispatch} from 'react-redux';
@@ -143,7 +143,7 @@ const LaunchpadContainer = () => {
         label: (
           <InfoTooltip
             showIcon={true}
-            label="Liquidity Reserve refers to a percentage of the funds that are used to add initial liquidity for trading purposes after the crowdfunding ends"
+            label="Liquidity Reserve refers to a percentage of the funds and amount of token that are used to add initial liquidity for trading purposes after the crowdfunding ends"
           >
             Liquidity reserve
           </InfoTooltip>
@@ -237,7 +237,14 @@ const LaunchpadContainer = () => {
       },
       {
         id: 'hardCap',
-        label: 'Hard Cap',
+        label: (
+          <InfoTooltip
+            showIcon={true}
+            label="Launchpad will stop upon reaching its hard cap (the maximum amount for the fund)"
+          >
+            Hard Cap
+          </InfoTooltip>
+        ),
         labelConfig: {
           fontSize: '12px',
           fontWeight: '500',
