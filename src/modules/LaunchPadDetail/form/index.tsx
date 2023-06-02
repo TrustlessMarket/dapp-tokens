@@ -650,7 +650,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
               containerConfig={{ flex: 1, mt: 6 }}
               loadingText={submitting ? 'Processing' : ' '}
               processInfo={{
-                id: transactionType.createPoolApprove,
+                id: transactionType.depositLaunchpad,
               }}
               style={{
                 backgroundColor: isClaimLaunchpad
@@ -708,24 +708,12 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
   const [canClose, setCanClose] = useState(false);
   const [userDeposit, setUserDeposit] = useState<any>();
 
-  // console.log('poolDetail', poolDetail);
-  // console.log('canEnd', canEnd);
-  // console.log('canClaim', canClaim);
-  // console.log('canClose', canClose);
-  // console.log('userDeposit', userDeposit);
-  // console.log('=====');
-
-  // const canEnd = [
-  //   LAUNCHPAD_STATUS.NotPassed,
-  //   LAUNCHPAD_STATUS.Successful,
-  //   LAUNCHPAD_STATUS.Failed,
-  //   LAUNCHPAD_STATUS.End,
-  // ].includes(status.key);
-
-  // const isClaimLaunchpad = [
-  //   LAUNCHPAD_STATUS.Completed,
-  //   LAUNCHPAD_STATUS.Failed,
-  // ].includes(status.key);
+  console.log('poolDetail', poolDetail);
+  console.log('canEnd', canEnd);
+  console.log('canClaim', canClaim);
+  console.log('canClose', canClose);
+  console.log('userDeposit', userDeposit);
+  console.log('=====');
 
   const isStarting = [LAUNCHPAD_STATUS.Launching].includes(status.key);
 
