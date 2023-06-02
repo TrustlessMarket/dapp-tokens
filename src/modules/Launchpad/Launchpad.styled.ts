@@ -1,7 +1,7 @@
 import BodyContainer from '@/components/Swap/bodyContainer';
-import { colors } from '@/theme/colors';
+import {colors} from '@/theme/colors';
 import px2rem from '@/utils/px2rem';
-import { Badge } from '@chakra-ui/react';
+import {Badge} from '@chakra-ui/react';
 import styled from 'styled-components';
 
 export const StyledIdoContainer = styled(BodyContainer)`
@@ -125,7 +125,7 @@ export const StyledIdoStatus = styled(Badge)`
     border-radius: 50%;
   }
   
-  &.upcoming {
+  &.pending {
     color: #ff7e21;
     background-color: rgba(255, 126, 33, 0.2);
 
@@ -133,7 +133,15 @@ export const StyledIdoStatus = styled(Badge)`
       background: #ff7e21;
     }
   }
-  &.crowing-funding {
+  &.voting {
+    color: #95A4FC;
+    background-color: rgba(149, 164, 252, 0.2);
+
+    &::before {
+      background: #95A4FC;
+    }
+  }
+  &.launching {
     color: rgba(51, 133, 255, 1);
     background-color: rgba(51, 133, 255, 0.2);
 
@@ -141,8 +149,7 @@ export const StyledIdoStatus = styled(Badge)`
       background: rgba(51, 133, 255, 1);
     }
   }
-  &.finished,
-  &.success {
+  &.successful {
     color: rgba(4, 197, 127, 1);
     background-color: rgba(4, 197, 127, 0.2);
 
@@ -150,10 +157,9 @@ export const StyledIdoStatus = styled(Badge)`
       background: rgba(4, 197, 127, 1);
     }
   }
-  &.cancelled,
-  &.ending,
+  &.notpassed,
   &.failed,
-  &.closed {
+  &.end {
     color: rgba(255, 71, 71, 1);
     background-color: rgba(255, 71, 71, 0.2);
 
