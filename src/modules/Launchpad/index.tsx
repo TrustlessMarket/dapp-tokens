@@ -270,7 +270,7 @@ const LaunchpadContainer = () => {
         },
         render(row: ILaunchpad) {
           const [status] = useLaunchPadStatus({ row });
-          if ([LaunchpadLabelStatus.draft.value, LaunchpadLabelStatus.pending.value].includes(status.value)) {
+          if ([LaunchpadLabelStatus.pending.value].includes(status.value)) {
             return (
               <Box>
                 <Text>
