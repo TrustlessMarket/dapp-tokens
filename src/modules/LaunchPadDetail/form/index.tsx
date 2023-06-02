@@ -412,7 +412,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       <Flex gap={0} color={'#FFFFFF'} mt={8} direction={'column'}>
         <Flex gap={6} justifyContent={'space-between'}>
           <Stat className={styles.infoColumn} flex={1}>
-            <StatLabel>Rewards</StatLabel>
+            <StatLabel>Reward pool</StatLabel>
             <StatNumber>
               {formatCurrency(poolDetail?.launchpadBalance || 0)}
             </StatNumber>
