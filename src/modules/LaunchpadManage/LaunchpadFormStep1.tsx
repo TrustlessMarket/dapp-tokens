@@ -190,7 +190,7 @@ const LaunchpadFormStep1: React.FC<ILaunchpadFormStep1> = ({
               label="The total number of tokens that the contributors will receive once the crowdfunding has ended."
               iconColor={colors.white500}
             >
-              {`Rewards ${tokenSelected ? `(${tokenSelected.symbol})` : ''}`}
+              {`Reward pool ${tokenSelected ? `(${tokenSelected.symbol})` : ''}`}
             </InfoTooltip>
           }
           disabled={detail?.launchpad}
