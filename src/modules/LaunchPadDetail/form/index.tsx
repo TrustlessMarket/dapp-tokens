@@ -689,20 +689,30 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       </Flex>
       {
         [
-          LaunchpadLabelStatus.draft.key, LAUNCHPAD_STATUS.Pending,
+          LAUNCHPAD_STATUS.Pending,
         ].includes(status.key) ? (
           <Text mt={4} fontSize={px2rem(16)} fontWeight={'400'} color={'#FFFFFF'}>
             This project requires community votes to initiate crowdfunding. Please prepare your TM token to participate in the voting process.
           </Text>
-        ) : (
-          <Text mt={4} fontSize={px2rem(16)} fontWeight={'400'} color={'#FFFFFF'}>
-            All or nothing. This project will only be funded if it reaches its goal by{' '}
-            <Text as={'span'} color={'#FF7E21'}>
-              {moment.utc(poolDetail?.launchEnd).format('ddd, MMMM Do YYYY HH:mm:ss Z')}
+        ) :
+          [
+            LAUNCHPAD_STATUS.Voting,
+          ].includes(status.key) ? (
+            <Text mt={4} fontSize={px2rem(16)} fontWeight={'400'} color={'#FFFFFF'}>
+              If you enjoy this project, please show your support by voting for it.
             </Text>
-            .
-          </Text>
-        )
+          ) :
+            [
+              LAUNCHPAD_STATUS.Launching,
+            ].includes(status.key) ? (
+              <Text mt={4} fontSize={px2rem(16)} fontWeight={'400'} color={'#FFFFFF'}>
+                All or nothing. This project will only be funded if it reaches its goal by{' '}
+                <Text as={'span'} color={'#FF7E21'}>
+                  {moment.utc(poolDetail?.launchEnd).format('ddd, MMMM Do YYYY HH:mm:ss Z')}
+                </Text>
+                .
+              </Text>
+            ) : <></>
       }
     </form>
   );
