@@ -18,6 +18,7 @@ export interface ICreateLaunchpadParams {
   launchpadBalance: string;
   goalBalance: string;
   thresholdBalance: string;
+  liquidityBalance: string;
 }
 
 const useCreateLaunchpad: ContractOperationHook<
@@ -36,7 +37,10 @@ const useCreateLaunchpad: ContractOperationHook<
         launchpadBalance,
         goalBalance,
         thresholdBalance,
+        liquidityBalance,
       } = params;
+
+      console.log('params', params);
 
       if (account && provider) {
         const contract = getContract(
@@ -58,6 +62,7 @@ const useCreateLaunchpad: ContractOperationHook<
             ratio,
             web3.utils.toWei(durationArg.toString()),
             web3.utils.toWei(launchpadBalance),
+            web3.utils.toWei(liquidityBalance),
             web3.utils.toWei(goalBalance),
             web3.utils.toWei(thresholdBalance),
             {

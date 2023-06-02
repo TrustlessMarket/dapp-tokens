@@ -6,8 +6,9 @@ import React from "react";
 import Intro from "@/modules/LaunchPadDetail/aboveTheFold/intro";
 import Statistic from "@/modules/LaunchPadDetail/statistic";
 import Usp from "@/modules/LaunchPadDetail/usp";
+import {ILaunchpad} from "@/interfaces/launchpad";
 
-const LaunchpadStarting = ({poolDetail}: any) => {
+const LaunchpadStarting = ({poolDetail}: { poolDetail: ILaunchpad }) => {
   return (
     <Box>
       <Grid templateColumns={['1.25fr 1fr']} gap={[8]}>

@@ -23,6 +23,9 @@ import { useRouter } from 'next/router';
 import { useForm, useFormState } from 'react-final-form';
 import { FiChevronLeft } from 'react-icons/fi';
 import { StyledLaunchpadManageHeader } from './LaunchpadManage.styled';
+import ModalConfirmApprove from '@/components/ModalConfirmApprove';
+import { closeModal, openModal } from '@/state/modal';
+import { useDispatch } from 'react-redux';
 
 export interface LaunchpadManageHeaderProps {
   step: number;
@@ -47,6 +50,7 @@ const LaunchpadManageHeader: React.FC<LaunchpadManageHeaderProps> = ({
 }) => {
   const { values } = useFormState();
   const { change } = useForm();
+  const dispatch = useDispatch();
 
   const tokenSelected: IToken | undefined = values?.launchpadTokenArg;
 
@@ -62,7 +66,7 @@ const LaunchpadManageHeader: React.FC<LaunchpadManageHeaderProps> = ({
           isDisabled={loading}
           loadingText="Processing"
           // btnSize={'h'}
-          onClick={onApprove}
+          onClick={onShowModalApprove}
           type="button"
         >
           {`APPROVE USE OF ${tokenSelected?.symbol}`}
@@ -79,7 +83,7 @@ const LaunchpadManageHeader: React.FC<LaunchpadManageHeaderProps> = ({
           className={detail && !detail.launchpad ? 'btn-secondary' : 'btn-primary'}
           onClick={() => change('isLastStep', lastStep)}
         >
-          {detail ? 'Update' : lastStep ? 'Submit' : 'Next'}
+          {lastStep ? (detail ? 'Update' : 'Submit') : 'Next'}
         </FiledButton>
         {detail && lastStep && !detail.launchpad && (
           <FiledButton
@@ -113,6 +117,26 @@ const LaunchpadManageHeader: React.FC<LaunchpadManageHeaderProps> = ({
     } else {
       router.push(ROUTE_PATH.LAUNCHPAD);
     }
+  };
+
+  const onShowModalApprove = () => {
+    const id = 'modal';
+    const onClose = () => dispatch(closeModal({ id }));
+    dispatch(
+      openModal({
+        id,
+        theme: 'dark',
+        title: `APPROVE USE OF ${tokenSelected?.symbol}`,
+        modalProps: {
+          centered: true,
+          // size: mobileScreen ? 'full' : 'xl',
+          zIndex: 9999999,
+        },
+        render: () => (
+          <ModalConfirmApprove onApprove={onApprove} onClose={onClose} />
+        ),
+      }),
+    );
   };
 
   return (

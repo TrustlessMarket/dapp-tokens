@@ -14,6 +14,7 @@ import { Form } from 'react-final-form';
 import { toast } from 'react-hot-toast';
 import LaunchpadManageFormContainer from './LauchpadManage.FormContainer';
 import { StyledLaunchpadManage } from './LaunchpadManage.styled';
+import { ROUTE_PATH } from '@/constants/route-path';
 
 const LaunchpadManage = () => {
   const { getSignature } = useContext(WalletContext);
@@ -26,6 +27,7 @@ const LaunchpadManage = () => {
   const [loading, setLoading] = useState(false);
   const [step, setStep] = useState(0);
   const [detail, setDetail] = useState<ILaunchpad | undefined>(undefined);
+  const [error, setMessageError] = useState('');
 
   const router = useRouter();
   const id = router.query?.id;
@@ -47,6 +49,7 @@ const LaunchpadManage = () => {
 
   const onSubmit = async (values: any) => {
     console.log('values', values);
+    setMessageError('');
 
     try {
       localStorage.setItem(
@@ -86,6 +89,7 @@ const LaunchpadManage = () => {
           liquidity_balance: values.liquidityBalance,
           liquidity_ratio: values.liquidityRatioArg,
           goal_balance: values.goalBalance,
+          threshold_balance: values.thresholdBalance || '0',
           duration: Number(seconds),
         });
 
@@ -96,16 +100,19 @@ const LaunchpadManage = () => {
             liquidityRatioArg: values.liquidityRatioArg,
             durationArg: seconds,
             launchpadBalance: values.launchpadBalance,
+            liquidityBalance: values.liquidityBalance,
             goalBalance: values.goalBalance,
-            thresholdBalance: values.goalBalance,
+            thresholdBalance: values.thresholdBalance || '0',
           });
-          localStorage.removeItem(LAUNCHPAD_FORM_STEP);
         }
-
+        localStorage.removeItem(LAUNCHPAD_FORM_STEP);
+        router.replace(ROUTE_PATH.LAUNCHPAD);
         toast.success(`Submitted proposals successfully.`);
       }
     } catch (error) {
       console.log('error', error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -120,6 +127,7 @@ const LaunchpadManage = () => {
             step={step}
             setStep={setStep}
             detail={detail}
+            error={error}
           />
         )}
       </Form>

@@ -123,7 +123,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
 
   useEffect(() => {
     if (poolDetail?.id) {
-      setEndTime(moment(poolDetail?.endTime).unix());
+      setEndTime(moment(poolDetail?.launchEnd).unix());
     }
   }, [poolDetail?.id]);
 
@@ -454,10 +454,10 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           <Stat className={styles.infoColumn} flex={1.5}>
             <StatLabel>
               {[
-                LAUNCHPAD_STATUS.Closed,
-                LAUNCHPAD_STATUS.Completed,
+                LAUNCHPAD_STATUS.NotPassed,
+                LAUNCHPAD_STATUS.Successful,
                 LAUNCHPAD_STATUS.Failed,
-                LAUNCHPAD_STATUS.Cancelled,
+                LAUNCHPAD_STATUS.End,
               ].includes(status.key)
                 ? 'Ended at'
                 : 'Ends in'}
@@ -465,14 +465,14 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             <StatNumber>
               <Text>
                 {[
-                  LAUNCHPAD_STATUS.Closed,
-                  LAUNCHPAD_STATUS.Completed,
+                  LAUNCHPAD_STATUS.NotPassed,
+                  LAUNCHPAD_STATUS.Successful,
                   LAUNCHPAD_STATUS.Failed,
-                  LAUNCHPAD_STATUS.Cancelled,
+                  LAUNCHPAD_STATUS.End,
                 ].includes(status.key) ? (
-                  moment(poolDetail.endTime).format('LLL')
+                  moment(poolDetail.launchEnd).format('LLL')
                 ) : (
-                  <CountDownTimer end_time={poolDetail.endTime} />
+                  <CountDownTimer end_time={poolDetail.launchEnd} />
                 )}
               </Text>
             </StatNumber>
@@ -703,7 +703,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       <Text mt={4} fontSize={px2rem(16)} fontWeight={'400'} color={'#FFFFFF'}>
         All or nothing. This project will only be funded if it reaches its goal by{' '}
         <Text as={'span'} color={'#FF7E21'}>
-          {moment.utc(poolDetail?.endTime).format('ddd, MMMM Do YYYY HH:mm:ss Z')}
+          {moment.utc(poolDetail?.launchEnd).format('ddd, MMMM Do YYYY HH:mm:ss Z')}
         </Text>
         .
       </Text>
@@ -733,10 +733,10 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
   const [userDeposit, setUserDeposit] = useState<any>();
 
   const canEnd = [
-    LAUNCHPAD_STATUS.End,
-    LAUNCHPAD_STATUS.Completed,
+    LAUNCHPAD_STATUS.NotPassed,
+    LAUNCHPAD_STATUS.Successful,
     LAUNCHPAD_STATUS.Failed,
-    LAUNCHPAD_STATUS.Cancelled,
+    LAUNCHPAD_STATUS.End,
   ].includes(status.key);
 
   // const isClaimLaunchpad = [
@@ -744,7 +744,7 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
   //   LAUNCHPAD_STATUS.Failed,
   // ].includes(status.key);
 
-  const isStarting = [LAUNCHPAD_STATUS.Created].includes(status.key);
+  const isStarting = [LAUNCHPAD_STATUS.Launching].includes(status.key);
 
   useEffect(() => {
     fetchData();

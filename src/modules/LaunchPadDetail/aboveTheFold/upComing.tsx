@@ -10,8 +10,9 @@ import {requestReload} from "@/state/pnftExchange";
 import Intro from "@/modules/LaunchPadDetail/aboveTheFold/intro";
 import SocialToken from "@/components/Social";
 import Usp from "@/modules/LaunchPadDetail/usp";
+import {ILaunchpad} from "@/interfaces/launchpad";
 
-const LaunchpadUpComing = ({poolDetail}: any) => {
+const LaunchpadUpComing = ({poolDetail}: { poolDetail: ILaunchpad }) => {
   const [endTime, setEndTime] = useState(0);
   const [days, hours, minutes, seconds, expired] = useCountDownTimer(
     moment.unix(endTime).format("YYYY/MM/DD HH:mm:ss")
@@ -70,7 +71,7 @@ const LaunchpadUpComing = ({poolDetail}: any) => {
             <Flex justifyContent={"flex-start"}>
               <SocialToken socials={poolDetail?.launchpadToken?.social} />
             </Flex>
-            <Text mt={4} fontSize={"sm"} color={"#FFFFFF"}>All or nothing. This project will only be funded if it reaches its goal by {moment.utc(poolDetail?.endTime).format('ddd, MMMM Do YYYY HH:mm:ss Z')}.</Text>
+            <Text mt={4} fontSize={"sm"} color={"#FFFFFF"}>All or nothing. This project will only be funded if it reaches its goal by {moment.utc(poolDetail?.launchEnd).format('ddd, MMMM Do YYYY HH:mm:ss Z')}.</Text>
           </Card>
         </GridItem>
       </Grid>

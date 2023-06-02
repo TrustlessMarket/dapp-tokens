@@ -6,34 +6,40 @@ import moment from 'moment';
 
 export enum LAUNCHPAD_STATUS {
   Pending,
-  Created,
-  Completed,
-  Cancelled,
+  Voting,
+  NotPassed,
+  Launching,
+  Successful,
   Failed,
-  Closed,
-  Starting,
+
+  //FE define
   End,
 }
 
-export const LabelStatus = {
-  upcoming: {
+export const LaunchpadLabelStatus = {
+  pending: {
     key: LAUNCHPAD_STATUS.Pending,
-    value: 'upcoming',
-    label: 'Upcoming',
+    value: 'pending',
+    label: 'Voting Preparation',
   },
-  starting: {
-    key: LAUNCHPAD_STATUS.Created,
-    value: 'crowing-funding',
+  voting: {
+    key: LAUNCHPAD_STATUS.Voting,
+    value: 'voting',
+    label: 'Voting',
+  },
+  notpassed: {
+    key: LAUNCHPAD_STATUS.NotPassed,
+    value: 'notpassed',
+    label: 'Closed',
+  },
+  launching: {
+    key: LAUNCHPAD_STATUS.Launching,
+    value: 'launching',
     label: 'Funding',
   },
-  success: {
-    key: LAUNCHPAD_STATUS.Completed,
-    value: 'success',
-    label: 'Success',
-  },
-  cancelled: {
-    key: LAUNCHPAD_STATUS.Cancelled,
-    value: 'cancelled',
+  successful: {
+    key: LAUNCHPAD_STATUS.Successful,
+    value: 'successful',
     label: 'Closed',
   },
   failed: {
@@ -41,47 +47,40 @@ export const LabelStatus = {
     value: 'failed',
     label: 'Closed',
   },
-  closed: {
-    key: LAUNCHPAD_STATUS.Closed,
-    value: 'closed',
-    label: 'Closed',
-  },
   end: {
     key: LAUNCHPAD_STATUS.End,
-    value: 'ending',
+    value: 'end',
     label: 'Closed',
   },
 };
 
 export const useLaunchPadStatus = ({ row }: { row: ILaunchpad }) => {
   const state = row?.state;
-  const startTime = row?.startTime;
-  const endTime = row?.endTime;
+  const startTime = row?.launchStart;
+  const endTime = row?.launchEnd;
 
-  let status = LabelStatus.upcoming;
+  let status = LaunchpadLabelStatus.pending;
 
-  if (state === LAUNCHPAD_STATUS.Completed) {
-    status = LabelStatus.success;
+  if (state === LAUNCHPAD_STATUS.Voting) {
+    status = LaunchpadLabelStatus.voting;
+  } else if (state === LAUNCHPAD_STATUS.NotPassed) {
+    status = LaunchpadLabelStatus.notpassed;
+  } else if (state === LAUNCHPAD_STATUS.Launching) {
+    status = LaunchpadLabelStatus.launching;
+  } else if (state === LAUNCHPAD_STATUS.Successful) {
+    status = LaunchpadLabelStatus.successful;
   } else if (state === LAUNCHPAD_STATUS.Failed) {
-    status = LabelStatus.failed;
-  } else if (state === LAUNCHPAD_STATUS.Closed) {
-    status = LabelStatus.closed;
-  } else if (state === LAUNCHPAD_STATUS.Created) {
-    status = LabelStatus.starting;
-  } else if (state === LAUNCHPAD_STATUS.Cancelled) {
-    status = LabelStatus.cancelled;
+    status = LaunchpadLabelStatus.failed;
   // } else if (
   //   moment(startTime).unix() <= moment().unix() &&
   //   moment().unix() < moment(endTime).unix()
   // ) {
   //   status = LabelStatus.starting;
-  } else if (moment().unix() >= moment(endTime).unix() && row?.proposalId) {
-    status = LabelStatus.end;
+  } else if (moment().unix() >= moment(endTime).unix()) {
+    status = LaunchpadLabelStatus.end;
   }
 
   return [status];
-
-  //
 };
 
 const LaunchpadStatus = ({ row }: { row: ILaunchpad }) => {
