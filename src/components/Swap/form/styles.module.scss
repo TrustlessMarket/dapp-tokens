@@ -92,7 +92,7 @@
   }
 
   :global .chakra-input__left-element {
-    height: 100% !important;
+    height: 100%;
     z-index: 1 !important;
   }
   :global .chakra-input__right-element {
@@ -247,6 +247,13 @@
       opacity: 1;
     }
   }
+  :global {
+    .w-md-editor-preview {
+      p {
+        color: inherit;
+      }
+    }
+  }
   textarea {
     height: 100%;
     width: 100%;
@@ -317,5 +324,23 @@
     height: 50px;
     font-weight: 500;
     color: #353945;
+  }
+}
+
+.formCalendar {
+  display: flex;
+  height: 50px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  padding: 15px 16px;
+  input {
+    width: 100%;
+  }
+}
+
+.formSelect {
+  input {
+    display: none;
   }
 }

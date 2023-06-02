@@ -1,9 +1,10 @@
-import React from "react";
-import cx from "classnames";
-import {Box, BoxProps} from "@chakra-ui/react";
+import React from 'react';
+import cx from 'classnames';
+import { Box, BoxProps } from '@chakra-ui/react';
 
-import styles from "./styles.module.scss";
-import {useScreenLayout} from "@/hooks/useScreenLayout";
+import styles from './styles.module.scss';
+import { useScreenLayout } from '@/hooks/useScreenLayout';
+import { colors } from '@/theme/colors';
 
 interface BodyContainerProps {
   children: React.ReactNode;
@@ -13,11 +14,7 @@ interface BodyContainerProps {
 }
 
 const BodyContainer = (props: BodyContainerProps) => {
-  const {
-    className,
-    children,
-    boxConfig,
-  } = props;
+  const { className, children, boxConfig } = props;
 
   const { headerHeight, footerHeight } = useScreenLayout();
 
@@ -27,6 +24,7 @@ const BodyContainer = (props: BodyContainerProps) => {
     <Box
       className={cx(className, styles.bodyContainer)}
       minHeight={`calc(100vh - ${contentHeight}px)`}
+      backgroundColor={colors.dark}
       {...boxConfig}
     >
       <div>{children}</div>

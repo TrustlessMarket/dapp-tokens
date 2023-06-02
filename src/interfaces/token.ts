@@ -9,7 +9,7 @@ export interface IToken {
   createdAt?: string;
   updatedAt?: string;
   address: string;
-  totalSupply?: string;
+  totalSupply?: any;
   owner?: string;
   deployedAtBlock?: number;
   slug?: string;

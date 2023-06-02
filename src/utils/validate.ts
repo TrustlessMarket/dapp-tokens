@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { validate, getAddressInfo, AddressType } from 'bitcoin-address-validation';
 import { ethers } from 'ethers';
 
@@ -24,4 +25,14 @@ export const validateEVMAddress = (_address: string): boolean => {
 
 export const validateTwitterUrl = (url: string): boolean => {
   return url.startsWith('https://twitter.com/');
+};
+
+export const validateYoutubeLink = (youtube_link: string): any => {
+  return !youtube_link
+    ? undefined
+    : /http(?:s?):\/\/(?:www\.)?youtu(?:be\.com\/watch\?v=|\.be\/)([\w\-\_]*)(&(amp;)?‌​[\w\?‌​=]*)?/.test(
+        youtube_link,
+      )
+    ? undefined
+    : 'Link Invalid';
 };

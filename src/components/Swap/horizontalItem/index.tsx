@@ -3,23 +3,26 @@ import { Box, Flex, Tooltip } from '@chakra-ui/react';
 import React, { memo } from 'react';
 import { MdHelpOutline } from 'react-icons/md';
 import styles from './styles.module.scss';
+import cs from 'classnames';
 
-interface HorizonalItemProps {
+interface HorizontalItemProps {
   label?: any;
   desc?: any;
   value?: any | React.ReactElement;
   color?: any;
+  className?: string;
 }
 
-const HorizontalItem: React.FC<HorizonalItemProps> = ({
+const HorizontalItem: React.FC<HorizontalItemProps> = ({
   label,
   value,
   desc,
   color,
+  className,
 }) => {
   return (
     <Flex
-      className={styles.container}
+      className={cs(styles.container, className)}
       alignItems={'flex-end'}
       justifyContent={'space-between'}
       color={color}

@@ -2,7 +2,7 @@ import ERC20ABIJson from '@/abis/erc20.json';
 import { AssetsContext } from '@/contexts/assets-context';
 import { TransactionEventType } from '@/enums/transaction';
 import { ContractOperationHook, DAppType } from '@/interfaces/contract-operation';
-import { getContract, getProviderProvider } from '@/utils';
+import { getContract, getDefaultProvider } from '@/utils';
 import { useWeb3React } from '@web3-react/core';
 import { useCallback, useContext } from 'react';
 
@@ -22,7 +22,7 @@ const useSupplyERC20Liquid: ContractOperationHook<
   const { account } = useWeb3React();
   const { btcBalance, feeRate } = useContext(AssetsContext);
 
-  const provider = getProviderProvider();
+  const provider = getDefaultProvider();
 
   const call = useCallback(
     async (

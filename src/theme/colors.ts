@@ -9,6 +9,7 @@ export const colors = {
   redPrimary: '#ea3943',
   redSecondary: '#FF6838',
   darkBorderColor: '#353945',
+  bluePrimary: '#3385FF',
   hLabelColor: '#A1A8B8',
 };
 

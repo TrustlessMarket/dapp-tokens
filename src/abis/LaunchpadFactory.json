@@ -1,0 +1,399 @@
+[
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint8",
+        "name": "version",
+        "type": "uint8"
+      }
+    ],
+    "name": "Initialized",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "launchpad",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "launchpadToken",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "liquidityToken",
+        "type": "address"
+      }
+    ],
+    "name": "LaunchpadPoolCreated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "previousOwner",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "newOwner",
+        "type": "address"
+      }
+    ],
+    "name": "OwnershipTransferred",
+    "type": "event"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "launchpadTokenArg",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "liquidityTokenArg",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "liquidityRatioArg",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "durationArg",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "launchpadBalance",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "liquidityBalance",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "goalBalance",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "thresholdBalance",
+        "type": "uint256"
+      }
+    ],
+    "name": "createLaunchpadPool",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "launchpad",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getFeeTo",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getLaunchpadConfigs",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "protocolRatio",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "rewardVoteRatio",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "votePrepareDuration",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "voteDuration",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "voteReleaseDuration",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "voteGoal",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "lpTokenReleaseDuration",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "lpTokenArg",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "liquidityTokenArg",
+        "type": "address"
+      }
+    ],
+    "name": "getLaunchpadPool",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "pool",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getLaunchpadPoolImplementation",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getPoolAdmin",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getUniswapV2Factory",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getUniswapV2Router",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getVoteToken",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "uniswapV2RouterArg",
+        "type": "address"
+      }
+    ],
+    "name": "initialize",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "owner",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "renounceOwnership",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "feeToArg",
+        "type": "address"
+      }
+    ],
+    "name": "setFeeTo",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "protocolRatioArg",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "rewardVoteRatioArg",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "votePrepareDurationArg",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "voteDurationArg",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "voteReleaseDurationArg",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "voteGoalArg",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "lpTokenReleaseDurationArg",
+        "type": "uint256"
+      }
+    ],
+    "name": "setLaunchpadConfigs",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "launchpadPoolImplementationArg",
+        "type": "address"
+      }
+    ],
+    "name": "setLaunchpadPoolImplementation",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "poolAdminArg",
+        "type": "address"
+      }
+    ],
+    "name": "setPoolAdmin",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "tmTokenArg",
+        "type": "address"
+      }
+    ],
+    "name": "setVoteToken",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "newOwner",
+        "type": "address"
+      }
+    ],
+    "name": "transferOwnership",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  }
+]

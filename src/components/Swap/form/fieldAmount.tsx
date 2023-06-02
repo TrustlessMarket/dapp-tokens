@@ -15,10 +15,12 @@ import React from 'react';
 
 import { formatCurrency } from '@/utils';
 import styles from './styles.module.scss';
+import { CleaveOptions } from 'cleave.js/options';
 
 interface FieldAmountProps {
   input?: any;
   meta?: any;
+  customMeta?: any;
   label?: string;
   prependComp?: React.ReactNode;
   appendComp?: React.ReactNode;
@@ -31,6 +33,7 @@ interface FieldAmountProps {
   fieldChanged?: (_: any) => void;
   hideError?: boolean;
   borderColor?: string;
+  numberOptions?: CleaveOptions;
 }
 
 const FieldAmount = (props: FieldAmountProps) => {
@@ -50,10 +53,14 @@ const FieldAmount = (props: FieldAmountProps) => {
     // disabledInput, errorPlacement, zIndex, anchorAppend,
     hideError = false,
     borderColor = 'background.default',
+    numberOptions,
+    customMeta,
     ...restProps
   } = props;
   const { onChange, onBlur, onFocus, value } = input;
-  const { error, touched } = meta;
+  const _meta = meta || customMeta;
+  const error = _meta.error;
+  const touched = _meta.touched;
   const shouldShowError = !!(touched && error) || (error && value);
   const hasAppend = appendComp || onClickMax;
 
@@ -74,14 +81,18 @@ const FieldAmount = (props: FieldAmountProps) => {
             </FormLabel>
           </Box>
           <Box>
-            <FormLabel fontSize="xs" fontWeight="medium">
-              {rightLabel}
-            </FormLabel>
+            {typeof rightLabel === 'object' ? (
+              rightLabel
+            ) : (
+              <FormLabel fontSize="xs" fontWeight="medium">
+                {rightLabel}
+              </FormLabel>
+            )}
           </Box>
         </Flex>
       )}
       <InputGroup
-        borderStyle={"solid"}
+        borderStyle={'solid'}
         borderWidth={1}
         borderColor={shouldShowError ? 'brand.danger.400' : borderColor}
         borderRadius={8}
@@ -113,6 +124,10 @@ const FieldAmount = (props: FieldAmountProps) => {
               numeralThousandsGroupStyle: 'thousand',
               numeralPositiveOnly: true,
               numeralDecimalScale: decimals,
+              tailPrefix: true,
+              rawValueTrimPrefix: true,
+              noImmediatePrefix: false,
+              ...numberOptions,
             }}
             {...restProps}
           />

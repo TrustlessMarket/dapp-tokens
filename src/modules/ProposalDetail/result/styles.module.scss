@@ -1,0 +1,75 @@
+.sideWrapper {
+  height: 350px;
+
+  :global {
+    .side-title {
+      font-weight: 600;
+      font-size: rem(24);
+      text-transform: uppercase;
+    }
+
+    .side-total {
+      font-weight: 500;
+      font-size: rem(24);
+    }
+  }
+}
+
+.sideFor {
+  :global {
+    .side-title {
+      color: #04C57F;
+    }
+
+    .progress-bar {
+      background: rgba(4, 197, 127, 0.2);
+      border-radius: 100px;
+      > div:first-child {
+        background: #04C57F;
+        border-radius: 100px;
+      }
+    }
+  }
+}
+
+.sideAgainst {
+  :global {
+    .side-title {
+      color: #BB0505;
+    }
+
+    .progress-bar {
+      //background: #1C1C1C;
+      background: rgba(187, 5, 5, 0.2);
+      border-radius: 100px;
+      > div:first-child {
+        background: #BB0505;
+        border-radius: 100px;
+      }
+    }
+  }
+}
+
+.btnResult {
+  padding: 8px 16px;
+  background: #1E1E22;
+  border-radius: 1000px;
+  font-size: rem(16);
+  font-weight: 500;
+}
+
+.btnResultFor {
+  background: #04C57F;
+}
+
+.btnResultAgainst {
+  background: #BB0505;
+}
+
+.boxTime {
+  margin-top: rem(16);
+  padding: 8px 16px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 100px;
+  width: fit-content;
+}

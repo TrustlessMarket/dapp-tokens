@@ -30,7 +30,7 @@ import BigNumber from "bignumber.js";
 import {decimalToExponential} from "@/utils/format";
 import {ROUTE_PATH} from "@/constants/route-path";
 
-const MAX_FILE_SIZE = 393216000; // 375 MB
+export const MAX_FILE_SIZE = 393216000; // 375 MB
 
 const Avatar = ({img, alt}: {img: string | any, alt: string | undefined}) => {
   return (

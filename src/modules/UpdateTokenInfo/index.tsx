@@ -1,6 +1,6 @@
 import UpdateTokenInfoForm from '@/modules/UpdateTokenInfo/form';
-import {StyledTokens, UploadFileContainer} from './UpdateTokenInfo.styled';
-import BodyContainer from "@/components/Swap/bodyContainer";
+import { StyledTokens, UploadFileContainer } from './UpdateTokenInfo.styled';
+import BodyContainer from '@/components/Swap/bodyContainer';
 import styles from './styles.module.scss';
 
 const UpdateTokenInfo = () => {
@@ -8,7 +8,7 @@ const UpdateTokenInfo = () => {
     <BodyContainer className={styles.wrapper}>
       <StyledTokens>
         <div>
-          <h3 className="upload_title">Token informations</h3>
+          <h3 className="upload_title">Token information's</h3>
         </div>
         <UploadFileContainer>
           <div className="upload_left">

@@ -36,7 +36,7 @@ export function getContract(
   return new Contract(address, ABI, getProviderOrSigner(provider, account) as any);
 }
 
-export const getProviderProvider = () => {
+export const getDefaultProvider = () => {
   const { provider: defaultProvider } = useWeb3React();
 
   let provider: any = defaultProvider;

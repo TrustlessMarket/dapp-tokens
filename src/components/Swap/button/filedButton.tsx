@@ -39,7 +39,7 @@ const FiledButton: React.FC<FiledButtonProps> = (props) => {
         className={styles.container}
         {...containerConfig}
       >
-        {!isLoading && (
+        {(!isLoading || !Boolean(processInfo)) && (
           <Button
             className={cx(styles[`${btnSize}`], className)}
             isLoading={isLoading}
@@ -50,6 +50,19 @@ const FiledButton: React.FC<FiledButtonProps> = (props) => {
             {children}
           </Button>
         )}
+
+        {/* {!isLoading && !Boolean(processInfo) && (
+          <Button
+            className={cx(styles[`${btnSize}`], className)}
+            isLoading={isLoading}
+            w={'100%'}
+            loadingText={loadingText || 'Processing'}
+            display={}
+            {...otherProps}
+          >
+            {children}
+          </Button>
+        )} */}
       </Flex>
     </>
   );

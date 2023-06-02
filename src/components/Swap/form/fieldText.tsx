@@ -13,7 +13,7 @@ import {
 } from '@chakra-ui/react';
 
 import styles from './styles.module.scss';
-import React from "react";
+import React from 'react';
 
 interface FieldTextProps {
   input?: any;
@@ -51,6 +51,8 @@ const FieldText = (props: FieldTextProps) => {
 
   const isError = meta.error && meta.touched;
 
+  console.log(error, touched, shouldShowError);
+
   const hasAppend = appendComp;
 
   const handleChange = (e: any) => {
@@ -75,7 +77,7 @@ const FieldText = (props: FieldTextProps) => {
         </Flex>
       )}
       <InputGroup
-        borderStyle={"solid"}
+        borderStyle={'solid'}
         borderWidth={1}
         borderColor={shouldShowError ? 'brand.danger.400' : borderColor}
         borderRadius={8}

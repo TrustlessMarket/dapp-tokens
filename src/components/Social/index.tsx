@@ -1,26 +1,23 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { colors } from '@/theme/colors';
-import { Flex } from '@chakra-ui/react';
+import {Flex} from '@chakra-ui/react';
 import React from 'react';
-import {
-  FaDiscord,
-  FaInstagram,
-  FaMedium,
-  FaTelegram,
-  FaTwitter,
-} from 'react-icons/fa';
-import { RiEarthFill } from 'react-icons/ri';
-import { StyledSocial } from './Social.styled';
+import {FaDiscord, FaInstagram, FaMedium, FaTelegram, FaTwitter,} from 'react-icons/fa';
+import {RiEarthFill} from 'react-icons/ri';
+import {StyledSocial} from './Social.styled';
+import {colors} from '@/theme/colors';
 
 interface SocialTokenProps {
   socials?: any;
+  theme?: 'light' | 'dark';
   isShowEmpty?: boolean;
 }
 
 const SocialToken: React.FC<SocialTokenProps> = ({
   socials,
+  theme = 'dark',
   isShowEmpty = false,
 }) => {
+  const color = theme === 'light' ? colors.dark : colors.white;
   return (
     <StyledSocial
       className={'social-container'}
@@ -32,7 +29,7 @@ const SocialToken: React.FC<SocialTokenProps> = ({
           onClick={() => window.open(socials?.twitter, '_blank')}
           className="item-social"
         >
-          <FaTwitter fontSize={'20px'} style={{ color: colors.white }} />
+          <FaTwitter fontSize={'20px'} style={{ color }} />
         </Flex>
       )}
       {socials?.discord && (
@@ -40,7 +37,7 @@ const SocialToken: React.FC<SocialTokenProps> = ({
           onClick={() => window.open(socials?.discord, '_blank')}
           className="item-social"
         >
-          <FaDiscord fontSize={'20px'} style={{ color: colors.white }} />
+          <FaDiscord fontSize={'20px'} style={{ color }} />
         </Flex>
       )}
       {socials?.telegram && (
@@ -48,7 +45,7 @@ const SocialToken: React.FC<SocialTokenProps> = ({
           onClick={() => window.open(socials?.telegram, '_blank')}
           className="item-social"
         >
-          <FaTelegram fontSize={'20px'} style={{ color: colors.white }} />
+          <FaTelegram fontSize={'20px'} style={{ color }} />
         </Flex>
       )}
       {socials?.medium && (
@@ -56,7 +53,7 @@ const SocialToken: React.FC<SocialTokenProps> = ({
           onClick={() => window.open(socials?.medium, '_blank')}
           className="item-social"
         >
-          <FaMedium fontSize={'20px'} style={{ color: colors.white }} />
+          <FaMedium fontSize={'20px'} style={{ color }} />
         </Flex>
       )}
       {socials?.website && (
@@ -64,7 +61,7 @@ const SocialToken: React.FC<SocialTokenProps> = ({
           onClick={() => window.open(socials?.website, '_blank')}
           className="item-social"
         >
-          <RiEarthFill fontSize={'20px'} style={{ color: colors.white }} />
+          <RiEarthFill fontSize={'20px'} style={{ color }} />
         </Flex>
       )}
       {socials?.instagram && (
@@ -72,7 +69,7 @@ const SocialToken: React.FC<SocialTokenProps> = ({
           onClick={() => window.open(socials?.instagram, '_blank')}
           className="item-social"
         >
-          <FaInstagram fontSize={'20px'} style={{ color: colors.white }} />
+          <FaInstagram fontSize={'20px'} style={{ color }} />
         </Flex>
       )}
     </StyledSocial>

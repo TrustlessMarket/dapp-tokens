@@ -5,6 +5,7 @@ export const PAGE_LOADING = 'PAGE_LOADING';
 export const PAGE_ENTER = 'PAGE_ENTER';
 
 export const BRIDGE_SUPPORT_TOKEN = ['WBTC', 'WETH'];
+export const COMMON_TOKEN = ['BUTT', 'NAKA', 'DEV'];
 
 export const WBTC_ADDRESS = isDevelop()
   ? '0x435bdab1bcB2fcf80e5cF47dba209E28c340c3Bf'
@@ -38,5 +39,8 @@ export const TRUSTLESS_GASSTATION = 'https://tcgasstation.com/';
 export const TRUSTLESS_BRIDGE = 'https://trustlessbridge.io/';
 export const TRUSTLESS_COMPUTER = 'https://trustless.computer/';
 export const GENERATIVE_DISCORD = 'https://generative.xyz/discord';
+
+export const TOKEN_ICON_DEFAULT =
+  'https://cdn.trustless.computer/upload/1683530065704444020-1683530065-default-coin.svg';
 
 export const DEFAULT_GAS_PRICE = 1e9;

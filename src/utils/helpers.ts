@@ -6,6 +6,7 @@ import camelCase from 'lodash/camelCase';
 import { formatCurrency } from './string';
 import { random } from 'lodash';
 import { DEFAULT_GAS_PRICE } from '@/constants/common';
+import web3 from 'web3';
 
 export function isAddress(value: string): string | false {
   try {
@@ -79,4 +80,8 @@ export const abbreviateNumber = (value: any) => {
 
 export const getDefaultGasPrice = () => {
   return random(35, 45) * DEFAULT_GAS_PRICE;
+};
+
+export const getLiquidityRatio = (ratio: any) => {
+  return new BigNumber(web3.utils.toWei(ratio).toString()).dividedBy(10000);
 };
