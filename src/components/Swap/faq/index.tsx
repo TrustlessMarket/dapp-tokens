@@ -5,20 +5,21 @@ import styles from './styles.module.scss'
 import IconPlusToMinus from "@/components/Swap/iconPlusToMinus";
 import cx from 'classnames';
 import Empty from "@/components/Empty";
+import px2rem from "@/utils/px2rem";
 
 const Item = ({ data } : {data: any}) => {
   const [open, setOpen] = useState(false)
 
   return (
     <Accordion allowToggle onChange={i => setOpen(i === 0)}>
-      <AccordionItem border='none' borderRadius={12} w={['100%', '100%']} bgColor='#1E1E22'>
-        <AccordionButton px={[6,6]} pt={6} pb={open ? 4 : 6}>
-          <Flex w='100%' alignItems='center'>
-            <IconPlusToMinus open={open} size='16px' color='#1b77fd' />
-            <Text ml={6} fontSize='lg' fontWeight='medium' textAlign={"left"} className={cx('faq-question')}>{data?.q}</Text>
+      <AccordionItem border='none'  w={['100%', '100%']}>
+        <AccordionButton px={0} pt={6} pb={open ? 4 : 6}>
+          <Flex w='100%' alignItems='center' justifyContent={"space-between"}>
+            <Text fontSize={px2rem(20)} fontWeight='medium' textAlign={"left"} className={cx('faq-question')}>{data?.q}</Text>
+            <IconPlusToMinus open={open} size='16px' color='#FFFFFF'/>
           </Flex>
         </AccordionButton>
-        <AccordionPanel pl={16} pr={6} pb={6} style={{paddingTop: '0'}}>
+        <AccordionPanel px={0} pb={6} style={{paddingTop: '0'}}>
           <Box className={cx(styles.answer, 'faq-answer')} color='text.secondary' fontSize='sm' dangerouslySetInnerHTML={{ __html: data?.a }} />
         </AccordionPanel>
       </AccordionItem>
@@ -33,18 +34,21 @@ const Section = ({title, data}: {title?: any, data: any}) => {
 
   return (
       <Flex direction='column' w={"100%"}>
-        {title && <Text fontSize='lg' fontWeight='medium' textAlign={"left"}>{title}</Text>}
-        <Flex gap={2} direction='column' mt={4}>
+        {title && <Text fontSize='lg' fontWeight='medium' textAlign={"left"} mb={4}>{title}</Text>}
+        <Flex gap={2} direction='column' py={6} px={12}>
           {renderData.map((e: any , i: number ) => <Item key={i} data={e} />)}
         </Flex>
         {
           data?.length > 5 && (
             <Button
-              color={"#FFFFFF"} mt={4} fontSize='md' fontWeight='medium'
-              variant={"outline"} borderRadius={"8px"} h={"56px"}
-              border={"1px solid #1b77fd"}
+              color={"#FFFFFF"} mt={4} mb={4} fontSize='md' fontWeight='medium'
+              // variant={"outline"} borderRadius={"8px"} h={"56px"}
+              // border={"1px solid #1b77fd"}
+              backgroundImage={"none"}
               _hover={{
-                backgroundColor: '#1E1E22',
+              }}
+              _focusVisible={{
+                boxShadow: 'none'
               }}
               onClick={() => setViewAll(!viewAll)}>{viewAll ? 'View Less' : 'View All'}
             </Button>
