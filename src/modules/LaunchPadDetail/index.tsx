@@ -15,7 +15,6 @@ import {useRouter} from 'next/router';
 import React, {useEffect, useState} from 'react';
 import IdoFaqs from './faqs';
 import styles from './styles.module.scss';
-import Intro from "@/modules/LaunchPadDetail/aboveTheFold/intro";
 import px2rem from "@/utils/px2rem";
 import SectionContainer from "@/components/Swap/sectionContainer";
 
