@@ -17,7 +17,7 @@ const IdoFaqs = ({poolDetail}: any) => {
     return [];
   }, [poolDetail?.qandA]);
 
-  return (
+  return data?.length > 0 && (
     <Box className={styles.container}>
       <Faq data={data}/>
     </Box>
