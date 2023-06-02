@@ -385,16 +385,16 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             {formatCurrency(poolDetail?.goalBalance || 0)} {liquidityToken?.symbol}
           </StatNumber>
         </Stat>
-        {
-          Number(poolDetail?.thresholdBalance || 0) > 0 && (
-            <Stat className={styles.infoColumn} textAlign={'left'}>
-              <StatLabel>Hard Cap</StatLabel>
-              <StatNumber>
-                {formatCurrency(poolDetail?.thresholdBalance || 0)} {liquidityToken?.symbol}
-              </StatNumber>
-            </Stat>
-          )
-        }
+        <Stat className={styles.infoColumn} textAlign={'left'}>
+          <StatLabel>Hard Cap</StatLabel>
+          <StatNumber>
+            {
+              Number(poolDetail?.thresholdBalance || 0) > 0 ? (
+                <>{formatCurrency(poolDetail?.thresholdBalance || 0)} {liquidityToken?.symbol}</>
+              ) : ('N/A')
+            }
+          </StatNumber>
+        </Stat>
       </Flex>
       {
         ![LAUNCHPAD_STATUS.Pending].includes(status.key) && (
