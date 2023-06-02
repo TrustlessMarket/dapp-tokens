@@ -24,11 +24,10 @@ import useApproveERC20Token from '@/hooks/contract-operations/token/useApproveER
 import useBalanceERC20Token from '@/hooks/contract-operations/token/useBalanceERC20Token';
 import useIsApproveERC20Token from '@/hooks/contract-operations/token/useIsApproveERC20Token';
 import useContractOperation from '@/hooks/contract-operations/useContractOperation';
-import useCountDownTimer from '@/hooks/useCountdown';
 import {ILaunchpad} from '@/interfaces/launchpad';
 import {IToken} from '@/interfaces/token';
 import {TransactionStatus} from '@/interfaces/walletTransaction';
-import {LAUNCHPAD_STATUS, useLaunchPadStatus,} from '@/modules/Launchpad/Launchpad.Status';
+import {LAUNCHPAD_STATUS, LaunchpadLabelStatus, useLaunchPadStatus,} from '@/modules/Launchpad/Launchpad.Status';
 import {getLaunchpadUserDepositInfo, getUserBoost} from '@/services/launchpad';
 import {logErrorToServer} from '@/services/swap';
 import {useAppDispatch, useAppSelector} from '@/state/hooks';
@@ -688,13 +687,23 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       <Flex justifyContent={'flex-end'} mt={4}>
         <SocialToken socials={poolDetail?.launchpadToken?.social} />
       </Flex>
-      <Text mt={4} fontSize={px2rem(16)} fontWeight={'400'} color={'#FFFFFF'}>
-        All or nothing. This project will only be funded if it reaches its goal by{' '}
-        <Text as={'span'} color={'#FF7E21'}>
-          {moment.utc(poolDetail?.launchEnd).format('ddd, MMMM Do YYYY HH:mm:ss Z')}
-        </Text>
-        .
-      </Text>
+      {
+        [
+          LaunchpadLabelStatus.draft.key, LAUNCHPAD_STATUS.Pending,
+        ].includes(status.key) ? (
+          <Text mt={4} fontSize={px2rem(16)} fontWeight={'400'} color={'#FFFFFF'}>
+            This project requires community votes to initiate crowdfunding. Please prepare your TM token to participate in the voting process.
+          </Text>
+        ) : (
+          <Text mt={4} fontSize={px2rem(16)} fontWeight={'400'} color={'#FFFFFF'}>
+            All or nothing. This project will only be funded if it reaches its goal by{' '}
+            <Text as={'span'} color={'#FF7E21'}>
+              {moment.utc(poolDetail?.launchEnd).format('ddd, MMMM Do YYYY HH:mm:ss Z')}
+            </Text>
+            .
+          </Text>
+        )
+      }
     </form>
   );
 });
