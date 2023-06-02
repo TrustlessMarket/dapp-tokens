@@ -19,6 +19,7 @@ import web3 from 'web3';
 import LaunchpadFormStep1 from './LaunchpadFormStep1';
 import LaunchpadFormStep2 from './LaunchpadFormStep2';
 import LaunchpadManageHeader from './header';
+import { getLiquidityRatio } from '@/utils';
 
 export interface LaunchpadManageFormContainerProps {
   loading: boolean;
@@ -207,7 +208,7 @@ const LaunchpadManageFormContainer: React.FC<LaunchpadManageFormContainerProps> 
         launchpadTokenArg: detail.launchpadToken,
         liquidityTokenArg: detail.liquidityToken,
         launchpadBalance: detail.launchpadBalance,
-        liquidityRatioArg: detail.liquidityRatio,
+        liquidityRatioArg: getLiquidityRatio(detail.liquidityRatio),
         goalBalance: detail.goalBalance,
         liquidityBalance: detail.liquidityBalance,
         startTimeArg: new Date(detail.launchStart),
