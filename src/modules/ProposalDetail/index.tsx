@@ -78,7 +78,7 @@ const IdoDetailContainer = () => {
       <SectionContainer>
         <Tabs className={cx(styles.tabContainer)} variant='soft-rounded'>
           <TabList mb={6} mt={6}>
-            <Tab>INFORMATION</Tab>
+            <Tab>STORY</Tab>
             <Tab>FAQS</Tab>
           </TabList>
           <TabPanels>
