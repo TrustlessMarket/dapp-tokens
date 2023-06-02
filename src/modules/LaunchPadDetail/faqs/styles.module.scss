@@ -1,7 +1,11 @@
 .container {
-  margin: 4rem auto;
+  //margin: 4rem auto;
   //width: 744px;
   align-self: center;
+  background: #1E1E22;
+  border: 1px solid #353945;
+  box-shadow: 0px 5px 16px rgba(8, 15, 52, 0.06);
+  border-radius: 12px;
 
   :global {
     .chakra-heading {
@@ -13,23 +17,30 @@
     }
 
     .faq-answer {
-      color: #FFFFFF;
+      color: rgba(255, 255, 255, 0.7);
 
       p {
         color: inherit;
       }
     }
 
+    .chakra-accordion {
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
     .chakra-accordion__button {
-      background-color: #1E1E22;
+      background-color: transparent;
 
       &:hover {
-        background-color: #1E1E33;
+        background-color: transparent;
+      }
+      &:focus-visible {
+        box-shadow: none;
       }
     }
 
     .chakra-accordion__panel {
-      background-color: #1E1E22;
+      background-color: transparent;
     }
   }
 
