@@ -10,7 +10,6 @@ import {TOKEN_ICON_DEFAULT} from '@/constants/common';
 import {ROUTE_PATH} from '@/constants/route-path';
 import {ILaunchpad} from '@/interfaces/launchpad';
 import {IToken} from '@/interfaces/token';
-import ProposalStatus, {PROPOSAL_STATUS,} from '@/modules/Proposal/Proposal.Status';
 import {getListLaunchpad} from '@/services/launchpad';
 import {useAppSelector} from '@/state/hooks';
 import {selectPnftExchange} from '@/state/pnftExchange';
@@ -27,7 +26,7 @@ import {BsBoxArrowUpRight, BsPencil} from 'react-icons/bs';
 import {ImClock2} from 'react-icons/im';
 import {useDispatch} from 'react-redux';
 import web3 from 'web3';
-import LaunchpadStatus, {LaunchpadLabelStatus, useLaunchPadStatus,} from './Launchpad.Status';
+import LaunchpadStatus, {LAUNCHPAD_STATUS, LaunchpadLabelStatus, useLaunchPadStatus,} from './Launchpad.Status';
 import {StyledIdoContainer} from './Launchpad.styled';
 
 const LaunchpadContainer = () => {
@@ -54,15 +53,6 @@ const LaunchpadContainer = () => {
     } finally {
       setLoading(false);
     }
-  };
-
-  const checkIsProposal = (row: ILaunchpad) => {
-    return (
-      row?.proposalId &&
-      [PROPOSAL_STATUS.Pending, PROPOSAL_STATUS.Active].includes(
-        row?.userProposal?.state,
-      )
-    );
   };
 
   const columns: ColumnProp[] = useMemo(() => {
@@ -343,12 +333,7 @@ const LaunchpadContainer = () => {
           borderBottom: 'none',
         },
         render(row: ILaunchpad) {
-          const isProposal = checkIsProposal(row);
-          if (isProposal) {
-            return <ProposalStatus row={row?.userProposal} />;
-          } else {
-            return <LaunchpadStatus row={row} />;
-          }
+          return <LaunchpadStatus row={row} />;
         },
       },
       {
@@ -379,12 +364,9 @@ const LaunchpadContainer = () => {
           borderBottom: 'none',
         },
         render(row: ILaunchpad) {
-          const isProposal = checkIsProposal(row);
-
           if (
             compareString(row.creatorAddress, account) &&
-            (!row?.proposalId ||
-              moment(row?.userProposal?.voteStart).unix() > moment().unix())
+            [LAUNCHPAD_STATUS.Pending].includes(row?.state)
           ) {
             return (
               <Flex alignItems={'center'} gap={4}>
@@ -419,7 +401,7 @@ const LaunchpadContainer = () => {
                     </Box>
                   </InfoTooltip>
                 )}
-              {isProposal && (
+              {[LAUNCHPAD_STATUS.Voting].includes(row?.state) && (
                 <InfoTooltip label={'Proposal Detail'}>
                   <Box
                     cursor={'pointer'}
