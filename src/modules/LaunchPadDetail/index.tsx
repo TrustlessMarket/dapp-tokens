@@ -73,7 +73,7 @@ const IdoDetailContainer = () => {
     <Box className={styles.wrapper}>
       <AboveTheFold poolDetail={poolDetail}/>
       <SectionContainer>
-        <Tabs className={cx(styles.tabContainer)} variant='soft-rounded'>
+        <Tabs className={cx(styles.tabContainer)}>
           <TabList mb={6} mt={6}>
             <Tab>STORY</Tab>
             <Tab>FAQS</Tab>
