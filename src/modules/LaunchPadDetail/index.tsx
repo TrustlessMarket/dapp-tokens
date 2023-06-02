@@ -15,7 +15,6 @@ import {useRouter} from 'next/router';
 import React, {useEffect, useState} from 'react';
 import IdoFaqs from './faqs';
 import styles from './styles.module.scss';
-import Intro from "@/modules/LaunchPadDetail/aboveTheFold/intro";
 import px2rem from "@/utils/px2rem";
 import SectionContainer from "@/components/Swap/sectionContainer";
 
@@ -74,16 +73,13 @@ const IdoDetailContainer = () => {
     <Box className={styles.wrapper}>
       <AboveTheFold poolDetail={poolDetail}/>
       <SectionContainer>
-        <Tabs className={cx(styles.tabContainer)} variant='soft-rounded'>
+        <Tabs className={cx(styles.tabContainer)}>
           <TabList mb={6} mt={6}>
-            <Tab>INFORMATION</Tab>
+            <Tab>STORY</Tab>
             <Tab>FAQS</Tab>
           </TabList>
           <TabPanels>
             <TabPanel>
-              <Box h={"738px"}>
-                <Intro poolDetail={poolDetail}/>
-              </Box>
               <Text fontSize={px2rem(24)} fontWeight={"500"} color={"#FFFFFF"} mt={8}>Description</Text>
               <Box mt={8}></Box>
               <IdoDescription poolDetail={poolDetail}/>

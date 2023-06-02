@@ -18,6 +18,7 @@ export interface ILaunchpad {
   liquidityBalance: string;
   liquidityRatio: string;
   goalBalance: string;
+  thresholdBalance: string;
   liquidityTokenAddress: string;
   lpTokenReleaseTime: string;
   protocolRatio: string;

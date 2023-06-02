@@ -76,9 +76,9 @@ const IdoDetailContainer = () => {
     <Box className={styles.wrapper}>
       <AboveTheFold proposalDetail={proposalDetail}/>
       <SectionContainer>
-        <Tabs className={cx(styles.tabContainer)} variant='soft-rounded'>
+        <Tabs className={cx(styles.tabContainer)}>
           <TabList mb={6} mt={6}>
-            <Tab>INFORMATION</Tab>
+            <Tab>STORY</Tab>
             <Tab>FAQS</Tab>
           </TabList>
           <TabPanels>

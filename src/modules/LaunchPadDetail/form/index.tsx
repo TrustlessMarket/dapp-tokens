@@ -4,7 +4,7 @@
 import CountDownTimer from '@/components/Countdown';
 import ModalConfirmApprove from '@/components/ModalConfirmApprove';
 import SocialToken from '@/components/Social';
-import { transactionType } from '@/components/Swap/alertInfoProcessing/types';
+import {transactionType} from '@/components/Swap/alertInfoProcessing/types';
 import FiledButton from '@/components/Swap/button/filedButton';
 import FieldAmount from '@/components/Swap/form/fieldAmount';
 import InputWrapper from '@/components/Swap/form/inputWrapper';
@@ -12,14 +12,10 @@ import HorizontalItem from '@/components/Swap/horizontalItem';
 import InfoTooltip from '@/components/Swap/infoTooltip';
 import TokenBalance from '@/components/Swap/tokenBalance';
 import WrapperConnected from '@/components/WrapperConnected';
-import { CDN_URL } from '@/configs';
-import {
-  BRIDGE_SUPPORT_TOKEN,
-  TRUSTLESS_BRIDGE,
-  TRUSTLESS_FAUCET,
-} from '@/constants/common';
-import { toastError } from '@/constants/error';
-import { AssetsContext } from '@/contexts/assets-context';
+import {CDN_URL} from '@/configs';
+import {BRIDGE_SUPPORT_TOKEN, TRUSTLESS_BRIDGE, TRUSTLESS_FAUCET,} from '@/constants/common';
+import {toastError} from '@/constants/error';
+import {AssetsContext} from '@/contexts/assets-context';
 import useClaimLaunchPad from '@/hooks/contract-operations/launchpad/useClaim';
 import useDepositPool from '@/hooks/contract-operations/launchpad/useDeposit';
 import useEndLaunchPad from '@/hooks/contract-operations/launchpad/useEnd';
@@ -29,63 +25,44 @@ import useBalanceERC20Token from '@/hooks/contract-operations/token/useBalanceER
 import useIsApproveERC20Token from '@/hooks/contract-operations/token/useIsApproveERC20Token';
 import useContractOperation from '@/hooks/contract-operations/useContractOperation';
 import useCountDownTimer from '@/hooks/useCountdown';
-import { ILaunchpad } from '@/interfaces/launchpad';
-import { IToken } from '@/interfaces/token';
-import { TransactionStatus } from '@/interfaces/walletTransaction';
-import {
-  LAUNCHPAD_STATUS,
-  useLaunchPadStatus,
-} from '@/modules/Launchpad/Launchpad.Status';
-import { getLaunchpadUserDepositInfo, getUserBoost } from '@/services/launchpad';
-import { logErrorToServer } from '@/services/swap';
-import { useAppDispatch, useAppSelector } from '@/state/hooks';
-import { closeModal, openModal } from '@/state/modal';
+import {ILaunchpad} from '@/interfaces/launchpad';
+import {IToken} from '@/interfaces/token';
+import {TransactionStatus} from '@/interfaces/walletTransaction';
+import {LAUNCHPAD_STATUS, useLaunchPadStatus,} from '@/modules/Launchpad/Launchpad.Status';
+import {getLaunchpadUserDepositInfo, getUserBoost} from '@/services/launchpad';
+import {logErrorToServer} from '@/services/swap';
+import {useAppDispatch, useAppSelector} from '@/state/hooks';
+import {closeModal, openModal} from '@/state/modal';
 import {
   requestReload,
   requestReloadRealtime,
   selectPnftExchange,
   updateCurrentTransaction,
 } from '@/state/pnftExchange';
-import { getIsAuthenticatedSelector } from '@/state/user/selector';
-import { colors } from '@/theme/colors';
-import { abbreviateNumber, formatCurrency } from '@/utils';
-import { composeValidators, required } from '@/utils/formValidate';
+import {getIsAuthenticatedSelector} from '@/state/user/selector';
+import {colors} from '@/theme/colors';
+import {abbreviateNumber, formatCurrency} from '@/utils';
+import {composeValidators, required} from '@/utils/formValidate';
 import px2rem from '@/utils/px2rem';
-import { showError } from '@/utils/toast';
-import {
-  Box,
-  Center,
-  Flex,
-  Progress,
-  Stat,
-  StatLabel,
-  StatNumber,
-  Text,
-  forwardRef,
-} from '@chakra-ui/react';
-import { useWindowSize } from '@trustless-computer/dapp-core';
-import { useWeb3React } from '@web3-react/core';
+import {showError} from '@/utils/toast';
+import {Box, Center, Flex, forwardRef, Progress, Stat, StatLabel, StatNumber, Text,} from '@chakra-ui/react';
+import {useWindowSize} from '@trustless-computer/dapp-core';
+import {useWeb3React} from '@web3-react/core';
 import BigNumber from 'bignumber.js';
 import cx from 'classnames';
 import debounce from 'lodash/debounce';
 import moment from 'moment';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
-import {
-  useCallback,
-  useContext,
-  useEffect,
-  useImperativeHandle,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
-import { Field, Form, useForm, useFormState } from 'react-final-form';
+import {useRouter} from 'next/router';
+import {useCallback, useContext, useEffect, useImperativeHandle, useMemo, useRef, useState,} from 'react';
+import {Field, Form, useForm, useFormState} from 'react-final-form';
 import toast from 'react-hot-toast';
-import { BiBell } from 'react-icons/bi';
-import { useDispatch, useSelector } from 'react-redux';
+import {BiBell} from 'react-icons/bi';
+import {useDispatch, useSelector} from 'react-redux';
 import Web3 from 'web3';
 import styles from './styles.module.scss';
+import useIsAbleEnd from "@/hooks/contract-operations/launchpad/useIsAbleEnd";
+import useIsAbleClose from "@/hooks/contract-operations/launchpad/useIsAbleClose";
 
 const FEE = 2;
 export const MakeFormSwap = forwardRef((props, ref) => {
@@ -98,8 +75,8 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     isClaimLaunchpad,
   } = props;
   const [loading, setLoading] = useState(false);
-  const [baseToken, setBaseToken] = useState<any>();
-  const [quoteToken, setQuoteToken] = useState<any>();
+  const [liquidityToken, setLiquidityToken] = useState<any>();
+  const [launchpadToken, setLaunchpadToken] = useState<any>();
   const [amountBaseTokenApproved, setAmountBaseTokenApproved] = useState('0');
   const { call: isApproved } = useIsApproveERC20Token();
   const { call: tokenBalance } = useBalanceERC20Token();
@@ -114,28 +91,11 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const needReload = useAppSelector(selectPnftExchange).needReload;
   const [boostInfo, setBoostInfo] = useState<any>();
 
-  const [endTime, setEndTime] = useState(0);
-  const [days, hours, minutes, seconds, expired] = useCountDownTimer(
-    moment.unix(endTime).format('YYYY/MM/DD HH:mm:ss'),
-  );
-
   const [status] = useLaunchPadStatus({ row: poolDetail });
-
-  useEffect(() => {
-    if (poolDetail?.id) {
-      setEndTime(moment(poolDetail?.launchEnd).unix());
-    }
-  }, [poolDetail?.id]);
-
-  useEffect(() => {
-    if (expired && endTime) {
-      dispatch(requestReload());
-    }
-  }, [expired]);
 
   const { values } = useFormState();
   const { change, restart } = useForm();
-  const btnDisabled = loading || !baseToken;
+  const btnDisabled = loading || !liquidityToken;
   // const isRequireApprove =
   //   isAuthenticated &&
   //   new BigNumber(amountBaseTokenApproved || 0).lt(
@@ -228,8 +188,8 @@ export const MakeFormSwap = forwardRef((props, ref) => {
 
   useEffect(() => {
     if (poolDetail?.id) {
-      setBaseToken(poolDetail?.liquidityToken);
-      setQuoteToken(poolDetail?.launchpadToken);
+      setLiquidityToken(poolDetail?.liquidityToken);
+      setLaunchpadToken(poolDetail?.launchpadToken);
       change('baseToken', poolDetail?.liquidityToken);
       change('quoteToken', poolDetail?.launchpadToken);
     }
@@ -240,10 +200,10 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   }, [baseBalance]);
 
   useEffect(() => {
-    if (account && baseToken?.address) {
-      checkApproveBaseToken(baseToken);
+    if (account && liquidityToken?.address) {
+      checkApproveBaseToken(liquidityToken);
     }
-  }, [account, baseToken?.address]);
+  }, [account, liquidityToken?.address]);
 
   const checkApproveBaseToken = async (token: any) => {
     const [_isApprove] = await Promise.all([checkTokenApprove(token)]);
@@ -365,7 +325,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       openModal({
         id,
         theme: 'dark',
-        title: `APPROVE USE OF ${baseToken?.symbol}`,
+        title: `APPROVE USE OF ${liquidityToken?.symbol}`,
         className: styles.modalContent,
         modalProps: {
           centered: true,
@@ -382,8 +342,8 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const onApprove = async () => {
     try {
       setLoading(true);
-      await requestApproveToken(baseToken);
-      checkApproveBaseToken(baseToken);
+      await requestApproveToken(liquidityToken);
+      checkApproveBaseToken(liquidityToken);
 
       // toast.success('Transaction has been created. You can swap now!');
     } catch (err: any) {
@@ -401,46 +361,58 @@ export const MakeFormSwap = forwardRef((props, ref) => {
 
   return (
     <form onSubmit={onSubmit} style={{ height: '100%' }}>
-      <Flex direction={'column'}>
-        <Flex justifyContent={'space-between'}>
-          <Stat className={styles.infoColumn}>
-            <StatLabel>Funded</StatLabel>
-            <StatNumber>
-              <InfoTooltip
-                label={`$${formatCurrency(poolDetail?.totalValueUsd || 0, 2)}`}
-              >
-                <Flex gap={1} alignItems={'center'}>
-                  <Text>
-                    {formatCurrency(poolDetail?.totalValue || 0)} {baseToken?.symbol}
-                  </Text>
-                  <Text fontSize={'20px'} fontWeight={'400'}>
-                    ({formatCurrency(percent, 2)}% funded)
-                  </Text>
-                </Flex>
-              </InfoTooltip>
-            </StatNumber>
-          </Stat>
-          <Stat className={styles.infoColumn} textAlign={'left'}>
-            <StatLabel>Target</StatLabel>
-            <StatNumber>
-              {formatCurrency(poolDetail?.goalBalance || 0)} {baseToken?.symbol}
-            </StatNumber>
-          </Stat>
-        </Flex>
-        <Box className={styles.progressBar} mt={4}>
-          <Progress
-            w={['100%', '100%']}
-            h="10px"
-            value={percent}
-            borderRadius={20}
-          ></Progress>
-          {/*<Image src={fireImg} className={styles.fireImg} />*/}
-        </Box>
+      <Flex justifyContent={'space-between'}>
+        <Stat className={styles.infoColumn}>
+          <StatLabel>Funded</StatLabel>
+          <StatNumber>
+            <InfoTooltip
+              label={`$${formatCurrency(poolDetail?.totalValueUsd || 0, 2)}`}
+            >
+              <Flex gap={1} alignItems={'center'}>
+                <Text>
+                  {formatCurrency(poolDetail?.totalValue || 0)} {liquidityToken?.symbol}
+                </Text>
+                <Text fontSize={'20px'} fontWeight={'400'}>
+                  ({formatCurrency(percent, 2)}% funded)
+                </Text>
+              </Flex>
+            </InfoTooltip>
+          </StatNumber>
+        </Stat>
+        <Stat className={styles.infoColumn} textAlign={'left'}>
+          <StatLabel>Target</StatLabel>
+          <StatNumber>
+            {formatCurrency(poolDetail?.goalBalance || 0)} {liquidityToken?.symbol}
+          </StatNumber>
+        </Stat>
+        {
+          Number(poolDetail?.thresholdBalance || 0) > 0 && (
+            <Stat className={styles.infoColumn} textAlign={'left'}>
+              <StatLabel>Hard Cap</StatLabel>
+              <StatNumber>
+                {formatCurrency(poolDetail?.thresholdBalance || 0)} {liquidityToken?.symbol}
+              </StatNumber>
+            </Stat>
+          )
+        }
       </Flex>
+      {
+        ![LAUNCHPAD_STATUS.Pending].includes(status.key) && (
+          <Box className={styles.progressBar} mt={4}>
+            <Progress
+              w={['100%', '100%']}
+              h="10px"
+              value={percent}
+              borderRadius={20}
+            ></Progress>
+            {/*<Image src={fireImg} className={styles.fireImg} />*/}
+          </Box>
+        )
+      }
       <Flex gap={0} color={'#FFFFFF'} mt={8} direction={'column'}>
         <Flex gap={6} justifyContent={'space-between'}>
           <Stat className={styles.infoColumn} flex={1}>
-            <StatLabel>Rewards</StatLabel>
+            <StatLabel>Reward pool</StatLabel>
             <StatNumber>
               {formatCurrency(poolDetail?.launchpadBalance || 0)}
             </StatNumber>
@@ -497,25 +469,25 @@ export const MakeFormSwap = forwardRef((props, ref) => {
               fieldChanged={onChangeValueBaseAmount}
               disabled={submitting}
               // placeholder={"Enter number of tokens"}
-              decimals={baseToken?.decimal || 18}
+              decimals={liquidityToken?.decimal || 18}
               className={styles.inputAmount}
               prependComp={
-                baseToken && (
+                liquidityToken && (
                   <Flex gap={1} alignItems={'center'} color={'#FFFFFF'} paddingX={2}>
                     <img
                       src={
-                        baseToken?.thumbnail ||
+                        liquidityToken?.thumbnail ||
                         `${CDN_URL}/upload/1683530065704444020-1683530065-default-coin.svg`
                       }
-                      alt={baseToken?.thumbnail || 'default-icon'}
+                      alt={liquidityToken?.thumbnail || 'default-icon'}
                       className={'avatar'}
                     />
-                    <Text fontSize={'sm'}>{baseToken?.symbol}</Text>
+                    <Text fontSize={'sm'}>{liquidityToken?.symbol}</Text>
                   </Flex>
                 )
               }
               appendComp={
-                baseToken && (
+                liquidityToken && (
                   <Flex gap={2} fontSize={px2rem(14)} color={'#FFFFFF'}>
                     <Flex
                       gap={1}
@@ -526,10 +498,10 @@ export const MakeFormSwap = forwardRef((props, ref) => {
                     >
                       Balance:
                       <TokenBalance
-                        token={baseToken}
+                        token={liquidityToken}
                         onBalanceChange={(_amount) => setBaseBalance(_amount)}
                       />
-                      {baseToken?.symbol}
+                      {liquidityToken?.symbol}
                     </Flex>
                     <Text
                       cursor={'pointer'}
@@ -621,8 +593,8 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         )}
       {isAuthenticated &&
         isStarting &&
-        baseToken &&
-        BRIDGE_SUPPORT_TOKEN.includes(baseToken?.symbol) &&
+        liquidityToken &&
+        BRIDGE_SUPPORT_TOKEN.includes(liquidityToken?.symbol) &&
         new BigNumber(baseBalance || 0).lte(0) && (
           <Flex gap={3} mt={2}>
             <Center
@@ -635,10 +607,10 @@ export const MakeFormSwap = forwardRef((props, ref) => {
               <BiBell color="#FF7E21" />
             </Center>
             <Text fontSize="sm" color="#FF7E21" textAlign={'left'}>
-              Insufficient {baseToken?.symbol} balance! Consider swapping your{' '}
-              {baseToken?.symbol?.replace('W', '')} to trustless network{' '}
+              Insufficient {liquidityToken?.symbol} balance! Consider swapping your{' '}
+              {liquidityToken?.symbol?.replace('W', '')} to trustless network{' '}
               <Link
-                href={`${TRUSTLESS_BRIDGE}${baseToken?.symbol
+                href={`${TRUSTLESS_BRIDGE}${liquidityToken?.symbol
                   ?.replace('W', '')
                   ?.toLowerCase()}`}
                 target={'_blank'}
@@ -667,7 +639,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
                 id: transactionType.createPoolApprove,
               }}
             >
-              APPROVE USE OF {baseToken?.symbol}
+              APPROVE USE OF {liquidityToken?.symbol}
             </FiledButton>
           ) : (
             <FiledButton
@@ -726,18 +698,29 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
     operation: useClaimLaunchPad,
   });
   const { call: isAbleRedeem } = useIsAbleRedeem();
+  const { call: isAbleEnd } = useIsAbleEnd();
+  const { call: isAbleClose } = useIsAbleClose();
 
   const { mobileScreen } = useWindowSize();
   const [status] = useLaunchPadStatus({ row: poolDetail });
   const [canClaim, setCanClaim] = useState(false);
+  const [canEnd, setCanEnd] = useState(false);
+  const [canClose, setCanClose] = useState(false);
   const [userDeposit, setUserDeposit] = useState<any>();
 
-  const canEnd = [
-    LAUNCHPAD_STATUS.NotPassed,
-    LAUNCHPAD_STATUS.Successful,
-    LAUNCHPAD_STATUS.Failed,
-    LAUNCHPAD_STATUS.End,
-  ].includes(status.key);
+  // console.log('poolDetail', poolDetail);
+  // console.log('canEnd', canEnd);
+  // console.log('canClaim', canClaim);
+  // console.log('canClose', canClose);
+  // console.log('userDeposit', userDeposit);
+  // console.log('=====');
+
+  // const canEnd = [
+  //   LAUNCHPAD_STATUS.NotPassed,
+  //   LAUNCHPAD_STATUS.Successful,
+  //   LAUNCHPAD_STATUS.Failed,
+  //   LAUNCHPAD_STATUS.End,
+  // ].includes(status.key);
 
   // const isClaimLaunchpad = [
   //   LAUNCHPAD_STATUS.Completed,
@@ -753,8 +736,14 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
   const fetchData = async () => {
     try {
       const response: any = await Promise.all([
+        isAbleEnd({
+          launchpad_address: poolDetail.launchpad,
+        }),
+        isAbleClose({
+          launchpad_address: poolDetail.launchpad,
+        }),
         isAbleRedeem({
-          owner_address: account,
+          user_address: account,
           launchpad_address: poolDetail.launchpad,
         }),
         getLaunchpadUserDepositInfo({
@@ -762,10 +751,12 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
           address: account,
         }),
       ]);
-      setCanClaim(response[0]);
-      setUserDeposit(response[1]);
+      setCanEnd(response[0]);
+      setCanClose(response[1]);
+      setCanClaim(response[2]);
+      setUserDeposit(response[3]);
     } catch (error) {
-      console.log('eeeee', error);
+      console.log('Launchpad detail form fetchData', error);
     }
   };
 
