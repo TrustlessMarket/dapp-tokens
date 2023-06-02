@@ -123,7 +123,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
 
   useEffect(() => {
     if (poolDetail?.id) {
-      setEndTime(moment(poolDetail?.endTime).unix());
+      setEndTime(moment(poolDetail?.launchEnd).unix());
     }
   }, [poolDetail?.id]);
 
@@ -470,9 +470,9 @@ export const MakeFormSwap = forwardRef((props, ref) => {
                   LAUNCHPAD_STATUS.Failed,
                   LAUNCHPAD_STATUS.End,
                 ].includes(status.key) ? (
-                  moment(poolDetail.endTime).format('LLL')
+                  moment(poolDetail.launchEnd).format('LLL')
                 ) : (
-                  <CountDownTimer end_time={poolDetail.endTime} />
+                  <CountDownTimer end_time={poolDetail.launchEnd} />
                 )}
               </Text>
             </StatNumber>
@@ -703,7 +703,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       <Text mt={4} fontSize={px2rem(16)} fontWeight={'400'} color={'#FFFFFF'}>
         All or nothing. This project will only be funded if it reaches its goal by{' '}
         <Text as={'span'} color={'#FF7E21'}>
-          {moment.utc(poolDetail?.endTime).format('ddd, MMMM Do YYYY HH:mm:ss Z')}
+          {moment.utc(poolDetail?.launchEnd).format('ddd, MMMM Do YYYY HH:mm:ss Z')}
         </Text>
         .
       </Text>
