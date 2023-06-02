@@ -106,7 +106,7 @@ const LaunchpadFormStep2: React.FC<ILaunchpadFormStep2> = ({
         validate={required}
         name="description"
         children={FieldMDEditor}
-        label="Description"
+        label="Story"
       />
     </StyledLaunchpadFormStep1>
   );

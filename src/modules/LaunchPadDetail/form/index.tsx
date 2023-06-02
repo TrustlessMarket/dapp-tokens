@@ -24,11 +24,10 @@ import useApproveERC20Token from '@/hooks/contract-operations/token/useApproveER
 import useBalanceERC20Token from '@/hooks/contract-operations/token/useBalanceERC20Token';
 import useIsApproveERC20Token from '@/hooks/contract-operations/token/useIsApproveERC20Token';
 import useContractOperation from '@/hooks/contract-operations/useContractOperation';
-import useCountDownTimer from '@/hooks/useCountdown';
 import {ILaunchpad} from '@/interfaces/launchpad';
 import {IToken} from '@/interfaces/token';
 import {TransactionStatus} from '@/interfaces/walletTransaction';
-import {LAUNCHPAD_STATUS, useLaunchPadStatus,} from '@/modules/Launchpad/Launchpad.Status';
+import {LAUNCHPAD_STATUS, LaunchpadLabelStatus, useLaunchPadStatus,} from '@/modules/Launchpad/Launchpad.Status';
 import {getLaunchpadUserDepositInfo, getUserBoost} from '@/services/launchpad';
 import {logErrorToServer} from '@/services/swap';
 import {useAppDispatch, useAppSelector} from '@/state/hooks';
@@ -385,16 +384,16 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             {formatCurrency(poolDetail?.goalBalance || 0)} {liquidityToken?.symbol}
           </StatNumber>
         </Stat>
-        {
-          Number(poolDetail?.thresholdBalance || 0) > 0 && (
-            <Stat className={styles.infoColumn} textAlign={'left'}>
-              <StatLabel>Hard Cap</StatLabel>
-              <StatNumber>
-                {formatCurrency(poolDetail?.thresholdBalance || 0)} {liquidityToken?.symbol}
-              </StatNumber>
-            </Stat>
-          )
-        }
+        <Stat className={styles.infoColumn} textAlign={'left'}>
+          <StatLabel>Hard Cap</StatLabel>
+          <StatNumber>
+            {
+              Number(poolDetail?.thresholdBalance || 0) > 0 ? (
+                <>{formatCurrency(poolDetail?.thresholdBalance || 0)} {liquidityToken?.symbol}</>
+              ) : ('N/A')
+            }
+          </StatNumber>
+        </Stat>
       </Flex>
       {
         ![LAUNCHPAD_STATUS.Pending].includes(status.key) && (
@@ -426,10 +425,18 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           <Stat className={styles.infoColumn} flex={1.5}>
             <StatLabel>
               {[
-                LAUNCHPAD_STATUS.NotPassed,
-                LAUNCHPAD_STATUS.Successful,
-                LAUNCHPAD_STATUS.Failed,
-                LAUNCHPAD_STATUS.End,
+                LAUNCHPAD_STATUS.Pending,
+              ].includes(status.key)
+                ? 'Voting will start in' :
+                [
+                  LAUNCHPAD_STATUS.Voting,
+                ].includes(status.key)
+                  ? 'Voting will end in' :
+                [
+                  LAUNCHPAD_STATUS.NotPassed,
+                  LAUNCHPAD_STATUS.Successful,
+                  LAUNCHPAD_STATUS.Failed,
+                  LAUNCHPAD_STATUS.End,
               ].includes(status.key)
                 ? 'Ended at'
                 : 'Ends in'}
@@ -437,6 +444,14 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             <StatNumber>
               <Text>
                 {[
+                  LAUNCHPAD_STATUS.Pending,
+                ].includes(status.key)
+                  ? <CountDownTimer end_time={poolDetail.voteStart} /> :
+                  [
+                    LAUNCHPAD_STATUS.Voting,
+                  ].includes(status.key)
+                    ? <CountDownTimer end_time={poolDetail.voteEnd} /> :
+                  [
                   LAUNCHPAD_STATUS.NotPassed,
                   LAUNCHPAD_STATUS.Successful,
                   LAUNCHPAD_STATUS.Failed,
@@ -672,13 +687,33 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       <Flex justifyContent={'flex-end'} mt={4}>
         <SocialToken socials={poolDetail?.launchpadToken?.social} />
       </Flex>
-      <Text mt={4} fontSize={px2rem(16)} fontWeight={'400'} color={'#FFFFFF'}>
-        All or nothing. This project will only be funded if it reaches its goal by{' '}
-        <Text as={'span'} color={'#FF7E21'}>
-          {moment.utc(poolDetail?.launchEnd).format('ddd, MMMM Do YYYY HH:mm:ss Z')}
-        </Text>
-        .
-      </Text>
+      {
+        [
+          LAUNCHPAD_STATUS.Pending,
+        ].includes(status.key) ? (
+          <Text mt={4} fontSize={px2rem(16)} fontWeight={'400'} color={'#FFFFFF'}>
+            This project requires community votes to initiate crowdfunding. Please prepare your TM token to participate in the voting process.
+          </Text>
+        ) :
+          [
+            LAUNCHPAD_STATUS.Voting,
+          ].includes(status.key) ? (
+            <Text mt={4} fontSize={px2rem(16)} fontWeight={'400'} color={'#FFFFFF'}>
+              If you enjoy this project, please show your support by voting for it.
+            </Text>
+          ) :
+            [
+              LAUNCHPAD_STATUS.Launching,
+            ].includes(status.key) ? (
+              <Text mt={4} fontSize={px2rem(16)} fontWeight={'400'} color={'#FFFFFF'}>
+                All or nothing. This project will only be funded if it reaches its goal by{' '}
+                <Text as={'span'} color={'#FF7E21'}>
+                  {moment.utc(poolDetail?.launchEnd).format('ddd, MMMM Do YYYY HH:mm:ss Z')}
+                </Text>
+                .
+              </Text>
+            ) : <></>
+      }
     </form>
   );
 });

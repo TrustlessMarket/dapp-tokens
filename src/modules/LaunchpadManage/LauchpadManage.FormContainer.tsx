@@ -11,7 +11,7 @@ import useIsApproveERC20Token from '@/hooks/contract-operations/token/useIsAppro
 import { ILaunchpad } from '@/interfaces/launchpad';
 import { IToken } from '@/interfaces/token';
 import { getListLiquidityToken, getListOwnerToken } from '@/services/launchpad';
-import { getLiquidityRatio } from '@/utils';
+import { camelCaseKeys, getLiquidityRatio } from '@/utils';
 import { useWeb3React } from '@web3-react/core';
 import BigNumber from 'bignumber.js';
 import React, { useEffect, useState } from 'react';
@@ -22,6 +22,7 @@ import LaunchpadFormStep2 from './LaunchpadFormStep2';
 import LaunchpadFormStep3 from './LaunchpadFormStep3';
 import LaunchpadManageHeader from './header';
 import LaunchpadFormStep4 from './LaunchpadFormStep4';
+import { useRouter } from 'next/router';
 
 export interface LaunchpadManageFormContainerProps {
   loading: boolean;
@@ -33,9 +34,9 @@ export interface LaunchpadManageFormContainerProps {
   error?: any;
 }
 
-export const steps = [{ title: 'Launchpad Information' }, { title: 'Story' }];
+export const steps = [{ title: 'Launchpad\nInformation' }, { title: 'Story' }];
 
-export const extra_steps = [{ title: 'FAQs' }, { title: 'Boost' }];
+export const extra_steps = [{ title: 'FAQs' }];
 
 const LaunchpadManageFormContainer: React.FC<LaunchpadManageFormContainerProps> = ({
   loading,
@@ -58,6 +59,7 @@ const LaunchpadManageFormContainer: React.FC<LaunchpadManageFormContainerProps> 
   const { values } = useFormState();
   const { change, initialize } = useForm();
   const { account, isActive } = useWeb3React();
+  const router = useRouter();
 
   const { call: isApproved } = useIsApproveERC20Token();
   const { call: approveToken } = useApproveERC20Token();
@@ -69,6 +71,8 @@ const LaunchpadManageFormContainer: React.FC<LaunchpadManageFormContainerProps> 
   const tokenSelected: IToken | undefined = values?.launchpadTokenArg;
 
   const cachedData = localStorage.getItem(LAUNCHPAD_FORM_STEP);
+
+  const id = router.query?.id;
 
   const checkTokenApprove = async (token: IToken | any) => {
     try {
@@ -172,9 +176,6 @@ const LaunchpadManageFormContainer: React.FC<LaunchpadManageFormContainerProps> 
   }, [isActive, account]);
 
   useEffect(() => {
-    initialize({
-      steps: refSteps,
-    });
     fetchData();
   }, []);
 
@@ -192,6 +193,8 @@ const LaunchpadManageFormContainer: React.FC<LaunchpadManageFormContainerProps> 
   ]);
 
   useEffect(() => {
+    console.log('cachedData', cachedData);
+
     if (cachedData && !detail) {
       const parseCachedData: any = JSON.parse(cachedData);
       const _values = parseCachedData.values || {};
@@ -204,15 +207,13 @@ const LaunchpadManageFormContainer: React.FC<LaunchpadManageFormContainerProps> 
 
       initialize({
         ..._values,
-        // launchpadTokenArg: _values?.launchpadTokenArg,
-        // liquidityTokenArg: _values?.liquidityTokenArg?.address,
       });
     }
   }, [cachedData, detail]);
 
   useEffect(() => {
     if (detail) {
-      const duration = new BigNumber(detail.duration).div(24).div(3600).toFixed(2);
+      const duration = new BigNumber(detail.duration).div(24).div(3600).toNumber();
 
       const _refSteps = steps.concat(extra_steps);
 
@@ -279,6 +280,15 @@ const LaunchpadManageFormContainer: React.FC<LaunchpadManageFormContainerProps> 
       console.log('error', error);
     }
   };
+
+  useEffect(() => {
+    if (!id && liquidTokens.length > 0) {
+      initialize({
+        liquidityTokenArg: camelCaseKeys(liquidTokens[0]),
+        steps: refSteps,
+      });
+    }
+  }, [liquidTokens]);
 
   const renderContentByStep = () => {
     switch (step) {

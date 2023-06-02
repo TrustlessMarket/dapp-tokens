@@ -54,6 +54,10 @@ const LaunchpadManage = () => {
     setMessageError('');
 
     try {
+      if (!values.liquidityTokenArg?.address) {
+        return toast.error(`Select Funding token, please.`);
+      }
+
       localStorage.setItem(
         LAUNCHPAD_FORM_STEP,
         JSON.stringify({
@@ -66,7 +70,6 @@ const LaunchpadManage = () => {
         setLoading(true);
         const tokenAddress = values?.launchpadTokenArg?.address;
         const liquidAddress = values?.liquidityTokenArg?.address;
-        const signature = await getSignature(account);
 
         const seconds = new BigNumber(values.duration)
           .multipliedBy(24)
@@ -80,43 +83,44 @@ const LaunchpadManage = () => {
           }),
         );
 
-        const res = await createLaunchpad({
-          user_address: account,
-          video: values?.video,
-          image: values?.image,
-          description: values?.description,
-          signature,
-          qand_a: JSON.stringify(faqs),
-          id: detail?.id,
-          launchpad_token: tokenAddress,
-          liquidity_token: liquidAddress,
-          launchpad_balance: values.launchpadBalance,
-          liquidity_balance: values.liquidityBalance,
-          liquidity_ratio: values.liquidityRatioArg,
-          goal_balance: values.goalBalance,
-          threshold_balance: values.thresholdBalance || '0',
-          duration: Number(seconds),
-        });
-
-        if (values.isCreateProposal && !detail?.launchpad) {
-          await createProposalLaunchpad({
-            launchpadTokenArg: tokenAddress,
-            liquidityTokenArg: liquidAddress,
-            liquidityRatioArg: values.liquidityRatioArg,
-            durationArg: seconds,
-            launchpadBalance: values.launchpadBalance,
-            liquidityBalance: values.liquidityBalance,
-            goalBalance: values.goalBalance,
-            thresholdBalance: values.thresholdBalance || '0',
+        if (values.isLastStep) {
+          const signature = await getSignature(account);
+          const res = await createLaunchpad({
+            user_address: account,
+            video: values?.video,
+            image: values?.image,
+            description: values?.description,
+            signature,
+            qand_a: JSON.stringify(faqs),
+            id: detail?.id,
+            launchpad_token: tokenAddress,
+            liquidity_token: liquidAddress,
+            launchpad_balance: values.launchpadBalance,
+            liquidity_balance: values.liquidityBalance,
+            liquidity_ratio: values.liquidityRatioArg,
+            goal_balance: values.goalBalance,
+            threshold_balance: values.thresholdBalance || '0',
+            duration: Number(seconds),
           });
+          if (values.isCreateProposal && !detail?.launchpad) {
+            await createProposalLaunchpad({
+              launchpadTokenArg: tokenAddress,
+              liquidityTokenArg: liquidAddress,
+              liquidityRatioArg: values.liquidityRatioArg,
+              durationArg: seconds,
+              launchpadBalance: values.launchpadBalance,
+              liquidityBalance: values.liquidityBalance,
+              goalBalance: values.goalBalance,
+              thresholdBalance: values.thresholdBalance || '0',
+            });
+          }
+          toast.success(`Submitted proposals successfully.`);
         }
 
         if (!detail) {
           localStorage.removeItem(LAUNCHPAD_FORM_STEP);
           router.replace(ROUTE_PATH.LAUNCHPAD);
         }
-
-        toast.success(`Submitted proposals successfully.`);
       }
       if (step < values.steps.length) {
         setStep((n) => n + 1);
