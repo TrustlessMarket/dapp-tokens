@@ -1,13 +1,15 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { LAUNCHPAD_STATUS } from '@/modules/Launchpad/Launchpad.Status';
 import { IToken } from './token';
-import {IProposal} from "@/interfaces/proposal";
+import { IProposal } from '@/interfaces/proposal';
 
 export interface ILaunchpad {
+  startTime: any;
   id: string;
   launchpadToken: IToken;
   liquidityToken: IToken;
-  startTime: string;
-  endTime: string;
+  launchStart: string;
+  launchEnd: string;
   creatorAddress: string;
   creatorRatio: string;
   launchpad: string;
@@ -31,4 +33,6 @@ export interface ILaunchpad {
   duration: string;
   proposalId: string;
   userProposal: IProposal;
+  voteStart: string;
+  voteEnd: string;
 }
