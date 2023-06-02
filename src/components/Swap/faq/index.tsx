@@ -67,7 +67,7 @@ const FAQs = ({data} : {data: any, desc?: any}) => {
         data?.length > 0 ? (
           <Section data={data}/>
         ) : (
-          <Empty isTable={false} />
+          <></>
         )
       }
     </Flex>

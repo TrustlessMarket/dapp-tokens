@@ -7,7 +7,7 @@ import Empty from "@/components/Empty";
 const IdoDescription = ({poolDetail} : any) => {
   return (
     <Box className={styles.wrapper}>
-      <SimpleGrid className={"max-content"} columns={[1, 1]} spacingX={10}>
+      <SimpleGrid columns={[1, 1]} spacingX={10}>
         <GridItem>
           <Text whiteSpace={"pre-line"}>
             {poolDetail?.description ? (
