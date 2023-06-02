@@ -20,6 +20,7 @@ import { CleaveOptions } from 'cleave.js/options';
 interface FieldAmountProps {
   input?: any;
   meta?: any;
+  customMeta?: any;
   label?: string;
   prependComp?: React.ReactNode;
   appendComp?: React.ReactNode;
@@ -53,10 +54,13 @@ const FieldAmount = (props: FieldAmountProps) => {
     hideError = false,
     borderColor = 'background.default',
     numberOptions,
+    customMeta,
     ...restProps
   } = props;
   const { onChange, onBlur, onFocus, value } = input;
-  const { error, touched } = meta;
+  const _meta = meta || customMeta;
+  const error = _meta.error;
+  const touched = _meta.touched;
   const shouldShowError = !!(touched && error) || (error && value);
   const hasAppend = appendComp || onClickMax;
 

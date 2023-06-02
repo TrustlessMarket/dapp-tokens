@@ -28,9 +28,11 @@ export const validateTwitterUrl = (url: string): boolean => {
 };
 
 export const validateYoutubeLink = (youtube_link: string): any => {
-  return /http(?:s?):\/\/(?:www\.)?youtu(?:be\.com\/watch\?v=|\.be\/)([\w\-\_]*)(&(amp;)?‌​[\w\?‌​=]*)?/.test(
-    youtube_link,
-  )
+  return !youtube_link
+    ? undefined
+    : /http(?:s?):\/\/(?:www\.)?youtu(?:be\.com\/watch\?v=|\.be\/)([\w\-\_]*)(&(amp;)?‌​[\w\?‌​=]*)?/.test(
+        youtube_link,
+      )
     ? undefined
     : 'Link Invalid';
 };

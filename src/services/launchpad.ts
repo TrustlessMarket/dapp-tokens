@@ -96,6 +96,7 @@ export const createLaunchpad = async (data: {
   liquidity_balance: string;
   liquidity_ratio: string;
   goal_balance: string;
+  threshold_balance: string;
   id?: string;
   duration: number;
 }) => {

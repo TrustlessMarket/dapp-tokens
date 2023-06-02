@@ -27,6 +27,7 @@ export interface LaunchpadManageFormContainerProps {
   setStep: (_: any) => void;
   detail?: ILaunchpad;
   step: number;
+  error?: any;
 }
 
 export const steps = [{ title: 'Setup token' }, { title: 'Fill information' }];
@@ -38,6 +39,7 @@ const LaunchpadManageFormContainer: React.FC<LaunchpadManageFormContainerProps> 
   onSubmit,
   setStep,
   step,
+  error,
 }) => {
   const [isApproveToken, setIsApproveToken] = useState<boolean>(true);
   const [isApproveAmountToken, setIsApproveAmountToken] = useState<string>('0');
@@ -76,7 +78,16 @@ const LaunchpadManageFormContainer: React.FC<LaunchpadManageFormContainerProps> 
       ]);
       setIsApproveAmountToken(web3.utils.fromWei(_isApprove));
       setBalanceToken(_tokenBalance);
-      console.log('_values _tokenBalance', _tokenBalance);
+      console.log('_values _tokenBalance', _isApprove);
+
+      setIsApproveToken(
+        checkBalanceIsApprove(
+          web3.utils.fromWei(_isApprove),
+          new BigNumber(values.launchpadBalance || '0')
+            .plus(values.liquidityBalance || '0')
+            .toString(),
+        ),
+      );
 
       return _isApprove;
     } catch (error) {
@@ -164,6 +175,7 @@ const LaunchpadManageFormContainer: React.FC<LaunchpadManageFormContainerProps> 
     JSON.stringify(tokenSelected),
     detail,
     values?.launchpadBalance,
+    values?.liquidityBalance,
     step,
     cachedData,
   ]);
@@ -197,6 +209,7 @@ const LaunchpadManageFormContainer: React.FC<LaunchpadManageFormContainerProps> 
         launchpadBalance: detail.launchpadBalance,
         liquidityRatioArg: detail.liquidityRatio,
         goalBalance: detail.goalBalance,
+        liquidityBalance: detail.liquidityBalance,
         startTimeArg: new Date(detail.startTime),
         endTimeArg: new Date(detail.endTime),
         description: detail.description,
@@ -242,6 +255,7 @@ const LaunchpadManageFormContainer: React.FC<LaunchpadManageFormContainerProps> 
             step={step}
             launchpadConfigs={launchpadConfigs}
             detail={detail}
+            error={error}
           />
         );
       case 1:

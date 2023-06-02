@@ -7,9 +7,13 @@ import FiledButton from '@/components/Swap/button/filedButton';
 import FieldAmount from '@/components/Swap/form/fieldAmount';
 import FieldSelect from '@/components/Swap/form/fieldDropdown';
 import HorizontalItem from '@/components/Swap/horizontalItem';
+import InfoTooltip from '@/components/Swap/infoTooltip';
 import { TOKEN_ICON_DEFAULT } from '@/constants/common';
 import { ROUTE_PATH } from '@/constants/route-path';
+import tokenIcons from '@/constants/tokenIcons';
+import { ILaunchpad } from '@/interfaces/launchpad';
 import { IToken } from '@/interfaces/token';
+import { colors } from '@/theme/colors';
 import { compareString, formatCurrency } from '@/utils';
 import { composeValidators, required, requiredAmount } from '@/utils/formValidate';
 import { Box, Flex, FormLabel, Spinner, Text } from '@chakra-ui/react';
@@ -19,13 +23,7 @@ import { isEmpty, truncate } from 'lodash';
 import { useRouter } from 'next/router';
 import React, { useCallback, useEffect, useState } from 'react';
 import { Field, useForm, useFormState } from 'react-final-form';
-import web3 from 'web3';
 import { StyledLaunchpadFormStep1 } from './LaunchpadManage.styled';
-import { LaunchpadManageHeaderProps } from './header';
-import InfoTooltip from '@/components/Swap/infoTooltip';
-import { colors } from '@/theme/colors';
-import { ILaunchpad } from '@/interfaces/launchpad';
-import tokenIcons from '@/constants/tokenIcons';
 
 interface ILaunchpadFormStep1 {
   detail?: ILaunchpad;
@@ -34,6 +32,7 @@ interface ILaunchpadFormStep1 {
   balanceToken: string;
   step: number;
   launchpadConfigs: any;
+  error: any;
 }
 
 const LaunchpadFormStep1: React.FC<ILaunchpadFormStep1> = ({
@@ -42,6 +41,7 @@ const LaunchpadFormStep1: React.FC<ILaunchpadFormStep1> = ({
   balanceToken,
   liquidTokens,
   launchpadConfigs,
+  error,
 }) => {
   const router = useRouter();
   const { values } = useFormState();
@@ -49,8 +49,6 @@ const LaunchpadFormStep1: React.FC<ILaunchpadFormStep1> = ({
   const tokenSelected: IToken | undefined = values?.launchpadTokenArg;
   const liquidityTokenSelected: IToken | undefined = values?.liquidityTokenArg;
   const [needLiquidBalance, setNeedLiquidBalance] = useState<string>('0');
-
-  console.log('_values balanceToken', balanceToken);
 
   const validateAmount = useCallback(
     (_amount: any) => {
@@ -66,14 +64,8 @@ const LaunchpadFormStep1: React.FC<ILaunchpadFormStep1> = ({
   const validateMaxRatio = useCallback(
     (_amount: any) => {
       if (!detail || !detail.launchpad) {
-        if (Number(_amount) > Number(90)) {
-          return `Max liquidity reserve is ${90}%`;
-        } else if (
-          new BigNumber(needLiquidBalance)
-            .plus(values.launchpadBalance)
-            .gt(balanceToken)
-        ) {
-          return `Liquidity balance is ${formatCurrency(
+        if (new BigNumber(_amount).plus(values.launchpadBalance).gt(balanceToken)) {
+          return `Max liquidity reserve is ${formatCurrency(
             new BigNumber(balanceToken).minus(values.launchpadBalance).toString(),
           )} ${tokenSelected?.symbol || ''}`;
         }
@@ -81,32 +73,61 @@ const LaunchpadFormStep1: React.FC<ILaunchpadFormStep1> = ({
 
       return undefined;
     },
-    [values.launchpadBalance, tokenSelected, detail, needLiquidBalance],
+    [
+      values.launchpadBalance,
+      values.liquidityBalance,
+      tokenSelected,
+      detail,
+      needLiquidBalance,
+      balanceToken,
+    ],
+  );
+
+  const minGoalBalance = useCallback(
+    (_amount: any) => {
+      if (!detail || !detail.launchpad) {
+        if (Number(_amount) >= Number(values.thresholdBalance)) {
+          return `Min funding goal is less than Max funding goal`;
+        }
+      }
+
+      return undefined;
+    },
+    [values.thresholdBalance, values.goalBalance],
+  );
+
+  const maxGoalBalance = useCallback(
+    (_amount: any) => {
+      if (!detail || !detail.launchpad) {
+        if (Number(_amount) > 0 && Number(_amount) <= Number(values.goalBalance)) {
+          return `Min funding goal is less than Max funding goal`;
+        }
+      }
+
+      return undefined;
+    },
+    [values.thresholdBalance, values.goalBalance],
   );
 
   useEffect(() => {
-    const multiX = new BigNumber(launchpadConfigs.liquidityPriceMultiple)
+    const multiX = new BigNumber(launchpadConfigs.rewardVoteRatio)
       .dividedBy(1000000)
       .toString();
     const launchpadBalance = values?.launchpadBalance || 0;
     const liquidityRatio = values?.liquidityRatioArg || 0;
-
-    console.log('_values liquidityRatio', liquidityRatio);
 
     const _needLiquidBalance = new BigNumber(liquidityRatio)
       .dividedBy(100)
       .multipliedBy(launchpadBalance)
       .dividedBy(multiX)
       .toString();
-    change('liquidityBalance', _needLiquidBalance);
+    // change('liquidityBalance', _needLiquidBalance);
     setNeedLiquidBalance(_needLiquidBalance);
   }, [
     values?.launchpadBalance,
-    values?.liquidityRatioArg,
-    launchpadConfigs.liquidityPriceMultiple,
+    values?.liquidityBalance,
+    launchpadConfigs.rewardVoteRatio,
   ]);
-
-  console.log('tokens', tokens);
 
   return (
     <StyledLaunchpadFormStep1>
@@ -131,9 +152,12 @@ const LaunchpadFormStep1: React.FC<ILaunchpadFormStep1> = ({
           label={`Rewards ${tokenSelected ? `(${tokenSelected.symbol})` : ''}`}
           disabled={detail?.launchpad}
           validate={composeValidators(requiredAmount, validateAmount)}
+          customMeta={{
+            error,
+            touched: Boolean(error),
+          }}
           rightLabel={
-            !isEmpty(tokenSelected) &&
-            !detail && (
+            !isEmpty(tokenSelected) && (
               <Flex
                 alignItems={'center'}
                 gap={2}
@@ -144,36 +168,75 @@ const LaunchpadFormStep1: React.FC<ILaunchpadFormStep1> = ({
                 <Flex gap={1} alignItems={'center'}>
                   Balance: {formatCurrency(balanceToken)}
                 </Flex>
-                <Text
-                  cursor={'pointer'}
-                  color={'#3385FF'}
-                  onClick={() => change('launchpadBalance', balanceToken)}
-                  bgColor={'rgba(51, 133, 255, 0.2)'}
-                  borderRadius={'4px'}
-                  padding={'1px 12px'}
-                >
-                  MAX
-                </Text>
+                {/* {!detail && (
+                  <Text
+                    cursor={'pointer'}
+                    color={'#3385FF'}
+                    onClick={() => change('launchpadBalance', balanceToken)}
+                    bgColor={'rgba(51, 133, 255, 0.2)'}
+                    borderRadius={'4px'}
+                    padding={'1px 12px'}
+                  >
+                    MAX
+                  </Text>
+                )} */}
               </Flex>
             )
           }
         />
         <Box mb={6} />
         <Field
+          name="liquidityBalance"
+          children={FieldAmount}
+          customMeta={{
+            error,
+            touched: Boolean(error),
+          }}
+          // rightLabel={
+          //   !isEmpty(tokenSelected) &&
+          //   !detail && (
+          //     <Flex
+          //       alignItems={'center'}
+          //       gap={2}
+          //       fontSize={px2rem(14)}
+          //       color={'#FFFFFF'}
+          //       mb={2}
+          //     >
+          //       <Flex gap={1} alignItems={'center'}>
+          //         Liquidity balance: {formatCurrency(needLiquidBalance)}{' '}
+          //         {tokenSelected ? `${tokenSelected.symbol}` : ''}
+          //       </Flex>
+          //     </Flex>
+          //   )
+          // }
+          label={
+            <InfoTooltip
+              showIcon={true}
+              label="Liquidity Reserve refers to a percentage of the funds that are used to add initial liquidity for trading purposes after the crowdfunding ends"
+              iconColor={colors.white500}
+            >
+              Liquidity reserve
+            </InfoTooltip>
+          }
+          disabled={detail?.launchpad}
+          validate={composeValidators(requiredAmount, validateMaxRatio)}
+        />
+        <Box mb={6} />
+        <Field
           name="goalBalance"
           decimals={18}
           children={FieldAmount}
-          label={`Funding goal ${
+          label={`Min funding goal ${
             liquidityTokenSelected ? `(${liquidityTokenSelected.symbol})` : ''
           }`}
           disabled={detail?.launchpad}
-          validate={composeValidators(requiredAmount, validateMaxRatio)}
+          validate={composeValidators(requiredAmount, minGoalBalance)}
         />
       </Box>
       <Box className="fields-right-container" flex={1}>
         <Box>
           <FormLabel fontSize="xs" fontWeight="medium">
-            Liquidity
+            Funding token
           </FormLabel>
           <Flex className="liquidity-container">
             {liquidTokens.length > 0 ? (
@@ -198,6 +261,14 @@ const LaunchpadFormStep1: React.FC<ILaunchpadFormStep1> = ({
             )}
           </Flex>
         </Box>
+        <Box mb={6} />
+        <Field
+          name="duration"
+          decimals={18}
+          children={FieldAmount}
+          label={`Duration`}
+          validate={composeValidators(requiredAmount)}
+        />
 
         <Box mb={6} />
         <Field
@@ -205,8 +276,7 @@ const LaunchpadFormStep1: React.FC<ILaunchpadFormStep1> = ({
           decimals={18}
           children={FieldAmount}
           rightLabel={
-            !isEmpty(tokenSelected) &&
-            !detail && (
+            !isEmpty(liquidityTokenSelected) && (
               <Flex
                 alignItems={'center'}
                 gap={2}
@@ -215,8 +285,7 @@ const LaunchpadFormStep1: React.FC<ILaunchpadFormStep1> = ({
                 mb={2}
               >
                 <Flex gap={1} alignItems={'center'}>
-                  Liquidity balance: {formatCurrency(needLiquidBalance)}{' '}
-                  {tokenSelected ? `${tokenSelected.symbol}` : ''}
+                  {liquidityTokenSelected?.symbol}
                 </Flex>
               </Flex>
             )
@@ -227,19 +296,22 @@ const LaunchpadFormStep1: React.FC<ILaunchpadFormStep1> = ({
               label="Liquidity Reserve refers to a percentage of the funds that are used to add initial liquidity for trading purposes after the crowdfunding ends"
               iconColor={colors.white500}
             >
-              Liquidity reserve
+              Adding funding reward
             </InfoTooltip>
           }
           disabled={detail?.launchpad}
-          validate={composeValidators(requiredAmount, validateMaxRatio)}
+          validate={composeValidators(requiredAmount)}
         />
         <Box mb={6} />
         <Field
-          name="duration"
+          name="thresholdBalance"
           decimals={18}
           children={FieldAmount}
-          label={`Duration`}
-          validate={composeValidators(requiredAmount, validateMaxRatio)}
+          label={`Max funding goal ${
+            liquidityTokenSelected ? `(${liquidityTokenSelected.symbol})` : ''
+          }`}
+          disabled={detail?.launchpad}
+          validate={composeValidators(maxGoalBalance)}
         />
       </Box>
       <Box className="token-info" flex={1}>

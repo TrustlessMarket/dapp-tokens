@@ -9,7 +9,7 @@ import { useCallback } from 'react';
 
 export interface ConfigLaunchpadResponse {
   protocolRatio: string;
-  liquidityPriceMultiple: string;
+  rewardVoteRatio: string;
   lpTokenReleaseDuration: string;
 }
 
@@ -29,14 +29,14 @@ const useGetConfigLaunchpad: ContractOperationHook<
       const transaction = await contract.connect(provider).getLaunchpadConfigs();
 
       return {
-        protocolRatio: transaction[0].toString(),
-        liquidityPriceMultiple: transaction[1].toString(),
-        lpTokenReleaseDuration: transaction[2].toString(),
+        protocolRatio: transaction['protocolRatio'].toString(),
+        rewardVoteRatio: transaction['rewardVoteRatio'].toString(),
+        lpTokenReleaseDuration: transaction['lpTokenReleaseDuration'].toString(),
       };
     }
     return {
       protocolRatio: '0',
-      liquidityPriceMultiple: '0',
+      rewardVoteRatio: '0',
       lpTokenReleaseDuration: '0',
     };
   }, [provider]);
