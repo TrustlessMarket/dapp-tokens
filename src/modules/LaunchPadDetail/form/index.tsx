@@ -754,7 +754,7 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
     try {
       const response: any = await Promise.all([
         isAbleRedeem({
-          owner_address: account,
+          user_address: account,
           launchpad_address: poolDetail.launchpad,
         }),
         getLaunchpadUserDepositInfo({
