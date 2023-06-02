@@ -18,7 +18,7 @@ const IdoFaqs = ({poolDetail}: any) => {
   }, [poolDetail?.qandA]);
 
   return (
-    <Box bgColor="transparent" className={styles.container}>
+    <Box className={styles.container}>
       <Faq data={data}/>
     </Box>
   )

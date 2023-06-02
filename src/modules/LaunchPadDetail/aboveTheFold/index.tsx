@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {LAUNCHPAD_STATUS, useLaunchPadStatus} from '@/modules/Launchpad/Launchpad.Status';
-import BodyContainer from '@/components/Swap/bodyContainer';
 import styles from '@/modules/LaunchPadDetail/aboveTheFold/styles.module.scss';
 import {ILaunchpad} from '@/interfaces/launchpad';
 import {Box, Divider, Grid, GridItem} from "@chakra-ui/react";
@@ -15,7 +14,7 @@ const AboveTheFold = ({ poolDetail }: ILaunchpad | any) => {
   const [status] = useLaunchPadStatus({ row: poolDetail });
 
   return (
-    <BodyContainer className={styles.wrapper}>
+    <Box className={styles.wrapper}>
       <Grid templateColumns={['1.25fr 1fr']} gap={[8]}>
         <GridItem>
           <Intro poolDetail={poolDetail}/>
@@ -43,7 +42,7 @@ const AboveTheFold = ({ poolDetail }: ILaunchpad | any) => {
           )
         }
       </Grid>
-    </BodyContainer>
+    </Box>
   );
 };
 
