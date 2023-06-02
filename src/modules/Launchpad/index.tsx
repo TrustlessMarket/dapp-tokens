@@ -201,8 +201,7 @@ const LaunchpadContainer = () => {
           borderBottom: 'none',
         },
         render(row: ILaunchpad) {
-          const isProposal = checkIsProposal(row);
-          // const [status] = useLaunchPadStatus({row});
+          const [status] = useLaunchPadStatus({ row });
           const color = colors.white;
 
           // if (isLaunchPad) {
@@ -215,7 +214,13 @@ const LaunchpadContainer = () => {
           //   }
           // }
 
-          return !isProposal ? (
+          return [LaunchpadLabelStatus.pending.value, LaunchpadLabelStatus.voting.value].includes(status.value) ? (
+            <Box>
+              <Text
+                color={color}
+              >{`${row.goalBalance} ${row.liquidityToken.symbol}`}</Text>
+            </Box>
+          ) : (
             <Box>
               <Flex color={color} alignItems={'center'} gap={1}>
                 {`${row.totalValue} / ${row.goalBalance} `}
@@ -234,12 +239,6 @@ const LaunchpadContainer = () => {
               <Text className="note" mt={1}>
                 ${formatCurrency(row.totalValueUsd, 2)}
               </Text>
-            </Box>
-          ) : (
-            <Box>
-              <Text
-                color={color}
-              >{`${row.goalBalance} ${row.liquidityToken.symbol}`}</Text>
             </Box>
           );
         },
