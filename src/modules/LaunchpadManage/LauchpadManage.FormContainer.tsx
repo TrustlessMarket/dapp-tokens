@@ -11,15 +11,17 @@ import useIsApproveERC20Token from '@/hooks/contract-operations/token/useIsAppro
 import { ILaunchpad } from '@/interfaces/launchpad';
 import { IToken } from '@/interfaces/token';
 import { getListLiquidityToken, getListOwnerToken } from '@/services/launchpad';
+import { getLiquidityRatio } from '@/utils';
 import { useWeb3React } from '@web3-react/core';
 import BigNumber from 'bignumber.js';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm, useFormState } from 'react-final-form';
 import web3 from 'web3';
 import LaunchpadFormStep1 from './LaunchpadFormStep1';
 import LaunchpadFormStep2 from './LaunchpadFormStep2';
+import LaunchpadFormStep3 from './LaunchpadFormStep3';
 import LaunchpadManageHeader from './header';
-import { getLiquidityRatio } from '@/utils';
+import LaunchpadFormStep4 from './LaunchpadFormStep4';
 
 export interface LaunchpadManageFormContainerProps {
   loading: boolean;
@@ -31,7 +33,9 @@ export interface LaunchpadManageFormContainerProps {
   error?: any;
 }
 
-export const steps = [{ title: 'Setup token' }, { title: 'Fill information' }];
+export const steps = [{ title: 'Launchpad Information' }, { title: 'Story' }];
+
+export const extra_steps = [{ title: 'FAQs' }, { title: 'Boost' }];
 
 const LaunchpadManageFormContainer: React.FC<LaunchpadManageFormContainerProps> = ({
   loading,
@@ -60,7 +64,7 @@ const LaunchpadManageFormContainer: React.FC<LaunchpadManageFormContainerProps> 
   const { call: tokenBalance } = useBalanceERC20Token();
   const { call: getConfigLaunchpad } = useGetConfigLaunchpad();
 
-  const refSteps = useRef(steps);
+  const [refSteps, setRefSteps] = useState(steps);
 
   const tokenSelected: IToken | undefined = values?.launchpadTokenArg;
 
@@ -79,7 +83,6 @@ const LaunchpadManageFormContainer: React.FC<LaunchpadManageFormContainerProps> 
       ]);
       setIsApproveAmountToken(web3.utils.fromWei(_isApprove));
       setBalanceToken(_tokenBalance);
-      console.log('_values _tokenBalance', _isApprove);
 
       setIsApproveToken(
         checkBalanceIsApprove(
@@ -169,6 +172,12 @@ const LaunchpadManageFormContainer: React.FC<LaunchpadManageFormContainerProps> 
   }, [isActive, account]);
 
   useEffect(() => {
+    initialize({
+      steps: refSteps,
+    });
+  }, []);
+
+  useEffect(() => {
     if (tokenSelected) {
       checkTokenApprove(tokenSelected);
     }
@@ -204,6 +213,19 @@ const LaunchpadManageFormContainer: React.FC<LaunchpadManageFormContainerProps> 
     if (detail) {
       const duration = new BigNumber(detail.duration).div(24).div(3600).toFixed(2);
 
+      const _refSteps = steps.concat(extra_steps);
+
+      setRefSteps(_refSteps);
+
+      const _faqs: any = {};
+      if (detail.qandA) {
+        for (let i = 0; i < JSON.parse(detail.qandA).length; i++) {
+          const element = JSON.parse(detail.qandA)[i];
+          _faqs[`faq_q_${i + 1}`] = element.value;
+          _faqs[`faq_a_${i + 1}`] = element.label;
+        }
+      }
+
       initialize({
         launchpadTokenArg: detail.launchpadToken,
         liquidityTokenArg: detail.liquidityToken,
@@ -217,15 +239,14 @@ const LaunchpadManageFormContainer: React.FC<LaunchpadManageFormContainerProps> 
         video: detail.video,
         image: detail.image,
         duration: duration,
+        steps: _refSteps,
+        ..._faqs,
       });
     }
   }, [detail]);
 
   const getTokens = async () => {
     setTokens([]);
-    if (!account || !isActive) {
-      return;
-    }
     try {
       const response = await Promise.all([
         getListOwnerToken({
@@ -270,6 +291,28 @@ const LaunchpadManageFormContainer: React.FC<LaunchpadManageFormContainerProps> 
             detail={detail}
           />
         );
+      case 2:
+        return (
+          <LaunchpadFormStep3
+            tokens={tokens}
+            balanceToken={balanceToken}
+            liquidTokens={liquidTokens}
+            step={step}
+            launchpadConfigs={launchpadConfigs}
+            detail={detail}
+          />
+        );
+      case 3:
+        return (
+          <LaunchpadFormStep4
+            tokens={tokens}
+            balanceToken={balanceToken}
+            liquidTokens={liquidTokens}
+            step={step}
+            launchpadConfigs={launchpadConfigs}
+            detail={detail}
+          />
+        );
 
       default:
         return null;
@@ -285,7 +328,7 @@ const LaunchpadManageFormContainer: React.FC<LaunchpadManageFormContainerProps> 
         onApprove={onApprove}
         isApproveToken={isApproveToken}
         setStep={setStep}
-        steps={refSteps.current}
+        steps={refSteps}
         detail={detail}
       />
       {renderContentByStep()}

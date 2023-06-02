@@ -87,7 +87,7 @@ const LaunchpadFormStep1: React.FC<ILaunchpadFormStep1> = ({
     (_amount: any) => {
       if (!detail || !detail.launchpad) {
         if (Number(_amount) >= Number(values.thresholdBalance)) {
-          return `Min funding goal is less than Max funding goal`;
+          return `Funding goal is less than Hard cap`;
         }
       }
 
@@ -100,7 +100,7 @@ const LaunchpadFormStep1: React.FC<ILaunchpadFormStep1> = ({
     (_amount: any) => {
       if (!detail || !detail.launchpad) {
         if (Number(_amount) > 0 && Number(_amount) <= Number(values.goalBalance)) {
-          return `Min funding goal is less than Max funding goal`;
+          return `Funding goal is less than Hard cap`;
         }
       }
 
@@ -226,7 +226,7 @@ const LaunchpadFormStep1: React.FC<ILaunchpadFormStep1> = ({
           name="goalBalance"
           decimals={18}
           children={FieldAmount}
-          label={`Min funding goal ${
+          label={`Funding goal ${
             liquidityTokenSelected ? `(${liquidityTokenSelected.symbol})` : ''
           }`}
           disabled={detail?.launchpad}
@@ -307,7 +307,7 @@ const LaunchpadFormStep1: React.FC<ILaunchpadFormStep1> = ({
           name="thresholdBalance"
           decimals={18}
           children={FieldAmount}
-          label={`Max funding goal ${
+          label={`Hard cap ${
             liquidityTokenSelected ? `(${liquidityTokenSelected.symbol})` : ''
           }`}
           disabled={detail?.launchpad}

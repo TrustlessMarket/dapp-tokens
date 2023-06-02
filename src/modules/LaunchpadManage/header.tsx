@@ -61,21 +61,23 @@ const LaunchpadManageHeader: React.FC<LaunchpadManageHeaderProps> = ({
 
     if (!isApproveToken && tokenSelected) {
       return (
-        <FiledButton
-          isLoading={loading}
-          isDisabled={loading}
-          loadingText="Processing"
-          // btnSize={'h'}
-          onClick={onShowModalApprove}
-          type="button"
-        >
-          {`APPROVE USE OF ${tokenSelected?.symbol}`}
-        </FiledButton>
+        <Flex width={'100%'} justifyContent={'flex-end'} gap={6}>
+          <FiledButton
+            isLoading={loading}
+            isDisabled={loading}
+            loadingText="Processing"
+            // btnSize={'h'}
+            onClick={onShowModalApprove}
+            type="button"
+          >
+            {`APPROVE USE OF ${tokenSelected?.symbol}`}
+          </FiledButton>
+        </Flex>
       );
     }
 
     return (
-      <Flex width={'100%'} justifyContent={'flex-end'} gap={6}>
+      <Flex width={'100%'} justifyContent={'flex-end'} gap={6} alignItems={'center'}>
         <FiledButton
           isLoading={loading}
           isDisabled={loading}
