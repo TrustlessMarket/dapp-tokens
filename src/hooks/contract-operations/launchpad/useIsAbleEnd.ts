@@ -6,22 +6,21 @@ import { ContractOperationHook, DAppType } from '@/interfaces/contract-operation
 import { getContract, getDefaultProvider } from '@/utils';
 import { useCallback } from 'react';
 
-export interface IIsAbleRedeemProps {
-  user_address?: string;
+export interface IIsAbleEndProps {
   launchpad_address?: string;
 }
 
-const useIsAbleRedeem: ContractOperationHook<IIsAbleRedeemProps, boolean> = () => {
+const useIsAbleEnd: ContractOperationHook<IIsAbleEndProps, boolean> = () => {
   const provider = getDefaultProvider();
   const call = useCallback(
-    async (params: IIsAbleRedeemProps): Promise<boolean> => {
-      const { user_address, launchpad_address } = params;
-      if (provider && user_address && launchpad_address) {
+    async (params: IIsAbleEndProps): Promise<boolean> => {
+      const { launchpad_address } = params;
+      if (provider && launchpad_address) {
         const contract = getContract(launchpad_address, LaunchpadPoolJson, provider);
 
         const transaction = await contract
           .connect(provider)
-          .isAbleRedeem(user_address);
+          .isAbleEnd();
 
         return transaction;
       }
@@ -37,4 +36,4 @@ const useIsAbleRedeem: ContractOperationHook<IIsAbleRedeemProps, boolean> = () =
   };
 };
 
-export default useIsAbleRedeem;
+export default useIsAbleEnd;

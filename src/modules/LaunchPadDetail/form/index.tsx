@@ -4,7 +4,7 @@
 import CountDownTimer from '@/components/Countdown';
 import ModalConfirmApprove from '@/components/ModalConfirmApprove';
 import SocialToken from '@/components/Social';
-import { transactionType } from '@/components/Swap/alertInfoProcessing/types';
+import {transactionType} from '@/components/Swap/alertInfoProcessing/types';
 import FiledButton from '@/components/Swap/button/filedButton';
 import FieldAmount from '@/components/Swap/form/fieldAmount';
 import InputWrapper from '@/components/Swap/form/inputWrapper';
@@ -12,14 +12,10 @@ import HorizontalItem from '@/components/Swap/horizontalItem';
 import InfoTooltip from '@/components/Swap/infoTooltip';
 import TokenBalance from '@/components/Swap/tokenBalance';
 import WrapperConnected from '@/components/WrapperConnected';
-import { CDN_URL } from '@/configs';
-import {
-  BRIDGE_SUPPORT_TOKEN,
-  TRUSTLESS_BRIDGE,
-  TRUSTLESS_FAUCET,
-} from '@/constants/common';
-import { toastError } from '@/constants/error';
-import { AssetsContext } from '@/contexts/assets-context';
+import {CDN_URL} from '@/configs';
+import {BRIDGE_SUPPORT_TOKEN, TRUSTLESS_BRIDGE, TRUSTLESS_FAUCET,} from '@/constants/common';
+import {toastError} from '@/constants/error';
+import {AssetsContext} from '@/contexts/assets-context';
 import useClaimLaunchPad from '@/hooks/contract-operations/launchpad/useClaim';
 import useDepositPool from '@/hooks/contract-operations/launchpad/useDeposit';
 import useEndLaunchPad from '@/hooks/contract-operations/launchpad/useEnd';
@@ -29,63 +25,44 @@ import useBalanceERC20Token from '@/hooks/contract-operations/token/useBalanceER
 import useIsApproveERC20Token from '@/hooks/contract-operations/token/useIsApproveERC20Token';
 import useContractOperation from '@/hooks/contract-operations/useContractOperation';
 import useCountDownTimer from '@/hooks/useCountdown';
-import { ILaunchpad } from '@/interfaces/launchpad';
-import { IToken } from '@/interfaces/token';
-import { TransactionStatus } from '@/interfaces/walletTransaction';
-import {
-  LAUNCHPAD_STATUS,
-  useLaunchPadStatus,
-} from '@/modules/Launchpad/Launchpad.Status';
-import { getLaunchpadUserDepositInfo, getUserBoost } from '@/services/launchpad';
-import { logErrorToServer } from '@/services/swap';
-import { useAppDispatch, useAppSelector } from '@/state/hooks';
-import { closeModal, openModal } from '@/state/modal';
+import {ILaunchpad} from '@/interfaces/launchpad';
+import {IToken} from '@/interfaces/token';
+import {TransactionStatus} from '@/interfaces/walletTransaction';
+import {LAUNCHPAD_STATUS, useLaunchPadStatus,} from '@/modules/Launchpad/Launchpad.Status';
+import {getLaunchpadUserDepositInfo, getUserBoost} from '@/services/launchpad';
+import {logErrorToServer} from '@/services/swap';
+import {useAppDispatch, useAppSelector} from '@/state/hooks';
+import {closeModal, openModal} from '@/state/modal';
 import {
   requestReload,
   requestReloadRealtime,
   selectPnftExchange,
   updateCurrentTransaction,
 } from '@/state/pnftExchange';
-import { getIsAuthenticatedSelector } from '@/state/user/selector';
-import { colors } from '@/theme/colors';
-import { abbreviateNumber, formatCurrency } from '@/utils';
-import { composeValidators, required } from '@/utils/formValidate';
+import {getIsAuthenticatedSelector} from '@/state/user/selector';
+import {colors} from '@/theme/colors';
+import {abbreviateNumber, formatCurrency} from '@/utils';
+import {composeValidators, required} from '@/utils/formValidate';
 import px2rem from '@/utils/px2rem';
-import { showError } from '@/utils/toast';
-import {
-  Box,
-  Center,
-  Flex,
-  Progress,
-  Stat,
-  StatLabel,
-  StatNumber,
-  Text,
-  forwardRef,
-} from '@chakra-ui/react';
-import { useWindowSize } from '@trustless-computer/dapp-core';
-import { useWeb3React } from '@web3-react/core';
+import {showError} from '@/utils/toast';
+import {Box, Center, Flex, forwardRef, Progress, Stat, StatLabel, StatNumber, Text,} from '@chakra-ui/react';
+import {useWindowSize} from '@trustless-computer/dapp-core';
+import {useWeb3React} from '@web3-react/core';
 import BigNumber from 'bignumber.js';
 import cx from 'classnames';
 import debounce from 'lodash/debounce';
 import moment from 'moment';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
-import {
-  useCallback,
-  useContext,
-  useEffect,
-  useImperativeHandle,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
-import { Field, Form, useForm, useFormState } from 'react-final-form';
+import {useRouter} from 'next/router';
+import {useCallback, useContext, useEffect, useImperativeHandle, useMemo, useRef, useState,} from 'react';
+import {Field, Form, useForm, useFormState} from 'react-final-form';
 import toast from 'react-hot-toast';
-import { BiBell } from 'react-icons/bi';
-import { useDispatch, useSelector } from 'react-redux';
+import {BiBell} from 'react-icons/bi';
+import {useDispatch, useSelector} from 'react-redux';
 import Web3 from 'web3';
 import styles from './styles.module.scss';
+import useIsAbleEnd from "@/hooks/contract-operations/launchpad/useIsAbleEnd";
+import useIsAbleClose from "@/hooks/contract-operations/launchpad/useIsAbleClose";
 
 const FEE = 2;
 export const MakeFormSwap = forwardRef((props, ref) => {
@@ -726,18 +703,29 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
     operation: useClaimLaunchPad,
   });
   const { call: isAbleRedeem } = useIsAbleRedeem();
+  const { call: isAbleEnd } = useIsAbleEnd();
+  const { call: isAbleClose } = useIsAbleClose();
 
   const { mobileScreen } = useWindowSize();
   const [status] = useLaunchPadStatus({ row: poolDetail });
   const [canClaim, setCanClaim] = useState(false);
+  const [canEnd, setCanEnd] = useState(false);
+  const [canClose, setCanClose] = useState(false);
   const [userDeposit, setUserDeposit] = useState<any>();
 
-  const canEnd = [
-    LAUNCHPAD_STATUS.NotPassed,
-    LAUNCHPAD_STATUS.Successful,
-    LAUNCHPAD_STATUS.Failed,
-    LAUNCHPAD_STATUS.End,
-  ].includes(status.key);
+  // console.log('poolDetail', poolDetail);
+  // console.log('canEnd', canEnd);
+  // console.log('canClaim', canClaim);
+  // console.log('canClose', canClose);
+  // console.log('userDeposit', userDeposit);
+  // console.log('=====');
+
+  // const canEnd = [
+  //   LAUNCHPAD_STATUS.NotPassed,
+  //   LAUNCHPAD_STATUS.Successful,
+  //   LAUNCHPAD_STATUS.Failed,
+  //   LAUNCHPAD_STATUS.End,
+  // ].includes(status.key);
 
   // const isClaimLaunchpad = [
   //   LAUNCHPAD_STATUS.Completed,
@@ -753,8 +741,14 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
   const fetchData = async () => {
     try {
       const response: any = await Promise.all([
+        isAbleEnd({
+          launchpad_address: poolDetail.launchpad,
+        }),
+        isAbleClose({
+          launchpad_address: poolDetail.launchpad,
+        }),
         isAbleRedeem({
-          owner_address: account,
+          user_address: account,
           launchpad_address: poolDetail.launchpad,
         }),
         getLaunchpadUserDepositInfo({
@@ -762,10 +756,12 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
           address: account,
         }),
       ]);
-      setCanClaim(response[0]);
-      setUserDeposit(response[1]);
+      setCanEnd(response[0]);
+      setCanClose(response[1]);
+      setCanClaim(response[2]);
+      setUserDeposit(response[3]);
     } catch (error) {
-      console.log('eeeee', error);
+      console.log('Launchpad detail form fetchData', error);
     }
   };
 
