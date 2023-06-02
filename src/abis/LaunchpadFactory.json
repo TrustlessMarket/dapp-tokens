@@ -139,6 +139,26 @@
       },
       {
         "internalType": "uint256",
+        "name": "votePrepareDuration",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "voteDuration",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "voteReleaseDuration",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "voteGoal",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
         "name": "lpTokenReleaseDuration",
         "type": "uint256"
       }
@@ -291,6 +311,26 @@
       {
         "internalType": "uint256",
         "name": "rewardVoteRatioArg",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "votePrepareDurationArg",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "voteDurationArg",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "voteReleaseDurationArg",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "voteGoalArg",
         "type": "uint256"
       },
       {
