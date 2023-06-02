@@ -163,10 +163,7 @@ const LaunchpadContainer = () => {
               <Text>{`${
                 row.liquidityRatio
                   ? `${formatCurrency(
-                      new BigNumber(web3.utils.toWei(row.liquidityRatio).toString())
-                        .dividedBy(10000)
-                        .toString(),
-                      18,
+                    row.liquidityRatio
                     )}% of funded`
                   : 'N/A'
               }`}</Text>
