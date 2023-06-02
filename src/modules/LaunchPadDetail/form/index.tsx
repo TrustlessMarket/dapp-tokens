@@ -454,10 +454,10 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           <Stat className={styles.infoColumn} flex={1.5}>
             <StatLabel>
               {[
-                LAUNCHPAD_STATUS.Closed,
-                LAUNCHPAD_STATUS.Completed,
+                LAUNCHPAD_STATUS.NotPassed,
+                LAUNCHPAD_STATUS.Successful,
                 LAUNCHPAD_STATUS.Failed,
-                LAUNCHPAD_STATUS.Cancelled,
+                LAUNCHPAD_STATUS.End,
               ].includes(status.key)
                 ? 'Ended at'
                 : 'Ends in'}
@@ -465,10 +465,10 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             <StatNumber>
               <Text>
                 {[
-                  LAUNCHPAD_STATUS.Closed,
-                  LAUNCHPAD_STATUS.Completed,
+                  LAUNCHPAD_STATUS.NotPassed,
+                  LAUNCHPAD_STATUS.Successful,
                   LAUNCHPAD_STATUS.Failed,
-                  LAUNCHPAD_STATUS.Cancelled,
+                  LAUNCHPAD_STATUS.End,
                 ].includes(status.key) ? (
                   moment(poolDetail.endTime).format('LLL')
                 ) : (
@@ -733,10 +733,10 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
   const [userDeposit, setUserDeposit] = useState<any>();
 
   const canEnd = [
-    LAUNCHPAD_STATUS.End,
-    LAUNCHPAD_STATUS.Completed,
+    LAUNCHPAD_STATUS.NotPassed,
+    LAUNCHPAD_STATUS.Successful,
     LAUNCHPAD_STATUS.Failed,
-    LAUNCHPAD_STATUS.Cancelled,
+    LAUNCHPAD_STATUS.End,
   ].includes(status.key);
 
   // const isClaimLaunchpad = [
@@ -744,7 +744,7 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
   //   LAUNCHPAD_STATUS.Failed,
   // ].includes(status.key);
 
-  const isStarting = [LAUNCHPAD_STATUS.Created].includes(status.key);
+  const isStarting = [LAUNCHPAD_STATUS.Launching].includes(status.key);
 
   useEffect(() => {
     fetchData();
