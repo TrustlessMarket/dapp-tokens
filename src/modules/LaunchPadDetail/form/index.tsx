@@ -426,10 +426,18 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           <Stat className={styles.infoColumn} flex={1.5}>
             <StatLabel>
               {[
-                LAUNCHPAD_STATUS.NotPassed,
-                LAUNCHPAD_STATUS.Successful,
-                LAUNCHPAD_STATUS.Failed,
-                LAUNCHPAD_STATUS.End,
+                LAUNCHPAD_STATUS.Pending,
+              ].includes(status.key)
+                ? 'Voting will start in' :
+                [
+                  LAUNCHPAD_STATUS.Voting,
+                ].includes(status.key)
+                  ? 'Voting will end in' :
+                [
+                  LAUNCHPAD_STATUS.NotPassed,
+                  LAUNCHPAD_STATUS.Successful,
+                  LAUNCHPAD_STATUS.Failed,
+                  LAUNCHPAD_STATUS.End,
               ].includes(status.key)
                 ? 'Ended at'
                 : 'Ends in'}
@@ -437,6 +445,14 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             <StatNumber>
               <Text>
                 {[
+                  LAUNCHPAD_STATUS.Pending,
+                ].includes(status.key)
+                  ? <CountDownTimer end_time={poolDetail.voteStart} /> :
+                  [
+                    LAUNCHPAD_STATUS.Voting,
+                  ].includes(status.key)
+                    ? <CountDownTimer end_time={poolDetail.voteEnd} /> :
+                  [
                   LAUNCHPAD_STATUS.NotPassed,
                   LAUNCHPAD_STATUS.Successful,
                   LAUNCHPAD_STATUS.Failed,
