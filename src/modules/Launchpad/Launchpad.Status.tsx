@@ -16,7 +16,7 @@ export enum LAUNCHPAD_STATUS {
   End,
 }
 
-export const LabelStatus = {
+export const LaunchpadLabelStatus = {
   pending: {
     key: LAUNCHPAD_STATUS.Pending,
     value: 'pending',
@@ -59,25 +59,25 @@ export const useLaunchPadStatus = ({ row }: { row: ILaunchpad }) => {
   const startTime = row?.startTime;
   const endTime = row?.endTime;
 
-  let status = LabelStatus.pending;
+  let status = LaunchpadLabelStatus.pending;
 
   if (state === LAUNCHPAD_STATUS.Voting) {
-    status = LabelStatus.voting;
+    status = LaunchpadLabelStatus.voting;
   } else if (state === LAUNCHPAD_STATUS.NotPassed) {
-    status = LabelStatus.notpassed;
+    status = LaunchpadLabelStatus.notpassed;
   } else if (state === LAUNCHPAD_STATUS.Launching) {
-    status = LabelStatus.launching;
+    status = LaunchpadLabelStatus.launching;
   } else if (state === LAUNCHPAD_STATUS.Successful) {
-    status = LabelStatus.successful;
+    status = LaunchpadLabelStatus.successful;
   } else if (state === LAUNCHPAD_STATUS.Failed) {
-    status = LabelStatus.failed;
+    status = LaunchpadLabelStatus.failed;
   // } else if (
   //   moment(startTime).unix() <= moment().unix() &&
   //   moment().unix() < moment(endTime).unix()
   // ) {
   //   status = LabelStatus.starting;
   } else if (moment().unix() >= moment(endTime).unix() && row?.proposalId) {
-    status = LabelStatus.end;
+    status = LaunchpadLabelStatus.end;
   }
 
   return [status];
