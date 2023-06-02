@@ -78,16 +78,7 @@ const LaunchpadManageHeader: React.FC<LaunchpadManageHeaderProps> = ({
 
     return (
       <Flex width={'100%'} justifyContent={'flex-end'} gap={6} alignItems={'center'}>
-        <FiledButton
-          isLoading={loading}
-          isDisabled={loading}
-          type="submit"
-          className={detail && !detail.launchpad ? 'btn-secondary' : 'btn-primary'}
-          onClick={() => change('isLastStep', lastStep)}
-        >
-          {lastStep ? (detail ? 'Update' : 'Submit') : 'Next'}
-        </FiledButton>
-        {detail && lastStep && !detail.launchpad && (
+        {lastStep && !detail?.launchpad ? (
           <FiledButton
             isLoading={loading}
             isDisabled={loading}
@@ -106,7 +97,17 @@ const LaunchpadManageHeader: React.FC<LaunchpadManageHeaderProps> = ({
               change('isLastStep', lastStep);
             }}
           >
-            {'Submit proposal'}
+            {'Submit Launchpad'}
+          </FiledButton>
+        ) : (
+          <FiledButton
+            isLoading={loading}
+            isDisabled={loading}
+            type="submit"
+            className={detail && !detail.launchpad ? 'btn-secondary' : 'btn-primary'}
+            onClick={() => change('isLastStep', lastStep)}
+          >
+            {lastStep ? (detail ? 'Update' : 'Submit') : 'Next'}
           </FiledButton>
         )}
       </Flex>

@@ -16,6 +16,7 @@ import LaunchpadManageFormContainer from './LauchpadManage.FormContainer';
 import { StyledLaunchpadManage } from './LaunchpadManage.styled';
 import { ROUTE_PATH } from '@/constants/route-path';
 import { filter } from 'lodash';
+import web3 from 'web3';
 
 const LaunchpadManage = () => {
   const { getSignature } = useContext(WalletContext);
@@ -97,7 +98,7 @@ const LaunchpadManage = () => {
           duration: Number(seconds),
         });
 
-        if (values.isCreateProposal && !detail) {
+        if (values.isCreateProposal && !detail?.launchpad) {
           await createProposalLaunchpad({
             launchpadTokenArg: tokenAddress,
             liquidityTokenArg: liquidAddress,
