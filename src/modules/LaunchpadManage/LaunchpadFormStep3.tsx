@@ -63,7 +63,11 @@ const LaunchpadFormStep3: React.FC<ILaunchpadFormStep3> = ({
 
   useEffect(() => {
     if (detail?.qandA) {
-      setFaqs(JSON.parse(detail.qandA).map((v: any, i: number) => ({ id: i + 1 })));
+      if (JSON.parse(detail.qandA)?.length > 0) {
+        setFaqs(
+          JSON.parse(detail.qandA).map((v: any, i: number) => ({ id: i + 1 })),
+        );
+      }
     }
   }, [detail]);
 
@@ -93,7 +97,7 @@ const LaunchpadFormStep3: React.FC<ILaunchpadFormStep3> = ({
                 name={`faq_q_${v.id}`}
                 placeholder="Question"
                 children={FieldText}
-                validate={required}
+                // validate={required}
               />
             </InputWrapper>
             <InputWrapper className="item-faq-container" key={`a${i}`} label={` `}>
@@ -101,7 +105,7 @@ const LaunchpadFormStep3: React.FC<ILaunchpadFormStep3> = ({
                 name={`faq_a_${v.id}`}
                 placeholder="Answer"
                 children={FieldText}
-                validate={required}
+                // validate={required}
               />
             </InputWrapper>
           </Flex>

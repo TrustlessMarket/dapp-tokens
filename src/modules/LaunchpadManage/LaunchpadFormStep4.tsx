@@ -83,7 +83,7 @@ const LaunchpadFormStep4: React.FC<ILaunchpadFormStep4> = ({
       >
         <FileDropzoneUpload
           className="image-drop-container"
-          accept=".csv"
+          accept="text/csv"
           maxSize={MAX_FILE_SIZE}
           onChange={onFileChange}
           url={values?.image || `${CDN_URL}/icons/ic_upload_media.svg`}

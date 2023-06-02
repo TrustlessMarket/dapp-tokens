@@ -59,7 +59,7 @@ const LaunchpadManageHeader: React.FC<LaunchpadManageHeaderProps> = ({
   const renderButton = () => {
     const lastStep = step >= steps.length - 1;
 
-    if (!isApproveToken && tokenSelected) {
+    if (!isApproveToken && tokenSelected && lastStep) {
       return (
         <Flex width={'100%'} justifyContent={'flex-end'} gap={6}>
           <FiledButton
@@ -104,7 +104,8 @@ const LaunchpadManageHeader: React.FC<LaunchpadManageHeaderProps> = ({
             isLoading={loading}
             isDisabled={loading}
             type="submit"
-            className={detail && !detail.launchpad ? 'btn-secondary' : 'btn-primary'}
+            // className={detail && !detail.launchpad ? 'btn-secondary' : 'btn-primary'}
+            className={lastStep ? 'btn-primary' : 'btn-secondary'}
             onClick={() => change('isLastStep', lastStep)}
           >
             {lastStep ? (detail ? 'Update' : 'Submit') : 'Next'}

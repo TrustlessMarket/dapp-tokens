@@ -45,7 +45,7 @@ const LaunchpadFormStep1: React.FC<ILaunchpadFormStep1> = ({
 }) => {
   const router = useRouter();
   const { values } = useFormState();
-  const { change } = useForm();
+  const { change, initialize } = useForm();
   const tokenSelected: IToken | undefined = values?.launchpadTokenArg;
   const liquidityTokenSelected: IToken | undefined = values?.liquidityTokenArg;
   const [needLiquidBalance, setNeedLiquidBalance] = useState<string>('0');
@@ -65,9 +65,29 @@ const LaunchpadFormStep1: React.FC<ILaunchpadFormStep1> = ({
     (_amount: any) => {
       if (!detail || !detail.launchpad) {
         if (new BigNumber(_amount).plus(values.launchpadBalance).gt(balanceToken)) {
-          return `Max liquidity reserve is ${formatCurrency(
+          return `Max Initial liquidity in token is ${formatCurrency(
             new BigNumber(balanceToken).minus(values.launchpadBalance).toString(),
           )} ${tokenSelected?.symbol || ''}`;
+        }
+      }
+
+      return undefined;
+    },
+    [
+      values.launchpadBalance,
+      values.liquidityBalance,
+      tokenSelected,
+      detail,
+      needLiquidBalance,
+      balanceToken,
+    ],
+  );
+
+  const validateMaxFundingRate = useCallback(
+    (_amount: any) => {
+      if (!detail || !detail.launchpad) {
+        if (new BigNumber(_amount).gt(90)) {
+          return `Max Initial liquidity is 90%`;
         }
       }
 
@@ -220,7 +240,7 @@ const LaunchpadFormStep1: React.FC<ILaunchpadFormStep1> = ({
               label="This amount of token that are used to add initial liquidity for trading purposes after the crowdfunding ends."
               iconColor={colors.white500}
             >
-              Liquidity reserve
+              Initial liquidity in token
             </InfoTooltip>
           }
           disabled={detail?.launchpad}
@@ -235,7 +255,7 @@ const LaunchpadFormStep1: React.FC<ILaunchpadFormStep1> = ({
             liquidityTokenSelected ? `(${liquidityTokenSelected.symbol})` : ''
           }`}
           disabled={detail?.launchpad}
-          validate={composeValidators(requiredAmount, minGoalBalance)}
+          validate={composeValidators(requiredAmount)}
           appendComp={
             <Text color={colors.white500}>{liquidityTokenSelected?.symbol}</Text>
           }
@@ -306,14 +326,14 @@ const LaunchpadFormStep1: React.FC<ILaunchpadFormStep1> = ({
           label={
             <InfoTooltip
               showIcon={true}
-              label="Liquidity Reserve refers to a percentage of the funds that are used to add initial liquidity for trading purposes after the crowdfunding ends"
+              label="Initial liquidity in token refers to a percentage of the funds that are used to add initial liquidity for trading purposes after the crowdfunding ends"
               iconColor={colors.white500}
             >
-              Adding funding reward
+              Initial liquidity
             </InfoTooltip>
           }
           disabled={detail?.launchpad}
-          validate={composeValidators(requiredAmount)}
+          validate={composeValidators(requiredAmount, validateMaxFundingRate)}
         />
         <Box mb={6} />
         <Field
