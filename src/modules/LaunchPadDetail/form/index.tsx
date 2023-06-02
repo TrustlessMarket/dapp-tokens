@@ -199,10 +199,10 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   }, [baseBalance]);
 
   useEffect(() => {
-    if (account && liquidityToken?.address) {
+    if (account && liquidityToken?.address && poolDetail?.launchpad) {
       checkApproveBaseToken(liquidityToken);
     }
-  }, [account, liquidityToken?.address]);
+  }, [account, liquidityToken?.address, poolDetail?.launchpad]);
 
   const checkApproveBaseToken = async (token: any) => {
     const [_isApprove] = await Promise.all([checkTokenApprove(token)]);
@@ -753,7 +753,9 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
   const isStarting = [LAUNCHPAD_STATUS.Launching].includes(status.key);
 
   useEffect(() => {
-    fetchData();
+    if (![LaunchpadLabelStatus.draft.key].includes(status.key)) {
+      fetchData();
+    }
   }, [account, isActive, poolDetail]);
 
   const fetchData = async () => {
