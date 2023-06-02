@@ -16,7 +16,7 @@ const LaunchpadStarting = ({poolDetail}: { poolDetail: ILaunchpad }) => {
           <Intro poolDetail={poolDetail}/>
         </GridItem>
         <GridItem>
-          <Card bgColor={"#1B1E26"} paddingX={6} paddingY={6}>
+          <Card bgColor={"#1B1E26"} paddingX={6} paddingY={6} minH={"50vh"}>
             <BuyForm poolDetail={poolDetail}/>
           </Card>
         </GridItem>
