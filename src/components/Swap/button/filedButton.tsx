@@ -45,7 +45,6 @@ const FiledButton: React.FC<FiledButtonProps> = (props) => {
             isLoading={isLoading}
             w={'100%'}
             loadingText={loadingText || 'Processing'}
-            display={'none'}
             {...otherProps}
           >
             {children}
