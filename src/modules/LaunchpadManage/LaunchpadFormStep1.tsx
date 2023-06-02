@@ -184,7 +184,15 @@ const LaunchpadFormStep1: React.FC<ILaunchpadFormStep1> = ({
           name="launchpadBalance"
           decimals={18}
           children={FieldAmount}
-          label={`Rewards ${tokenSelected ? `(${tokenSelected.symbol})` : ''}`}
+          label={
+            <InfoTooltip
+              showIcon={true}
+              label="The total number of tokens that backers will share once the crowdfunding has ended."
+              iconColor={colors.white500}
+            >
+              {`Rewards ${tokenSelected ? `(${tokenSelected.symbol})` : ''}`}
+            </InfoTooltip>
+          }
           disabled={detail?.launchpad}
           validate={composeValidators(requiredAmount, validateAmount)}
           customMeta={{
