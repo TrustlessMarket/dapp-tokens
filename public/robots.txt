@@ -1,0 +1,8 @@
+User-agent: *
+Disallow:
+
+# Allow all crawlers
+User-agent: *
+Allow: /
+
+Sitemap: https://trustless.market/sitemap.xml
