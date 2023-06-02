@@ -295,12 +295,12 @@ const LaunchpadContainer = () => {
                     <span style={{ color: colors.white500, fontSize: px2rem(14) }}>
                       Ends at:
                     </span>{' '}
-                  {moment(row?.userProposal.voteEnd).format('MMM, DD')}
+                  {moment(row?.voteEnd).format('MMM, DD')}
                 </Text>
                 <Flex mt={1} alignItems={'center'} gap={2}>
                   <ImClock2 />
                   <Text>
-                    <CountDownTimer end_time={row?.userProposal.voteEnd} />
+                    <CountDownTimer end_time={row?.voteEnd} />
                   </Text>
                 </Flex>
               </Box>
