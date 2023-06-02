@@ -650,7 +650,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
               containerConfig={{ flex: 1, mt: 6 }}
               loadingText={submitting ? 'Processing' : ' '}
               processInfo={{
-                id: transactionType.createPoolApprove,
+                id: transactionType.depositLaunchpad,
               }}
               style={{
                 backgroundColor: isClaimLaunchpad
