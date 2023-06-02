@@ -24,6 +24,7 @@ import { useRouter } from 'next/router';
 import React, { useCallback, useEffect, useState } from 'react';
 import { Field, useForm, useFormState } from 'react-final-form';
 import { StyledLaunchpadFormStep1 } from './LaunchpadManage.styled';
+import { isProduction } from '@/utils/commons';
 
 interface ILaunchpadFormStep1 {
   detail?: ILaunchpad;
@@ -54,6 +55,17 @@ const LaunchpadFormStep1: React.FC<ILaunchpadFormStep1> = ({
     (_amount: any) => {
       if (!detail && Number(_amount) > Number(balanceToken)) {
         return `Max amount is ${formatCurrency(balanceToken)}`;
+      }
+
+      return undefined;
+    },
+    [values.launchpadBalance, tokenSelected, balanceToken, detail],
+  );
+
+  const validateDuration = useCallback(
+    (_amount: any) => {
+      if (!detail && Number(_amount) > Number(isProduction() ? 30 : 0.02)) {
+        return `Max duration is ${formatCurrency(isProduction() ? 30 : 0.02)} day`;
       }
 
       return undefined;
@@ -295,8 +307,9 @@ const LaunchpadFormStep1: React.FC<ILaunchpadFormStep1> = ({
           decimals={18}
           children={FieldAmount}
           label={`Duration`}
-          validate={composeValidators(requiredAmount)}
+          validate={composeValidators(requiredAmount, validateDuration)}
           appendComp={<Text color={colors.white500}>Day</Text>}
+          disabled={detail?.launchpad}
         />
 
         <Box mb={6} />
