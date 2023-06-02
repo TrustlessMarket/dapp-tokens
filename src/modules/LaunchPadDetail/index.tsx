@@ -16,7 +16,6 @@ import React, {useEffect, useState} from 'react';
 import IdoFaqs from './faqs';
 import styles from './styles.module.scss';
 import px2rem from "@/utils/px2rem";
-import SectionContainer from "@/components/Swap/sectionContainer";
 
 const IdoDetailContainer = () => {
   const router = useRouter();

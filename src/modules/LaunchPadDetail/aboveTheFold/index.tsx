@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {LAUNCHPAD_STATUS, useLaunchPadStatus} from '@/modules/Launchpad/Launchpad.Status';
-import BodyContainer from '@/components/Swap/bodyContainer';
 import styles from '@/modules/LaunchPadDetail/aboveTheFold/styles.module.scss';
 import {ILaunchpad} from '@/interfaces/launchpad';
 import {Box, Divider, Grid, GridItem} from "@chakra-ui/react";
