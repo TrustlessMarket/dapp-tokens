@@ -88,14 +88,40 @@ export const StyledLaunchpadManage = styled(BodyContainer)`
 
   .item-faq-container {
     flex: 1;
+    margin-bottom: 25px;
+    input {
+      background-color: transparent;
+    }
   }
 
   .btn-add-faq {
-    color: ${colors.bluePrimary};
-    align-items: center;
-    gap: 8;
-    cursor: pointer;
-    opacity: 0.8;
+    color: ${colors.white};
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    width: 140px !important;
+    min-width: 140px !important;
+    svg {
+      margin-right: 3px;
+    }
+  }
+
+  .btn-remove {
+    background: rgba(255, 71, 71, 0.2);
+    border-radius: 4px;
+    color: #ff4747;
+    font-style: normal;
+    font-weight: 500;
+    font-size: ${px2rem(10)}!important;
+    line-height: 16px;
+    min-width: 63px !important;
+    width: 68px !important;
+    height: 18px !important;
+    margin-left: 12px;
+    padding-left: 0;
+    padding-right: 0;
+    svg {
+      margin-right: 5px;
+    }
   }
 
   .btn-secondary {
