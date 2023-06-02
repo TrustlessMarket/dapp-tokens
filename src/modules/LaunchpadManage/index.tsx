@@ -15,6 +15,7 @@ import { toast } from 'react-hot-toast';
 import LaunchpadManageFormContainer from './LauchpadManage.FormContainer';
 import { StyledLaunchpadManage } from './LaunchpadManage.styled';
 import { ROUTE_PATH } from '@/constants/route-path';
+import { filter } from 'lodash';
 
 const LaunchpadManage = () => {
   const { getSignature } = useContext(WalletContext);
@@ -60,11 +61,7 @@ const LaunchpadManage = () => {
         }),
       );
 
-      if (step === 0) {
-        setStep(1);
-      }
-
-      if (values?.isLastStep && account) {
+      if ((values?.isLastStep || step > 1) && account) {
         setLoading(true);
         const tokenAddress = values?.launchpadTokenArg?.address;
         const liquidAddress = values?.liquidityTokenArg?.address;
@@ -75,13 +72,20 @@ const LaunchpadManage = () => {
           .multipliedBy(3600)
           .toFixed(0);
 
+        const faqs = filter(Object.keys(values), (v) => v?.includes('faq_q')).map(
+          (v, i) => ({
+            value: values?.[v],
+            label: values?.[`faq_a_${i + 1}`],
+          }),
+        );
+
         const res = await createLaunchpad({
           user_address: account,
           video: values?.video,
           image: values?.image,
           description: values?.description,
           signature,
-          // qand_a: JSON.stringify(faqs),
+          qand_a: JSON.stringify(faqs),
           id: detail?.id,
           launchpad_token: tokenAddress,
           liquidity_token: liquidAddress,
@@ -93,7 +97,7 @@ const LaunchpadManage = () => {
           duration: Number(seconds),
         });
 
-        if (values.isCreateProposal) {
+        if (values.isCreateProposal && !detail) {
           await createProposalLaunchpad({
             launchpadTokenArg: tokenAddress,
             liquidityTokenArg: liquidAddress,
@@ -105,9 +109,16 @@ const LaunchpadManage = () => {
             thresholdBalance: values.thresholdBalance || '0',
           });
         }
-        localStorage.removeItem(LAUNCHPAD_FORM_STEP);
-        router.replace(ROUTE_PATH.LAUNCHPAD);
+
+        if (!detail) {
+          localStorage.removeItem(LAUNCHPAD_FORM_STEP);
+          router.replace(ROUTE_PATH.LAUNCHPAD);
+        }
+
         toast.success(`Submitted proposals successfully.`);
+      }
+      if (step < values.steps.length) {
+        setStep((n) => n + 1);
       }
     } catch (error) {
       console.log('error', error);
