@@ -34,7 +34,7 @@ export interface LaunchpadManageFormContainerProps {
   error?: any;
 }
 
-export const steps = [{ title: 'Launchpad\nInformation' }, { title: 'Story' }];
+export const steps = [{ title: 'Info' }, { title: 'Story of the Project' }];
 
 export const extra_steps = [{ title: 'FAQs' }];
 
