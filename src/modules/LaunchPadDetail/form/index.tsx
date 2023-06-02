@@ -713,6 +713,13 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
   const [canClose, setCanClose] = useState(false);
   const [userDeposit, setUserDeposit] = useState<any>();
 
+  // console.log('poolDetail', poolDetail);
+  // console.log('canEnd', canEnd);
+  // console.log('canClaim', canClaim);
+  // console.log('canClose', canClose);
+  // console.log('userDeposit', userDeposit);
+  // console.log('=====');
+
   // const canEnd = [
   //   LAUNCHPAD_STATUS.NotPassed,
   //   LAUNCHPAD_STATUS.Successful,
