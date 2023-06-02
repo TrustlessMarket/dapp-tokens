@@ -204,7 +204,9 @@ const LaunchpadContainer = () => {
           //   }
           // }
 
-          return [LaunchpadLabelStatus.pending.value, LaunchpadLabelStatus.voting.value].includes(status.value) ? (
+          return [LaunchpadLabelStatus.draft.value,
+            LaunchpadLabelStatus.pending.value,
+            LaunchpadLabelStatus.voting.value].includes(status.value) ? (
             <Box>
               <Text
                 color={color}
@@ -268,7 +270,7 @@ const LaunchpadContainer = () => {
         },
         render(row: ILaunchpad) {
           const [status] = useLaunchPadStatus({ row });
-          if (status.value === LaunchpadLabelStatus.pending.value) {
+          if ([LaunchpadLabelStatus.draft.value, LaunchpadLabelStatus.pending.value].includes(status.value)) {
             return (
               <Box>
                 <Text>

@@ -83,8 +83,8 @@ export const useLaunchPadStatus = ({ row }: { row: ILaunchpad }) => {
   //   moment().unix() < moment(endTime).unix()
   // ) {
   //   status = LabelStatus.starting;
-  } else if (moment().unix() >= moment(endTime).unix()) {
-    status = LaunchpadLabelStatus.end;
+  // } else if (moment().unix() >= moment(endTime).unix()) {
+  //   status = LaunchpadLabelStatus.end;
   }
 
   return [status];
