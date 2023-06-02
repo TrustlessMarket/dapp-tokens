@@ -86,27 +86,30 @@ const LaunchpadFormStep1: React.FC<ILaunchpadFormStep1> = ({
   const minGoalBalance = useCallback(
     (_amount: any) => {
       if (!detail || !detail.launchpad) {
-        if (Number(_amount) >= Number(values.thresholdBalance)) {
+        if (
+          Number(values.thresholdBalance) > 0 &&
+          Number(_amount) >= Number(values.thresholdBalance)
+        ) {
           return `Funding goal is less than Hard cap`;
         }
       }
 
       return undefined;
     },
-    [values.thresholdBalance, values.goalBalance],
+    [values.thresholdBalance, values.goalBalance, detail],
   );
 
   const maxGoalBalance = useCallback(
     (_amount: any) => {
       if (!detail || !detail.launchpad) {
         if (Number(_amount) > 0 && Number(_amount) <= Number(values.goalBalance)) {
-          return `Funding goal is less than Hard cap`;
+          return `Hard cap is greater than Funding goal`;
         }
       }
 
       return undefined;
     },
-    [values.thresholdBalance, values.goalBalance],
+    [values.thresholdBalance, values.goalBalance, detail],
   );
 
   useEffect(() => {
@@ -156,6 +159,7 @@ const LaunchpadFormStep1: React.FC<ILaunchpadFormStep1> = ({
             error,
             touched: Boolean(error),
           }}
+          appendComp={<Text color={colors.white500}>{tokenSelected?.symbol}</Text>}
           rightLabel={
             !isEmpty(tokenSelected) && (
               <Flex
@@ -192,6 +196,7 @@ const LaunchpadFormStep1: React.FC<ILaunchpadFormStep1> = ({
             error,
             touched: Boolean(error),
           }}
+          appendComp={<Text color={colors.white500}>{tokenSelected?.symbol}</Text>}
           // rightLabel={
           //   !isEmpty(tokenSelected) &&
           //   !detail && (
@@ -212,7 +217,7 @@ const LaunchpadFormStep1: React.FC<ILaunchpadFormStep1> = ({
           label={
             <InfoTooltip
               showIcon={true}
-              label="Liquidity Reserve refers to a percentage of the funds that are used to add initial liquidity for trading purposes after the crowdfunding ends"
+              label="This amount of token that are used to add initial liquidity for trading purposes after the crowdfunding ends."
               iconColor={colors.white500}
             >
               Liquidity reserve
@@ -231,6 +236,9 @@ const LaunchpadFormStep1: React.FC<ILaunchpadFormStep1> = ({
           }`}
           disabled={detail?.launchpad}
           validate={composeValidators(requiredAmount, minGoalBalance)}
+          appendComp={
+            <Text color={colors.white500}>{liquidityTokenSelected?.symbol}</Text>
+          }
         />
       </Box>
       <Box className="fields-right-container" flex={1}>
@@ -268,6 +276,7 @@ const LaunchpadFormStep1: React.FC<ILaunchpadFormStep1> = ({
           children={FieldAmount}
           label={`Duration`}
           validate={composeValidators(requiredAmount)}
+          appendComp={<Text color={colors.white500}>Day</Text>}
         />
 
         <Box mb={6} />
@@ -275,20 +284,24 @@ const LaunchpadFormStep1: React.FC<ILaunchpadFormStep1> = ({
           name="liquidityRatioArg"
           decimals={18}
           children={FieldAmount}
-          rightLabel={
-            !isEmpty(liquidityTokenSelected) && (
-              <Flex
-                alignItems={'center'}
-                gap={2}
-                fontSize={px2rem(14)}
-                color={'#FFFFFF'}
-                mb={2}
-              >
-                <Flex gap={1} alignItems={'center'}>
-                  {liquidityTokenSelected?.symbol}
-                </Flex>
-              </Flex>
-            )
+          // rightLabel={
+          //   !isEmpty(liquidityTokenSelected) && (
+          //     <Flex
+          //       alignItems={'center'}
+          //       gap={2}
+          //       fontSize={px2rem(14)}
+          //       color={'#FFFFFF'}
+          //       mb={2}
+          //     >
+          //       <Flex gap={1} alignItems={'center'}>
+          //         {liquidityTokenSelected?.symbol}
+          //       </Flex>
+          //     </Flex>
+          //   )
+          // }
+
+          appendComp={
+            <Text color={colors.white500}>% ({liquidityTokenSelected?.symbol})</Text>
           }
           label={
             <InfoTooltip
@@ -307,15 +320,24 @@ const LaunchpadFormStep1: React.FC<ILaunchpadFormStep1> = ({
           name="thresholdBalance"
           decimals={18}
           children={FieldAmount}
-          label={`Hard cap ${
-            liquidityTokenSelected ? `(${liquidityTokenSelected.symbol})` : ''
-          }`}
+          appendComp={
+            <Text color={colors.white500}>{liquidityTokenSelected?.symbol}</Text>
+          }
+          label={
+            <InfoTooltip
+              showIcon={true}
+              label="Launchpad will stop upon reaching its hard cap (the maximum amount for the fund)"
+              iconColor={colors.white500}
+            >
+              Hard cap
+            </InfoTooltip>
+          }
           disabled={detail?.launchpad}
           validate={composeValidators(maxGoalBalance)}
         />
       </Box>
       <Box className="token-info" flex={1}>
-        <Text as={'h6'}>Token information's</Text>
+        <Text as={'h6'}>Token information</Text>
         {tokenSelected && (
           <Flex
             justifyContent={'space-between'}
@@ -361,7 +383,7 @@ const LaunchpadFormStep1: React.FC<ILaunchpadFormStep1> = ({
               />
             </Box>
 
-            <Box>
+            {/* <Box>
               <Box mt={6} />
               <FiledButton
                 btnSize="l"
@@ -375,7 +397,7 @@ const LaunchpadFormStep1: React.FC<ILaunchpadFormStep1> = ({
               >
                 Update token info
               </FiledButton>
-            </Box>
+            </Box> */}
           </Flex>
         )}
       </Box>

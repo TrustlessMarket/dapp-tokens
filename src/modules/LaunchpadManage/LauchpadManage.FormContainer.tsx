@@ -175,6 +175,7 @@ const LaunchpadManageFormContainer: React.FC<LaunchpadManageFormContainerProps> 
     initialize({
       steps: refSteps,
     });
+    fetchData();
   }, []);
 
   useEffect(() => {
@@ -230,7 +231,7 @@ const LaunchpadManageFormContainer: React.FC<LaunchpadManageFormContainerProps> 
         launchpadTokenArg: detail.launchpadToken,
         liquidityTokenArg: detail.liquidityToken,
         launchpadBalance: detail.launchpadBalance,
-        liquidityRatioArg: getLiquidityRatio(detail.liquidityRatio),
+        liquidityRatioArg: detail.liquidityRatio,
         goalBalance: detail.goalBalance,
         liquidityBalance: detail.liquidityBalance,
         startTimeArg: new Date(detail.launchStart),
@@ -247,6 +248,9 @@ const LaunchpadManageFormContainer: React.FC<LaunchpadManageFormContainerProps> 
 
   const getTokens = async () => {
     setTokens([]);
+    if (!account || !isActive) {
+      return;
+    }
     try {
       const response = await Promise.all([
         getListOwnerToken({
@@ -254,13 +258,23 @@ const LaunchpadManageFormContainer: React.FC<LaunchpadManageFormContainerProps> 
           page: 1,
           limit: 9999,
         }),
+      ]);
+
+      setTokens(response[0]);
+    } catch (error) {
+      console.log('error', error);
+    }
+  };
+
+  const fetchData = async () => {
+    try {
+      const response = await Promise.all([
         getListLiquidityToken(),
         getConfigLaunchpad({}),
       ]);
 
-      setTokens(response[0]);
-      setLiquidTokens(response[1]);
-      setLaunchpadConfigs(response[2]);
+      setLiquidTokens(response[0]);
+      setLaunchpadConfigs(response[1]);
     } catch (error) {
       console.log('error', error);
     }

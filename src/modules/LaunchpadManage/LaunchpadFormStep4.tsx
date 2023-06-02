@@ -16,6 +16,9 @@ import React, { useEffect, useState } from 'react';
 import { Field, useForm, useFormState } from 'react-final-form';
 import { IoIosAddCircleOutline, IoIosRemoveCircleOutline } from 'react-icons/io';
 import { StyledLaunchpadFormStep1 } from './LaunchpadManage.styled';
+import FileDropzoneUpload from '@/components/Swap/form/fileDropzoneUpload';
+import { CDN_URL } from '@/configs';
+import { MAX_FILE_SIZE } from '../UpdateTokenInfo/form';
 
 interface ILaunchpadFormStep4 {
   detail?: ILaunchpad;
@@ -67,51 +70,26 @@ const LaunchpadFormStep4: React.FC<ILaunchpadFormStep4> = ({
     }
   }, [detail]);
 
+  const onFileChange = async (file: File) => {
+    console.log('file', file);
+  };
+
   return (
     <StyledLaunchpadFormStep1 className={'step-2-container'}>
-      <InputWrapper theme="dark">
-        {faqs.map((v, i) => (
-          <Flex alignItems={'center'} gap={6} key={i}>
-            <InputWrapper
-              className="item-faq-container"
-              key={`q-${i}`}
-              label={
-                <Flex alignItems={'center'}>
-                  <Text style={{ color: colors.white }}>{`Question ${v.id}`}</Text>
-                  {i > 0 && (
-                    <FiledButton
-                      className="btn-remove"
-                      onClick={() => onRemoveChoose(v)}
-                    >
-                      <IoIosRemoveCircleOutline /> Remove
-                    </FiledButton>
-                  )}
-                </Flex>
-              }
-            >
-              <Field
-                name={`faq_q_${v.id}`}
-                placeholder="Question"
-                children={FieldText}
-                validate={required}
-              />
-            </InputWrapper>
-            <InputWrapper className="item-faq-container" key={`a${i}`} label={` `}>
-              <Field
-                name={`faq_a_${v.id}`}
-                placeholder="Answer"
-                children={FieldText}
-                validate={required}
-              />
-            </InputWrapper>
-          </Flex>
-        ))}
+      <InputWrapper
+        className="field-container"
+        theme="dark"
+        label={<Text>CSV</Text>}
+      >
+        <FileDropzoneUpload
+          className="image-drop-container"
+          accept=".csv"
+          maxSize={MAX_FILE_SIZE}
+          onChange={onFileChange}
+          url={values?.image || `${CDN_URL}/icons/ic_upload_media.svg`}
+          loading={uploading}
+        />
       </InputWrapper>
-      <Flex>
-        <FiledButton onClick={onAddChoice} className="btn-add-faq">
-          <IoIosAddCircleOutline /> Add more FAQ
-        </FiledButton>
-      </Flex>
     </StyledLaunchpadFormStep1>
   );
 };
