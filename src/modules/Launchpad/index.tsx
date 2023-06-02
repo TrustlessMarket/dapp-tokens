@@ -85,7 +85,7 @@ const LaunchpadContainer = () => {
       },
       {
         id: 'rewards',
-        label: 'Rewards',
+        label: 'Reward Pool',
         labelConfig: {
           fontSize: '12px',
           fontWeight: '500',
@@ -167,10 +167,10 @@ const LaunchpadContainer = () => {
                         .dividedBy(10000)
                         .toString(),
                       18,
-                    )}%`
+                    )}% of funded`
                   : 'N/A'
               }`}</Text>
-              <Text className="note">{`${
+              <Text>{`${
                 token.totalSupply
                   ? `${formatCurrency(row.liquidityBalance, 18)} ${token?.symbol}`
                   : 'N/A'
