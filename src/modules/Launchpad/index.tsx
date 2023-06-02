@@ -234,6 +234,28 @@ const LaunchpadContainer = () => {
         },
       },
       {
+        id: 'hardCap',
+        label: 'Hard Cap',
+        labelConfig: {
+          fontSize: '12px',
+          fontWeight: '500',
+          color: '#B1B5C3',
+        },
+        config: {
+          borderBottom: 'none',
+        },
+        render(row: ILaunchpad) {
+          const color = colors.white;
+          return Number(row?.thresholdBalance || 0) > 0 ? (
+            <Box>
+              <Text
+                color={color}
+              >{`${formatCurrency(row.thresholdBalance)} ${row.liquidityToken.symbol}`}</Text>
+            </Box>
+          ) : 'N/A';
+        },
+      },
+      {
         id: 'date',
         label: 'Date',
         labelConfig: {
