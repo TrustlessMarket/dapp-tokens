@@ -56,8 +56,8 @@ export const LaunchpadLabelStatus = {
 
 export const useLaunchPadStatus = ({ row }: { row: ILaunchpad }) => {
   const state = row?.state;
-  const startTime = row?.startTime;
-  const endTime = row?.endTime;
+  const startTime = row?.launchStart;
+  const endTime = row?.launchEnd;
 
   let status = LaunchpadLabelStatus.pending;
 
@@ -76,13 +76,11 @@ export const useLaunchPadStatus = ({ row }: { row: ILaunchpad }) => {
   //   moment().unix() < moment(endTime).unix()
   // ) {
   //   status = LabelStatus.starting;
-  } else if (moment().unix() >= moment(endTime).unix() && row?.proposalId) {
+  } else if (moment().unix() >= moment(endTime).unix()) {
     status = LaunchpadLabelStatus.end;
   }
 
   return [status];
-
-  //
 };
 
 const LaunchpadStatus = ({ row }: { row: ILaunchpad }) => {

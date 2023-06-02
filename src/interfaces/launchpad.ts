@@ -6,8 +6,8 @@ export interface ILaunchpad {
   id: string;
   launchpadToken: IToken;
   liquidityToken: IToken;
-  startTime: string;
-  endTime: string;
+  launchStart: string;
+  launchEnd: string;
   creatorAddress: string;
   creatorRatio: string;
   launchpad: string;
@@ -31,4 +31,6 @@ export interface ILaunchpad {
   duration: string;
   proposalId: string;
   userProposal: IProposal;
+  voteStart: string;
+  voteEnd: string;
 }

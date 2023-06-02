@@ -264,12 +264,12 @@ const LaunchpadContainer = () => {
                     <span style={{ color: colors.white500, fontSize: px2rem(14) }}>
                       Starts at:
                     </span>{' '}
-                  {moment(row.startTime).format('MMM, DD')}
+                  {moment(row.launchStart).format('MMM, DD')}
                 </Text>
                 <Flex mt={1} alignItems={'center'} gap={2}>
                   <ImClock2 />
                   <Text>
-                    <CountDownTimer end_time={row.startTime} />
+                    <CountDownTimer end_time={row.launchStart} />
                   </Text>
                 </Flex>
               </Box>
@@ -300,12 +300,12 @@ const LaunchpadContainer = () => {
                     <span style={{ color: colors.white500, fontSize: px2rem(14) }}>
                       Ends at:
                     </span>{' '}
-                  {moment(row.endTime).format('MMM, DD')}
+                  {moment(row.launchEnd).format('MMM, DD')}
                 </Text>
                 <Flex mt={1} alignItems={'center'} gap={2}>
                   <ImClock2 />
                   <Text>
-                    <CountDownTimer end_time={row.endTime} />
+                    <CountDownTimer end_time={row.launchEnd} />
                   </Text>
                 </Flex>
               </Box>
