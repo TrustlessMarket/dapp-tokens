@@ -88,7 +88,7 @@ const LaunchpadContainer = () => {
         label: (
           <InfoTooltip
             showIcon={true}
-            label="The total number of tokens that the contributors will receive once the crowdfunding has ended."
+            label="The total number of tokens that backers will share once the crowdfunding has ended."
           >
             Reward pool
           </InfoTooltip>

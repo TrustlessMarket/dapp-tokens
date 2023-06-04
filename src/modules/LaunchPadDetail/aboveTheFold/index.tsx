@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import {LAUNCHPAD_STATUS, LaunchpadLabelStatus, useLaunchPadStatus} from '@/modules/Launchpad/Launchpad.Status';
+import {LAUNCHPAD_STATUS, useLaunchPadStatus} from '@/modules/Launchpad/Launchpad.Status';
 import styles from '@/modules/LaunchPadDetail/aboveTheFold/styles.module.scss';
 import {ILaunchpad} from '@/interfaces/launchpad';
 import {Box, Divider, Grid, GridItem} from "@chakra-ui/react";
@@ -33,7 +33,12 @@ const AboveTheFold = ({ poolDetail }: ILaunchpad | any) => {
           <Usp />
         </GridItem>
         {
-          ![LaunchpadLabelStatus.draft.key, LAUNCHPAD_STATUS.Pending].includes(status.key) && (
+          ![
+            LAUNCHPAD_STATUS.Draft,
+            LAUNCHPAD_STATUS.Pending,
+            LAUNCHPAD_STATUS.Voting,
+            LAUNCHPAD_STATUS.NotPassed
+          ].includes(status.key) && (
             <GridItem>
               <Card bgColor={"#1B1E26"} paddingX={6} paddingY={6} mt={8}>
                 <Statistic poolDetail={poolDetail}/>
