@@ -753,7 +753,7 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
   const isStarting = [LAUNCHPAD_STATUS.Launching].includes(status.key);
 
   useEffect(() => {
-    if (![LaunchpadLabelStatus.draft.key].includes(status.key)) {
+    if (![LAUNCHPAD_STATUS.Draft].includes(status.key)) {
       fetchData();
     }
   }, [account, isActive, poolDetail]);

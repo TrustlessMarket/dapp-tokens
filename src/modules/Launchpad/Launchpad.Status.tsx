@@ -5,6 +5,7 @@ import { StyledIdoStatus } from './Launchpad.styled';
 import moment from 'moment';
 
 export enum LAUNCHPAD_STATUS {
+  Draft = -1,
   Pending,
   Voting,
   NotPassed,
@@ -18,14 +19,14 @@ export enum LAUNCHPAD_STATUS {
 
 export const LaunchpadLabelStatus = {
   draft: {
-    key: -1,
+    key: LAUNCHPAD_STATUS.Draft,
     value: 'draft',
     label: 'Draft',
   },
   pending: {
     key: LAUNCHPAD_STATUS.Pending,
     value: 'pending',
-    label: 'Voting Preparation',
+    label: 'Preparing to Vote',
   },
   voting: {
     key: LAUNCHPAD_STATUS.Voting,
