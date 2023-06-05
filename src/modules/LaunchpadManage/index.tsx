@@ -21,6 +21,8 @@ import { StyledLaunchpadManage } from './LaunchpadManage.styled';
 import { ROUTE_PATH } from '@/constants/route-path';
 import { filter, isArray } from 'lodash';
 import web3 from 'web3';
+import { toastError } from '@/constants/error';
+import { showError } from '@/utils/toast';
 
 const LaunchpadManage = () => {
   const { getSignature } = useContext(WalletContext);
@@ -142,6 +144,7 @@ const LaunchpadManage = () => {
         setStep((n) => n + 1);
       }
     } catch (error) {
+      toastError(showError, error, { address: account });
       console.log('error', error);
     } finally {
       setLoading(false);

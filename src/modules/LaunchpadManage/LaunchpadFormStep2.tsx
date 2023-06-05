@@ -89,7 +89,9 @@ const LaunchpadFormStep2: React.FC<ILaunchpadFormStep2> = ({
       >
         <FileDropzoneUpload
           className="image-drop-container"
-          accept="image/*"
+          accept={{
+            'image/*': ['.png'],
+          }}
           maxSize={MAX_FILE_SIZE}
           onChange={onFileChange}
           url={values?.image || `${CDN_URL}/icons/ic_upload_media.svg`}
