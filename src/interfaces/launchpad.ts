@@ -31,6 +31,7 @@ export interface ILaunchpad {
   qandA: string;
   video: string;
   image: string;
+  boostUrl: string;
   duration: string;
   proposalId: string;
   userProposal: IProposal;

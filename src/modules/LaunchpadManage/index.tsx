@@ -5,7 +5,11 @@ import { WalletContext } from '@/contexts/wallet-context';
 import useCreateLaunchpad from '@/hooks/contract-operations/launchpad/useCreate';
 import useContractOperation from '@/hooks/contract-operations/useContractOperation';
 import { ILaunchpad } from '@/interfaces/launchpad';
-import { createLaunchpad, getDetailLaunchpad } from '@/services/launchpad';
+import {
+  createLaunchpad,
+  getDetailLaunchpad,
+  importBoost,
+} from '@/services/launchpad';
 import { useWeb3React } from '@web3-react/core';
 import BigNumber from 'bignumber.js';
 import { useRouter } from 'next/router';
@@ -15,7 +19,7 @@ import { toast } from 'react-hot-toast';
 import LaunchpadManageFormContainer from './LauchpadManage.FormContainer';
 import { StyledLaunchpadManage } from './LaunchpadManage.styled';
 import { ROUTE_PATH } from '@/constants/route-path';
-import { filter } from 'lodash';
+import { filter, isArray } from 'lodash';
 import web3 from 'web3';
 
 const LaunchpadManage = () => {
@@ -102,6 +106,18 @@ const LaunchpadManage = () => {
             threshold_balance: values.thresholdBalance || '0',
             duration: Number(seconds),
           });
+          if (values.boost_file_url && step === 3 && detail?.launchpad) {
+            await importBoost(
+              {
+                pool_address: detail?.launchpad,
+                address: account,
+              },
+              {
+                signature,
+                file_url: values.boost_file_url,
+              },
+            );
+          }
           if (values.isCreateProposal && !detail?.launchpad) {
             await createProposalLaunchpad({
               launchpadTokenArg: tokenAddress,
@@ -122,7 +138,7 @@ const LaunchpadManage = () => {
           router.replace(ROUTE_PATH.LAUNCHPAD);
         }
       }
-      if (step < values.steps.length) {
+      if (step < values.steps.length - 1) {
         setStep((n) => n + 1);
       }
     } catch (error) {
