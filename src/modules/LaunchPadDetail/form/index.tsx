@@ -410,13 +410,27 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           </StatNumber>
         </Stat>
         <Stat className={styles.infoColumn} textAlign={'left'}>
-          <StatLabel>Target</StatLabel>
+          <StatLabel>
+            <InfoTooltip
+              showIcon={true}
+              label="The minimum amount you would like to raise. If the crowdfunding does not reach the Funding Goal, the funded amount will be returned to the contributors"
+            >
+              {`Funding goal`}
+            </InfoTooltip>
+          </StatLabel>
           <StatNumber>
             {formatCurrency(poolDetail?.goalBalance || 0)} {liquidityToken?.symbol}
           </StatNumber>
         </Stat>
         <Stat className={styles.infoColumn} textAlign={'left'}>
-          <StatLabel>Hard Cap</StatLabel>
+          <StatLabel>
+            <InfoTooltip
+              showIcon={true}
+              label="The maximum amount you would like to raise. The crowdfunding will stop upon reaching its hard cap"
+            >
+              Hard Cap
+            </InfoTooltip>
+          </StatLabel>
           <StatNumber>
             {Number(poolDetail?.thresholdBalance || 0) > 0 ? (
               <>
