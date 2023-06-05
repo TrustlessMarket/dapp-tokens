@@ -4,7 +4,7 @@
 import CountDownTimer from '@/components/Countdown';
 import ModalConfirmApprove from '@/components/ModalConfirmApprove';
 import SocialToken from '@/components/Social';
-import {transactionType} from '@/components/Swap/alertInfoProcessing/types';
+import { transactionType } from '@/components/Swap/alertInfoProcessing/types';
 import FiledButton from '@/components/Swap/button/filedButton';
 import FieldAmount from '@/components/Swap/form/fieldAmount';
 import InputWrapper from '@/components/Swap/form/inputWrapper';
@@ -12,10 +12,14 @@ import HorizontalItem from '@/components/Swap/horizontalItem';
 import InfoTooltip from '@/components/Swap/infoTooltip';
 import TokenBalance from '@/components/Swap/tokenBalance';
 import WrapperConnected from '@/components/WrapperConnected';
-import {CDN_URL} from '@/configs';
-import {BRIDGE_SUPPORT_TOKEN, TRUSTLESS_BRIDGE, TRUSTLESS_FAUCET,} from '@/constants/common';
-import {toastError} from '@/constants/error';
-import {AssetsContext} from '@/contexts/assets-context';
+import { CDN_URL } from '@/configs';
+import {
+  BRIDGE_SUPPORT_TOKEN,
+  TRUSTLESS_BRIDGE,
+  TRUSTLESS_FAUCET,
+} from '@/constants/common';
+import { toastError } from '@/constants/error';
+import { AssetsContext } from '@/contexts/assets-context';
 import useClaimLaunchPad from '@/hooks/contract-operations/launchpad/useClaim';
 import useDepositPool from '@/hooks/contract-operations/launchpad/useDeposit';
 import useEndLaunchPad from '@/hooks/contract-operations/launchpad/useEnd';
@@ -24,47 +28,69 @@ import useApproveERC20Token from '@/hooks/contract-operations/token/useApproveER
 import useBalanceERC20Token from '@/hooks/contract-operations/token/useBalanceERC20Token';
 import useIsApproveERC20Token from '@/hooks/contract-operations/token/useIsApproveERC20Token';
 import useContractOperation from '@/hooks/contract-operations/useContractOperation';
-import {ILaunchpad} from '@/interfaces/launchpad';
-import {IToken} from '@/interfaces/token';
-import {TransactionStatus} from '@/interfaces/walletTransaction';
-import {LAUNCHPAD_STATUS, LaunchpadLabelStatus, useLaunchPadStatus,} from '@/modules/Launchpad/Launchpad.Status';
-import {getLaunchpadUserDepositInfo, getUserBoost} from '@/services/launchpad';
-import {logErrorToServer} from '@/services/swap';
-import {useAppDispatch, useAppSelector} from '@/state/hooks';
-import {closeModal, openModal} from '@/state/modal';
+import { ILaunchpad } from '@/interfaces/launchpad';
+import { IToken } from '@/interfaces/token';
+import { TransactionStatus } from '@/interfaces/walletTransaction';
+import {
+  LAUNCHPAD_STATUS,
+  LaunchpadLabelStatus,
+  useLaunchPadStatus,
+} from '@/modules/Launchpad/Launchpad.Status';
+import { getLaunchpadUserDepositInfo, getUserBoost } from '@/services/launchpad';
+import { logErrorToServer } from '@/services/swap';
+import { useAppDispatch, useAppSelector } from '@/state/hooks';
+import { closeModal, openModal } from '@/state/modal';
 import {
   requestReload,
   requestReloadRealtime,
   selectPnftExchange,
   updateCurrentTransaction,
 } from '@/state/pnftExchange';
-import {getIsAuthenticatedSelector} from '@/state/user/selector';
-import {colors} from '@/theme/colors';
-import {abbreviateNumber, compareString, formatCurrency} from '@/utils';
-import {composeValidators, required} from '@/utils/formValidate';
+import { getIsAuthenticatedSelector } from '@/state/user/selector';
+import { colors } from '@/theme/colors';
+import { abbreviateNumber, compareString, formatCurrency } from '@/utils';
+import { composeValidators, required } from '@/utils/formValidate';
 import px2rem from '@/utils/px2rem';
-import {showError} from '@/utils/toast';
-import {Box, Center, Flex, forwardRef, Progress, Stat, StatLabel, StatNumber, Text,} from '@chakra-ui/react';
-import {useWindowSize} from '@trustless-computer/dapp-core';
-import {useWeb3React} from '@web3-react/core';
+import { showError } from '@/utils/toast';
+import {
+  Box,
+  Center,
+  Flex,
+  forwardRef,
+  Progress,
+  Stat,
+  StatLabel,
+  StatNumber,
+  Text,
+} from '@chakra-ui/react';
+import { useWindowSize } from '@trustless-computer/dapp-core';
+import { useWeb3React } from '@web3-react/core';
 import BigNumber from 'bignumber.js';
 import cx from 'classnames';
 import debounce from 'lodash/debounce';
 import moment from 'moment';
 import Link from 'next/link';
-import {useRouter} from 'next/router';
-import {useCallback, useContext, useEffect, useImperativeHandle, useMemo, useRef, useState,} from 'react';
-import {Field, Form, useForm, useFormState} from 'react-final-form';
+import { useRouter } from 'next/router';
+import {
+  useCallback,
+  useContext,
+  useEffect,
+  useImperativeHandle,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
+import { Field, Form, useForm, useFormState } from 'react-final-form';
 import toast from 'react-hot-toast';
-import {BiBell} from 'react-icons/bi';
-import {useDispatch, useSelector} from 'react-redux';
+import { BiBell } from 'react-icons/bi';
+import { useDispatch, useSelector } from 'react-redux';
 import Web3 from 'web3';
 import styles from './styles.module.scss';
-import useIsAbleEnd from "@/hooks/contract-operations/launchpad/useIsAbleEnd";
-import useIsAbleClose from "@/hooks/contract-operations/launchpad/useIsAbleClose";
-import useIsAbleVoteRelease from "@/hooks/contract-operations/launchpad/useIsAbleVoteRelease";
-import useIsAbleCancel from "@/hooks/contract-operations/launchpad/useIsAbleCancel";
-import useCancelLaunchPad from "@/hooks/contract-operations/launchpad/useCancel";
+import useIsAbleEnd from '@/hooks/contract-operations/launchpad/useIsAbleEnd';
+import useIsAbleClose from '@/hooks/contract-operations/launchpad/useIsAbleClose';
+import useIsAbleVoteRelease from '@/hooks/contract-operations/launchpad/useIsAbleVoteRelease';
+import useIsAbleCancel from '@/hooks/contract-operations/launchpad/useIsAbleCancel';
+import useCancelLaunchPad from '@/hooks/contract-operations/launchpad/useCancel';
 
 const FEE = 2;
 export const MakeFormSwap = forwardRef((props, ref) => {
@@ -75,7 +101,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     isStarting,
     isEndLaunchpad,
     isClaimLaunchpad,
-    isCancelLaunchpad
+    isCancelLaunchpad,
   } = props;
   const [loading, setLoading] = useState(false);
   const [liquidityToken, setLiquidityToken] = useState<any>();
@@ -373,7 +399,8 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             >
               <Flex gap={1} alignItems={'center'}>
                 <Text>
-                  {formatCurrency(poolDetail?.totalValue || 0)} {liquidityToken?.symbol}
+                  {formatCurrency(poolDetail?.totalValue || 0)}{' '}
+                  {liquidityToken?.symbol}
                 </Text>
                 <Text fontSize={'20px'} fontWeight={'400'}>
                   ({formatCurrency(percent, 2)}% funded)
@@ -391,27 +418,28 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         <Stat className={styles.infoColumn} textAlign={'left'}>
           <StatLabel>Hard Cap</StatLabel>
           <StatNumber>
-            {
-              Number(poolDetail?.thresholdBalance || 0) > 0 ? (
-                <>{formatCurrency(poolDetail?.thresholdBalance || 0)} {liquidityToken?.symbol}</>
-              ) : ('N/A')
-            }
+            {Number(poolDetail?.thresholdBalance || 0) > 0 ? (
+              <>
+                {formatCurrency(poolDetail?.thresholdBalance || 0)}{' '}
+                {liquidityToken?.symbol}
+              </>
+            ) : (
+              'N/A'
+            )}
           </StatNumber>
         </Stat>
       </Flex>
-      {
-        ![LAUNCHPAD_STATUS.Pending].includes(status.key) && (
-          <Box className={styles.progressBar} mt={4}>
-            <Progress
-              w={['100%', '100%']}
-              h="10px"
-              value={percent}
-              borderRadius={20}
-            ></Progress>
-            {/*<Image src={fireImg} className={styles.fireImg} />*/}
-          </Box>
-        )
-      }
+      {![LAUNCHPAD_STATUS.Pending].includes(status.key) && (
+        <Box className={styles.progressBar} mt={4}>
+          <Progress
+            w={['100%', '100%']}
+            h="10px"
+            value={percent}
+            borderRadius={20}
+          ></Progress>
+          {/*<Image src={fireImg} className={styles.fireImg} />*/}
+        </Box>
+      )}
       <Flex gap={0} color={'#FFFFFF'} mt={8} direction={'column'}>
         <Flex gap={6} justifyContent={'space-between'}>
           <Stat className={styles.infoColumn} flex={1}>
@@ -428,39 +456,31 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           </Stat>
           <Stat className={styles.infoColumn} flex={1.5}>
             <StatLabel>
-              {[
-                LAUNCHPAD_STATUS.Pending,
-              ].includes(status.key)
-                ? 'Voting will start in' :
-                [
-                  LAUNCHPAD_STATUS.Voting,
-                ].includes(status.key)
-                  ? 'Voting will end in' :
-                [
-                  LAUNCHPAD_STATUS.NotPassed,
-                  LAUNCHPAD_STATUS.Successful,
-                  LAUNCHPAD_STATUS.Failed,
-                  LAUNCHPAD_STATUS.End,
-              ].includes(status.key)
+              {[LAUNCHPAD_STATUS.Pending].includes(status.key)
+                ? 'Voting will start in'
+                : [LAUNCHPAD_STATUS.Voting].includes(status.key)
+                ? 'Voting will end in'
+                : [
+                    LAUNCHPAD_STATUS.NotPassed,
+                    LAUNCHPAD_STATUS.Successful,
+                    LAUNCHPAD_STATUS.Failed,
+                    LAUNCHPAD_STATUS.End,
+                  ].includes(status.key)
                 ? 'Ended at'
                 : 'Ends in'}
             </StatLabel>
             <StatNumber>
               <Text>
-                {[
-                  LAUNCHPAD_STATUS.Pending,
-                ].includes(status.key)
-                  ? <CountDownTimer end_time={poolDetail.voteStart} /> :
-                  [
-                    LAUNCHPAD_STATUS.Voting,
-                  ].includes(status.key)
-                    ? <CountDownTimer end_time={poolDetail.voteEnd} /> :
-                  [
-                  LAUNCHPAD_STATUS.NotPassed,
-                  LAUNCHPAD_STATUS.Successful,
-                  LAUNCHPAD_STATUS.Failed,
-                  LAUNCHPAD_STATUS.End,
-                ].includes(status.key) ? (
+                {[LAUNCHPAD_STATUS.Pending].includes(status.key) ? (
+                  <CountDownTimer end_time={poolDetail.voteStart} />
+                ) : [LAUNCHPAD_STATUS.Voting].includes(status.key) ? (
+                  <CountDownTimer end_time={poolDetail.voteEnd} />
+                ) : [
+                    LAUNCHPAD_STATUS.NotPassed,
+                    LAUNCHPAD_STATUS.Successful,
+                    LAUNCHPAD_STATUS.Failed,
+                    LAUNCHPAD_STATUS.End,
+                  ].includes(status.key) ? (
                   moment(poolDetail.launchEnd).format('LLL')
                 ) : (
                   <CountDownTimer end_time={poolDetail.launchEnd} />
@@ -672,15 +692,21 @@ export const MakeFormSwap = forwardRef((props, ref) => {
                 id: transactionType.depositLaunchpad,
               }}
               style={{
-                backgroundColor: isClaimLaunchpad ? colors.greenPrimary
-                  : isEndLaunchpad ? colors.redPrimary
-                  : isCancelLaunchpad ? colors.redPrimary
+                backgroundColor: isClaimLaunchpad
+                  ? colors.greenPrimary
+                  : isEndLaunchpad
+                  ? colors.redPrimary
+                  : isCancelLaunchpad
+                  ? colors.redPrimary
                   : colors.bluePrimary,
               }}
             >
-              {isClaimLaunchpad ? 'CLAIM THIS PROJECT'
-                : isEndLaunchpad ? 'END THIS PROJECT'
-                : isCancelLaunchpad ? 'CANCEL THIS PROJECT'
+              {isClaimLaunchpad
+                ? 'CLAIM THIS PROJECT'
+                : isEndLaunchpad
+                ? 'END THIS PROJECT'
+                : isCancelLaunchpad
+                ? 'CANCEL THIS PROJECT'
                 : 'BACK THIS PROJECT'}
             </FiledButton>
           )}
@@ -689,33 +715,28 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       <Flex justifyContent={'flex-end'} mt={4}>
         <SocialToken socials={poolDetail?.launchpadToken?.social} />
       </Flex>
-      {
-        [
-          LAUNCHPAD_STATUS.Pending,
-        ].includes(status.key) ? (
-          <Text mt={4} fontSize={px2rem(16)} fontWeight={'400'} color={'#FFFFFF'}>
-            This project requires community votes to initiate crowdfunding. Please prepare your TM token to participate in the voting process.
+      {[LAUNCHPAD_STATUS.Pending].includes(status.key) ? (
+        <Text mt={4} fontSize={px2rem(16)} fontWeight={'400'} color={'#FFFFFF'}>
+          This project requires community votes to initiate crowdfunding. Please
+          prepare your TM token to participate in the voting process.
+        </Text>
+      ) : [LAUNCHPAD_STATUS.Voting].includes(status.key) ? (
+        <Text mt={4} fontSize={px2rem(16)} fontWeight={'400'} color={'#FFFFFF'}>
+          If you enjoy this project, please show your support by voting for it.
+        </Text>
+      ) : [LAUNCHPAD_STATUS.Launching].includes(status.key) ? (
+        <Text mt={4} fontSize={px2rem(16)} fontWeight={'400'} color={'#FFFFFF'}>
+          All or nothing. This project will only be funded if it reaches its goal by{' '}
+          <Text as={'span'} color={'#FF7E21'}>
+            {moment
+              .utc(poolDetail?.launchEnd)
+              .format('ddd, MMMM Do YYYY HH:mm:ss Z')}
           </Text>
-        ) :
-          [
-            LAUNCHPAD_STATUS.Voting,
-          ].includes(status.key) ? (
-            <Text mt={4} fontSize={px2rem(16)} fontWeight={'400'} color={'#FFFFFF'}>
-              If you enjoy this project, please show your support by voting for it.
-            </Text>
-          ) :
-            [
-              LAUNCHPAD_STATUS.Launching,
-            ].includes(status.key) ? (
-              <Text mt={4} fontSize={px2rem(16)} fontWeight={'400'} color={'#FFFFFF'}>
-                All or nothing. This project will only be funded if it reaches its goal by{' '}
-                <Text as={'span'} color={'#FF7E21'}>
-                  {moment.utc(poolDetail?.launchEnd).format('ddd, MMMM Do YYYY HH:mm:ss Z')}
-                </Text>
-                .
-              </Text>
-            ) : <></>
-      }
+          .
+        </Text>
+      ) : (
+        <></>
+      )}
     </form>
   );
 });
@@ -728,15 +749,11 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
   const { run: depositLaunchpad } = useContractOperation({
     operation: useDepositPool,
   });
-  const { run: endLaunchpad } = useContractOperation({
-    operation: useEndLaunchPad,
-  });
+  const { call: endLaunchpad } = useEndLaunchPad();
   const { run: claimLaunchpad } = useContractOperation({
     operation: useClaimLaunchPad,
   });
-  const { run: cancelLaunchpad } = useContractOperation({
-    operation: useCancelLaunchPad,
-  });
+  const { call: cancelLaunchpad } = useCancelLaunchPad();
   const { call: isAbleRedeem } = useIsAbleRedeem();
   const { call: isAbleEnd } = useIsAbleEnd();
   const { call: isAbleClose } = useIsAbleClose();
@@ -798,9 +815,10 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
       setCanClose(response[1]);
       setCanClaim(response[2]);
       setCanVoteRelease(response[3]);
-      setCanCancel(response[4] &&
-        compareString(poolDetail.creatorAddress, account) &&
-        [LAUNCHPAD_STATUS.Pending].includes(poolDetail?.state)
+      setCanCancel(
+        response[4] &&
+          compareString(poolDetail.creatorAddress, account) &&
+          [LAUNCHPAD_STATUS.Pending].includes(poolDetail?.state),
       );
       setUserDeposit(response[5]);
     } catch (error) {
@@ -816,9 +834,12 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
       openModal({
         id,
         theme: 'dark',
-        title: canClaim ? 'Confirm claim this project'
-          : canEnd ? 'Confirm end this project'
-          : canCancel ? 'Delete my launchpad'
+        title: canClaim
+          ? 'Confirm claim this project'
+          : canEnd
+          ? 'Confirm end this project'
+          : canCancel
+          ? 'Delete my launchpad'
           : 'Confirm deposit',
         className: styles.modalContent,
         modalProps: {
@@ -860,8 +881,11 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
             ) : canEnd ? (
               <Text>End this project?</Text>
             ) : canCancel ? (
-              <Text>If you wish to delete your launchpad, click Confirm below and your tokens will be immediately returned to your account.</Text>
-              ) : (
+              <Text>
+                If you wish to delete your launchpad, click Confirm below and your
+                tokens will be immediately returned to your account.
+              </Text>
+            ) : (
               <>
                 <HorizontalItem
                   label={
