@@ -7,17 +7,11 @@ import WrapperConnected from '@/components/WrapperConnected';
 import {TRUSTLESS_GASSTATION} from '@/constants/common';
 import {toastError} from '@/constants/error';
 import {AssetsContext} from '@/contexts/assets-context';
-import useCastVoteProposal from '@/hooks/contract-operations/proposal/useCastVote';
 import useContractOperation from '@/hooks/contract-operations/useContractOperation';
 import {TransactionStatus} from '@/interfaces/walletTransaction';
 import {logErrorToServer} from '@/services/swap';
-import {useAppDispatch, useAppSelector} from '@/state/hooks';
-import {
-  requestReload,
-  requestReloadRealtime,
-  selectPnftExchange,
-  updateCurrentTransaction,
-} from '@/state/pnftExchange';
+import {useAppDispatch} from '@/state/hooks';
+import {requestReload, requestReloadRealtime, updateCurrentTransaction,} from '@/state/pnftExchange';
 import {formatCurrency} from '@/utils';
 import {showError} from '@/utils/toast';
 import {
@@ -35,7 +29,6 @@ import {
 import {useWeb3React} from '@web3-react/core';
 import BigNumber from 'bignumber.js';
 import Link from 'next/link';
-import {useRouter} from 'next/router';
 import {useCallback, useContext, useEffect, useImperativeHandle, useMemo, useRef, useState} from 'react';
 import {Field, Form, useForm, useFormState} from 'react-final-form';
 import toast from 'react-hot-toast';
@@ -479,11 +472,6 @@ const BuyForm = ({ poolDetail, votingToken }: any) => {
   const [submitting, setSubmitting] = useState(false);
   const dispatch = useAppDispatch();
   const { account, isActive } = useWeb3React();
-
-  const needReload = useAppSelector(selectPnftExchange).needReload;
-  const router = useRouter();
-  const [voteSignatureProposal, setVoteSignatureProposal] = useState<any>();
-  const [canVote, setCanVote] = useState(false);
 
   const { run: voteLaunchpad } = useContractOperation({
     operation: useVoteLaunchpad,
