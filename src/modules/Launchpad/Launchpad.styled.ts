@@ -160,6 +160,7 @@ export const StyledIdoStatus = styled(Badge)`
   }
   &.notpassed,
   &.failed,
+  &.cancelled,
   &.end {
     color: rgba(255, 71, 71, 1);
     background-color: rgba(255, 71, 71, 0.2);

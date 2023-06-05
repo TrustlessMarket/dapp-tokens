@@ -32,22 +32,21 @@ import { useContext, useEffect, useImperativeHandle, useRef, useState } from 're
 import { Form, useForm } from 'react-final-form';
 import { useDispatch } from 'react-redux';
 import styles from './styles.module.scss';
+import {ILaunchpad} from "@/interfaces/launchpad";
+import {TM_ADDRESS} from "@/configs";
+import {LAUNCHPAD_STATUS, useLaunchPadStatus} from "@/modules/Launchpad/Launchpad.Status";
 
 export const MakeFormSwap = forwardRef((props, ref) => {
   const {
     onSubmit,
     submitting,
-    proposalDetail,
-    isStartingProposal,
-    isPendingProposal,
-    isEndProposal,
-    canVote,
+    poolDetail,
+    votingToken,
   } = props;
   const [loading, setLoading] = useState(false);
   const [baseBalance, setBaseBalance] = useState<any>('0');
   const { juiceBalance, isLoadedAssets } = useContext(AssetsContext);
   const dispatch = useDispatch();
-  const poolDetail = proposalDetail?.userPool;
   const { account, isActive: isAuthenticated } = useWeb3React();
 
   const [endTime, setEndTime] = useState(0);
@@ -55,15 +54,15 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     moment.unix(endTime).format('YYYY/MM/DD HH:mm:ss'),
   );
 
-  useEffect(() => {
-    if (poolDetail?.id) {
-      if (isPendingProposal) {
-        setEndTime(moment(proposalDetail?.voteStart).unix());
-      } else {
-        setEndTime(moment(proposalDetail?.voteEnd).unix());
-      }
-    }
-  }, [poolDetail?.id, isPendingProposal, isStartingProposal]);
+  // useEffect(() => {
+  //   if (poolDetail?.id) {
+  //     if (isPendingProposal) {
+  //       setEndTime(moment(proposalDetail?.voteStart).unix());
+  //     } else {
+  //       setEndTime(moment(proposalDetail?.voteEnd).unix());
+  //     }
+  //   }
+  // }, [poolDetail?.id, isPendingProposal, isStartingProposal]);
 
   useEffect(() => {
     if (expired && endTime) {
@@ -167,7 +166,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       {isAuthenticated && (
         <WrapperConnected type={'submit'} className={styles.submitButton}>
           <>
-            {compareString(poolDetail.creatorAddress, account) ? (
+            {/*{compareString(poolDetail.creatorAddress, account) ? (
               <>
                 {proposalDetail?.state === PROPOSAL_STATUS.Defeated && (
                   <FiledButton
@@ -204,11 +203,11 @@ export const MakeFormSwap = forwardRef((props, ref) => {
               </>
             ) : (
               <></>
-            )}
-            {proposalDetail?.state === PROPOSAL_STATUS.Active && canVote && (
+            )}*/}
+            {[LAUNCHPAD_STATUS.Voting].includes(poolDetail?.state)  && (
               <FiledButton
                 isLoading={submitting}
-                isDisabled={submitting || btnDisabled || !canVote}
+                isDisabled={submitting || btnDisabled}
                 type="submit"
                 // processInfo={{
                 //   id: transactionType.votingProposal,
@@ -221,7 +220,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
                 }}
                 className={styles.btnVoteUp}
               >
-                VOTE THIS PROPOSAL
+                VOTE THIS LAUNCHPAD
               </FiledButton>
             )}
           </>
@@ -231,62 +230,36 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   );
 });
 
-const BuyForm = ({ proposalDetail }: { proposalDetail: IProposal }) => {
+const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
   const refForm = useRef<any>();
   const [submitting, setSubmitting] = useState(false);
   const dispatch = useAppDispatch();
   const { account, isActive } = useWeb3React();
 
   const { mobileScreen } = useWindowSize();
-  const [status] = useProposalStatus({ row: proposalDetail });
-  // const poolDetail = proposalDetail?.userPool;
   const needReload = useAppSelector(selectPnftExchange).needReload;
   const router = useRouter();
-  const [voteSignatureProposal, setVoteSignatureProposal] = useState<any>();
-  const [canVote, setCanVote] = useState(false);
+  const [status] = useLaunchPadStatus({ row: poolDetail });
+  const isStarting = [LAUNCHPAD_STATUS.Voting].includes(status.key);
 
-  // console.log('voteSignatureProposal', voteSignatureProposal);
-  // console.log('canVote', canVote);
-
-  // const {run: defeatProposal} = useContractOperation({
-  //   operation: useDefeatProposal,
-  // });
-  //
-  // const {run: executeProposal} = useContractOperation({
-  //   operation: useExecuteProposal,
-  // });
-  //
-  // const {run: castVoteProposal} = useContractOperation({
-  //   operation: useCastVoteProposal,
-  // });
-
-  const isEndProposal = [
-    PROPOSAL_STATUS.Canceled,
-    PROPOSAL_STATUS.Defeated,
-    PROPOSAL_STATUS.Succeeded,
-    PROPOSAL_STATUS.Queued,
-    PROPOSAL_STATUS.Expired,
-    PROPOSAL_STATUS.Executed,
-    PROPOSAL_STATUS.Closed,
-  ].includes(status.key);
-
-  const isStarting = [PROPOSAL_STATUS.Active].includes(status.key);
-  const isPending = [PROPOSAL_STATUS.Pending].includes(status.key);
+  const votingToken = {
+    address: TM_ADDRESS,
+    thumbnail: 'https://i.ibb.co/TbshdC0/Icon-Token-TM-04.png',
+    decimal: 18
+  };
 
   const getUserVoteInfo = async () => {
     try {
-      const response = await Promise.all([
-        getVoteSignatureProposal({
-          address: account,
-          proposal_id: router?.query?.proposal_id,
-        }),
-        getUserVoteProposal({
-          address: account,
-          proposal_id: router?.query?.proposal_id,
-        }),
-      ]);
-      setVoteSignatureProposal(response[0]);
-      setCanVote(!!response[0] && !response[1]);
+      // const response = await Promise.all([
+      //   getVoteSignatureProposal({
+      //     address: account,
+      //     proposal_id: router?.query?.proposal_id,
+      //   }),
+      //   getUserVoteProposal({
+      //     address: account,
+      //     proposal_id: router?.query?.proposal_id,
+      //   }),
+      // ]);
     } catch (err) {
       throw err;
     }
@@ -300,8 +273,8 @@ const BuyForm = ({ proposalDetail }: { proposalDetail: IProposal }) => {
     account,
     isActive,
     router?.query?.proposal_id,
-    proposalDetail?.id,
-    proposalDetail?.state,
+    poolDetail?.id,
+    poolDetail?.state,
     needReload,
   ]);
 
@@ -322,7 +295,7 @@ const BuyForm = ({ proposalDetail }: { proposalDetail: IProposal }) => {
         },
         render: () => (
           <Flex>
-            <VoteForm proposalDetail={proposalDetail} onClose={close} />
+            <VoteForm poolDetail={poolDetail} votingToken={votingToken} onClose={close} />
           </Flex>
         ),
       }),
@@ -402,11 +375,9 @@ const BuyForm = ({ proposalDetail }: { proposalDetail: IProposal }) => {
             ref={refForm}
             onSubmit={handleSubmit}
             submitting={submitting}
-            proposalDetail={proposalDetail}
-            isStartingProposal={isStarting}
-            isPendingProposal={isPending}
-            isEndProposal={isEndProposal}
-            canVote={canVote}
+            poolDetail={poolDetail}
+            votingToken={votingToken}
+            isStarting={isStarting}
           />
         )}
       </Form>
