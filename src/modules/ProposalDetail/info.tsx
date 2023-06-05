@@ -22,7 +22,6 @@ const ProposalInfo = ({ poolDetail }: ILaunchpad | any) => {
               <InfoTooltip
                 showIcon={true}
                 label="The total number of tokens that the contributors will receive after the crowdfunding ends."
-                // iconColor={colors.white500}
               >
                 {`Reward pool`}
               </InfoTooltip>

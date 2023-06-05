@@ -71,7 +71,7 @@ import debounce from 'lodash/debounce';
 import moment from 'moment';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import {
+import React, {
   useCallback,
   useContext,
   useEffect,
@@ -443,7 +443,14 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       <Flex gap={0} color={'#FFFFFF'} mt={8} direction={'column'}>
         <Flex gap={6} justifyContent={'space-between'}>
           <Stat className={styles.infoColumn} flex={1}>
-            <StatLabel>Reward pool</StatLabel>
+            <StatLabel>
+              <InfoTooltip
+                showIcon={true}
+                label="The total number of tokens that the contributors will receive after the crowdfunding ends."
+              >
+                {`Reward pool`}
+              </InfoTooltip>
+            </StatLabel>
             <StatNumber>
               {formatCurrency(poolDetail?.launchpadBalance || 0)}
             </StatNumber>
