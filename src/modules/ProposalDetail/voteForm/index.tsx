@@ -367,30 +367,13 @@ const BuyForm = ({ poolDetail, votingToken }: any) => {
         }),
       );
 
-      let response;
-      if (
-        compareString(poolDetail?.creatorAddress, account) &&
-        proposalDetail?.state === PROPOSAL_STATUS.Defeated
-      ) {
-        response = await defeatProposal({
-          proposalId: proposalDetail?.proposalId,
-        });
-      } else if (
-        compareString(poolDetail?.creatorAddress, account) &&
-        proposalDetail?.state === PROPOSAL_STATUS.Succeeded
-      ) {
-        response = await executeProposal({
-          proposalId: proposalDetail?.proposalId,
-        });
-      } else if (canVote) {
-        const data = {
-          proposalId: proposalDetail?.proposalId,
-          weight: voteSignatureProposal?.weigthSign,
-          support: values?.isVoteUp ? '1' : '0',
-          signature: voteSignatureProposal?.adminSignature,
-        };
-        response = await castVoteProposal(data);
-      }
+      const data = {
+        proposalId: 'proposalDetail?.proposalId',
+        weight: voteSignatureProposal?.weigthSign,
+        support: values?.isVoteUp ? '1' : '0',
+        signature: voteSignatureProposal?.adminSignature,
+      };
+      const response = await castVoteProposal(data);
 
       toast.success('Transaction has been created. Please wait for few minutes.');
       refForm.current?.reset();
