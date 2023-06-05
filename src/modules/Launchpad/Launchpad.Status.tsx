@@ -57,7 +57,7 @@ export const LaunchpadLabelStatus = {
   cancelled: {
     key: LAUNCHPAD_STATUS.Cancelled,
     value: 'cancelled',
-    label: 'Closed',
+    label: 'Cancelled',
   },
   end: {
     key: LAUNCHPAD_STATUS.End,
@@ -73,7 +73,7 @@ export const useLaunchPadStatus = ({ row }: { row: ILaunchpad }) => {
 
   let status = LaunchpadLabelStatus.draft;
 
-  if(state === LAUNCHPAD_STATUS.Pending) {
+  if (state === LAUNCHPAD_STATUS.Pending) {
     status = LaunchpadLabelStatus.pending;
   } else if (state === LAUNCHPAD_STATUS.Voting) {
     status = LaunchpadLabelStatus.voting;
@@ -85,13 +85,16 @@ export const useLaunchPadStatus = ({ row }: { row: ILaunchpad }) => {
     status = LaunchpadLabelStatus.successful;
   } else if (state === LAUNCHPAD_STATUS.Failed) {
     status = LaunchpadLabelStatus.failed;
-  // } else if (
-  //   moment(startTime).unix() <= moment().unix() &&
-  //   moment().unix() < moment(endTime).unix()
-  // ) {
-  //   status = LabelStatus.starting;
-  // } else if (moment().unix() >= moment(endTime).unix()) {
-  //   status = LaunchpadLabelStatus.end;
+    // } else if (
+    //   moment(startTime).unix() <= moment().unix() &&
+    //   moment().unix() < moment(endTime).unix()
+    // ) {
+    //   status = LabelStatus.starting;
+    // }
+    // else if (moment().unix() >= moment(endTime).unix()) {
+    //   status = LaunchpadLabelStatus.end;
+  } else if (state === LAUNCHPAD_STATUS.Cancelled) {
+    status = LaunchpadLabelStatus.cancelled;
   }
 
   return [status];

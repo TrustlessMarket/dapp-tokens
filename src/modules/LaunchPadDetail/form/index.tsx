@@ -40,7 +40,7 @@ import {
 } from '@/state/pnftExchange';
 import {getIsAuthenticatedSelector} from '@/state/user/selector';
 import {colors} from '@/theme/colors';
-import {abbreviateNumber, formatCurrency} from '@/utils';
+import {abbreviateNumber, compareString, formatCurrency} from '@/utils';
 import {composeValidators, required} from '@/utils/formValidate';
 import px2rem from '@/utils/px2rem';
 import {showError} from '@/utils/toast';
@@ -75,6 +75,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     isStarting,
     isEndLaunchpad,
     isClaimLaunchpad,
+    isCancelLaunchpad
   } = props;
   const [loading, setLoading] = useState(false);
   const [liquidityToken, setLiquidityToken] = useState<any>();
@@ -640,7 +641,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             </Text>
           </Flex>
         )}
-      {(isStarting || isEndLaunchpad || isClaimLaunchpad) && (
+      {(isStarting || isEndLaunchpad || isClaimLaunchpad || isCancelLaunchpad) && (
         <WrapperConnected
           type={isRequireApprove ? 'button' : 'submit'}
           className={styles.submitButton}
@@ -671,17 +672,15 @@ export const MakeFormSwap = forwardRef((props, ref) => {
                 id: transactionType.depositLaunchpad,
               }}
               style={{
-                backgroundColor: isClaimLaunchpad
-                  ? colors.greenPrimary
-                  : isEndLaunchpad
-                  ? colors.redPrimary
+                backgroundColor: isClaimLaunchpad ? colors.greenPrimary
+                  : isEndLaunchpad ? colors.redPrimary
+                  : isCancelLaunchpad ? colors.redPrimary
                   : colors.bluePrimary,
               }}
             >
-              {isClaimLaunchpad
-                ? 'CLAIM THIS PROJECT'
-                : isEndLaunchpad
-                ? 'END THIS PROJECT'
+              {isClaimLaunchpad ? 'CLAIM THIS PROJECT'
+                : isEndLaunchpad ? 'END THIS PROJECT'
+                : isCancelLaunchpad ? 'CANCEL THIS PROJECT'
                 : 'BACK THIS PROJECT'}
             </FiledButton>
           )}
@@ -758,6 +757,7 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
   console.log('canClaim', canClaim);
   console.log('canClose', canClose);
   console.log('canVoteRelease', canVoteRelease);
+  console.log('canCancel', canCancel);
   console.log('userDeposit', userDeposit);
   console.log('=====');
 
@@ -798,7 +798,10 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
       setCanClose(response[1]);
       setCanClaim(response[2]);
       setCanVoteRelease(response[3]);
-      setCanCancel(response[4]);
+      setCanCancel(response[4] &&
+        compareString(poolDetail.creatorAddress, account) &&
+        [LAUNCHPAD_STATUS.Pending].includes(poolDetail?.state)
+      );
       setUserDeposit(response[5]);
     } catch (error) {
       console.log('Launchpad detail form fetchData', error);
@@ -1022,6 +1025,7 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
             isEndLaunchpad={canEnd}
             isClaimLaunchpad={canClaim}
             isStarting={isStarting}
+            isCancelLaunchpad={canCancel}
           />
         )}
       </Form>

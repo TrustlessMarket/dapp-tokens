@@ -41,7 +41,6 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     onSubmit,
     submitting,
     poolDetail,
-    votingToken,
   } = props;
   const [loading, setLoading] = useState(false);
   const [baseBalance, setBaseBalance] = useState<any>('0');
@@ -163,69 +162,29 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             </Text>
           </Flex>
         )}*/}
-      {isAuthenticated && (
-        <WrapperConnected type={'submit'} className={styles.submitButton}>
-          <>
-            {/*{compareString(poolDetail.creatorAddress, account) ? (
-              <>
-                {proposalDetail?.state === PROPOSAL_STATUS.Defeated && (
-                  <FiledButton
-                    isDisabled={submitting || btnDisabled}
-                    isLoading={submitting}
-                    type="submit"
-                    btnSize={'h'}
-                    containerConfig={{ flex: 1, mt: 6 }}
-                    loadingText={submitting ? 'Processing' : ' '}
-                    // processInfo={{
-                    //   id: transactionType.votingProposal,
-                    // }}
-                    className={styles.btnDefeat}
-                  >
-                    DEFEAT THIS PROPOSAL
-                  </FiledButton>
-                )}
-                {proposalDetail?.state === PROPOSAL_STATUS.Succeeded && (
-                  <FiledButton
-                    isDisabled={submitting || btnDisabled}
-                    isLoading={submitting}
-                    type="submit"
-                    btnSize={'h'}
-                    containerConfig={{ flex: 1, mt: 6 }}
-                    loadingText={submitting ? 'Processing' : ' '}
-                    // processInfo={{
-                    //   id: transactionType.votingProposal,
-                    // }}
-                    className={styles.btnExecute}
-                  >
-                    EXECUTE THIS PROPOSAL
-                  </FiledButton>
-                )}
-              </>
-            ) : (
-              <></>
-            )}*/}
-            {[LAUNCHPAD_STATUS.Voting].includes(poolDetail?.state)  && (
-              <FiledButton
-                isLoading={submitting}
-                isDisabled={submitting || btnDisabled}
-                type="submit"
-                // processInfo={{
-                //   id: transactionType.votingProposal,
-                // }}
-                btnSize="h"
-                containerConfig={{
-                  style: {
-                    width: '100%',
-                  },
-                }}
-                className={styles.btnVoteUp}
-              >
-                VOTE THIS LAUNCHPAD
-              </FiledButton>
-            )}
-          </>
-        </WrapperConnected>
-      )}
+      <WrapperConnected type={'submit'} className={styles.submitButton}>
+        <>
+          {[LAUNCHPAD_STATUS.Voting].includes(poolDetail?.state)  && (
+            <FiledButton
+              isLoading={submitting}
+              isDisabled={submitting || btnDisabled}
+              type="submit"
+              // processInfo={{
+              //   id: transactionType.votingProposal,
+              // }}
+              btnSize="h"
+              containerConfig={{
+                style: {
+                  width: '100%',
+                },
+              }}
+              className={styles.btnVoteUp}
+            >
+              VOTE THIS LAUNCHPAD
+            </FiledButton>
+          )}
+        </>
+      </WrapperConnected>
     </form>
   );
 });
@@ -240,7 +199,7 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
   const needReload = useAppSelector(selectPnftExchange).needReload;
   const router = useRouter();
   const [status] = useLaunchPadStatus({ row: poolDetail });
-  const isStarting = [LAUNCHPAD_STATUS.Voting].includes(status.key);
+  // const isStarting = ![LAUNCHPAD_STATUS.Voting].includes(status.key);
 
   const votingToken = {
     address: TM_ADDRESS,
@@ -376,8 +335,6 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
             onSubmit={handleSubmit}
             submitting={submitting}
             poolDetail={poolDetail}
-            votingToken={votingToken}
-            isStarting={isStarting}
           />
         )}
       </Form>
