@@ -92,6 +92,7 @@
 }
 
 .modalContent {
+  max-width: 60vw !important;
   :global {
     .modal-header-wrap {
       margin-bottom: 0;
