@@ -5,28 +5,32 @@ import CountDownTimer from '@/components/Countdown';
 import SocialToken from '@/components/Social';
 import FiledButton from '@/components/Swap/button/filedButton';
 import InfoTooltip from '@/components/Swap/infoTooltip';
-import ListTable, {ColumnProp} from '@/components/Swap/listTable';
-import {TOKEN_ICON_DEFAULT} from '@/constants/common';
-import {ROUTE_PATH} from '@/constants/route-path';
-import {ILaunchpad} from '@/interfaces/launchpad';
-import {IToken} from '@/interfaces/token';
-import {getListLaunchpad} from '@/services/launchpad';
-import {useAppSelector} from '@/state/hooks';
-import {selectPnftExchange} from '@/state/pnftExchange';
-import {colors} from '@/theme/colors';
-import {compareString, formatCurrency} from '@/utils';
-import {Box, Flex, Progress, Text} from '@chakra-ui/react';
-import {px2rem} from '@trustless-computer/dapp-core';
-import {useWeb3React} from '@web3-react/core';
+import ListTable, { ColumnProp } from '@/components/Swap/listTable';
+import { TOKEN_ICON_DEFAULT } from '@/constants/common';
+import { ROUTE_PATH } from '@/constants/route-path';
+import { ILaunchpad } from '@/interfaces/launchpad';
+import { IToken } from '@/interfaces/token';
+import { getListLaunchpad } from '@/services/launchpad';
+import { useAppSelector } from '@/state/hooks';
+import { selectPnftExchange } from '@/state/pnftExchange';
+import { colors } from '@/theme/colors';
+import { compareString, formatCurrency } from '@/utils';
+import { Box, Flex, Progress, Text } from '@chakra-ui/react';
+import { px2rem } from '@trustless-computer/dapp-core';
+import { useWeb3React } from '@web3-react/core';
 import BigNumber from 'bignumber.js';
 import moment from 'moment';
-import {useRouter} from 'next/router';
-import React, {useEffect, useMemo, useState} from 'react';
-import {BsPencil} from 'react-icons/bs';
-import {ImClock2} from 'react-icons/im';
-import {useDispatch} from 'react-redux';
-import LaunchpadStatus, {LAUNCHPAD_STATUS, LaunchpadLabelStatus, useLaunchPadStatus,} from './Launchpad.Status';
-import {StyledIdoContainer} from './Launchpad.styled';
+import { useRouter } from 'next/router';
+import React, { useEffect, useMemo, useState } from 'react';
+import { BsPencil } from 'react-icons/bs';
+import { ImClock2 } from 'react-icons/im';
+import { useDispatch } from 'react-redux';
+import LaunchpadStatus, {
+  LAUNCHPAD_STATUS,
+  LaunchpadLabelStatus,
+  useLaunchPadStatus,
+} from './Launchpad.Status';
+import { StyledIdoContainer } from './Launchpad.styled';
 
 const LaunchpadContainer = () => {
   const [data, setData] = useState<any[]>();
@@ -87,7 +91,7 @@ const LaunchpadContainer = () => {
         label: (
           <InfoTooltip
             showIcon={true}
-            label="The total number of tokens that backers will share once the crowdfunding has ended."
+            label="The total number of tokens that the contributors will receive after the crowdfunding ends."
           >
             Reward pool
           </InfoTooltip>
@@ -149,7 +153,7 @@ const LaunchpadContainer = () => {
         label: (
           <InfoTooltip
             showIcon={true}
-            label="Liquidity Reserve refers to a percentage of the funds and amount of token that are used to add initial liquidity for trading purposes after the crowdfunding ends"
+            label="The amount of your token that is used to add initial liquidity for trading purposes after the crowdfunding ends"
           >
             Liquidity reserve
           </InfoTooltip>
@@ -168,9 +172,7 @@ const LaunchpadContainer = () => {
             <Box>
               <Text>{`${
                 row.liquidityRatio
-                  ? `${formatCurrency(
-                    row.liquidityRatio
-                    )}% of funded`
+                  ? `${formatCurrency(row.liquidityRatio)}% of funded`
                   : 'N/A'
               }`}</Text>
               <Text>{`${
@@ -184,7 +186,14 @@ const LaunchpadContainer = () => {
       },
       {
         id: 'goal',
-        label: 'Funding Goal',
+        label: (
+          <InfoTooltip
+            showIcon={true}
+            label="The minimum amount you would like to raise. If the crowdfunding does not reach the Funding Goal, the funded amount will be returned to the contributors"
+          >
+            Funding Goal
+          </InfoTooltip>
+        ),
         labelConfig: {
           fontSize: '12px',
           fontWeight: '500',
@@ -207,9 +216,11 @@ const LaunchpadContainer = () => {
           //   }
           // }
 
-          return [LaunchpadLabelStatus.draft.value,
+          return [
+            LaunchpadLabelStatus.draft.value,
             LaunchpadLabelStatus.pending.value,
-            LaunchpadLabelStatus.voting.value].includes(status.value) ? (
+            LaunchpadLabelStatus.voting.value,
+          ].includes(status.value) ? (
             <Box>
               <Text
                 color={color}
@@ -243,7 +254,7 @@ const LaunchpadContainer = () => {
         label: (
           <InfoTooltip
             showIcon={true}
-            label="Launchpad will stop upon reaching its hard cap (the maximum amount for the fund)"
+            label="The maximum amount you would like to raise. The crowdfunding will stop upon reaching its hard cap"
           >
             Hard Cap
           </InfoTooltip>
@@ -260,11 +271,13 @@ const LaunchpadContainer = () => {
           const color = colors.white;
           return Number(row?.thresholdBalance || 0) > 0 ? (
             <Box>
-              <Text
-                color={color}
-              >{`${formatCurrency(row.thresholdBalance)} ${row.liquidityToken.symbol}`}</Text>
+              <Text color={color}>{`${formatCurrency(row.thresholdBalance)} ${
+                row.liquidityToken.symbol
+              }`}</Text>
             </Box>
-          ) : 'N/A';
+          ) : (
+            'N/A'
+          );
         },
       },
       {
@@ -284,9 +297,9 @@ const LaunchpadContainer = () => {
             return (
               <Box>
                 <Text>
-                    <span style={{ color: colors.white500, fontSize: px2rem(14) }}>
-                      Starts at:
-                    </span>{' '}
+                  <span style={{ color: colors.white500, fontSize: px2rem(14) }}>
+                    Starts at:
+                  </span>{' '}
                   {moment(row.voteStart).format('MMM, DD')}
                 </Text>
                 <Flex mt={1} alignItems={'center'} gap={2}>
@@ -302,9 +315,9 @@ const LaunchpadContainer = () => {
             return (
               <Box>
                 <Text>
-                    <span style={{ color: colors.white500, fontSize: px2rem(14) }}>
-                      Ends at:
-                    </span>{' '}
+                  <span style={{ color: colors.white500, fontSize: px2rem(14) }}>
+                    Ends at:
+                  </span>{' '}
                   {moment(row?.voteEnd).format('MMM, DD')}
                 </Text>
                 <Flex mt={1} alignItems={'center'} gap={2}>
@@ -320,9 +333,9 @@ const LaunchpadContainer = () => {
             return (
               <Box>
                 <Text>
-                    <span style={{ color: colors.white500, fontSize: px2rem(14) }}>
-                      Ends at:
-                    </span>{' '}
+                  <span style={{ color: colors.white500, fontSize: px2rem(14) }}>
+                    Ends at:
+                  </span>{' '}
                   {moment(row.launchEnd).format('MMM, DD')}
                 </Text>
                 <Flex mt={1} alignItems={'center'} gap={2}>
@@ -335,14 +348,17 @@ const LaunchpadContainer = () => {
             );
           }
           if (
-            [LaunchpadLabelStatus.successful.value, LaunchpadLabelStatus.failed.value].includes(status.value)
+            [
+              LaunchpadLabelStatus.successful.value,
+              LaunchpadLabelStatus.failed.value,
+            ].includes(status.value)
           ) {
             return (
               <Box>
                 <Text>
-                    <span style={{ color: colors.white500, fontSize: px2rem(14) }}>
-                      Release time:
-                    </span>{' '}
+                  <span style={{ color: colors.white500, fontSize: px2rem(14) }}>
+                    Release time:
+                  </span>{' '}
                 </Text>
                 <Flex mt={1} alignItems={'center'} gap={2}>
                   <ImClock2 />

@@ -1,36 +1,74 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import {Box, GridItem, SimpleGrid, Stat, StatLabel, StatNumber} from "@chakra-ui/react";
-import {formatCurrency} from "@/utils";
-import React from "react";
-import {ILaunchpad} from "@/interfaces/launchpad";
+import {
+  Box,
+  GridItem,
+  SimpleGrid,
+  Stat,
+  StatLabel,
+  StatNumber,
+} from '@chakra-ui/react';
+import { formatCurrency } from '@/utils';
+import React from 'react';
+import { ILaunchpad } from '@/interfaces/launchpad';
+import InfoTooltip from '@/components/Swap/infoTooltip';
 
 const ProposalInfo = ({ poolDetail }: ILaunchpad | any) => {
   return (
-    <Box color={"#FFFFFF"}>
+    <Box color={'#FFFFFF'}>
       <SimpleGrid columns={4} spacingX={6}>
         <GridItem>
           <Stat>
-            <StatLabel>Rewards</StatLabel>
-            <StatNumber>{formatCurrency(poolDetail?.launchpadBalance)} {poolDetail?.launchpadToken?.symbol}</StatNumber>
-          </Stat>
-        </GridItem>
-        <GridItem>
-          <Stat>
-            <StatLabel>Funding Goal</StatLabel>
+            <StatLabel>
+              <InfoTooltip
+                showIcon={true}
+                label="The total number of tokens that the contributors will receive after the crowdfunding ends."
+                // iconColor={colors.white500}
+              >
+                {`Reward pool`}
+              </InfoTooltip>
+            </StatLabel>
             <StatNumber>
-              {formatCurrency(poolDetail?.goalBalance || 0)} {poolDetail?.liquidityToken?.symbol}
+              {formatCurrency(poolDetail?.launchpadBalance)}{' '}
+              {poolDetail?.launchpadToken?.symbol}
             </StatNumber>
           </Stat>
         </GridItem>
         <GridItem>
           <Stat>
-            <StatLabel>Hard Cap</StatLabel>
+            <StatLabel>
+              <InfoTooltip
+                showIcon={true}
+                label="The minimum amount you would like to raise. If the crowdfunding does not reach the Funding Goal, the funded amount will be returned to the contributors"
+                // iconColor={colors.white500}
+              >
+                {`Funding goal`}
+              </InfoTooltip>
+            </StatLabel>
             <StatNumber>
-              {
-                Number(poolDetail?.thresholdBalance || 0) > 0 ? (
-                  <>{formatCurrency(poolDetail?.thresholdBalance || 0)} {poolDetail?.liquidityToken?.symbol}</>
-                ) : ('N/A')
-              }
+              {formatCurrency(poolDetail?.goalBalance || 0)}{' '}
+              {poolDetail?.liquidityToken?.symbol}
+            </StatNumber>
+          </Stat>
+        </GridItem>
+        <GridItem>
+          <Stat>
+            <StatLabel>
+              <InfoTooltip
+                showIcon={true}
+                label="The maximum amount you would like to raise. The crowdfunding will stop upon reaching its hard cap"
+              >
+                Hard Cap
+              </InfoTooltip>
+            </StatLabel>
+            <StatNumber>
+              {Number(poolDetail?.thresholdBalance || 0) > 0 ? (
+                <>
+                  {formatCurrency(poolDetail?.thresholdBalance || 0)}{' '}
+                  {poolDetail?.liquidityToken?.symbol}
+                </>
+              ) : (
+                'N/A'
+              )}
             </StatNumber>
           </Stat>
         </GridItem>
