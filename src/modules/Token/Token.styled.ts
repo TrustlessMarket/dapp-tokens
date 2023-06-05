@@ -111,7 +111,7 @@ export const StyledTokenTopInfo = styled(GridItem)`
     display: none;
   }
   .desktop {
-    display: block;
+    display: flex;
   }
 
   @media screen and (max-width: 768px) {
