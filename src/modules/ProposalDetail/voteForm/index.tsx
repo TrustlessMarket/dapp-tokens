@@ -9,9 +9,7 @@ import {toastError} from '@/constants/error';
 import {AssetsContext} from '@/contexts/assets-context';
 import useCastVoteProposal from '@/hooks/contract-operations/proposal/useCastVote';
 import useContractOperation from '@/hooks/contract-operations/useContractOperation';
-import useCountDownTimer from '@/hooks/useCountdown';
 import {TransactionStatus} from '@/interfaces/walletTransaction';
-import {PROPOSAL_STATUS,} from '@/modules/Proposal/Proposal.Status';
 import {logErrorToServer} from '@/services/swap';
 import {useAppDispatch, useAppSelector} from '@/state/hooks';
 import {
@@ -20,7 +18,7 @@ import {
   selectPnftExchange,
   updateCurrentTransaction,
 } from '@/state/pnftExchange';
-import {compareString, formatCurrency} from '@/utils';
+import {formatCurrency} from '@/utils';
 import {showError} from '@/utils/toast';
 import {
   Box,
@@ -36,7 +34,6 @@ import {
 } from '@chakra-ui/react';
 import {useWeb3React} from '@web3-react/core';
 import BigNumber from 'bignumber.js';
-import moment from 'moment';
 import Link from 'next/link';
 import {useRouter} from 'next/router';
 import {useCallback, useContext, useEffect, useImperativeHandle, useRef, useState} from 'react';
@@ -57,10 +54,8 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const {
     onSubmit,
     submitting,
-    proposalDetail,
     isStartingProposal,
-    isPendingProposal,
-    isEndProposal,
+    poolDetail,
     canVote,
     votingToken,
   } = props;
@@ -68,34 +63,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const [baseBalance, setBaseBalance] = useState<any>('0');
   const { juiceBalance, isLoadedAssets } = useContext(AssetsContext);
   const dispatch = useDispatch();
-  const poolDetail = proposalDetail?.userPool;
   const { account, isActive: isAuthenticated } = useWeb3React();
-
-  const [endTime, setEndTime] = useState(0);
-  const [days, hours, minutes, seconds, expired] = useCountDownTimer(
-    moment.unix(endTime).format('YYYY/MM/DD HH:mm:ss'),
-  );
-
-  // const onBaseAmountChange = useCallback(
-  //   debounce((p) => handleBaseAmountChange(p), 1000),
-  //   [],
-  // );
-
-  useEffect(() => {
-    if (poolDetail?.id) {
-      if (isPendingProposal) {
-        setEndTime(moment(proposalDetail?.voteStart).unix());
-      } else {
-        setEndTime(moment(proposalDetail?.voteEnd).unix());
-      }
-    }
-  }, [poolDetail?.id, isPendingProposal, isStartingProposal]);
-
-  useEffect(() => {
-    if (expired && endTime) {
-      dispatch(requestReload());
-    }
-  }, [expired]);
 
   const { values } = useFormState();
   const { change, restart } = useForm();
@@ -196,7 +164,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             </Stat>
           </GridItem>
         </SimpleGrid>
-        <Stat className={styles.infoColumn}>
+        {/*<Stat className={styles.infoColumn}>
           <StatLabel>
             {isPendingProposal
               ? 'Starts in'
@@ -217,7 +185,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
                 : moment(proposalDetail.voteEnd).format('LLL')}
             </Text>
           </StatNumber>
-        </Stat>
+        </Stat>*/}
       </Flex>
       <InputWrapper
         className={cx(styles.inputAmountWrap, styles.inputBaseAmountWrap)}
