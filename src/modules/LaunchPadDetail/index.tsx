@@ -98,13 +98,13 @@ const IdoDetailContainer = () => {
         </TabList>
         <TabPanels>
           <TabPanel>
-            <Box h={"738px"}>
-              {
-                [LAUNCHPAD_STATUS.Voting].includes(poolDetail?.state) && (
+            {
+              [LAUNCHPAD_STATUS.Voting].includes(poolDetail?.state) && (
+                <Box h={"738px"}>
                   <Intro poolDetail={poolDetail}/>
-                )
-              }
-            </Box>
+                </Box>
+              )
+            }
             <Text fontSize={px2rem(24)} fontWeight={'500'} color={'#FFFFFF'} mt={8}>
               Description
             </Text>
