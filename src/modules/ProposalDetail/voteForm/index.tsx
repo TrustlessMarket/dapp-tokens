@@ -36,7 +36,7 @@ import {useWeb3React} from '@web3-react/core';
 import BigNumber from 'bignumber.js';
 import Link from 'next/link';
 import {useRouter} from 'next/router';
-import {useCallback, useContext, useEffect, useImperativeHandle, useRef, useState} from 'react';
+import {useCallback, useContext, useEffect, useImperativeHandle, useMemo, useRef, useState} from 'react';
 import {Field, Form, useForm, useFormState} from 'react-final-form';
 import toast from 'react-hot-toast';
 import {BiBell} from 'react-icons/bi';
@@ -49,6 +49,11 @@ import {composeValidators, required} from "@/utils/formValidate";
 import {CDN_URL} from "@/configs";
 import TokenBalance from "@/components/Swap/tokenBalance";
 import InputWrapper from "@/components/Swap/form/inputWrapper";
+import Web3 from "web3";
+import {IToken} from "@/interfaces/token";
+import useIsApproveERC20Token from "@/hooks/contract-operations/token/useIsApproveERC20Token";
+import useBalanceERC20Token from "@/hooks/contract-operations/token/useBalanceERC20Token";
+import useApproveERC20Token from "@/hooks/contract-operations/token/useApproveERC20Token";
 
 export const MakeFormSwap = forwardRef((props, ref) => {
   const {
@@ -56,7 +61,6 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     submitting,
     isStartingProposal,
     poolDetail,
-    canVote,
     votingToken,
   } = props;
   const [loading, setLoading] = useState(false);
@@ -64,6 +68,10 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const { juiceBalance, isLoadedAssets } = useContext(AssetsContext);
   const dispatch = useDispatch();
   const { account, isActive: isAuthenticated } = useWeb3React();
+  const [amountBaseTokenApproved, setAmountBaseTokenApproved] = useState('0');
+  const { call: isApproved } = useIsApproveERC20Token();
+  const { call: tokenBalance } = useBalanceERC20Token();
+  const { call: approveToken } = useApproveERC20Token();
 
   const { values } = useFormState();
   const { change, restart } = useForm();
@@ -80,11 +88,105 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       // baseToken: values?.baseToken,
       // quoteToken: values?.quoteToken,
     });
+
+    try {
+      const [_baseBalance] = await Promise.all([
+        getTokenBalance(votingToken),
+        // getTokenBalance(values?.quoteToken),
+      ]);
+      setBaseBalance(_baseBalance);
+    } catch (error) {
+      throw error;
+    }
   };
 
+  const isRequireApprove = useMemo(() => {
+    let result = false;
+    try {
+      result =
+        isAuthenticated &&
+        values?.baseAmount &&
+        !isNaN(Number(values?.baseAmount)) &&
+        new BigNumber(amountBaseTokenApproved || 0).lt(
+          Web3.utils.toWei(`${values?.baseAmount || 0}`, 'ether'),
+        );
+    } catch (err: any) {
+      logErrorToServer({
+        type: 'error',
+        address: account,
+        error: JSON.stringify(err),
+        message: err?.message,
+        place_happen: 'isRequireApprove',
+      });
+    }
+
+    return result;
+  }, [isAuthenticated, amountBaseTokenApproved, values?.baseAmount]);
+
   useEffect(() => {
-    change('baseBalance', baseBalance);
-  }, [baseBalance]);
+    if (account && votingToken?.address && poolDetail?.launchpad) {
+      checkApproveBaseToken(votingToken);
+    }
+  }, [account, votingToken?.address, poolDetail?.launchpad]);
+
+  const checkApproveBaseToken = async (token: any) => {
+    const [_isApprove] = await Promise.all([checkTokenApprove(token)]);
+    setAmountBaseTokenApproved(_isApprove);
+  };
+
+  const checkTokenApprove = async (token: IToken) => {
+    try {
+      const response = await isApproved({
+        erc20TokenAddress: token.address,
+        address: poolDetail?.launchpad,
+      });
+      return response;
+    } catch (error) {
+      console.log('error', error);
+      throw error;
+    }
+  };
+
+  const getTokenBalance = async (token: IToken) => {
+    try {
+      const response = await tokenBalance({
+        erc20TokenAddress: token.address,
+      });
+      return response;
+    } catch (error) {
+      console.log('error', error);
+      throw error;
+    }
+  };
+
+  const requestApproveToken = async (token: IToken) => {
+    try {
+      dispatch(
+        updateCurrentTransaction({
+          id: transactionType.createPoolApprove,
+          status: TransactionStatus.info,
+        }),
+      );
+      const response: any = await approveToken({
+        erc20TokenAddress: token.address,
+        address: poolDetail?.launchpad,
+      });
+      dispatch(
+        updateCurrentTransaction({
+          status: TransactionStatus.success,
+          id: transactionType.createPoolApprove,
+          hash: response.hash,
+          infoTexts: {
+            success: `${token.symbol} has been approved successfully. You can swap now!`,
+          },
+        }),
+      );
+    } catch (error) {
+      throw error;
+    } finally {
+      // dispatch(updateCurrentTransaction(null));
+    }
+  };
 
   const handleChangeMaxBaseAmount = () => {
     change('baseAmount', baseBalance);
@@ -140,6 +242,26 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   //     });
   //   }
   // };
+
+  const onApprove = async () => {
+    try {
+      setLoading(true);
+      await requestApproveToken(votingToken);
+      checkApproveBaseToken(votingToken);
+
+      // toast.success('Transaction has been created. You can swap now!');
+    } catch (err: any) {
+      logErrorToServer({
+        type: 'error',
+        address: account,
+        error: JSON.stringify(err),
+        message: err?.message,
+      });
+      toastError(showError, err, { address: account });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <form onSubmit={onSubmit} style={{ height: '100%' }}>
@@ -284,26 +406,44 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             </Text>
           </Flex>
         )}
-      {isAuthenticated && (
-        <WrapperConnected type={'submit'} className={styles.submitButton}>
-          <FiledButton
-            isLoading={submitting}
-            isDisabled={submitting || btnDisabled || !canVote}
-            type="submit"
-            processInfo={{
-              id: transactionType.votingProposal,
-            }}
-            btnSize="h"
-            containerConfig={{
-              style: {
-                width: '100%',
-              },
-            }}
-            className={styles.btnVoteUp}
-            onClick={() => change('isVoteUp', true)}
-          >
-            Vote
-          </FiledButton>
+      {(isAuthenticated) && (
+        <WrapperConnected
+          type={isRequireApprove ? 'button' : 'submit'}
+          className={styles.submitButton}
+        >
+          {isRequireApprove ? (
+            <FiledButton
+              isLoading={loading}
+              isDisabled={loading}
+              loadingText="Processing"
+              btnSize={'h'}
+              containerConfig={{ flex: 1, mt: 6 }}
+              onClick={onApprove}
+              processInfo={{
+                id: transactionType.createPoolApprove,
+              }}
+            >
+              APPROVE USE OF {votingToken?.symbol}
+            </FiledButton>
+          ) : (
+            <FiledButton
+              isDisabled={submitting || btnDisabled}
+              isLoading={submitting}
+              type="submit"
+              btnSize={'h'}
+              loadingText={submitting ? 'Processing' : ' '}
+              processInfo={{
+                id: transactionType.votingProposal,
+              }}
+              containerConfig={{
+                style: {
+                  width: '100%',
+                },
+              }}
+            >
+              Vote
+            </FiledButton>
+          )}
         </WrapperConnected>
       )}
     </form>
