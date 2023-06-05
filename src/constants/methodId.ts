@@ -7,5 +7,5 @@ export const CONTRACT_METHOD_IDS = {
   EXECUTE_VOTE: '0xfe0d94c1',
   CAST_VOTE: '0x1c69d7d1',
   END_LAUNCHPAD: '0xefbe1c1c',
-  CANCEL_PRE_VOTING: '0x63b95884',
+  CANCEL_PRE_VOTING: '0xea8a1af0',
 };
