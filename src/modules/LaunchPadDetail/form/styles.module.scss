@@ -7,6 +7,15 @@
       margin-bottom: 0;
     }
   }
+
+  :global {
+    .token-avatar {
+      object-fit: cover;
+      width: rem(25);
+      height: rem(25);
+      border-radius: 50%;
+    }
+  }
 }
 
 .inputAmountWrap {
@@ -106,7 +115,7 @@
 .progressBar {
   position: relative;
   > div {
-    background: #1C1C1C;
+    background: rgba(255, 255, 255, 0.2);
 
     > div:first-child {
       background: linear-gradient(90deg, #3385FF 0%, #96C0FF 100%);
