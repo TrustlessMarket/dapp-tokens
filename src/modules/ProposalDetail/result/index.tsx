@@ -1,32 +1,23 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import {getVoteResultProposal} from "@/services/proposal";
 import React, {useEffect, useState} from "react";
-import {useRouter} from "next/router";
 import {useAppSelector} from "@/state/hooks";
 import {selectPnftExchange} from "@/state/pnftExchange";
 import Side from "@/modules/ProposalDetail/result/side";
 import {Box, Card, GridItem, SimpleGrid} from "@chakra-ui/react";
 import styles from './styles.module.scss';
 import cx from 'classnames';
+import {getVoteResultLaunchpad} from "@/services/launchpad";
+import {ILaunchpad} from '@/interfaces/launchpad';
 
-const ProposalResult = () => {
-  const router = useRouter();
+const ProposalResult = ({poolDetail}: { poolDetail: ILaunchpad }) => {
   const needReload = useAppSelector(selectPnftExchange).needReload;
   const [voteResult, setVoteResult] = useState<any>();
-  // const [status] = useProposalStatus({ row: voteResult?.userProposal });
-
-  // const forVotes = Number(voteResult?.userProposal?.forVotes || 0);
-  // const againstVotes = Number(voteResult?.userProposal?.againstVotes) || 0;
-  // const result = forVotes > againstVotes ? 1 : againstVotes > forVotes ? -1 : 0;
-
-  // console.log('voteResult', voteResult);
-  // console.log('status', status);
 
   const getVoteResultProposalInfo = async () => {
     try {
-      const response = await getVoteResultProposal({
-        proposal_id: router?.query?.proposal_id,
+      const response = await getVoteResultLaunchpad({
+        pool_address: poolDetail?.launchpad,
       });
       setVoteResult(response);
     } catch (err) {
@@ -35,11 +26,11 @@ const ProposalResult = () => {
   };
 
   useEffect(() => {
-    if (router?.query?.proposal_id) {
+    if (poolDetail?.launchpad) {
       getVoteResultProposalInfo();
     }
   }, [
-    router?.query?.proposal_id,
+    poolDetail?.launchpad,
     needReload,
   ]);
 
@@ -50,8 +41,8 @@ const ProposalResult = () => {
           <Card bgColor={"transparent"} paddingX={6} paddingY={6} border={"1px solid #353945"}>
             <Side
               title={"For"}
-              totalVote={voteResult?.forVote?.totalVoter + voteResult?.againstVote?.totalVoter}
-              data={voteResult?.forVote}
+              totalVote={voteResult?.totalVoter}
+              data={voteResult}
               className={cx(styles.sideWrapper, styles.sideFor)}
             />
           </Card>

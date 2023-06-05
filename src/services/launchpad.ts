@@ -143,3 +143,13 @@ export const importBoost = async (
     error: 'Fail to get deposit address',
   });
 };
+
+export const getVoteResultLaunchpad = async (params: {
+  pool_address?: any;
+}) => {
+  const qs = '?' + queryString.stringify(params);
+  return swrFetcher(`${API_EXCHANGE_URL}${API_PATH}/vote-result${qs}`, {
+    method: 'GET',
+    error: 'getVoteResultLaunchpad fail',
+  });
+};

@@ -7,17 +7,11 @@ import WrapperConnected from '@/components/WrapperConnected';
 import {TRUSTLESS_GASSTATION} from '@/constants/common';
 import {toastError} from '@/constants/error';
 import {AssetsContext} from '@/contexts/assets-context';
-import useCastVoteProposal from '@/hooks/contract-operations/proposal/useCastVote';
 import useContractOperation from '@/hooks/contract-operations/useContractOperation';
 import {TransactionStatus} from '@/interfaces/walletTransaction';
 import {logErrorToServer} from '@/services/swap';
-import {useAppDispatch, useAppSelector} from '@/state/hooks';
-import {
-  requestReload,
-  requestReloadRealtime,
-  selectPnftExchange,
-  updateCurrentTransaction,
-} from '@/state/pnftExchange';
+import {useAppDispatch} from '@/state/hooks';
+import {requestReload, requestReloadRealtime, updateCurrentTransaction,} from '@/state/pnftExchange';
 import {formatCurrency} from '@/utils';
 import {showError} from '@/utils/toast';
 import {
@@ -35,7 +29,6 @@ import {
 import {useWeb3React} from '@web3-react/core';
 import BigNumber from 'bignumber.js';
 import Link from 'next/link';
-import {useRouter} from 'next/router';
 import {useCallback, useContext, useEffect, useImperativeHandle, useMemo, useRef, useState} from 'react';
 import {Field, Form, useForm, useFormState} from 'react-final-form';
 import toast from 'react-hot-toast';
@@ -54,6 +47,9 @@ import {IToken} from "@/interfaces/token";
 import useIsApproveERC20Token from "@/hooks/contract-operations/token/useIsApproveERC20Token";
 import useBalanceERC20Token from "@/hooks/contract-operations/token/useBalanceERC20Token";
 import useApproveERC20Token from "@/hooks/contract-operations/token/useApproveERC20Token";
+import {closeModal, openModal} from "@/state/modal";
+import ModalConfirmApprove from "@/components/ModalConfirmApprove";
+import useVoteLaunchpad from "@/hooks/contract-operations/launchpad/useVote";
 
 export const MakeFormSwap = forwardRef((props, ref) => {
   const {
@@ -243,6 +239,27 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   //   }
   // };
 
+  const onShowModalApprove = () => {
+    const id = 'modal';
+    const onClose = () => dispatch(closeModal({ id }));
+    dispatch(
+      openModal({
+        id,
+        theme: 'dark',
+        title: `APPROVE USE OF ${votingToken?.symbol}`,
+        className: styles.modalContent,
+        modalProps: {
+          centered: true,
+          // size: mobileScreen ? 'full' : 'xl',
+          zIndex: 9999999,
+        },
+        render: () => (
+          <ModalConfirmApprove onApprove={onApprove} onClose={onClose} />
+        ),
+      }),
+    );
+  };
+
   const onApprove = async () => {
     try {
       setLoading(true);
@@ -330,7 +347,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             className={styles.inputAmount}
             prependComp={
               votingToken && (
-                <Flex gap={1} alignItems={'center'} color={'#FFFFFF'} paddingX={2}>
+                <Flex gap={1} alignItems={'center'} color={'#000000'} paddingX={2}>
                   <img
                     src={
                       votingToken?.thumbnail ||
@@ -418,7 +435,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
               loadingText="Processing"
               btnSize={'h'}
               containerConfig={{ flex: 1, mt: 6 }}
-              onClick={onApprove}
+              onClick={onShowModalApprove}
               processInfo={{
                 id: transactionType.createPoolApprove,
               }}
@@ -456,16 +473,12 @@ const BuyForm = ({ poolDetail, votingToken }: any) => {
   const dispatch = useAppDispatch();
   const { account, isActive } = useWeb3React();
 
-  const needReload = useAppSelector(selectPnftExchange).needReload;
-  const router = useRouter();
-  const [voteSignatureProposal, setVoteSignatureProposal] = useState<any>();
-  const [canVote, setCanVote] = useState(false);
-
-  const { run: castVoteProposal } = useContractOperation({
-    operation: useCastVoteProposal,
+  const { run: voteLaunchpad } = useContractOperation({
+    operation: useVoteLaunchpad,
   });
 
   const handleSubmit = async (values: any) => {
+    const { baseAmount } = values;
     try {
       setSubmitting(true);
       dispatch(
@@ -476,12 +489,10 @@ const BuyForm = ({ poolDetail, votingToken }: any) => {
       );
 
       const data = {
-        proposalId: 'proposalDetail?.proposalId',
-        weight: voteSignatureProposal?.weigthSign,
-        support: values?.isVoteUp ? '1' : '0',
-        signature: voteSignatureProposal?.adminSignature,
+        amount: baseAmount,
+        launchpadAddress: poolDetail?.launchpad,
       };
-      const response = await castVoteProposal(data);
+      const response = await voteLaunchpad(data);
 
       toast.success('Transaction has been created. Please wait for few minutes.');
       refForm.current?.reset();

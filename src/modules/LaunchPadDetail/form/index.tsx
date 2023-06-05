@@ -653,7 +653,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
               loadingText="Processing"
               btnSize={'h'}
               containerConfig={{ flex: 1, mt: 6 }}
-              onClick={onApprove}
+              onClick={onShowModalApprove}
               processInfo={{
                 id: transactionType.createPoolApprove,
               }}
@@ -816,10 +816,9 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
       openModal({
         id,
         theme: 'dark',
-        title: canClaim
-          ? 'Confirm claim this project'
-          : canEnd
-          ? 'Confirm end this project'
+        title: canClaim ? 'Confirm claim this project'
+          : canEnd ? 'Confirm end this project'
+          : canCancel ? 'Delete my launchpad'
           : 'Confirm deposit',
         className: styles.modalContent,
         modalProps: {
@@ -861,7 +860,7 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
             ) : canEnd ? (
               <Text>End this project?</Text>
             ) : canCancel ? (
-              <Text>Cancel this project?</Text>
+              <Text>If you wish to delete your launchpad, click Confirm below and your tokens will be immediately returned to your account.</Text>
               ) : (
               <>
                 <HorizontalItem
@@ -951,7 +950,7 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
   };
 
   const handleDeposit = async (values: any) => {
-    const { boostInfo, baseAmount, quoteAmount, swapRoutes } = values;
+    const { baseAmount } = values;
 
     try {
       setSubmitting(true);
@@ -969,10 +968,10 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
         signature: '',
       };
 
-      if (boostInfo) {
-        data.boostRatio = boostInfo.boostSign;
-        data.signature = boostInfo.adminSignature;
-      }
+      // if (boostInfo) {
+      //   data.boostRatio = boostInfo.boostSign;
+      //   data.signature = boostInfo.adminSignature;
+      // }
 
       let response;
       if (canClaim) {

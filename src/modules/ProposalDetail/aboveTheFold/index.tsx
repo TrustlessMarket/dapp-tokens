@@ -14,7 +14,7 @@ const AboveTheFold = ({ poolDetail }: ILaunchpad | any) => {
     <SectionContainer className={styles.wrapper}>
       <ProposalStarting poolDetail={poolDetail} />
       <Box mt={6}>
-        <ProposalResult />
+        <ProposalResult poolDetail={poolDetail} />
       </Box>
       <Card bgColor={'#1E1E22'} paddingX={6} paddingY={6} mt={6}>
         <ProposalInfo poolDetail={poolDetail} />
