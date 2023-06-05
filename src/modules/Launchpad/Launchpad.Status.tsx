@@ -12,6 +12,7 @@ export enum LAUNCHPAD_STATUS {
   Launching,
   Successful,
   Failed,
+  Cancelled,
 
   //FE define
   End,
@@ -51,6 +52,11 @@ export const LaunchpadLabelStatus = {
   failed: {
     key: LAUNCHPAD_STATUS.Failed,
     value: 'failed',
+    label: 'Closed',
+  },
+  cancelled: {
+    key: LAUNCHPAD_STATUS.Cancelled,
+    value: 'cancelled',
     label: 'Closed',
   },
   end: {
