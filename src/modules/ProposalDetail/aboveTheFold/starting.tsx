@@ -10,8 +10,8 @@ import styles from './styles.module.scss';
 import { formatCurrency } from '@/utils';
 import ProposalStatus from '@/modules/Proposal/Proposal.Status';
 
-const ProposalStarting = ({ proposalDetail }: { proposalDetail?: any }) => {
-  const token: IToken = proposalDetail?.userPool?.launchpadToken;
+const ProposalStarting = ({ poolDetail }: { poolDetail?: any }) => {
+  const token: IToken = poolDetail?.userPool?.launchpadToken;
 
   return (
     <Box border={'1px solid #353945'} paddingX={6} paddingY={6}>
@@ -26,9 +26,9 @@ const ProposalStarting = ({ proposalDetail }: { proposalDetail?: any }) => {
             </Text>
             <Flex alignItems={'center'} mt={2} gap={2}>
               <Text className={styles.boxProposalId}>
-                Proposal {formatCurrency(proposalDetail.id, 0)}
+                Proposal {formatCurrency(poolDetail.id, 0)}
               </Text>
-              <ProposalStatus row={proposalDetail} />
+              <ProposalStatus row={poolDetail} />
             </Flex>
           </Box>
         </Flex>
@@ -53,7 +53,7 @@ const ProposalStarting = ({ proposalDetail }: { proposalDetail?: any }) => {
           </a>
         </Flex>*/}
         <Card bgColor={'transparent'} paddingX={6}>
-          <BuyForm proposalDetail={proposalDetail} />
+          <BuyForm proposalDetail={poolDetail} />
         </Card>
       </Flex>
     </Box>
