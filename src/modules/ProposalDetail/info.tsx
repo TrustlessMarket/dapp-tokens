@@ -1,17 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import {useProposalStatus} from "@/modules/Proposal/Proposal.Status";
-import {IProposal} from "@/interfaces/proposal";
-import {Box, Flex, GridItem, SimpleGrid, Stat, StatLabel, StatNumber, Text} from "@chakra-ui/react";
+import {Box, GridItem, SimpleGrid, Stat, StatLabel, StatNumber} from "@chakra-ui/react";
 import {formatCurrency} from "@/utils";
 import React from "react";
-import {ImClock2} from "react-icons/im";
-import CountDownTimer from "@/components/Countdown";
-import moment from "moment/moment";
+import {ILaunchpad} from "@/interfaces/launchpad";
 
-const ProposalInfo = ({ proposalDetail }: IProposal | any) => {
-  const [status] = useProposalStatus({ row: proposalDetail });
-  const poolDetail = proposalDetail?.userPool;
-
+const ProposalInfo = ({ poolDetail }: ILaunchpad | any) => {
   return (
     <Box color={"#FFFFFF"}>
       <SimpleGrid columns={4} spacingX={6}>
@@ -31,13 +24,17 @@ const ProposalInfo = ({ proposalDetail }: IProposal | any) => {
         </GridItem>
         <GridItem>
           <Stat>
-            <StatLabel>Threshold</StatLabel>
+            <StatLabel>Hard Cap</StatLabel>
             <StatNumber>
-              {formatCurrency(poolDetail?.goalBalance || 0)} {poolDetail?.liquidityToken?.symbol}
+              {
+                Number(poolDetail?.thresholdBalance || 0) > 0 ? (
+                  <>{formatCurrency(poolDetail?.thresholdBalance || 0)} {poolDetail?.liquidityToken?.symbol}</>
+                ) : ('N/A')
+              }
             </StatNumber>
           </Stat>
         </GridItem>
-        {
+        {/*{
           status.value === 'pending' ? (
             <GridItem>
               <Stat>
@@ -79,7 +76,7 @@ const ProposalInfo = ({ proposalDetail }: IProposal | any) => {
               </Stat>
             </GridItem>
           )
-        }
+        }*/}
       </SimpleGrid>
     </Box>
   );

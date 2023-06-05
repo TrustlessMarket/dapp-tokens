@@ -436,7 +436,7 @@ const LaunchpadContainer = () => {
                     </Box>
                   </InfoTooltip>
                 )}
-              {[LAUNCHPAD_STATUS.Voting].includes(row?.state) && (
+              {/*{[LAUNCHPAD_STATUS.Voting].includes(row?.state) && (
                 <InfoTooltip label={'Proposal Detail'}>
                   <Box
                     cursor={'pointer'}
@@ -449,7 +449,7 @@ const LaunchpadContainer = () => {
                     <BsBoxArrowUpRight />
                   </Box>
                 </InfoTooltip>
-              )}
+              )}*/}
             </Flex>
           );
         },

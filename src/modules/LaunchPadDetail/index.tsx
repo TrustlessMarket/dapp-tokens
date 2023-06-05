@@ -3,7 +3,8 @@ import BodyContainer from '@/components/Swap/bodyContainer';
 import FiledButton from '@/components/Swap/button/filedButton';
 import { ROUTE_PATH } from '@/constants/route-path';
 import { ILaunchpad } from '@/interfaces/launchpad';
-import AboveTheFold from '@/modules/LaunchPadDetail/aboveTheFold';
+import AboveTheFoldLaunchpad from '@/modules/LaunchPadDetail/aboveTheFold';
+import AboveTheFoldVoting from '@/modules/ProposalDetail/aboveTheFold';
 import IdoDescription from '@/modules/LaunchPadDetail/description';
 import { getDetailLaunchpad } from '@/services/launchpad';
 import { useAppSelector } from '@/state/hooks';
@@ -25,6 +26,8 @@ import React, { useEffect, useState } from 'react';
 import IdoFaqs from './faqs';
 import styles from './styles.module.scss';
 import px2rem from '@/utils/px2rem';
+import {LAUNCHPAD_STATUS} from "@/modules/Launchpad/Launchpad.Status";
+import Intro from "@/modules/LaunchPadDetail/aboveTheFold/intro";
 
 const IdoDetailContainer = () => {
   const router = useRouter();
@@ -81,7 +84,13 @@ const IdoDetailContainer = () => {
 
   return (
     <BodyContainer className={styles.wrapper}>
-      <AboveTheFold poolDetail={poolDetail} />
+      {
+        ![LAUNCHPAD_STATUS.Voting].includes(poolDetail?.state) ? (
+          <AboveTheFoldVoting poolDetail={poolDetail} />
+        ) : (
+          <AboveTheFoldLaunchpad poolDetail={poolDetail} />
+        )
+      }
       <Tabs className={cx(styles.tabContainer)} mt={16}>
         <TabList mb={8} mt={8}>
           <Tab>STORY</Tab>
@@ -89,6 +98,13 @@ const IdoDetailContainer = () => {
         </TabList>
         <TabPanels>
           <TabPanel>
+            <Box h={"738px"}>
+              {
+                [LAUNCHPAD_STATUS.Voting].includes(poolDetail?.state) && (
+                  <Intro poolDetail={poolDetail}/>
+                )
+              }
+            </Box>
             <Text fontSize={px2rem(24)} fontWeight={'500'} color={'#FFFFFF'} mt={8}>
               Description
             </Text>
