@@ -8,10 +8,10 @@ import {TOKEN_ICON_DEFAULT} from "@/constants/common";
 import px2rem from "@/utils/px2rem";
 import styles from './styles.module.scss';
 import {formatCurrency} from "@/utils";
-import ProposalStatus from "@/modules/Proposal/Proposal.Status";
+import LaunchpadStatus from "@/modules/Launchpad/Launchpad.Status";
 
-const ProposalStarting = ({proposalDetail}: any) => {
-  const token: IToken = proposalDetail?.userPool?.launchpadToken;
+const ProposalStarting = ({poolDetail}: any) => {
+  const token: IToken = poolDetail?.launchpadToken;
 
   return (
     <Box border={"1px solid #353945"} paddingX={6} paddingY={6}>
@@ -25,8 +25,8 @@ const ProposalStarting = ({proposalDetail}: any) => {
               {token.name} <span>{token.symbol}</span>
             </Text>
             <Flex alignItems={"center"} mt={2} gap={2}>
-              <Text className={styles.boxProposalId}>Proposal {formatCurrency(proposalDetail.id, 0)}</Text>
-              <ProposalStatus row={proposalDetail} />
+              <Text className={styles.boxProposalId}>Launchpad {formatCurrency(poolDetail.id, 0)}</Text>
+              <LaunchpadStatus row={poolDetail} />
             </Flex>
           </Box>
         </Flex>
@@ -51,7 +51,7 @@ const ProposalStarting = ({proposalDetail}: any) => {
           </a>
         </Flex>*/}
         <Card bgColor={"transparent"} paddingX={6}>
-          <BuyForm proposalDetail={proposalDetail}/>
+          <BuyForm poolDetail={poolDetail}/>
         </Card>
       </Flex>
     </Box>
