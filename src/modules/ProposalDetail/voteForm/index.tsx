@@ -54,6 +54,8 @@ import {IToken} from "@/interfaces/token";
 import useIsApproveERC20Token from "@/hooks/contract-operations/token/useIsApproveERC20Token";
 import useBalanceERC20Token from "@/hooks/contract-operations/token/useBalanceERC20Token";
 import useApproveERC20Token from "@/hooks/contract-operations/token/useApproveERC20Token";
+import {closeModal, openModal} from "@/state/modal";
+import ModalConfirmApprove from "@/components/ModalConfirmApprove";
 
 export const MakeFormSwap = forwardRef((props, ref) => {
   const {
@@ -243,6 +245,27 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   //   }
   // };
 
+  const onShowModalApprove = () => {
+    const id = 'modal';
+    const onClose = () => dispatch(closeModal({ id }));
+    dispatch(
+      openModal({
+        id,
+        theme: 'dark',
+        title: `APPROVE USE OF ${votingToken?.symbol}`,
+        className: styles.modalContent,
+        modalProps: {
+          centered: true,
+          // size: mobileScreen ? 'full' : 'xl',
+          zIndex: 9999999,
+        },
+        render: () => (
+          <ModalConfirmApprove onApprove={onApprove} onClose={onClose} />
+        ),
+      }),
+    );
+  };
+
   const onApprove = async () => {
     try {
       setLoading(true);
@@ -330,7 +353,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             className={styles.inputAmount}
             prependComp={
               votingToken && (
-                <Flex gap={1} alignItems={'center'} color={'#FFFFFF'} paddingX={2}>
+                <Flex gap={1} alignItems={'center'} color={'#000000'} paddingX={2}>
                   <img
                     src={
                       votingToken?.thumbnail ||
@@ -418,7 +441,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
               loadingText="Processing"
               btnSize={'h'}
               containerConfig={{ flex: 1, mt: 6 }}
-              onClick={onApprove}
+              onClick={onShowModalApprove}
               processInfo={{
                 id: transactionType.createPoolApprove,
               }}

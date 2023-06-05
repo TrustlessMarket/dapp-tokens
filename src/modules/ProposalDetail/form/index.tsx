@@ -204,7 +204,8 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
   const votingToken = {
     address: TM_ADDRESS,
     thumbnail: 'https://i.ibb.co/TbshdC0/Icon-Token-TM-04.png',
-    decimal: 18
+    decimal: 18,
+    symbol: 'TM'
   };
 
   const getUserVoteInfo = async () => {
