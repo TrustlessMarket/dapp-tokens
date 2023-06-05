@@ -27,10 +27,10 @@ const AboveTheFold = ({ poolDetail }: ILaunchpad | any) => {
           </Flex>
           <Box>
             <Text fontSize={px2rem(24)} fontWeight={'500'}>
-              {launchpadToken.name} <span>{launchpadToken.symbol}</span>
+              {launchpadToken.name} <span style={{color: 'rgba(255,255,255,0.7)'}}>{launchpadToken.symbol}</span>
             </Text>
             <Flex alignItems={"center"} mt={2} gap={2}>
-              <Text className={styles.boxProposalId}>Launchpad {formatCurrency(poolDetail.id, 0)}</Text>
+              <Text className={styles.boxProposalId}>Launchpad #{formatCurrency(poolDetail.id, 0)}</Text>
               <LaunchpadStatus row={poolDetail} />
             </Flex>
           </Box>
