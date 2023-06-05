@@ -162,7 +162,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             </Text>
           </Flex>
         )}*/}
-      <WrapperConnected type={'submit'} className={styles.submitButton}>
+      <WrapperConnected className={styles.submitButton}>
         <>
           {[LAUNCHPAD_STATUS.Voting].includes(poolDetail?.state)  && (
             <FiledButton

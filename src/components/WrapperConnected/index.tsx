@@ -1,10 +1,9 @@
-import { WalletContext } from '@/contexts/wallet-context';
-import { getIsAuthenticatedSelector } from '@/state/user/selector';
-import { showError } from '@/utils/toast';
-import React, { useContext } from 'react';
-import { useSelector } from 'react-redux';
-import { StyledWrapperConnected } from './WrapperConnected.styled';
-import { ButtonProps } from '../Button';
+import {WalletContext} from '@/contexts/wallet-context';
+import {showError} from '@/utils/toast';
+import React, {useContext} from 'react';
+import {StyledWrapperConnected} from './WrapperConnected.styled';
+import {ButtonProps} from '../Button';
+import {useWeb3React} from "@web3-react/core";
 
 interface WrapperConnectedProps extends ButtonProps {
   children?: React.ReactElement;
@@ -18,7 +17,7 @@ const WrapperConnected: React.FC<WrapperConnectedProps> = ({
   className,
   type = 'button',
 }) => {
-  const isAuthenticated = useSelector(getIsAuthenticatedSelector);
+  const { isActive } = useWeb3React();
   const { onDisconnect, onConnect, requestBtcAddress } = useContext(WalletContext);
 
   const handleConnectWallet = async () => {
@@ -34,19 +33,19 @@ const WrapperConnected: React.FC<WrapperConnectedProps> = ({
   };
 
   const handleClick = () => {
-    if (!isAuthenticated) {
+    if (!isActive) {
       handleConnectWallet();
     } else {
       onClick?.();
     }
   };
 
-  if (isAuthenticated) {
+  if (isActive) {
     return <>{children}</>;
   }
 
   return (
-    <StyledWrapperConnected {...children?.props} type={isAuthenticated ? type : 'button'} onClick={handleClick} className={className}>
+    <StyledWrapperConnected {...children?.props} type={isActive ? type : 'button'} onClick={handleClick} className={className}>
       {children?.props?.children}
     </StyledWrapperConnected>
   );
