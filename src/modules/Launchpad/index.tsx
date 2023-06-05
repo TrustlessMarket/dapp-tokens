@@ -22,10 +22,9 @@ import BigNumber from 'bignumber.js';
 import moment from 'moment';
 import {useRouter} from 'next/router';
 import React, {useEffect, useMemo, useState} from 'react';
-import {BsBoxArrowUpRight, BsPencil} from 'react-icons/bs';
+import {BsPencil} from 'react-icons/bs';
 import {ImClock2} from 'react-icons/im';
 import {useDispatch} from 'react-redux';
-import web3 from 'web3';
 import LaunchpadStatus, {LAUNCHPAD_STATUS, LaunchpadLabelStatus, useLaunchPadStatus,} from './Launchpad.Status';
 import {StyledIdoContainer} from './Launchpad.styled';
 
@@ -401,7 +400,7 @@ const LaunchpadContainer = () => {
         render(row: ILaunchpad) {
           if (
             compareString(row.creatorAddress, account) &&
-            [LAUNCHPAD_STATUS.Pending].includes(row?.state)
+            [LAUNCHPAD_STATUS.Draft, LAUNCHPAD_STATUS.Pending].includes(row?.state)
           ) {
             return (
               <Flex alignItems={'center'} gap={4}>
@@ -419,39 +418,6 @@ const LaunchpadContainer = () => {
               </Flex>
             );
           }
-
-          return (
-            <Flex alignItems={'center'} gap={4}>
-              {compareString(row.creatorAddress, account) &&
-                (!row?.proposalId ||
-                  moment(row?.userProposal?.voteStart).unix() > moment().unix()) && (
-                  <InfoTooltip label={'Edit Proposal'}>
-                    <Box
-                      cursor={'pointer'}
-                      onClick={() =>
-                        router.push(`${ROUTE_PATH.LAUNCHPAD_MANAGE}?id=${row.id}`)
-                      }
-                    >
-                      <BsPencil />
-                    </Box>
-                  </InfoTooltip>
-                )}
-              {/*{[LAUNCHPAD_STATUS.Voting].includes(row?.state) && (
-                <InfoTooltip label={'Proposal Detail'}>
-                  <Box
-                    cursor={'pointer'}
-                    onClick={() =>
-                      router.push(
-                        `${ROUTE_PATH.LAUNCHPAD_PROPOSAL}?proposal_id=${row?.proposalId}`,
-                      )
-                    }
-                  >
-                    <BsBoxArrowUpRight />
-                  </Box>
-                </InfoTooltip>
-              )}*/}
-            </Flex>
-          );
         },
       },
     ];
