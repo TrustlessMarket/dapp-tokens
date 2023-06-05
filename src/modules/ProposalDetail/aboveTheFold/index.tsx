@@ -12,12 +12,7 @@ import {ILaunchpad} from "@/interfaces/launchpad";
 const AboveTheFold = ({ poolDetail }: ILaunchpad | any) => {
   return (
     <SectionContainer className={styles.wrapper}>
-      {/*{[PROPOSAL_STATUS.Pending].includes(status.key) ? (
-        <ProposalPending proposalDetail={proposalDetail} />
-      ) : (
-        <ProposalStarting proposalDetail={proposalDetail} />
-      )}*/}
-      <ProposalStarting proposalDetail={proposalDetail} />
+      <ProposalStarting poolDetail={poolDetail} />
       <Box mt={6}>
         <ProposalResult />
       </Box>
