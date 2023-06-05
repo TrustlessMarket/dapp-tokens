@@ -62,6 +62,7 @@ import Web3 from 'web3';
 import styles from './styles.module.scss';
 import useIsAbleEnd from "@/hooks/contract-operations/launchpad/useIsAbleEnd";
 import useIsAbleClose from "@/hooks/contract-operations/launchpad/useIsAbleClose";
+import useIsAbleVoteRelease from "@/hooks/contract-operations/launchpad/useIsAbleVoteRelease";
 
 const FEE = 2;
 export const MakeFormSwap = forwardRef((props, ref) => {
@@ -735,18 +736,21 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
   const { call: isAbleRedeem } = useIsAbleRedeem();
   const { call: isAbleEnd } = useIsAbleEnd();
   const { call: isAbleClose } = useIsAbleClose();
+  const { call: isAbleVoteRelease } = useIsAbleVoteRelease();
 
   const { mobileScreen } = useWindowSize();
   const [status] = useLaunchPadStatus({ row: poolDetail });
   const [canClaim, setCanClaim] = useState(false);
   const [canEnd, setCanEnd] = useState(false);
   const [canClose, setCanClose] = useState(false);
+  const [canVoteRelease, setCanVoteRelease] = useState(false);
   const [userDeposit, setUserDeposit] = useState<any>();
 
   console.log('poolDetail', poolDetail);
   console.log('canEnd', canEnd);
   console.log('canClaim', canClaim);
   console.log('canClose', canClose);
+  console.log('canVoteRelease', canVoteRelease);
   console.log('userDeposit', userDeposit);
   console.log('=====');
 
@@ -771,6 +775,10 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
           user_address: account,
           launchpad_address: poolDetail.launchpad,
         }),
+        isAbleVoteRelease({
+          voter_address: account,
+          launchpad_address: poolDetail.launchpad,
+        }),
         getLaunchpadUserDepositInfo({
           pool_address: poolDetail?.launchpad,
           address: account,
@@ -779,7 +787,8 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
       setCanEnd(response[0]);
       setCanClose(response[1]);
       setCanClaim(response[2]);
-      setUserDeposit(response[3]);
+      setCanVoteRelease(response[3]);
+      setUserDeposit(response[4]);
     } catch (error) {
       console.log('Launchpad detail form fetchData', error);
     }
@@ -955,6 +964,7 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
           launchpadAddress: poolDetail?.launchpad,
         });
       } else if (canEnd) {
+        console.log('end launch pad', poolDetail);
         response = await endLaunchpad({
           launchpadAddress: poolDetail?.launchpad,
         });
