@@ -23,6 +23,9 @@ import LaunchpadFormStep3 from './LaunchpadFormStep3';
 import LaunchpadManageHeader from './header';
 import LaunchpadFormStep4 from './LaunchpadFormStep4';
 import { useRouter } from 'next/router';
+import { toast } from 'react-hot-toast';
+import { toastError } from '@/constants/error';
+import { showError } from '@/utils/toast';
 
 export interface LaunchpadManageFormContainerProps {
   loading: boolean;
@@ -122,7 +125,7 @@ const LaunchpadManageFormContainer: React.FC<LaunchpadManageFormContainerProps> 
         checkBalanceIsApprove(web3.utils.fromWei(_isApprove), values?.liquidValue),
       );
 
-      // toast.success('Transaction has been created. Please wait for few minutes.');
+      toast.success('Transaction has been created. Please wait for few minutes.');
     } catch (err) {
       const message =
         (err as Error).message || 'Something went wrong. Please try again later.';
@@ -132,8 +135,7 @@ const LaunchpadManageFormContainer: React.FC<LaunchpadManageFormContainerProps> 
       //   error: JSON.stringify(err),
       //   message: message,
       // });
-      // toastError(showError, err, { address: account });
-      // dispatch(updateCurrentTransaction(null));
+      toastError(showError, err, { address: account });
     } finally {
       setLoading(false);
     }
