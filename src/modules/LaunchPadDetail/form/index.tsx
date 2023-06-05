@@ -816,10 +816,9 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
       openModal({
         id,
         theme: 'dark',
-        title: canClaim
-          ? 'Confirm claim this project'
-          : canEnd
-          ? 'Confirm end this project'
+        title: canClaim ? 'Confirm claim this project'
+          : canEnd ? 'Confirm end this project'
+          : canCancel ? 'Delete my launchpad'
           : 'Confirm deposit',
         className: styles.modalContent,
         modalProps: {
@@ -861,7 +860,7 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
             ) : canEnd ? (
               <Text>End this project?</Text>
             ) : canCancel ? (
-              <Text>Cancel this project?</Text>
+              <Text>If you wish to delete your launchpad, click Confirm below and your tokens will be immediately returned to your account.</Text>
               ) : (
               <>
                 <HorizontalItem
