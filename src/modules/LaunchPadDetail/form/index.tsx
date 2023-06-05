@@ -63,6 +63,8 @@ import styles from './styles.module.scss';
 import useIsAbleEnd from "@/hooks/contract-operations/launchpad/useIsAbleEnd";
 import useIsAbleClose from "@/hooks/contract-operations/launchpad/useIsAbleClose";
 import useIsAbleVoteRelease from "@/hooks/contract-operations/launchpad/useIsAbleVoteRelease";
+import useIsAbleCancel from "@/hooks/contract-operations/launchpad/useIsAbleCancel";
+import useCancelLaunchPad from "@/hooks/contract-operations/launchpad/useCancel";
 
 const FEE = 2;
 export const MakeFormSwap = forwardRef((props, ref) => {
@@ -733,10 +735,14 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
   const { run: claimLaunchpad } = useContractOperation({
     operation: useClaimLaunchPad,
   });
+  const { run: cancelLaunchpad } = useContractOperation({
+    operation: useCancelLaunchPad,
+  });
   const { call: isAbleRedeem } = useIsAbleRedeem();
   const { call: isAbleEnd } = useIsAbleEnd();
   const { call: isAbleClose } = useIsAbleClose();
   const { call: isAbleVoteRelease } = useIsAbleVoteRelease();
+  const { call: isAbleCancel } = useIsAbleCancel();
 
   const { mobileScreen } = useWindowSize();
   const [status] = useLaunchPadStatus({ row: poolDetail });
@@ -744,6 +750,7 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
   const [canEnd, setCanEnd] = useState(false);
   const [canClose, setCanClose] = useState(false);
   const [canVoteRelease, setCanVoteRelease] = useState(false);
+  const [canCancel, setCanCancel] = useState(false);
   const [userDeposit, setUserDeposit] = useState<any>();
 
   console.log('poolDetail', poolDetail);
@@ -779,6 +786,9 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
           voter_address: account,
           launchpad_address: poolDetail.launchpad,
         }),
+        isAbleCancel({
+          launchpad_address: poolDetail.launchpad,
+        }),
         getLaunchpadUserDepositInfo({
           pool_address: poolDetail?.launchpad,
           address: account,
@@ -788,7 +798,8 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
       setCanClose(response[1]);
       setCanClaim(response[2]);
       setCanVoteRelease(response[3]);
-      setUserDeposit(response[4]);
+      setCanCancel(response[4]);
+      setUserDeposit(response[5]);
     } catch (error) {
       console.log('Launchpad detail form fetchData', error);
     }
@@ -846,7 +857,9 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
               </>
             ) : canEnd ? (
               <Text>End this project?</Text>
-            ) : (
+            ) : canCancel ? (
+              <Text>Cancel this project?</Text>
+              ) : (
               <>
                 <HorizontalItem
                   label={
@@ -964,8 +977,11 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
           launchpadAddress: poolDetail?.launchpad,
         });
       } else if (canEnd) {
-        console.log('end launch pad', poolDetail);
         response = await endLaunchpad({
+          launchpadAddress: poolDetail?.launchpad,
+        });
+      } else if (canCancel) {
+        response = await cancelLaunchpad({
           launchpadAddress: poolDetail?.launchpad,
         });
       } else {
