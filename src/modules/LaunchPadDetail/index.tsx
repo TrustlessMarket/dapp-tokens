@@ -28,6 +28,7 @@ import styles from './styles.module.scss';
 import px2rem from '@/utils/px2rem';
 import {LAUNCHPAD_STATUS} from "@/modules/Launchpad/Launchpad.Status";
 import Intro from "@/modules/LaunchPadDetail/aboveTheFold/intro";
+import SectionContainer from "@/components/Swap/sectionContainer";
 
 const IdoDetailContainer = () => {
   const router = useRouter();
@@ -91,31 +92,33 @@ const IdoDetailContainer = () => {
           <AboveTheFoldLaunchpad poolDetail={poolDetail} />
         )
       }
-      <Tabs className={cx(styles.tabContainer)} mt={16}>
-        <TabList mb={8} mt={8}>
-          <Tab>STORY</Tab>
-          <Tab>FAQS</Tab>
-        </TabList>
-        <TabPanels>
-          <TabPanel>
-            {
-              [LAUNCHPAD_STATUS.Voting].includes(poolDetail?.state) && (
-                <Box h={"738px"}>
-                  <Intro poolDetail={poolDetail}/>
-                </Box>
-              )
-            }
-            <Text fontSize={px2rem(24)} fontWeight={'500'} color={'#FFFFFF'} mt={8}>
-              Description
-            </Text>
-            <Box mt={8}></Box>
-            <IdoDescription poolDetail={poolDetail} />
-          </TabPanel>
-          <TabPanel>
-            <IdoFaqs poolDetail={poolDetail} />
-          </TabPanel>
-        </TabPanels>
-      </Tabs>
+      <SectionContainer>
+        <Tabs className={cx(styles.tabContainer)} mt={16}>
+          <TabList mb={8} mt={8}>
+            <Tab>STORY</Tab>
+            <Tab>FAQS</Tab>
+          </TabList>
+          <TabPanels>
+            <TabPanel>
+              {
+                [LAUNCHPAD_STATUS.Voting].includes(poolDetail?.state) && (
+                  <Box h={"738px"}>
+                    <Intro poolDetail={poolDetail}/>
+                  </Box>
+                )
+              }
+              <Text fontSize={px2rem(24)} fontWeight={'500'} color={'#FFFFFF'} mt={8}>
+                Description
+              </Text>
+              <Box mt={8}></Box>
+              <IdoDescription poolDetail={poolDetail} />
+            </TabPanel>
+            <TabPanel>
+              <IdoFaqs poolDetail={poolDetail} />
+            </TabPanel>
+          </TabPanels>
+        </Tabs>
+      </SectionContainer>
     </BodyContainer>
   );
 };
