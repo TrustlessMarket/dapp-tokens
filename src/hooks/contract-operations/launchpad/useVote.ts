@@ -13,7 +13,7 @@ interface IVoteLaunchpadParams {
   launchpadAddress: string;
 }
 
-const useDepositPool: ContractOperationHook<IVoteLaunchpadParams, boolean> = () => {
+const useVoteLaunchpad: ContractOperationHook<IVoteLaunchpadParams, boolean> = () => {
   const { account, provider } = useWeb3React();
   const call = useCallback(
     async (params: IVoteLaunchpadParams): Promise<boolean> => {
@@ -68,4 +68,4 @@ const useDepositPool: ContractOperationHook<IVoteLaunchpadParams, boolean> = () 
   };
 };
 
-export default useDepositPool;
+export default useVoteLaunchpad;

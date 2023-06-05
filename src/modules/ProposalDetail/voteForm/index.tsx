@@ -56,6 +56,7 @@ import useBalanceERC20Token from "@/hooks/contract-operations/token/useBalanceER
 import useApproveERC20Token from "@/hooks/contract-operations/token/useApproveERC20Token";
 import {closeModal, openModal} from "@/state/modal";
 import ModalConfirmApprove from "@/components/ModalConfirmApprove";
+import useVoteLaunchpad from "@/hooks/contract-operations/launchpad/useVote";
 
 export const MakeFormSwap = forwardRef((props, ref) => {
   const {
@@ -484,11 +485,12 @@ const BuyForm = ({ poolDetail, votingToken }: any) => {
   const [voteSignatureProposal, setVoteSignatureProposal] = useState<any>();
   const [canVote, setCanVote] = useState(false);
 
-  const { run: castVoteProposal } = useContractOperation({
-    operation: useCastVoteProposal,
+  const { run: voteLaunchpad } = useContractOperation({
+    operation: useVoteLaunchpad,
   });
 
   const handleSubmit = async (values: any) => {
+    const { baseAmount } = values;
     try {
       setSubmitting(true);
       dispatch(
@@ -499,12 +501,10 @@ const BuyForm = ({ poolDetail, votingToken }: any) => {
       );
 
       const data = {
-        proposalId: 'proposalDetail?.proposalId',
-        weight: voteSignatureProposal?.weigthSign,
-        support: values?.isVoteUp ? '1' : '0',
-        signature: voteSignatureProposal?.adminSignature,
+        amount: baseAmount,
+        launchpadAddress: poolDetail?.launchpad,
       };
-      const response = await castVoteProposal(data);
+      const response = await voteLaunchpad(data);
 
       toast.success('Transaction has been created. Please wait for few minutes.');
       refForm.current?.reset();

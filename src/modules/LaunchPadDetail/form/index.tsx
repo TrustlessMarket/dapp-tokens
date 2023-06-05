@@ -951,7 +951,7 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
   };
 
   const handleDeposit = async (values: any) => {
-    const { boostInfo, baseAmount, quoteAmount, swapRoutes } = values;
+    const { baseAmount } = values;
 
     try {
       setSubmitting(true);
@@ -969,10 +969,10 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
         signature: '',
       };
 
-      if (boostInfo) {
-        data.boostRatio = boostInfo.boostSign;
-        data.signature = boostInfo.adminSignature;
-      }
+      // if (boostInfo) {
+      //   data.boostRatio = boostInfo.boostSign;
+      //   data.signature = boostInfo.adminSignature;
+      // }
 
       let response;
       if (canClaim) {
