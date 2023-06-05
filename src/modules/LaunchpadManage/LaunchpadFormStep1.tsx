@@ -187,7 +187,7 @@ const LaunchpadFormStep1: React.FC<ILaunchpadFormStep1> = ({
           label={
             <InfoTooltip
               showIcon={true}
-              label="The total number of tokens that backers will share once the crowdfunding has ended."
+              label="The total number of tokens that the contributors will receive after the crowdfunding ends."
               iconColor={colors.white500}
             >
               {`Reward pool ${tokenSelected ? `(${tokenSelected.symbol})` : ''}`}
@@ -257,7 +257,7 @@ const LaunchpadFormStep1: React.FC<ILaunchpadFormStep1> = ({
           label={
             <InfoTooltip
               showIcon={true}
-              label="This amount of token that are used to add initial liquidity for trading purposes after the crowdfunding ends."
+              label="The amount of your token that is used to add initial liquidity for trading purposes after the crowdfunding ends."
               iconColor={colors.white500}
             >
               Initial liquidity in token
@@ -271,9 +271,17 @@ const LaunchpadFormStep1: React.FC<ILaunchpadFormStep1> = ({
           name="goalBalance"
           decimals={18}
           children={FieldAmount}
-          label={`Funding goal ${
-            liquidityTokenSelected ? `(${liquidityTokenSelected.symbol})` : ''
-          }`}
+          label={
+            <InfoTooltip
+              showIcon={true}
+              label="The minimum amount you would like to raise. If the crowdfunding does not reach the Funding Goal, the funded amount will be returned to the contributors"
+              iconColor={colors.white500}
+            >
+              {`Funding goal ${
+                liquidityTokenSelected ? `(${liquidityTokenSelected.symbol})` : ''
+              }`}
+            </InfoTooltip>
+          }
           disabled={detail?.launchpad}
           validate={composeValidators(requiredAmount)}
           appendComp={
@@ -314,7 +322,15 @@ const LaunchpadFormStep1: React.FC<ILaunchpadFormStep1> = ({
           name="duration"
           decimals={18}
           children={FieldAmount}
-          label={`Duration`}
+          label={
+            <InfoTooltip
+              showIcon={true}
+              label="The duration of your crowdfunding event"
+              iconColor={colors.white500}
+            >
+              {`Duration`}
+            </InfoTooltip>
+          }
           validate={composeValidators(requiredAmount, validateDuration)}
           appendComp={<Text color={colors.white500}>Day</Text>}
           disabled={detail?.launchpad}
@@ -347,7 +363,7 @@ const LaunchpadFormStep1: React.FC<ILaunchpadFormStep1> = ({
           label={
             <InfoTooltip
               showIcon={true}
-              label="Initial liquidity in token refers to a percentage of the funds that are used to add initial liquidity for trading purposes after the crowdfunding ends"
+              label="The percentage of the total crowdfunded amount (in ETH or BTC) to add initial liquidity for trading purposes after the crowdfund ends"
               iconColor={colors.white500}
             >
               Initial liquidity
@@ -367,7 +383,7 @@ const LaunchpadFormStep1: React.FC<ILaunchpadFormStep1> = ({
           label={
             <InfoTooltip
               showIcon={true}
-              label="Launchpad will stop upon reaching its hard cap (the maximum amount for the fund)"
+              label="The maximum amount you would like to raise. The crowdfunding will stop upon reaching its hard cap"
               iconColor={colors.white500}
             >
               Hard cap
