@@ -488,9 +488,19 @@ const IdoTokenManageForm: React.FC<IdoTokenManageFormProps> = ({
                 name="goalBalance"
                 decimals={18}
                 children={FieldAmount}
-                label={`Funding goal ${
-                  liquidityTokenSelected ? `(${liquidityTokenSelected.symbol})` : ''
-                }`}
+                label={
+                  <InfoTooltip
+                    showIcon={true}
+                    label="The minimum amount you would like to raise. If the crowdfunding does not reach the Funding Goal, the funded amount will be returned to the contributors"
+                    iconColor={colors.white500}
+                  >
+                    {`Funding goal ${
+                      liquidityTokenSelected
+                        ? `(${liquidityTokenSelected.symbol})`
+                        : ''
+                    }`}
+                  </InfoTooltip>
+                }
                 disabled={detail?.launchpad}
                 validate={composeValidators(requiredAmount, validateMaxRatio)}
               />
