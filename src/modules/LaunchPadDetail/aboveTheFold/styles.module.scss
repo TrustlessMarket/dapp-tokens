@@ -2,6 +2,15 @@
   color: #FFFFFF;
   //padding-top: 48px;
   //padding-bottom: 48px;
+
+  :global {
+    .token-avatar {
+      width: 40px;
+      height: 40px;
+      object-fit: cover;
+      border-radius: 50%;
+    }
+  }
 }
 
 .introWrapper {
