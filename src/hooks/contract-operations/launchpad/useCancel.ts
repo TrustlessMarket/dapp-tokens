@@ -11,14 +11,14 @@ import { getContract, getDefaultGasPrice } from '@/utils';
 import { useWeb3React } from '@web3-react/core';
 import { useCallback } from 'react';
 
-interface IEndLaunchpadPoolParams {
+interface ICancelLaunchpadPoolParams {
   launchpadAddress: string;
 }
 
-const useEndLaunchPad: ContractOperationHook<IEndLaunchpadPoolParams, boolean> = () => {
+const useCancelLaunchPad: ContractOperationHook<ICancelLaunchpadPoolParams, boolean> = () => {
   const { account, provider } = useWeb3React();
   const call = useCallback(
-    async (params: IEndLaunchpadPoolParams): Promise<boolean> => {
+    async (params: ICancelLaunchpadPoolParams): Promise<boolean> => {
       const { launchpadAddress } = params;
       if (account && provider && launchpadAddress) {
         const contract = getContract(
@@ -28,7 +28,7 @@ const useEndLaunchPad: ContractOperationHook<IEndLaunchpadPoolParams, boolean> =
           account,
         );
 
-        const transaction = await contract.connect(provider.getSigner()).end({
+        const transaction = await contract.connect(provider.getSigner()).cancel({
           gasLimit: '1000000',
           gasPrice: getDefaultGasPrice(),
         });
@@ -61,8 +61,8 @@ const useEndLaunchPad: ContractOperationHook<IEndLaunchpadPoolParams, boolean> =
   return {
     call: call,
     dAppType: DAppType.ERC20,
-    transactionType: TransactionEventType.END_LAUNCHPAD,
+    transactionType: TransactionEventType.CANCEL_LAUNCHPAD,
   };
 };
 
-export default useEndLaunchPad;
+export default useCancelLaunchPad;

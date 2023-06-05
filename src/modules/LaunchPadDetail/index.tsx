@@ -1,21 +1,33 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import BodyContainer from '@/components/Swap/bodyContainer';
 import FiledButton from '@/components/Swap/button/filedButton';
-import {ROUTE_PATH} from '@/constants/route-path';
-import {ILaunchpad} from '@/interfaces/launchpad';
-import AboveTheFold from '@/modules/LaunchPadDetail/aboveTheFold';
+import { ROUTE_PATH } from '@/constants/route-path';
+import { ILaunchpad } from '@/interfaces/launchpad';
+import AboveTheFoldLaunchpad from '@/modules/LaunchPadDetail/aboveTheFold';
+import AboveTheFoldVoting from '@/modules/ProposalDetail/aboveTheFold';
 import IdoDescription from '@/modules/LaunchPadDetail/description';
-import {getDetailLaunchpad} from '@/services/launchpad';
-import {useAppSelector} from '@/state/hooks';
-import {selectPnftExchange} from '@/state/pnftExchange';
-import {colors} from '@/theme/colors';
-import {Box, Spinner, Tab, TabList, TabPanel, TabPanels, Tabs, Text,} from '@chakra-ui/react';
+import { getDetailLaunchpad } from '@/services/launchpad';
+import { useAppSelector } from '@/state/hooks';
+import { selectPnftExchange } from '@/state/pnftExchange';
+import { colors } from '@/theme/colors';
+import {
+  Box,
+  Spinner,
+  Tab,
+  TabList,
+  TabPanel,
+  TabPanels,
+  Tabs,
+  Text,
+} from '@chakra-ui/react';
 import cx from 'classnames';
-import {useRouter} from 'next/router';
-import React, {useEffect, useState} from 'react';
+import { useRouter } from 'next/router';
+import React, { useEffect, useState } from 'react';
 import IdoFaqs from './faqs';
 import styles from './styles.module.scss';
-import px2rem from "@/utils/px2rem";
+import px2rem from '@/utils/px2rem';
+import {LAUNCHPAD_STATUS} from "@/modules/Launchpad/Launchpad.Status";
+import Intro from "@/modules/LaunchPadDetail/aboveTheFold/intro";
 
 const IdoDetailContainer = () => {
   const router = useRouter();
@@ -33,6 +45,8 @@ const IdoDetailContainer = () => {
       ]);
       setPoolDetail(response[0]);
     } catch (err) {
+      console.log('err', err);
+
       throw err;
     } finally {
       setLoading(false);
@@ -48,7 +62,7 @@ const IdoDetailContainer = () => {
   if (loading) {
     return (
       <BodyContainer className={cx(styles.wrapper, styles.loadingContainer)}>
-        <Spinner color={colors.white}/>
+        <Spinner color={colors.white} />
       </BodyContainer>
     );
   }
@@ -56,8 +70,8 @@ const IdoDetailContainer = () => {
   if (!poolDetail) {
     return (
       <BodyContainer className={cx(styles.wrapper, styles.loadingContainer)}>
-        <Text style={{color: colors.white}}>Opps... This project not found!</Text>
-        <Box mt={6}/>
+        <Text style={{ color: colors.white }}>Opps... This project not found!</Text>
+        <Box mt={6} />
         <FiledButton
           onClick={() => router.replace(ROUTE_PATH.LAUNCHPAD)}
           btnSize="h"
@@ -70,7 +84,13 @@ const IdoDetailContainer = () => {
 
   return (
     <BodyContainer className={styles.wrapper}>
-      <AboveTheFold poolDetail={poolDetail}/>
+      {
+        [LAUNCHPAD_STATUS.Voting].includes(poolDetail?.state) ? (
+          <AboveTheFoldVoting poolDetail={poolDetail} />
+        ) : (
+          <AboveTheFoldLaunchpad poolDetail={poolDetail} />
+        )
+      }
       <Tabs className={cx(styles.tabContainer)} mt={16}>
         <TabList mb={8} mt={8}>
           <Tab>STORY</Tab>
@@ -78,12 +98,21 @@ const IdoDetailContainer = () => {
         </TabList>
         <TabPanels>
           <TabPanel>
-            <Text fontSize={px2rem(24)} fontWeight={"500"} color={"#FFFFFF"} mt={8}>Description</Text>
+            <Box h={"738px"}>
+              {
+                [LAUNCHPAD_STATUS.Voting].includes(poolDetail?.state) && (
+                  <Intro poolDetail={poolDetail}/>
+                )
+              }
+            </Box>
+            <Text fontSize={px2rem(24)} fontWeight={'500'} color={'#FFFFFF'} mt={8}>
+              Description
+            </Text>
             <Box mt={8}></Box>
-            <IdoDescription poolDetail={poolDetail}/>
+            <IdoDescription poolDetail={poolDetail} />
           </TabPanel>
           <TabPanel>
-            <IdoFaqs poolDetail={poolDetail}/>
+            <IdoFaqs poolDetail={poolDetail} />
           </TabPanel>
         </TabPanels>
       </Tabs>

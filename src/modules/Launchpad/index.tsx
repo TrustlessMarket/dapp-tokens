@@ -21,7 +21,7 @@ import {useWeb3React} from '@web3-react/core';
 import BigNumber from 'bignumber.js';
 import moment from 'moment';
 import {useRouter} from 'next/router';
-import {useEffect, useMemo, useState} from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 import {BsBoxArrowUpRight, BsPencil} from 'react-icons/bs';
 import {ImClock2} from 'react-icons/im';
 import {useDispatch} from 'react-redux';
@@ -85,7 +85,14 @@ const LaunchpadContainer = () => {
       },
       {
         id: 'rewards',
-        label: 'Reward Pool',
+        label: (
+          <InfoTooltip
+            showIcon={true}
+            label="The total number of tokens that backers will share once the crowdfunding has ended."
+          >
+            Reward pool
+          </InfoTooltip>
+        ),
         labelConfig: {
           fontSize: '12px',
           fontWeight: '500',
@@ -143,7 +150,7 @@ const LaunchpadContainer = () => {
         label: (
           <InfoTooltip
             showIcon={true}
-            label="Liquidity Reserve refers to a percentage of the funds that are used to add initial liquidity for trading purposes after the crowdfunding ends"
+            label="Liquidity Reserve refers to a percentage of the funds and amount of token that are used to add initial liquidity for trading purposes after the crowdfunding ends"
           >
             Liquidity reserve
           </InfoTooltip>
@@ -163,10 +170,7 @@ const LaunchpadContainer = () => {
               <Text>{`${
                 row.liquidityRatio
                   ? `${formatCurrency(
-                      new BigNumber(web3.utils.toWei(row.liquidityRatio).toString())
-                        .dividedBy(10000)
-                        .toString(),
-                      18,
+                    row.liquidityRatio
                     )}% of funded`
                   : 'N/A'
               }`}</Text>
@@ -237,7 +241,14 @@ const LaunchpadContainer = () => {
       },
       {
         id: 'hardCap',
-        label: 'Hard Cap',
+        label: (
+          <InfoTooltip
+            showIcon={true}
+            label="Launchpad will stop upon reaching its hard cap (the maximum amount for the fund)"
+          >
+            Hard Cap
+          </InfoTooltip>
+        ),
         labelConfig: {
           fontSize: '12px',
           fontWeight: '500',
@@ -425,7 +436,7 @@ const LaunchpadContainer = () => {
                     </Box>
                   </InfoTooltip>
                 )}
-              {[LAUNCHPAD_STATUS.Voting].includes(row?.state) && (
+              {/*{[LAUNCHPAD_STATUS.Voting].includes(row?.state) && (
                 <InfoTooltip label={'Proposal Detail'}>
                   <Box
                     cursor={'pointer'}
@@ -438,7 +449,7 @@ const LaunchpadContainer = () => {
                     <BsBoxArrowUpRight />
                   </Box>
                 </InfoTooltip>
-              )}
+              )}*/}
             </Flex>
           );
         },

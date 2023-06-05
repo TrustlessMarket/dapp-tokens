@@ -3,6 +3,7 @@ import {Box, GridItem, SimpleGrid, Text} from "@chakra-ui/react";
 import styles from './styles.module.scss';
 import React from "react";
 import Empty from "@/components/Empty";
+import ReactMarkdown from 'react-markdown';
 
 const IdoDescription = ({poolDetail} : any) => {
   return (
@@ -11,7 +12,7 @@ const IdoDescription = ({poolDetail} : any) => {
         <GridItem>
           <Text whiteSpace={"pre-line"}>
             {poolDetail?.description ? (
-              <>{poolDetail?.description}</>
+                <ReactMarkdown>{poolDetail?.description}</ReactMarkdown>
             ) : (
               <Empty isTable={false} />
             )}

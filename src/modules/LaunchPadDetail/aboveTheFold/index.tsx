@@ -33,7 +33,12 @@ const AboveTheFold = ({ poolDetail }: ILaunchpad | any) => {
           <Usp />
         </GridItem>
         {
-          ![LAUNCHPAD_STATUS.Pending].includes(status.key) && (
+          ![
+            LAUNCHPAD_STATUS.Draft,
+            LAUNCHPAD_STATUS.Pending,
+            LAUNCHPAD_STATUS.Voting,
+            LAUNCHPAD_STATUS.NotPassed
+          ].includes(status.key) && (
             <GridItem>
               <Card bgColor={"#1B1E26"} paddingX={6} paddingY={6} mt={8}>
                 <Statistic poolDetail={poolDetail}/>

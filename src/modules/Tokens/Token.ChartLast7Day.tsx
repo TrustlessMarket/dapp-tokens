@@ -4,7 +4,7 @@ import { getChartToken } from '@/services/swap';
 import { Box } from '@chakra-ui/react';
 import BigNumber from 'bignumber.js';
 import { createChart } from 'lightweight-charts';
-import { last, sortBy } from 'lodash';
+import {first, last, sortBy} from 'lodash';
 import { useEffect, useRef, useState } from 'react';
 
 const ChartThumb = ({ chartData }: { chartData: any[] }) => {
@@ -115,18 +115,18 @@ const TokenChartLast7Day = ({ token }: { token: IToken }) => {
         contract_address: token.address,
         chart_type: 'day',
       });
-      if (response && response?.length > 0) {
-        const sortedData = sortBy(response, 'timestamp');
+
+      const res = response?.length >= 7 ? response.slice(response.length - 7) : response;
+      if (res && res?.length > 0) {
+        const sortedData = sortBy(res, 'timestamp');
 
         let color = '#45B26B';
 
-        if (sortedData.length >= 7) {
-          color =
-            Number(last(sortedData).close) <
-            Number(sortedData[sortedData.length - 8].close)
-              ? '#EF466F'
-              : '#45B26B';
-        }
+        color =
+          Number(last(sortedData).close) <
+          Number(first(sortedData).close)
+            ? '#EF466F'
+            : '#45B26B';
 
         const _data = sortedData?.map((v: any) => {
           return {

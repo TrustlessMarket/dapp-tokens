@@ -36,7 +36,7 @@ export interface LaunchpadManageFormContainerProps {
 
 export const steps = [{ title: 'Info' }, { title: 'Story of the Project' }];
 
-export const extra_steps = [{ title: 'FAQs' }];
+export const extra_steps = [{ title: 'FAQs' }, { title: 'Boost' }];
 
 const LaunchpadManageFormContainer: React.FC<LaunchpadManageFormContainerProps> = ({
   loading,
@@ -240,6 +240,7 @@ const LaunchpadManageFormContainer: React.FC<LaunchpadManageFormContainerProps> 
         description: detail.description,
         video: detail.video,
         image: detail.image,
+        boost_url: detail.boostUrl,
         duration: duration,
         steps: _refSteps,
         ..._faqs,

@@ -64,7 +64,7 @@ const useClaimLaunchPad: ContractOperationHook<
   return {
     call: call,
     dAppType: DAppType.ERC20,
-    transactionType: TransactionEventType.END_LAUNCHPAD,
+    transactionType: TransactionEventType.REDEEM_LAUNCHPAD,
   };
 };
 

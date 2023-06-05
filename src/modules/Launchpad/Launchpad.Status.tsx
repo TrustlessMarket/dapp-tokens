@@ -5,12 +5,14 @@ import { StyledIdoStatus } from './Launchpad.styled';
 import moment from 'moment';
 
 export enum LAUNCHPAD_STATUS {
+  Draft = -1,
   Pending,
   Voting,
   NotPassed,
   Launching,
   Successful,
   Failed,
+  Cancelled,
 
   //FE define
   End,
@@ -18,14 +20,14 @@ export enum LAUNCHPAD_STATUS {
 
 export const LaunchpadLabelStatus = {
   draft: {
-    key: -1,
+    key: LAUNCHPAD_STATUS.Draft,
     value: 'draft',
     label: 'Draft',
   },
   pending: {
     key: LAUNCHPAD_STATUS.Pending,
     value: 'pending',
-    label: 'Voting Preparation',
+    label: 'Preparing to Vote',
   },
   voting: {
     key: LAUNCHPAD_STATUS.Voting,
@@ -50,6 +52,11 @@ export const LaunchpadLabelStatus = {
   failed: {
     key: LAUNCHPAD_STATUS.Failed,
     value: 'failed',
+    label: 'Closed',
+  },
+  cancelled: {
+    key: LAUNCHPAD_STATUS.Cancelled,
+    value: 'cancelled',
     label: 'Closed',
   },
   end: {
