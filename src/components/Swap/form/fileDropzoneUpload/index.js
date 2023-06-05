@@ -6,7 +6,7 @@ import IconFile from './img/ic_file.svg';
 import styles from './styles.module.scss';
 
 const FileDropzoneUpload = (props) => {
-  const { className, accept, onChange, url, loading } = props;
+  const { className, accept, onChange, url, loading, icon } = props;
   const [file, setFile] = useState(null);
 
   const handleOnDrop = (files) => {
@@ -24,7 +24,7 @@ const FileDropzoneUpload = (props) => {
       {file
         ? <>
           <div className={cx(styles.file, 'uploaded')}>
-            {!loading && <img alt="img-upload" src={url} />}
+            {!loading && icon || <img alt="img-upload" src={url} />}
             <div>
               <span>{file?.name}</span>
               <button type="button" onClick={handleRemove}>Remove</button>
@@ -37,7 +37,10 @@ const FileDropzoneUpload = (props) => {
               <div {...getRootProps()}>
                 <input {...getInputProps()} />
                 <div className={cx(styles.dropzone, 'dropzone')}>
-                  <img className={cx(styles.iconFile, 'img-upload')} alt="" src={url || IconFile} />
+                  {
+                    icon || <img className={cx(styles.iconFile, 'img-upload')} alt="" src={url || IconFile} />
+                  }
+
                   <div>Drag files here<br /> or click to upload</div>
                 </div>
               </div>

@@ -377,4 +377,22 @@ export const StyledLaunchpadFormStep1 = styled(Flex)`
       }
     }
   }
+
+  .btn-download-template {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 8px 14px 8px 10px;
+    gap: 8px;
+    justify-content: center;
+    align-items: center;
+    color: #ffffff;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 24px;
+    cursor: pointer;
+    &.primary {
+      background: ${colors.bluePrimary};
+    }
+  }
 `;

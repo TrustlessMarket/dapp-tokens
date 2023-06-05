@@ -133,10 +133,7 @@ export const importBoost = async (
   },
   data: {
     signature: string;
-    list: {
-      user_address: string;
-      boost: number;
-    }[];
+    file_url: string;
   },
 ) => {
   const qs = '?network=tc&' + queryString.stringify(params);
