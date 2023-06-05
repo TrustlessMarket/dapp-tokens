@@ -22,7 +22,6 @@ const ProposalInfo = ({ poolDetail }: ILaunchpad | any) => {
               <InfoTooltip
                 showIcon={true}
                 label="The total number of tokens that the contributors will receive after the crowdfunding ends."
-                // iconColor={colors.white500}
               >
                 {`Reward pool`}
               </InfoTooltip>
@@ -39,7 +38,6 @@ const ProposalInfo = ({ poolDetail }: ILaunchpad | any) => {
               <InfoTooltip
                 showIcon={true}
                 label="The minimum amount you would like to raise. If the crowdfunding does not reach the Funding Goal, the funded amount will be returned to the contributors"
-                // iconColor={colors.white500}
               >
                 {`Funding goal`}
               </InfoTooltip>

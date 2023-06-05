@@ -96,7 +96,7 @@ export const StyledIdoContainer = styled(BodyContainer)`
         }
         
         .progress-bar {
-          background: #1C1C1C;
+          background: rgba(255, 255, 255, 0.2);
           border-radius: 100px;
           > div:first-child {
             background: #04C57F;
