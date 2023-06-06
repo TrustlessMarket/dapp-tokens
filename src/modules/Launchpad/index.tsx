@@ -14,7 +14,7 @@ import { getListLaunchpad } from '@/services/launchpad';
 import { useAppSelector } from '@/state/hooks';
 import { selectPnftExchange } from '@/state/pnftExchange';
 import { colors } from '@/theme/colors';
-import { compareString, formatCurrency } from '@/utils';
+import {abbreviateNumber, compareString, formatCurrency} from '@/utils';
 import { Box, Flex, Progress, Text } from '@chakra-ui/react';
 import { useWeb3React } from '@web3-react/core';
 import BigNumber from 'bignumber.js';
@@ -142,7 +142,7 @@ const LaunchpadContainer = () => {
           return (
             <Text>{`${
               token.totalSupply
-                ? `${formatCurrency(token.totalSupply, 18)} ${token?.symbol}`
+                ? `${Number(token.totalSupply) > 10**6 ? abbreviateNumber(token.totalSupply) : formatCurrency(token.totalSupply, Number(token?.decimal || 18))} ${token?.symbol}`
                 : 'N/A'
             }`}</Text>
           );
