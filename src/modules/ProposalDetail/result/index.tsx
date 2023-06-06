@@ -41,7 +41,7 @@ const ProposalResult = ({poolDetail}: { poolDetail: ILaunchpad }) => {
           <Card bgColor={"transparent"} paddingX={6} paddingY={6} border={"1px solid #353945"}>
             <Side
               title={"For"}
-              totalVote={voteResult?.totalVoter}
+              totalVote={Number(poolDetail?.voteGoal)}
               data={voteResult}
               className={cx(styles.sideWrapper, styles.sideFor)}
             />
