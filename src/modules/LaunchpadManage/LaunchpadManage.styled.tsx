@@ -392,6 +392,9 @@ export const StyledLaunchpadFormStep1 = styled(Flex)`
           & > div {
             text-align: center;
             margin-top: 5px;
+            button {
+              margin: 0 auto;
+            }
           }
         }
       }

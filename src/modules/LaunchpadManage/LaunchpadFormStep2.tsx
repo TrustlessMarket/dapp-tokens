@@ -2,25 +2,27 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react/no-children-prop */
-import FieldRichEditor from '@/components/Swap/form/fieldRichEditor';
+import FieldMDEditor from '@/components/Swap/form/fieldMDEditor';
 import FieldText from '@/components/Swap/form/fieldText';
 import FileDropzoneUpload from '@/components/Swap/form/fileDropzoneUpload';
 import InputWrapper from '@/components/Swap/form/inputWrapper';
 import { CDN_URL } from '@/configs';
+import { toastError } from '@/constants/error';
 import { ILaunchpad } from '@/interfaces/launchpad';
 import { IToken } from '@/interfaces/token';
 import { uploadFile } from '@/services/file';
 import { logErrorToServer } from '@/services/swap';
 import { validateYoutubeLink } from '@/utils';
 import { composeValidators, required } from '@/utils/formValidate';
+import { showError } from '@/utils/toast';
 import { Text } from '@chakra-ui/react';
 import { useWeb3React } from '@web3-react/core';
 import { useRouter } from 'next/router';
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useState } from 'react';
 import { Field, useForm, useFormState } from 'react-final-form';
+import { toast } from 'react-hot-toast';
 import { MAX_FILE_SIZE } from '../UpdateTokenInfo/form';
 import { StyledLaunchpadFormStep1 } from './LaunchpadManage.styled';
-import FieldMDEditor from '@/components/Swap/form/fieldMDEditor';
 
 interface ILaunchpadFormStep2 {
   detail?: ILaunchpad;
@@ -54,6 +56,10 @@ const LaunchpadFormStep2: React.FC<ILaunchpadFormStep2> = ({
   const [uploading, setUploading] = useState(false);
 
   const onFileChange = async (file: File) => {
+    if (file.size > MAX_FILE_SIZE) {
+      return toast.error('Max image size: 1MB');
+    }
+
     if (!file) {
       change('image', file);
     }
@@ -73,6 +79,7 @@ const LaunchpadFormStep2: React.FC<ILaunchpadFormStep2> = ({
         error: JSON.stringify(err),
         message: message,
       });
+      toastError(showError, err, { address: account });
     } finally {
       setUploading(false);
     }
