@@ -20,7 +20,7 @@ const AboveTheFold = ({ poolDetail }: ILaunchpad | any) => {
 
   return (
     <Box className={styles.wrapper}>
-      <Flex mb={12} borderBottom={"1px solid rgba(255, 255, 255, 0.1)"}>
+      <Flex pb={7} mb={12} borderBottom={"1px solid rgba(255, 255, 255, 0.1)"}>
         <Flex gap={4} color={'#FFFFFF'} alignItems={'center'}>
           <Flex alignItems={'flex-start'} h={'100%'}>
             <img src={launchpadToken.thumbnail || TOKEN_ICON_DEFAULT} className={"token-avatar"}/>
