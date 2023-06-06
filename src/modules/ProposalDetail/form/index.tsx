@@ -105,7 +105,7 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
       openModal({
         id,
         theme: 'dark',
-        title: 'Confirm',
+        title: 'Support this Launchpad',
         className: styles.modalContent,
         modalProps: {
           centered: true,
