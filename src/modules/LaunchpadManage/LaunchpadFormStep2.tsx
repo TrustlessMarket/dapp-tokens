@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react/no-children-prop */
-import FieldMDEditor from '@/components/Swap/form/fieldMDEditor';
+import FieldRichEditor from '@/components/Swap/form/fieldRichEditor';
 import FieldText from '@/components/Swap/form/fieldText';
 import FileDropzoneUpload from '@/components/Swap/form/fileDropzoneUpload';
 import InputWrapper from '@/components/Swap/form/inputWrapper';
@@ -107,7 +107,7 @@ const LaunchpadFormStep2: React.FC<ILaunchpadFormStep2> = ({
       <Field
         validate={required}
         name="description"
-        children={FieldMDEditor}
+        children={FieldRichEditor}
         label="Story"
       />
     </StyledLaunchpadFormStep1>

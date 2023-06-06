@@ -336,6 +336,9 @@ export const StyledLaunchpadFormStep1 = styled(Flex)`
 
         color: #ffffff;
       }
+      &.disabled {
+        cursor: default;
+      }
     }
   }
   &.step-2-container {

@@ -51,9 +51,11 @@ const LaunchpadFormStep1: React.FC<ILaunchpadFormStep1> = ({
   const liquidityTokenSelected: IToken | undefined = values?.liquidityTokenArg;
   const [needLiquidBalance, setNeedLiquidBalance] = useState<string>('0');
 
+  const isFirstDisabled = Boolean(detail?.launchpad);
+
   const validateAmount = useCallback(
     (_amount: any) => {
-      if (!detail && Number(_amount) > Number(balanceToken)) {
+      if (!isFirstDisabled && Number(_amount) > Number(balanceToken)) {
         return `Max amount is ${formatCurrency(balanceToken)}`;
       }
 
@@ -75,7 +77,7 @@ const LaunchpadFormStep1: React.FC<ILaunchpadFormStep1> = ({
 
   const validateMaxRatio = useCallback(
     (_amount: any) => {
-      if (!detail || !detail.launchpad) {
+      if (!isFirstDisabled) {
         if (new BigNumber(_amount).plus(values.launchpadBalance).gt(balanceToken)) {
           return `Max Initial liquidity in token is ${formatCurrency(
             new BigNumber(balanceToken).minus(values.launchpadBalance).toString(),
@@ -97,7 +99,7 @@ const LaunchpadFormStep1: React.FC<ILaunchpadFormStep1> = ({
 
   const validateMaxFundingRate = useCallback(
     (_amount: any) => {
-      if (!detail || !detail.launchpad) {
+      if (!isFirstDisabled) {
         if (new BigNumber(_amount).gt(90)) {
           return `Max Initial liquidity is 90%`;
         }
@@ -133,7 +135,7 @@ const LaunchpadFormStep1: React.FC<ILaunchpadFormStep1> = ({
 
   const maxGoalBalance = useCallback(
     (_amount: any) => {
-      if (!detail || !detail.launchpad) {
+      if (!isFirstDisabled) {
         if (Number(_amount) > 0 && Number(_amount) <= Number(values.goalBalance)) {
           return `Hard cap is greater than Funding goal`;
         }
@@ -193,7 +195,7 @@ const LaunchpadFormStep1: React.FC<ILaunchpadFormStep1> = ({
               {`Reward pool ${tokenSelected ? `(${tokenSelected.symbol})` : ''}`}
             </InfoTooltip>
           }
-          disabled={detail?.launchpad}
+          disabled={isFirstDisabled}
           validate={composeValidators(requiredAmount, validateAmount)}
           customMeta={{
             error,
@@ -263,7 +265,7 @@ const LaunchpadFormStep1: React.FC<ILaunchpadFormStep1> = ({
               Initial liquidity in token
             </InfoTooltip>
           }
-          disabled={detail?.launchpad}
+          disabled={isFirstDisabled}
           validate={composeValidators(requiredAmount, validateMaxRatio)}
         />
         <Box mb={6} />
@@ -282,7 +284,7 @@ const LaunchpadFormStep1: React.FC<ILaunchpadFormStep1> = ({
               }`}
             </InfoTooltip>
           }
-          disabled={detail?.launchpad}
+          disabled={isFirstDisabled}
           validate={composeValidators(requiredAmount)}
           appendComp={
             <Text color={colors.white500}>{liquidityTokenSelected?.symbol}</Text>
@@ -298,12 +300,16 @@ const LaunchpadFormStep1: React.FC<ILaunchpadFormStep1> = ({
             {liquidTokens.length > 0 ? (
               liquidTokens.map((liq) => (
                 <Flex
-                  onClick={() => change('liquidityTokenArg', liq)}
+                  onClick={
+                    !isFirstDisabled
+                      ? () => change('liquidityTokenArg', liq)
+                      : undefined
+                  }
                   className={`liquidity-item ${
                     compareString(liq.symbol, liquidityTokenSelected?.symbol)
                       ? 'active'
                       : ''
-                  }`}
+                  } ${isFirstDisabled ? 'disabled' : ''}`}
                   key={liq.symbol}
                 >
                   <img src={tokenIcons[liq.symbol.toLowerCase()]} />
@@ -333,7 +339,7 @@ const LaunchpadFormStep1: React.FC<ILaunchpadFormStep1> = ({
           }
           validate={composeValidators(requiredAmount, validateDuration)}
           appendComp={<Text color={colors.white500}>Day</Text>}
-          disabled={detail?.launchpad}
+          disabled={isFirstDisabled}
         />
 
         <Box mb={6} />
@@ -369,7 +375,7 @@ const LaunchpadFormStep1: React.FC<ILaunchpadFormStep1> = ({
               Initial liquidity
             </InfoTooltip>
           }
-          disabled={detail?.launchpad}
+          disabled={isFirstDisabled}
           validate={composeValidators(requiredAmount, validateMaxFundingRate)}
         />
         <Box mb={6} />
@@ -389,7 +395,7 @@ const LaunchpadFormStep1: React.FC<ILaunchpadFormStep1> = ({
               Hard cap
             </InfoTooltip>
           }
-          disabled={detail?.launchpad}
+          disabled={isFirstDisabled}
           validate={composeValidators(maxGoalBalance)}
         />
       </Box>
