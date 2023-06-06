@@ -24,7 +24,7 @@ const ProposalResult = ({title, totalVote, className, data}: any) => {
       <Flex justifyContent={"space-between"}>
         <Text className={"side-title"}>{title}</Text>
         <Text className={"side-total"} color={"#FFFFFF"}>Total number of Supporters: {formatCurrency(data?.totalVoter, 0)}</Text>
-        <Text className={"side-total"} color={"#FFFFFF"}>Total TM Supported: {formatCurrency(data?.totalAmount, 0)}</Text>
+        <Text className={"side-total"} color={"#FFFFFF"}>Total TM Supported: {formatCurrency(data?.totalAmount, 0)} / {totalVote}</Text>
       </Flex>
       <Progress
         max={100}
