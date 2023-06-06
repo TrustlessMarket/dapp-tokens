@@ -4,14 +4,24 @@ import cx from 'classnames';
 
 import IconFile from './img/ic_file.svg';
 import styles from './styles.module.scss';
+import { Skeleton } from '@chakra-ui/react';
+import { toast } from 'react-hot-toast';
 
 const FileDropzoneUpload = (props) => {
-  const { className, accept, onChange, url, loading, icon } = props;
+  const { className, accept, onChange, url, loading, icon, maxSize, } = props;
   const [file, setFile] = useState(null);
 
   const handleOnDrop = (files) => {
-    setFile(files[0]);
-    if (onChange) onChange(files[0]);
+
+    if (file?.[0]?.size > maxSize) {
+      toast.error('Max image size: 1MB');
+    } else {
+      setFile(files[0]);
+      if (onChange) onChange(files[0]);
+    }
+
+
+
   };
 
   const handleRemove = () => {
@@ -24,7 +34,10 @@ const FileDropzoneUpload = (props) => {
       {file
         ? <>
           <div className={cx(styles.file, 'uploaded')}>
-            {!loading && icon || <img alt="img-upload" src={url} />}
+            <Skeleton isLoaded={!loading}>
+              {!loading && icon || <img alt="img-upload" src={url} />}
+            </Skeleton>
+
             <div>
               <span>{file?.name}</span>
               <button type="button" onClick={handleRemove}>Remove</button>
@@ -32,7 +45,7 @@ const FileDropzoneUpload = (props) => {
           </div>
         </>
         : (
-          <Dropzone multiple={false} onDrop={handleOnDrop} accept={accept}>
+          <Dropzone multiple={false} onDrop={handleOnDrop} accept={accept} >
             {({ getRootProps, getInputProps }) => (
               <div {...getRootProps()}>
                 <input {...getInputProps()} />
