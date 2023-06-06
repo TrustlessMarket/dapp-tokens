@@ -11,6 +11,7 @@ import { formatCurrency } from '@/utils';
 import React from 'react';
 import { ILaunchpad } from '@/interfaces/launchpad';
 import InfoTooltip from '@/components/Swap/infoTooltip';
+import CountDownTimer from '@/components/Countdown';
 
 const ProposalInfo = ({ poolDetail }: ILaunchpad | any) => {
   return (
@@ -67,6 +68,16 @@ const ProposalInfo = ({ poolDetail }: ILaunchpad | any) => {
               ) : (
                 'N/A'
               )}
+            </StatNumber>
+          </Stat>
+        </GridItem>
+        <GridItem>
+          <Stat>
+            <StatLabel>
+              Voting will end in
+            </StatLabel>
+            <StatNumber>
+              <CountDownTimer end_time={poolDetail.voteEnd} />
             </StatNumber>
           </Stat>
         </GridItem>
