@@ -64,9 +64,9 @@ export const MakeFormSwap = forwardRef((props, ref) => {
               }}
               className={styles.btnVoteUp}
             >
-              VOTE THIS LAUNCHPAD
+              Support this Launchpad
             </FiledButton>
-          ) : 'VOTE THIS LAUNCHPAD'
+          ) : 'Support this Launchpad'
           }
         </>
       </WrapperConnected>
@@ -105,7 +105,7 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
       openModal({
         id,
         theme: 'dark',
-        title: 'Confirm',
+        title: 'Support this Launchpad',
         className: styles.modalContent,
         modalProps: {
           centered: true,
