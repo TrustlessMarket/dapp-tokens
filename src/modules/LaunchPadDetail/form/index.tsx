@@ -116,7 +116,6 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const { juiceBalance, isLoadedAssets } = useContext(AssetsContext);
   const isAuthenticated = useSelector(getIsAuthenticatedSelector);
   const dispatch = useDispatch();
-  const router = useRouter();
 
   const { account } = useWeb3React();
   const needReload = useAppSelector(selectPnftExchange).needReload;
@@ -126,14 +125,6 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const { values } = useFormState();
   const { change, restart } = useForm();
   const btnDisabled = loading || !liquidityToken;
-  // const isRequireApprove =
-  //   isAuthenticated &&
-  //   new BigNumber(amountBaseTokenApproved || 0).lt(
-  //     Web3.utils.toWei(`${values?.baseAmount || 0}`, 'ether'),
-  //   );
-
-  // console.log('values', values);
-  // console.log('=====')
 
   const isRequireApprove = useMemo(() => {
     let result = false;
@@ -285,6 +276,11 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       }
       if (new BigNumber(_amount).gt(baseBalance)) {
         return `Insufficient balance.`;
+      }
+
+      if((Number(poolDetail?.thresholdBalance || 0) > 0)
+        && new BigNumber(_amount).plus(poolDetail?.totalValue).gt(poolDetail?.thresholdBalance)) {
+        return `Total amount deposit greater than ${poolDetail?.thresholdBalance}. Max allow deposit is ${new BigNumber(poolDetail?.thresholdBalance).minus(poolDetail?.totalValue).toNumber()}`;
       }
 
       return undefined;
@@ -784,15 +780,15 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
   const [userDeposit, setUserDeposit] = useState<any>();
   const [boostInfo, setBoostInfo] = useState<any>();
 
-  console.log('poolDetail', poolDetail);
-  console.log('canEnd', canEnd);
-  console.log('canClaim', canClaim);
-  console.log('canClose', canClose);
-  console.log('canVoteRelease', canVoteRelease);
-  console.log('canCancel', canCancel);
-  console.log('userDeposit', userDeposit);
-  console.log('boostInfo', boostInfo);
-  console.log('=====');
+  // console.log('poolDetail', poolDetail);
+  // console.log('canEnd', canEnd);
+  // console.log('canClaim', canClaim);
+  // console.log('canClose', canClose);
+  // console.log('canVoteRelease', canVoteRelease);
+  // console.log('canCancel', canCancel);
+  // console.log('userDeposit', userDeposit);
+  // console.log('boostInfo', boostInfo);
+  // console.log('=====');
   const isLaunchpadCreator = compareString(poolDetail?.creatorAddress, account);
 
   const isStarting = [LAUNCHPAD_STATUS.Launching].includes(status.key);
