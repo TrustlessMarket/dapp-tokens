@@ -50,6 +50,7 @@ import useApproveERC20Token from "@/hooks/contract-operations/token/useApproveER
 import {closeModal, openModal} from "@/state/modal";
 import ModalConfirmApprove from "@/components/ModalConfirmApprove";
 import useVoteLaunchpad from "@/hooks/contract-operations/launchpad/useVote";
+import moment from "moment";
 
 export const MakeFormSwap = forwardRef((props, ref) => {
   const {
@@ -95,6 +96,10 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       throw error;
     }
   };
+
+  useEffect(() => {
+    change('baseBalance', baseBalance);
+  }, [baseBalance]);
 
   const isRequireApprove = useMemo(() => {
     let result = false;
@@ -186,7 +191,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
 
   const handleChangeMaxBaseAmount = () => {
     change('baseAmount', baseBalance);
-    onChangeValueBaseAmount(baseBalance);
+    // onChangeValueBaseAmount(baseBalance);
   };
 
   const validateBaseAmount = useCallback(
@@ -198,12 +203,12 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         return `Required`;
       }
       if (new BigNumber(_amount).gt(baseBalance)) {
-        return `Insufficient balance.`;
+        return `Unfortunately, you don’t have have enough TM to vote. But don’t worry, stay tuned for updates regarding our next airdrop on our Discord channel.`;
       }
 
       return undefined;
     },
-    [values.baseAmount],
+    [values.baseAmount, values?.baseBalance],
   );
 
 
@@ -437,6 +442,10 @@ const BuyForm = ({ poolDetail, votingToken, onClose }: any) => {
   });
 
   const handleSubmit = async (values: any) => {
+    if(moment().unix() >= moment(poolDetail?.voteEnd).unix()) {
+      toast.error('This project is overdue for voting.');
+      return;
+    }
     const { baseAmount } = values;
     try {
       setSubmitting(true);
