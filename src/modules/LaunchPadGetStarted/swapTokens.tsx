@@ -24,7 +24,7 @@ const STEPS = [
             <img
               alt="swap_step1_1"
               className={styles.introImg}
-              src={`${CDN_URL}/upload/1683706234267465749-1683706234-swap_step1_2.png`}
+              src={`${CDN_URL}/pages/trustlessmarket/get_started/swap_step_1.2.png`}
             />
           </ListItem>
         </UnorderedList>
@@ -51,7 +51,7 @@ const STEPS = [
               <img
                 alt="swap_step1_1"
                 className={styles.introImg}
-                src={`${CDN_URL}/upload/1683706377431650464-1683706377-swap_step2.png`}
+                src={`${CDN_URL}/pages/trustlessmarket/get_started/swap_step_2.2.png`}
               />
             </ListItem>
           </UnorderedList>
