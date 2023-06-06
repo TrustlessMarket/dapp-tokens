@@ -723,16 +723,16 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         <SocialToken socials={poolDetail?.launchpadToken?.social} />
       </Flex>
       {[LAUNCHPAD_STATUS.Pending].includes(status.key) ? (
-        <Text mt={4} fontSize={px2rem(16)} fontWeight={'400'} color={'#FFFFFF'}>
+        <Text mt={6} fontSize={px2rem(16)} fontWeight={'400'} color={'#FFFFFF'} bgColor={"rgba(255, 255, 255, 0.05)"} borderRadius={"8px"} px={4} py={3}>
           This project requires community votes to initiate crowdfunding. Please
           prepare your TM token to participate in the voting process.
         </Text>
       ) : [LAUNCHPAD_STATUS.Voting].includes(status.key) ? (
-        <Text mt={4} fontSize={px2rem(16)} fontWeight={'400'} color={'#FFFFFF'}>
+        <Text mt={6} fontSize={px2rem(16)} fontWeight={'400'} color={'#FFFFFF'} bgColor={"rgba(255, 255, 255, 0.05)"} borderRadius={"8px"} px={4} py={3}>
           If you enjoy this project, please show your support by voting for it.
         </Text>
       ) : [LAUNCHPAD_STATUS.Launching].includes(status.key) ? (
-        <Text mt={4} fontSize={px2rem(16)} fontWeight={'400'} color={'#FFFFFF'}>
+        <Text mt={6} fontSize={px2rem(16)} fontWeight={'400'} color={'#FFFFFF'} bgColor={"rgba(255, 255, 255, 0.05)"} borderRadius={"8px"} px={4} py={3}>
           All or nothing. This project will only be funded if it reaches its goal by{' '}
           <Text as={'span'} color={'#FF7E21'}>
             {moment
