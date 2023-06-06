@@ -15,6 +15,8 @@
 
 .introWrapper {
   height: 100%;
+  background: #1B1E26;
+  border-radius: 12px;
   :global .home-video {
     height: 100%;
     position: relative;
@@ -72,4 +74,13 @@
     object-fit: contain;
     height: 100%;
   }
+}
+
+.boxProposalId {
+  padding: 4px 16px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 100px;
+  width: fit-content;
+  font-size: rem(14);
+  font-weight: 500;
 }

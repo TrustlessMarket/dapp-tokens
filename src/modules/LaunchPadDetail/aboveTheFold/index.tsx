@@ -13,9 +13,9 @@ import {TOKEN_ICON_DEFAULT} from "@/constants/common";
 import px2rem from "@/utils/px2rem";
 import {formatCurrency} from "@/utils";
 import {IToken} from "@/interfaces/token";
+import SectionContainer from "@/components/Swap/sectionContainer";
 
 const AboveTheFold = ({ poolDetail }: ILaunchpad | any) => {
-  const [status] = useLaunchPadStatus({ row: poolDetail });
   const launchpadToken: IToken = poolDetail?.launchpadToken;
 
   return (
@@ -46,27 +46,32 @@ const AboveTheFold = ({ poolDetail }: ILaunchpad | any) => {
           </Card>
         </GridItem>
       </Grid>
-      <Grid templateColumns={['1.25fr 1fr']} gap={[8]} mt={6}>
-        <GridItem>
-          <Box mt={8}>
-            <Usp />
-          </Box>
-        </GridItem>
-        {
-          ![
-            LAUNCHPAD_STATUS.Draft,
-            LAUNCHPAD_STATUS.Pending,
-            LAUNCHPAD_STATUS.Voting,
-            LAUNCHPAD_STATUS.NotPassed
-          ].includes(status.key) && (
+      {
+        [
+          LAUNCHPAD_STATUS.Draft,
+          LAUNCHPAD_STATUS.Pending,
+          LAUNCHPAD_STATUS.NotPassed
+        ] ? (
+          <Grid templateColumns={['1fr']} gap={[8]} mt={6} bgColor={"#1E1E22"} py={8} ml={-px2rem(25)} mr={-px2rem(25)}>
+            <SectionContainer>
+              <Usp />
+            </SectionContainer>
+          </Grid>
+        ) : (
+          <Grid templateColumns={['1.25fr 1fr']} gap={[8]} mt={6}>
             <GridItem>
-              <Card bgColor={"#1B1E26"} paddingX={6} paddingY={6} mt={8}>
+              <Box mt={8}>
+                <Usp />
+              </Box>
+            </GridItem>
+            <GridItem>
+              <Card bgColor={"#1B1E26"} paddingX={6} paddingY={6} mt={8} borderRadisus={px2rem(12)}>
                 <Statistic poolDetail={poolDetail}/>
               </Card>
             </GridItem>
-          )
-        }
-      </Grid>
+          </Grid>
+        )
+      }
     </Box>
   );
 };

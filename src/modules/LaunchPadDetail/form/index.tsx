@@ -718,7 +718,8 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           )}
         </WrapperConnected>
       )}
-      <Flex justifyContent={'flex-end'} mt={4}>
+      <Flex direction={"column"} mt={4}>
+        {Object.values(poolDetail?.launchpadToken?.social).join('')?.length > 0 && <Text fontSize={px2rem(16)} fontWeight={400} color={"#B6B6B6"} mb={"8px !important"} mt={2}>Link</Text>}
         <SocialToken socials={poolDetail?.launchpadToken?.social} />
       </Flex>
       {[LAUNCHPAD_STATUS.Pending].includes(status.key) ? (
