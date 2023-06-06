@@ -12,24 +12,12 @@ import {TransactionStatus} from '@/interfaces/walletTransaction';
 import {logErrorToServer} from '@/services/swap';
 import {useAppDispatch} from '@/state/hooks';
 import {requestReload, requestReloadRealtime, updateCurrentTransaction,} from '@/state/pnftExchange';
-import {formatCurrency} from '@/utils';
 import {showError} from '@/utils/toast';
-import {
-  Box,
-  Center,
-  Flex,
-  forwardRef,
-  GridItem,
-  SimpleGrid,
-  Stat,
-  StatLabel,
-  StatNumber,
-  Text,
-} from '@chakra-ui/react';
+import {Box, Center, Flex, forwardRef, Text,} from '@chakra-ui/react';
 import {useWeb3React} from '@web3-react/core';
 import BigNumber from 'bignumber.js';
 import Link from 'next/link';
-import {useCallback, useContext, useEffect, useImperativeHandle, useMemo, useRef, useState} from 'react';
+import {useContext, useEffect, useImperativeHandle, useMemo, useRef, useState} from 'react';
 import {Field, Form, useForm, useFormState} from 'react-final-form';
 import toast from 'react-hot-toast';
 import {BiBell} from 'react-icons/bi';
@@ -51,6 +39,20 @@ import {closeModal, openModal} from "@/state/modal";
 import ModalConfirmApprove from "@/components/ModalConfirmApprove";
 import useVoteLaunchpad from "@/hooks/contract-operations/launchpad/useVote";
 import moment from "moment";
+
+const validateBaseAmount = (_amount: any, values: any) => {
+  if (!_amount) {
+    return undefined;
+  }
+  if (new BigNumber(_amount).lte(0)) {
+    return `Required`;
+  }
+  if (new BigNumber(_amount).gt(values?.baseBalance)) {
+    return `Unfortunately, you don’t have have enough TM to vote. But don’t worry, stay tuned for updates regarding our next airdrop on our Discord channel.`;
+  }
+
+  return undefined;
+};
 
 export const MakeFormSwap = forwardRef((props, ref) => {
   const {
@@ -194,23 +196,6 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     // onChangeValueBaseAmount(baseBalance);
   };
 
-  const validateBaseAmount = useCallback(
-    (_amount: any) => {
-      if (!_amount) {
-        return undefined;
-      }
-      if (new BigNumber(_amount).lte(0)) {
-        return `Required`;
-      }
-      if (new BigNumber(_amount).gt(baseBalance)) {
-        return `Unfortunately, you don’t have have enough TM to vote. But don’t worry, stay tuned for updates regarding our next airdrop on our Discord channel.`;
-      }
-
-      return undefined;
-    },
-    [values.baseAmount, values?.baseBalance],
-  );
-
 
   const onChangeValueBaseAmount = (amount: any) => {
     // onBaseAmountChange({
@@ -218,31 +203,6 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     //   poolDetail,
     // });
   };
-
-  // const handleBaseAmountChange = ({
-  //   amount,
-  //   poolDetail,
-  // }: {
-  //   amount: any;
-  //   poolDetail: any;
-  // }) => {
-  //   try {
-  //     if (!amount || isNaN(Number(amount))) return;
-  //
-  //     const quoteAmount = new BigNumber(amount)
-  //       .div(new BigNumber(poolDetail?.totalValue || 0).plus(amount))
-  //       .multipliedBy(poolDetail?.launchpadBalance || 0);
-  //     change('quoteAmount', quoteAmount.toFixed());
-  //   } catch (err: any) {
-  //     logErrorToServer({
-  //       type: 'error',
-  //       address: account,
-  //       error: JSON.stringify(err),
-  //       message: err?.message,
-  //       place_happen: 'handleBaseAmountChange',
-  //     });
-  //   }
-  // };
 
   const onShowModalApprove = () => {
     const id = 'modal';
