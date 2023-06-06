@@ -726,16 +726,16 @@ export const MakeFormSwap = forwardRef((props, ref) => {
               }}
               style={{
                 backgroundColor:
-                  isClaimLaunchpad ? colors.greenPrimary
-                  : isEndLaunchpad ? colors.redPrimary
+                  isEndLaunchpad ? colors.redPrimary
+                  : isClaimLaunchpad ? colors.greenPrimary
                   : isCancelLaunchpad ? colors.redPrimary
                   : isVoteRelease ? colors.bluePrimary
                   : colors.bluePrimary,
               }}
             >
               {
-                isClaimLaunchpad ? 'CLAIM THIS PROJECT'
-                : isEndLaunchpad ? 'END THIS PROJECT'
+                isEndLaunchpad ? 'END THIS PROJECT'
+                : isClaimLaunchpad ? 'CLAIM THIS PROJECT'
                 : isCancelLaunchpad ? 'CANCEL THIS PROJECT'
                 : isVoteRelease ? 'RELEASE VOTE'
                 : 'BACK THIS PROJECT'
@@ -879,8 +879,8 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
         id,
         theme: 'dark',
         title:
-          canClaim ? 'Confirm claim this project'
-          : canEnd ? 'Confirm end this project'
+          canEnd ? 'Confirm end this project'
+          : canClaim ? 'Confirm claim this project'
           : canCancel ? 'Delete my launchpad'
           : canVoteRelease ? 'Release vote token'
           : 'Confirm deposit',
@@ -892,7 +892,23 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
         },
         render: () => (
           <Flex direction={'column'} gap={2}>
-            {canClaim ? (
+            {canEnd ? (
+              <Box>
+                <Text>End this project?</Text>
+                <HorizontalItem
+                  label={
+                    <Text fontSize={'sm'} color={'#B1B5C3'}>
+                      State
+                    </Text>
+                  }
+                  value={
+                    <Text fontSize={'sm'}>
+                      {poolDetail?.state}
+                    </Text>
+                  }
+                />
+              </Box>
+            ) : canClaim ? (
               <>
                 <HorizontalItem
                   label={
@@ -921,23 +937,6 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
                   }
                 />
               </>
-            ) : canEnd ? (
-              <Box>
-                <Text>End this project?</Text>
-                <HorizontalItem
-                  label={
-                    <Text fontSize={'sm'} color={'#B1B5C3'}>
-                      State
-                    </Text>
-                  }
-                  value={
-                    <Text fontSize={'sm'}>
-                      {poolDetail?.state}
-                    </Text>
-                  }
-                />
-              </Box>
-
             ) : canCancel ? (
               <Text>
                 If you wish to delete your launchpad, click Confirm below and your
