@@ -19,7 +19,11 @@ export enum LAUNCHPAD_STATUS {
   End,
 }
 
-export const LaunchpadLabelStatus = {
+interface LabelStatusMap {
+  [name: string]: any
+};
+
+export const LaunchpadLabelStatus : LabelStatusMap = {
   draft: {
     key: LAUNCHPAD_STATUS.Draft,
     value: 'draft',
