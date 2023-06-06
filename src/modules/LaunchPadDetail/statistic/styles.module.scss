@@ -1,17 +1,17 @@
 .wrapper {
-  color: #FFFFFF;
+  color: #ffffff;
 }
 
 .modalContent {
-  min-width: 40vw !important;
-  background: #1C1C1C !important;
+  min-width: 50vw !important;
+  background: #1c1c1c !important;
   box-shadow: -10px 0px 40px rgba(0, 0, 0, 0.2) !important;
   border-radius: 8px !important;
   :global {
     .chakra-modal__header {
       font-size: rem(24);
       font-weight: 500;
-      color: #FFFFFF;
+      color: #ffffff;
     }
     .modal-header-wrap {
       margin-bottom: 0;
@@ -20,8 +20,8 @@
       //padding: 0;
     }
     .chakra-modal__close-btn {
-      color: #FFFFFF;
-      border: 1px solid #FFFFFF;
+      color: #ffffff;
+      border: 1px solid #ffffff;
       border-radius: 50%;
       margin-top: 10px;
     }

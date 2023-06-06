@@ -17,12 +17,14 @@ import { useContext, useEffect, useState } from 'react';
 import { Form } from 'react-final-form';
 import { toast } from 'react-hot-toast';
 import LaunchpadManageFormContainer from './LauchpadManage.FormContainer';
-import { StyledLaunchpadManage } from './LaunchpadManage.styled';
+import { FAQStyled, StyledLaunchpadManage } from './LaunchpadManage.styled';
 import { ROUTE_PATH } from '@/constants/route-path';
 import { filter, isArray } from 'lodash';
 import web3 from 'web3';
 import { toastError } from '@/constants/error';
 import { showError } from '@/utils/toast';
+import Faq from '@/components/Swap/faq';
+import { Text } from '@chakra-ui/react';
 
 const LaunchpadManage = () => {
   const { getSignature } = useContext(WalletContext);
@@ -73,6 +75,10 @@ const LaunchpadManage = () => {
       );
 
       if ((values?.isLastStep || step > 1) && account) {
+        if (!values.isApprove) {
+          return;
+        }
+
         setLoading(true);
         const tokenAddress = values?.launchpadTokenArg?.address;
         const liquidAddress = values?.liquidityTokenArg?.address;
@@ -108,7 +114,7 @@ const LaunchpadManage = () => {
             threshold_balance: values.thresholdBalance || '0',
             duration: Number(seconds),
           });
-          if (values.boost_file_url && step === 3 && detail?.launchpad) {
+          if (values.boost_url && step === 3 && detail?.launchpad) {
             await importBoost(
               {
                 pool_address: detail?.launchpad,
@@ -116,7 +122,7 @@ const LaunchpadManage = () => {
               },
               {
                 signature,
-                file_url: values.boost_file_url,
+                file_url: values.boost_url,
               },
             );
           }
@@ -166,6 +172,55 @@ const LaunchpadManage = () => {
           />
         )}
       </Form>
+      <FAQStyled>
+        <Text as={'h3'}>FAQs</Text>
+        <Faq
+          data={[
+            {
+              q: 'What amount should I put in the Reward Pool?',
+              a: `It depends on your tokenomics. Think of how many % from the total token supply you would like to distribute to those who contribute to your crowdfunding\nBy the end of the crowdfunding campaign, this Reward Pool amount will be distributed proportionally to all contributors based on the amount they contributed`,
+            },
+            {
+              q: 'What are Initial Liquidity and Initial Liquidity with token?',
+              a: `In order to create a liquidity pool, you need to deposit an equal value of two different assets into the pool.\n - <b>Initial Liquidity In Token</b> refers to the amount of your project’s token you deposit into the liquidity pool\n - <b>Initial Liquidity</b> refers to the percentage of the total crowdfunded amount (in ETH or BTC) you deposit into the liquidity pool.\nFor example:\nYour project’s token name is ABC with total supply = 100,000
+            You allocate 80,000 ABC (80% supply) to Reward Pool\nYou’d dedicate <b>5,000 ABC (5% supply)</b> for <b>initial liquidity in token</b>\nAt the same time, your crowdfunding successfully raises 100 ETH\n
+            You’d dedicate <b>50% of the total crowdfunded amount</b> for <b>initial liquidity</b> (= 50 ETH)\nThis means that after the crowdfunding, an amount of (5,000 ABC / 50 ETH) will be automatically deposited into the liquidity pool.\nThis will make the initial price eight times greater than your crowdfunding price.`,
+            },
+            {
+              q: 'What is Funding Goal?',
+              a: `The Funding Goal acts as the Soft Cap for your crowdfunding campaign. Funding Goal represents the minimum amount that the project would like to raise.\n
+            If the crowdfunding does not reach the Funding Goal, the contributed funds will be returned to the contributors\n
+            The funding goal also serves to protect the project creators. Even in case the crowdfund amount falls short of expectations, creators wouldn't lose the token amount put in the Reward Pool
+            `,
+            },
+            {
+              q: 'What are the fees to be on Trustless Launchpad?',
+              a: `There are no upfront fees, but a launchpad fee of 10% on the total amount you raise through crowdfunding.\n
+            This fee is divided as follows:\n
+            5% (in btc/eth) will serve as the platform fee\n
+            The remaining 5% (in your project’s token) will be distributed proportionally among all TM governance users who supported your project during the voting round. This will be locked in the smart contract for 30 days
+            `,
+            },
+            {
+              q: 'When does the crowdfunding campaign start after a project submission on Trustless Launchpad?',
+              a: `After submitting, a project will appear on the launchpad page and will go through 3 phases:\n
+
+              - <b>Preparing to Vote phase:</b>\n
+                 - When?: right after project submission
+                 - Duration: 1 day 
+                 - The project can cancel the campaign if needed within this phase
+              - <b>Voting phase:</b> 
+                 - When?: right after Preparing to Vote phase ends 
+                 - Duration: 3 days
+                 - The project's campaign proceeds if it receives a minimum of 100 TM votes
+              - <b>Funding phase:</b>
+                 - When?: right after Voting phase ends with at least 100 TM votes
+                 - Duration: decided by the project
+              `,
+            },
+          ]}
+        />
+      </FAQStyled>
     </StyledLaunchpadManage>
   );
 };

@@ -91,7 +91,8 @@ import useIsAbleClose from '@/hooks/contract-operations/launchpad/useIsAbleClose
 import useIsAbleVoteRelease from '@/hooks/contract-operations/launchpad/useIsAbleVoteRelease';
 import useIsAbleCancel from '@/hooks/contract-operations/launchpad/useIsAbleCancel';
 import useCancelLaunchPad from '@/hooks/contract-operations/launchpad/useCancel';
-import useVoteReleaseLaunchpad from "@/hooks/contract-operations/launchpad/useVoteRelease";
+import useVoteReleaseLaunchpad from '@/hooks/contract-operations/launchpad/useVoteRelease';
+import tokenIcons from '@/constants/tokenIcons';
 
 const FEE = 2;
 export const MakeFormSwap = forwardRef((props, ref) => {
@@ -103,7 +104,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     isEndLaunchpad,
     isClaimLaunchpad,
     isCancelLaunchpad,
-    isVoteRelease
+    isVoteRelease,
   } = props;
   const [loading, setLoading] = useState(false);
   const [liquidityToken, setLiquidityToken] = useState<any>();
@@ -116,7 +117,6 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const { juiceBalance, isLoadedAssets } = useContext(AssetsContext);
   const isAuthenticated = useSelector(getIsAuthenticatedSelector);
   const dispatch = useDispatch();
-  const router = useRouter();
 
   const { account } = useWeb3React();
   const needReload = useAppSelector(selectPnftExchange).needReload;
@@ -126,14 +126,6 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const { values } = useFormState();
   const { change, restart } = useForm();
   const btnDisabled = loading || !liquidityToken;
-  // const isRequireApprove =
-  //   isAuthenticated &&
-  //   new BigNumber(amountBaseTokenApproved || 0).lt(
-  //     Web3.utils.toWei(`${values?.baseAmount || 0}`, 'ether'),
-  //   );
-
-  // console.log('values', values);
-  // console.log('=====')
 
   const isRequireApprove = useMemo(() => {
     let result = false;
@@ -287,6 +279,11 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         return `Insufficient balance.`;
       }
 
+      if((Number(poolDetail?.thresholdBalance || 0) > 0)
+        && new BigNumber(_amount).plus(poolDetail?.totalValue).gt(poolDetail?.thresholdBalance)) {
+        return `Total amount deposit greater than ${poolDetail?.thresholdBalance}. Max allow deposit is ${new BigNumber(poolDetail?.thresholdBalance).minus(poolDetail?.totalValue).toNumber()}`;
+      }
+
       return undefined;
     },
     [values.baseAmount],
@@ -380,7 +377,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
               label={`$${formatCurrency(poolDetail?.totalValueUsd || 0, 2)}`}
             >
               <Flex gap={1} alignItems={'center'}>
-                <Flex gap={1} alignItems={"center"}>
+                <Flex gap={1} alignItems={'center'}>
                   {formatCurrency(poolDetail?.totalValue || 0)}{' '}
                   <img
                     src={
@@ -400,7 +397,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         </Stat>
         <Stat className={styles.infoColumn} textAlign={'left'}>
           <StatLabel>
-            <Flex gap={1} justifyContent={"flex-end"}>
+            <Flex gap={1} justifyContent={'flex-end'}>
               <InfoTooltip
                 showIcon={true}
                 label="The minimum amount you would like to raise. If the crowdfunding does not reach the Funding Goal, the funded amount will be returned to the contributors"
@@ -417,8 +414,8 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             </Flex>
           </StatLabel>
           <StatNumber>
-            <Flex gap={1} justifyContent={"flex-end"}>
-              <Flex gap={1} alignItems={"center"}>
+            <Flex gap={1} justifyContent={'flex-end'}>
+              <Flex gap={1} alignItems={'center'}>
                 {formatCurrency(poolDetail?.goalBalance || 0)}
                 <img
                   src={
@@ -430,7 +427,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
                 />
               </Flex>
               /
-              <Flex gap={1} alignItems={"center"}>
+              <Flex gap={1} alignItems={'center'}>
                 {Number(poolDetail?.thresholdBalance || 0) > 0 ? (
                   <>
                     {formatCurrency(poolDetail?.thresholdBalance || 0)}{' '}
@@ -483,9 +480,10 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           </Stat>
           <Stat className={styles.infoColumn} flex={1.5}>
             <StatLabel>
-              {
-                [LAUNCHPAD_STATUS.Pending].includes(status.key) ? 'Voting will start in'
-                : [LAUNCHPAD_STATUS.Voting].includes(status.key) ? 'Voting will end in'
+              {[LAUNCHPAD_STATUS.Pending].includes(status.key)
+                ? 'Voting will start in'
+                : [LAUNCHPAD_STATUS.Voting].includes(status.key)
+                ? 'Voting will end in'
                 : [
                     LAUNCHPAD_STATUS.NotPassed,
                     LAUNCHPAD_STATUS.Successful,
@@ -493,8 +491,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
                     LAUNCHPAD_STATUS.End,
                   ].includes(status.key)
                 ? 'Ended at'
-                : 'Ends in'
-              }
+                : 'Ends in'}
             </StatLabel>
             <StatNumber>
               <Text>
@@ -541,10 +538,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
                 liquidityToken && (
                   <Flex gap={1} alignItems={'center'} color={'#FFFFFF'} paddingX={2}>
                     <img
-                      src={
-                        liquidityToken?.thumbnail ||
-                        `${CDN_URL}/upload/1683530065704444020-1683530065-default-coin.svg`
-                      }
+                      src={tokenIcons[liquidityToken?.symbol?.toLowerCase()]}
                       alt={liquidityToken?.thumbnail || 'default-icon'}
                       className={'avatar'}
                     />
@@ -665,13 +659,11 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             </Text>
           </Flex>
         )}
-      {(
-        isStarting
-        || isEndLaunchpad
-        || isClaimLaunchpad
-        || isCancelLaunchpad
-        || isVoteRelease
-      ) && (
+      {(isStarting ||
+        isEndLaunchpad ||
+        isClaimLaunchpad ||
+        isCancelLaunchpad ||
+        isVoteRelease) && (
         <WrapperConnected
           type={isRequireApprove ? 'button' : 'submit'}
           className={styles.submitButton}
@@ -702,21 +694,26 @@ export const MakeFormSwap = forwardRef((props, ref) => {
                 id: transactionType.depositLaunchpad,
               }}
               style={{
-                backgroundColor:
-                  isEndLaunchpad ? colors.redPrimary
-                  : isClaimLaunchpad ? colors.greenPrimary
-                  : isCancelLaunchpad ? colors.redPrimary
-                  : isVoteRelease ? colors.bluePrimary
+                backgroundColor: isEndLaunchpad
+                  ? colors.redPrimary
+                  : isClaimLaunchpad
+                  ? colors.greenPrimary
+                  : isCancelLaunchpad
+                  ? colors.redPrimary
+                  : isVoteRelease
+                  ? colors.bluePrimary
                   : colors.bluePrimary,
               }}
             >
-              {
-                isEndLaunchpad ? 'END THIS PROJECT'
-                : isClaimLaunchpad ? 'CLAIM THIS PROJECT'
-                : isCancelLaunchpad ? 'CANCEL THIS PROJECT'
-                : isVoteRelease ? 'RELEASE VOTE'
-                : 'BACK THIS PROJECT'
-              }
+              {isEndLaunchpad
+                ? 'END THIS PROJECT'
+                : isClaimLaunchpad
+                ? 'CLAIM THIS PROJECT'
+                : isCancelLaunchpad
+                ? 'CANCEL THIS PROJECT'
+                : isVoteRelease
+                ? 'RELEASE VOTE'
+                : 'BACK THIS PROJECT'}
             </FiledButton>
           )}
         </WrapperConnected>
@@ -784,15 +781,15 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
   const [userDeposit, setUserDeposit] = useState<any>();
   const [boostInfo, setBoostInfo] = useState<any>();
 
-  console.log('poolDetail', poolDetail);
-  console.log('canEnd', canEnd);
-  console.log('canClaim', canClaim);
-  console.log('canClose', canClose);
-  console.log('canVoteRelease', canVoteRelease);
-  console.log('canCancel', canCancel);
-  console.log('userDeposit', userDeposit);
-  console.log('boostInfo', boostInfo);
-  console.log('=====');
+  // console.log('poolDetail', poolDetail);
+  // console.log('canEnd', canEnd);
+  // console.log('canClaim', canClaim);
+  // console.log('canClose', canClose);
+  // console.log('canVoteRelease', canVoteRelease);
+  // console.log('canCancel', canCancel);
+  // console.log('userDeposit', userDeposit);
+  // console.log('boostInfo', boostInfo);
+  // console.log('=====');
   const isLaunchpadCreator = compareString(poolDetail?.creatorAddress, account);
 
   const isStarting = [LAUNCHPAD_STATUS.Launching].includes(status.key);
@@ -830,7 +827,7 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
         getUserBoost({
           address: account,
           pool_address: poolDetail?.launchpad,
-        })
+        }),
       ]);
       setCanEnd(response[0]);
       setCanClose(response[1]);

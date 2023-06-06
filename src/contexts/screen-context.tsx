@@ -1,10 +1,11 @@
-import React, {createContext, useEffect, useMemo, useState} from "react";
-import {useRouter} from "next/router";
-import {useMediaQuery} from "@chakra-ui/react";
-import {useWindowSize} from "@trustless-computer/dapp-core";
-import {useWeb3React} from "@web3-react/core";
-import {useAppSelector} from "@/state/hooks";
-import {selectPnftExchange} from "@/state/pnftExchange";
+import React, { createContext, useEffect, useMemo, useState } from 'react';
+import { useRouter } from 'next/router';
+import { useMediaQuery } from '@chakra-ui/react';
+import { useWindowSize } from '@trustless-computer/dapp-core';
+import { useWeb3React } from '@web3-react/core';
+import { useAppSelector } from '@/state/hooks';
+import { selectPnftExchange } from '@/state/pnftExchange';
+import { ROUTE_PATH } from '@/constants/route-path';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export const defaultProvider = {
@@ -16,15 +17,16 @@ export const defaultProvider = {
   footerTradingHeight: 35,
   footerTradingHeightMobile: 60,
   showGetStarted: false,
+  showLaunchpadGetStarted: false,
   bannerHeight: 40,
-  bannerHeightMobile: 40
+  bannerHeightMobile: 40,
 };
 
 const ScreenLayoutContext = createContext(defaultProvider);
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const ScreenLayoutProvider: React.FC<any> = ({ children }) => {
-  const [screen800] = useMediaQuery("(max-width: 768px)");
+  const [screen800] = useMediaQuery('(max-width: 768px)');
   const { mobileScreen } = useWindowSize();
   const { account } = useWeb3React();
   const showBanner = useAppSelector(selectPnftExchange).showBanner;
@@ -34,24 +36,25 @@ const ScreenLayoutProvider: React.FC<any> = ({ children }) => {
   const router = useRouter();
 
   const [headerHeight, setHeaderHeight] = useState(
-    _isMobile
-      ? defaultProvider.headerHeightMobile
-      : defaultProvider.headerHeight
+    _isMobile ? defaultProvider.headerHeightMobile : defaultProvider.headerHeight,
   );
 
   const footerHeight = useMemo(() => {
     return _isMobile
       ? defaultProvider.footerHeightMobile
-      : defaultProvider.footerHeight
+      : defaultProvider.footerHeight;
   }, [_isMobile]);
 
   const bannerHeight = useMemo(() => {
-    return showBanner ? _isMobile
-      ? defaultProvider.bannerHeightMobile
-      : defaultProvider.bannerHeight : 0;
+    return showBanner
+      ? _isMobile
+        ? defaultProvider.bannerHeightMobile
+        : defaultProvider.bannerHeight
+      : 0;
   }, [_isMobile, showBanner]);
 
-  const showGetStarted = true;
+  const showGetStarted = !router?.pathname?.includes(ROUTE_PATH.LAUNCHPAD);
+  const showLaunchpadGetStarted = router?.pathname?.includes(ROUTE_PATH.LAUNCHPAD);
 
   useEffect(() => {
     let height = _isMobile
@@ -62,24 +65,19 @@ const ScreenLayoutProvider: React.FC<any> = ({ children }) => {
     // }
 
     // if (!_isMobile) {
-      height +=
-        (showGetStarted ? bannerHeight : 0)
-      ;
+    height += showGetStarted ? bannerHeight : 0;
+    height += showLaunchpadGetStarted ? bannerHeight : 0;
     // }
 
     setHeaderHeight(height);
-  }, [
-    _isMobile,
-    account,
-    router?.pathname,
-    showBanner
-  ]);
+  }, [_isMobile, account, router?.pathname, showBanner]);
 
   const values = {
     ...defaultProvider,
     headerHeight,
     footerHeight,
     showGetStarted,
+    showLaunchpadGetStarted,
     bannerHeight,
   };
 

@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react/no-children-prop */
-import FieldMDEditor from '@/components/Swap/form/fieldMDEditor';
+import FieldRichEditor from '@/components/Swap/form/fieldRichEditor';
 import FieldText from '@/components/Swap/form/fieldText';
 import FileDropzoneUpload from '@/components/Swap/form/fileDropzoneUpload';
 import InputWrapper from '@/components/Swap/form/inputWrapper';
@@ -16,10 +16,11 @@ import { composeValidators, required } from '@/utils/formValidate';
 import { Text } from '@chakra-ui/react';
 import { useWeb3React } from '@web3-react/core';
 import { useRouter } from 'next/router';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { Field, useForm, useFormState } from 'react-final-form';
 import { MAX_FILE_SIZE } from '../UpdateTokenInfo/form';
 import { StyledLaunchpadFormStep1 } from './LaunchpadManage.styled';
+import FieldMDEditor from '@/components/Swap/form/fieldMDEditor';
 
 interface ILaunchpadFormStep2 {
   detail?: ILaunchpad;
@@ -29,6 +30,14 @@ interface ILaunchpadFormStep2 {
   step: number;
   launchpadConfigs: any;
 }
+
+const onValidateYoutubeLink = (_link: any, values: any) => {
+  if (!_link && !values.image) {
+    return `Please ensure that you provide either an image or a YouTube link.`;
+  }
+
+  return undefined;
+};
 
 const LaunchpadFormStep2: React.FC<ILaunchpadFormStep2> = ({
   detail,
@@ -68,17 +77,6 @@ const LaunchpadFormStep2: React.FC<ILaunchpadFormStep2> = ({
       setUploading(false);
     }
   };
-
-  const onValidateYoutubeLink = useCallback(
-    (_link: any) => {
-      if (!_link && !values.image) {
-        return `Image or Youtube link is Required`;
-      }
-
-      return undefined;
-    },
-    [values.image],
-  );
 
   return (
     <StyledLaunchpadFormStep1 className={'step-2-container'}>
