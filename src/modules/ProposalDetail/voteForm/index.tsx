@@ -282,28 +282,9 @@ export const MakeFormSwap = forwardRef((props, ref) => {
 
   return (
     <form onSubmit={onSubmit} style={{ height: '100%' }}>
-      <Flex gap={0} color={'#000000'} mt={4} direction={'column'}>
-        <SimpleGrid columns={3} spacingX={6}>
-          <GridItem>
-            <Stat>
-              <StatLabel>Rewards</StatLabel>
-              <StatNumber>
-                {formatCurrency(poolDetail?.launchpadBalance)}{' '}
-                {poolDetail?.launchpadToken?.symbol}
-              </StatNumber>
-            </Stat>
-          </GridItem>
-          <GridItem>
-            <Stat>
-              <StatLabel>Funding Goal</StatLabel>
-              <StatNumber>
-                {formatCurrency(poolDetail?.goalBalance || 0)}{' '}
-                {poolDetail?.votingToken?.symbol}
-              </StatNumber>
-            </Stat>
-          </GridItem>
-        </SimpleGrid>
-      </Flex>*/}
+      <Text>
+        Your vote will confirm your support for this project. Note, that when you pledge your token onto the platform, it stays locked for 30 days and earns 5% of the total funds raised, paid via project tokens.
+      </Text>
       <InputWrapper
         className={cx(styles.inputAmountWrap, styles.inputBaseAmountWrap)}
         theme="light"
@@ -359,7 +340,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
                     cursor={'pointer'}
                     color={'#3385FF'}
                     onClick={handleChangeMaxBaseAmount}
-                    bgColor={'#2E2E2E'}
+                    bgColor={"rgba(0, 0, 0, 0.2)"}
                     borderRadius={'4px'}
                     padding={'1px 12px'}
                     fontSize={px2rem(16)}
