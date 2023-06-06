@@ -483,10 +483,9 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           </Stat>
           <Stat className={styles.infoColumn} flex={1.5}>
             <StatLabel>
-              {[LAUNCHPAD_STATUS.Pending].includes(status.key)
-                ? 'Voting will start in'
-                : [LAUNCHPAD_STATUS.Voting].includes(status.key)
-                ? 'Voting will end in'
+              {
+                [LAUNCHPAD_STATUS.Pending].includes(status.key) ? 'Voting will start in'
+                : [LAUNCHPAD_STATUS.Voting].includes(status.key) ? 'Voting will end in'
                 : [
                     LAUNCHPAD_STATUS.NotPassed,
                     LAUNCHPAD_STATUS.Successful,
@@ -494,7 +493,8 @@ export const MakeFormSwap = forwardRef((props, ref) => {
                     LAUNCHPAD_STATUS.End,
                   ].includes(status.key)
                 ? 'Ended at'
-                : 'Ends in'}
+                : 'Ends in'
+              }
             </StatLabel>
             <StatNumber>
               <Text>
