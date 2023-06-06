@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { ILaunchpad } from '@/interfaces/launchpad';
-import { StyledIdoStatus } from './Launchpad.styled';
-import moment from 'moment';
+import {ILaunchpad} from '@/interfaces/launchpad';
+import {StyledIdoStatus} from './Launchpad.styled';
+import InfoTooltip from "@/components/Swap/infoTooltip";
+import React from "react";
 
 export enum LAUNCHPAD_STATUS {
   Draft = -1,
@@ -18,7 +19,11 @@ export enum LAUNCHPAD_STATUS {
   End,
 }
 
-export const LaunchpadLabelStatus = {
+interface LabelStatusMap {
+  [name: string]: any
+};
+
+export const LaunchpadLabelStatus : LabelStatusMap = {
   draft: {
     key: LAUNCHPAD_STATUS.Draft,
     value: 'draft',
@@ -32,12 +37,28 @@ export const LaunchpadLabelStatus = {
   voting: {
     key: LAUNCHPAD_STATUS.Voting,
     value: 'voting',
-    label: 'Voting',
+    label: (
+      <InfoTooltip
+        showIcon={true}
+        label="This project is being voted on by the community. If you like this project, kindly demonstrate your support by voting."
+        iconColor={"#95A4FC"}
+      >
+        Voting
+      </InfoTooltip>
+    ),
   },
   notpassed: {
     key: LAUNCHPAD_STATUS.NotPassed,
     value: 'notpassed',
-    label: 'Closed',
+    label: (
+      <InfoTooltip
+        showIcon={true}
+        label="The project has yet to be approved by the communities votes."
+        iconColor={"rgba(255, 71, 71, 1)"}
+      >
+        Voting Failed
+      </InfoTooltip>
+    ),
   },
   launching: {
     key: LAUNCHPAD_STATUS.Launching,

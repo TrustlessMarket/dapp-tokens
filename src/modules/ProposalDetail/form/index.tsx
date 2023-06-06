@@ -64,9 +64,9 @@ export const MakeFormSwap = forwardRef((props, ref) => {
               }}
               className={styles.btnVoteUp}
             >
-              VOTE THIS LAUNCHPAD
+              Support this Launchpad
             </FiledButton>
-          ) : 'VOTE THIS LAUNCHPAD'
+          ) : 'Support this Launchpad'
           }
         </>
       </WrapperConnected>

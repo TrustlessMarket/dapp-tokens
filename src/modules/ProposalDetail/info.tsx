@@ -27,7 +27,7 @@ const ProposalInfo = ({ poolDetail }: ILaunchpad | any) => {
                 showIcon={true}
                 label="The total number of tokens that the contributors will receive after the crowdfunding ends."
               >
-                {`Reward pool`}
+                Reward Pool
               </InfoTooltip>
             </StatLabel>
             <StatNumber>
@@ -43,7 +43,7 @@ const ProposalInfo = ({ poolDetail }: ILaunchpad | any) => {
                 showIcon={true}
                 label="The minimum amount that the project would like to raise. If the crowdfunding does not reach the Funding Goal, the funded amount will be returned to the contributors"
               >
-                {`Funding goal`}
+                Funding Goal
               </InfoTooltip>
             </StatLabel>
             <StatNumber>
@@ -77,7 +77,7 @@ const ProposalInfo = ({ poolDetail }: ILaunchpad | any) => {
         <GridItem>
           <Stat>
             <StatLabel>
-              Reward for voter
+              Reward for Supporters
             </StatLabel>
             <StatNumber>
               {configs?.percentRewardForVoter}% funded
@@ -87,7 +87,7 @@ const ProposalInfo = ({ poolDetail }: ILaunchpad | any) => {
         <GridItem>
           <Stat>
             <StatLabel>
-              Voting will end in
+              Voting Ends in
             </StatLabel>
             <StatNumber>
               <CountDownTimer end_time={poolDetail.voteEnd} />
