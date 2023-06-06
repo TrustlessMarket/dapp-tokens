@@ -34,8 +34,8 @@ const ProposalResult = ({title, totalVote, className, data}: any) => {
                   value={<Text color={"#FFFFFF"}>{shortenAddress(d.voter, 4, 4)}</Text>}
                 />
                 <HorizontalItem
-                  label={<Text color={"rgba(255, 255, 255, 0.7)"}>Weight</Text>}
-                  value={<Text color={"#FFFFFF"}>{formatCurrency(d.weight)}</Text>}
+                  label={<Text color={"rgba(255, 255, 255, 0.7)"}>Amount</Text>}
+                  value={<Text color={"#FFFFFF"}>{formatCurrency(d.amount)} {'TM'}</Text>}
                 />
               </Box>
               }
