@@ -91,6 +91,7 @@ import useIsAbleClose from '@/hooks/contract-operations/launchpad/useIsAbleClose
 import useIsAbleVoteRelease from '@/hooks/contract-operations/launchpad/useIsAbleVoteRelease';
 import useIsAbleCancel from '@/hooks/contract-operations/launchpad/useIsAbleCancel';
 import useCancelLaunchPad from '@/hooks/contract-operations/launchpad/useCancel';
+import useVoteReleaseLaunchpad from "@/hooks/contract-operations/launchpad/useVoteRelease";
 
 const FEE = 2;
 export const MakeFormSwap = forwardRef((props, ref) => {
@@ -102,6 +103,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     isEndLaunchpad,
     isClaimLaunchpad,
     isCancelLaunchpad,
+    isVoteRelease
   } = props;
   const [loading, setLoading] = useState(false);
   const [liquidityToken, setLiquidityToken] = useState<any>();
@@ -686,7 +688,13 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             </Text>
           </Flex>
         )}
-      {(isStarting || isEndLaunchpad || isClaimLaunchpad || isCancelLaunchpad) && (
+      {(
+        isStarting
+        || isEndLaunchpad
+        || isClaimLaunchpad
+        || isCancelLaunchpad
+        || isVoteRelease
+      ) && (
         <WrapperConnected
           type={isRequireApprove ? 'button' : 'submit'}
           className={styles.submitButton}
@@ -717,22 +725,21 @@ export const MakeFormSwap = forwardRef((props, ref) => {
                 id: transactionType.depositLaunchpad,
               }}
               style={{
-                backgroundColor: isClaimLaunchpad
-                  ? colors.greenPrimary
-                  : isEndLaunchpad
-                  ? colors.redPrimary
-                  : isCancelLaunchpad
-                  ? colors.redPrimary
+                backgroundColor:
+                  isClaimLaunchpad ? colors.greenPrimary
+                  : isEndLaunchpad ? colors.redPrimary
+                  : isCancelLaunchpad ? colors.redPrimary
+                  : isVoteRelease ? colors.bluePrimary
                   : colors.bluePrimary,
               }}
             >
-              {isClaimLaunchpad
-                ? 'CLAIM THIS PROJECT'
-                : isEndLaunchpad
-                ? 'END THIS PROJECT'
-                : isCancelLaunchpad
-                ? 'CANCEL THIS PROJECT'
-                : 'BACK THIS PROJECT'}
+              {
+                isClaimLaunchpad ? 'CLAIM THIS PROJECT'
+                : isEndLaunchpad ? 'END THIS PROJECT'
+                : isCancelLaunchpad ? 'CANCEL THIS PROJECT'
+                : isVoteRelease ? 'RELEASE VOTE'
+                : 'BACK THIS PROJECT'
+              }
             </FiledButton>
           )}
         </WrapperConnected>
@@ -777,6 +784,9 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
   const { call: endLaunchpad } = useEndLaunchPad();
   const { run: claimLaunchpad } = useContractOperation({
     operation: useClaimLaunchPad,
+  });
+  const { run: voteReleaseLaunchpad } = useContractOperation({
+    operation: useVoteReleaseLaunchpad,
   });
   const { call: cancelLaunchpad } = useCancelLaunchPad();
   const { call: isAbleRedeem } = useIsAbleRedeem();
@@ -866,12 +876,11 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
       openModal({
         id,
         theme: 'dark',
-        title: canClaim
-          ? 'Confirm claim this project'
-          : canEnd
-          ? 'Confirm end this project'
-          : canCancel
-          ? 'Delete my launchpad'
+        title:
+          canClaim ? 'Confirm claim this project'
+          : canEnd ? 'Confirm end this project'
+          : canCancel ? 'Delete my launchpad'
+          : canVoteRelease ? 'Release vote token'
           : 'Confirm deposit',
         className: styles.modalContent,
         modalProps: {
@@ -911,11 +920,30 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
                 />
               </>
             ) : canEnd ? (
-              <Text>End this project?</Text>
+              <Box>
+                <Text>End this project?</Text>
+                <HorizontalItem
+                  label={
+                    <Text fontSize={'sm'} color={'#B1B5C3'}>
+                      State
+                    </Text>
+                  }
+                  value={
+                    <Text fontSize={'sm'}>
+                      {poolDetail?.state}
+                    </Text>
+                  }
+                />
+              </Box>
+
             ) : canCancel ? (
               <Text>
                 If you wish to delete your launchpad, click Confirm below and your
                 tokens will be immediately returned to your account.
+              </Text>
+            ) : canVoteRelease ? (
+              <Text>
+                Release launchpad to get back voting token.
               </Text>
             ) : (
               <>
@@ -1042,6 +1070,10 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
         response = await cancelLaunchpad({
           launchpadAddress: poolDetail?.launchpad,
         });
+      } else if (canVoteRelease) {
+        response = await voteReleaseLaunchpad({
+          launchpadAddress: poolDetail?.launchpad,
+        });
       } else {
         response = await depositLaunchpad(data);
       }
@@ -1081,6 +1113,7 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
             isClaimLaunchpad={canClaim}
             isStarting={isStarting}
             isCancelLaunchpad={canCancel}
+            isVoteRelease={canVoteRelease}
           />
         )}
       </Form>
