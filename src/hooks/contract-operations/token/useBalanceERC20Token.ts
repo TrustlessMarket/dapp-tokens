@@ -4,7 +4,12 @@ import { CONTRACT_METHOD_IDS } from '@/constants/methodId';
 import { TransactionEventType } from '@/enums/transaction';
 import useBitcoin from '@/hooks/useBitcoin';
 import { ContractOperationHook, DAppType } from '@/interfaces/contract-operation';
-import { compareString, getContract, isConnectedTrustChain } from '@/utils';
+import {
+  compareString,
+  getContract,
+  getDefaultProvider,
+  isConnectedTrustChain,
+} from '@/utils';
 import { useWeb3React } from '@web3-react/core';
 import BigNumber from 'bignumber.js';
 import { useCallback } from 'react';
@@ -19,7 +24,8 @@ const useBalanceERC20Token: ContractOperationHook<
   IBalanceERC20TokenParams,
   string
 > = () => {
-  const { account, provider } = useWeb3React();
+  const { account } = useWeb3React();
+  const provider = getDefaultProvider();
   const isConnected = isConnectedTrustChain();
   const {
     getPendingInscribeTxsDetail,

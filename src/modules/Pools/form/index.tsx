@@ -1098,7 +1098,6 @@ const CreateMarket = ({
         tokenA: baseToken,
         tokenB: quoteToken,
       });
-      console.log('121212121', response);
       const [resReserve, resSupply] = await Promise.all([
         getReserves({
           address: response,
