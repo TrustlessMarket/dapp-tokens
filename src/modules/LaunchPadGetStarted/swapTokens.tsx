@@ -127,7 +127,7 @@ const STEPS = [
           <Text fontWeight={"700"} mt={2}>4.1. Voting:</Text>
           <UnorderedList>
             <ListItem>
-              Select the project with the “Voting” status. Then click “Support this Launchpad”.
+              Select the project with the “Voting” status. Then click “Support this Project”.
               <img
                 alt="launchpad_step1_1"
                 className={styles.introImg}
