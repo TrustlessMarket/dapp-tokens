@@ -589,29 +589,6 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           </Flex>
         </InputWrapper>
       )}
-
-      {/*<Box mt={1}>
-        <HorizontalItem
-          label={
-            <Text fontSize={'sm'} fontWeight={'medium'} color={'rgba(255, 255, 255, 0.7)'}>
-              FEE: {FEE * (swapRoutes?.length || 1)}%
-            </Text>
-          }
-        />
-      </Box>*/}
-      {/*{baseToken && quoteToken && values?.baseAmount && Number(exchangeRate) > 0 && (
-        <Box mt={1}>
-          <HorizontalItem
-            label={
-              <Text fontSize={'sm'} fontWeight={'medium'} color={'#FFFFFF'}>
-                1 {quoteToken?.symbol} =&nbsp;
-                {formatCurrency(exchangeRate.toString(), baseToken?.decimal || 18)}
-                &nbsp;{baseToken?.symbol}
-              </Text>
-            }
-          />
-        </Box>
-      )}*/}
       {values?.baseAmount && (
         <Box mt={1}>
           <HorizontalItem
