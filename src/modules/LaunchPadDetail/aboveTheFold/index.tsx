@@ -20,7 +20,7 @@ const AboveTheFold = ({ poolDetail }: ILaunchpad | any) => {
 
   return (
     <Box className={styles.wrapper}>
-      <Flex mb={12}>
+      <Flex mb={12} borderBottom={"1px solid rgba(255, 255, 255, 0.1)"}>
         <Flex gap={4} color={'#FFFFFF'} alignItems={'center'}>
           <Flex alignItems={'flex-start'} h={'100%'}>
             <img src={launchpadToken.thumbnail || TOKEN_ICON_DEFAULT} className={"token-avatar"}/>
@@ -65,7 +65,7 @@ const AboveTheFold = ({ poolDetail }: ILaunchpad | any) => {
               </Box>
             </GridItem>
             <GridItem>
-              <Card bgColor={"#1B1E26"} paddingX={6} paddingY={6} mt={8} borderRadisus={px2rem(12)}>
+              <Card bgColor={"#1B1E26"} paddingX={6} paddingY={6} mt={8} borderRadius={"12px"}>
                 <Statistic poolDetail={poolDetail}/>
               </Card>
             </GridItem>
