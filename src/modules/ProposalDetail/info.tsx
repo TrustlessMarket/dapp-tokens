@@ -12,11 +12,14 @@ import React from 'react';
 import { ILaunchpad } from '@/interfaces/launchpad';
 import InfoTooltip from '@/components/Swap/infoTooltip';
 import CountDownTimer from '@/components/Countdown';
+import {useAppSelector} from "@/state/hooks";
+import {selectPnftExchange} from "@/state/pnftExchange";
 
 const ProposalInfo = ({ poolDetail }: ILaunchpad | any) => {
+  const configs = useAppSelector(selectPnftExchange).configs;
   return (
     <Box color={'#FFFFFF'}>
-      <SimpleGrid columns={4} spacingX={6}>
+      <SimpleGrid columns={5} spacingX={6}>
         <GridItem>
           <Stat>
             <StatLabel>
@@ -68,6 +71,16 @@ const ProposalInfo = ({ poolDetail }: ILaunchpad | any) => {
               ) : (
                 'N/A'
               )}
+            </StatNumber>
+          </Stat>
+        </GridItem>
+        <GridItem>
+          <Stat>
+            <StatLabel>
+              Reward for voter
+            </StatLabel>
+            <StatNumber>
+              {configs?.percentRewardForVoter}% funded
             </StatNumber>
           </Stat>
         </GridItem>
