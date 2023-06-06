@@ -38,7 +38,7 @@ const ProposalResult = ({poolDetail}: { poolDetail: ILaunchpad }) => {
     <Box>
       <SimpleGrid columns={1} gap={6}>
         <GridItem>
-          <Card bgColor={"transparent"} paddingX={6} paddingY={6} border={"1px solid #353945"}>
+          <Card bgColor={"transparent"} paddingX={6} paddingY={6} border={"1px solid #353945"} borderRadius={0}>
             <Side
               title={"For"}
               totalVote={Number(poolDetail?.voteGoal)}

@@ -52,7 +52,7 @@ const ProposalResult = ({title, totalVote, className, data}: any) => {
                     style={{ textDecoration: 'underline' }}
                   >
                     <Jazzicon
-                      diameter={mobileScreen || tabletScreen ? 24 : 36}
+                      diameter={mobileScreen || tabletScreen ? 40 : 60}
                       seed={jsNumberForAddress(d.voter)}
                     />
                   </a>

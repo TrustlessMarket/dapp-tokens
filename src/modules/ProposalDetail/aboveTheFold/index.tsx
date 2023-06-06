@@ -11,15 +11,19 @@ import { ILaunchpad } from '@/interfaces/launchpad';
 
 const AboveTheFold = ({ poolDetail }: ILaunchpad | any) => {
   return (
-    <SectionContainer className={styles.wrapper}>
-      <ProposalStarting poolDetail={poolDetail} />
-      <Box mt={6}>
-        <ProposalResult poolDetail={poolDetail} />
+    <>
+      <Box className={styles.wrapper}>
+        <ProposalStarting poolDetail={poolDetail} />
       </Box>
-      <Card bgColor={'#1E1E22'} paddingX={6} paddingY={6} mt={6}>
-        <ProposalInfo poolDetail={poolDetail} />
-      </Card>
-    </SectionContainer>
+      <SectionContainer className={styles.wrapper}>
+        <Box mt={6}>
+          <ProposalResult poolDetail={poolDetail} />
+        </Box>
+        <Card bgColor={'#1E1E22'} paddingX={6} paddingY={6} mt={6}>
+          <ProposalInfo poolDetail={poolDetail} />
+        </Card>
+      </SectionContainer>
+    </>
   );
 };
 
