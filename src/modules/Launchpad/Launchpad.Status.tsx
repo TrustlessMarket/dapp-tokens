@@ -33,7 +33,15 @@ export const LaunchpadLabelStatus = {
   voting: {
     key: LAUNCHPAD_STATUS.Voting,
     value: 'voting',
-    label: 'Voting',
+    label: (
+      <InfoTooltip
+        showIcon={true}
+        label="This project is being voted on by the community. If you like this project, kindly demonstrate your support by voting."
+        iconColor={"#95A4FC"}
+      >
+        Voting
+      </InfoTooltip>
+    ),
   },
   notpassed: {
     key: LAUNCHPAD_STATUS.NotPassed,

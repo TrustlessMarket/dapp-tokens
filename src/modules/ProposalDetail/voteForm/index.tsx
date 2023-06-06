@@ -467,7 +467,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   );
 });
 
-const BuyForm = ({ poolDetail, votingToken }: any) => {
+const BuyForm = ({ poolDetail, votingToken, onClose }: any) => {
   const refForm = useRef<any>();
   const [submitting, setSubmitting] = useState(false);
   const dispatch = useAppDispatch();
@@ -498,6 +498,7 @@ const BuyForm = ({ poolDetail, votingToken }: any) => {
       refForm.current?.reset();
       dispatch(requestReload());
       dispatch(requestReloadRealtime());
+      onClose && onClose();
     } catch (err: any) {
       toastError(showError, err, { address: account });
       logErrorToServer({
@@ -526,6 +527,7 @@ const BuyForm = ({ poolDetail, votingToken }: any) => {
             submitting={submitting}
             poolDetail={poolDetail}
             votingToken={votingToken}
+            onClose={onClose}
           />
         )}
       </Form>

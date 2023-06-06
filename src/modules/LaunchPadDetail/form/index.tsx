@@ -816,6 +816,7 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
   console.log('userDeposit', userDeposit);
   console.log('boostInfo', boostInfo);
   console.log('=====');
+  const isLaunchpadCreator = compareString(poolDetail?.creatorAddress, account);
 
   const isStarting = [LAUNCHPAD_STATUS.Launching].includes(status.key);
 
@@ -870,20 +871,111 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
     }
   };
 
+  const getConfirmTitle = () => {
+    return (
+      canEnd ? (isLaunchpadCreator ? 'Close My Launchpad' : 'Close Launchpad')
+        : canClaim ? 'Confirm claim this project'
+          : canCancel ? 'Delete my launchpad'
+            : canVoteRelease ? 'Release vote token'
+              : 'Confirm deposit'
+    );
+  }
+
+  const getConfirmContent = (values: any) => {
+    const { baseAmount, quoteAmount } = values;
+    return (
+      <>
+        {canEnd ? (
+          <Box>
+            <Text>
+              {
+                isLaunchpadCreator
+                  ? 'If you wish to close your launchpad, click Confirm below and your tokens will be immediately returned to your account.'
+                  : 'If you wish to close this launchpad, click Confirm below.'
+              }
+            </Text>
+          </Box>
+        ) : canClaim ? (
+          <>
+            <HorizontalItem
+              label={
+                <Text fontSize={'sm'} color={'#B1B5C3'}>
+                  Deposit amount
+                </Text>
+              }
+              value={
+                <Text fontSize={'sm'}>
+                  {formatCurrency(userDeposit?.amount || 0, 6)}{' '}
+                  {poolDetail?.liquidityToken?.symbol}
+                </Text>
+              }
+            />
+            <HorizontalItem
+              label={
+                <Text fontSize={'sm'} color={'#B1B5C3'}>
+                  Estimate receive amount
+                </Text>
+              }
+              value={
+                <Text fontSize={'sm'}>
+                  {abbreviateNumber(userDeposit?.userLaunchpadBalance || 0)}{' '}
+                  {poolDetail?.launchpadToken?.symbol}
+                </Text>
+              }
+            />
+          </>
+        ) : canCancel ? (
+          <Text>
+            If you wish to delete your launchpad, click Confirm below and your
+            tokens will be immediately returned to your account.
+          </Text>
+        ) : canVoteRelease ? (
+          <Text>
+            Release launchpad to get back voting token.
+          </Text>
+        ) : (
+          <>
+            <HorizontalItem
+              label={
+                <Text fontSize={'sm'} color={'#B1B5C3'}>
+                  Deposit amount
+                </Text>
+              }
+              value={
+                <Text fontSize={'sm'}>
+                  {formatCurrency(baseAmount, 6)}{' '}
+                  {poolDetail?.liquidityToken?.symbol}
+                </Text>
+              }
+            />
+            <HorizontalItem
+              label={
+                <Text fontSize={'sm'} color={'#B1B5C3'}>
+                  Estimate receive amount
+                </Text>
+              }
+              value={
+                <Text fontSize={'sm'}>
+                  {formatCurrency(quoteAmount, 6)}{' '}
+                  {poolDetail?.launchpadToken?.symbol}
+                </Text>
+              }
+            />
+          </>
+        )}
+      </>
+    )
+  }
+
   const confirmDeposit = (values: any) => {
-    const { baseAmount, quoteAmount, onConfirm } = values;
+    const { onConfirm } = values;
     const id = 'modalDepositConfirm';
     // const close = () => dispatch(closeModal({id}));
     dispatch(
       openModal({
         id,
         theme: 'dark',
-        title:
-          canEnd ? 'Confirm end this project'
-          : canClaim ? 'Confirm claim this project'
-          : canCancel ? 'Delete my launchpad'
-          : canVoteRelease ? 'Release vote token'
-          : 'Confirm deposit',
+        title: getConfirmTitle(),
         className: styles.modalContent,
         modalProps: {
           centered: true,
@@ -892,90 +984,7 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
         },
         render: () => (
           <Flex direction={'column'} gap={2}>
-            {canEnd ? (
-              <Box>
-                <Text>End this project?</Text>
-                <HorizontalItem
-                  label={
-                    <Text fontSize={'sm'} color={'#B1B5C3'}>
-                      State
-                    </Text>
-                  }
-                  value={
-                    <Text fontSize={'sm'}>
-                      {poolDetail?.state}
-                    </Text>
-                  }
-                />
-              </Box>
-            ) : canClaim ? (
-              <>
-                <HorizontalItem
-                  label={
-                    <Text fontSize={'sm'} color={'#B1B5C3'}>
-                      Deposit amount
-                    </Text>
-                  }
-                  value={
-                    <Text fontSize={'sm'}>
-                      {formatCurrency(userDeposit?.amount || 0, 6)}{' '}
-                      {poolDetail?.liquidityToken?.symbol}
-                    </Text>
-                  }
-                />
-                <HorizontalItem
-                  label={
-                    <Text fontSize={'sm'} color={'#B1B5C3'}>
-                      Estimate receive amount
-                    </Text>
-                  }
-                  value={
-                    <Text fontSize={'sm'}>
-                      {abbreviateNumber(userDeposit?.userLaunchpadBalance || 0)}{' '}
-                      {poolDetail?.launchpadToken?.symbol}
-                    </Text>
-                  }
-                />
-              </>
-            ) : canCancel ? (
-              <Text>
-                If you wish to delete your launchpad, click Confirm below and your
-                tokens will be immediately returned to your account.
-              </Text>
-            ) : canVoteRelease ? (
-              <Text>
-                Release launchpad to get back voting token.
-              </Text>
-            ) : (
-              <>
-                <HorizontalItem
-                  label={
-                    <Text fontSize={'sm'} color={'#B1B5C3'}>
-                      Deposit amount
-                    </Text>
-                  }
-                  value={
-                    <Text fontSize={'sm'}>
-                      {formatCurrency(baseAmount, 6)}{' '}
-                      {poolDetail?.liquidityToken?.symbol}
-                    </Text>
-                  }
-                />
-                <HorizontalItem
-                  label={
-                    <Text fontSize={'sm'} color={'#B1B5C3'}>
-                      Estimate receive amount
-                    </Text>
-                  }
-                  value={
-                    <Text fontSize={'sm'}>
-                      {formatCurrency(quoteAmount, 6)}{' '}
-                      {poolDetail?.launchpadToken?.symbol}
-                    </Text>
-                  }
-                />
-              </>
-            )}
+            {getConfirmContent(values)}
 
             {/*<HorizontalItem
               label={
