@@ -977,7 +977,9 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
           size: mobileScreen ? 'full' : 'xl',
           zIndex: 9999999,
         },
-        render: getConfirmContent(values),
+        render: () => {
+          return getConfirmContent(values);
+        },
       }),
     );
   };
