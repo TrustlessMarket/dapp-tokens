@@ -303,29 +303,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             </Stat>
           </GridItem>
         </SimpleGrid>
-        {/*<Stat className={styles.infoColumn}>
-          <StatLabel>
-            {isPendingProposal
-              ? 'Starts in'
-              : isStartingProposal
-              ? 'Ends in'
-              : 'Ended at'}
-          </StatLabel>
-          <StatNumber>
-            <Text>
-              {isPendingProposal
-                ? `${
-                    Number(days) > 0 ? `${days}d :` : ''
-                  } ${hours}h : ${minutes}m : ${seconds}s`
-                : isStartingProposal
-                ? `${
-                    Number(days) > 0 ? `${days}d :` : ''
-                  } ${hours}h : ${minutes}m : ${seconds}s`
-                : moment(proposalDetail.voteEnd).format('LLL')}
-            </Text>
-          </StatNumber>
-        </Stat>*/}
-      </Flex>
+      </Flex>*/}
       <InputWrapper
         className={cx(styles.inputAmountWrap, styles.inputBaseAmountWrap)}
         theme="light"
