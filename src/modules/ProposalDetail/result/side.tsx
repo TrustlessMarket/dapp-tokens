@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-empty-function */
 
 import {Box, Flex, Progress, SimpleGrid, Text} from "@chakra-ui/react";
 import {compareString, formatCurrency, shortenAddress} from "@/utils";
@@ -69,7 +70,6 @@ const ProposalResult = ({title, totalVote, className, data}: any) => {
         }
         {
           emtyData?.map((d: any, index) => {
-            console.log('index', index);
             return (
               <Box
                 key={index}
