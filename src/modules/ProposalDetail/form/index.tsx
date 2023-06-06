@@ -6,20 +6,19 @@ import WrapperConnected from '@/components/WrapperConnected';
 import {toastError} from '@/constants/error';
 import VoteForm from '@/modules/ProposalDetail/voteForm';
 import {logErrorToServer} from '@/services/swap';
-import {useAppDispatch, useAppSelector} from '@/state/hooks';
+import {useAppDispatch} from '@/state/hooks';
 import {closeModal, openModal} from '@/state/modal';
-import {selectPnftExchange, updateCurrentTransaction,} from '@/state/pnftExchange';
+import {updateCurrentTransaction,} from '@/state/pnftExchange';
 import {showError} from '@/utils/toast';
 import {Box, Flex, forwardRef, Text} from '@chakra-ui/react';
 import {useWindowSize} from '@trustless-computer/dapp-core';
 import {useWeb3React} from '@web3-react/core';
-import {useRouter} from 'next/router';
-import {useEffect, useImperativeHandle, useRef, useState} from 'react';
+import {useImperativeHandle, useRef, useState} from 'react';
 import {Form, useForm} from 'react-final-form';
 import styles from './styles.module.scss';
 import {ILaunchpad} from "@/interfaces/launchpad";
 import {TM_ADDRESS} from "@/configs";
-import {LAUNCHPAD_STATUS, useLaunchPadStatus} from "@/modules/Launchpad/Launchpad.Status";
+import {LAUNCHPAD_STATUS} from "@/modules/Launchpad/Launchpad.Status";
 import px2rem from "@/utils/px2rem";
 
 export const MakeFormSwap = forwardRef((props, ref) => {
@@ -90,10 +89,6 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
   const { account, isActive } = useWeb3React();
 
   const { mobileScreen } = useWindowSize();
-  const needReload = useAppSelector(selectPnftExchange).needReload;
-  const router = useRouter();
-  const [status] = useLaunchPadStatus({ row: poolDetail });
-  // const isStarting = ![LAUNCHPAD_STATUS.Voting].includes(status.key);
 
   const votingToken = {
     address: TM_ADDRESS,
@@ -101,36 +96,6 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
     decimal: 18,
     symbol: 'TM'
   };
-
-  const getUserVoteInfo = async () => {
-    try {
-      // const response = await Promise.all([
-      //   getVoteSignatureProposal({
-      //     address: account,
-      //     proposal_id: router?.query?.proposal_id,
-      //   }),
-      //   getUserVoteProposal({
-      //     address: account,
-      //     proposal_id: router?.query?.proposal_id,
-      //   }),
-      // ]);
-    } catch (err) {
-      throw err;
-    }
-  };
-
-  useEffect(() => {
-    if (account && router?.query?.proposal_id) {
-      getUserVoteInfo();
-    }
-  }, [
-    account,
-    isActive,
-    router?.query?.proposal_id,
-    poolDetail?.id,
-    poolDetail?.state,
-    needReload,
-  ]);
 
   const handleConfirmVote = (values: any) => {
     const {} = values;
