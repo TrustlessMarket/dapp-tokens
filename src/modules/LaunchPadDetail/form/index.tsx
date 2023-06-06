@@ -874,7 +874,7 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
   const getConfirmTitle = () => {
     return (
       canEnd ? (isLaunchpadCreator ? 'Close My Launchpad' : 'Close Launchpad')
-        : canClaim ? 'Confirm claim this project'
+        : canClaim ? ([LAUNCHPAD_STATUS.Failed].includes(poolDetail?.state) ? 'Claim your Funds' : 'Claim your Reward')
           : canCancel ? 'Delete my launchpad'
             : canVoteRelease ? 'Release vote token'
               : 'Confirm deposit'
@@ -882,48 +882,25 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
   }
 
   const getConfirmContent = (values: any) => {
-    const { baseAmount, quoteAmount } = values;
+    const { baseAmount, quoteAmount, onConfirm } = values;
     return (
-      <>
+      <Flex direction={'column'} gap={2}>
         {canEnd ? (
           <Box>
-            <Text>
-              {
-                isLaunchpadCreator
-                  ? 'If you wish to close your launchpad, click Confirm below and your tokens will be immediately returned to your account.'
-                  : 'If you wish to close this launchpad, click Confirm below.'
-              }
-            </Text>
+            {
+              isLaunchpadCreator
+                ? 'If you wish to close your launchpad, click Confirm below and your tokens will be immediately returned to your account.'
+                : 'If you wish to close this launchpad, click Confirm below.'
+            }
           </Box>
         ) : canClaim ? (
-          <>
-            <HorizontalItem
-              label={
-                <Text fontSize={'sm'} color={'#B1B5C3'}>
-                  Deposit amount
-                </Text>
-              }
-              value={
-                <Text fontSize={'sm'}>
-                  {formatCurrency(userDeposit?.amount || 0, 6)}{' '}
-                  {poolDetail?.liquidityToken?.symbol}
-                </Text>
-              }
-            />
-            <HorizontalItem
-              label={
-                <Text fontSize={'sm'} color={'#B1B5C3'}>
-                  Estimate receive amount
-                </Text>
-              }
-              value={
-                <Text fontSize={'sm'}>
-                  {abbreviateNumber(userDeposit?.userLaunchpadBalance || 0)}{' '}
-                  {poolDetail?.launchpadToken?.symbol}
-                </Text>
-              }
-            />
-          </>
+          <Box>
+            {
+              [LAUNCHPAD_STATUS.Failed].includes(poolDetail?.state)
+                ? 'The launchpad did not reach the funding goal. Click Claim your Funds to get your funds back.'
+                : 'Congratulations! The launchpad has achieved its funding goal. Please click on "Claim" to receive your reward.'
+            }
+          </Box>
         ) : canCancel ? (
           <Text>
             If you wish to delete your launchpad, click Confirm below and your
@@ -963,7 +940,25 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
             />
           </>
         )}
-      </>
+        <FiledButton
+          loadingText="Processing"
+          btnSize={'h'}
+          onClick={onConfirm}
+          mt={4}
+        >
+          {
+            canClaim ? (
+              <>
+                {
+                  [LAUNCHPAD_STATUS.Failed].includes(poolDetail?.state)
+                    ? 'Claim your Funds'
+                    : 'Claim'
+                }
+              </>
+            ) : 'Confirm'
+          }
+        </FiledButton>
+      </Flex>
     )
   }
 
@@ -982,49 +977,7 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
           size: mobileScreen ? 'full' : 'xl',
           zIndex: 9999999,
         },
-        render: () => (
-          <Flex direction={'column'} gap={2}>
-            {getConfirmContent(values)}
-
-            {/*<HorizontalItem
-              label={
-                <Text fontSize={'sm'} color={'#B1B5C3'}>
-                  Slippage
-                </Text>
-              }
-              value={<Text fontSize={'sm'}>{slippage}%</Text>}
-            />
-            <Flex
-              gap={1}
-              alignItems={slippage === 100 ? 'center' : 'flex-start'}
-              mt={2}
-            >
-              <img
-                src={`${CDN_URL}/icons/icon-information.png`}
-                alt="info"
-                style={{ width: 25, height: 25, minWidth: 25, minHeight: 25 }}
-              />
-              <Text
-                fontSize="sm"
-                color="brand.warning.400"
-                textAlign={'left'}
-                maxW={'500px'}
-              >
-                {slippage === 100
-                  ? `Your current slippage is set at 100%. Trade at your own risk.`
-                  : `Your slippage percentage of ${slippage}% means that if the price changes by ${slippage}%, your transaction will fail and revert. If you wish to change your slippage percentage, please close this confirmation popup and go to the top of the swap box where you can set a different slippage value.`}
-              </Text>
-            </Flex>*/}
-            <FiledButton
-              loadingText="Processing"
-              btnSize={'h'}
-              onClick={onConfirm}
-              mt={4}
-            >
-              Confirm
-            </FiledButton>
-          </Flex>
-        ),
+        render: getConfirmContent(values),
       }),
     );
   };
