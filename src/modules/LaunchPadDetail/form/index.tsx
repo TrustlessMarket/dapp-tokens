@@ -781,7 +781,9 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
   const { run: depositLaunchpad } = useContractOperation({
     operation: useDepositPool,
   });
-  const { call: endLaunchpad } = useEndLaunchPad();
+  const { run: endLaunchpad } = useContractOperation({
+    operation: useEndLaunchPad,
+  });
   const { run: claimLaunchpad } = useContractOperation({
     operation: useClaimLaunchPad,
   });
