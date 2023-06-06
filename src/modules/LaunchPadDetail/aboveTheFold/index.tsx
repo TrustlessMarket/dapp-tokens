@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import LaunchpadStatus, {LAUNCHPAD_STATUS, useLaunchPadStatus} from '@/modules/Launchpad/Launchpad.Status';
+import LaunchpadStatus, {LAUNCHPAD_STATUS} from '@/modules/Launchpad/Launchpad.Status';
 import styles from '@/modules/LaunchPadDetail/aboveTheFold/styles.module.scss';
 import {ILaunchpad} from '@/interfaces/launchpad';
 import {Box, Flex, Grid, GridItem, Text} from "@chakra-ui/react";
