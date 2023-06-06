@@ -118,7 +118,6 @@ export const MakeFormSwap = forwardRef((props, ref) => {
 
   const { account } = useWeb3React();
   const needReload = useAppSelector(selectPnftExchange).needReload;
-  const [boostInfo, setBoostInfo] = useState<any>();
 
   const [status] = useLaunchPadStatus({ row: poolDetail });
 
@@ -195,25 +194,6 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       throw error;
     }
   };
-
-  const getBoostInfo = async () => {
-    try {
-      const response = await getUserBoost({
-        address: account,
-        pool_address: router?.query?.pool_address,
-      });
-      setBoostInfo(response);
-      change('boostInfo', response);
-    } catch (err) {
-      throw err;
-    }
-  };
-
-  useEffect(() => {
-    if (account && router?.query?.pool_address) {
-      getBoostInfo();
-    }
-  }, [account, router?.query?.pool_address, needReload]);
 
   useEffect(() => {
     if (poolDetail?.id) {
@@ -813,6 +793,7 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
   const [canVoteRelease, setCanVoteRelease] = useState(false);
   const [canCancel, setCanCancel] = useState(false);
   const [userDeposit, setUserDeposit] = useState<any>();
+  const [boostInfo, setBoostInfo] = useState<any>();
 
   console.log('poolDetail', poolDetail);
   console.log('canEnd', canEnd);
@@ -821,6 +802,7 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
   console.log('canVoteRelease', canVoteRelease);
   console.log('canCancel', canCancel);
   console.log('userDeposit', userDeposit);
+  console.log('boostInfo', boostInfo);
   console.log('=====');
 
   const isStarting = [LAUNCHPAD_STATUS.Launching].includes(status.key);
@@ -829,7 +811,7 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
     if (![LAUNCHPAD_STATUS.Draft].includes(status.key)) {
       fetchData();
     }
-  }, [account, isActive, poolDetail]);
+  }, [account, isActive, JSON.stringify(poolDetail)]);
 
   const fetchData = async () => {
     try {
@@ -855,6 +837,10 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
           pool_address: poolDetail?.launchpad,
           address: account,
         }),
+        getUserBoost({
+          address: account,
+          pool_address: poolDetail?.launchpad,
+        })
       ]);
       setCanEnd(response[0]);
       setCanClose(response[1]);
@@ -866,6 +852,7 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
           [LAUNCHPAD_STATUS.Pending].includes(poolDetail?.state),
       );
       setUserDeposit(response[5]);
+      setBoostInfo(response[6]);
     } catch (error) {
       console.log('Launchpad detail form fetchData', error);
     }
@@ -1037,10 +1024,10 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
         signature: '',
       };
 
-      // if (boostInfo) {
-      //   data.boostRatio = boostInfo.boostSign;
-      //   data.signature = boostInfo.adminSignature;
-      // }
+      if (boostInfo) {
+        data.boostRatio = boostInfo.boostSign;
+        data.signature = boostInfo.adminSignature;
+      }
 
       let response;
       if (canClaim) {
