@@ -1,11 +1,12 @@
 import BodyContainer from '@/components/Swap/bodyContainer';
 import { colors } from '@/theme/colors';
-import { Flex } from '@chakra-ui/react';
+import { Box, Flex } from '@chakra-ui/react';
 import { px2rem } from '@trustless-computer/dapp-core';
 import styled from 'styled-components';
 
 export const StyledLaunchpadManage = styled(BodyContainer)`
   padding: 0px ${px2rem(60)};
+  padding-bottom: ${px2rem(30)};
   & > div {
     padding: 0px;
   }
@@ -89,6 +90,22 @@ export const StyledLaunchpadManage = styled(BodyContainer)`
   .item-faq-container {
     flex: 1;
     margin-bottom: 25px;
+    &.cls-textarea {
+      .chakra-input__group {
+        height: unset;
+        min-height: 60px;
+        border: none;
+        textarea {
+          height: 60px;
+          background-color: transparent;
+          border: 1px solid #353945;
+          color: white !important;
+          border-radius: 0;
+          padding-top: 5px;
+          margin-top: 5px;
+        }
+      }
+    }
     input {
       background-color: transparent;
     }
@@ -336,6 +353,9 @@ export const StyledLaunchpadFormStep1 = styled(Flex)`
 
         color: #ffffff;
       }
+      &.disabled {
+        cursor: default;
+      }
     }
   }
   &.step-2-container {
@@ -372,6 +392,9 @@ export const StyledLaunchpadFormStep1 = styled(Flex)`
           & > div {
             text-align: center;
             margin-top: 5px;
+            button {
+              margin: 0 auto;
+            }
           }
         }
       }
@@ -393,6 +416,62 @@ export const StyledLaunchpadFormStep1 = styled(Flex)`
     cursor: pointer;
     &.primary {
       background: ${colors.bluePrimary};
+    }
+  }
+`;
+
+export const FAQStyled = styled(Box)`
+  margin-top: ${px2rem(30)};
+  align-self: center;
+  border: 1px solid #353945;
+  padding: ${px2rem(40)};
+  h3 {
+    color: ${colors.white};
+    text-align: left;
+  }
+  .faqs-wrapper {
+    & > div {
+      & > div {
+        padding-inline-start: 0;
+        padding-inline-end: 0;
+        .chakra-heading {
+          color: #ffffff;
+        }
+
+        .faq-question {
+          color: #ffffff;
+        }
+
+        .faq-answer {
+          color: rgba(255, 255, 255, 0.7);
+
+          p {
+            color: inherit;
+          }
+          a {
+            color: ${colors.bluePrimary};
+          }
+        }
+
+        .chakra-accordion {
+          border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .chakra-accordion__button {
+          background-color: transparent;
+
+          &:hover {
+            background-color: transparent;
+          }
+          &:focus-visible {
+            box-shadow: none;
+          }
+        }
+
+        .chakra-accordion__panel {
+          background-color: transparent;
+        }
+      }
     }
   }
 `;

@@ -26,6 +26,7 @@ import { StyledLaunchpadManageHeader } from './LaunchpadManage.styled';
 import ModalConfirmApprove from '@/components/ModalConfirmApprove';
 import { closeModal, openModal } from '@/state/modal';
 import { useDispatch } from 'react-redux';
+import { isArray } from 'lodash';
 
 export interface LaunchpadManageHeaderProps {
   step: number;
@@ -48,7 +49,7 @@ const LaunchpadManageHeader: React.FC<LaunchpadManageHeaderProps> = ({
   setStep,
   steps,
 }) => {
-  const { values } = useFormState();
+  const { values, errors, error } = useFormState();
   const { change } = useForm();
   const dispatch = useDispatch();
 
@@ -68,7 +69,7 @@ const LaunchpadManageHeader: React.FC<LaunchpadManageHeaderProps> = ({
             loadingText="Processing"
             // btnSize={'h'}
             onClick={onShowModalApprove}
-            type="button"
+            type="submit"
           >
             {`APPROVE USE OF ${tokenSelected?.symbol}`}
           </FiledButton>
@@ -124,7 +125,16 @@ const LaunchpadManageHeader: React.FC<LaunchpadManageHeaderProps> = ({
   };
 
   const onShowModalApprove = () => {
+    change('isApprove', false);
+
+    const _errors = errors as any;
+
+    if (Object.keys(_errors).length > 0) {
+      return;
+    }
+
     const id = 'modal';
+
     const onClose = () => dispatch(closeModal({ id }));
     dispatch(
       openModal({

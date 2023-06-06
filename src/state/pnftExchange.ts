@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { createSlice } from '@reduxjs/toolkit';
 import { RootState } from '.';
 import localStorage from '@/utils/localstorage';
@@ -11,6 +12,7 @@ interface NftyLendState {
   loadingRealtime: boolean;
   currentTransaction: WalletTransactionData | undefined;
   showBanner: boolean;
+  configs: any;
 }
 
 const initialState: NftyLendState = {
@@ -20,6 +22,7 @@ const initialState: NftyLendState = {
   loadingRealtime: false,
   currentTransaction: undefined,
   showBanner: true,
+  configs: {}
 };
 
 const slice = createSlice({
@@ -45,6 +48,9 @@ const slice = createSlice({
     updateShowBanner: (state, action) => {
       state.showBanner = action.payload;
     },
+    updateConfigs: (state, action) => {
+      state.configs = action.payload;
+    },
   },
 });
 
@@ -54,7 +60,8 @@ export const {
   updateSlippage,
   updateLoadingRealtime,
   updateCurrentTransaction,
-  updateShowBanner
+  updateShowBanner,
+  updateConfigs
 } = slice.actions;
 
 export const selectPnftExchange = (state: RootState) => state.pnftExchange;

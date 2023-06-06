@@ -36,6 +36,82 @@ interface ILaunchpadFormStep1 {
   error: any;
 }
 
+const maxGoalBalance = (_amount: any, values: any, props: any) => {
+  const isFirstDisabled = Boolean(values?.detail?.launchpad);
+  if (!isFirstDisabled) {
+    if (Number(_amount) > 0 && Number(_amount) <= Number(values.goalBalance)) {
+      return `Hard cap is greater than Funding goal`;
+    }
+  }
+
+  return undefined;
+};
+
+const validateAmount = (_amount: any, values: any) => {
+  const isFirstDisabled = Boolean(values?.detail?.launchpad);
+  const balanceToken: any = values?.balanceToken;
+  if (!isFirstDisabled) {
+    if (Number(_amount) > Number(balanceToken)) {
+      return `Max amount is ${formatCurrency(balanceToken)}`;
+    }
+    // else if (
+    //   new BigNumber(_amount).dividedBy(balanceToken).multipliedBy(100).lte(10)
+    // ) {
+    //   return `The reward pool amount you have entered is significantly lower than your total supply. Please verify this number again as it appears to be an unusual value`;
+    // }
+  }
+
+  return undefined;
+};
+
+const validateDuration = (_amount: any, values: any) => {
+  if (!values?.detail && Number(_amount) > Number(isProduction() ? 30 : 0.02)) {
+    return `Max duration is ${formatCurrency(isProduction() ? 30 : 0.02)} day`;
+  }
+
+  return undefined;
+};
+
+const validateMaxRatio = (_amount: any, values: any) => {
+  const isFirstDisabled = Boolean(values?.detail?.launchpad);
+  const balanceToken: any = values?.balanceToken;
+  const tokenSelected: IToken | undefined = values?.launchpadTokenArg;
+  if (!isFirstDisabled) {
+    if (new BigNumber(_amount).plus(values.launchpadBalance).gt(balanceToken)) {
+      return `Max Initial liquidity in token is ${formatCurrency(
+        new BigNumber(balanceToken).minus(values.launchpadBalance).toString(),
+      )} ${tokenSelected?.symbol || ''}`;
+    }
+  }
+
+  return undefined;
+};
+
+const validateMaxFundingRate = (_amount: any, values: any) => {
+  const isFirstDisabled = Boolean(values?.detail?.launchpad);
+  if (!isFirstDisabled) {
+    if (new BigNumber(_amount).gt(90)) {
+      return `Max Initial liquidity is 90%`;
+    }
+  }
+
+  return undefined;
+};
+
+const minGoalBalance = (_amount: any, values: any) => {
+  const detail = values?.detail;
+  if (!detail || !detail.launchpad) {
+    if (
+      Number(values.thresholdBalance) > 0 &&
+      Number(_amount) >= Number(values.thresholdBalance)
+    ) {
+      return `Funding goal is less than Hard cap`;
+    }
+  }
+
+  return undefined;
+};
+
 const LaunchpadFormStep1: React.FC<ILaunchpadFormStep1> = ({
   detail,
   tokens,
@@ -51,98 +127,7 @@ const LaunchpadFormStep1: React.FC<ILaunchpadFormStep1> = ({
   const liquidityTokenSelected: IToken | undefined = values?.liquidityTokenArg;
   const [needLiquidBalance, setNeedLiquidBalance] = useState<string>('0');
 
-  const validateAmount = useCallback(
-    (_amount: any) => {
-      if (!detail && Number(_amount) > Number(balanceToken)) {
-        return `Max amount is ${formatCurrency(balanceToken)}`;
-      }
-
-      return undefined;
-    },
-    [values.launchpadBalance, tokenSelected, balanceToken, detail],
-  );
-
-  const validateDuration = useCallback(
-    (_amount: any) => {
-      if (!detail && Number(_amount) > Number(isProduction() ? 30 : 0.02)) {
-        return `Max duration is ${formatCurrency(isProduction() ? 30 : 0.02)} day`;
-      }
-
-      return undefined;
-    },
-    [values.launchpadBalance, tokenSelected, balanceToken, detail],
-  );
-
-  const validateMaxRatio = useCallback(
-    (_amount: any) => {
-      if (!detail || !detail.launchpad) {
-        if (new BigNumber(_amount).plus(values.launchpadBalance).gt(balanceToken)) {
-          return `Max Initial liquidity in token is ${formatCurrency(
-            new BigNumber(balanceToken).minus(values.launchpadBalance).toString(),
-          )} ${tokenSelected?.symbol || ''}`;
-        }
-      }
-
-      return undefined;
-    },
-    [
-      values.launchpadBalance,
-      values.liquidityBalance,
-      tokenSelected,
-      detail,
-      needLiquidBalance,
-      balanceToken,
-    ],
-  );
-
-  const validateMaxFundingRate = useCallback(
-    (_amount: any) => {
-      if (!detail || !detail.launchpad) {
-        if (new BigNumber(_amount).gt(90)) {
-          return `Max Initial liquidity is 90%`;
-        }
-      }
-
-      return undefined;
-    },
-    [
-      values.launchpadBalance,
-      values.liquidityBalance,
-      tokenSelected,
-      detail,
-      needLiquidBalance,
-      balanceToken,
-    ],
-  );
-
-  const minGoalBalance = useCallback(
-    (_amount: any) => {
-      if (!detail || !detail.launchpad) {
-        if (
-          Number(values.thresholdBalance) > 0 &&
-          Number(_amount) >= Number(values.thresholdBalance)
-        ) {
-          return `Funding goal is less than Hard cap`;
-        }
-      }
-
-      return undefined;
-    },
-    [values.thresholdBalance, values.goalBalance, detail],
-  );
-
-  const maxGoalBalance = useCallback(
-    (_amount: any) => {
-      if (!detail || !detail.launchpad) {
-        if (Number(_amount) > 0 && Number(_amount) <= Number(values.goalBalance)) {
-          return `Hard cap is greater than Funding goal`;
-        }
-      }
-
-      return undefined;
-    },
-    [values.thresholdBalance, values.goalBalance, detail],
-  );
+  const isFirstDisabled = Boolean(detail?.launchpad);
 
   useEffect(() => {
     const multiX = new BigNumber(launchpadConfigs.rewardVoteRatio)
@@ -175,7 +160,7 @@ const LaunchpadFormStep1: React.FC<ILaunchpadFormStep1> = ({
             name="launchpadTokenArg"
             options={tokens}
             children={FieldSelect}
-            validate={required}
+            validate={composeValidators(required)}
             disabled={detail}
           />
         </Box>
@@ -193,7 +178,7 @@ const LaunchpadFormStep1: React.FC<ILaunchpadFormStep1> = ({
               {`Reward pool ${tokenSelected ? `(${tokenSelected.symbol})` : ''}`}
             </InfoTooltip>
           }
-          disabled={detail?.launchpad}
+          disabled={isFirstDisabled}
           validate={composeValidators(requiredAmount, validateAmount)}
           customMeta={{
             error,
@@ -212,19 +197,28 @@ const LaunchpadFormStep1: React.FC<ILaunchpadFormStep1> = ({
                 <Flex gap={1} alignItems={'center'}>
                   Balance: {formatCurrency(balanceToken)}
                 </Flex>
-                {/* {!detail && (
-                  <Text
-                    cursor={'pointer'}
-                    color={'#3385FF'}
-                    onClick={() => change('launchpadBalance', balanceToken)}
-                    bgColor={'rgba(51, 133, 255, 0.2)'}
-                    borderRadius={'4px'}
-                    padding={'1px 12px'}
-                  >
-                    MAX
-                  </Text>
-                )} */}
               </Flex>
+            )
+          }
+          note={
+            new BigNumber(values?.launchpadBalance)
+              .dividedBy(balanceToken)
+              .multipliedBy(100)
+              .lte(10) && (
+              <Text
+                as={'div'}
+                style={{
+                  color: colors.redSecondary,
+                  fontSize: 12,
+                  lineHeight: `14px`,
+                  marginTop: 10,
+                  opacity: 0.8,
+                }}
+              >
+                The reward pool amount you have entered is significantly lower than
+                your total supply. Please verify this number again as it appears to
+                be an unusual value
+              </Text>
             )
           }
         />
@@ -237,23 +231,6 @@ const LaunchpadFormStep1: React.FC<ILaunchpadFormStep1> = ({
             touched: Boolean(error),
           }}
           appendComp={<Text color={colors.white500}>{tokenSelected?.symbol}</Text>}
-          // rightLabel={
-          //   !isEmpty(tokenSelected) &&
-          //   !detail && (
-          //     <Flex
-          //       alignItems={'center'}
-          //       gap={2}
-          //       fontSize={px2rem(14)}
-          //       color={'#FFFFFF'}
-          //       mb={2}
-          //     >
-          //       <Flex gap={1} alignItems={'center'}>
-          //         Liquidity balance: {formatCurrency(needLiquidBalance)}{' '}
-          //         {tokenSelected ? `${tokenSelected.symbol}` : ''}
-          //       </Flex>
-          //     </Flex>
-          //   )
-          // }
           label={
             <InfoTooltip
               showIcon={true}
@@ -263,7 +240,7 @@ const LaunchpadFormStep1: React.FC<ILaunchpadFormStep1> = ({
               Initial liquidity in token
             </InfoTooltip>
           }
-          disabled={detail?.launchpad}
+          disabled={isFirstDisabled}
           validate={composeValidators(requiredAmount, validateMaxRatio)}
         />
         <Box mb={6} />
@@ -282,8 +259,8 @@ const LaunchpadFormStep1: React.FC<ILaunchpadFormStep1> = ({
               }`}
             </InfoTooltip>
           }
-          disabled={detail?.launchpad}
-          validate={composeValidators(requiredAmount)}
+          disabled={isFirstDisabled}
+          validate={composeValidators(requiredAmount, minGoalBalance)}
           appendComp={
             <Text color={colors.white500}>{liquidityTokenSelected?.symbol}</Text>
           }
@@ -298,12 +275,16 @@ const LaunchpadFormStep1: React.FC<ILaunchpadFormStep1> = ({
             {liquidTokens.length > 0 ? (
               liquidTokens.map((liq) => (
                 <Flex
-                  onClick={() => change('liquidityTokenArg', liq)}
+                  onClick={
+                    !isFirstDisabled
+                      ? () => change('liquidityTokenArg', liq)
+                      : undefined
+                  }
                   className={`liquidity-item ${
                     compareString(liq.symbol, liquidityTokenSelected?.symbol)
                       ? 'active'
                       : ''
-                  }`}
+                  } ${isFirstDisabled ? 'disabled' : ''}`}
                   key={liq.symbol}
                 >
                   <img src={tokenIcons[liq.symbol.toLowerCase()]} />
@@ -333,7 +314,7 @@ const LaunchpadFormStep1: React.FC<ILaunchpadFormStep1> = ({
           }
           validate={composeValidators(requiredAmount, validateDuration)}
           appendComp={<Text color={colors.white500}>Day</Text>}
-          disabled={detail?.launchpad}
+          disabled={isFirstDisabled}
         />
 
         <Box mb={6} />
@@ -369,7 +350,7 @@ const LaunchpadFormStep1: React.FC<ILaunchpadFormStep1> = ({
               Initial liquidity
             </InfoTooltip>
           }
-          disabled={detail?.launchpad}
+          disabled={isFirstDisabled}
           validate={composeValidators(requiredAmount, validateMaxFundingRate)}
         />
         <Box mb={6} />
@@ -389,7 +370,7 @@ const LaunchpadFormStep1: React.FC<ILaunchpadFormStep1> = ({
               Hard cap
             </InfoTooltip>
           }
-          disabled={detail?.launchpad}
+          disabled={isFirstDisabled}
           validate={composeValidators(maxGoalBalance)}
         />
       </Box>

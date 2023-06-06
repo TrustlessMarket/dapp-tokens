@@ -12,24 +12,12 @@ import {TransactionStatus} from '@/interfaces/walletTransaction';
 import {logErrorToServer} from '@/services/swap';
 import {useAppDispatch} from '@/state/hooks';
 import {requestReload, requestReloadRealtime, updateCurrentTransaction,} from '@/state/pnftExchange';
-import {formatCurrency} from '@/utils';
 import {showError} from '@/utils/toast';
-import {
-  Box,
-  Center,
-  Flex,
-  forwardRef,
-  GridItem,
-  SimpleGrid,
-  Stat,
-  StatLabel,
-  StatNumber,
-  Text,
-} from '@chakra-ui/react';
+import {Box, Center, Flex, forwardRef, Text,} from '@chakra-ui/react';
 import {useWeb3React} from '@web3-react/core';
 import BigNumber from 'bignumber.js';
 import Link from 'next/link';
-import {useCallback, useContext, useEffect, useImperativeHandle, useMemo, useRef, useState} from 'react';
+import {useContext, useEffect, useImperativeHandle, useMemo, useRef, useState} from 'react';
 import {Field, Form, useForm, useFormState} from 'react-final-form';
 import toast from 'react-hot-toast';
 import {BiBell} from 'react-icons/bi';
@@ -50,6 +38,21 @@ import useApproveERC20Token from "@/hooks/contract-operations/token/useApproveER
 import {closeModal, openModal} from "@/state/modal";
 import ModalConfirmApprove from "@/components/ModalConfirmApprove";
 import useVoteLaunchpad from "@/hooks/contract-operations/launchpad/useVote";
+import moment from "moment";
+
+const validateBaseAmount = (_amount: any, values: any) => {
+  if (!_amount) {
+    return undefined;
+  }
+  if (new BigNumber(_amount).lte(0)) {
+    return `Required`;
+  }
+  if (new BigNumber(_amount).gt(values?.baseBalance)) {
+    return `Unfortunately, you don’t have have enough TM to vote. But don’t worry, stay tuned for updates regarding our next airdrop on our Discord channel.`;
+  }
+
+  return undefined;
+};
 
 export const MakeFormSwap = forwardRef((props, ref) => {
   const {
@@ -95,6 +98,10 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       throw error;
     }
   };
+
+  useEffect(() => {
+    change('baseBalance', baseBalance);
+  }, [baseBalance]);
 
   const isRequireApprove = useMemo(() => {
     let result = false;
@@ -186,25 +193,8 @@ export const MakeFormSwap = forwardRef((props, ref) => {
 
   const handleChangeMaxBaseAmount = () => {
     change('baseAmount', baseBalance);
-    onChangeValueBaseAmount(baseBalance);
+    // onChangeValueBaseAmount(baseBalance);
   };
-
-  const validateBaseAmount = useCallback(
-    (_amount: any) => {
-      if (!_amount) {
-        return undefined;
-      }
-      if (new BigNumber(_amount).lte(0)) {
-        return `Required`;
-      }
-      if (new BigNumber(_amount).gt(baseBalance)) {
-        return `Insufficient balance.`;
-      }
-
-      return undefined;
-    },
-    [values.baseAmount],
-  );
 
 
   const onChangeValueBaseAmount = (amount: any) => {
@@ -213,31 +203,6 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     //   poolDetail,
     // });
   };
-
-  // const handleBaseAmountChange = ({
-  //   amount,
-  //   poolDetail,
-  // }: {
-  //   amount: any;
-  //   poolDetail: any;
-  // }) => {
-  //   try {
-  //     if (!amount || isNaN(Number(amount))) return;
-  //
-  //     const quoteAmount = new BigNumber(amount)
-  //       .div(new BigNumber(poolDetail?.totalValue || 0).plus(amount))
-  //       .multipliedBy(poolDetail?.launchpadBalance || 0);
-  //     change('quoteAmount', quoteAmount.toFixed());
-  //   } catch (err: any) {
-  //     logErrorToServer({
-  //       type: 'error',
-  //       address: account,
-  //       error: JSON.stringify(err),
-  //       message: err?.message,
-  //       place_happen: 'handleBaseAmountChange',
-  //     });
-  //   }
-  // };
 
   const onShowModalApprove = () => {
     const id = 'modal';
@@ -282,50 +247,9 @@ export const MakeFormSwap = forwardRef((props, ref) => {
 
   return (
     <form onSubmit={onSubmit} style={{ height: '100%' }}>
-      <Flex gap={0} color={'#000000'} mt={4} direction={'column'}>
-        <SimpleGrid columns={3} spacingX={6}>
-          <GridItem>
-            <Stat>
-              <StatLabel>Rewards</StatLabel>
-              <StatNumber>
-                {formatCurrency(poolDetail?.launchpadBalance)}{' '}
-                {poolDetail?.launchpadToken?.symbol}
-              </StatNumber>
-            </Stat>
-          </GridItem>
-          <GridItem>
-            <Stat>
-              <StatLabel>Funding Goal</StatLabel>
-              <StatNumber>
-                {formatCurrency(poolDetail?.goalBalance || 0)}{' '}
-                {poolDetail?.votingToken?.symbol}
-              </StatNumber>
-            </Stat>
-          </GridItem>
-        </SimpleGrid>
-        {/*<Stat className={styles.infoColumn}>
-          <StatLabel>
-            {isPendingProposal
-              ? 'Starts in'
-              : isStartingProposal
-              ? 'Ends in'
-              : 'Ended at'}
-          </StatLabel>
-          <StatNumber>
-            <Text>
-              {isPendingProposal
-                ? `${
-                    Number(days) > 0 ? `${days}d :` : ''
-                  } ${hours}h : ${minutes}m : ${seconds}s`
-                : isStartingProposal
-                ? `${
-                    Number(days) > 0 ? `${days}d :` : ''
-                  } ${hours}h : ${minutes}m : ${seconds}s`
-                : moment(proposalDetail.voteEnd).format('LLL')}
-            </Text>
-          </StatNumber>
-        </Stat>*/}
-      </Flex>
+      <Text>
+        Your vote will confirm your support for this project. Note, that when you pledge your token onto the platform, it stays locked for 30 days and earns 5% of the total funds raised, paid via project tokens.
+      </Text>
       <InputWrapper
         className={cx(styles.inputAmountWrap, styles.inputBaseAmountWrap)}
         theme="light"
@@ -381,7 +305,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
                     cursor={'pointer'}
                     color={'#3385FF'}
                     onClick={handleChangeMaxBaseAmount}
-                    bgColor={'#2E2E2E'}
+                    bgColor={"rgba(0, 0, 0, 0.2)"}
                     borderRadius={'4px'}
                     padding={'1px 12px'}
                     fontSize={px2rem(16)}
@@ -467,7 +391,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   );
 });
 
-const BuyForm = ({ poolDetail, votingToken }: any) => {
+const BuyForm = ({ poolDetail, votingToken, onClose }: any) => {
   const refForm = useRef<any>();
   const [submitting, setSubmitting] = useState(false);
   const dispatch = useAppDispatch();
@@ -478,6 +402,10 @@ const BuyForm = ({ poolDetail, votingToken }: any) => {
   });
 
   const handleSubmit = async (values: any) => {
+    if(moment().unix() >= moment(poolDetail?.voteEnd).unix()) {
+      toast.error('This project is overdue for voting.');
+      return;
+    }
     const { baseAmount } = values;
     try {
       setSubmitting(true);
@@ -498,6 +426,7 @@ const BuyForm = ({ poolDetail, votingToken }: any) => {
       refForm.current?.reset();
       dispatch(requestReload());
       dispatch(requestReloadRealtime());
+      onClose && onClose();
     } catch (err: any) {
       toastError(showError, err, { address: account });
       logErrorToServer({
@@ -526,6 +455,7 @@ const BuyForm = ({ poolDetail, votingToken }: any) => {
             submitting={submitting}
             poolDetail={poolDetail}
             votingToken={votingToken}
+            onClose={onClose}
           />
         )}
       </Form>

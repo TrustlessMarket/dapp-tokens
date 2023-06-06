@@ -91,6 +91,8 @@ import useIsAbleClose from '@/hooks/contract-operations/launchpad/useIsAbleClose
 import useIsAbleVoteRelease from '@/hooks/contract-operations/launchpad/useIsAbleVoteRelease';
 import useIsAbleCancel from '@/hooks/contract-operations/launchpad/useIsAbleCancel';
 import useCancelLaunchPad from '@/hooks/contract-operations/launchpad/useCancel';
+import useVoteReleaseLaunchpad from '@/hooks/contract-operations/launchpad/useVoteRelease';
+import tokenIcons from '@/constants/tokenIcons';
 
 const FEE = 2;
 export const MakeFormSwap = forwardRef((props, ref) => {
@@ -102,6 +104,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     isEndLaunchpad,
     isClaimLaunchpad,
     isCancelLaunchpad,
+    isVoteRelease,
   } = props;
   const [loading, setLoading] = useState(false);
   const [liquidityToken, setLiquidityToken] = useState<any>();
@@ -114,25 +117,15 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const { juiceBalance, isLoadedAssets } = useContext(AssetsContext);
   const isAuthenticated = useSelector(getIsAuthenticatedSelector);
   const dispatch = useDispatch();
-  const router = useRouter();
 
   const { account } = useWeb3React();
   const needReload = useAppSelector(selectPnftExchange).needReload;
-  const [boostInfo, setBoostInfo] = useState<any>();
 
   const [status] = useLaunchPadStatus({ row: poolDetail });
 
   const { values } = useFormState();
   const { change, restart } = useForm();
   const btnDisabled = loading || !liquidityToken;
-  // const isRequireApprove =
-  //   isAuthenticated &&
-  //   new BigNumber(amountBaseTokenApproved || 0).lt(
-  //     Web3.utils.toWei(`${values?.baseAmount || 0}`, 'ether'),
-  //   );
-
-  // console.log('values', values);
-  // console.log('=====')
 
   const isRequireApprove = useMemo(() => {
     let result = false;
@@ -195,25 +188,6 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       throw error;
     }
   };
-
-  const getBoostInfo = async () => {
-    try {
-      const response = await getUserBoost({
-        address: account,
-        pool_address: router?.query?.pool_address,
-      });
-      setBoostInfo(response);
-      change('boostInfo', response);
-    } catch (err) {
-      throw err;
-    }
-  };
-
-  useEffect(() => {
-    if (account && router?.query?.pool_address) {
-      getBoostInfo();
-    }
-  }, [account, router?.query?.pool_address, needReload]);
 
   useEffect(() => {
     if (poolDetail?.id) {
@@ -303,6 +277,11 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       }
       if (new BigNumber(_amount).gt(baseBalance)) {
         return `Insufficient balance.`;
+      }
+
+      if((Number(poolDetail?.thresholdBalance || 0) > 0)
+        && new BigNumber(_amount).plus(poolDetail?.totalValue).gt(poolDetail?.thresholdBalance)) {
+        return `Total amount deposit greater than ${poolDetail?.thresholdBalance}. Max allow deposit is ${new BigNumber(poolDetail?.thresholdBalance).minus(poolDetail?.totalValue).toNumber()}`;
       }
 
       return undefined;
@@ -398,7 +377,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
               label={`$${formatCurrency(poolDetail?.totalValueUsd || 0, 2)}`}
             >
               <Flex gap={1} alignItems={'center'}>
-                <Flex gap={1} alignItems={"center"}>
+                <Flex gap={1} alignItems={'center'}>
                   {formatCurrency(poolDetail?.totalValue || 0)}{' '}
                   <img
                     src={
@@ -418,7 +397,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         </Stat>
         <Stat className={styles.infoColumn} textAlign={'left'}>
           <StatLabel>
-            <Flex gap={1} justifyContent={"flex-end"}>
+            <Flex gap={1} justifyContent={'flex-end'}>
               <InfoTooltip
                 showIcon={true}
                 label="The minimum amount you would like to raise. If the crowdfunding does not reach the Funding Goal, the funded amount will be returned to the contributors"
@@ -435,8 +414,8 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             </Flex>
           </StatLabel>
           <StatNumber>
-            <Flex gap={1} justifyContent={"flex-end"}>
-              <Flex gap={1} alignItems={"center"}>
+            <Flex gap={1} justifyContent={'flex-end'}>
+              <Flex gap={1} alignItems={'center'}>
                 {formatCurrency(poolDetail?.goalBalance || 0)}
                 <img
                   src={
@@ -448,7 +427,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
                 />
               </Flex>
               /
-              <Flex gap={1} alignItems={"center"}>
+              <Flex gap={1} alignItems={'center'}>
                 {Number(poolDetail?.thresholdBalance || 0) > 0 ? (
                   <>
                     {formatCurrency(poolDetail?.thresholdBalance || 0)}{' '}
@@ -559,10 +538,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
                 liquidityToken && (
                   <Flex gap={1} alignItems={'center'} color={'#FFFFFF'} paddingX={2}>
                     <img
-                      src={
-                        liquidityToken?.thumbnail ||
-                        `${CDN_URL}/upload/1683530065704444020-1683530065-default-coin.svg`
-                      }
+                      src={tokenIcons[liquidityToken?.symbol?.toLowerCase()]}
                       alt={liquidityToken?.thumbnail || 'default-icon'}
                       className={'avatar'}
                     />
@@ -607,29 +583,6 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           </Flex>
         </InputWrapper>
       )}
-
-      {/*<Box mt={1}>
-        <HorizontalItem
-          label={
-            <Text fontSize={'sm'} fontWeight={'medium'} color={'rgba(255, 255, 255, 0.7)'}>
-              FEE: {FEE * (swapRoutes?.length || 1)}%
-            </Text>
-          }
-        />
-      </Box>*/}
-      {/*{baseToken && quoteToken && values?.baseAmount && Number(exchangeRate) > 0 && (
-        <Box mt={1}>
-          <HorizontalItem
-            label={
-              <Text fontSize={'sm'} fontWeight={'medium'} color={'#FFFFFF'}>
-                1 {quoteToken?.symbol} =&nbsp;
-                {formatCurrency(exchangeRate.toString(), baseToken?.decimal || 18)}
-                &nbsp;{baseToken?.symbol}
-              </Text>
-            }
-          />
-        </Box>
-      )}*/}
       {values?.baseAmount && (
         <Box mt={1}>
           <HorizontalItem
@@ -706,7 +659,11 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             </Text>
           </Flex>
         )}
-      {(isStarting || isEndLaunchpad || isClaimLaunchpad || isCancelLaunchpad) && (
+      {(isStarting ||
+        isEndLaunchpad ||
+        isClaimLaunchpad ||
+        isCancelLaunchpad ||
+        isVoteRelease) && (
         <WrapperConnected
           type={isRequireApprove ? 'button' : 'submit'}
           className={styles.submitButton}
@@ -737,21 +694,25 @@ export const MakeFormSwap = forwardRef((props, ref) => {
                 id: transactionType.depositLaunchpad,
               }}
               style={{
-                backgroundColor: isClaimLaunchpad
-                  ? colors.greenPrimary
-                  : isEndLaunchpad
+                backgroundColor: isEndLaunchpad
                   ? colors.redPrimary
+                  : isClaimLaunchpad
+                  ? colors.greenPrimary
                   : isCancelLaunchpad
                   ? colors.redPrimary
+                  : isVoteRelease
+                  ? colors.bluePrimary
                   : colors.bluePrimary,
               }}
             >
-              {isClaimLaunchpad
-                ? 'CLAIM THIS PROJECT'
-                : isEndLaunchpad
+              {isEndLaunchpad
                 ? 'END THIS PROJECT'
+                : isClaimLaunchpad
+                ? 'CLAIM THIS PROJECT'
                 : isCancelLaunchpad
                 ? 'CANCEL THIS PROJECT'
+                : isVoteRelease
+                ? 'RELEASE VOTE'
                 : 'BACK THIS PROJECT'}
             </FiledButton>
           )}
@@ -794,9 +755,14 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
   const { run: depositLaunchpad } = useContractOperation({
     operation: useDepositPool,
   });
-  const { call: endLaunchpad } = useEndLaunchPad();
+  const { run: endLaunchpad } = useContractOperation({
+    operation: useEndLaunchPad,
+  });
   const { run: claimLaunchpad } = useContractOperation({
     operation: useClaimLaunchPad,
+  });
+  const { run: voteReleaseLaunchpad } = useContractOperation({
+    operation: useVoteReleaseLaunchpad,
   });
   const { call: cancelLaunchpad } = useCancelLaunchPad();
   const { call: isAbleRedeem } = useIsAbleRedeem();
@@ -813,15 +779,18 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
   const [canVoteRelease, setCanVoteRelease] = useState(false);
   const [canCancel, setCanCancel] = useState(false);
   const [userDeposit, setUserDeposit] = useState<any>();
+  const [boostInfo, setBoostInfo] = useState<any>();
 
-  console.log('poolDetail', poolDetail);
-  console.log('canEnd', canEnd);
-  console.log('canClaim', canClaim);
-  console.log('canClose', canClose);
-  console.log('canVoteRelease', canVoteRelease);
-  console.log('canCancel', canCancel);
-  console.log('userDeposit', userDeposit);
-  console.log('=====');
+  // console.log('poolDetail', poolDetail);
+  // console.log('canEnd', canEnd);
+  // console.log('canClaim', canClaim);
+  // console.log('canClose', canClose);
+  // console.log('canVoteRelease', canVoteRelease);
+  // console.log('canCancel', canCancel);
+  // console.log('userDeposit', userDeposit);
+  // console.log('boostInfo', boostInfo);
+  // console.log('=====');
+  const isLaunchpadCreator = compareString(poolDetail?.creatorAddress, account);
 
   const isStarting = [LAUNCHPAD_STATUS.Launching].includes(status.key);
 
@@ -829,7 +798,7 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
     if (![LAUNCHPAD_STATUS.Draft].includes(status.key)) {
       fetchData();
     }
-  }, [account, isActive, poolDetail]);
+  }, [account, isActive, JSON.stringify(poolDetail)]);
 
   const fetchData = async () => {
     try {
@@ -855,6 +824,10 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
           pool_address: poolDetail?.launchpad,
           address: account,
         }),
+        getUserBoost({
+          address: account,
+          pool_address: poolDetail?.launchpad,
+        }),
       ]);
       setCanEnd(response[0]);
       setCanClose(response[1]);
@@ -866,140 +839,121 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
           [LAUNCHPAD_STATUS.Pending].includes(poolDetail?.state),
       );
       setUserDeposit(response[5]);
+      setBoostInfo(response[6]);
     } catch (error) {
       console.log('Launchpad detail form fetchData', error);
     }
   };
 
-  const confirmDeposit = (values: any) => {
+  const getConfirmTitle = () => {
+    return (
+      canEnd ? (isLaunchpadCreator ? 'Close My Launchpad' : 'Close Launchpad')
+        : canClaim ? ([LAUNCHPAD_STATUS.Failed].includes(poolDetail?.state) ? 'Claim your Funds' : 'Claim your Reward')
+          : canCancel ? 'Delete my launchpad'
+            : canVoteRelease ? 'Release vote token'
+              : 'Confirm deposit'
+    );
+  }
+
+  const getConfirmContent = (values: any) => {
     const { baseAmount, quoteAmount, onConfirm } = values;
+    return (
+      <Flex direction={'column'} gap={2}>
+        {canEnd ? (
+          <Box>
+            {
+              isLaunchpadCreator
+                ? 'If you wish to close your launchpad, click Confirm below and your tokens will be immediately returned to your account.'
+                : 'If you wish to close this launchpad, click Confirm below.'
+            }
+          </Box>
+        ) : canClaim ? (
+          <Box>
+            {
+              [LAUNCHPAD_STATUS.Failed].includes(poolDetail?.state)
+                ? 'The launchpad did not reach the funding goal. Click Claim your Funds to get your funds back.'
+                : 'Congratulations! The launchpad has achieved its funding goal. Please click on "Claim" to receive your reward.'
+            }
+          </Box>
+        ) : canCancel ? (
+          <Text>
+            If you wish to delete your launchpad, click Confirm below and your
+            tokens will be immediately returned to your account.
+          </Text>
+        ) : canVoteRelease ? (
+          <Text>
+            Release launchpad to get back voting token.
+          </Text>
+        ) : (
+          <>
+            <HorizontalItem
+              label={
+                <Text fontSize={'sm'} color={'#B1B5C3'}>
+                  Deposit amount
+                </Text>
+              }
+              value={
+                <Text fontSize={'sm'}>
+                  {formatCurrency(baseAmount, 6)}{' '}
+                  {poolDetail?.liquidityToken?.symbol}
+                </Text>
+              }
+            />
+            <HorizontalItem
+              label={
+                <Text fontSize={'sm'} color={'#B1B5C3'}>
+                  Estimate receive amount
+                </Text>
+              }
+              value={
+                <Text fontSize={'sm'}>
+                  {formatCurrency(quoteAmount, 6)}{' '}
+                  {poolDetail?.launchpadToken?.symbol}
+                </Text>
+              }
+            />
+          </>
+        )}
+        <FiledButton
+          loadingText="Processing"
+          btnSize={'h'}
+          onClick={onConfirm}
+          mt={4}
+        >
+          {
+            canClaim ? (
+              <>
+                {
+                  [LAUNCHPAD_STATUS.Failed].includes(poolDetail?.state)
+                    ? 'Claim your Funds'
+                    : 'Claim'
+                }
+              </>
+            ) : 'Confirm'
+          }
+        </FiledButton>
+      </Flex>
+    )
+  }
+
+  const confirmDeposit = (values: any) => {
+    const { onConfirm } = values;
     const id = 'modalDepositConfirm';
     // const close = () => dispatch(closeModal({id}));
     dispatch(
       openModal({
         id,
         theme: 'dark',
-        title: canClaim
-          ? 'Confirm claim this project'
-          : canEnd
-          ? 'Confirm end this project'
-          : canCancel
-          ? 'Delete my launchpad'
-          : 'Confirm deposit',
+        title: getConfirmTitle(),
         className: styles.modalContent,
         modalProps: {
           centered: true,
           size: mobileScreen ? 'full' : 'xl',
           zIndex: 9999999,
         },
-        render: () => (
-          <Flex direction={'column'} gap={2}>
-            {canClaim ? (
-              <>
-                <HorizontalItem
-                  label={
-                    <Text fontSize={'sm'} color={'#B1B5C3'}>
-                      Deposit amount
-                    </Text>
-                  }
-                  value={
-                    <Text fontSize={'sm'}>
-                      {formatCurrency(userDeposit?.amount || 0, 6)}{' '}
-                      {poolDetail?.liquidityToken?.symbol}
-                    </Text>
-                  }
-                />
-                <HorizontalItem
-                  label={
-                    <Text fontSize={'sm'} color={'#B1B5C3'}>
-                      Estimate receive amount
-                    </Text>
-                  }
-                  value={
-                    <Text fontSize={'sm'}>
-                      {abbreviateNumber(userDeposit?.userLaunchpadBalance || 0)}{' '}
-                      {poolDetail?.launchpadToken?.symbol}
-                    </Text>
-                  }
-                />
-              </>
-            ) : canEnd ? (
-              <Text>End this project?</Text>
-            ) : canCancel ? (
-              <Text>
-                If you wish to delete your launchpad, click Confirm below and your
-                tokens will be immediately returned to your account.
-              </Text>
-            ) : (
-              <>
-                <HorizontalItem
-                  label={
-                    <Text fontSize={'sm'} color={'#B1B5C3'}>
-                      Deposit amount
-                    </Text>
-                  }
-                  value={
-                    <Text fontSize={'sm'}>
-                      {formatCurrency(baseAmount, 6)}{' '}
-                      {poolDetail?.liquidityToken?.symbol}
-                    </Text>
-                  }
-                />
-                <HorizontalItem
-                  label={
-                    <Text fontSize={'sm'} color={'#B1B5C3'}>
-                      Estimate receive amount
-                    </Text>
-                  }
-                  value={
-                    <Text fontSize={'sm'}>
-                      {formatCurrency(quoteAmount, 6)}{' '}
-                      {poolDetail?.launchpadToken?.symbol}
-                    </Text>
-                  }
-                />
-              </>
-            )}
-
-            {/*<HorizontalItem
-              label={
-                <Text fontSize={'sm'} color={'#B1B5C3'}>
-                  Slippage
-                </Text>
-              }
-              value={<Text fontSize={'sm'}>{slippage}%</Text>}
-            />
-            <Flex
-              gap={1}
-              alignItems={slippage === 100 ? 'center' : 'flex-start'}
-              mt={2}
-            >
-              <img
-                src={`${CDN_URL}/icons/icon-information.png`}
-                alt="info"
-                style={{ width: 25, height: 25, minWidth: 25, minHeight: 25 }}
-              />
-              <Text
-                fontSize="sm"
-                color="brand.warning.400"
-                textAlign={'left'}
-                maxW={'500px'}
-              >
-                {slippage === 100
-                  ? `Your current slippage is set at 100%. Trade at your own risk.`
-                  : `Your slippage percentage of ${slippage}% means that if the price changes by ${slippage}%, your transaction will fail and revert. If you wish to change your slippage percentage, please close this confirmation popup and go to the top of the swap box where you can set a different slippage value.`}
-              </Text>
-            </Flex>*/}
-            <FiledButton
-              loadingText="Processing"
-              btnSize={'h'}
-              onClick={onConfirm}
-              mt={4}
-            >
-              Confirm
-            </FiledButton>
-          </Flex>
-        ),
+        render: () => {
+          return getConfirmContent(values);
+        },
       }),
     );
   };
@@ -1037,10 +991,10 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
         signature: '',
       };
 
-      // if (boostInfo) {
-      //   data.boostRatio = boostInfo.boostSign;
-      //   data.signature = boostInfo.adminSignature;
-      // }
+      if (boostInfo) {
+        data.boostRatio = boostInfo.boostSign;
+        data.signature = boostInfo.adminSignature;
+      }
 
       let response;
       if (canClaim) {
@@ -1053,6 +1007,10 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
         });
       } else if (canCancel) {
         response = await cancelLaunchpad({
+          launchpadAddress: poolDetail?.launchpad,
+        });
+      } else if (canVoteRelease) {
+        response = await voteReleaseLaunchpad({
           launchpadAddress: poolDetail?.launchpad,
         });
       } else {
@@ -1094,6 +1052,7 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
             isClaimLaunchpad={canClaim}
             isStarting={isStarting}
             isCancelLaunchpad={canCancel}
+            isVoteRelease={canVoteRelease}
           />
         )}
       </Form>

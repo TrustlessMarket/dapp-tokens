@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable react/no-children-prop */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {
@@ -6,16 +7,25 @@ import {
   FormControl,
   FormErrorMessage,
   FormLabel,
-  Input,
   InputGroup,
   InputLeftElement,
   InputRightElement,
 } from '@chakra-ui/react';
 
 import styles from './styles.module.scss';
-import React from 'react';
 
-interface FieldTextProps {
+import dynamic from 'next/dynamic';
+import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
+import { useState } from 'react';
+import { EditorProps } from 'react-draft-wysiwyg';
+
+import { ContentState, convertToRaw } from 'draft-js';
+
+const Editor = dynamic<EditorProps>(
+  () => import('react-draft-wysiwyg').then((mod) => mod.Editor),
+  { ssr: false },
+);
+interface FieldRichEditorProps {
   input?: any;
   meta?: any;
   label?: string;
@@ -30,7 +40,7 @@ interface FieldTextProps {
   borderColor?: string;
 }
 
-const FieldText = (props: FieldTextProps) => {
+const FieldRichEditor = (props: FieldRichEditorProps) => {
   const {
     input,
     label,
@@ -53,9 +63,14 @@ const FieldText = (props: FieldTextProps) => {
 
   const hasAppend = appendComp;
 
+  const _contentState = ContentState.createFromText('Sample content state');
+  const raw = convertToRaw(_contentState); // RawDraftContentState JSON
+  const [contentState, setContentState] = useState(raw); // ContentState JSON
+
   const handleChange = (e: any) => {
-    onChange(e.target.value);
-    fieldChanged?.(e.target.value);
+    console.log(e);
+    // onChange(e);
+    // fieldChanged?.(e);
   };
 
   return (
@@ -81,6 +96,7 @@ const FieldText = (props: FieldTextProps) => {
         borderRadius={8}
         bgColor="background.default"
         overflow="hidden"
+        style={{ height: 300 }}
       >
         {prependComp && (
           <InputLeftElement
@@ -91,10 +107,22 @@ const FieldText = (props: FieldTextProps) => {
             position={'relative'}
           />
         )}
-        <Box className={styles.formControl}>
-          <Input
+        <Box data-color-mode="dark" className={styles.formControl}>
+          {/* <MDEditor
+            style={{ minHeight: 300 }}
+            editorState={value}
+            onEditorStateChange={handleChange}
+            {...restProps}
+          /> */}
+          <Editor
+            defaultContentState={contentState}
+            onContentStateChange={setContentState}
+            wrapperClassName="wrapper-class"
+            editorClassName="editor-class"
+            toolbarClassName="toolbar-class"
+          />
+          {/* <Input
             as={inputType === 'text' ? 'input' : 'textarea'}
-            type={inputType === 'text' ? 'input' : 'textarea'}
             placeholder={placeholder}
             _placeholder={{ color: '#b3b3b3' }}
             value={value}
@@ -103,9 +131,9 @@ const FieldText = (props: FieldTextProps) => {
               onBlur();
               e?.target?.blur();
             }}
-            {...restProps}
             onChange={handleChange}
-          />
+            {...restProps}
+          /> */}
         </Box>
         {hasAppend && (
           <InputRightElement w="fit-content" pr={2} children={appendComp} />
@@ -118,4 +146,4 @@ const FieldText = (props: FieldTextProps) => {
   );
 };
 
-export default FieldText;
+export default FieldRichEditor;
