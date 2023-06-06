@@ -15,8 +15,8 @@ const ProposalResult = ({title, totalVote, className, data}: any) => {
   const { mobileScreen, tabletScreen } = useWindowSize();
   const { account} = useWeb3React();
 
-  const emtyData = useMemo(() => {
-    return [...Array(18 - (data?.voters?.length || 0))].map(function () {});
+  const emptyData = useMemo(() => {
+    return [...Array((data?.voters?.length >= 18 ? 30 : 18) - (data?.voters?.length || 0))].map(function () {});
   }, [JSON.stringify(data)]);
 
   return (
@@ -33,7 +33,7 @@ const ProposalResult = ({title, totalVote, className, data}: any) => {
         className={"progress-bar"}
         mt={4}
       />
-      <SimpleGrid mt={6} spacingX={8} spacingY={4} columns={6} w={"fit-content"} marginX={"auto"}>
+      <SimpleGrid mt={6} spacingX={8} spacingY={4} columns={data?.voters?.length >= 18 ? 10 : 6} w={"fit-content"} marginX={"auto"}>
         {
           data?.voters?.map((d: any) => {
             return (
@@ -69,7 +69,7 @@ const ProposalResult = ({title, totalVote, className, data}: any) => {
           })
         }
         {
-          emtyData?.map((d: any, index) => {
+          emptyData?.map((d: any, index) => {
             return (
               <Box
                 key={index}
