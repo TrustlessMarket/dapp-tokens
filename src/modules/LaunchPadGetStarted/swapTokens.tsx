@@ -42,7 +42,7 @@ const STEPS = [
               <img
                 alt="swap_step1_1"
                 className={styles.introImg}
-                src={`${CDN_URL}/upload/1683709871148485312-1683709871-swap_step2_0.png`}
+                src={`${CDN_URL}/pages/trustlessmarket/get_started/swap_step_2.1.png`}
               />
             </ListItem>
             <ListItem>
@@ -63,24 +63,34 @@ const STEPS = [
     title: 'Wrap your BTC or ETH',
     desc: (
         <Box>
+          <Text>Go to <Link href={"https://trustlessbridge.io/"} target={"_blank"} style={{textDecoration: 'underline'}}>https://trustlessbridge.io/</Link>, choose your preferred cryptocurrency.</Text>
+          <Text fontWeight={"700"} mt={2}>3.1. Wrap BTC:</Text>
           <UnorderedList>
             <ListItem>
-              Go to <Link href={"https://trustlessbridge.io/"} target={"_blank"} style={{textDecoration: 'underline'}}>https://trustlessbridge.io/</Link>, choose your preferred cryptocurrency.
+              Copy your TC address at <Link href={"https://trustlesswallet.io/"} target={"_blank"} style={{textDecoration: 'underline'}}>https://trustlesswallet.io/</Link> and paste it here. Then click “Transfer”.
               <img
                 alt="swap_step1_1"
                 className={styles.introImg}
-                src={`${CDN_URL}/upload/1683706461623422665-1683706461-swap_step3_1.png`}
+                src={`${CDN_URL}/pages/trustlessmarket/get_started/swap_step_3.1.1.png`}
               />
             </ListItem>
             <ListItem>
-              Choose your preferred cryptocurrency (4 options: BTC, ETH, USDC, PEPE).
-            </ListItem>
-            <ListItem>
-              Send the amount of the chosen crypto you want to trade to this wallet, and your crypto will be automatically wrapped.
+              Transfer your BTC to the following address. Your $BTC will be automatically wrapped.
               <img
                 alt="swap_step1_1"
                 className={styles.introImg}
-                src={`${CDN_URL}/upload/1683706545509754577-1683706545-swap_step3_2.png`}
+                src={`${CDN_URL}/pages/trustlessmarket/get_started/swap_step_3.1.2.png`}
+              />
+            </ListItem>
+          </UnorderedList>
+          <Text fontWeight={"700"} mt={2}>3.2. Wrap ETH</Text>
+          <UnorderedList>
+            <ListItem>
+              Put in the amount of ETH you want to wrap. Copy your TC address at <Link href={"https://trustlesswallet.io/"} target={"_blank"} style={{textDecoration: 'underline'}}>https://trustlesswallet.io/</Link> and paste it here. Then click “Transfer”.
+              <img
+                alt="swap_step1_1"
+                className={styles.introImg}
+                src={`${CDN_URL}/pages/trustlessmarket/get_started/swap_step_3.2.1.png`}
               />
             </ListItem>
             <ListItem>
@@ -97,41 +107,61 @@ const STEPS = [
   },
   {
     step: '4',
-    title: 'Start trading Smart BRC-20 tokens with Trustless Market',
+    title: 'Participate in the crowdfunding of the projects',
     desc: (
         <Box>
+          <Text>Go to <Link href={"https://trustless.market/launchpad"} style={{textDecoration: 'underline'}}>https://trustless.market/launchpad</Link> and select the project you want to support</Text>
+          <img
+            alt="swap_step1_1"
+            className={styles.introImg}
+            src={`${CDN_URL}/pages/trustlessmarket/get_started/launchpad_step_4.png`}
+          />
+          <Text fontWeight={"700"} mt={2}>4.1. Voting:</Text>
           <UnorderedList>
             <ListItem>
-              You are now ready to swap SBRC-20 tokens using Wrapped Crypto (i.e WBTC).
-            </ListItem>
-            <ListItem>
-              Go to <Link href={"https://trustless.market/"} style={{textDecoration: 'underline'}}>https://trustless.market</Link> and select the token you want to swap.
-            </ListItem>
-            <ListItem>
-              After choosing a token and the amount you want to trade, click <Text as="span" fontStyle={"italic"}>"Approve use of WBTC"</Text>, then click <Text as="span" fontStyle={"italic"}>"Swap"</Text>.
+              Select the project with the “Voting” status. Then click “Support this Launchpad”.
               <img
-                alt="swap_step1_1"
+                alt="launchpad_step1_1"
                 className={styles.introImg}
-                src={`${CDN_URL}/upload/1683709832008265887-1683709832-swap_step4.png`}
+                src={`${CDN_URL}/pages/trustlessmarket/get_started/launchpad_step_4.1.1.png`}
               />
+            </ListItem>
+            <ListItem>
+              Put in the amount of $TM you want to vote. If you don’t have $TM, you can earn 1 $TM for each time you add liquidity and 0.1 $TM for each swap on <Link href={"https://trustless.market/"} style={{textDecoration: 'underline'}}>Trustless Market DEX</Link>. Alternatively, join our <Link href={"https://discord.gg/HPuZHUexgv"} style={{textDecoration: 'underline'}}>Discord channel</Link> for updates about potential $TM airdrops.
+              <img
+                alt="launchpad_step1_1"
+                className={styles.introImg}
+                src={`${CDN_URL}/pages/trustlessmarket/get_started/launchpad_step_4.1.2.png`}
+              />
+            </ListItem>
+            <ListItem>
+              Click “Approve of TM“ {'=>'} Click “Confirm”
+              <img
+                alt="launchpad_step1_1"
+                className={styles.introImg}
+                src={`${CDN_URL}/pages/trustlessmarket/get_started/launchpad_step_4.1.3.png`}
+              />
+            </ListItem>
+            <ListItem>
+              Then go to <Link href={"https://trustlesswallet.io/"} style={{textDecoration: 'underline'}}>https://trustlesswallet.io/</Link>, click “Process” your transaction on the transactions tab and wait for the confirmation on the mempool
             </ListItem>
           </UnorderedList>
-        </Box>
-      )
-  },
-  {
-    step: '5',
-    title: 'Process the transactions',
-    desc: (
-        <Box>
+          <Text>*Note: <Text fontWeight={"700"} as={"span"}>If a project is listed on the launchpad, voters will receive 5% of the project's total crowdfunding amount proportionally in project’s tokens.</Text></Text>
+          <Text fontWeight={"700"} mt={2}>4.2. Contributing</Text>
           <UnorderedList>
             <ListItem>
-              Go to <Link href={"https://trustlesswallet.io/"} target={"_blank"} style={{textDecoration: 'underline'}}>https://trustlesswallet.io/</Link>, click <Text as="span" fontStyle={"italic"}>"Process"</Text> your transaction on the transactions tab and wait for the confirmation on the mempool.
+              Select the project with the “Funding” status.
+            </ListItem>
+            <ListItem>
+              Put in the amount you want to contribute (in WETH or WBTC). Then click “Approve” {"=>"} Click “Confirm”
               <img
-                alt="swap_step1_1"
+                alt="launchpad_step1_1"
                 className={styles.introImg}
-                src={`${CDN_URL}/upload/1683706671933624328-1683706671-swap_step5.png`}
+                src={`${CDN_URL}/pages/trustlessmarket/get_started/launchpad_step_4.2.1.png`}
               />
+            </ListItem>
+            <ListItem>
+              Then go to <Link href={"https://trustlesswallet.io/"} style={{textDecoration: 'underline'}}>https://trustlesswallet.io/</Link>, click “Process” your transaction on the transactions tab and wait for the confirmation on the mempool
             </ListItem>
           </UnorderedList>
         </Box>

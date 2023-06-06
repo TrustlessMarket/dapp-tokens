@@ -2,6 +2,7 @@ import styles from "./styles.module.scss";
 import BodyContainer from "@/components/Swap/bodyContainer";
 import SwapTokens from "./swapTokens";
 import SectionContainer from "@/components/Swap/sectionContainer";
+import {Box} from "@chakra-ui/react";
 
 const LaunchPadGetStarted = () => {
   return (
@@ -10,7 +11,9 @@ const LaunchPadGetStarted = () => {
         <div>
           <h3 className={styles.upload_title}>Instructions for Participating in TM LaunchPad</h3>
         </div>
-        <SwapTokens />
+        <Box mt={6}>
+          <SwapTokens />
+        </Box>
       </SectionContainer>
     </BodyContainer>
   );
