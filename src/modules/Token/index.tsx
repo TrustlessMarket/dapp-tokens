@@ -72,11 +72,12 @@ const TokenDetail = () => {
           chart_type: 'minute',
         }),
       ]);
+      console.log('resChart', resToken.length);
       if (resToken.length === 0) {
         throw 'Token not found';
       }
 
-      const sortedData = sortBy(resChart, 'timestamp');
+      const sortedData = sortBy(resChart || [], 'timestamp');
 
       const _data = sortedData?.map((v: any) => {
         return {
@@ -95,6 +96,7 @@ const TokenDetail = () => {
 
       setData(camelCaseKeys(resToken[0]));
     } catch (error) {
+      console.log('error >>>>>>>', error);
     } finally {
       setLoading(false);
     }

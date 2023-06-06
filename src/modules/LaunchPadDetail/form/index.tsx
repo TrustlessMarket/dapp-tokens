@@ -71,7 +71,7 @@ import debounce from 'lodash/debounce';
 import moment from 'moment';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import {
+import React, {
   useCallback,
   useContext,
   useEffect,
@@ -398,10 +398,17 @@ export const MakeFormSwap = forwardRef((props, ref) => {
               label={`$${formatCurrency(poolDetail?.totalValueUsd || 0, 2)}`}
             >
               <Flex gap={1} alignItems={'center'}>
-                <Text>
+                <Flex gap={1} alignItems={"center"}>
                   {formatCurrency(poolDetail?.totalValue || 0)}{' '}
-                  {liquidityToken?.symbol}
-                </Text>
+                  <img
+                    src={
+                      liquidityToken?.thumbnail ||
+                      `${CDN_URL}/upload/1683530065704444020-1683530065-default-coin.svg`
+                    }
+                    alt={liquidityToken?.thumbnail || 'default-icon'}
+                    className={'token-avatar'}
+                  />
+                </Flex>
                 <Text fontSize={'20px'} fontWeight={'400'}>
                   ({formatCurrency(percent, 2)}% funded)
                 </Text>
@@ -410,40 +417,78 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           </StatNumber>
         </Stat>
         <Stat className={styles.infoColumn} textAlign={'left'}>
-          <StatLabel>Target</StatLabel>
+          <StatLabel>
+            <Flex gap={1} justifyContent={"flex-end"}>
+              <InfoTooltip
+                showIcon={true}
+                label="The minimum amount you would like to raise. If the crowdfunding does not reach the Funding Goal, the funded amount will be returned to the contributors"
+              >
+                {`Funding goal`}
+              </InfoTooltip>
+              /
+              <InfoTooltip
+                showIcon={true}
+                label="The maximum amount you would like to raise. The crowdfunding will stop upon reaching its hard cap"
+              >
+                Hard Cap
+              </InfoTooltip>
+            </Flex>
+          </StatLabel>
           <StatNumber>
-            {formatCurrency(poolDetail?.goalBalance || 0)} {liquidityToken?.symbol}
-          </StatNumber>
-        </Stat>
-        <Stat className={styles.infoColumn} textAlign={'left'}>
-          <StatLabel>Hard Cap</StatLabel>
-          <StatNumber>
-            {Number(poolDetail?.thresholdBalance || 0) > 0 ? (
-              <>
-                {formatCurrency(poolDetail?.thresholdBalance || 0)}{' '}
-                {liquidityToken?.symbol}
-              </>
-            ) : (
-              'N/A'
-            )}
+            <Flex gap={1} justifyContent={"flex-end"}>
+              <Flex gap={1} alignItems={"center"}>
+                {formatCurrency(poolDetail?.goalBalance || 0)}
+                <img
+                  src={
+                    liquidityToken?.thumbnail ||
+                    `${CDN_URL}/upload/1683530065704444020-1683530065-default-coin.svg`
+                  }
+                  alt={liquidityToken?.thumbnail || 'default-icon'}
+                  className={'token-avatar'}
+                />
+              </Flex>
+              /
+              <Flex gap={1} alignItems={"center"}>
+                {Number(poolDetail?.thresholdBalance || 0) > 0 ? (
+                  <>
+                    {formatCurrency(poolDetail?.thresholdBalance || 0)}{' '}
+                    <img
+                      src={
+                        liquidityToken?.thumbnail ||
+                        `${CDN_URL}/upload/1683530065704444020-1683530065-default-coin.svg`
+                      }
+                      alt={liquidityToken?.thumbnail || 'default-icon'}
+                      className={'token-avatar'}
+                    />
+                  </>
+                ) : (
+                  'N/A'
+                )}
+              </Flex>
+            </Flex>
           </StatNumber>
         </Stat>
       </Flex>
-      {![LAUNCHPAD_STATUS.Pending].includes(status.key) && (
-        <Box className={styles.progressBar} mt={4}>
-          <Progress
-            w={['100%', '100%']}
-            h="10px"
-            value={percent}
-            borderRadius={20}
-          ></Progress>
-          {/*<Image src={fireImg} className={styles.fireImg} />*/}
-        </Box>
-      )}
+      <Box className={styles.progressBar} mt={4}>
+        <Progress
+          w={['100%', '100%']}
+          h="10px"
+          value={percent}
+          borderRadius={20}
+        ></Progress>
+        {/*<Image src={fireImg} className={styles.fireImg} />*/}
+      </Box>
       <Flex gap={0} color={'#FFFFFF'} mt={8} direction={'column'}>
         <Flex gap={6} justifyContent={'space-between'}>
           <Stat className={styles.infoColumn} flex={1}>
-            <StatLabel>Reward pool</StatLabel>
+            <StatLabel>
+              <InfoTooltip
+                showIcon={true}
+                label="The total number of tokens that the contributors will receive after the crowdfunding ends."
+              >
+                {`Reward pool`}
+              </InfoTooltip>
+            </StatLabel>
             <StatNumber>
               {formatCurrency(poolDetail?.launchpadBalance || 0)}
             </StatNumber>

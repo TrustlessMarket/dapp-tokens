@@ -4,7 +4,7 @@ import { getAddress } from '@ethersproject/address';
 import BigNumber from 'bignumber.js';
 import camelCase from 'lodash/camelCase';
 import { formatCurrency } from './string';
-import { random } from 'lodash';
+import { isEmpty, random } from 'lodash';
 import { DEFAULT_GAS_PRICE } from '@/constants/common';
 import web3 from 'web3';
 
@@ -28,10 +28,10 @@ export const shortCryptoAddress = (address = '', toLength?: number) => {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const camelCaseKeys = (obj: any): any => {
-  if (Array.isArray(obj)) {
+  if (Boolean(obj) && !isEmpty(obj) && Array.isArray(obj)) {
     return obj.map((v) => camelCaseKeys(v));
   }
-  if (obj !== null && obj.constructor === Object) {
+  if (Boolean(obj) && obj !== null && obj.constructor === Object) {
     return Object.keys(obj).reduce(
       (result, key) => ({
         ...result,

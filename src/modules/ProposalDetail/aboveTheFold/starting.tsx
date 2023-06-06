@@ -11,21 +11,21 @@ import {formatCurrency} from "@/utils";
 import LaunchpadStatus from "@/modules/Launchpad/Launchpad.Status";
 
 const ProposalStarting = ({poolDetail}: any) => {
-  const token: IToken = poolDetail?.launchpadToken;
+  const launchpadToken: IToken = poolDetail?.launchpadToken;
 
   return (
     <Box border={'1px solid #353945'} paddingX={6} paddingY={6}>
       <Flex justifyContent={'space-between'} mb={6}>
         <Flex gap={4} color={'#FFFFFF'} alignItems={'center'}>
           <Flex alignItems={'flex-start'} h={'100%'}>
-            <img src={token.thumbnail || TOKEN_ICON_DEFAULT} className={"token-avatar"}/>
+            <img src={launchpadToken.thumbnail || TOKEN_ICON_DEFAULT} className={"token-avatar"}/>
           </Flex>
           <Box>
             <Text fontSize={px2rem(24)} fontWeight={'500'}>
-              {token.name} <span>{token.symbol}</span>
+              {launchpadToken.name} <span style={{color: 'rgba(255,255,255,0.7)'}}>{launchpadToken.symbol}</span>
             </Text>
             <Flex alignItems={"center"} mt={2} gap={2}>
-              <Text className={styles.boxProposalId}>Launchpad {formatCurrency(poolDetail.id, 0)}</Text>
+              <Text className={styles.boxProposalId}>Launchpad #{formatCurrency(poolDetail.id, 0)}</Text>
               <LaunchpadStatus row={poolDetail} />
             </Flex>
           </Box>

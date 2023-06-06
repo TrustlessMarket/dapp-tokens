@@ -26,7 +26,7 @@ const useIsAbleEnd: ContractOperationHook<IIsAbleEndProps, boolean> = () => {
 
         let transaction = await contract.connect(provider).isAbleEnd();
 
-        if (!transaction && account) {
+        if (transaction && account) {
           const [unInscribedTxIDs] = await Promise.all([
             getUnInscribedTransactionDetailByAddress(account),
           ]);

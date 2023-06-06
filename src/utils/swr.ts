@@ -28,6 +28,7 @@ export const swrFetcher = async (url: string, options: any) => {
 
   try {
     const response = await axios.request({ url, method, data, ...rest });
+
     return camelCaseKeys(response?.data?.data || response?.data?.result);
   } catch (error: any) {
     if (error.response) {

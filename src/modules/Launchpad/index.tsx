@@ -16,13 +16,13 @@ import { selectPnftExchange } from '@/state/pnftExchange';
 import { colors } from '@/theme/colors';
 import { compareString, formatCurrency } from '@/utils';
 import { Box, Flex, Progress, Text } from '@chakra-ui/react';
-import { px2rem } from '@trustless-computer/dapp-core';
 import { useWeb3React } from '@web3-react/core';
 import BigNumber from 'bignumber.js';
 import moment from 'moment';
 import { useRouter } from 'next/router';
-import React, { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { BsPencil } from 'react-icons/bs';
+import { FaFireAlt } from 'react-icons/fa';
 import { ImClock2 } from 'react-icons/im';
 import { useDispatch } from 'react-redux';
 import LaunchpadStatus, {
@@ -175,7 +175,7 @@ const LaunchpadContainer = () => {
                   ? `${formatCurrency(row.liquidityRatio)}% of funded`
                   : 'N/A'
               }`}</Text>
-              <Text>{`${
+              <Text className="note">{`${
                 token.totalSupply
                   ? `${formatCurrency(row.liquidityBalance, 18)} ${token?.symbol}`
                   : 'N/A'
@@ -296,54 +296,39 @@ const LaunchpadContainer = () => {
           if ([LaunchpadLabelStatus.pending.value].includes(status.value)) {
             return (
               <Box>
-                <Text>
-                  <span style={{ color: colors.white500, fontSize: px2rem(14) }}>
-                    Starts at:
-                  </span>{' '}
-                  {moment(row.voteStart).format('MMM, DD')}
-                </Text>
                 <Flex mt={1} alignItems={'center'} gap={2}>
                   <ImClock2 />
                   <Text>
                     <CountDownTimer end_time={row.voteStart} />
                   </Text>
                 </Flex>
+                <Text className="note">Time left</Text>
               </Box>
             );
           }
           if (status.value === LaunchpadLabelStatus.voting.value) {
             return (
               <Box>
-                <Text>
-                  <span style={{ color: colors.white500, fontSize: px2rem(14) }}>
-                    Ends at:
-                  </span>{' '}
-                  {moment(row?.voteEnd).format('MMM, DD')}
-                </Text>
                 <Flex mt={1} alignItems={'center'} gap={2}>
-                  <ImClock2 />
+                  <FaFireAlt />
                   <Text>
                     <CountDownTimer end_time={row?.voteEnd} />
                   </Text>
                 </Flex>
+                <Text className="note">Ends at</Text>
               </Box>
             );
           }
           if (status.value === LaunchpadLabelStatus.launching.value) {
             return (
               <Box>
-                <Text>
-                  <span style={{ color: colors.white500, fontSize: px2rem(14) }}>
-                    Ends at:
-                  </span>{' '}
-                  {moment(row.launchEnd).format('MMM, DD')}
-                </Text>
                 <Flex mt={1} alignItems={'center'} gap={2}>
-                  <ImClock2 />
+                  <FaFireAlt />
                   <Text>
                     <CountDownTimer end_time={row.launchEnd} />
                   </Text>
                 </Flex>
+                <Text className="note">Ends at</Text>
               </Box>
             );
           }
@@ -355,15 +340,11 @@ const LaunchpadContainer = () => {
           ) {
             return (
               <Box>
-                <Text>
-                  <span style={{ color: colors.white500, fontSize: px2rem(14) }}>
-                    Release time:
-                  </span>{' '}
-                </Text>
                 <Flex mt={1} alignItems={'center'} gap={2}>
-                  <ImClock2 />
+                  <FaFireAlt />
                   <Text>{moment(row.lpTokenReleaseTime).format('LL')}</Text>
                 </Flex>
+                <Text className="note">Release time</Text>
               </Box>
             );
           }

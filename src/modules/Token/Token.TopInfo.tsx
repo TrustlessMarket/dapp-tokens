@@ -58,6 +58,7 @@ const TokenTopInfo = ({ data }: { data: IToken }) => {
                   backgroundColor: 'transparent',
                   borderColor: 'white',
                 }}
+                mt={2}
                 onClick={() =>
                   router.push(
                     `${ROUTE_PATH.UPDATE_TOKEN_INFO}?address=${data?.address}`,
