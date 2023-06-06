@@ -1,11 +1,12 @@
 import BodyContainer from '@/components/Swap/bodyContainer';
 import { colors } from '@/theme/colors';
-import { Flex } from '@chakra-ui/react';
+import { Box, Flex } from '@chakra-ui/react';
 import { px2rem } from '@trustless-computer/dapp-core';
 import styled from 'styled-components';
 
 export const StyledLaunchpadManage = styled(BodyContainer)`
   padding: 0px ${px2rem(60)};
+  padding-bottom: ${px2rem(30)};
   & > div {
     padding: 0px;
   }
@@ -89,6 +90,22 @@ export const StyledLaunchpadManage = styled(BodyContainer)`
   .item-faq-container {
     flex: 1;
     margin-bottom: 25px;
+    &.cls-textarea {
+      .chakra-input__group {
+        height: unset;
+        min-height: 60px;
+        border: none;
+        textarea {
+          height: 60px;
+          background-color: transparent;
+          border: 1px solid #353945;
+          color: white !important;
+          border-radius: 0;
+          padding-top: 5px;
+          margin-top: 5px;
+        }
+      }
+    }
     input {
       background-color: transparent;
     }
@@ -399,3 +416,5 @@ export const StyledLaunchpadFormStep1 = styled(Flex)`
     }
   }
 `;
+
+export const FAQStyled = styled(Box)``;

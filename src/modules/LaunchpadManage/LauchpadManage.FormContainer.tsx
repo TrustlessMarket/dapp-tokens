@@ -59,7 +59,7 @@ const LaunchpadManageFormContainer: React.FC<LaunchpadManageFormContainerProps> 
     ConfigLaunchpadResponse | any
   >({});
 
-  const { values } = useFormState();
+  const { values, errors } = useFormState();
   const { change, initialize } = useForm();
   const { account, isActive } = useWeb3React();
   const router = useRouter();
@@ -75,8 +75,6 @@ const LaunchpadManageFormContainer: React.FC<LaunchpadManageFormContainerProps> 
 
   const cachedData = localStorage.getItem(LAUNCHPAD_FORM_STEP);
 
-  const id = router.query?.id;
-
   const checkTokenApprove = async (token: IToken | any) => {
     try {
       const [_isApprove, _tokenBalance] = await Promise.all([
@@ -90,6 +88,7 @@ const LaunchpadManageFormContainer: React.FC<LaunchpadManageFormContainerProps> 
       ]);
       setIsApproveAmountToken(web3.utils.fromWei(_isApprove));
       setBalanceToken(_tokenBalance);
+      change('balanceToken', _tokenBalance);
 
       setIsApproveToken(
         checkBalanceIsApprove(
@@ -108,7 +107,10 @@ const LaunchpadManageFormContainer: React.FC<LaunchpadManageFormContainerProps> 
   };
 
   const checkBalanceIsApprove = (required: any = 0, amount: any = 0) => {
-    return required > 0 && new BigNumber(required).minus(amount).toNumber() >= 0;
+    const hasApprove =
+      required > 0 && new BigNumber(required).minus(amount).toNumber() >= 0;
+    change('isApprove', hasApprove);
+    return hasApprove;
   };
 
   const onApprove = async () => {
@@ -126,6 +128,7 @@ const LaunchpadManageFormContainer: React.FC<LaunchpadManageFormContainerProps> 
       );
 
       toast.success('Transaction has been created. Please wait for few minutes.');
+      change('isApprove', true);
     } catch (err) {
       const message =
         (err as Error).message || 'Something went wrong. Please try again later.';
@@ -195,23 +198,28 @@ const LaunchpadManageFormContainer: React.FC<LaunchpadManageFormContainerProps> 
   ]);
 
   useEffect(() => {
-    console.log('cachedData', cachedData);
+    if (!detail) {
+      if (cachedData) {
+        const parseCachedData: any = JSON.parse(cachedData);
+        const _values = parseCachedData.values || {};
 
-    if (cachedData && !detail) {
-      const parseCachedData: any = JSON.parse(cachedData);
-      const _values = parseCachedData.values || {};
+        const _step = parseCachedData.step;
 
-      const _step = parseCachedData.step;
+        if (_step > 0 && _step < steps.length) {
+          setStep(Number(_step));
+        }
 
-      if (_step > 0 && _step < steps.length) {
-        setStep(Number(_step));
+        initialize({
+          ..._values,
+        });
+      } else if (liquidTokens.length > 0) {
+        initialize({
+          liquidityTokenArg: camelCaseKeys(liquidTokens[0]),
+          steps: refSteps,
+        });
       }
-
-      initialize({
-        ..._values,
-      });
     }
-  }, [cachedData, detail]);
+  }, [cachedData, detail, liquidTokens]);
 
   useEffect(() => {
     if (detail) {
@@ -245,6 +253,7 @@ const LaunchpadManageFormContainer: React.FC<LaunchpadManageFormContainerProps> 
         boost_url: detail.boostUrl,
         duration: duration,
         steps: _refSteps,
+        detail: detail,
         ..._faqs,
       });
     }
@@ -283,15 +292,6 @@ const LaunchpadManageFormContainer: React.FC<LaunchpadManageFormContainerProps> 
       console.log('error', error);
     }
   };
-
-  useEffect(() => {
-    if (!id && liquidTokens.length > 0) {
-      initialize({
-        liquidityTokenArg: camelCaseKeys(liquidTokens[0]),
-        steps: refSteps,
-      });
-    }
-  }, [liquidTokens]);
 
   const renderContentByStep = () => {
     switch (step) {

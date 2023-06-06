@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import BigNumber from 'bignumber.js';
+import { reduce } from 'lodash';
 
 export const required = (value: unknown) => (value ? undefined : 'Required');
 export const requiredAmount = (value: unknown) =>
@@ -15,9 +16,10 @@ export const isEmail = (message?: string) => (value: string) =>
 
 export const composeValidators =
   (...validators: any[]) =>
-  (value: unknown, values: unknown) =>
-    validators.reduce(
-      (error, validator) => error || validator(value, values),
+  (value: unknown, values: unknown, props: any) =>
+    reduce(
+      validators,
+      (error, validator) => error || validator(value, values, props),
       undefined,
     );
 

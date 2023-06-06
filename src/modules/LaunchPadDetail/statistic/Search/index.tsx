@@ -27,17 +27,14 @@ const Search: React.FC<IProps> = ({ onSearch }: IProps): React.ReactElement => {
       <div className={s.formWrapper}>
         <div className={s.inputWrapper}>
           <Input
-            onChange={e => setSearchVal(e.target.value)}
+            onChange={(e) => setSearchVal(e.target.value)}
             onKeyDown={handleKeyDown}
             value={searchVal}
             className={s.input}
-            placeholder="Enter your TC wallet address or ENS"
+            placeholder="Enter your TC wallet address"
           />
           <button onClick={clearInput} className={s.clearBtn}>
-            <img
-              src={`${CDN_URL}/icons/clear-input-20.svg`}
-              alt="x-contained"
-            />
+            <img src={`${CDN_URL}/icons/clear-input-20.svg`} alt="x-contained" />
           </button>
         </div>
         <Button

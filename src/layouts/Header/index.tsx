@@ -58,7 +58,8 @@ const Header = () => {
   const [isOpenMenu, setIsOpenMenu] = useState<boolean>(false);
   const { mobileScreen } = useWindowSize();
   const router = useRouter();
-  const { headerHeight, showGetStarted } = useScreenLayout();
+  const { headerHeight, showGetStarted, showLaunchpadGetStarted } =
+    useScreenLayout();
 
   // const isTokensPage = useMemo(() => {
   //   return isScreenDarkMode();
@@ -162,6 +163,29 @@ const Header = () => {
               fontWeight="bold"
               color="brand.info.400"
               href={ROUTE_PATH.GET_STARTED}
+            >
+              Start here.
+            </LinkText>{' '}
+          </Text>
+        </Flex>
+      )}
+      {showLaunchpadGetStarted && (
+        <Flex
+          height={10}
+          alignItems="center"
+          justifyContent="center"
+          bgColor={`#ebebeb${isScreenDarkMode() ? '33' : ''}`}
+        >
+          <Text
+            fontWeight="medium"
+            fontSize="sm"
+            color={isScreenDarkMode() ? 'white' : 'black'}
+          >
+            Are you new?{' '}
+            <LinkText
+              fontWeight="bold"
+              color="brand.info.400"
+              href={ROUTE_PATH.LAUNCHPAD_GET_STARTED}
             >
               Start here.
             </LinkText>{' '}

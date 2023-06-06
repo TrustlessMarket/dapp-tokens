@@ -51,8 +51,6 @@ const FieldText = (props: FieldTextProps) => {
 
   const isError = meta.error && meta.touched;
 
-  console.log(error, touched, shouldShowError);
-
   const hasAppend = appendComp;
 
   const handleChange = (e: any) => {
@@ -96,6 +94,7 @@ const FieldText = (props: FieldTextProps) => {
         <Box className={styles.formControl}>
           <Input
             as={inputType === 'text' ? 'input' : 'textarea'}
+            type={inputType === 'text' ? 'input' : 'textarea'}
             placeholder={placeholder}
             _placeholder={{ color: '#b3b3b3' }}
             value={value}
@@ -104,8 +103,8 @@ const FieldText = (props: FieldTextProps) => {
               onBlur();
               e?.target?.blur();
             }}
-            onChange={handleChange}
             {...restProps}
+            onChange={handleChange}
           />
         </Box>
         {hasAppend && (

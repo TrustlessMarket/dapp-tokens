@@ -100,11 +100,16 @@ const LaunchpadFormStep3: React.FC<ILaunchpadFormStep3> = ({
                 // validate={required}
               />
             </InputWrapper>
-            <InputWrapper className="item-faq-container" key={`a${i}`} label={` `}>
+            <InputWrapper
+              className="item-faq-container cls-textarea"
+              key={`a${i}`}
+              label={` `}
+            >
               <Field
                 name={`faq_a_${v.id}`}
                 placeholder="Answer"
                 children={FieldText}
+                inputType="textarea"
                 // validate={required}
               />
             </InputWrapper>

@@ -106,7 +106,7 @@
   }
 
   .dataListWrapper {
-      height: 432px;
+    height: 432px;
 
     @include max-tablet {
       height: 400px;
@@ -118,7 +118,7 @@
 
     &__currentUser {
       .dataId {
-        width: 15%;
+        // width: 15%;
         color: #000000;
       }
 
@@ -133,7 +133,7 @@
       }
 
       .dataUserInfo {
-        width: calc(32% - rem(8)) !important;
+        // width: calc(32% - rem(8)) !important;
       }
 
       .dataShare {
@@ -212,17 +212,18 @@
   }
 
   .dataId {
-    width: 15%;
+    // width: 15%;
     font-weight: 600;
     font-size: rem(20);
     //line-height: 150%;
-    color: #FFFFFF;
+    color: #ffffff;
     text-align: center;
     white-space: nowrap;
   }
 
   .dataUserInfo {
-    width: calc(40% - rem(8));
+    // width: calc(40% - rem(8));
+    flex: 1;
     margin-left: rem(8);
     display: flex;
     align-items: center;
@@ -245,7 +246,7 @@
       font-size: rem(18);
       line-height: 150%;
       letter-spacing: -0.01em;
-      color: #FFFFFF;
+      color: #ffffff;
       // max-width: 10ch;
       white-space: nowrap;
       overflow: hidden;
@@ -260,7 +261,7 @@
       }
 
       &__white {
-        color: #FFFFFF;
+        color: #ffffff;
       }
     }
   }
@@ -274,7 +275,8 @@
   }
 
   .dataContribute {
-    width: 18%;
+    // width: 18%;
+    flex: 1;
 
     .dataValue {
       display: flex;
@@ -294,8 +296,9 @@
   }
 
   .dataToken {
-    width: calc(28% - rem(8));
+    // width: calc(28% - rem(8));
     align-items: flex-end;
+    flex: 1;
   }
 
   .dataLabel {
@@ -316,7 +319,7 @@
     white-space: nowrap;
     display: flex;
     align-items: center;
-    justify-content: flex-end;
+    justify-content: space-between;
     gap: rem(4);
     .percentage {
       font-size: rem(12);
@@ -328,7 +331,7 @@
       }
 
       &__white {
-        color: #FFFFFF;
+        color: #ffffff;
       }
     }
 
@@ -337,7 +340,7 @@
     }
 
     &__white {
-      color: #FFFFFF;
+      color: #ffffff;
     }
   }
 
