@@ -77,7 +77,7 @@ const ProposalInfo = ({ poolDetail }: ILaunchpad | any) => {
         <GridItem>
           <Stat>
             <StatLabel>
-              Reward for voter
+              Reward for supporters
             </StatLabel>
             <StatNumber>
               {configs?.percentRewardForVoter}% funded

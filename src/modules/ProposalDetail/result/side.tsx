@@ -18,7 +18,7 @@ const ProposalResult = ({title, totalVote, className, data}: any) => {
       <Flex justifyContent={"space-between"}>
         <Text className={"side-title"}>{title}</Text>
         <Text className={"side-total"} color={"#FFFFFF"}>Total number of supporters: {formatCurrency(data?.totalVoter, 0)}</Text>
-        <Text className={"side-total"} color={"#FFFFFF"}>Total TM supporting: {formatCurrency(data?.totalAmount, 0)}</Text>
+        <Text className={"side-total"} color={"#FFFFFF"}>Total TM voted: {formatCurrency(data?.totalAmount, 0)}</Text>
       </Flex>
       <Progress
         max={100}
@@ -32,19 +32,10 @@ const ProposalResult = ({title, totalVote, className, data}: any) => {
           data?.voters?.map((d: any) => {
             return (
               <InfoTooltip label={<Box>
-                {
-                  compareString(account, d.voter) ? (
-                    <HorizontalItem
-                      label={<Text color={"rgba(255, 255, 255, 0.7)"}>You</Text>}
-                      value={<Text color={"#FFFFFF"}></Text>}
-                    />
-                  ) : (
-                    <HorizontalItem
-                      label={<Text color={"rgba(255, 255, 255, 0.7)"}>Address</Text>}
-                      value={<Text color={"#FFFFFF"}>{shortenAddress(d.voter, 4, 4)}</Text>}
-                    />
-                  )
-                }
+                <HorizontalItem
+                  label={<Text color={"rgba(255, 255, 255, 0.7)"}>Address</Text>}
+                  value={<Text color={"#FFFFFF"}>{shortenAddress(d.voter, 4, 4)}</Text>}
+                />
                 <HorizontalItem
                   label={<Text color={"rgba(255, 255, 255, 0.7)"}>Amount</Text>}
                   value={<Text color={"#FFFFFF"}>{formatCurrency(d.amount)} {'TM'}</Text>}
@@ -65,6 +56,7 @@ const ProposalResult = ({title, totalVote, className, data}: any) => {
                       seed={jsNumberForAddress(d.voter)}
                     />
                   </a>
+                  {compareString(account, d.voter) && <Text color={"rgba(255, 255, 255, 0.7)"} textAlign={"center"} mt={-2}>You</Text>}
                 </Box>
               </InfoTooltip>
             );
