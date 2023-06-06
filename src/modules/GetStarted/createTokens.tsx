@@ -24,7 +24,7 @@ const STEPS_CREATE_TOKEN = [
             <img
               alt="swap_step1_1"
               className={styles.introImg}
-              src={`${CDN_URL}/upload/1683706234267465749-1683706234-swap_step1_2.png`}
+              src={`${CDN_URL}/pages/trustlessmarket/get_started/swap_step_1.2_v1.png`}
             />
           </ListItem>
         </UnorderedList>
@@ -38,20 +38,20 @@ const STEPS_CREATE_TOKEN = [
       <Box>
         <UnorderedList>
           <ListItem>
-            Go to <Link href={"https://trustlessfaucet.io/"} target={"_blank"} style={{textDecoration: 'underline'}}>https://trustlessfaucet.io/</Link> to claim $TC for free.
+            Go to <Link href={"https://tcgasstation.com/"} target={"_blank"} style={{textDecoration: 'underline'}}>https://tcgasstation.com/</Link> to buy $TC (1 TC = 0.0069 ETH). 0.1 TC should be sufficient for about 10 normal transactions.
             <img
               alt="swap_step1_1"
               className={styles.introImg}
-              src={`${CDN_URL}/upload/1683709871148485312-1683709871-swap_step2_0.png`}
+              src={`${CDN_URL}/pages/trustlessmarket/get_started/swap_step_2.1_v1.png`}
             />
           </ListItem>
           <ListItem>
-            Send $BTC to your newly generated BTC wallet address for the network fee.<br/>
-            You can check your $BTC balance here:
+            Send $BTC to your newly generated BTC wallet address for the network fee. Please send $BTC from a wallet/platform that supports taproot type.<br/>
+            Then you can check your $BTC balance to cover gas fee here:
             <img
               alt="swap_step1_1"
               className={styles.introImg}
-              src={`${CDN_URL}/upload/1683706377431650464-1683706377-swap_step2.png`}
+              src={`${CDN_URL}/pages/trustlessmarket/get_started/swap_step_2.2_v1.png`}
             />
           </ListItem>
         </UnorderedList>
@@ -60,28 +60,12 @@ const STEPS_CREATE_TOKEN = [
   },
   {
     step: '3',
-    title: 'Wrap your ETH, BTC, or USDC',
+    title: 'Wrap your cryptocurrencies',
     desc: (
       <Box>
         <UnorderedList>
           <ListItem>
-            Go to <Link href={"https://trustlessbridge.io"} target={"_blank"} style={{textDecoration: 'underline'}}>https://trustlessbridge.io/</Link>, and connect your wallet.
-            <img
-              alt="swap_step1_1"
-              className={styles.introImg}
-              src={`${CDN_URL}/upload/1683706461623422665-1683706461-swap_step3_1.png`}
-            />
-          </ListItem>
-          <ListItem>
-            Choose your preferred cryptocurrency (4 options: BTC, ETH, USDC, PEPE).
-          </ListItem>
-          <ListItem>
-            Send the amount of the chosen crypto you want to trade to this wallet, and your crypto will be automatically wrapped.
-            <img
-              alt="swap_step1_1"
-              className={styles.introImg}
-              src={`${CDN_URL}/upload/1683706545509754577-1683706545-swap_step3_2.png`}
-            />
+            Go to <Link href={"https://trustlessbridge.io"} target={"_blank"} style={{textDecoration: 'underline'}}>https://trustlessbridge.io/</Link>, choose your preferred cryptocurrency from Bitcoin and Ethereum Network.
           </ListItem>
           <ListItem>
             Once the transaction is completed, check your wrapped crypto balance under the Tokens tab in your Trustless Wallet: <Link href={"https://trustlesswallet.io/"} target={"_blank"} style={{textDecoration: 'underline'}}>https://trustlesswallet.io/</Link>
