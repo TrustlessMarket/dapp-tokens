@@ -14,7 +14,7 @@ import { getListLaunchpad } from '@/services/launchpad';
 import { useAppSelector } from '@/state/hooks';
 import { selectPnftExchange } from '@/state/pnftExchange';
 import { colors } from '@/theme/colors';
-import {abbreviateNumber, compareString, formatCurrency} from '@/utils';
+import { abbreviateNumber, compareString, formatCurrency } from '@/utils';
 import { Box, Flex, Progress, Text } from '@chakra-ui/react';
 import { useWeb3React } from '@web3-react/core';
 import BigNumber from 'bignumber.js';
@@ -31,6 +31,8 @@ import LaunchpadStatus, {
   useLaunchPadStatus,
 } from './Launchpad.Status';
 import { StyledIdoContainer } from './Launchpad.styled';
+import { FAQStyled } from '../LaunchpadManage/LaunchpadManage.styled';
+import Faq from '@/components/Swap/faq';
 
 const LaunchpadContainer = () => {
   const [data, setData] = useState<any[]>();
@@ -142,7 +144,14 @@ const LaunchpadContainer = () => {
           return (
             <Text>{`${
               token.totalSupply
-                ? `${Number(token.totalSupply) > 10**6 ? abbreviateNumber(token.totalSupply) : formatCurrency(token.totalSupply, Number(token?.decimal || 18))} ${token?.symbol}`
+                ? `${
+                    Number(token.totalSupply) > 10 ** 6
+                      ? abbreviateNumber(token.totalSupply)
+                      : formatCurrency(
+                          token.totalSupply,
+                          Number(token?.decimal || 18),
+                        )
+                  } ${token?.symbol}`
                 : 'N/A'
             }`}</Text>
           );
@@ -481,6 +490,31 @@ const LaunchpadContainer = () => {
           }}
         />
       </Box>
+      <FAQStyled style={{ border: 'none' }}>
+        <Text as={'h3'}>FAQs</Text>
+        <Faq
+          data={[
+            {
+              q: 'I am new to Trustless Market. How do I start voting and contributing to projects on the launchpad?',
+              a: `You can follow this step-by-step instruction: <a href="${ROUTE_PATH.LAUNCHPAD_GET_STARTED}">Get started</a>`,
+            },
+            {
+              q: 'Is the launchpad run by smart contracts?',
+              a: `Yes, the Trustless Launchpad operates entirely through smart contracts to ensure fairness and decentralization\n\nPlease note that the launchpad is permissionless, allowing anyone to submit their project. Therefore, it is crucial to DYOR (Do Your Own Research) before voting and contributing to projects`,
+            },
+            {
+              q: 'What benefits do I receive by voting for projects on Trustless Launchpad?',
+              a: `Here is the Trustless Launchpad voting mechanism:\n\n    - TM token holders will have the governance right to vote if a project should be on the launchpad or not.\n    - The voting period for each project will be 3 days\n    - 1 TM = 1 vote (you can vote with any amount of TM, even fractional amounts such as 0.1)\n    - Your TM tokens will be locked for 30 days after voting\n    - Projects that receive a minimum of 100 votes will proceed to the launchpad\n    - If a project is listed on the launchpad, <b>voters will receive 5% of the project's total crowdfunding amount proportionally in project’s tokens</b>
+            `,
+            },
+            {
+              q: 'How do I get TM token to vote for projects?',
+              a: `If you don’t have $TM, you can earn 1 $TM for each time you add liquidity and 0.1 $TM for each swap on <a href="${ROUTE_PATH.MARKETS}">Trustless Market DEX</a>. Alternatively, join our <a href="https://discord.com/invite/HPuZHUexgv">Discord channel</a> for updates about potential $TM airdrops.
+            `,
+            },
+          ]}
+        />
+      </FAQStyled>
     </StyledIdoContainer>
   );
 };

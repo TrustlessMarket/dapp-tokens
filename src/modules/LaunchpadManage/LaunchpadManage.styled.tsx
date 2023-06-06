@@ -417,4 +417,58 @@ export const StyledLaunchpadFormStep1 = styled(Flex)`
   }
 `;
 
-export const FAQStyled = styled(Box)``;
+export const FAQStyled = styled(Box)`
+  margin-top: ${px2rem(30)};
+  align-self: center;
+  border: 1px solid #353945;
+  padding: ${px2rem(40)};
+  h3 {
+    color: ${colors.white};
+    text-align: left;
+  }
+  .faqs-wrapper {
+    & > div {
+      & > div {
+        padding-inline-start: 0;
+        padding-inline-end: 0;
+        .chakra-heading {
+          color: #ffffff;
+        }
+
+        .faq-question {
+          color: #ffffff;
+        }
+
+        .faq-answer {
+          color: rgba(255, 255, 255, 0.7);
+
+          p {
+            color: inherit;
+          }
+          a {
+            color: ${colors.bluePrimary};
+          }
+        }
+
+        .chakra-accordion {
+          border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .chakra-accordion__button {
+          background-color: transparent;
+
+          &:hover {
+            background-color: transparent;
+          }
+          &:focus-visible {
+            box-shadow: none;
+          }
+        }
+
+        .chakra-accordion__panel {
+          background-color: transparent;
+        }
+      }
+    }
+  }
+`;
