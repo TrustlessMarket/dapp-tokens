@@ -291,11 +291,21 @@ export const StyledLaunchpadFormStep1 = styled(Flex)`
     }
 
     .horizontal-item {
+      align-items: flex-start;
       div {
         :first-child {
           color: ${colors.white500};
         }
         :last-child {
+          > div {
+            :first-child {
+              color: ${colors.white};
+            }
+            &.note {
+              color: ${colors.white500};
+              font-size: ${px2rem(12)};
+            }
+          }
           color: ${colors.white};
         }
       }
@@ -416,6 +426,19 @@ export const StyledLaunchpadFormStep1 = styled(Flex)`
     cursor: pointer;
     &.primary {
       background: ${colors.bluePrimary};
+    }
+  }
+
+  .summary-information {
+    color: ${colors.white500};
+    margin-top: ${px2rem(15)};
+    font-size: ${px2rem(13)};
+    white-space: break-spaces;
+    label {
+      font-weight: 500;
+    }
+    b {
+      color: ${colors.white};
     }
   }
 `;

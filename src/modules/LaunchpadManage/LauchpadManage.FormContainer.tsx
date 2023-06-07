@@ -127,7 +127,9 @@ const LaunchpadManageFormContainer: React.FC<LaunchpadManageFormContainerProps> 
         checkBalanceIsApprove(web3.utils.fromWei(_isApprove), values?.liquidValue),
       );
 
-      toast.success('Transaction has been created. Please wait for few minutes.');
+      toast.success(
+        'Your approval transaction has been added to the process list. You may now continue to submit your launchpad.',
+      );
       change('isApprove', true);
     } catch (err) {
       const message =
