@@ -5,7 +5,7 @@ import Button from '@/components/Button';
 import {IToken} from '@/interfaces/token';
 import {getTokenRp} from '@/services/swap';
 import {getIsAuthenticatedSelector} from '@/state/user/selector';
-import {abbreviateNumber, formatCurrency} from '@/utils';
+import {formatCurrency} from '@/utils';
 import {debounce} from 'lodash';
 import React, {useContext, useEffect, useMemo, useRef, useState} from 'react';
 import Spinner from 'react-bootstrap/Spinner';
@@ -32,9 +32,7 @@ import {AiOutlineCaretDown, AiOutlineCaretUp} from 'react-icons/ai';
 import {VscArrowSwap} from 'react-icons/vsc';
 import styles from './styles.module.scss';
 import TokenChartLast7Day from './Token.ChartLast7Day';
-import {getTextColorStatus, VERIFIED_STATUS} from "@/components/Swap/filterToken/verifiedBadge";
-import {HiBadgeCheck} from "react-icons/hi";
-import {ImWarning} from "react-icons/im";
+import VerifiedBadge from "@/components/Swap/filterToken/verifiedBadge";
 
 const LIMIT_PAGE = 100;
 
@@ -185,11 +183,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
                     {row?.name}
                   </Box>
                   <Box color={'rgba(255, 255, 255, 0.7)'}>{row?.symbol}</Box>
-                  {
-                    row?.status && (
-                      <Icon as={row?.status === VERIFIED_STATUS.PREMIUM ? HiBadgeCheck : ImWarning} fontSize={"14px"} color={getTextColorStatus(row?.status)}/>
-                    )
-                  }
+                  <VerifiedBadge token={row}/>
                 </Flex>
                 <Box fontSize={px2rem(12)} color={'rgba(255, 255, 255, 0.7)'}>
                   {row?.network || 'TC'}
@@ -336,7 +330,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         render(row: any) {
           return (
             <Text color={'#FFFFFF'} fontSize={px2rem(16)}>
-              ${abbreviateNumber(row?.usdMarketCap)}
+              ${formatCurrency(row?.usdMarketCap, 2)}
             </Text>
           );
         },
@@ -396,7 +390,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         render(row: any) {
           return (
             <Text color={'#FFFFFF'} fontSize={px2rem(16)}>
-              {abbreviateNumber(row?.totalSupply.toString())}
+              {formatCurrency(row?.totalSupply, 0)}
             </Text>
           );
         },
