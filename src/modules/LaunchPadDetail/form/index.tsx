@@ -484,7 +484,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             </StatNumber>
           </Stat>
           <Stat className={styles.infoColumn} flex={1}>
-            <StatLabel>Backers</StatLabel>
+            <StatLabel>Contributors</StatLabel>
             <StatNumber>
               {formatCurrency(poolDetail?.contributors || 0, 0)}
             </StatNumber>
@@ -725,7 +725,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
                 ? 'CANCEL THIS PROJECT'
                 : isVoteRelease
                 ? 'RELEASE VOTE'
-                : 'BACK THIS PROJECT'}
+                : 'CONTRIBUTE TO THIS PROJECT '}
             </FiledButton>
           )}
         </WrapperConnected>
