@@ -10,8 +10,13 @@ import {AssetsContext} from '@/contexts/assets-context';
 import useContractOperation from '@/hooks/contract-operations/useContractOperation';
 import {TransactionStatus} from '@/interfaces/walletTransaction';
 import {logErrorToServer} from '@/services/swap';
-import {useAppDispatch} from '@/state/hooks';
-import {requestReload, requestReloadRealtime, updateCurrentTransaction,} from '@/state/pnftExchange';
+import {useAppDispatch, useAppSelector} from '@/state/hooks';
+import {
+  requestReload,
+  requestReloadRealtime,
+  selectPnftExchange,
+  updateCurrentTransaction,
+} from '@/state/pnftExchange';
 import {showError} from '@/utils/toast';
 import {Box, Center, Flex, forwardRef, Text,} from '@chakra-ui/react';
 import {useWeb3React} from '@web3-react/core';
@@ -71,6 +76,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const { call: isApproved } = useIsApproveERC20Token();
   const { call: tokenBalance } = useBalanceERC20Token();
   const { call: approveToken } = useApproveERC20Token();
+  const configs = useAppSelector(selectPnftExchange).configs;
 
   const { values } = useFormState();
   const { change, restart } = useForm();
@@ -247,8 +253,8 @@ export const MakeFormSwap = forwardRef((props, ref) => {
 
   return (
     <form onSubmit={onSubmit} style={{ height: '100%' }}>
-      <Text>
-        Your vote will confirm your support for this project. Note, that when you pledge your token onto the platform, it stays locked for 30 days and earns 5% of the total funds raised, paid via project tokens.
+      <Text color={"#1C1C1C"}>
+        Your vote will confirm your support for this project. Note, that when you pledge your token onto the platform, it stays locked for 30 days and earns {configs?.percentRewardForVoter}% of the total funds raised, paid via project tokens.
       </Text>
       <InputWrapper
         className={cx(styles.inputAmountWrap, styles.inputBaseAmountWrap)}
@@ -257,6 +263,24 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           <Text fontSize={px2rem(14)} color={'#FFFFFF'}>
             Amount
           </Text>
+        }
+        rightLabel={
+          votingToken && (
+            <Flex
+              gap={1}
+              alignItems={'center'}
+              color={'#B6B6B6'}
+              fontSize={px2rem(14)}
+              fontWeight={'400'}
+            >
+              Balance:
+              <TokenBalance
+                token={votingToken}
+                onBalanceChange={(_amount) => setBaseBalance(_amount)}
+              />
+              {votingToken?.symbol}
+            </Flex>
+          )
         }
       >
         <Flex gap={4} direction={'column'}>
@@ -287,36 +311,23 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             appendComp={
               votingToken && (
                 <Flex gap={2} fontSize={px2rem(14)} color={'#FFFFFF'}>
-                  <Flex
-                    gap={1}
-                    alignItems={'center'}
-                    color={'#B6B6B6'}
-                    fontSize={px2rem(16)}
-                    fontWeight={'400'}
-                  >
-                    Balance:
-                    <TokenBalance
-                      token={votingToken}
-                      onBalanceChange={(_amount) => setBaseBalance(_amount)}
-                    />
-                    {votingToken?.symbol}
-                  </Flex>
                   <Text
                     cursor={'pointer'}
                     color={'#3385FF'}
                     onClick={handleChangeMaxBaseAmount}
-                    bgColor={"rgba(0, 0, 0, 0.2)"}
+                    // bgColor={"rgba(0, 0, 0, 0.2)"}
                     borderRadius={'4px'}
                     padding={'1px 12px'}
                     fontSize={px2rem(16)}
                     fontWeight={'600'}
+                    border={"1px solid #3385FF"}
                   >
                     Max
                   </Text>
                 </Flex>
               )
             }
-            borderColor={'#353945'}
+            borderColor={'#ECECED'}
           />
         </Flex>
       </InputWrapper>
@@ -372,17 +383,13 @@ export const MakeFormSwap = forwardRef((props, ref) => {
               isLoading={submitting}
               type="submit"
               btnSize={'h'}
+              containerConfig={{ flex: 1, mt: 6 }}
               loadingText={submitting ? 'Processing' : ' '}
               processInfo={{
                 id: transactionType.votingProposal,
               }}
-              containerConfig={{
-                style: {
-                  width: '100%',
-                },
-              }}
             >
-              Vote
+              VOTE
             </FiledButton>
           )}
         </WrapperConnected>
