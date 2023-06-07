@@ -18,7 +18,7 @@ const ProposalStarting = ({poolDetail}: any) => {
       <Flex justifyContent={'space-between'} mb={6}>
         <Flex gap={4} color={'#FFFFFF'} alignItems={'center'}>
           <Flex alignItems={'flex-start'} h={'100%'}>
-            <img src={launchpadToken.thumbnail || TOKEN_ICON_DEFAULT} className={"token-avatar"}/>
+            <img src={launchpadToken.thumbnail || TOKEN_ICON_DEFAULT} className={"launchpad-token-avatar"}/>
           </Flex>
           <Box>
             <Text fontSize={px2rem(24)} fontWeight={'500'}>

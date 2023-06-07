@@ -394,7 +394,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
                       `${CDN_URL}/upload/1683530065704444020-1683530065-default-coin.svg`
                     }
                     alt={liquidityToken?.thumbnail || 'default-icon'}
-                    className={'token-avatar'}
+                    className={'liquidity-token-avatar'}
                   />
                 </Flex>
                 <Text fontSize={'20px'} fontWeight={'400'}>
@@ -436,7 +436,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
                     `${CDN_URL}/upload/1683530065704444020-1683530065-default-coin.svg`
                   }
                   alt={liquidityToken?.thumbnail || 'default-icon'}
-                  className={'token-avatar'}
+                  className={'liquidity-token-avatar'}
                 />
               </Flex>
               /
@@ -450,7 +450,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
                         `${CDN_URL}/upload/1683530065704444020-1683530065-default-coin.svg`
                       }
                       alt={liquidityToken?.thumbnail || 'default-icon'}
-                      className={'token-avatar'}
+                      className={'liquidity-token-avatar'}
                     />
                   </>
                 ) : (
