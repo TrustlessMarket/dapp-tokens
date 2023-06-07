@@ -15,6 +15,8 @@ import CountDownTimer from '@/components/Countdown';
 import {useAppSelector} from "@/state/hooks";
 import {selectPnftExchange} from "@/state/pnftExchange";
 import {useWeb3React} from "@web3-react/core";
+import {LAUNCHPAD_STATUS} from "@/modules/Launchpad/Launchpad.Status";
+import moment from "moment/moment";
 
 const ProposalInfo = ({ poolDetail }: ILaunchpad | any) => {
   const configs = useAppSelector(selectPnftExchange).configs;
@@ -91,10 +93,18 @@ const ProposalInfo = ({ poolDetail }: ILaunchpad | any) => {
         <GridItem>
           <Stat>
             <StatLabel>
-              Voting Ends in
+              {
+                [LAUNCHPAD_STATUS.Voting].includes(poolDetail?.state)
+                  ? 'Voting Ends in'
+                  : 'Voting Ended at'
+              }
             </StatLabel>
             <StatNumber>
-              <CountDownTimer end_time={poolDetail.voteEnd} />
+              {
+                [LAUNCHPAD_STATUS.Voting].includes(poolDetail?.state)
+                  ? <CountDownTimer end_time={poolDetail?.voteEnd} />
+                  : moment(poolDetail?.voteEnd).format('LLL')
+              }
             </StatNumber>
           </Stat>
         </GridItem>

@@ -48,7 +48,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     <form onSubmit={onSubmit} style={{ height: '100%' }}>
       <WrapperConnected className={styles.submitButton}>
         <>
-          {isActive && [LAUNCHPAD_STATUS.Voting].includes(poolDetail?.state) ? (
+          {isActive ? (
             <FiledButton
               isLoading={submitting}
               isDisabled={submitting}
@@ -86,8 +86,6 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
   const refForm = useRef<any>();
   const [submitting, setSubmitting] = useState(false);
   const dispatch = useAppDispatch();
-  const { account, isActive } = useWeb3React();
-
   const { mobileScreen } = useWindowSize();
 
   const votingToken = {
@@ -97,7 +95,7 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
     symbol: 'TM'
   };
 
-  const handleConfirmVote = (values: any) => {
+  const handleSubmit = async (values: any) => {
     const {} = values;
     const id = 'modalVoteConfirm';
     const close = () => dispatch(closeModal({ id }));
@@ -119,71 +117,6 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
         ),
       }),
     );
-  };
-
-  const handleSubmit = async (values: any) => {
-    try {
-      let response;
-      // if(compareString(poolDetail?.creatorAddress, account) && (proposalDetail?.state === PROPOSAL_STATUS.Defeated || proposalDetail?.state === PROPOSAL_STATUS.Succeeded)) {
-      //   setSubmitting(true);
-      //   dispatch(
-      //     updateCurrentTransaction({
-      //       status: TransactionStatus.info,
-      //       id: transactionType.votingProposal,
-      //     }),
-      //   );
-      //   if (proposalDetail?.state === PROPOSAL_STATUS.Defeated) {
-      //     response = await defeatProposal({
-      //       proposalId: proposalDetail?.proposalId,
-      //     });
-      //   } else if (proposalDetail?.state === PROPOSAL_STATUS.Succeeded) {
-      //     response = await executeProposal({
-      //       proposalId: proposalDetail?.proposalId,
-      //     });
-      //   }
-      //   toast.success('Transaction has been created. Please wait for few minutes.');
-      //   refForm.current?.reset();
-      //   dispatch(requestReload());
-      //   dispatch(requestReloadRealtime());
-      // } else if (canVote) {
-      //   handleConfirmVote(values);
-      // }
-
-      handleConfirmVote(values);
-
-      // if (compareString(poolDetail?.creatorAddress, account) && proposalDetail?.state === PROPOSAL_STATUS.Defeated) {
-      //   response = await defeatProposal({
-      //     proposalId: proposalDetail?.proposalId,
-      //   });
-      // } else if (compareString(poolDetail?.creatorAddress, account) && ) {
-      //   response = await executeProposal({
-      //     proposalId: proposalDetail?.proposalId,
-      //   });
-      // } else if (canVote) {
-      //   const data = {
-      //     proposalId: proposalDetail?.proposalId,
-      //     weight: voteSignatureProposal?.weigthSign,
-      //     support: values?.isVoteUp ? "1" : "0",
-      //     signature: voteSignatureProposal?.adminSignature
-      //   }
-      //   response = await castVoteProposal(data);
-      // }
-    } catch (err: any) {
-      toastError(showError, err, { address: account });
-      logErrorToServer({
-        type: 'error',
-        address: account,
-        error: JSON.stringify(err),
-        message: err?.message,
-      });
-      // showError({
-      //   message:
-      //     (err as Error).message || 'Something went wrong. Please try again later.',
-      // });
-    } finally {
-      setSubmitting(false);
-      dispatch(updateCurrentTransaction(null));
-    }
   };
 
   return (
