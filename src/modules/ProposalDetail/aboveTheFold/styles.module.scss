@@ -2,10 +2,19 @@
   color: #FFFFFF;
 
   :global {
-    .token-avatar {
+    .launchpad-token-avatar {
       width: 40px;
       height: 40px;
       object-fit: cover;
+      border-radius: 50%;
+    }
+  }
+
+  :global {
+    .liquidity-token-avatar {
+      object-fit: cover;
+      width: rem(25);
+      height: rem(25);
       border-radius: 50%;
     }
   }

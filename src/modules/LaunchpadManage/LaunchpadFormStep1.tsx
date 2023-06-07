@@ -3,28 +3,26 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react/no-children-prop */
 import SocialToken from '@/components/Social';
-import FiledButton from '@/components/Swap/button/filedButton';
 import FieldAmount from '@/components/Swap/form/fieldAmount';
 import FieldSelect from '@/components/Swap/form/fieldDropdown';
 import HorizontalItem from '@/components/Swap/horizontalItem';
 import InfoTooltip from '@/components/Swap/infoTooltip';
 import { TOKEN_ICON_DEFAULT } from '@/constants/common';
-import { ROUTE_PATH } from '@/constants/route-path';
 import tokenIcons from '@/constants/tokenIcons';
 import { ILaunchpad } from '@/interfaces/launchpad';
 import { IToken } from '@/interfaces/token';
 import { colors } from '@/theme/colors';
 import { compareString, formatCurrency } from '@/utils';
+import { isProduction } from '@/utils/commons';
 import { composeValidators, required, requiredAmount } from '@/utils/formValidate';
-import { Box, Flex, FormLabel, Spinner, Text } from '@chakra-ui/react';
+import { Box, Divider, Flex, FormLabel, Spinner, Text } from '@chakra-ui/react';
 import { px2rem } from '@trustless-computer/dapp-core';
 import BigNumber from 'bignumber.js';
 import { isEmpty, truncate } from 'lodash';
 import { useRouter } from 'next/router';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Field, useForm, useFormState } from 'react-final-form';
 import { StyledLaunchpadFormStep1 } from './LaunchpadManage.styled';
-import { isProduction } from '@/utils/commons';
 
 interface ILaunchpadFormStep1 {
   detail?: ILaunchpad;
@@ -158,6 +156,17 @@ const LaunchpadFormStep1: React.FC<ILaunchpadFormStep1> = ({
     launchpadConfigs.rewardVoteRatio,
   ]);
 
+  const calcInitialPrice = () => {
+    let price = '0';
+    if (values?.launchpadBalance && values?.liquidityBalance) {
+      price = new BigNumber(values?.launchpadBalance)
+        .multipliedBy(new BigNumber(values?.liquidityRatioArg).dividedBy(100))
+        .dividedBy(values?.liquidityBalance)
+        .toString();
+    }
+    return price;
+  };
+
   return (
     <StyledLaunchpadFormStep1>
       <Box className="fields-left-container" flex={1}>
@@ -230,9 +239,9 @@ const LaunchpadFormStep1: React.FC<ILaunchpadFormStep1> = ({
                   opacity: 0.8,
                 }}
               >
-                The reward pool amount you have entered is significantly lower than
-                your total supply. Please verify this number again as it appears to
-                be an unusual value
+                Warning: The reward pool amount you have entered is significantly
+                lower than your total supply. Please verify this number again as it
+                appears to be an unusual value
               </Text>
             )
           }
@@ -337,22 +346,6 @@ const LaunchpadFormStep1: React.FC<ILaunchpadFormStep1> = ({
           name="liquidityRatioArg"
           decimals={18}
           children={FieldAmount}
-          // rightLabel={
-          //   !isEmpty(liquidityTokenSelected) && (
-          //     <Flex
-          //       alignItems={'center'}
-          //       gap={2}
-          //       fontSize={px2rem(14)}
-          //       color={'#FFFFFF'}
-          //       mb={2}
-          //     >
-          //       <Flex gap={1} alignItems={'center'}>
-          //         {liquidityTokenSelected?.symbol}
-          //       </Flex>
-          //     </Flex>
-          //   )
-          // }
-
           appendComp={
             <Text color={colors.white500}>% ({liquidityTokenSelected?.symbol})</Text>
           }
@@ -433,6 +426,73 @@ const LaunchpadFormStep1: React.FC<ILaunchpadFormStep1> = ({
                   length: 50,
                   separator: '...',
                 })}
+              />
+              <Divider borderColor={colors.white500} />
+              <Box mt={3} />
+              <HorizontalItem
+                label={'Reward Pool'}
+                className="horizontal-item"
+                value={formatCurrency(values?.launchpadBalance || '0')}
+              />
+              <Box mt={3} />
+              <HorizontalItem
+                label={'Initial liquidity in token'}
+                className="horizontal-item"
+                value={
+                  <>
+                    <div>{`${formatCurrency(values?.liquidityBalance || '0')}`}</div>
+                    <div className="note">{`(${new BigNumber(
+                      values?.liquidityBalance || '0',
+                    )
+                      .dividedBy(tokenSelected.totalSupply)
+                      .multipliedBy(100)
+                      .toFixed()}% supply)`}</div>
+                  </>
+                }
+              />
+              <Box mt={3} />
+              <HorizontalItem
+                label={'Initial liquidity'}
+                className="horizontal-item"
+                value={
+                  <>
+                    <div>{`${formatCurrency(
+                      new BigNumber(values?.goalBalance)
+                        .multipliedBy(values?.liquidityRatioArg)
+                        .dividedBy(100)
+                        .toFixed(),
+                    )} ${liquidityTokenSelected?.symbol}`}</div>
+                    <div className="note">{`${formatCurrency(
+                      values?.liquidityRatioArg || '0',
+                    )}%`}</div>
+                  </>
+                }
+              />
+              <Box mt={3} />
+              <HorizontalItem
+                label={'Funding goal / Hard cap'}
+                className="horizontal-item"
+                value={`${formatCurrency(values?.goalBalance || '0')} / ${
+                  !values?.thresholdBalance
+                    ? '∞'
+                    : formatCurrency(values?.thresholdBalance || '0')
+                } ${liquidityTokenSelected?.symbol}`}
+              />
+              <Divider borderColor={colors.white500} />
+              <Box mt={3} />
+              <HorizontalItem
+                label={
+                  <InfoTooltip
+                    showIcon
+                    label={`This will make the initial price ${formatCurrency(
+                      calcInitialPrice(),
+                    )} times greater than your crowdfunding price.`}
+                  >
+                    Initial price
+                  </InfoTooltip>
+                }
+                className="horizontal-item"
+                value={<b>{`${formatCurrency(calcInitialPrice())} times`}</b>}
               />
             </Box>
 

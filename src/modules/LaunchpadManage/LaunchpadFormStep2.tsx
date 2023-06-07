@@ -57,7 +57,9 @@ const LaunchpadFormStep2: React.FC<ILaunchpadFormStep2> = ({
 
   const onFileChange = async (file: File) => {
     if (file.size > MAX_FILE_SIZE) {
-      return toast.error('Max image size: 1MB');
+      return toast.error(
+        'Please note that the maximum allowed size for images is 1MB',
+      );
     }
 
     if (!file) {
