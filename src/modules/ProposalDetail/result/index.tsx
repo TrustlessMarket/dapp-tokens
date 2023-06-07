@@ -9,6 +9,7 @@ import styles from './styles.module.scss';
 import cx from 'classnames';
 import {getVoteResultLaunchpad} from "@/services/launchpad";
 import {ILaunchpad} from '@/interfaces/launchpad';
+import px2rem from "@/utils/px2rem";
 
 const ProposalResult = ({poolDetail}: { poolDetail: ILaunchpad }) => {
   const needReload = useAppSelector(selectPnftExchange).needReload;
@@ -38,7 +39,7 @@ const ProposalResult = ({poolDetail}: { poolDetail: ILaunchpad }) => {
     <Box>
       <SimpleGrid columns={1} gap={6}>
         <GridItem>
-          <Card bgColor={"transparent"} paddingX={10} paddingY={10} border={"1px solid #353945"} borderRadius={0}>
+          <Card bgColor={"transparent"} paddingX={10} paddingTop={10} paddingBottom={px2rem(100)} border={"1px solid #353945"} borderRadius={0}>
             <Side
               title={"For"}
               totalVote={Number(poolDetail?.voteGoal)}

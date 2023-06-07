@@ -75,19 +75,32 @@
 }
 
 .listVote {
-  width: 50%;
   margin: 32px auto 0;
   :global .slick-list {
     margin: 0 -12px;
   }
 
   :global .slick-arrow {
-    display: none !important;
+    top: 145%;
+
+    &::before {
+      display: none;
+    }
+
+    &.slick-prev {
+      left: 45%;
+    }
+
+    &.slick-next {
+      right: 45%;
+    }
   }
 
   :global .slick-dots {
+    bottom: -48px;
     li button::before {
       color: white;
+      font-size: 10px;
     }
     .slick-active li button::before {
       color: white;
