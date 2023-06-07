@@ -11,6 +11,7 @@ import {
   selectCurrentTransaction,
   updateCurrentTransaction,
 } from '@/state/pnftExchange';
+import { colors } from '@/theme/colors';
 import { compareString, shortCryptoAddress } from '@/utils';
 import {
   Alert,
@@ -109,6 +110,8 @@ const AlertInfoProcess: React.FC<AlertInfoProcessProps> = ({
     _title = currentTransaction?.infoTexts?.info;
   }
 
+  const theme = processInfo?.theme || 'dark';
+
   return (
     <Alert
       status={currentTransaction?.status}
@@ -117,36 +120,27 @@ const AlertInfoProcess: React.FC<AlertInfoProcessProps> = ({
       alignItems="center"
       justifyContent={processInfo?.size === 'sm' ? 'flex-start' : 'center'}
       textAlign="center"
-      borderRadius={4}
-      // mb={2}
-      opacity={0.8}
+      borderRadius={8}
       py={processInfo?.size === 'sm' ? 2 : 4}
       gap={2}
       mb={3}
+      backgroundColor={theme === 'dark' ? colors.dark : colors.white}
+      border={`1px solid ${
+        theme === 'dark' ? colors.darkBorderColor : colors.white500
+      }`}
     >
-      <AlertIcon boxSize="40px" mr={0} />
+      <AlertIcon boxSize="40px" mr={0} mb={2} />
       <Flex direction={'column'}>
         <AlertTitle
-          fontSize={processInfo?.size === 'sm' ? 'xs' : 'md'}
+          fontSize={processInfo?.size === 'sm' ? 'smaller' : 'sm'}
           lineHeight={processInfo?.size === 'sm' ? 'xs' : 'md'}
+          color={theme === 'dark' ? colors.white : colors.black}
         >
           {_title}
         </AlertTitle>
         {currentTransaction && currentTransaction.hash && (
           <AlertDescription
-            // style={{
-            //   cursor: "pointer",
-            //   fontWeight: 500,
-            // }}
-            // onClick={() =>
-            //   window.open(
-            //     getLinkEvmExplorer(
-            //       currentTransaction?.hash,
-            //       "tx",
-            //       currentTransaction.network
-            //     )
-            //   )
-            // }
+            color={theme === 'dark' ? colors.white : colors.black}
             fontSize="x-small"
           >
             {shortCryptoAddress(currentTransaction.hash, 30)}
@@ -174,6 +168,7 @@ const AlertInfoProcess: React.FC<AlertInfoProcessProps> = ({
             style={{
               backgroundColor: 'transparent',
             }}
+            color={theme === 'dark' ? colors.white : colors.black}
           />
         )}
     </Alert>

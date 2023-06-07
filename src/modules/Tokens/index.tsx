@@ -5,7 +5,7 @@ import Button from '@/components/Button';
 import { IToken } from '@/interfaces/token';
 import { getTokenRp } from '@/services/swap';
 import { getIsAuthenticatedSelector } from '@/state/user/selector';
-import { formatCurrency } from '@/utils';
+import { abbreviateNumber, formatCurrency } from '@/utils';
 import { decimalToExponential } from '@/utils/format';
 import { debounce } from 'lodash';
 import React, { useContext, useEffect, useMemo, useRef, useState } from 'react';
@@ -33,7 +33,7 @@ import { AiOutlineCaretDown, AiOutlineCaretUp } from 'react-icons/ai';
 import { VscArrowSwap } from 'react-icons/vsc';
 import styles from './styles.module.scss';
 import TokenChartLast7Day from './Token.ChartLast7Day';
-import VerifiedBadge from "@/components/Swap/filterToken/verifiedBadge";
+import VerifiedBadge from '@/components/Swap/filterToken/verifiedBadge';
 
 const LIMIT_PAGE = 100;
 
@@ -184,7 +184,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
                     {row?.name}
                   </Box>
                   <Box color={'rgba(255, 255, 255, 0.7)'}>{row?.symbol}</Box>
-                  <VerifiedBadge token={row}/>
+                  <VerifiedBadge token={row} />
                 </Flex>
                 <Box fontSize={px2rem(12)} color={'rgba(255, 255, 255, 0.7)'}>
                   {row?.network || 'TC'}
@@ -331,7 +331,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         render(row: any) {
           return (
             <Text color={'#FFFFFF'} fontSize={px2rem(16)}>
-              ${formatCurrency(row?.usdMarketCap, 2)}
+              ${abbreviateNumber(row?.usdMarketCap)}
             </Text>
           );
         },
@@ -391,7 +391,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         render(row: any) {
           return (
             <Text color={'#FFFFFF'} fontSize={px2rem(16)}>
-              {formatCurrency(row?.totalSupply, 0)}
+              {abbreviateNumber(row?.totalSupply.toString())}
             </Text>
           );
         },
