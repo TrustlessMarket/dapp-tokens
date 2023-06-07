@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import {Box, Flex, Progress, Stat, StatLabel, StatNumber, Text, Tooltip,} from '@chakra-ui/react';
+import {Box, Flex, SimpleGrid, Stat, StatLabel, StatNumber, Text, Tooltip,} from '@chakra-ui/react';
 import {abbreviateNumber, compareString, formatCurrency} from '@/utils';
 import React, {useMemo} from 'react';
 import {ILaunchpad} from '@/interfaces/launchpad';
@@ -34,7 +34,7 @@ const ProposalInfo = ({ poolDetail }: ILaunchpad | any) => {
 
   return (
     <Box color={'#FFFFFF'}>
-      <Flex justifyContent={'space-between'}>
+      <SimpleGrid columns={3} spacingY={8} spacingX={8}>
         <Stat className={styles.infoColumn}>
           <StatLabel>Funded</StatLabel>
           <StatNumber>
@@ -60,73 +60,62 @@ const ProposalInfo = ({ poolDetail }: ILaunchpad | any) => {
             </InfoTooltip>
           </StatNumber>
         </Stat>
-        <Stat className={styles.infoColumn} textAlign={'left'}>
+        <Stat className={styles.infoColumn}>
           <StatLabel>
-            <Flex gap={1} justifyContent={'flex-end'}>
-              <InfoTooltip
-                showIcon={true}
-                label={`The minimum amount ${
-                  isLaunchpadCreator ? 'you' : 'that the project'
-                } would like to raise. If the crowdfunding does not reach the Funding Goal, the funded amount will be returned to the contributors`}
-              >
-                {`Funding goal`}
-              </InfoTooltip>
-              /
-              <InfoTooltip
-                showIcon={true}
-                label={`The maximum amount ${
-                  isLaunchpadCreator ? 'you' : 'that the project'
-                } would like to raise. The crowdfunding will stop upon reaching its hard cap`}
-              >
-                Hard Cap
-              </InfoTooltip>
-            </Flex>
+            <InfoTooltip
+              showIcon={true}
+              label={`The minimum amount ${
+                isLaunchpadCreator ? 'you' : 'that the project'
+              } would like to raise. If the crowdfunding does not reach the Funding Goal, the funded amount will be returned to the contributors`}
+            >
+              {`Funding goal`}
+            </InfoTooltip>
           </StatLabel>
           <StatNumber>
-            <Flex gap={1} justifyContent={'flex-end'}>
-              <Flex gap={1} alignItems={'center'}>
-                {formatCurrency(poolDetail?.goalBalance || 0)}
-                <img
-                  src={
-                    liquidityToken?.thumbnail ||
-                    `${CDN_URL}/upload/1683530065704444020-1683530065-default-coin.svg`
-                  }
-                  alt={liquidityToken?.thumbnail || 'default-icon'}
-                  className={'liquidity-token-avatar'}
-                />
-              </Flex>
-              /
-              <Flex gap={1} alignItems={'center'}>
-                {Number(poolDetail?.thresholdBalance || 0) > 0 ? (
-                  <>
-                    {formatCurrency(poolDetail?.thresholdBalance || 0)}{' '}
-                    <img
-                      src={
-                        liquidityToken?.thumbnail ||
-                        `${CDN_URL}/upload/1683530065704444020-1683530065-default-coin.svg`
-                      }
-                      alt={liquidityToken?.thumbnail || 'default-icon'}
-                      className={'liquidity-token-avatar'}
-                    />
-                  </>
-                ) : (
-                  'N/A'
-                )}
-              </Flex>
+            <Flex gap={1} alignItems={'center'}>
+              {formatCurrency(poolDetail?.goalBalance || 0)}
+              <img
+                src={
+                  liquidityToken?.thumbnail ||
+                  `${CDN_URL}/upload/1683530065704444020-1683530065-default-coin.svg`
+                }
+                alt={liquidityToken?.thumbnail || 'default-icon'}
+                className={'liquidity-token-avatar'}
+              />
             </Flex>
           </StatNumber>
         </Stat>
-      </Flex>
-      <Box className={styles.progressBar} mt={4}>
-        <Progress
-          w={['100%', '100%']}
-          h="10px"
-          value={percent}
-          borderRadius={20}
-        ></Progress>
-        {/*<Image src={fireImg} className={styles.fireImg} />*/}
-      </Box>
-      <Flex justifyContent={'space-between'} mt={8}>
+        <Stat className={styles.infoColumn}>
+          <StatLabel>
+            <InfoTooltip
+              showIcon={true}
+              label={`The maximum amount ${
+                isLaunchpadCreator ? 'you' : 'that the project'
+              } would like to raise. The crowdfunding will stop upon reaching its hard cap`}
+            >
+              Hard Cap
+            </InfoTooltip>
+          </StatLabel>
+          <StatNumber>
+            <Flex gap={1} alignItems={'center'}>
+              {Number(poolDetail?.thresholdBalance || 0) > 0 ? (
+                <>
+                  {formatCurrency(poolDetail?.thresholdBalance || 0)}{' '}
+                  <img
+                    src={
+                      liquidityToken?.thumbnail ||
+                      `${CDN_URL}/upload/1683530065704444020-1683530065-default-coin.svg`
+                    }
+                    alt={liquidityToken?.thumbnail || 'default-icon'}
+                    className={'liquidity-token-avatar'}
+                  />
+                </>
+              ) : (
+                'N/A'
+              )}
+            </Flex>
+          </StatNumber>
+        </Stat>
         <Stat className={styles.infoColumn}>
           <StatLabel>
             <InfoTooltip
@@ -162,7 +151,7 @@ const ProposalInfo = ({ poolDetail }: ILaunchpad | any) => {
             )}
           </StatNumber>
         </Stat>
-      </Flex>
+      </SimpleGrid>
     </Box>
   );
 };
