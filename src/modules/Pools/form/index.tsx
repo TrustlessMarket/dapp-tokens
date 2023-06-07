@@ -1003,6 +1003,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             </Text>
           </Flex>
         )}
+      <Box mt={6} />
       <WrapperConnected
         type={
           !Boolean(isApproveBaseToken) ||
@@ -1026,7 +1027,6 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             processInfo={{
               id: transactionType.createPoolApprove,
             }}
-            mt={6}
           >
             {!isScreenRemove
               ? `APPROVE USE OF ${
@@ -1048,7 +1048,6 @@ export const MakeFormSwap = forwardRef((props, ref) => {
               id: transactionType.createPoolApprove,
             }}
             style={{ backgroundColor: renderContentTitle().btnBgColor }}
-            mt={6}
           >
             {renderContentTitle().btnTitle}
           </FiledButton>

@@ -15,7 +15,7 @@ import { useAppSelector } from '@/state/hooks';
 import { selectPnftExchange } from '@/state/pnftExchange';
 import { colors } from '@/theme/colors';
 import { abbreviateNumber, compareString, formatCurrency } from '@/utils';
-import { Box, Flex, Progress, Text } from '@chakra-ui/react';
+import { Box, Flex, Progress, Text, Tooltip } from '@chakra-ui/react';
 import { useWeb3React } from '@web3-react/core';
 import BigNumber from 'bignumber.js';
 import moment from 'moment';
@@ -118,9 +118,15 @@ const LaunchpadContainer = () => {
 
           return row.launchpadBalance ? (
             <Flex direction={'column'}>
-              <Text>
-                {formatCurrency(row.launchpadBalance, 18)} {token?.symbol}
-              </Text>
+              <Tooltip
+                placement="bottom"
+                label={`${formatCurrency(row.launchpadBalance)} ${token?.symbol}`}
+              >
+                <Text>
+                  {abbreviateNumber(row.launchpadBalance)} {token?.symbol}
+                </Text>
+              </Tooltip>
+
               <Text className="note">{formatCurrency(percent, 2)}% of Supply</Text>
             </Flex>
           ) : (
@@ -142,18 +148,27 @@ const LaunchpadContainer = () => {
         render(row: ILaunchpad) {
           const token: IToken = row.launchpadToken;
           return (
-            <Text>{`${
-              token.totalSupply
-                ? `${
-                    Number(token.totalSupply) > 10 ** 6
-                      ? abbreviateNumber(token.totalSupply)
-                      : formatCurrency(
-                          token.totalSupply,
-                          Number(token?.decimal || 18),
-                        )
-                  } ${token?.symbol}`
-                : 'N/A'
-            }`}</Text>
+            <Tooltip
+              placement="bottom"
+              label={`${
+                Number(token.totalSupply) > 10 ** 6
+                  ? formatCurrency(token.totalSupply)
+                  : formatCurrency(token.totalSupply, Number(token?.decimal || 18))
+              } ${token?.symbol}`}
+            >
+              <Text>{`${
+                token.totalSupply
+                  ? `${
+                      Number(token.totalSupply) > 10 ** 6
+                        ? abbreviateNumber(token.totalSupply)
+                        : formatCurrency(
+                            token.totalSupply,
+                            Number(token?.decimal || 18),
+                          )
+                    } ${token?.symbol}`
+                  : 'N/A'
+              }`}</Text>
+            </Tooltip>
           );
         },
       },
@@ -184,11 +199,15 @@ const LaunchpadContainer = () => {
                   ? `${formatCurrency(row.liquidityRatio)}% of funded`
                   : 'N/A'
               }`}</Text>
-              <Text className="note">{`${
-                token.totalSupply
-                  ? `${formatCurrency(row.liquidityBalance, 18)} ${token?.symbol}`
-                  : 'N/A'
-              }`}</Text>
+              <Tooltip
+                label={`${formatCurrency(row.liquidityBalance)} ${token?.symbol}`}
+              >
+                <Text className="note">{`${
+                  token.totalSupply
+                    ? `${abbreviateNumber(row.liquidityBalance)} ${token?.symbol}`
+                    : 'N/A'
+                }`}</Text>
+              </Tooltip>
             </Box>
           );
         },
