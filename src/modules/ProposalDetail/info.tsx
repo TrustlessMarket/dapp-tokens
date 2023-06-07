@@ -6,17 +6,18 @@ import {
   Stat,
   StatLabel,
   StatNumber,
+  Tooltip,
 } from '@chakra-ui/react';
-import {compareString, formatCurrency} from '@/utils';
+import { abbreviateNumber, compareString, formatCurrency } from '@/utils';
 import React from 'react';
 import { ILaunchpad } from '@/interfaces/launchpad';
 import InfoTooltip from '@/components/Swap/infoTooltip';
 import CountDownTimer from '@/components/Countdown';
-import {useAppSelector} from "@/state/hooks";
-import {selectPnftExchange} from "@/state/pnftExchange";
-import {useWeb3React} from "@web3-react/core";
-import {LAUNCHPAD_STATUS} from "@/modules/Launchpad/Launchpad.Status";
-import moment from "moment/moment";
+import { useAppSelector } from '@/state/hooks';
+import { selectPnftExchange } from '@/state/pnftExchange';
+import { useWeb3React } from '@web3-react/core';
+import { LAUNCHPAD_STATUS } from '@/modules/Launchpad/Launchpad.Status';
+import moment from 'moment/moment';
 
 const ProposalInfo = ({ poolDetail }: ILaunchpad | any) => {
   const configs = useAppSelector(selectPnftExchange).configs;
@@ -37,7 +38,10 @@ const ProposalInfo = ({ poolDetail }: ILaunchpad | any) => {
               </InfoTooltip>
             </StatLabel>
             <StatNumber>
-              {formatCurrency(poolDetail?.launchpadBalance)}{' '}
+              <Tooltip label={`${formatCurrency(poolDetail?.launchpadBalance)}`}>
+                {abbreviateNumber(poolDetail?.launchpadBalance)}
+              </Tooltip>
+              {` `}
               {poolDetail?.launchpadToken?.symbol}
             </StatNumber>
           </Stat>
@@ -47,7 +51,9 @@ const ProposalInfo = ({ poolDetail }: ILaunchpad | any) => {
             <StatLabel>
               <InfoTooltip
                 showIcon={true}
-                label={`The minimum amount ${isLaunchpadCreator ? 'you' : 'that the project'} would like to raise. If the crowdfunding does not reach the Funding Goal, the funded amount will be returned to the contributors`}
+                label={`The minimum amount ${
+                  isLaunchpadCreator ? 'you' : 'that the project'
+                } would like to raise. If the crowdfunding does not reach the Funding Goal, the funded amount will be returned to the contributors`}
               >
                 Funding Goal
               </InfoTooltip>
@@ -63,7 +69,9 @@ const ProposalInfo = ({ poolDetail }: ILaunchpad | any) => {
             <StatLabel>
               <InfoTooltip
                 showIcon={true}
-                label={`The maximum amount ${isLaunchpadCreator ? 'you' : 'that the project'} would like to raise. The crowdfunding will stop upon reaching its hard cap`}
+                label={`The maximum amount ${
+                  isLaunchpadCreator ? 'you' : 'that the project'
+                } would like to raise. The crowdfunding will stop upon reaching its hard cap`}
               >
                 Hard Cap
               </InfoTooltip>
@@ -82,29 +90,23 @@ const ProposalInfo = ({ poolDetail }: ILaunchpad | any) => {
         </GridItem>
         <GridItem>
           <Stat>
-            <StatLabel>
-              Reward for Supporters
-            </StatLabel>
-            <StatNumber>
-              {configs?.percentRewardForVoter}% funded
-            </StatNumber>
+            <StatLabel>Reward for Supporters</StatLabel>
+            <StatNumber>{configs?.percentRewardForVoter}% funded</StatNumber>
           </Stat>
         </GridItem>
         <GridItem>
           <Stat>
             <StatLabel>
-              {
-                [LAUNCHPAD_STATUS.Voting].includes(poolDetail?.state)
-                  ? 'Voting Ends in'
-                  : 'Voting Ended at'
-              }
+              {[LAUNCHPAD_STATUS.Voting].includes(poolDetail?.state)
+                ? 'Voting Ends in'
+                : 'Voting Ended at'}
             </StatLabel>
             <StatNumber>
-              {
-                [LAUNCHPAD_STATUS.Voting].includes(poolDetail?.state)
-                  ? <CountDownTimer end_time={poolDetail?.voteEnd} />
-                  : moment(poolDetail?.voteEnd).format('LLL')
-              }
+              {[LAUNCHPAD_STATUS.Voting].includes(poolDetail?.state) ? (
+                <CountDownTimer end_time={poolDetail?.voteEnd} />
+              ) : (
+                moment(poolDetail?.voteEnd).format('LLL')
+              )}
             </StatNumber>
           </Stat>
         </GridItem>
