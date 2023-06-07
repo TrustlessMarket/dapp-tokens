@@ -73,3 +73,24 @@
   border-radius: 100px;
   width: fit-content;
 }
+
+.listVote {
+  width: 43%;
+  margin: 32px auto 0;
+  :global .slick-list {
+    margin: 0 -12px;
+  }
+
+  :global .slick-arrow {
+    display: none !important;
+  }
+
+  :global .slick-dots {
+    li button::before {
+      color: white;
+    }
+    .slick-active li button::before {
+      color: white;
+    }
+  }
+}
