@@ -3,7 +3,7 @@ import LaunchpadStatus, {LAUNCHPAD_STATUS} from '@/modules/Launchpad/Launchpad.S
 import styles from '@/modules/LaunchPadDetail/aboveTheFold/styles.module.scss';
 import {ILaunchpad} from '@/interfaces/launchpad';
 import {Box, Flex, Grid, GridItem, Text} from "@chakra-ui/react";
-import Intro from "@/modules/LaunchPadDetail/aboveTheFold/intro";
+import Intro from "@/modules/LaunchPadDetail/intro";
 import Card from "@/components/Swap/card";
 import BuyForm from "@/modules/LaunchPadDetail/form";
 import Usp from "@/modules/LaunchPadDetail/usp";

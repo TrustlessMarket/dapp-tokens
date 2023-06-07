@@ -16,16 +16,13 @@ import {IProposal} from "@/interfaces/proposal";
 import IdoDescription from "@/modules/LaunchPadDetail/description";
 import IdoFaqs from "@/modules/LaunchPadDetail/faqs";
 import SectionContainer from "@/components/Swap/sectionContainer";
-import Intro from "@/modules/LaunchPadDetail/aboveTheFold/intro";
+import Intro from "@/modules/LaunchPadDetail/intro";
 import px2rem from "@/utils/px2rem";
 
 const IdoDetailContainer = () => {
   const router = useRouter();
   const [proposalDetail, setProposalDetail] = useState<IProposal | any>(undefined);
   const needReload = useAppSelector(selectPnftExchange).needReload;
-
-  console.log('proposalDetail', proposalDetail);
-
   const [loading, setLoading] = useState(true);
 
   const getPoolInfo = async () => {

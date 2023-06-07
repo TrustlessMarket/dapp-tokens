@@ -27,7 +27,7 @@ import IdoFaqs from './faqs';
 import styles from './styles.module.scss';
 import px2rem from '@/utils/px2rem';
 import {LAUNCHPAD_STATUS} from "@/modules/Launchpad/Launchpad.Status";
-import Intro from "@/modules/LaunchPadDetail/aboveTheFold/intro";
+import Intro from "@/modules/LaunchPadDetail/intro";
 import SectionContainer from "@/components/Swap/sectionContainer";
 
 const IdoDetailContainer = () => {

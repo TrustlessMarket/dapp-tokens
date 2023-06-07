@@ -22,7 +22,7 @@ const Intro = ({poolDetail}: any) => {
   };
 
   return (
-    <Box className={styles.introWrapper}>
+    <Box className={styles.wrapper}>
       {
         poolDetail?.video ? (
           <>
