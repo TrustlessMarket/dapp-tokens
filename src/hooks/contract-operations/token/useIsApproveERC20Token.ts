@@ -4,7 +4,12 @@ import { AssetsContext } from '@/contexts/assets-context';
 import { TransactionEventType } from '@/enums/transaction';
 import useBitcoin from '@/hooks/useBitcoin';
 import { ContractOperationHook, DAppType } from '@/interfaces/contract-operation';
-import { compareString, getContract } from '@/utils';
+import {
+  compareString,
+  getContract,
+  getDefaultProvider,
+  isConnectedTrustChain,
+} from '@/utils';
 import { useWeb3React } from '@web3-react/core';
 import { maxBy } from 'lodash';
 import { useCallback, useContext } from 'react';
@@ -19,14 +24,16 @@ const useIsApproveERC20Token: ContractOperationHook<
   IIsApproveERC20TokenParams,
   string
 > = () => {
-  const { account, provider } = useWeb3React();
+  const { account } = useWeb3React();
+  const provider = getDefaultProvider();
+  const trustChain = isConnectedTrustChain();
   const { btcBalance, feeRate } = useContext(AssetsContext);
   const { getUnInscribedTransactionDetailByAddress, getTCTxByHash } = useBitcoin();
 
   const call = useCallback(
     async (params: IIsApproveERC20TokenParams): Promise<string> => {
       const { erc20TokenAddress, address } = params;
-      if (account && provider && erc20TokenAddress) {
+      if (account && provider && erc20TokenAddress && trustChain) {
         const contract = getContract(erc20TokenAddress, ERC20ABIJson.abi, provider);
 
         const [unInscribedTxIDs, transaction] = await Promise.all([

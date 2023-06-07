@@ -1,33 +1,24 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import BodyContainer from '@/components/Swap/bodyContainer';
 import FiledButton from '@/components/Swap/button/filedButton';
-import { ROUTE_PATH } from '@/constants/route-path';
-import { ILaunchpad } from '@/interfaces/launchpad';
+import {ROUTE_PATH} from '@/constants/route-path';
+import {ILaunchpad} from '@/interfaces/launchpad';
 import AboveTheFoldLaunchpad from '@/modules/LaunchPadDetail/aboveTheFold';
 import AboveTheFoldVoting from '@/modules/ProposalDetail/aboveTheFold';
 import IdoDescription from '@/modules/LaunchPadDetail/description';
-import { getDetailLaunchpad } from '@/services/launchpad';
-import { useAppSelector } from '@/state/hooks';
-import { selectPnftExchange } from '@/state/pnftExchange';
-import { colors } from '@/theme/colors';
-import {
-  Box,
-  Spinner,
-  Tab,
-  TabList,
-  TabPanel,
-  TabPanels,
-  Tabs,
-  Text,
-} from '@chakra-ui/react';
+import {getDetailLaunchpad} from '@/services/launchpad';
+import {useAppSelector} from '@/state/hooks';
+import {selectPnftExchange} from '@/state/pnftExchange';
+import {colors} from '@/theme/colors';
+import {Box, Spinner, Tab, TabList, TabPanel, TabPanels, Tabs, Text,} from '@chakra-ui/react';
 import cx from 'classnames';
-import { useRouter } from 'next/router';
-import React, { useEffect, useState } from 'react';
+import {useRouter} from 'next/router';
+import React, {useEffect, useState} from 'react';
 import IdoFaqs from './faqs';
 import styles from './styles.module.scss';
 import px2rem from '@/utils/px2rem';
 import {LAUNCHPAD_STATUS} from "@/modules/Launchpad/Launchpad.Status";
-import Intro from "@/modules/LaunchPadDetail/aboveTheFold/intro";
+import Intro from "@/modules/LaunchPadDetail/intro";
 import SectionContainer from "@/components/Swap/sectionContainer";
 
 const IdoDetailContainer = () => {
@@ -86,7 +77,7 @@ const IdoDetailContainer = () => {
   return (
     <BodyContainer className={styles.wrapper}>
       {
-        [LAUNCHPAD_STATUS.Voting].includes(poolDetail?.state) ? (
+        [LAUNCHPAD_STATUS.Voting, LAUNCHPAD_STATUS.NotPassed].includes(poolDetail?.state) ? (
           <AboveTheFoldVoting poolDetail={poolDetail} />
         ) : (
           <AboveTheFoldLaunchpad poolDetail={poolDetail} />

@@ -33,4 +33,10 @@
       padding: 0;
     }
   }
+
+  :global {
+    .home-image {
+      max-height: unset;
+    }
+  }
 }

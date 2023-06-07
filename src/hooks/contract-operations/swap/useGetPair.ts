@@ -5,7 +5,6 @@ import { TransactionEventType } from '@/enums/transaction';
 import { ContractOperationHook, DAppType } from '@/interfaces/contract-operation';
 import { IToken } from '@/interfaces/token';
 import { getContract, getDefaultProvider, sortAddressPair } from '@/utils';
-import { useWeb3React } from '@web3-react/core';
 import { useCallback } from 'react';
 
 export interface IGetPairParams {
@@ -14,8 +13,6 @@ export interface IGetPairParams {
 }
 
 const useGetPair: ContractOperationHook<IGetPairParams, string> = () => {
-  const { account } = useWeb3React();
-
   const provider = getDefaultProvider();
 
   const call = useCallback(
@@ -26,7 +23,6 @@ const useGetPair: ContractOperationHook<IGetPairParams, string> = () => {
           UNIV2_FACTORY_ADDRESS,
           UniswapV2FactoryJson,
           provider,
-          account,
         );
         const [token0, token1] = sortAddressPair(tokenA, tokenB);
 
@@ -39,7 +35,7 @@ const useGetPair: ContractOperationHook<IGetPairParams, string> = () => {
 
       return NULL_ADDRESS;
     },
-    [account, provider],
+    [provider],
   );
 
   return {

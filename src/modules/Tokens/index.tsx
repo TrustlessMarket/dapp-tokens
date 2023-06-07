@@ -2,40 +2,37 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-empty-function */
 import Button from '@/components/Button';
-import { IToken } from '@/interfaces/token';
-import { getTokenRp } from '@/services/swap';
-import { getIsAuthenticatedSelector } from '@/state/user/selector';
-import { formatCurrency } from '@/utils';
-import { decimalToExponential } from '@/utils/format';
-import { debounce } from 'lodash';
-import { useContext, useEffect, useMemo, useRef, useState } from 'react';
+import {IToken} from '@/interfaces/token';
+import {getTokenRp} from '@/services/swap';
+import {getIsAuthenticatedSelector} from '@/state/user/selector';
+import {formatCurrency} from '@/utils';
+import {debounce} from 'lodash';
+import React, {useContext, useEffect, useMemo, useRef, useState} from 'react';
 import Spinner from 'react-bootstrap/Spinner';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import { useSelector } from 'react-redux';
+import {useSelector} from 'react-redux';
 import ModalCreateToken from './ModalCreateToken';
-import { StyledTokens, UploadFileContainer } from './Tokens.styled';
-// import { useRouter } from 'next/router';
-// import { ROUTE_PATH } from '@/constants/route-path';
-import { ROUTE_PATH } from '@/constants/route-path';
-import { WalletContext } from '@/contexts/wallet-context';
-import { showError } from '@/utils/toast';
-import { Box, Flex, forwardRef, Icon, Text } from '@chakra-ui/react';
+import {StyledTokens, UploadFileContainer} from './Tokens.styled';
+import {ROUTE_PATH} from '@/constants/route-path';
+import {WalletContext} from '@/contexts/wallet-context';
+import {showError} from '@/utils/toast';
+import {Box, Flex, forwardRef, Icon, Text} from '@chakra-ui/react';
 import BigNumber from 'bignumber.js';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
-//const EXPLORER_URL = TRUSTLESS_COMPUTER_CHAIN_INFO.explorers[0].url;
+import {useRouter} from 'next/router';
 import BodyContainer from '@/components/Swap/bodyContainer';
 import FieldText from '@/components/Swap/form/fieldText';
-import ListTable, { ColumnProp } from '@/components/Swap/listTable';
-import { CDN_URL } from '@/configs';
-import { GM_ADDRESS, WBTC_ADDRESS, WETH_ADDRESS } from '@/constants/common';
+import ListTable, {ColumnProp} from '@/components/Swap/listTable';
+import {CDN_URL} from '@/configs';
+import {GM_ADDRESS, WBTC_ADDRESS, WETH_ADDRESS} from '@/constants/common';
 import useDebounce from '@/hooks/useDebounce';
 import px2rem from '@/utils/px2rem';
-import { Field, Form, useFormState } from 'react-final-form';
-import { AiOutlineCaretDown, AiOutlineCaretUp } from 'react-icons/ai';
-import { VscArrowSwap } from 'react-icons/vsc';
+import {Field, Form, useFormState} from 'react-final-form';
+import {AiOutlineCaretDown, AiOutlineCaretUp} from 'react-icons/ai';
+import {VscArrowSwap} from 'react-icons/vsc';
 import styles from './styles.module.scss';
 import TokenChartLast7Day from './Token.ChartLast7Day';
+import VerifiedBadge from "@/components/Swap/filterToken/verifiedBadge";
 
 const LIMIT_PAGE = 100;
 
@@ -181,11 +178,12 @@ export const MakeFormSwap = forwardRef((props, ref) => {
                 className={'avatar'}
               />
               <Flex direction={'column'}>
-                <Flex gap={1} alignItems={'flex-end'} fontSize={px2rem(16)}>
+                <Flex gap={1} alignItems={'center'} fontSize={px2rem(16)}>
                   <Box fontWeight={'500'} color={'#FFFFFF'}>
                     {row?.name}
                   </Box>
                   <Box color={'rgba(255, 255, 255, 0.7)'}>{row?.symbol}</Box>
+                  <VerifiedBadge token={row}/>
                 </Flex>
                 <Box fontSize={px2rem(12)} color={'rgba(255, 255, 255, 0.7)'}>
                   {row?.network || 'TC'}
@@ -390,12 +388,9 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         },
         sort: sort?.sort,
         render(row: any) {
-          const totalSupply = new BigNumber(row?.totalSupply || 0).div(
-            decimalToExponential(Number(row?.decimal || 18)),
-          );
           return (
             <Text color={'#FFFFFF'} fontSize={px2rem(16)}>
-              {formatCurrency(totalSupply.toString(), 0)}
+              {formatCurrency(row?.totalSupply, 0)}
             </Text>
           );
         },

@@ -1,11 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { DEFAULT_GAS_PRICE } from '@/constants/common';
 import { IToken } from '@/interfaces/token';
 import { getAddress } from '@ethersproject/address';
 import BigNumber from 'bignumber.js';
-import camelCase from 'lodash/camelCase';
-import { formatCurrency } from './string';
 import { isEmpty, random } from 'lodash';
-import { DEFAULT_GAS_PRICE } from '@/constants/common';
+import camelCase from 'lodash/camelCase';
 import web3 from 'web3';
 
 export function isAddress(value: string): string | false {
@@ -55,27 +54,14 @@ export const sortAddressPair = (
 };
 
 export const abbreviateNumber = (value: any) => {
-  const formatValue = new BigNumber(value).toNumber();
-  const si = [
-    { value: 1, symbol: '' },
-    { value: 1e3, symbol: 'k' },
-    { value: 1e6, symbol: 'M' },
-    { value: 1e9, symbol: 'G' },
-    { value: 1e12, symbol: 'T' },
-    { value: 1e15, symbol: 'P' },
-    { value: 1e18, symbol: 'E' },
-  ];
-  const rx = /\.0+$|(\.[0-9]*[1-9])0+$/;
-  let i;
-  for (i = si.length - 1; i > 0; i--) {
-    if (formatValue >= si[i].value) {
-      break;
-    }
-  }
-  return (
-    formatCurrency((formatValue / si[i].value).toFixed(2).replace(rx, '$1')) +
-    si[i].symbol
-  );
+  const config: any = {
+    notation: 'compact',
+    compactDisplay: 'short',
+    maximumSignificantDigits: 3,
+    maximumFractionDigits: 2,
+  };
+  const result = new Intl.NumberFormat('en-US', config);
+  return result.format(value);
 };
 
 export const getDefaultGasPrice = () => {

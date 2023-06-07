@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import LaunchpadStatus, {LAUNCHPAD_STATUS, useLaunchPadStatus} from '@/modules/Launchpad/Launchpad.Status';
+import LaunchpadStatus, {LAUNCHPAD_STATUS} from '@/modules/Launchpad/Launchpad.Status';
 import styles from '@/modules/LaunchPadDetail/aboveTheFold/styles.module.scss';
 import {ILaunchpad} from '@/interfaces/launchpad';
 import {Box, Flex, Grid, GridItem, Text} from "@chakra-ui/react";
-import Intro from "@/modules/LaunchPadDetail/aboveTheFold/intro";
+import Intro from "@/modules/LaunchPadDetail/intro";
 import Card from "@/components/Swap/card";
 import BuyForm from "@/modules/LaunchPadDetail/form";
 import Usp from "@/modules/LaunchPadDetail/usp";
@@ -13,17 +13,17 @@ import {TOKEN_ICON_DEFAULT} from "@/constants/common";
 import px2rem from "@/utils/px2rem";
 import {formatCurrency} from "@/utils";
 import {IToken} from "@/interfaces/token";
+import SectionContainer from "@/components/Swap/sectionContainer";
 
 const AboveTheFold = ({ poolDetail }: ILaunchpad | any) => {
-  const [status] = useLaunchPadStatus({ row: poolDetail });
   const launchpadToken: IToken = poolDetail?.launchpadToken;
 
   return (
     <Box className={styles.wrapper}>
-      <Flex justifyContent={'center'} mb={12}>
+      <Flex pb={7} mb={12} borderBottom={"1px solid rgba(255, 255, 255, 0.1)"}>
         <Flex gap={4} color={'#FFFFFF'} alignItems={'center'}>
           <Flex alignItems={'flex-start'} h={'100%'}>
-            <img src={launchpadToken.thumbnail || TOKEN_ICON_DEFAULT} className={"token-avatar"}/>
+            <img src={launchpadToken.thumbnail || TOKEN_ICON_DEFAULT} className={"launchpad-token-avatar"}/>
           </Flex>
           <Box>
             <Text fontSize={px2rem(24)} fontWeight={'500'}>
@@ -46,27 +46,32 @@ const AboveTheFold = ({ poolDetail }: ILaunchpad | any) => {
           </Card>
         </GridItem>
       </Grid>
-      <Grid templateColumns={['1.25fr 1fr']} gap={[8]} mt={6}>
-        <GridItem>
-          <Box mt={8}>
-            <Usp />
-          </Box>
-        </GridItem>
-        {
-          ![
-            LAUNCHPAD_STATUS.Draft,
-            LAUNCHPAD_STATUS.Pending,
-            LAUNCHPAD_STATUS.Voting,
-            LAUNCHPAD_STATUS.NotPassed
-          ].includes(status.key) && (
+      {
+        [
+          LAUNCHPAD_STATUS.Draft,
+          LAUNCHPAD_STATUS.Pending,
+          LAUNCHPAD_STATUS.NotPassed
+        ] ? (
+          <Grid templateColumns={['1fr']} gap={[8]} mt={6} bgColor={"#1E1E22"} py={8} ml={-px2rem(25)} mr={-px2rem(25)}>
+            <SectionContainer>
+              <Usp />
+            </SectionContainer>
+          </Grid>
+        ) : (
+          <Grid templateColumns={['1.25fr 1fr']} gap={[8]} mt={6}>
             <GridItem>
-              <Card bgColor={"#1B1E26"} paddingX={6} paddingY={6} mt={8}>
+              <Box mt={8}>
+                <Usp />
+              </Box>
+            </GridItem>
+            <GridItem>
+              <Card bgColor={"#1B1E26"} paddingX={6} paddingY={6} mt={8} borderRadius={"12px"}>
                 <Statistic poolDetail={poolDetail}/>
               </Card>
             </GridItem>
-          )
-        }
-      </Grid>
+          </Grid>
+        )
+      }
     </Box>
   );
 };

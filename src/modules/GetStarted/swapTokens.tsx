@@ -24,7 +24,7 @@ const STEPS = [
             <img
               alt="swap_step1_1"
               className={styles.introImg}
-              src={`${CDN_URL}/pages/trustlessmarket/get_started/swap_step_1.2.png`}
+              src={`${CDN_URL}/pages/trustlessmarket/get_started/swap_step_1.2_v1.png`}
             />
           </ListItem>
         </UnorderedList>
@@ -42,7 +42,7 @@ const STEPS = [
             <img
               alt="swap_step1_1"
               className={styles.introImg}
-              src={`${CDN_URL}/pages/trustlessmarket/get_started/swap_step_2.1.png`}
+              src={`${CDN_URL}/pages/trustlessmarket/get_started/swap_step_2.1_v1.png`}
             />
           </ListItem>
           <ListItem>
@@ -51,7 +51,7 @@ const STEPS = [
             <img
               alt="swap_step1_1"
               className={styles.introImg}
-              src={`${CDN_URL}/pages/trustlessmarket/get_started/swap_step_2.2.png`}
+              src={`${CDN_URL}/pages/trustlessmarket/get_started/swap_step_2.2_v1.png`}
             />
           </ListItem>
         </UnorderedList>
@@ -60,38 +60,12 @@ const STEPS = [
   },
   {
     step: '3',
-    title: 'Wrap your BTC or ETH',
+    title: 'Wrap your cryptocurrencies',
     desc: (
       <Box>
-        <Text>Go to <Link href={"https://trustlessbridge.io/"} target={"_blank"} style={{textDecoration: 'underline'}}>https://trustlessbridge.io/</Link>, choose your preferred cryptocurrency.</Text>
-        <Text fontWeight={"700"} mt={2}>3.1. Wrap BTC:</Text>
         <UnorderedList>
           <ListItem>
-            Copy your TC address at <Link href={"https://trustlesswallet.io/"} target={"_blank"} style={{textDecoration: 'underline'}}>https://trustlesswallet.io/</Link> and paste it here. Then click “Transfer”.
-            <img
-              alt="swap_step1_1"
-              className={styles.introImg}
-              src={`${CDN_URL}/pages/trustlessmarket/get_started/swap_step_3.1.1.png`}
-            />
-          </ListItem>
-          <ListItem>
-            Transfer your BTC to the following address. Your $BTC will be automatically wrapped.
-            <img
-              alt="swap_step1_1"
-              className={styles.introImg}
-              src={`${CDN_URL}/pages/trustlessmarket/get_started/swap_step_3.1.2.png`}
-            />
-          </ListItem>
-        </UnorderedList>
-        <Text fontWeight={"700"} mt={2}>3.2. Wrap ETH</Text>
-        <UnorderedList>
-          <ListItem>
-            Put in the amount of ETH you want to wrap. Copy your TC address at <Link href={"https://trustlesswallet.io/"} target={"_blank"} style={{textDecoration: 'underline'}}>https://trustlesswallet.io/</Link> and paste it here. Then click “Transfer”.
-            <img
-              alt="swap_step1_1"
-              className={styles.introImg}
-              src={`${CDN_URL}/pages/trustlessmarket/get_started/swap_step_3.2.1.png`}
-            />
+            Go to <Link href={"https://trustlessbridge.io"} target={"_blank"} style={{textDecoration: 'underline'}}>https://trustlessbridge.io/</Link>, choose your preferred cryptocurrency from Bitcoin and Ethereum Network.
           </ListItem>
           <ListItem>
             Once the transaction is completed, check your wrapped crypto balance under the Tokens tab in your Trustless Wallet: <Link href={"https://trustlesswallet.io/"} target={"_blank"} style={{textDecoration: 'underline'}}>https://trustlesswallet.io/</Link>

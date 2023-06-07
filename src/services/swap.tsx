@@ -1,4 +1,4 @@
-import { API_URL } from '@/configs';
+import {API_EXCHANGE_URL, API_URL} from '@/configs';
 import { IPagingParams } from '@/interfaces/api/query';
 import { IToken } from '@/interfaces/token';
 import { swrFetcher } from '@/utils/swr';
@@ -18,7 +18,7 @@ export const getTokenRp = async (
 ): Promise<IToken[]> => {
   const qs = '?' + queryString.stringify(params);
 
-  return swrFetcher(`${API_URL}${API_PATH}/token/report${qs}`, {
+  return swrFetcher(`${API_EXCHANGE_URL}${API_PATH}/token/report${qs}`, {
     method: 'GET',
     error: 'Fail to get tokens data',
   });

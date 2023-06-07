@@ -58,8 +58,4 @@ export function formatCurrency(value: any = 0, decimalNumber = 6) {
 
   const result = new Intl.NumberFormat('en-US', config);
   return result.format(value);
-  // return new BigNumber(value)
-  //   .decimalPlaces(decimalNumber, 1)
-  //   .toFormat(decimalNumber)
-  //   .replace(/(\.[0-9]*[1-9])0+$|\.0*$/, '$1');
 }

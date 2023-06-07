@@ -2,7 +2,6 @@ import UniswapV2PairJson from '@/abis/UniswapV2Pair.json';
 import { TransactionEventType } from '@/enums/transaction';
 import { ContractOperationHook, DAppType } from '@/interfaces/contract-operation';
 import { getContract, getDefaultProvider } from '@/utils';
-import { useWeb3React } from '@web3-react/core';
 import { useCallback } from 'react';
 
 export interface IGetReservesParams {
@@ -16,8 +15,6 @@ const useGetReserves: ContractOperationHook<
     _reserve1: string;
   }
 > = () => {
-  const { account } = useWeb3React();
-
   const provider = getDefaultProvider();
 
   const call = useCallback(
@@ -29,7 +26,7 @@ const useGetReserves: ContractOperationHook<
     }> => {
       const { address } = params;
       if (provider && address) {
-        const contract = getContract(address, UniswapV2PairJson, provider, account);
+        const contract = getContract(address, UniswapV2PairJson, provider);
 
         const transaction = await contract.connect(provider).getReserves();
 
@@ -44,7 +41,7 @@ const useGetReserves: ContractOperationHook<
         _reserve1: '0',
       };
     },
-    [account, provider],
+    [provider],
   );
 
   return {

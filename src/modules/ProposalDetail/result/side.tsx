@@ -1,68 +1,113 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-empty-function */
 
-import {Box, Flex, Progress, Text} from "@chakra-ui/react";
+import {Box, Flex, Progress, SimpleGrid, Text} from "@chakra-ui/react";
 import {compareString, formatCurrency, shortenAddress} from "@/utils";
 import Jazzicon, {jsNumberForAddress} from 'react-jazzicon';
-import React from "react";
+import React, {useMemo} from "react";
 import {useWindowSize} from "@trustless-computer/dapp-core";
 import InfoTooltip from "@/components/Swap/infoTooltip";
 import HorizontalItem from "@/components/Swap/horizontalItem";
 import {TC_EXPLORER} from "@/configs";
 import {useWeb3React} from "@web3-react/core";
+import Slider from "react-slick";
+import styles from './styles.module.scss';
+import {chunk} from "lodash";
 
 const ProposalResult = ({title, totalVote, className, data}: any) => {
-  const { mobileScreen, tabletScreen } = useWindowSize();
-  const { account} = useWeb3React();
+  const {mobileScreen, tabletScreen} = useWindowSize();
+  const {account} = useWeb3React();
+  const perPage = 18;
+
+  const numSlide = useMemo(() => {
+    return Math.floor((data?.voters?.length || 0) / perPage) + 1;
+  }, [JSON.stringify(data)]);
+
+  const pageData = useMemo(() => {
+    const res = (data?.voters || []).concat([...Array((perPage * numSlide) - (data?.voters?.length || 0))].map(function () {
+    }));
+    return chunk(res, perPage);
+  }, [JSON.stringify(data), numSlide]);
+
+  const settings = {
+    dots: true,
+    infinite: false,
+    speed: 500,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+  };
+
   return (
     <Box className={className}>
       <Flex justifyContent={"space-between"}>
         <Text className={"side-title"}>{title}</Text>
-        <Text className={"side-total"} color={"#FFFFFF"}>Total number of Supporters: {formatCurrency(data?.totalVoter, 0)}</Text>
-        <Text className={"side-total"} color={"#FFFFFF"}>Total TM Supported: {formatCurrency(data?.totalAmount, 0)}</Text>
+        <Text className={"side-total"} color={"#FFFFFF"}>No. of Supporters: {formatCurrency(data?.totalVoter, 0)}</Text>
+        <Text className={"side-total"} color={"#FFFFFF"}>No. of TM
+          Supported: {formatCurrency(data?.totalAmount, 0)} / {totalVote}</Text>
       </Flex>
       <Progress
         max={100}
-        value={(data?.totalVoter / totalVote) * 100}
+        value={(Number(data?.totalAmount) / totalVote) * 100}
         h="20px"
         className={"progress-bar"}
         mt={4}
       />
-      <Flex mt={4} gap={4}>
+      <Slider {...settings} className={styles.listVote}>
         {
-          data?.voters?.map((d: any) => {
+          pageData?.map((d: any, i: number) => {
             return (
-              <InfoTooltip label={<Box>
-                <HorizontalItem
-                  label={<Text color={"rgba(255, 255, 255, 0.7)"}>Address</Text>}
-                  value={<Text color={"#FFFFFF"}>{shortenAddress(d.voter, 4, 4)}</Text>}
-                />
-                <HorizontalItem
-                  label={<Text color={"rgba(255, 255, 255, 0.7)"}>Amount</Text>}
-                  value={<Text color={"#FFFFFF"}>{formatCurrency(d.amount)} {'TM'}</Text>}
-                />
+              <Box key={i}>
+                <SimpleGrid spacingX={8} spacingY={4} columns={6} w={"fit-content"}>
+                  {
+                    d?.map((d: any, index: number) => {
+                      return d ? (
+                        <InfoTooltip label={<Box>
+                          <HorizontalItem
+                            label={<Text color={"rgba(255, 255, 255, 0.7)"}>Address</Text>}
+                            value={<Text color={"#FFFFFF"}>{shortenAddress(d.voter, 4, 4)}</Text>}
+                          />
+                          <HorizontalItem
+                            label={<Text color={"rgba(255, 255, 255, 0.7)"}>Amount</Text>}
+                            value={<Text color={"#FFFFFF"}>{formatCurrency(d.amount)} {'TM'}</Text>}
+                          />
+                        </Box>
+                        }
+                                     key={d.voter}
+                        >
+                          <Box key={d.voter}>
+                            <a
+                              title="explorer"
+                              href={`${TC_EXPLORER}/address/${d.voter}`}
+                              target="_blank"
+                              style={{textDecoration: 'underline'}}
+                            >
+                              <Jazzicon
+                                diameter={mobileScreen || tabletScreen ? 40 : 60}
+                                seed={jsNumberForAddress(d.voter)}
+                              />
+                            </a>
+                            {compareString(account, d.voter) &&
+                                <Text color={"rgba(255, 255, 255, 0.7)"} textAlign={"center"} mt={-2}>You</Text>}
+                          </Box>
+                        </InfoTooltip>
+                      ) : (
+                        <Box
+                          key={index}
+                          width={`${mobileScreen || tabletScreen ? 40 : 60}px`}
+                          height={`${mobileScreen || tabletScreen ? 40 : 60}px`}
+                          borderRadius={"50%"}
+                          backgroundColor={"#1E1E22"}
+                        >
+                        </Box>
+                      )
+                    })
+                  }
+                </SimpleGrid>
               </Box>
-              }
-                 key={d.voter}
-              >
-                <Box key={d.voter}>
-                  <a
-                    title="explorer"
-                    href={`${TC_EXPLORER}/address/${d.voter}`}
-                    target="_blank"
-                    style={{ textDecoration: 'underline' }}
-                  >
-                    <Jazzicon
-                      diameter={mobileScreen || tabletScreen ? 24 : 36}
-                      seed={jsNumberForAddress(d.voter)}
-                    />
-                  </a>
-                  {compareString(account, d.voter) && <Text color={"rgba(255, 255, 255, 0.7)"} textAlign={"center"} mt={-2}>You</Text>}
-                </Box>
-              </InfoTooltip>
-            );
+            )
           })
         }
-      </Flex>
+      </Slider>
     </Box>
   );
 }

@@ -1,7 +1,7 @@
 /* eslint-disable react/no-children-prop */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import {transactionType} from '@/components/Swap/alertInfoProcessing/types';
+import { transactionType } from '@/components/Swap/alertInfoProcessing/types';
 import FiledButton from '@/components/Swap/button/filedButton';
 import FilterButton from '@/components/Swap/filterToken';
 import FieldAmount from '@/components/Swap/form/fieldAmount';
@@ -9,63 +9,80 @@ import InputWrapper from '@/components/Swap/form/inputWrapper';
 import HorizontalItem from '@/components/Swap/horizontalItem';
 import TokenBalance from '@/components/Swap/tokenBalance';
 import WrapperConnected from '@/components/WrapperConnected';
-import {CDN_URL, UNIV2_ROUTER_ADDRESS} from '@/configs';
+import { CDN_URL, UNIV2_ROUTER_ADDRESS } from '@/configs';
 import {
   BRIDGE_SUPPORT_TOKEN,
   DEV_ADDRESS,
   GM_ADDRESS,
+  TOKEN_ICON_DEFAULT,
   TRUSTLESS_BRIDGE,
   TRUSTLESS_GASSTATION,
   WBTC_ADDRESS,
   WETH_ADDRESS,
 } from '@/constants/common';
-import {toastError} from '@/constants/error';
-import {AssetsContext} from '@/contexts/assets-context';
+import { toastError } from '@/constants/error';
+import { AssetsContext } from '@/contexts/assets-context';
 import useGetReserves from '@/hooks/contract-operations/swap/useReserves';
-import useSwapERC20Token, {ISwapERC20TokenParams,} from '@/hooks/contract-operations/swap/useSwapERC20Token';
+import useSwapERC20Token, {
+  ISwapERC20TokenParams,
+} from '@/hooks/contract-operations/swap/useSwapERC20Token';
 import useApproveERC20Token from '@/hooks/contract-operations/token/useApproveERC20Token';
 import useBalanceERC20Token from '@/hooks/contract-operations/token/useBalanceERC20Token';
 import useIsApproveERC20Token from '@/hooks/contract-operations/token/useIsApproveERC20Token';
 import useContractOperation from '@/hooks/contract-operations/useContractOperation';
-import {IToken} from '@/interfaces/token';
-import {TransactionStatus} from '@/interfaces/walletTransaction';
-import {getSwapRoutes, getSwapTokens, logErrorToServer} from '@/services/swap';
-import {useAppDispatch, useAppSelector} from '@/state/hooks';
+import { IToken } from '@/interfaces/token';
+import { TransactionStatus } from '@/interfaces/walletTransaction';
+import { getSwapRoutes, getSwapTokens, logErrorToServer } from '@/services/swap';
+import { useAppDispatch, useAppSelector } from '@/state/hooks';
 import {
   requestReload,
   requestReloadRealtime,
   selectPnftExchange,
   updateCurrentTransaction,
 } from '@/state/pnftExchange';
-import {getIsAuthenticatedSelector, getUserSelector} from '@/state/user/selector';
-import {camelCaseKeys, compareString, formatCurrency, sortAddressPair,} from '@/utils';
-import {isDevelop} from '@/utils/commons';
-import {composeValidators, required} from '@/utils/formValidate';
+import { getIsAuthenticatedSelector, getUserSelector } from '@/state/user/selector';
+import {
+  camelCaseKeys,
+  compareString,
+  formatCurrency,
+  sortAddressPair,
+} from '@/utils';
+import { isDevelop } from '@/utils/commons';
+import { composeValidators, required } from '@/utils/formValidate';
 import px2rem from '@/utils/px2rem';
-import {showError} from '@/utils/toast';
-import {Box, Center, Flex, forwardRef, Text, Tooltip} from '@chakra-ui/react';
-import {useWeb3React} from '@web3-react/core';
+import { showError } from '@/utils/toast';
+import { Box, Center, Flex, forwardRef, Text, Tooltip } from '@chakra-ui/react';
+import { useWeb3React } from '@web3-react/core';
 import BigNumber from 'bignumber.js';
 import cx from 'classnames';
 import debounce from 'lodash/debounce';
 import Link from 'next/link';
-import {useRouter} from 'next/router';
-import React, {useCallback, useContext, useEffect, useImperativeHandle, useMemo, useRef, useState,} from 'react';
-import {Field, Form, useForm, useFormState} from 'react-final-form';
+import { useRouter } from 'next/router';
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useImperativeHandle,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
+import { Field, Form, useForm, useFormState } from 'react-final-form';
 import toast from 'react-hot-toast';
-import {RiArrowUpDownLine} from 'react-icons/ri';
-import {useDispatch, useSelector} from 'react-redux';
+import { RiArrowUpDownLine } from 'react-icons/ri';
+import { useDispatch, useSelector } from 'react-redux';
 import Web3 from 'web3';
 import styles from './styles.module.scss';
-import {BsListCheck} from "react-icons/bs";
-import {BiBell} from "react-icons/bi";
-import {ROUTE_PATH} from "@/constants/route-path";
-import SlippageSettingButton from "@/components/Swap/slippageSetting/button";
-import {closeModal, openModal} from "@/state/modal";
-import {useWindowSize} from '@trustless-computer/dapp-core';
+import { BsListCheck } from 'react-icons/bs';
+import { BiBell } from 'react-icons/bi';
+import { ROUTE_PATH } from '@/constants/route-path';
+import SlippageSettingButton from '@/components/Swap/slippageSetting/button';
+import { closeModal, openModal } from '@/state/modal';
+import { useWindowSize } from '@trustless-computer/dapp-core';
 import InfoTooltip from '@/components/Swap/infoTooltip';
 import ModalConfirmApprove from '@/components/ModalConfirmApprove';
-import {MdHelpOutline} from "react-icons/md";
+import { MdHelpOutline } from 'react-icons/md';
+import tokenIcons from '@/constants/tokenIcons';
 
 const LIMIT_PAGE = 50;
 const FEE = 2;
@@ -127,7 +144,9 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     let result = false;
     try {
       result =
-        isAuthenticated && values?.baseAmount && !isNaN(Number(values?.baseAmount)) &&
+        isAuthenticated &&
+        values?.baseAmount &&
+        !isNaN(Number(values?.baseAmount)) &&
         new BigNumber(amountBaseTokenApproved || 0).lt(
           Web3.utils.toWei(`${values?.baseAmount || 0}`, 'ether'),
         );
@@ -539,7 +558,10 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           setExchangeRate(new BigNumber(1).div(exchangeRate).toString());
         }
 
-        const routes = await getSwapRoutesInfo(quoteToken?.address, baseToken?.address);
+        const routes = await getSwapRoutesInfo(
+          quoteToken?.address,
+          baseToken?.address,
+        );
 
         onBaseAmountChange({
           amount: values?.quoteAmount,
@@ -606,49 +628,45 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     });
   };
 
-  const calculateQuoteAmountMultiRoute = (
-    {
-      amount,
-      reserveInfos,
-      tokenIn,
-      tokenOut,
-      swapRoutes,
-      listPair
-    }: {
-      amount: any;
-      reserveInfos: any;
-      tokenIn: any;
-      tokenOut: any;
-      swapRoutes: any;
-      listPair: any[];
-    }
-  ) => {
+  const calculateQuoteAmountMultiRoute = ({
+    amount,
+    reserveInfos,
+    tokenIn,
+    tokenOut,
+    swapRoutes,
+    listPair,
+  }: {
+    amount: any;
+    reserveInfos: any;
+    tokenIn: any;
+    tokenOut: any;
+    swapRoutes: any;
+    listPair: any[];
+  }) => {
     let _amount = amount;
     for (let index = 0; index < listPair?.length; index++) {
-      const {baseToken, quoteToken} = listPair[index];
+      const { baseToken, quoteToken } = listPair[index];
       const [token0, token1] = sortAddressPair(baseToken, quoteToken);
 
-      const {_reserveIn, _reserveOut} = compareString(
+      const { _reserveIn, _reserveOut } = compareString(
         token0?.address,
         baseToken?.address,
       )
         ? {
-          _reserveIn: reserveInfos[index]?._reserve0,
-          _reserveOut: reserveInfos[index]?._reserve1,
-        }
+            _reserveIn: reserveInfos[index]?._reserve0,
+            _reserveOut: reserveInfos[index]?._reserve1,
+          }
         : {
-          _reserveIn: reserveInfos[index]?._reserve1,
-          _reserveOut: reserveInfos[index]?._reserve0,
-        };
+            _reserveIn: reserveInfos[index]?._reserve1,
+            _reserveOut: reserveInfos[index]?._reserve0,
+          };
 
       const amountIn = new BigNumber(_amount);
       const reserveIn = new BigNumber(
         Web3.utils.fromWei(Web3.utils.toBN(_reserveIn || 0), 'ether').toString(),
       );
       const reserveOut = new BigNumber(
-        Web3.utils
-          .fromWei(Web3.utils.toBN(_reserveOut || 0), 'ether')
-          .toString(),
+        Web3.utils.fromWei(Web3.utils.toBN(_reserveOut || 0), 'ether').toString(),
       );
       if (amountIn.lte(0) || reserveIn.lte(0) || reserveOut.lte(0)) {
         return;
@@ -663,7 +681,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
 
     setExchangeRate(rate.toString());
     change('quoteAmount', _amount.toFixed());
-  }
+  };
 
   const handleBaseAmountChange = ({
     amount,
@@ -693,8 +711,8 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         swapRoutes?.length > 1
       ) {
         const listPair = [
-          {baseToken: tokenIn, quoteToken: {address: WBTC_ADDRESS}},
-          {baseToken: {address: WBTC_ADDRESS}, quoteToken: tokenOut},
+          { baseToken: tokenIn, quoteToken: { address: WBTC_ADDRESS } },
+          { baseToken: { address: WBTC_ADDRESS }, quoteToken: tokenOut },
         ];
 
         calculateQuoteAmountMultiRoute({
@@ -703,16 +721,18 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           tokenIn,
           tokenOut,
           swapRoutes,
-          listPair
+          listPair,
         });
       } else if (
-        ((compareString(tokenIn?.address, WBTC_ADDRESS) && compareString(tokenOut?.address, GM_ADDRESS))
-          || (compareString(tokenIn?.address, GM_ADDRESS) && compareString(tokenOut?.address, WBTC_ADDRESS))
-        ) && swapRoutes?.length > 1
+        ((compareString(tokenIn?.address, WBTC_ADDRESS) &&
+          compareString(tokenOut?.address, GM_ADDRESS)) ||
+          (compareString(tokenIn?.address, GM_ADDRESS) &&
+            compareString(tokenOut?.address, WBTC_ADDRESS))) &&
+        swapRoutes?.length > 1
       ) {
         const listPair = [
-          {baseToken: tokenIn, quoteToken: {address: WETH_ADDRESS}},
-          {baseToken: {address: WETH_ADDRESS}, quoteToken: tokenOut},
+          { baseToken: tokenIn, quoteToken: { address: WETH_ADDRESS } },
+          { baseToken: { address: WETH_ADDRESS }, quoteToken: tokenOut },
         ];
 
         calculateQuoteAmountMultiRoute({
@@ -721,7 +741,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           tokenIn,
           tokenOut,
           swapRoutes,
-          listPair
+          listPair,
         });
       } else {
         const [token0, token1] = sortAddressPair(tokenIn, tokenOut);
@@ -971,57 +991,61 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           />
           <Text className={'router-text'}>Auto Router</Text>
         </Flex>
-        <Flex justifyContent={"space-between"} w={"100%"} color={"#FFFFFF"}>
-          <Flex alignItems={"center"}>
+        <Flex justifyContent={'space-between'} w={'100%'} color={'#FFFFFF'} gap={2}>
+          <Flex gap={2} alignItems={'center'}>
             <img
               // width={25}
               // height={25}
               src={
                 baseToken?.thumbnail ||
-                'https://cdn.trustless.computer/upload/1683530065704444020-1683530065-default-coin.svg'
+                tokenIcons?.[baseToken?.symbol?.toLowerCase()] ||
+                TOKEN_ICON_DEFAULT
               }
               alt={baseToken?.thumbnail || 'default-icon'}
               className={'avatar'}
             />
             {!baseToken?.thumbnail && <Text>{baseToken?.symbol}</Text>}
           </Flex>
-          <Flex flex={1} alignItems={'center'}>
+          <Flex gap={2} flex={1} alignItems={'center'}>
             <Box className={'dot-line'}></Box>
           </Flex>
           {swapRoutes?.length > 1 && (
             <>
-              {
-                (compareString(baseToken?.address, WBTC_ADDRESS) && compareString(quoteToken?.address, GM_ADDRESS))
-                || (compareString(baseToken?.address, GM_ADDRESS) && compareString(quoteToken?.address, WBTC_ADDRESS)) ? (
-                  <img
-                    // width={25}
-                    // height={25}
-                    src={'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png'}
-                    alt={'eth-icon'}
-                    className={'avatar'}
-                  />
-                ) : (
-                  <img
-                    // width={25}
-                    // height={25}
-                    src={'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png'}
-                    alt={'wbtc-icon'}
-                    className={'avatar'}
-                  />
-                )
-              }
+              {(compareString(baseToken?.address, WBTC_ADDRESS) &&
+                compareString(quoteToken?.address, GM_ADDRESS)) ||
+              (compareString(baseToken?.address, GM_ADDRESS) &&
+                compareString(quoteToken?.address, WBTC_ADDRESS)) ? (
+                <img
+                  // width={25}
+                  // height={25}
+                  src={
+                    'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png'
+                  }
+                  alt={'eth-icon'}
+                  className={'avatar'}
+                />
+              ) : (
+                <img
+                  // width={25}
+                  // height={25}
+                  src={'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png'}
+                  alt={'wbtc-icon'}
+                  className={'avatar'}
+                />
+              )}
               <Flex flex={1} alignItems={'center'}>
                 <Box className={'dot-line'}></Box>
               </Flex>
             </>
           )}
-          <Flex alignItems={'center'}>
+          <Flex gap={2} alignItems={'center'}>
             <img
               // width={25}
               // height={25}
               src={
                 quoteToken?.thumbnail ||
-                'https://cdn.trustless.computer/upload/1683530065704444020-1683530065-default-coin.svg'
+                tokenIcons?.[quoteToken?.symbol?.toLowerCase()] ||
+                TOKEN_ICON_DEFAULT
               }
               alt={quoteToken?.thumbnail || 'default-icon'}
               className={'avatar'}
@@ -1044,11 +1068,11 @@ export const MakeFormSwap = forwardRef((props, ref) => {
                 w={'40px'}
                 h={'40px'}
                 borderRadius={'50%'}
-                bgColor={"#353945"}
+                bgColor={'#353945'}
                 cursor={'pointer'}
                 onClick={() => router.push(ROUTE_PATH.SWAP_HISTORY)}
               >
-                <BsListCheck color="#FFFFFF" fontSize={"20px"}/>
+                <BsListCheck color="#FFFFFF" fontSize={'20px'} />
               </Center>
             </InfoTooltip>
             <SlippageSettingButton />
@@ -1058,11 +1082,15 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       <InputWrapper
         className={cx(styles.inputAmountWrap, styles.inputBaseAmountWrap)}
         theme="light"
-        label={<Text fontSize={px2rem(14)} color={"#FFFFFF"}>Swap from</Text>}
+        label={
+          <Text fontSize={px2rem(14)} color={'#FFFFFF'}>
+            Swap from
+          </Text>
+        }
         rightLabel={
           baseToken && (
-            <Flex gap={2} fontSize={px2rem(14)} color={"#FFFFFF"}>
-              <Flex gap={1} alignItems={"center"}>
+            <Flex gap={2} fontSize={px2rem(14)} color={'#FFFFFF'}>
+              <Flex gap={1} alignItems={'center'}>
                 Balance:
                 <TokenBalance
                   token={baseToken}
@@ -1074,9 +1102,9 @@ export const MakeFormSwap = forwardRef((props, ref) => {
                 cursor={'pointer'}
                 color={'#3385FF'}
                 onClick={handleChangeMaxBaseAmount}
-                bgColor={"rgba(51, 133, 255, 0.2)"}
-                borderRadius={"4px"}
-                padding={"1px 12px"}
+                bgColor={'rgba(51, 133, 255, 0.2)'}
+                borderRadius={'4px'}
+                padding={'1px 12px'}
               >
                 MAX
               </Text>
@@ -1117,17 +1145,21 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           p={2}
           bgColor={'#353945'}
         >
-          <RiArrowUpDownLine color="#FFFFFF" fontSize={"20px"}/>
+          <RiArrowUpDownLine color="#FFFFFF" fontSize={'20px'} />
         </Center>
       </Flex>
       <InputWrapper
         className={cx(styles.inputAmountWrap, styles.inputQuoteAmountWrap)}
         theme="light"
-        label={<Text fontSize={px2rem(14)} color={"#FFFFFF"}>Swap to</Text>}
+        label={
+          <Text fontSize={px2rem(14)} color={'#FFFFFF'}>
+            Swap to
+          </Text>
+        }
         rightLabel={
           quoteToken && (
-            <Flex gap={2} fontSize={px2rem(14)} color={"#FFFFFF"}>
-              <Flex gap={1} alignItems={"center"}>
+            <Flex gap={2} fontSize={px2rem(14)} color={'#FFFFFF'}>
+              <Flex gap={1} alignItems={'center'}>
                 Balance:
                 <TokenBalance
                   token={quoteToken}
@@ -1139,9 +1171,9 @@ export const MakeFormSwap = forwardRef((props, ref) => {
                 cursor={'pointer'}
                 color={'#3385FF'}
                 onClick={handleChangeMaxQuoteAmount}
-                bgColor={"rgba(51, 133, 255, 0.2)"}
-                borderRadius={"4px"}
-                padding={"1px 12px"}
+                bgColor={'rgba(51, 133, 255, 0.2)'}
+                borderRadius={'4px'}
+                padding={'1px 12px'}
               >
                 MAX
               </Text>
@@ -1177,14 +1209,22 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       <Box mt={1}>
         <HorizontalItem
           label={
-            <Text fontSize={'sm'} fontWeight={'medium'} color={'rgba(255, 255, 255, 0.7)'}>
+            <Text
+              fontSize={'sm'}
+              fontWeight={'medium'}
+              color={'rgba(255, 255, 255, 0.7)'}
+            >
               Fee: {FEE * (swapRoutes?.length || 1)}%
             </Text>
           }
         />
         <HorizontalItem
           label={
-            <Flex fontSize={'sm'} fontWeight={'medium'} color={'rgba(255, 255, 255, 0.7)'}>
+            <Flex
+              fontSize={'sm'}
+              fontWeight={'medium'}
+              color={'rgba(255, 255, 255, 0.7)'}
+            >
               Reward: +0.1TM
             </Flex>
           }
@@ -1213,7 +1253,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
               h={'24px'}
               borderRadius={'50%'}
               bg={'rgba(255, 126, 33, 0.2)'}
-              as={"span"}
+              as={'span'}
             >
               <BiBell color="#FF7E21" />
             </Center>
@@ -1234,29 +1274,31 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         baseToken &&
         BRIDGE_SUPPORT_TOKEN.includes(baseToken?.symbol) &&
         new BigNumber(baseBalance || 0).lte(0) && (
-        <Flex gap={3} mt={2}>
-          <Center
-            w={'24px'}
-            h={'24px'}
-            borderRadius={'50%'}
-            bg={'rgba(255, 126, 33, 0.2)'}
-            as={"span"}
-          >
-            <BiBell color="#FF7E21" />
-          </Center>
-          <Text fontSize="sm" color="#FF7E21" textAlign={'left'}>
-            Insufficient {baseToken?.symbol} balance! Consider swapping your{' '}
-            {baseToken?.symbol?.replace('W', '')} to trustless network{' '}
-            <Link
-              href={`${TRUSTLESS_BRIDGE}${baseToken?.symbol?.replace('W', '')?.toLowerCase()}`}
-              target={'_blank'}
-              style={{ textDecoration: 'underline' }}
+          <Flex gap={3} mt={2}>
+            <Center
+              w={'24px'}
+              h={'24px'}
+              borderRadius={'50%'}
+              bg={'rgba(255, 126, 33, 0.2)'}
+              as={'span'}
             >
-              here
-            </Link>
-            .
-          </Text>
-        </Flex>
+              <BiBell color="#FF7E21" />
+            </Center>
+            <Text fontSize="sm" color="#FF7E21" textAlign={'left'}>
+              Insufficient {baseToken?.symbol} balance! Consider swapping your{' '}
+              {baseToken?.symbol?.replace('W', '')} to trustless network{' '}
+              <Link
+                href={`${TRUSTLESS_BRIDGE}${baseToken?.symbol
+                  ?.replace('W', '')
+                  ?.toLowerCase()}`}
+                target={'_blank'}
+                style={{ textDecoration: 'underline' }}
+              >
+                here
+              </Link>
+              .
+            </Text>
+          </Flex>
         )}
       <Box mt={8} />
       <WrapperConnected
@@ -1359,18 +1401,25 @@ const TradingForm = () => {
               }
               value={<Text fontSize={'sm'}>{slippage}%</Text>}
             />
-            <Flex gap={1} alignItems={slippage === 100 ? 'center' : 'flex-start'} mt={2}>
+            <Flex
+              gap={1}
+              alignItems={slippage === 100 ? 'center' : 'flex-start'}
+              mt={2}
+            >
               <img
                 src={`${CDN_URL}/icons/icon-information.png`}
                 alt="info"
-                style={{width: 25, height: 25, minWidth: 25, minHeight: 25}}
+                style={{ width: 25, height: 25, minWidth: 25, minHeight: 25 }}
               />
-              <Text fontSize="sm" color="brand.warning.400" textAlign={'left'} maxW={"500px"}>
-                {
-                  slippage === 100
-                    ? `Your current slippage is set at 100%. Trade at your own risk.`
-                    : `Your slippage percentage of ${slippage}% means that if the price changes by ${slippage}%, your transaction will fail and revert. If you wish to change your slippage percentage, please close this confirmation popup and go to the top of the swap box where you can set a different slippage value.`
-                }
+              <Text
+                fontSize="sm"
+                color="brand.warning.400"
+                textAlign={'left'}
+                maxW={'500px'}
+              >
+                {slippage === 100
+                  ? `Your current slippage is set at 100%. Trade at your own risk.`
+                  : `Your slippage percentage of ${slippage}% means that if the price changes by ${slippage}%, your transaction will fail and revert. If you wish to change your slippage percentage, please close this confirmation popup and go to the top of the swap box where you can set a different slippage value.`}
               </Text>
             </Flex>
             <FiledButton
@@ -1424,10 +1473,13 @@ const TradingForm = () => {
         !compareString(quoteToken?.address, WBTC_ADDRESS) &&
         swapRoutes?.length > 1
           ? [baseToken.address, WBTC_ADDRESS, quoteToken.address]
-          : ((compareString(baseToken?.address, WBTC_ADDRESS) && compareString(quoteToken?.address, GM_ADDRESS))
-          || (compareString(baseToken?.address, GM_ADDRESS) && compareString(quoteToken?.address, WBTC_ADDRESS))
-        ) && swapRoutes?.length > 1 ? [baseToken.address, WETH_ADDRESS, quoteToken.address]
-            : [baseToken.address, quoteToken.address];
+          : ((compareString(baseToken?.address, WBTC_ADDRESS) &&
+              compareString(quoteToken?.address, GM_ADDRESS)) ||
+              (compareString(baseToken?.address, GM_ADDRESS) &&
+                compareString(quoteToken?.address, WBTC_ADDRESS))) &&
+            swapRoutes?.length > 1
+          ? [baseToken.address, WETH_ADDRESS, quoteToken.address]
+          : [baseToken.address, quoteToken.address];
 
       const data = {
         addresses: addresses,

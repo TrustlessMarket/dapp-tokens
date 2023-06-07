@@ -8,7 +8,7 @@ import { TOKEN_ICON_DEFAULT } from '@/constants/common';
 import px2rem from '@/utils/px2rem';
 import styles from './styles.module.scss';
 import {formatCurrency} from "@/utils";
-import LaunchpadStatus from "@/modules/Launchpad/Launchpad.Status";
+import LaunchpadStatus, {LAUNCHPAD_STATUS} from "@/modules/Launchpad/Launchpad.Status";
 
 const ProposalStarting = ({poolDetail}: any) => {
   const launchpadToken: IToken = poolDetail?.launchpadToken;
@@ -18,7 +18,7 @@ const ProposalStarting = ({poolDetail}: any) => {
       <Flex justifyContent={'space-between'} mb={6}>
         <Flex gap={4} color={'#FFFFFF'} alignItems={'center'}>
           <Flex alignItems={'flex-start'} h={'100%'}>
-            <img src={launchpadToken.thumbnail || TOKEN_ICON_DEFAULT} className={"token-avatar"}/>
+            <img src={launchpadToken.thumbnail || TOKEN_ICON_DEFAULT} className={"launchpad-token-avatar"}/>
           </Flex>
           <Box>
             <Text fontSize={px2rem(24)} fontWeight={'500'}>
@@ -30,29 +30,13 @@ const ProposalStarting = ({poolDetail}: any) => {
             </Flex>
           </Box>
         </Flex>
-        {/*<Flex alignItems={"center"} gap={1}>
-          <Text>Proposed by</Text>
-          <a
-            title="explorer"
-            href={`${TC_EXPLORER}/address/${proposalDetail?.proposerAddress}`}
-            target="_blank"
-            style={{ textDecoration: 'underline' }}
-          >
-            {formatLongAddress(proposalDetail?.proposerAddress)}
-          </a>
-          at
-          <a
-            title="explorer"
-            href={`${TC_EXPLORER}/tx/${proposalDetail?.txHash}`}
-            target="_blank"
-            style={{ textDecoration: 'underline' }}
-          >
-            {formatLongAddress(proposalDetail?.txHash)}
-          </a>
-        </Flex>*/}
-        <Card bgColor={"transparent"} paddingX={6}>
-          <BuyForm poolDetail={poolDetail}/>
-        </Card>
+        {
+          [LAUNCHPAD_STATUS.Voting].includes(poolDetail?.state) && (
+            <Card bgColor={"transparent"} paddingX={6}>
+              <BuyForm poolDetail={poolDetail}/>
+            </Card>
+          )
+        }
       </Flex>
     </Box>
   );

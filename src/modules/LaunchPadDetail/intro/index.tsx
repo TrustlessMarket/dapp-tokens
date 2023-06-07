@@ -2,7 +2,7 @@
 import {Box} from "@chakra-ui/react";
 import {CDN_URL} from "@/configs";
 import cx from "classnames";
-import React, {useRef, useState} from "react";
+import React, {useMemo, useRef, useState} from "react";
 import ReactPlayer from 'react-player';
 import styles from './styles.module.scss';
 
@@ -10,6 +10,9 @@ const Intro = ({poolDetail}: any) => {
   const refVideo = useRef<any>();
 
   const [isPlay, setIsPlay] = useState(false);
+  const isYoutube = useMemo(() => {
+    return poolDetail?.video?.includes('youtube') || poolDetail?.video?.includes('youtu.be');
+  }, [poolDetail?.video]);
 
   const onPlay = () => {
     setIsPlay(true);
@@ -22,12 +25,12 @@ const Intro = ({poolDetail}: any) => {
   };
 
   return (
-    <Box className={styles.introWrapper}>
+    <Box className={styles.wrapper}>
       {
         poolDetail?.video ? (
           <>
             {
-              poolDetail?.video?.includes('youtube') ? (
+              isYoutube ? (
                   <Box
                     className="youtube-video"
                     flex={1}

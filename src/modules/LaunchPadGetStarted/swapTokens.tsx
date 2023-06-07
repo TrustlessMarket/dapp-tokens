@@ -24,7 +24,7 @@ const STEPS = [
             <img
               alt="swap_step1_1"
               className={styles.introImg}
-              src={`${CDN_URL}/pages/trustlessmarket/get_started/swap_step_1.2.png`}
+              src={`${CDN_URL}/pages/trustlessmarket/get_started/swap_step_1.2_v1.png`}
             />
           </ListItem>
         </UnorderedList>
@@ -42,7 +42,7 @@ const STEPS = [
               <img
                 alt="swap_step1_1"
                 className={styles.introImg}
-                src={`${CDN_URL}/pages/trustlessmarket/get_started/swap_step_2.1.png`}
+                src={`${CDN_URL}/pages/trustlessmarket/get_started/swap_step_2.1_v1.png`}
               />
             </ListItem>
             <ListItem>
@@ -51,7 +51,7 @@ const STEPS = [
               <img
                 alt="swap_step1_1"
                 className={styles.introImg}
-                src={`${CDN_URL}/pages/trustlessmarket/get_started/swap_step_2.2.png`}
+                src={`${CDN_URL}/pages/trustlessmarket/get_started/swap_step_2.2_v1.png`}
               />
             </ListItem>
           </UnorderedList>
@@ -63,7 +63,11 @@ const STEPS = [
     title: 'Wrap your BTC or ETH',
     desc: (
         <Box>
-          <Text>Go to <Link href={"https://trustlessbridge.io/"} target={"_blank"} style={{textDecoration: 'underline'}}>https://trustlessbridge.io/</Link>, choose your preferred cryptocurrency.</Text>
+          <UnorderedList>
+            <ListItem>
+              <Text>Go to <Link href={"https://trustlessbridge.io/"} target={"_blank"} style={{textDecoration: 'underline'}}>https://trustlessbridge.io/</Link>, choose your preferred cryptocurrency.</Text>
+            </ListItem>
+          </UnorderedList>
           <Text fontWeight={"700"} mt={2}>3.1. Wrap BTC:</Text>
           <UnorderedList>
             <ListItem>
@@ -71,7 +75,7 @@ const STEPS = [
               <img
                 alt="swap_step1_1"
                 className={styles.introImg}
-                src={`${CDN_URL}/pages/trustlessmarket/get_started/swap_step_3.1.1.png`}
+                src={`${CDN_URL}/pages/trustlessmarket/get_started/swap_step_3.1.1_v1.png`}
               />
             </ListItem>
             <ListItem>
@@ -79,7 +83,7 @@ const STEPS = [
               <img
                 alt="swap_step1_1"
                 className={styles.introImg}
-                src={`${CDN_URL}/pages/trustlessmarket/get_started/swap_step_3.1.2.png`}
+                src={`${CDN_URL}/pages/trustlessmarket/get_started/swap_step_3.1.2_v1.png`}
               />
             </ListItem>
           </UnorderedList>
@@ -90,7 +94,7 @@ const STEPS = [
               <img
                 alt="swap_step1_1"
                 className={styles.introImg}
-                src={`${CDN_URL}/pages/trustlessmarket/get_started/swap_step_3.2.1.png`}
+                src={`${CDN_URL}/pages/trustlessmarket/get_started/swap_step_3.2.1_v1.png`}
               />
             </ListItem>
             <ListItem>
@@ -110,16 +114,20 @@ const STEPS = [
     title: 'Participate in the crowdfunding of the projects',
     desc: (
         <Box>
-          <Text>Go to <Link href={"https://trustless.market/launchpad"} style={{textDecoration: 'underline'}}>https://trustless.market/launchpad</Link> and select the project you want to support</Text>
-          <img
-            alt="swap_step1_1"
-            className={styles.introImg}
-            src={`${CDN_URL}/pages/trustlessmarket/get_started/launchpad_step_4.png`}
-          />
+          <UnorderedList>
+            <ListItem>
+              <Text>Go to <Link href={"https://trustless.market/launchpad"} style={{textDecoration: 'underline'}}>https://trustless.market/launchpad</Link> and select the project you want to support</Text>
+              <img
+                alt="swap_step1_1"
+                className={styles.introImg}
+                src={`${CDN_URL}/pages/trustlessmarket/get_started/launchpad_step_4.png`}
+              />
+            </ListItem>
+          </UnorderedList>
           <Text fontWeight={"700"} mt={2}>4.1. Voting:</Text>
           <UnorderedList>
             <ListItem>
-              Select the project with the “Voting” status. Then click “Support this Launchpad”.
+              Select the project with the “Voting” status. Then click “Support this Project”.
               <img
                 alt="launchpad_step1_1"
                 className={styles.introImg}

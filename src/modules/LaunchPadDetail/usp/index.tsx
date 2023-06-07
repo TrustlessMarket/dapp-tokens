@@ -8,7 +8,7 @@ const DATA = [
   {
     img: `${CDN_URL}/icons/fund-project.svg`,
     title: 'Fund projects',
-    desc: 'We connects creators with backers to fund projects.'
+    desc: 'We connects creators with contributors to fund projects.'
   },
   {
     img: `${CDN_URL}/icons/reward.svg`,
