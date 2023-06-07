@@ -137,7 +137,13 @@ const LaunchpadManage = () => {
               thresholdBalance: values.thresholdBalance || '0',
             });
           }
-          toast.success(`Submitted proposals successfully.`);
+          let messageSuccess = 'Submitted launchpad successfully.';
+          if (!detail?.launchpad && detail) {
+            messageSuccess = `Transaction confirmed. Please wait for it to be processed on the Bitcoin.`;
+          } else if (detail) {
+            messageSuccess = `Updated launchpad successfully.`;
+          }
+          toast.success(messageSuccess);
         }
 
         if (!detail) {
