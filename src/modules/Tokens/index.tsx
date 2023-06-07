@@ -389,12 +389,9 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         },
         sort: sort?.sort,
         render(row: any) {
-          const totalSupply = new BigNumber(row?.totalSupply || 0).div(
-            decimalToExponential(Number(row?.decimal || 18)),
-          );
           return (
             <Text color={'#FFFFFF'} fontSize={px2rem(16)}>
-              {formatCurrency(totalSupply.toString(), 0)}
+              {formatCurrency(row?.totalSupply, 0)}
             </Text>
           );
         },

@@ -40,4 +40,5 @@ export interface IToken {
   network?: string;
   baseTokenSymbol?: string;
   status?: string;
+  chart?: []
 }

@@ -1,11 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { IToken } from '@/interfaces/token';
-import { getChartToken } from '@/services/swap';
-import { Box } from '@chakra-ui/react';
+import {IToken} from '@/interfaces/token';
+import {Box} from '@chakra-ui/react';
 import BigNumber from 'bignumber.js';
-import { createChart } from 'lightweight-charts';
-import {first, last, sortBy} from 'lodash';
-import { useEffect, useRef, useState } from 'react';
+import {createChart} from 'lightweight-charts';
+import {useEffect, useMemo, useRef} from 'react';
 
 const ChartThumb = ({ chartData }: { chartData: any[] }) => {
   const chartContainerRef = useRef<any>();
@@ -96,59 +94,31 @@ const ChartThumb = ({ chartData }: { chartData: any[] }) => {
 };
 
 const TokenChartLast7Day = ({ token }: { token: IToken }) => {
-  const dataCached = localStorage.getItem(`cache_chart_${token.address}`);
-  let _data = [];
-  if (dataCached) {
-    _data = JSON.parse(dataCached);
-  }
+  const data = useMemo(() => {
+    if(token?.chart) {
+      let color = '#45B26B';
 
-  const [data, setData] = useState<any[]>(_data);
+      color = token?.percent7Day < 0 ? '#EF466F' : '#45B26B';
 
-  useEffect(() => {
-    getData();
-  }, [token?.address]);
-
-  const getData = async () => {
-    try {
-      const response: any[] = await getChartToken({
-        limit: 7,
-        contract_address: token.address,
-        chart_type: 'day',
+      const _data = token?.chart?.map((v: any) => {
+        return {
+          // ...v,
+          value: new BigNumber(v.close).toNumber(),
+          time: Number(v.timestamp),
+          open: new BigNumber(v.open).toNumber(),
+          high: new BigNumber(v.high).toNumber(),
+          close: new BigNumber(v.close).toNumber(),
+          low: new BigNumber(v.low).toNumber(),
+          color,
+          // volume: Number(v.volume || 0),
+        };
       });
 
-      const res = response?.length >= 7 ? response.slice(response.length - 7) : response;
-      if (res && res?.length > 0) {
-        const sortedData = sortBy(res, 'timestamp');
+      return _data;
+    }
 
-        let color = '#45B26B';
-
-        color =
-          Number(last(sortedData).close) <
-          Number(first(sortedData).close)
-            ? '#EF466F'
-            : '#45B26B';
-
-        const _data = sortedData?.map((v: any) => {
-          return {
-            // ...v,
-            value: new BigNumber(v.close).toNumber(),
-            time: Number(v.timestamp),
-            open: new BigNumber(v.open).toNumber(),
-            high: new BigNumber(v.high).toNumber(),
-            close: new BigNumber(v.close).toNumber(),
-            low: new BigNumber(v.low).toNumber(),
-            color,
-            // volume: Number(v.volume || 0),
-          };
-        });
-        setData(_data);
-        localStorage.setItem(`cache_chart_${token.address}`, JSON.stringify(_data));
-      } else {
-        setData([]);
-        localStorage.setItem(`cache_chart_${token.address}`, JSON.stringify([]));
-      }
-    } catch (error) {}
-  };
+    return [];
+  }, [JSON.stringify(token?.chart)]);
 
   return (
     <Box
