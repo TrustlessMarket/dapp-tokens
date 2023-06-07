@@ -50,15 +50,20 @@ const maxGoalBalance = (_amount: any, values: any, props: any) => {
 const validateAmount = (_amount: any, values: any) => {
   const isFirstDisabled = Boolean(values?.detail?.launchpad);
   const balanceToken: any = values?.balanceToken;
+  const liquidityBalance: any = values?.liquidityBalance || '0';
   if (!isFirstDisabled) {
-    if (Number(_amount) > Number(balanceToken)) {
-      return `Max amount is ${formatCurrency(balanceToken)}`;
+    if (
+      new BigNumber(_amount)
+        .multipliedBy(1.05)
+        .plus(liquidityBalance)
+        .gt(balanceToken)
+    ) {
+      return `Max amount is ${formatCurrency(
+        new BigNumber(balanceToken)
+          .minus(new BigNumber(balanceToken).multipliedBy(0.05).toString())
+          .toString(),
+      )}`;
     }
-    // else if (
-    //   new BigNumber(_amount).dividedBy(balanceToken).multipliedBy(100).lte(10)
-    // ) {
-    //   return `The reward pool amount you have entered is significantly lower than your total supply. Please verify this number again as it appears to be an unusual value`;
-    // }
   }
 
   return undefined;
@@ -76,10 +81,14 @@ const validateMaxRatio = (_amount: any, values: any) => {
   const isFirstDisabled = Boolean(values?.detail?.launchpad);
   const balanceToken: any = values?.balanceToken;
   const tokenSelected: IToken | undefined = values?.launchpadTokenArg;
+  const launchpadBalance: any = values?.launchpadBalance || '0';
+  const _launchpadBalance = new BigNumber(launchpadBalance)
+    .multipliedBy(1.05)
+    .toString();
   if (!isFirstDisabled) {
-    if (new BigNumber(_amount).plus(values.launchpadBalance).gt(balanceToken)) {
+    if (new BigNumber(_amount).plus(_launchpadBalance).gt(balanceToken)) {
       return `Max Initial liquidity in token is ${formatCurrency(
-        new BigNumber(balanceToken).minus(values.launchpadBalance).toString(),
+        new BigNumber(balanceToken).minus(_launchpadBalance).toString(),
       )} ${tokenSelected?.symbol || ''}`;
     }
   }
@@ -175,7 +184,7 @@ const LaunchpadFormStep1: React.FC<ILaunchpadFormStep1> = ({
               label="The total number of tokens that the contributors will receive after the crowdfunding ends."
               iconColor={colors.white500}
             >
-              {`Reward pool ${tokenSelected ? `(${tokenSelected.symbol})` : ''}`}
+              {`Reward pool`}
             </InfoTooltip>
           }
           disabled={isFirstDisabled}
@@ -189,12 +198,18 @@ const LaunchpadFormStep1: React.FC<ILaunchpadFormStep1> = ({
             !isEmpty(tokenSelected) && (
               <Flex
                 alignItems={'center'}
+                justifyContent={'flex-end'}
                 gap={2}
                 fontSize={px2rem(14)}
                 color={'#FFFFFF'}
                 mb={2}
               >
-                <Flex gap={1} alignItems={'center'}>
+                <Flex
+                  gap={1}
+                  textAlign={'right'}
+                  alignItems={'center'}
+                  justifyContent={'flex-end'}
+                >
                   Balance: {formatCurrency(balanceToken)}
                 </Flex>
               </Flex>

@@ -1,11 +1,15 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import LaunchpadPoolJson from '@/abis/LaunchpadPool.json';
-import {TransactionEventType} from '@/enums/transaction';
-import {ContractOperationHook, DAppType} from '@/interfaces/contract-operation';
-import {logErrorToServer} from '@/services/swap';
-import {getContract, getDefaultGasPrice} from '@/utils';
-import {useWeb3React} from '@web3-react/core';
-import {useCallback} from 'react';
+import { transactionType } from '@/components/Swap/alertInfoProcessing/types';
+import { TransactionEventType } from '@/enums/transaction';
+import { ContractOperationHook, DAppType } from '@/interfaces/contract-operation';
+import { TransactionStatus } from '@/interfaces/walletTransaction';
+import { logErrorToServer } from '@/services/swap';
+import store from '@/state';
+import { updateCurrentTransaction } from '@/state/pnftExchange';
+import { getContract, getDefaultGasPrice } from '@/utils';
+import { useWeb3React } from '@web3-react/core';
+import { useCallback } from 'react';
 import web3 from 'web3';
 
 interface IVoteLaunchpadParams {
@@ -13,7 +17,10 @@ interface IVoteLaunchpadParams {
   launchpadAddress: string;
 }
 
-const useVoteLaunchpad: ContractOperationHook<IVoteLaunchpadParams, boolean> = () => {
+const useVoteLaunchpad: ContractOperationHook<
+  IVoteLaunchpadParams,
+  boolean
+> = () => {
   const { account, provider } = useWeb3React();
   const call = useCallback(
     async (params: IVoteLaunchpadParams): Promise<boolean> => {
@@ -28,13 +35,10 @@ const useVoteLaunchpad: ContractOperationHook<IVoteLaunchpadParams, boolean> = (
 
         const transaction = await contract
           .connect(provider.getSigner())
-          .vote(
-            web3.utils.toWei(amount),
-            {
-              gasLimit: '250000',
-              gasPrice: getDefaultGasPrice(),
-            },
-          );
+          .vote(web3.utils.toWei(amount), {
+            gasLimit: '250000',
+            gasPrice: getDefaultGasPrice(),
+          });
 
         logErrorToServer({
           type: 'logs',
@@ -43,16 +47,16 @@ const useVoteLaunchpad: ContractOperationHook<IVoteLaunchpadParams, boolean> = (
           message: "gasLimit: '250000'",
         });
 
-        // store.dispatch(
-        //   updateCurrentTransaction({
-        //     id: transactionType.createLaunchpad,
-        //     status: TransactionStatus.pending,
-        //     hash: transaction.hash,
-        //     infoTexts: {
-        //       pending: `Deposit for launchpad pool ${launchpadAddress}`,
-        //     },
-        //   }),
-        // );
+        store.dispatch(
+          updateCurrentTransaction({
+            id: transactionType.votingProposal,
+            status: TransactionStatus.pending,
+            hash: transaction.hash,
+            infoTexts: {
+              pending: `Transaction confirmed. Please wait for it to be processed on the Bitcoin. Note that it may take up to 10 minutes for a block confirmation on the Bitcoin blockchain.`,
+            },
+          }),
+        );
 
         return transaction;
       }

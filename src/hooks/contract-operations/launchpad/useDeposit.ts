@@ -1,8 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import LaunchpadPoolJson from '@/abis/LaunchpadPool.json';
+import { transactionType } from '@/components/Swap/alertInfoProcessing/types';
 import { TransactionEventType } from '@/enums/transaction';
 import { ContractOperationHook, DAppType } from '@/interfaces/contract-operation';
+import { TransactionStatus } from '@/interfaces/walletTransaction';
 import { logErrorToServer } from '@/services/swap';
+import store from '@/state';
+import { updateCurrentTransaction } from '@/state/pnftExchange';
 import { getContract, getDefaultGasPrice } from '@/utils';
 import { useWeb3React } from '@web3-react/core';
 import { useCallback } from 'react';
@@ -47,16 +51,16 @@ const useDepositPool: ContractOperationHook<IDepositPoolParams, boolean> = () =>
           message: "gasLimit: '250000'",
         });
 
-        // store.dispatch(
-        //   updateCurrentTransaction({
-        //     id: transactionType.createLaunchpad,
-        //     status: TransactionStatus.pending,
-        //     hash: transaction.hash,
-        //     infoTexts: {
-        //       pending: `Deposit for launchpad pool ${launchpadAddress}`,
-        //     },
-        //   }),
-        // );
+        store.dispatch(
+          updateCurrentTransaction({
+            id: transactionType.depositLaunchpad,
+            status: TransactionStatus.pending,
+            hash: transaction.hash,
+            infoTexts: {
+              pending: `Transaction confirmed. Please wait for it to be processed on the Bitcoin. Note that it may take up to 10 minutes for a block confirmation on the Bitcoin blockchain.`,
+            },
+          }),
+        );
 
         return transaction;
       }

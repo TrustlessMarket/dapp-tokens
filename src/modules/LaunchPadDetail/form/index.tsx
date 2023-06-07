@@ -62,6 +62,7 @@ import {
   StatLabel,
   StatNumber,
   Text,
+  Tooltip,
 } from '@chakra-ui/react';
 import { useWindowSize } from '@trustless-computer/dapp-core';
 import { useWeb3React } from '@web3-react/core';
@@ -279,9 +280,17 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         return `Insufficient balance.`;
       }
 
-      if((Number(poolDetail?.thresholdBalance || 0) > 0)
-        && new BigNumber(_amount).plus(poolDetail?.totalValue).gt(poolDetail?.thresholdBalance)) {
-        return `Total amount deposit greater than ${poolDetail?.thresholdBalance}. Max allow deposit is ${new BigNumber(poolDetail?.thresholdBalance).minus(poolDetail?.totalValue).toNumber()}`;
+      if (
+        Number(poolDetail?.thresholdBalance || 0) > 0 &&
+        new BigNumber(_amount)
+          .plus(poolDetail?.totalValue)
+          .gt(poolDetail?.thresholdBalance)
+      ) {
+        return `Total amount deposit greater than ${
+          poolDetail?.thresholdBalance
+        }. Max allow deposit is ${new BigNumber(poolDetail?.thresholdBalance)
+          .minus(poolDetail?.totalValue)
+          .toNumber()}`;
       }
 
       return undefined;
@@ -469,7 +478,9 @@ export const MakeFormSwap = forwardRef((props, ref) => {
               </InfoTooltip>
             </StatLabel>
             <StatNumber>
-              {formatCurrency(poolDetail?.launchpadBalance || 0)}
+              <Tooltip label={formatCurrency(poolDetail?.launchpadBalance || 0)}>
+                {abbreviateNumber(poolDetail?.launchpadBalance || 0)}
+              </Tooltip>
             </StatNumber>
           </Stat>
           <Stat className={styles.infoColumn} flex={1}>
@@ -659,6 +670,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             </Text>
           </Flex>
         )}
+      <Box mt={6} />
       {(isStarting ||
         isEndLaunchpad ||
         isClaimLaunchpad ||
@@ -718,21 +730,58 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           )}
         </WrapperConnected>
       )}
-      <Flex direction={"column"} mt={4}>
-        {Object.values(poolDetail?.launchpadToken?.social).join('')?.length > 0 && <Text fontSize={px2rem(16)} fontWeight={400} color={"#B6B6B6"} mb={"8px !important"} mt={2}>Link</Text>}
+      <Flex direction={'column'} mt={4}>
+        {Object.values(poolDetail?.launchpadToken?.social).join('')?.length > 0 && (
+          <Text
+            fontSize={px2rem(16)}
+            fontWeight={400}
+            color={'#B6B6B6'}
+            mb={'8px !important'}
+            mt={2}
+          >
+            Link
+          </Text>
+        )}
         <SocialToken socials={poolDetail?.launchpadToken?.social} />
       </Flex>
       {[LAUNCHPAD_STATUS.Pending].includes(status.key) ? (
-        <Text mt={6} fontSize={px2rem(16)} fontWeight={'400'} color={'#FFFFFF'} bgColor={"rgba(255, 255, 255, 0.05)"} borderRadius={"8px"} px={4} py={3}>
+        <Text
+          mt={6}
+          fontSize={px2rem(16)}
+          fontWeight={'400'}
+          color={'#FFFFFF'}
+          bgColor={'rgba(255, 255, 255, 0.05)'}
+          borderRadius={'8px'}
+          px={4}
+          py={3}
+        >
           This project requires community votes to initiate crowdfunding. Please
           prepare your TM token to participate in the voting process.
         </Text>
       ) : [LAUNCHPAD_STATUS.Voting].includes(status.key) ? (
-        <Text mt={6} fontSize={px2rem(16)} fontWeight={'400'} color={'#FFFFFF'} bgColor={"rgba(255, 255, 255, 0.05)"} borderRadius={"8px"} px={4} py={3}>
+        <Text
+          mt={6}
+          fontSize={px2rem(16)}
+          fontWeight={'400'}
+          color={'#FFFFFF'}
+          bgColor={'rgba(255, 255, 255, 0.05)'}
+          borderRadius={'8px'}
+          px={4}
+          py={3}
+        >
           If you enjoy this project, please show your support by voting for it.
         </Text>
       ) : [LAUNCHPAD_STATUS.Launching].includes(status.key) ? (
-        <Text mt={6} fontSize={px2rem(16)} fontWeight={'400'} color={'#FFFFFF'} bgColor={"rgba(255, 255, 255, 0.05)"} borderRadius={"8px"} px={4} py={3}>
+        <Text
+          mt={6}
+          fontSize={px2rem(16)}
+          fontWeight={'400'}
+          color={'#FFFFFF'}
+          bgColor={'rgba(255, 255, 255, 0.05)'}
+          borderRadius={'8px'}
+          px={4}
+          py={3}
+        >
           All or nothing. This project will only be funded if it reaches its goal by{' '}
           <Text as={'span'} color={'#FF7E21'}>
             {moment
@@ -847,14 +896,20 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
   };
 
   const getConfirmTitle = () => {
-    return (
-      canEnd ? (isLaunchpadCreator ? 'Close My Launchpad' : 'Close Launchpad')
-        : canClaim ? ([LAUNCHPAD_STATUS.Failed].includes(poolDetail?.state) ? 'Claim your Funds' : 'Claim your Reward')
-          : canCancel ? 'Delete my launchpad'
-            : canVoteRelease ? 'Release vote token'
-              : 'Confirm deposit'
-    );
-  }
+    return canEnd
+      ? isLaunchpadCreator
+        ? 'Close My Launchpad'
+        : 'Close Launchpad'
+      : canClaim
+      ? [LAUNCHPAD_STATUS.Failed].includes(poolDetail?.state)
+        ? 'Claim your Funds'
+        : 'Claim your Reward'
+      : canCancel
+      ? 'Delete my launchpad'
+      : canVoteRelease
+      ? 'Release vote token'
+      : 'Confirm deposit';
+  };
 
   const getConfirmContent = (values: any) => {
     const { baseAmount, quoteAmount, onConfirm } = values;
@@ -862,29 +917,23 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
       <Flex direction={'column'} gap={2}>
         {canEnd ? (
           <Box>
-            {
-              isLaunchpadCreator
-                ? 'If you wish to close your launchpad, click Confirm below and your tokens will be immediately returned to your account.'
-                : 'If you wish to close this launchpad, click Confirm below.'
-            }
+            {isLaunchpadCreator
+              ? 'If you wish to close your launchpad, click Confirm below and your tokens will be immediately returned to your account.'
+              : 'If you wish to close this launchpad, click Confirm below.'}
           </Box>
         ) : canClaim ? (
           <Box>
-            {
-              [LAUNCHPAD_STATUS.Failed].includes(poolDetail?.state)
-                ? 'The launchpad did not reach the funding goal. Click Claim your Funds to get your funds back.'
-                : 'Congratulations! The launchpad has achieved its funding goal. Please click on "Claim" to receive your reward.'
-            }
+            {[LAUNCHPAD_STATUS.Failed].includes(poolDetail?.state)
+              ? 'The launchpad did not reach the funding goal. Click Claim your Funds to get your funds back.'
+              : 'Congratulations! The launchpad has achieved its funding goal. Please click on "Claim" to receive your reward.'}
           </Box>
         ) : canCancel ? (
           <Text>
-            If you wish to delete your launchpad, click Confirm below and your
-            tokens will be immediately returned to your account.
+            If you wish to delete your launchpad, click Confirm below and your tokens
+            will be immediately returned to your account.
           </Text>
         ) : canVoteRelease ? (
-          <Text>
-            Release launchpad to get back voting token.
-          </Text>
+          <Text>Release launchpad to get back voting token.</Text>
         ) : (
           <>
             <HorizontalItem
@@ -921,21 +970,19 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
           onClick={onConfirm}
           mt={4}
         >
-          {
-            canClaim ? (
-              <>
-                {
-                  [LAUNCHPAD_STATUS.Failed].includes(poolDetail?.state)
-                    ? 'Claim your Funds'
-                    : 'Claim'
-                }
-              </>
-            ) : 'Confirm'
-          }
+          {canClaim ? (
+            <>
+              {[LAUNCHPAD_STATUS.Failed].includes(poolDetail?.state)
+                ? 'Claim your Funds'
+                : 'Claim'}
+            </>
+          ) : (
+            'Confirm'
+          )}
         </FiledButton>
       </Flex>
-    )
-  }
+    );
+  };
 
   const confirmDeposit = (values: any) => {
     const { onConfirm } = values;

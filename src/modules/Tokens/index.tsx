@@ -5,7 +5,7 @@ import Button from '@/components/Button';
 import {IToken} from '@/interfaces/token';
 import {getTokenRp} from '@/services/swap';
 import {getIsAuthenticatedSelector} from '@/state/user/selector';
-import {formatCurrency} from '@/utils';
+import {abbreviateNumber, formatCurrency} from '@/utils';
 import {debounce} from 'lodash';
 import React, {useContext, useEffect, useMemo, useRef, useState} from 'react';
 import Spinner from 'react-bootstrap/Spinner';
@@ -336,7 +336,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         render(row: any) {
           return (
             <Text color={'#FFFFFF'} fontSize={px2rem(16)}>
-              ${formatCurrency(row?.usdMarketCap, 2)}
+              ${abbreviateNumber(row?.usdMarketCap)}
             </Text>
           );
         },
@@ -396,7 +396,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         render(row: any) {
           return (
             <Text color={'#FFFFFF'} fontSize={px2rem(16)}>
-              {formatCurrency(row?.totalSupply, 0)}
+              {abbreviateNumber(row?.totalSupply.toString())}
             </Text>
           );
         },
