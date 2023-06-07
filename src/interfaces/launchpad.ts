@@ -37,4 +37,5 @@ export interface ILaunchpad {
   userProposal: IProposal;
   voteStart: string;
   voteEnd: string;
+  voteGoal: string;
 }
