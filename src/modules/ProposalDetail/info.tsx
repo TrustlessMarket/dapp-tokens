@@ -126,49 +126,43 @@ const ProposalInfo = ({ poolDetail }: ILaunchpad | any) => {
         ></Progress>
         {/*<Image src={fireImg} className={styles.fireImg} />*/}
       </Box>
-      <SimpleGrid columns={3} spacingX={6} mt={8}>
-        <GridItem>
-          <Stat className={styles.infoColumn}>
-            <StatLabel>
-              <InfoTooltip
-                showIcon={true}
-                label="The total number of tokens that the contributors will receive after the crowdfunding ends."
-              >
-                Reward Pool
-              </InfoTooltip>
-            </StatLabel>
-            <StatNumber>
-              <Tooltip label={`${formatCurrency(poolDetail?.launchpadBalance)}`}>
-                {abbreviateNumber(poolDetail?.launchpadBalance)}
-              </Tooltip>
-              {` `}
-              {poolDetail?.launchpadToken?.symbol}
-            </StatNumber>
-          </Stat>
-        </GridItem>
-        <GridItem>
-          <Stat className={styles.infoColumn}>
-            <StatLabel>Reward for Supporters</StatLabel>
-            <StatNumber>{configs?.percentRewardForVoter}% funded</StatNumber>
-          </Stat>
-        </GridItem>
-        <GridItem>
-          <Stat className={styles.infoColumn}>
-            <StatLabel>
-              {[LAUNCHPAD_STATUS.Voting].includes(poolDetail?.state)
-                ? 'Voting Ends in'
-                : 'Voting Ended at'}
-            </StatLabel>
-            <StatNumber>
-              {[LAUNCHPAD_STATUS.Voting].includes(poolDetail?.state) ? (
-                <CountDownTimer end_time={poolDetail?.voteEnd} />
-              ) : (
-                moment(poolDetail?.voteEnd).format('LLL')
-              )}
-            </StatNumber>
-          </Stat>
-        </GridItem>
-      </SimpleGrid>
+      <Flex justifyContent={'space-between'} mt={8}>
+        <Stat className={styles.infoColumn}>
+          <StatLabel>
+            <InfoTooltip
+              showIcon={true}
+              label="The total number of tokens that the contributors will receive after the crowdfunding ends."
+            >
+              Reward Pool
+            </InfoTooltip>
+          </StatLabel>
+          <StatNumber>
+            <Tooltip label={`${formatCurrency(poolDetail?.launchpadBalance)}`}>
+              {abbreviateNumber(poolDetail?.launchpadBalance)}
+            </Tooltip>
+            {` `}
+            {poolDetail?.launchpadToken?.symbol}
+          </StatNumber>
+        </Stat>
+        <Stat className={styles.infoColumn}>
+          <StatLabel>Reward for Supporters</StatLabel>
+          <StatNumber>{configs?.percentRewardForVoter}% funded</StatNumber>
+        </Stat>
+        <Stat className={styles.infoColumn}>
+          <StatLabel>
+            {[LAUNCHPAD_STATUS.Voting].includes(poolDetail?.state)
+              ? 'Voting Ends in'
+              : 'Voting Ended at'}
+          </StatLabel>
+          <StatNumber>
+            {[LAUNCHPAD_STATUS.Voting].includes(poolDetail?.state) ? (
+              <CountDownTimer end_time={poolDetail?.voteEnd} />
+            ) : (
+              moment(poolDetail?.voteEnd).format('LLL')
+            )}
+          </StatNumber>
+        </Stat>
+      </Flex>
     </Box>
   );
 };
