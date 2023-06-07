@@ -81,7 +81,15 @@ export const LaunchpadLabelStatus : LabelStatusMap = {
   failed: {
     key: LAUNCHPAD_STATUS.Failed,
     value: 'failed',
-    label: 'Closed',
+    label: (
+      <InfoTooltip
+        showIcon={true}
+        label="This project did not reach its funding target."
+        iconColor={"rgba(255, 71, 71, 1)"}
+      >
+        Closed
+      </InfoTooltip>
+    ),
   },
   cancelled: {
     key: LAUNCHPAD_STATUS.Cancelled,
