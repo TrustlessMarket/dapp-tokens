@@ -1,5 +1,5 @@
 .sideWrapper {
-  height: 350px;
+  //height: 350px;
 
   :global {
     .side-title {
@@ -75,7 +75,7 @@
 }
 
 .listVote {
-  width: 43%;
+  width: 50%;
   margin: 32px auto 0;
   :global .slick-list {
     margin: 0 -12px;

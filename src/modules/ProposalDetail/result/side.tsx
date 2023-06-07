@@ -57,7 +57,7 @@ const ProposalResult = ({title, totalVote, className, data}: any) => {
           pageData?.map((d: any, i: number) => {
             return (
               <Box key={i}>
-                <SimpleGrid spacingX={8} spacingY={4} columns={6} w={"fit-content"}>
+                <SimpleGrid spacingY={4} columns={6} w={"fit-content"}>
                   {
                     d?.map((d: any, index: number) => {
                       return d ? (
@@ -74,7 +74,7 @@ const ProposalResult = ({title, totalVote, className, data}: any) => {
                         }
                                      key={d.voter}
                         >
-                          <Box key={d.voter}>
+                          <Box key={d.voter} paddingX={4}>
                             <a
                               title="explorer"
                               href={`${TC_EXPLORER}/address/${d.voter}`}
@@ -97,6 +97,7 @@ const ProposalResult = ({title, totalVote, className, data}: any) => {
                           height={`${mobileScreen || tabletScreen ? 40 : 60}px`}
                           borderRadius={"50%"}
                           backgroundColor={"#1E1E22"}
+                          marginX={4}
                         >
                         </Box>
                       )
