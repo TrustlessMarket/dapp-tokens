@@ -217,7 +217,7 @@ const LaunchpadContainer = () => {
         label: (
           <InfoTooltip
             showIcon={true}
-            label="The minimum amount you would like to raise. If the crowdfunding does not reach the Funding Goal, the funded amount will be returned to the contributors"
+            label="The minimum amount that the project would like to raise. If the crowdfunding does not reach the Funding Goal, the funded amount will be returned to the contributors"
           >
             Funding Goal
           </InfoTooltip>
@@ -282,7 +282,7 @@ const LaunchpadContainer = () => {
         label: (
           <InfoTooltip
             showIcon={true}
-            label="The maximum amount you would like to raise. The crowdfunding will stop upon reaching its hard cap"
+            label="The maximum amount that the project would like to raise. The crowdfunding will stop upon reaching its hard cap"
           >
             Hard Cap
           </InfoTooltip>

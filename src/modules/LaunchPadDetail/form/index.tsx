@@ -121,7 +121,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
 
   const { account } = useWeb3React();
   const needReload = useAppSelector(selectPnftExchange).needReload;
-
+  const isLaunchpadCreator = compareString(poolDetail?.creatorAddress, account);
   const [status] = useLaunchPadStatus({ row: poolDetail });
 
   const { values } = useFormState();
@@ -409,14 +409,18 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             <Flex gap={1} justifyContent={'flex-end'}>
               <InfoTooltip
                 showIcon={true}
-                label="The minimum amount you would like to raise. If the crowdfunding does not reach the Funding Goal, the funded amount will be returned to the contributors"
+                label={`The minimum amount ${
+                  isLaunchpadCreator ? 'you' : 'that the project'
+                } would like to raise. If the crowdfunding does not reach the Funding Goal, the funded amount will be returned to the contributors`}
               >
                 {`Funding goal`}
               </InfoTooltip>
               /
               <InfoTooltip
                 showIcon={true}
-                label="The maximum amount you would like to raise. The crowdfunding will stop upon reaching its hard cap"
+                label={`The maximum amount ${
+                  isLaunchpadCreator ? 'you' : 'that the project'
+                } would like to raise. The crowdfunding will stop upon reaching its hard cap`}
               >
                 Hard Cap
               </InfoTooltip>
