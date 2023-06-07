@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import {Box, Flex, GridItem, Progress, SimpleGrid, Stat, StatLabel, StatNumber, Text, Tooltip,} from '@chakra-ui/react';
+import {Box, Flex, Progress, Stat, StatLabel, StatNumber, Text, Tooltip,} from '@chakra-ui/react';
 import {abbreviateNumber, compareString, formatCurrency} from '@/utils';
 import React, {useMemo} from 'react';
 import {ILaunchpad} from '@/interfaces/launchpad';
