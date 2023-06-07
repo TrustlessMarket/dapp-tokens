@@ -19,6 +19,7 @@ export interface IToken {
   usdPrice?: number;
   usdVolume?: number;
   usdTotalVolume?: number;
+  usdMarketCap?: number;
   percent?: any;
   percent7Day?: any;
   volume?: number;

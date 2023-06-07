@@ -1,20 +1,16 @@
 import HorizontalItem from '@/components/HorizontalItem';
-import { IToken } from '@/interfaces/token';
-import { formatCurrency } from '@/utils';
-import { decimalToExponential } from '@/utils/format';
-import { Box, Text } from '@chakra-ui/react';
+import {IToken} from '@/interfaces/token';
+import {formatCurrency} from '@/utils';
+import {Box, Text} from '@chakra-ui/react';
 import BigNumber from 'bignumber.js';
 import TokenListPaired from './Token.ListPaired';
 
 const TokenLeftInfo = ({ data }: { data: IToken }) => {
-  const totalSupply = new BigNumber(data?.totalSupply || 0).div(
-    decimalToExponential(Number(data?.decimal || 18)),
-  );
   const tokenVolume = data?.usdTotalVolume
     ? new BigNumber(data?.usdTotalVolume).toFixed()
     : 'n/a';
-  const marketCap = data?.usdPrice
-    ? new BigNumber(data?.usdPrice).multipliedBy(totalSupply).toFixed()
+  const marketCap = data?.usdMarketCap
+    ? new BigNumber(data?.usdMarketCap).toFixed()
     : 'n/a';
   return (
     <>
@@ -24,7 +20,7 @@ const TokenLeftInfo = ({ data }: { data: IToken }) => {
         <HorizontalItem
           className="item-info"
           label="Max supply"
-          value={`${formatCurrency(totalSupply.toString())}`}
+          value={`${formatCurrency(data?.totalSupply)}`}
         />
         <Box mb={`8px`} />
         <HorizontalItem
