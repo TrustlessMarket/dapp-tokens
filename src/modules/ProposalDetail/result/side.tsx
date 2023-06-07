@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-empty-function */
-
 import {Box, Flex, Progress, SimpleGrid, Text} from "@chakra-ui/react";
 import {compareString, formatCurrency, shortenAddress} from "@/utils";
 import Jazzicon, {jsNumberForAddress} from 'react-jazzicon';
@@ -40,7 +39,7 @@ const ProposalResult = ({title, totalVote, className, data}: any) => {
     prevArrow: <SamplePrevArrow />
   };
 
-  function SampleNextArrow(props) {
+  function SampleNextArrow(props: any) {
     const { className, style, onClick } = props;
     return (
       <Box
@@ -53,7 +52,7 @@ const ProposalResult = ({title, totalVote, className, data}: any) => {
     );
   }
 
-  function SamplePrevArrow(props) {
+  function SamplePrevArrow(props: any) {
     const { className, style, onClick } = props;
     return (
       <Box
