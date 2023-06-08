@@ -43,36 +43,46 @@ const AboveTheFold = ({ poolDetail }: ILaunchpad | any) => {
         <Flex>
           <Stat>
             <StatLabel fontSize={px2rem(24)}>
-              {[LAUNCHPAD_STATUS.Pending].includes(poolDetail?.state)
-                ? 'Voting will start in'
+              {
+                [LAUNCHPAD_STATUS.Pending].includes(poolDetail?.state) ? 'Voting will start in'
                   : [
                     LAUNCHPAD_STATUS.Launching,
-                  ].includes(poolDetail?.state)
-                    ? 'Ends in'
-                    : 'Ended at'
+                  ].includes(poolDetail?.state) ? 'Ends in'
+                    : [
+                    LAUNCHPAD_STATUS.Successful,
+                    LAUNCHPAD_STATUS.Failed,
+                    LAUNCHPAD_STATUS.End,
+                  ].includes(poolDetail?.state) ? 'Ended at'
+                      : ''
               }
             </StatLabel>
             <StatNumber>
               <Text>
-                {[LAUNCHPAD_STATUS.Pending].includes(poolDetail?.state) ? (
+                {
+                  [LAUNCHPAD_STATUS.Pending].includes(poolDetail?.state) ? (
                   <Flex mt={2} alignItems={'center'} gap={2} className={styles.boxTime}>
                     <FaFireAlt />
                     <Text>
                       <CountDownTimer end_time={poolDetail.voteStart} />
                     </Text>
                   </Flex>
-                ) : [
-                  LAUNCHPAD_STATUS.Launching,
-                ].includes(poolDetail?.state) ? (
-                  <Flex mt={2} alignItems={'center'} gap={2} className={styles.boxTime}>
-                    <FaFireAlt />
-                    <Text>
-                      <CountDownTimer end_time={poolDetail.launchEnd} />
-                    </Text>
-                  </Flex>
-                ) : (
-                  moment(poolDetail.launchEnd).format('LLL')
-                )}
+                  ) : [
+                    LAUNCHPAD_STATUS.Launching,
+                  ].includes(poolDetail?.state) ? (
+                    <Flex mt={2} alignItems={'center'} gap={2} className={styles.boxTime}>
+                      <FaFireAlt />
+                      <Text>
+                        <CountDownTimer end_time={poolDetail.launchEnd} />
+                      </Text>
+                    </Flex>
+                  ) : [
+                    LAUNCHPAD_STATUS.Successful,
+                    LAUNCHPAD_STATUS.Failed,
+                    LAUNCHPAD_STATUS.End,
+                  ].includes(poolDetail?.state) ? (
+                    moment(poolDetail.launchEnd).format('LLL')
+                  ) : <></>
+                }
               </Text>
             </StatNumber>
           </Stat>
