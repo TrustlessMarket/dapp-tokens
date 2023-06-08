@@ -21,7 +21,7 @@ import BigNumber from 'bignumber.js';
 import moment from 'moment';
 import { useRouter } from 'next/router';
 import { useEffect, useMemo, useState } from 'react';
-import { BsPencil } from 'react-icons/bs';
+import { BsPencil, BsPencilFill } from 'react-icons/bs';
 import { FaFireAlt } from 'react-icons/fa';
 import { ImClock2 } from 'react-icons/im';
 import { useDispatch } from 'react-redux';
@@ -33,8 +33,8 @@ import LaunchpadStatus, {
 import { StyledIdoContainer } from './Launchpad.styled';
 import { FAQStyled } from '../LaunchpadManage/LaunchpadManage.styled';
 import Faq from '@/components/Swap/faq';
-import SectionContainer from "@/components/Swap/sectionContainer";
-import VerifiedBadgeLaunchpad from "@/modules/Launchpad/verifiedBadgeLaunchpad";
+import SectionContainer from '@/components/Swap/sectionContainer';
+import VerifiedBadgeLaunchpad from '@/modules/Launchpad/verifiedBadgeLaunchpad';
 
 const LaunchpadContainer = () => {
   const [data, setData] = useState<any[]>();
@@ -79,11 +79,27 @@ const LaunchpadContainer = () => {
           const token: IToken = row.launchpadToken;
           return (
             <Flex gap={4}>
-              <img src={token.thumbnail || TOKEN_ICON_DEFAULT} />
+              <div className="avatar">
+                {compareString(token.owner, account) && (
+                  <Box title="Update token info" className="update-info">
+                    <BsPencilFill attributeName="action" />
+                    <div
+                      className="fade-action"
+                      aria-current="true"
+                      onClick={() =>
+                        router.push(
+                          `${ROUTE_PATH.UPDATE_TOKEN_INFO}?address=${token.address}`,
+                        )
+                      }
+                    />
+                  </Box>
+                )}
+                <img src={token.thumbnail || TOKEN_ICON_DEFAULT} />
+              </div>
               <Box>
-                <Flex gap={1} alignItems={"center"} className="record-title">
+                <Flex gap={1} alignItems={'center'} className="record-title">
                   {token.name} <span>{token.symbol}</span>
-                  <VerifiedBadgeLaunchpad launchpad={row}/>
+                  <VerifiedBadgeLaunchpad launchpad={row} />
                 </Flex>
                 <Text className="note">{token.network}</Text>
               </Box>
@@ -495,20 +511,12 @@ const LaunchpadContainer = () => {
           columns={columns}
           initialLoading={loading}
           onItemClick={(e: ILaunchpad) => {
+            console.log(e);
+
             if (!e.id) {
               return null;
             }
             return router.push(`${ROUTE_PATH.LAUNCHPAD_DETAIL}?id=${e.id}`);
-            // const isLaunchPad = checkIsLaunchpad(e);
-            // if (isLaunchPad) {
-            //   return router.push(`${ROUTE_PATH.LAUNCHPAD_DETAIL}?id=${e.id}`);
-            // } else if (e.proposalId) {
-            //   return router.push(
-            //     `${ROUTE_PATH.LAUNCHPAD_PROPOSAL}?proposal_id=${e.proposalId}`,
-            //   );
-            // } else {
-            //   return router.push(`${ROUTE_PATH.LAUNCHPAD_MANAGE}?id=${e.id}`);
-            // }
           }}
         />
       </Box>

@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import {ILaunchpad} from '@/interfaces/launchpad';
-import {StyledIdoStatus} from './Launchpad.styled';
-import InfoTooltip from "@/components/Swap/infoTooltip";
-import React from "react";
+import { ILaunchpad } from '@/interfaces/launchpad';
+import { StyledIdoStatus } from './Launchpad.styled';
+import InfoTooltip from '@/components/Swap/infoTooltip';
+import React from 'react';
 
 export enum LAUNCHPAD_STATUS {
   Draft = -1,
@@ -20,10 +20,10 @@ export enum LAUNCHPAD_STATUS {
 }
 
 interface LabelStatusMap {
-  [name: string]: any
-};
+  [name: string]: any;
+}
 
-export const LaunchpadLabelStatus : LabelStatusMap = {
+export const LaunchpadLabelStatus: LabelStatusMap = {
   draft: {
     key: LAUNCHPAD_STATUS.Draft,
     value: 'draft',
@@ -41,7 +41,7 @@ export const LaunchpadLabelStatus : LabelStatusMap = {
       <InfoTooltip
         showIcon={true}
         label="This project is being voted on by the community. If you like this project, kindly demonstrate your support by voting."
-        iconColor={"#95A4FC"}
+        iconColor={'#95A4FC'}
       >
         Voting
       </InfoTooltip>
@@ -54,7 +54,7 @@ export const LaunchpadLabelStatus : LabelStatusMap = {
       <InfoTooltip
         showIcon={true}
         label="The project has yet to be approved by the communities votes."
-        iconColor={"rgba(255, 71, 71, 1)"}
+        iconColor={'rgba(255, 71, 71, 1)'}
       >
         Voting Failed
       </InfoTooltip>
@@ -72,7 +72,7 @@ export const LaunchpadLabelStatus : LabelStatusMap = {
       <InfoTooltip
         showIcon={true}
         label="This project has successfully achieved its funding goal and has now closed."
-        iconColor={"rgba(4, 197, 127, 1)"}
+        iconColor={'rgba(4, 197, 127, 1)'}
       >
         Closed
       </InfoTooltip>
@@ -85,7 +85,7 @@ export const LaunchpadLabelStatus : LabelStatusMap = {
       <InfoTooltip
         showIcon={true}
         label="This project did not reach its funding target."
-        iconColor={"rgba(255, 71, 71, 1)"}
+        iconColor={'rgba(255, 71, 71, 1)'}
       >
         Closed
       </InfoTooltip>
@@ -103,7 +103,7 @@ export const LaunchpadLabelStatus : LabelStatusMap = {
   },
 };
 
-export const useLaunchPadStatus = ({ row }: { row: ILaunchpad }) => {
+export const useLaunchPadStatus = ({ row }: { row?: ILaunchpad | undefined }) => {
   const state = row?.state;
   const startTime = row?.launchStart;
   const endTime = row?.launchEnd;
