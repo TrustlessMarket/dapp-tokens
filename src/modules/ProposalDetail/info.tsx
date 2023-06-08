@@ -100,13 +100,7 @@ const ProposalInfo = ({ poolDetail }: ILaunchpad | any) => {
           <StatLabel>
             <InfoTooltip
               showIcon
-              label={`This will make the initial price ${formatCurrency(
-                calcLaunchpadInitialPrice({
-                  launchpadBalance: poolDetail?.launchpadBalance,
-                  liquidityRatioArg: poolDetail?.liquidityRatio,
-                  liquidityBalance: poolDetail?.liquidityBalance,
-                }),
-              )} times greater than ${isLaunchpadCreator ? 'your' : 'the'} crowdfunding price.`}
+              label={`The initial price is the price that will be set at the start of the public sale.`}
             >
               Initial price
             </InfoTooltip>
@@ -118,7 +112,7 @@ const ProposalInfo = ({ poolDetail }: ILaunchpad | any) => {
                 liquidityRatioArg: poolDetail?.liquidityRatio,
                 liquidityBalance: poolDetail?.liquidityBalance,
               }),
-            )} times`}</>
+            )} Crowdfunding price`}</>
           </StatNumber>
         </Stat>
         <Stat className={styles.infoColumn}>
