@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { apiClient } from '@/services';
 import {
@@ -64,7 +65,10 @@ const ItemTable = ({
   index = null as any,
   onTdRow = null as any,
 }) => {
-  const onClick = () => {
+  const onClick = (e: any, v: any) => {
+    if (v?.id === 'action' || e?.target?.getAttribute?.('aria-current') === 'true') {
+      return;
+    }
     return onItemClick?.(item);
   };
 
@@ -72,7 +76,7 @@ const ItemTable = ({
     return (
       <>
         <Tr
-          onClick={onClick}
+          onClick={(e) => onClick(e, item)}
           cursor={onItemClick ? 'pointer' : 'default'}
           className={cx(
             compareString(selectedItem?.id, item.id) ? 'selected' : '',
@@ -103,7 +107,7 @@ const ItemTable = ({
           <Td
             {...v.config}
             key={v.id}
-            onClick={v.id === 'action' ? undefined : onClick}
+            onClick={(e) => onClick(e, v)}
             cursor={onItemClick ? 'pointer' : 'default'}
           >
             {v.render ? v.render(item, extraData, index) : item[v?.id]}

@@ -50,8 +50,6 @@ export const getDefaultProvider = () => {
 export const isConnectedTrustChain = () => {
   const { isActive, chainId } = useWeb3React();
 
-  console.log('chainId', chainId);
-
   if (isActive && compareString(chainId, SupportedChainId.TRUSTLESS_COMPUTER)) {
     return true;
   }

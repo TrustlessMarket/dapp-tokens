@@ -247,6 +247,7 @@ const LaunchpadManageFormContainer: React.FC<LaunchpadManageFormContainerProps> 
         liquidityRatioArg: detail.liquidityRatio,
         goalBalance: detail.goalBalance,
         liquidityBalance: detail.liquidityBalance,
+        thresholdBalance: detail.thresholdBalance,
         startTimeArg: new Date(detail.launchStart),
         endTimeArg: new Date(detail.launchEnd),
         description: detail.description,
