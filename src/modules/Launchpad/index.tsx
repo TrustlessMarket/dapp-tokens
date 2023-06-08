@@ -34,6 +34,7 @@ import { StyledIdoContainer } from './Launchpad.styled';
 import { FAQStyled } from '../LaunchpadManage/LaunchpadManage.styled';
 import Faq from '@/components/Swap/faq';
 import SectionContainer from "@/components/Swap/sectionContainer";
+import VerifiedBadgeLaunchpad from "@/modules/Launchpad/verifiedBadgeLaunchpad";
 
 const LaunchpadContainer = () => {
   const [data, setData] = useState<any[]>();
@@ -80,9 +81,10 @@ const LaunchpadContainer = () => {
             <Flex gap={4}>
               <img src={token.thumbnail || TOKEN_ICON_DEFAULT} />
               <Box>
-                <Text className="record-title">
+                <Flex gap={1} alignItems={"center"} className="record-title">
                   {token.name} <span>{token.symbol}</span>
-                </Text>
+                  <VerifiedBadgeLaunchpad launchpad={row}/>
+                </Flex>
                 <Text className="note">{token.network}</Text>
               </Box>
             </Flex>
