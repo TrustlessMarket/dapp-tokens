@@ -1,23 +1,22 @@
 /* eslint-disable react-hooks/rules-of-hooks */
-import { CDN_URL } from '@/configs';
+import {CDN_URL} from '@/configs';
 import {
   GENERATIVE_DISCORD,
   GM_ADDRESS,
-  TRUSTLESS_COMPUTER,
+  NEW_BITCOIN_CITY,
   TRUSTLESS_GASSTATION,
   WETH_ADDRESS,
 } from '@/constants/common';
-import { ROUTE_PATH } from '@/constants/route-path';
-import { defaultProvider } from '@/contexts/screen-context';
-import { useScreenLayout } from '@/hooks/useScreenLayout';
-import { Flex, Link as LinkText, Text } from '@chakra-ui/react';
-import { useWindowSize } from '@trustless-computer/dapp-core';
-import { gsap } from 'gsap';
+import {ROUTE_PATH} from '@/constants/route-path';
+import {defaultProvider} from '@/contexts/screen-context';
+import {useScreenLayout} from '@/hooks/useScreenLayout';
+import {Flex, Link as LinkText, Text} from '@chakra-ui/react';
+import {useWindowSize} from '@trustless-computer/dapp-core';
+import {gsap} from 'gsap';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
-import { useEffect, useRef, useState } from 'react';
-import { RiArrowRightUpLine } from 'react-icons/ri';
-import { Wrapper } from './Header.styled';
+import {useRouter} from 'next/router';
+import {useEffect, useRef, useState} from 'react';
+import {Wrapper} from './Header.styled';
 import MenuMobile from './MenuMobile';
 import WalletHeader from './Wallet';
 import {ScreenType} from "@/modules/Pools";
@@ -126,19 +125,28 @@ const Header = () => {
                 <Link href={TRUSTLESS_GASSTATION} target={'_blank'}>
                   <Flex gap={1} alignItems={'center'}>
                     <Text>GET TC</Text>
-                    <RiArrowRightUpLine fontSize={'20px'} />
+                    <img
+                      className="arrow-icon"
+                      src={`${CDN_URL}/trustless-market/icons/arrow_right_up.svg`}
+                    />
+                  </Flex>
+                </Link>
+                <Link href={NEW_BITCOIN_CITY} target={'_blank'}>
+                  <Flex gap={1} alignItems={'center'}>
+                    <Text>NBC</Text>
+                    <img
+                      className="arrow-icon"
+                      src={`${CDN_URL}/trustless-market/icons/arrow_right_up.svg`}
+                    />
                   </Flex>
                 </Link>
                 <Link href={GENERATIVE_DISCORD} target={'_blank'}>
                   <Flex gap={1} alignItems={'center'}>
                     <Text>DISCORD</Text>
-                    <RiArrowRightUpLine fontSize={'20px'} />
-                  </Flex>
-                </Link>
-                <Link href={TRUSTLESS_COMPUTER} target={'_blank'}>
-                  <Flex gap={1} alignItems={'center'}>
-                    <Text>TRUSTLESS</Text>
-                    <RiArrowRightUpLine fontSize={'20px'} />
+                    <img
+                      className="arrow-icon"
+                      src={`${CDN_URL}/trustless-market/icons/arrow_right_up.svg`}
+                    />
                   </Flex>
                 </Link>
               </div>

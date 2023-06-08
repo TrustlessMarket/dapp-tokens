@@ -17,6 +17,7 @@ import { FaFileCsv } from 'react-icons/fa';
 import { FiDownloadCloud } from 'react-icons/fi';
 import { MAX_FILE_SIZE } from '../UpdateTokenInfo/form';
 import { StyledLaunchpadFormStep1 } from './LaunchpadManage.styled';
+import { LAUNCHPAD_STATUS, useLaunchPadStatus } from '../Launchpad/Launchpad.Status';
 
 interface ILaunchpadFormStep4 {
   detail?: ILaunchpad;
@@ -41,9 +42,7 @@ const LaunchpadFormStep4: React.FC<ILaunchpadFormStep4> = ({
   const { change } = useForm();
   const [uploading, setUploading] = useState(false);
 
-  useEffect(() => {
-    //
-  }, []);
+  const [status] = useLaunchPadStatus({ row: detail });
 
   const onDrop = useCallback(async (acceptedFile: File) => {
     try {
@@ -90,36 +89,48 @@ const LaunchpadFormStep4: React.FC<ILaunchpadFormStep4> = ({
   //   change('boost', array);
   // };
 
+  const isAllowUpload = [
+    LAUNCHPAD_STATUS.Draft,
+    LAUNCHPAD_STATUS.Pending,
+    LAUNCHPAD_STATUS.Voting,
+  ].includes(status?.key);
+
   return (
     <StyledLaunchpadFormStep1 className={'step-2-container'}>
-      <InputWrapper
-        className="field-container"
-        theme="dark"
-        label={<Text>CSV</Text>}
-      >
-        <FileDropzoneUpload
-          className="image-drop-container"
-          accept={{ 'text/csv': ['.csv'] }}
-          maxSize={MAX_FILE_SIZE}
-          onChange={onDrop}
-          url={`${CDN_URL}/icons/ic_upload_media.svg`}
-          loading={uploading}
-          icon={<FaFileCsv style={{ fontSize: 50, marginBottom: 10 }} />}
-        />
-      </InputWrapper>
-      <Flex gap={4}>
-        <Flex
-          className="btn-download-template"
-          onClick={() =>
-            window.open(
-              'https://storage.googleapis.com/tc-cdn-prod/upload/boost_template.csv',
-              '_blank',
-            )
-          }
+      {isAllowUpload && (
+        <InputWrapper
+          className="field-container"
+          theme="dark"
+          label={<Text>CSV</Text>}
         >
-          <FiDownloadCloud />
-          Download CSV Template
-        </Flex>
+          <FileDropzoneUpload
+            className="image-drop-container"
+            accept={{ 'text/csv': ['.csv'] }}
+            maxSize={MAX_FILE_SIZE}
+            onChange={onDrop}
+            url={`${CDN_URL}/icons/ic_upload_media.svg`}
+            loading={uploading}
+            icon={<FaFileCsv style={{ fontSize: 50, marginBottom: 10 }} />}
+          />
+        </InputWrapper>
+      )}
+
+      <Flex gap={4}>
+        {isAllowUpload && (
+          <Flex
+            className="btn-download-template"
+            onClick={() =>
+              window.open(
+                'https://storage.googleapis.com/tc-cdn-prod/upload/boost_template.csv',
+                '_blank',
+              )
+            }
+          >
+            <FiDownloadCloud />
+            Download CSV Template
+          </Flex>
+        )}
+
         {detail?.boostUrl && (
           <Flex
             className="btn-download-template primary"

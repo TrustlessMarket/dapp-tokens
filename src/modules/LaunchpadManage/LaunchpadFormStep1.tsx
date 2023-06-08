@@ -473,13 +473,7 @@ const LaunchpadFormStep1: React.FC<ILaunchpadFormStep1> = ({
                 label={
                   <InfoTooltip
                     showIcon
-                    label={`This will make the initial price ${formatCurrency(
-                      calcLaunchpadInitialPrice({
-                        launchpadBalance: values?.launchpadBalance,
-                        liquidityRatioArg: values?.liquidityRatioArg,
-                        liquidityBalance: values?.liquidityBalance,
-                      }),
-                    )} times greater than your crowdfunding price.`}
+                    label={`The initial price is the price that will be set at the start of the public sale.`}
                   >
                     Initial price
                   </InfoTooltip>
@@ -492,7 +486,7 @@ const LaunchpadFormStep1: React.FC<ILaunchpadFormStep1> = ({
                       liquidityRatioArg: values?.liquidityRatioArg,
                       liquidityBalance: values?.liquidityBalance,
                     }),
-                  )} times`}</b>
+                  )} Crowdfunding price`}</b>
                 }
               />
             </Box>
