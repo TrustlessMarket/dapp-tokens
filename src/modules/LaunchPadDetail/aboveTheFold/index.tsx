@@ -51,7 +51,7 @@ const AboveTheFold = ({ poolDetail }: ILaunchpad | any) => {
           LAUNCHPAD_STATUS.Draft,
           LAUNCHPAD_STATUS.Pending,
           LAUNCHPAD_STATUS.NotPassed
-        ] ? (
+        ].includes(poolDetail?.state) ? (
           <Grid templateColumns={['1fr']} gap={[8]} mt={6} bgColor={"#1E1E22"} py={8} ml={-px2rem(25)} mr={-px2rem(25)}>
             <SectionContainer>
               <Usp />

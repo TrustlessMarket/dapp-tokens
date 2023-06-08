@@ -16,7 +16,7 @@ const STEPS_CREATE_TOKEN = [
             <img
               alt="swap_step1_1"
               className={styles.introImg}
-              src={`${CDN_URL}/upload/1683705812924381070-1683705812-swap_step1_1.png`}
+              src={`${CDN_URL}/pages/trustlessmarket/get_started/step_1.1_2023_06_08.png`}
             />
           </ListItem>
           <ListItem>
@@ -24,7 +24,7 @@ const STEPS_CREATE_TOKEN = [
             <img
               alt="swap_step1_1"
               className={styles.introImg}
-              src={`${CDN_URL}/pages/trustlessmarket/get_started/swap_step_1.2_v1.png`}
+              src={`${CDN_URL}/pages/trustlessmarket/get_started/step_1.2_2023_06_08.png`}
             />
           </ListItem>
         </UnorderedList>
@@ -42,7 +42,7 @@ const STEPS_CREATE_TOKEN = [
             <img
               alt="swap_step1_1"
               className={styles.introImg}
-              src={`${CDN_URL}/pages/trustlessmarket/get_started/swap_step_2.1_v1.png`}
+              src={`${CDN_URL}/pages/trustlessmarket/get_started/step_2.1_2023_06_08.png`}
             />
           </ListItem>
           <ListItem>
@@ -51,7 +51,7 @@ const STEPS_CREATE_TOKEN = [
             <img
               alt="swap_step1_1"
               className={styles.introImg}
-              src={`${CDN_URL}/pages/trustlessmarket/get_started/swap_step_2.2_v1.png`}
+              src={`${CDN_URL}/pages/trustlessmarket/get_started/step_2.2_2023_06_08.png`}
             />
           </ListItem>
         </UnorderedList>
