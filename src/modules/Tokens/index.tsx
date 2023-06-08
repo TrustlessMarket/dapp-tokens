@@ -32,7 +32,7 @@ import {AiOutlineCaretDown, AiOutlineCaretUp} from 'react-icons/ai';
 import {VscArrowSwap} from 'react-icons/vsc';
 import styles from './styles.module.scss';
 import TokenChartLast7Day from './Token.ChartLast7Day';
-import VerifiedBadge from "@/components/Swap/filterToken/verifiedBadge";
+import VerifiedBadgeToken from "./verifiedBadgeToken";
 
 const LIMIT_PAGE = 100;
 
@@ -183,7 +183,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
                     {row?.name}
                   </Box>
                   <Box color={'rgba(255, 255, 255, 0.7)'}>{row?.symbol}</Box>
-                  <VerifiedBadge token={row}/>
+                  <VerifiedBadgeToken token={row}/>
                 </Flex>
                 <Box fontSize={px2rem(12)} color={'rgba(255, 255, 255, 0.7)'}>
                   {row?.network || 'TC'}
