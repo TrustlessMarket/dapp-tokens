@@ -474,64 +474,28 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         ></Progress>
         {/*<Image src={fireImg} className={styles.fireImg} />*/}
       </Box>
-      <Flex gap={0} color={'#FFFFFF'} mt={8} direction={'column'}>
-        <Flex gap={6} justifyContent={'space-between'}>
-          <Stat className={styles.infoColumn} flex={1}>
-            <StatLabel>
-              <InfoTooltip
-                showIcon={true}
-                label="The total number of tokens that the contributors will receive after the crowdfunding ends."
-              >
-                {`Reward pool`}
-              </InfoTooltip>
-            </StatLabel>
-            <StatNumber>
-              <Tooltip label={formatCurrency(poolDetail?.launchpadBalance || 0)}>
-                {abbreviateNumber(poolDetail?.launchpadBalance || 0)}
-              </Tooltip>
-            </StatNumber>
-          </Stat>
-          <Stat className={styles.infoColumn} flex={1}>
-            <StatLabel>Contributors</StatLabel>
-            <StatNumber>
-              {formatCurrency(poolDetail?.contributors || 0, 0)}
-            </StatNumber>
-          </Stat>
-          <Stat className={styles.infoColumn} flex={1.5}>
-            <StatLabel>
-              {[LAUNCHPAD_STATUS.Pending].includes(status.key)
-                ? 'Voting will start in'
-                : [LAUNCHPAD_STATUS.Voting].includes(status.key)
-                ? 'Voting will end in'
-                : [
-                    LAUNCHPAD_STATUS.NotPassed,
-                    LAUNCHPAD_STATUS.Successful,
-                    LAUNCHPAD_STATUS.Failed,
-                    LAUNCHPAD_STATUS.End,
-                  ].includes(status.key)
-                ? 'Ended at'
-                : 'Ends in'}
-            </StatLabel>
-            <StatNumber>
-              <Text>
-                {[LAUNCHPAD_STATUS.Pending].includes(status.key) ? (
-                  <CountDownTimer end_time={poolDetail.voteStart} />
-                ) : [LAUNCHPAD_STATUS.Voting].includes(status.key) ? (
-                  <CountDownTimer end_time={poolDetail.voteEnd} />
-                ) : [
-                    LAUNCHPAD_STATUS.NotPassed,
-                    LAUNCHPAD_STATUS.Successful,
-                    LAUNCHPAD_STATUS.Failed,
-                    LAUNCHPAD_STATUS.End,
-                  ].includes(status.key) ? (
-                  moment(poolDetail.launchEnd).format('LLL')
-                ) : (
-                  <CountDownTimer end_time={poolDetail.launchEnd} />
-                )}
-              </Text>
-            </StatNumber>
-          </Stat>
-        </Flex>
+      <Flex gap={6} color={'#FFFFFF'} mt={8} justifyContent={'space-between'}>
+        <Stat className={styles.infoColumn} flex={1}>
+          <StatLabel>
+            <InfoTooltip
+              showIcon={true}
+              label="The total number of tokens that the contributors will receive after the crowdfunding ends."
+            >
+              {`Reward pool`}
+            </InfoTooltip>
+          </StatLabel>
+          <StatNumber>
+            <Tooltip label={formatCurrency(poolDetail?.launchpadBalance || 0)}>
+              {abbreviateNumber(poolDetail?.launchpadBalance || 0)}
+            </Tooltip>
+          </StatNumber>
+        </Stat>
+        <Stat className={styles.infoColumn} flex={1} textAlign={"right"}>
+          <StatLabel>Contributors</StatLabel>
+          <StatNumber>
+            {formatCurrency(poolDetail?.contributors || 0, 0)}
+          </StatNumber>
+        </Stat>
       </Flex>
       {isStarting && (
         <InputWrapper
