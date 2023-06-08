@@ -1,9 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React from "react";
-import {Flex, Icon} from "@chakra-ui/react";
+import {Box, Flex, Icon} from "@chakra-ui/react";
 import {HiBadgeCheck} from "react-icons/hi";
 import {IToken} from '@/interfaces/token';
 import {CDN_URL} from "@/configs";
+import InfoTooltip from "@/components/Swap/infoTooltip";
 
 export const VERIFIED_STATUS = {
   WARNING: 'warning',
@@ -45,23 +46,33 @@ const VerifiedBadge: React.FC<any> = ({token} : {token: IToken}): React.ReactEle
             <Icon as={HiBadgeCheck} fontSize={"14px"} color={getTextColorStatus(token.status)}/>
           </Flex>
         ) : (
-          <Flex
-            // bgColor={getBgColorStatus(token.status)}
-            color={getTextColorStatus(token.status)}
-            gap={1}
-            alignItems={"center"}
-            // paddingX={2}
-            paddingY={0}
-            borderRadius={"8px"}
-            fontSize={"xs"}
-            fontWeight={"medium"}
+          <InfoTooltip
+            label={
+              <Box
+                fontWeight={"400"}
+                dangerouslySetInnerHTML={{ __html: `This tokens name is similar to a different verified token — be aware of the similar spelling when trading this token.` }}
+              />
+            }
           >
-            <img
-              src={`${CDN_URL}/icons/warning.svg`}
-              alt="Trustless Market logo"
-              style={{width: '18px', height: '18px'}}
-            />
-          </Flex>
+            <Flex
+              // bgColor={getBgColorStatus(token.status)}
+              color={getTextColorStatus(token.status)}
+              gap={1}
+              alignItems={"center"}
+              // paddingX={2}
+              paddingY={0}
+              borderRadius={"8px"}
+              fontSize={"xs"}
+              fontWeight={"medium"}
+            >
+              <img
+                src={`${CDN_URL}/icons/warning.svg`}
+                alt="Trustless Market logo"
+                style={{width: '18px', height: '18px'}}
+              />
+            </Flex>
+          </InfoTooltip>
+
         )
       }
     </>
