@@ -41,8 +41,8 @@ const AboveTheFold = ({ poolDetail }: ILaunchpad | any) => {
           </Box>
         </Flex>
         <Flex>
-          <Stat className={styles.infoColumn}>
-            <StatLabel>
+          <Stat>
+            <StatLabel fontSize={px2rem(24)}>
               {[LAUNCHPAD_STATUS.Pending].includes(poolDetail?.state)
                 ? 'Voting will start in'
                   : [
@@ -55,7 +55,7 @@ const AboveTheFold = ({ poolDetail }: ILaunchpad | any) => {
             <StatNumber>
               <Text>
                 {[LAUNCHPAD_STATUS.Pending].includes(poolDetail?.state) ? (
-                  <Flex alignItems={'center'} gap={2} className={styles.boxTime}>
+                  <Flex mt={2} alignItems={'center'} gap={2} className={styles.boxTime}>
                     <FaFireAlt />
                     <Text>
                       <CountDownTimer end_time={poolDetail.voteStart} />
@@ -64,7 +64,7 @@ const AboveTheFold = ({ poolDetail }: ILaunchpad | any) => {
                 ) : [
                   LAUNCHPAD_STATUS.Launching,
                 ].includes(poolDetail?.state) ? (
-                  <Flex alignItems={'center'} gap={2} className={styles.boxTime}>
+                  <Flex mt={2} alignItems={'center'} gap={2} className={styles.boxTime}>
                     <FaFireAlt />
                     <Text>
                       <CountDownTimer end_time={poolDetail.launchEnd} />
