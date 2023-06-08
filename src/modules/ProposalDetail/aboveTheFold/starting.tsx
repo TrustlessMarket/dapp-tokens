@@ -7,6 +7,7 @@ import px2rem from '@/utils/px2rem';
 import styles from './styles.module.scss';
 import {formatCurrency} from "@/utils";
 import LaunchpadStatus from "@/modules/Launchpad/Launchpad.Status";
+import VerifiedBadgeLaunchpad from "@/modules/Launchpad/verifiedBadgeLaunchpad";
 
 const ProposalStarting = ({poolDetail}: any) => {
   const launchpadToken: IToken = poolDetail?.launchpadToken;
@@ -19,9 +20,10 @@ const ProposalStarting = ({poolDetail}: any) => {
             <img src={launchpadToken.thumbnail || TOKEN_ICON_DEFAULT} className={"launchpad-token-avatar"}/>
           </Flex>
           <Box>
-            <Text fontSize={px2rem(24)} fontWeight={'500'}>
+            <Flex gap={1} fontSize={px2rem(24)} fontWeight={'500'}>
               {launchpadToken.name} <span style={{color: 'rgba(255,255,255,0.7)'}}>{launchpadToken.symbol}</span>
-            </Text>
+              <VerifiedBadgeLaunchpad launchpad={poolDetail}/>
+            </Flex>
             <Flex alignItems={"center"} mt={2} gap={2}>
               <Text className={styles.boxProposalId}>Launchpad #{formatCurrency(poolDetail.id, 0)}</Text>
               <LaunchpadStatus row={poolDetail} />
