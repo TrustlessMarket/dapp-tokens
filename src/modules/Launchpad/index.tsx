@@ -5,36 +5,31 @@ import CountDownTimer from '@/components/Countdown';
 import SocialToken from '@/components/Social';
 import FiledButton from '@/components/Swap/button/filedButton';
 import InfoTooltip from '@/components/Swap/infoTooltip';
-import ListTable, { ColumnProp } from '@/components/Swap/listTable';
-import { TOKEN_ICON_DEFAULT } from '@/constants/common';
-import { ROUTE_PATH } from '@/constants/route-path';
-import { ILaunchpad } from '@/interfaces/launchpad';
-import { IToken } from '@/interfaces/token';
-import { getListLaunchpad } from '@/services/launchpad';
-import { useAppSelector } from '@/state/hooks';
-import { selectPnftExchange } from '@/state/pnftExchange';
-import { colors } from '@/theme/colors';
-import { abbreviateNumber, compareString, formatCurrency } from '@/utils';
-import { Box, Flex, Progress, Text, Tooltip } from '@chakra-ui/react';
-import { useWeb3React } from '@web3-react/core';
+import ListTable, {ColumnProp} from '@/components/Swap/listTable';
+import {TOKEN_ICON_DEFAULT} from '@/constants/common';
+import {ROUTE_PATH} from '@/constants/route-path';
+import {ILaunchpad} from '@/interfaces/launchpad';
+import {IToken} from '@/interfaces/token';
+import {getListLaunchpad} from '@/services/launchpad';
+import {useAppSelector} from '@/state/hooks';
+import {selectPnftExchange} from '@/state/pnftExchange';
+import {colors} from '@/theme/colors';
+import {abbreviateNumber, compareString, formatCurrency} from '@/utils';
+import {Box, Flex, Progress, Text, Tooltip} from '@chakra-ui/react';
+import {useWeb3React} from '@web3-react/core';
 import BigNumber from 'bignumber.js';
 import moment from 'moment';
-import { useRouter } from 'next/router';
-import { useEffect, useMemo, useState } from 'react';
-import { BsPencil } from 'react-icons/bs';
-import { FaFireAlt } from 'react-icons/fa';
-import { ImClock2 } from 'react-icons/im';
-import { useDispatch } from 'react-redux';
-import LaunchpadStatus, {
-  LAUNCHPAD_STATUS,
-  LaunchpadLabelStatus,
-  useLaunchPadStatus,
-} from './Launchpad.Status';
-import { StyledIdoContainer } from './Launchpad.styled';
-import { FAQStyled } from '../LaunchpadManage/LaunchpadManage.styled';
+import {useRouter} from 'next/router';
+import {useEffect, useMemo, useState} from 'react';
+import {BsPencil} from 'react-icons/bs';
+import {FaFireAlt} from 'react-icons/fa';
+import {ImClock2} from 'react-icons/im';
+import {useDispatch} from 'react-redux';
+import LaunchpadStatus, {LAUNCHPAD_STATUS, LaunchpadLabelStatus, useLaunchPadStatus,} from './Launchpad.Status';
+import {StyledIdoContainer} from './Launchpad.styled';
+import {FAQStyled} from '../LaunchpadManage/LaunchpadManage.styled';
 import Faq from '@/components/Swap/faq';
 import SectionContainer from "@/components/Swap/sectionContainer";
-import VerifiedBadgeLaunchpad from "@/modules/Launchpad/verifiedBadgeLaunchpad";
 
 const LaunchpadContainer = () => {
   const [data, setData] = useState<any[]>();
@@ -83,7 +78,7 @@ const LaunchpadContainer = () => {
               <Box>
                 <Flex gap={1} alignItems={"center"} className="record-title">
                   {token.name} <span>{token.symbol}</span>
-                  <VerifiedBadgeLaunchpad launchpad={row}/>
+                  {/*<VerifiedBadgeLaunchpad launchpad={row}/>*/}
                 </Flex>
                 <Text className="note">{token.network}</Text>
               </Box>
