@@ -30,6 +30,7 @@ import {StyledIdoContainer} from './Launchpad.styled';
 import {FAQStyled} from '../LaunchpadManage/LaunchpadManage.styled';
 import Faq from '@/components/Swap/faq';
 import SectionContainer from "@/components/Swap/sectionContainer";
+import VerifiedBadgeLaunchpad from "./verifiedBadgeLaunchpad";
 
 const LaunchpadContainer = () => {
   const [data, setData] = useState<any[]>();
@@ -78,7 +79,7 @@ const LaunchpadContainer = () => {
               <Box>
                 <Flex gap={1} alignItems={"center"} className="record-title">
                   {token.name} <span>{token.symbol}</span>
-                  {/*<VerifiedBadgeLaunchpad launchpad={row}/>*/}
+                  <VerifiedBadgeLaunchpad launchpad={row}/>
                 </Flex>
                 <Text className="note">{token.network}</Text>
               </Box>
