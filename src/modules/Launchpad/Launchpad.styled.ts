@@ -9,7 +9,7 @@ export const StyledIdoContainer = styled(BodyContainer)`
   /* max-width: 1366px; */
   > div {
     height: 100%;
-    padding: 0;
+    //padding: 0;
   }
   .title {
     color: white;

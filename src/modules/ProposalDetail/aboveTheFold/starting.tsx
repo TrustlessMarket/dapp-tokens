@@ -1,14 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Box, Flex, Text } from '@chakra-ui/react';
-import BuyForm from '@/modules/ProposalDetail/form';
-import Card from '@/components/Swap/card';
+import {Box, Flex, Text} from '@chakra-ui/react';
 import React from 'react';
-import { IToken } from '@/interfaces/token';
-import { TOKEN_ICON_DEFAULT } from '@/constants/common';
+import {IToken} from '@/interfaces/token';
+import {TOKEN_ICON_DEFAULT} from '@/constants/common';
 import px2rem from '@/utils/px2rem';
 import styles from './styles.module.scss';
 import {formatCurrency} from "@/utils";
-import LaunchpadStatus, {LAUNCHPAD_STATUS} from "@/modules/Launchpad/Launchpad.Status";
+import LaunchpadStatus from "@/modules/Launchpad/Launchpad.Status";
 
 const ProposalStarting = ({poolDetail}: any) => {
   const launchpadToken: IToken = poolDetail?.launchpadToken;
@@ -30,13 +28,6 @@ const ProposalStarting = ({poolDetail}: any) => {
             </Flex>
           </Box>
         </Flex>
-        {
-          [LAUNCHPAD_STATUS.Voting].includes(poolDetail?.state) && (
-            <Card bgColor={"transparent"} paddingX={6}>
-              <BuyForm poolDetail={poolDetail}/>
-            </Card>
-          )
-        }
       </Flex>
     </Box>
   );

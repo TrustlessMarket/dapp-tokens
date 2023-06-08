@@ -444,7 +444,7 @@ export const StyledLaunchpadFormStep1 = styled(Flex)`
 `;
 
 export const FAQStyled = styled(Box)`
-  margin-top: ${px2rem(30)};
+  margin-top: ${px2rem(48)};
   align-self: center;
   border: 1px solid #353945;
   padding: ${px2rem(40)};
@@ -457,6 +457,7 @@ export const FAQStyled = styled(Box)`
       & > div {
         padding-inline-start: 0;
         padding-inline-end: 0;
+        padding-top: 0;
         .chakra-heading {
           color: #ffffff;
         }

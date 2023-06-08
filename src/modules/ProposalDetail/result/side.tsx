@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-empty-function */
-
 import {Box, Flex, Progress, SimpleGrid, Text} from "@chakra-ui/react";
 import {compareString, formatCurrency, shortenAddress} from "@/utils";
 import Jazzicon, {jsNumberForAddress} from 'react-jazzicon';
@@ -13,11 +12,12 @@ import {useWeb3React} from "@web3-react/core";
 import Slider from "react-slick";
 import styles from './styles.module.scss';
 import {chunk} from "lodash";
+import {HiArrowLeft, HiArrowRight} from "react-icons/hi";
 
 const ProposalResult = ({title, totalVote, className, data}: any) => {
   const {mobileScreen, tabletScreen} = useWindowSize();
   const {account} = useWeb3React();
-  const perPage = 18;
+  const perPage = 20;
 
   const numSlide = useMemo(() => {
     return Math.floor((data?.voters?.length || 0) / perPage) + 1;
@@ -35,7 +35,35 @@ const ProposalResult = ({title, totalVote, className, data}: any) => {
     speed: 500,
     slidesToShow: 1,
     slidesToScroll: 1,
+    nextArrow: <SampleNextArrow />,
+    prevArrow: <SamplePrevArrow />
   };
+
+  function SampleNextArrow(props: any) {
+    const { className, style, onClick } = props;
+    return (
+      <Box
+        className={className}
+        style={{ ...style }}
+        onClick={onClick}
+      >
+        <HiArrowRight fontSize={'30px'} color={"#FFFFFF"}/>
+      </Box>
+    );
+  }
+
+  function SamplePrevArrow(props: any) {
+    const { className, style, onClick } = props;
+    return (
+      <Box
+        className={className}
+        style={{ ...style }}
+        onClick={onClick}
+      >
+        <HiArrowLeft fontSize={'30px'} color={"#FFFFFF"}/>
+      </Box>
+    );
+  }
 
   return (
     <Box className={className}>
@@ -57,7 +85,7 @@ const ProposalResult = ({title, totalVote, className, data}: any) => {
           pageData?.map((d: any, i: number) => {
             return (
               <Box key={i}>
-                <SimpleGrid spacingX={8} spacingY={4} columns={6} w={"fit-content"}>
+                <SimpleGrid spacingY={4} columns={perPage / 2} w={"100%"}>
                   {
                     d?.map((d: any, index: number) => {
                       return d ? (
@@ -74,7 +102,7 @@ const ProposalResult = ({title, totalVote, className, data}: any) => {
                         }
                                      key={d.voter}
                         >
-                          <Box key={d.voter}>
+                          <Box key={d.voter} paddingX={4}>
                             <a
                               title="explorer"
                               href={`${TC_EXPLORER}/address/${d.voter}`}
@@ -97,6 +125,7 @@ const ProposalResult = ({title, totalVote, className, data}: any) => {
                           height={`${mobileScreen || tabletScreen ? 40 : 60}px`}
                           borderRadius={"50%"}
                           backgroundColor={"#1E1E22"}
+                          marginX={4}
                         >
                         </Box>
                       )
