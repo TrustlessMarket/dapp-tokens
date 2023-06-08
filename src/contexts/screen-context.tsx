@@ -67,6 +67,7 @@ const ScreenLayoutProvider: React.FC<any> = ({ children }) => {
     // if (!_isMobile) {
     height += showGetStarted ? bannerHeight : 0;
     height += showLaunchpadGetStarted ? bannerHeight : 0;
+    height += bannerHeight;//banner for $OXBT & $MXRC
     // }
 
     setHeaderHeight(height);
