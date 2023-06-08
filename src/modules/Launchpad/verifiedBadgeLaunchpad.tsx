@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React from "react";
-import {Flex, Icon, Text} from "@chakra-ui/react";
-import {ImWarning} from "react-icons/im";
+import {Flex} from "@chakra-ui/react";
 import {IToken} from '@/interfaces/token';
 import {ILaunchpad} from "@/interfaces/launchpad";
 import InfoTooltip from "@/components/Swap/infoTooltip";
+import {CDN_URL} from "@/configs";
 
 const VerifiedBadgeLaunchpad: React.FC<any> = ({launchpad} : {launchpad: ILaunchpad}): React.ReactElement => {
   const token: IToken = launchpad.launchpadToken;
@@ -44,7 +44,12 @@ const VerifiedBadgeLaunchpad: React.FC<any> = ({launchpad} : {launchpad: ILaunch
           fontWeight={"medium"}
         >
           {/*<Text textTransform={"capitalize"}>{"warning"}</Text>*/}
-          <Icon as={ImWarning} fontSize={"12px"}/>
+          {/*<Icon as={ImWarning} fontSize={"12px"}/>*/}
+          <img
+            src={`${CDN_URL}/icons/warning.svg`}
+            alt="Trustless Market logo"
+            style={{width: '18px', height: '18px'}}
+          />
         </Flex>
       </InfoTooltip>
 
