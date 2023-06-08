@@ -46,6 +46,7 @@ const InfoTooltip = (props: InfoTooltipProps) => {
       placement={placement}
       closeOnClick={false}
       label={label}
+      className="popup-tooltip"
     >
       {renderChild()}
     </Tooltip>

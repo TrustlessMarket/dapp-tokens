@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React from "react";
-import {Flex} from "@chakra-ui/react";
+import {Box, Flex} from "@chakra-ui/react";
 import {ILaunchpad} from "@/interfaces/launchpad";
 import InfoTooltip from "@/components/Swap/infoTooltip";
 import {CDN_URL} from "@/configs";
@@ -8,7 +8,12 @@ import {CDN_URL} from "@/configs";
 const VerifiedBadgeLaunchpad: React.FC<any> = ({launchpad} : {launchpad: ILaunchpad}): React.ReactElement => {
   return launchpad?.warningNote ? (
       <InfoTooltip
-        label={launchpad?.warningNote}
+        label={
+          <Box
+            fontWeight={"400"}
+            dangerouslySetInnerHTML={{ __html: launchpad?.warningNote }}
+          />
+        }
       >
         <Flex
           // bgColor={"brand.danger.50"}
