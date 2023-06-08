@@ -15,6 +15,7 @@ import WrapperConnected from '@/components/WrapperConnected';
 import { CDN_URL } from '@/configs';
 import {
   BRIDGE_SUPPORT_TOKEN,
+  TOKEN_ICON_DEFAULT,
   TRUSTLESS_BRIDGE,
   TRUSTLESS_FAUCET,
 } from '@/constants/common';
@@ -391,7 +392,8 @@ export const MakeFormSwap = forwardRef((props, ref) => {
                   <img
                     src={
                       liquidityToken?.thumbnail ||
-                      `${CDN_URL}/upload/1683530065704444020-1683530065-default-coin.svg`
+                      tokenIcons?.[liquidityToken?.symbol?.toLowerCase()] ||
+                      TOKEN_ICON_DEFAULT
                     }
                     alt={liquidityToken?.thumbnail || 'default-icon'}
                     className={'liquidity-token-avatar'}
@@ -433,7 +435,8 @@ export const MakeFormSwap = forwardRef((props, ref) => {
                 <img
                   src={
                     liquidityToken?.thumbnail ||
-                    `${CDN_URL}/upload/1683530065704444020-1683530065-default-coin.svg`
+                    tokenIcons?.[liquidityToken?.symbol?.toLowerCase()] ||
+                    TOKEN_ICON_DEFAULT
                   }
                   alt={liquidityToken?.thumbnail || 'default-icon'}
                   className={'liquidity-token-avatar'}
@@ -447,7 +450,8 @@ export const MakeFormSwap = forwardRef((props, ref) => {
                     <img
                       src={
                         liquidityToken?.thumbnail ||
-                        `${CDN_URL}/upload/1683530065704444020-1683530065-default-coin.svg`
+                        tokenIcons?.[liquidityToken?.symbol?.toLowerCase()] ||
+                        TOKEN_ICON_DEFAULT
                       }
                       alt={liquidityToken?.thumbnail || 'default-icon'}
                       className={'liquidity-token-avatar'}

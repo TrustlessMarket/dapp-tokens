@@ -12,6 +12,7 @@ export interface FiledButtonProps extends ButtonProps {
   processInfo?: {
     id: string;
     size?: 'l' | 'sm';
+    theme?: 'light' | 'dark';
   };
 }
 

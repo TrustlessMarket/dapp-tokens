@@ -12,7 +12,7 @@ import tokenIcons from '@/constants/tokenIcons';
 import { ILaunchpad } from '@/interfaces/launchpad';
 import { IToken } from '@/interfaces/token';
 import { colors } from '@/theme/colors';
-import { compareString, formatCurrency } from '@/utils';
+import { calcLaunchpadInitialPrice, compareString, formatCurrency } from '@/utils';
 import { isProduction } from '@/utils/commons';
 import { composeValidators, required, requiredAmount } from '@/utils/formValidate';
 import { Box, Divider, Flex, FormLabel, Spinner, Text } from '@chakra-ui/react';
@@ -155,17 +155,6 @@ const LaunchpadFormStep1: React.FC<ILaunchpadFormStep1> = ({
     values?.liquidityBalance,
     launchpadConfigs.rewardVoteRatio,
   ]);
-
-  const calcInitialPrice = () => {
-    let price = '0';
-    if (values?.launchpadBalance && values?.liquidityBalance) {
-      price = new BigNumber(values?.launchpadBalance)
-        .multipliedBy(new BigNumber(values?.liquidityRatioArg).dividedBy(100))
-        .dividedBy(values?.liquidityBalance)
-        .toString();
-    }
-    return price;
-  };
 
   return (
     <StyledLaunchpadFormStep1>
@@ -485,14 +474,26 @@ const LaunchpadFormStep1: React.FC<ILaunchpadFormStep1> = ({
                   <InfoTooltip
                     showIcon
                     label={`This will make the initial price ${formatCurrency(
-                      calcInitialPrice(),
+                      calcLaunchpadInitialPrice({
+                        launchpadBalance: values?.launchpadBalance,
+                        liquidityRatioArg: values?.liquidityRatioArg,
+                        liquidityBalance: values?.liquidityBalance,
+                      }),
                     )} times greater than your crowdfunding price.`}
                   >
                     Initial price
                   </InfoTooltip>
                 }
                 className="horizontal-item"
-                value={<b>{`${formatCurrency(calcInitialPrice())} times`}</b>}
+                value={
+                  <b>{`${formatCurrency(
+                    calcLaunchpadInitialPrice({
+                      launchpadBalance: values?.launchpadBalance,
+                      liquidityRatioArg: values?.liquidityRatioArg,
+                      liquidityBalance: values?.liquidityBalance,
+                    }),
+                  )} times`}</b>
+                }
               />
             </Box>
 

@@ -1,23 +1,32 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import BodyContainer from '@/components/Swap/bodyContainer';
 import FiledButton from '@/components/Swap/button/filedButton';
-import {ROUTE_PATH} from '@/constants/route-path';
-import {Box, Spinner, Tab, TabList, TabPanel, TabPanels, Tabs, Text,} from '@chakra-ui/react';
+import { ROUTE_PATH } from '@/constants/route-path';
+import {
+  Box,
+  Spinner,
+  Tab,
+  TabList,
+  TabPanel,
+  TabPanels,
+  Tabs,
+  Text,
+} from '@chakra-ui/react';
 import AboveTheFold from '@/modules/ProposalDetail/aboveTheFold';
-import {useAppSelector} from '@/state/hooks';
-import {selectPnftExchange} from '@/state/pnftExchange';
-import {colors} from '@/theme/colors';
+import { useAppSelector } from '@/state/hooks';
+import { selectPnftExchange } from '@/state/pnftExchange';
+import { colors } from '@/theme/colors';
 import cx from 'classnames';
-import {useRouter} from 'next/router';
-import React, {useEffect, useState} from 'react';
+import { useRouter } from 'next/router';
+import React, { useEffect, useState } from 'react';
 import styles from './styles.module.scss';
-import {getDetailProposal} from "@/services/proposal";
-import {IProposal} from "@/interfaces/proposal";
-import IdoDescription from "@/modules/LaunchPadDetail/description";
-import IdoFaqs from "@/modules/LaunchPadDetail/faqs";
-import SectionContainer from "@/components/Swap/sectionContainer";
-import Intro from "@/modules/LaunchPadDetail/intro";
-import px2rem from "@/utils/px2rem";
+import { getDetailProposal } from '@/services/proposal';
+import { IProposal } from '@/interfaces/proposal';
+import IdoDescription from '@/modules/LaunchPadDetail/description';
+import IdoFaqs from '@/modules/LaunchPadDetail/faqs';
+import SectionContainer from '@/components/Swap/sectionContainer';
+import Intro from '@/modules/LaunchPadDetail/intro';
+import px2rem from '@/utils/px2rem';
 
 const IdoDetailContainer = () => {
   const router = useRouter();
@@ -49,7 +58,7 @@ const IdoDetailContainer = () => {
   if (loading) {
     return (
       <BodyContainer className={cx(styles.wrapper, styles.loadingContainer)}>
-        <Spinner color={colors.white}/>
+        <Spinner color={colors.white} />
       </BodyContainer>
     );
   }
@@ -57,8 +66,8 @@ const IdoDetailContainer = () => {
   if (!proposalDetail) {
     return (
       <BodyContainer className={cx(styles.wrapper, styles.loadingContainer)}>
-        <Text style={{color: colors.white}}>Opps... This proposal not found!</Text>
-        <Box mt={6}/>
+        <Text style={{ color: colors.white }}>Opps... This proposal not found!</Text>
+        <Box mt={6} />
         <FiledButton
           onClick={() => router.replace(ROUTE_PATH.LAUNCHPAD)}
           btnSize="h"
@@ -71,7 +80,7 @@ const IdoDetailContainer = () => {
 
   return (
     <Box className={styles.wrapper}>
-      <AboveTheFold proposalDetail={proposalDetail}/>
+      <AboveTheFold proposalDetail={proposalDetail} />
       <SectionContainer>
         <Tabs className={cx(styles.tabContainer)}>
           <TabList mb={6} mt={6}>
@@ -80,15 +89,22 @@ const IdoDetailContainer = () => {
           </TabList>
           <TabPanels>
             <TabPanel>
-              <Box h={"738px"}>
-                <Intro poolDetail={proposalDetail?.userPool}/>
+              <Box h={'738px'}>
+                <Intro poolDetail={proposalDetail?.userPool} />
               </Box>
-              <Text fontSize={px2rem(24)} fontWeight={"500"} color={"#FFFFFF"} mt={8}>Description</Text>
+              <Text
+                fontSize={px2rem(24)}
+                fontWeight={'500'}
+                color={'#FFFFFF'}
+                mt={8}
+              >
+                Description
+              </Text>
               <Box mt={8}></Box>
-              <IdoDescription poolDetail={proposalDetail?.userPool}/>
+              <IdoDescription poolDetail={proposalDetail?.userPool} />
             </TabPanel>
             <TabPanel>
-              <IdoFaqs poolDetail={proposalDetail?.userPool}/>
+              <IdoFaqs poolDetail={proposalDetail?.userPool} />
             </TabPanel>
           </TabPanels>
         </Tabs>
