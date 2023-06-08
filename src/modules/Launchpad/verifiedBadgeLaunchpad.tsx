@@ -33,17 +33,17 @@ const VerifiedBadgeLaunchpad: React.FC<any> = ({launchpad} : {launchpad: ILaunch
         label={message}
       >
         <Flex
-          bgColor={"brand.danger.50"}
+          // bgColor={"brand.danger.50"}
           color={"brand.danger.400"}
           gap={1}
           alignItems={"center"}
-          paddingX={2}
-          paddingY={0}
+          // paddingX={2}
+          // paddingY={0}
           borderRadius={"8px"}
           fontSize={"xs"}
           fontWeight={"medium"}
         >
-          <Text textTransform={"capitalize"}>{"warning"}</Text>
+          {/*<Text textTransform={"capitalize"}>{"warning"}</Text>*/}
           <Icon as={ImWarning} fontSize={"12px"}/>
         </Flex>
       </InfoTooltip>
