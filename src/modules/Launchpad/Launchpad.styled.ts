@@ -1,7 +1,7 @@
 import BodyContainer from '@/components/Swap/bodyContainer';
-import {colors} from '@/theme/colors';
+import { colors } from '@/theme/colors';
 import px2rem from '@/utils/px2rem';
-import {Badge} from '@chakra-ui/react';
+import { Badge } from '@chakra-ui/react';
 import styled from 'styled-components';
 
 export const StyledIdoContainer = styled(BodyContainer)`
@@ -9,7 +9,7 @@ export const StyledIdoContainer = styled(BodyContainer)`
   /* max-width: 1366px; */
   > div {
     height: 100%;
-    //padding: 0;
+    padding: 0;
   }
   .title {
     color: white;
@@ -67,6 +67,45 @@ export const StyledIdoContainer = styled(BodyContainer)`
           height: 40px;
           border-radius: 100%;
         }
+        .avatar {
+          position: relative;
+          img {
+            min-width: 40px;
+            min-height: 40px;
+          }
+          &:hover {
+            .update-info {
+              display: flex;
+            }
+          }
+          .update-info {
+            display: none;
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-color: #0000007a;
+            align-items: center;
+            justify-content: center;
+            border-radius: 100%;
+            animation: ease-in 100ms;
+            border: 1px solid #ffffff87;
+            svg {
+              color: ${colors.white};
+            }
+            .fade-action {
+              position: absolute;
+              width: 100%;
+              height: 100%;
+              border-radius: 100%;
+              cursor: pointer;
+              top: 0;
+              left: 0;
+              right: 0;
+              bottom: 0;
+              z-index: 2;
+            }
+          }
+        }
         .record-title {
           span {
             color: rgba(255, 255, 255, 0.7);
@@ -80,7 +119,7 @@ export const StyledIdoContainer = styled(BodyContainer)`
           max-width: 250px;
           white-space: break-spaces;
         }
-        
+
         .liquidity-token {
           font-size: 14px !important;
           background: rgba(255, 255, 255, 0.1);
@@ -88,18 +127,18 @@ export const StyledIdoContainer = styled(BodyContainer)`
           border-radius: 100px;
           padding: 2px 4px !important;
           width: max-content;
-          
+
           > img {
             width: 16px;
             height: 16px;
           }
         }
-        
+
         .progress-bar {
           background: rgba(255, 255, 255, 0.2);
           border-radius: 100px;
           > div:first-child {
-            background: #04C57F;
+            background: #04c57f;
             border-radius: 100px;
           }
         }
@@ -116,7 +155,7 @@ export const StyledIdoStatus = styled(Badge)`
   font-weight: 500;
 
   &::before {
-    content: "";
+    content: '';
     position: absolute;
     width: 6px;
     height: 6px;
@@ -124,7 +163,7 @@ export const StyledIdoStatus = styled(Badge)`
     left: 12px;
     border-radius: 50%;
   }
-  
+
   &.draft,
   &.pending {
     color: #ff7e21;
@@ -135,11 +174,11 @@ export const StyledIdoStatus = styled(Badge)`
     }
   }
   &.voting {
-    color: #95A4FC;
+    color: #95a4fc;
     background-color: rgba(149, 164, 252, 0.2);
 
     &::before {
-      background: #95A4FC;
+      background: #95a4fc;
     }
   }
   &.launching {

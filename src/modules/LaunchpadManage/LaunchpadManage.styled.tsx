@@ -1,6 +1,6 @@
 import BodyContainer from '@/components/Swap/bodyContainer';
 import { colors } from '@/theme/colors';
-import { Box, Flex } from '@chakra-ui/react';
+import { Box, Flex, Popover } from '@chakra-ui/react';
 import { px2rem } from '@trustless-computer/dapp-core';
 import styled from 'styled-components';
 
@@ -499,3 +499,44 @@ export const FAQStyled = styled(Box)`
     }
   }
 `;
+
+export const BtnNeedHelpStyled = styled(Flex)`
+  color: ${colors.black};
+  align-items: center;
+  justify-content: center;
+  background-color: transparent;
+  position: fixed;
+  bottom: 15px;
+  right: 15px;
+  z-index: 100;
+  border-radius: 8px;
+  min-width: 40px;
+  min-height: 40px;
+  gap: 5px;
+  cursor: pointer;
+  transition: 200ms ease-in-out;
+  p {
+    display: none;
+  }
+  svg {
+    font-size: ${px2rem(30)};
+    color: white;
+  }
+  &:hover,
+  &:active,
+  &:focus,
+  &.is-active {
+    background-color: white;
+    padding-left: ${px2rem(10)};
+    padding-right: ${px2rem(5)};
+    p {
+      display: block;
+    }
+    svg {
+      font-size: ${px2rem(30)};
+      color: black;
+    }
+  }
+`;
+
+export const PopoverNeedHelp = styled(Popover)``;

@@ -96,7 +96,6 @@ import useCancelLaunchPad from '@/hooks/contract-operations/launchpad/useCancel'
 import useVoteReleaseLaunchpad from '@/hooks/contract-operations/launchpad/useVoteRelease';
 import tokenIcons from '@/constants/tokenIcons';
 
-const FEE = 2;
 export const MakeFormSwap = forwardRef((props, ref) => {
   const {
     onSubmit,
