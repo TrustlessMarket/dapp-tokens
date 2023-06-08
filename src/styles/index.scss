@@ -1,3 +1,7 @@
 @import '_utils';
 @import '_reset';
 @import '_fonts';
+
+:global div:has(.popup-tooltip) {
+  z-index: 1401;
+}

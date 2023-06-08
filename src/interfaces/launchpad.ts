@@ -38,4 +38,5 @@ export interface ILaunchpad {
   voteStart: string;
   voteEnd: string;
   voteGoal: string;
+  warningNote?: string;
 }
