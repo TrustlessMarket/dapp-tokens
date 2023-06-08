@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import {Box, Flex, SimpleGrid, Stat, StatLabel, StatNumber, Text, Tooltip,} from '@chakra-ui/react';
-import {abbreviateNumber, compareString, formatCurrency} from '@/utils';
-import React, {useMemo} from 'react';
+import {Box, Flex, SimpleGrid, Stat, StatLabel, StatNumber, Tooltip,} from '@chakra-ui/react';
+import {abbreviateNumber, calcLaunchpadInitialPrice, compareString, formatCurrency} from '@/utils';
+import React from 'react';
 import {ILaunchpad} from '@/interfaces/launchpad';
 import InfoTooltip from '@/components/Swap/infoTooltip';
 import CountDownTimer from '@/components/Countdown';
@@ -10,54 +10,34 @@ import {selectPnftExchange} from '@/state/pnftExchange';
 import {useWeb3React} from '@web3-react/core';
 import {LAUNCHPAD_STATUS} from '@/modules/Launchpad/Launchpad.Status';
 import moment from 'moment/moment';
-import styles from "@/modules/LaunchPadDetail/form/styles.module.scss";
-import {CDN_URL} from "@/configs";
-import BigNumber from "bignumber.js";
+import styles from '@/modules/LaunchPadDetail/form/styles.module.scss';
+import {CDN_URL} from '@/configs';
+import {IToken} from '@/interfaces/token';
 
 const ProposalInfo = ({ poolDetail }: ILaunchpad | any) => {
   const configs = useAppSelector(selectPnftExchange).configs;
   const { account } = useWeb3React();
   const isLaunchpadCreator = compareString(poolDetail?.creatorAddress, account);
-  const needReload = useAppSelector(selectPnftExchange).needReload;
-  const liquidityToken = poolDetail?.liquidityToken;
-
-  const percent = useMemo(() => {
-    if (poolDetail?.id) {
-      return new BigNumber(poolDetail?.totalValue)
-        .div(poolDetail?.goalBalance)
-        .multipliedBy(100)
-        .toNumber();
-    }
-
-    return 0;
-  }, [poolDetail?.id, needReload]);
+  const liquidityToken: IToken = poolDetail?.liquidityToken;
 
   return (
     <Box color={'#FFFFFF'}>
       <SimpleGrid columns={3} spacingY={8} spacingX={8}>
         <Stat className={styles.infoColumn}>
-          <StatLabel>Funded</StatLabel>
-          <StatNumber>
+          <StatLabel>
             <InfoTooltip
-              label={`$${formatCurrency(poolDetail?.totalValueUsd || 0, 2)}`}
+              showIcon={true}
+              label="The total number of tokens that the contributors will receive after the crowdfunding ends."
             >
-              <Flex gap={1} alignItems={'center'}>
-                <Flex gap={1} alignItems={'center'}>
-                  {formatCurrency(poolDetail?.totalValue || 0)}{' '}
-                  <img
-                    src={
-                      liquidityToken?.thumbnail ||
-                      `${CDN_URL}/upload/1683530065704444020-1683530065-default-coin.svg`
-                    }
-                    alt={liquidityToken?.thumbnail || 'default-icon'}
-                    className={'liquidity-token-avatar'}
-                  />
-                </Flex>
-                <Text fontSize={'20px'} fontWeight={'400'}>
-                  ({formatCurrency(percent, 2)}% funded)
-                </Text>
-              </Flex>
+              Reward Pool
             </InfoTooltip>
+          </StatLabel>
+          <StatNumber>
+            <Tooltip label={`${formatCurrency(poolDetail?.launchpadBalance)}`}>
+              {abbreviateNumber(poolDetail?.launchpadBalance)}
+            </Tooltip>
+            {` `}
+            {poolDetail?.launchpadToken?.symbol}
           </StatNumber>
         </Stat>
         <Stat className={styles.infoColumn}>
@@ -119,18 +99,26 @@ const ProposalInfo = ({ poolDetail }: ILaunchpad | any) => {
         <Stat className={styles.infoColumn}>
           <StatLabel>
             <InfoTooltip
-              showIcon={true}
-              label="The total number of tokens that the contributors will receive after the crowdfunding ends."
+              showIcon
+              label={`This will make the initial price ${formatCurrency(
+                calcLaunchpadInitialPrice({
+                  launchpadBalance: poolDetail?.launchpadBalance,
+                  liquidityRatioArg: poolDetail?.liquidityRatio,
+                  liquidityBalance: poolDetail?.liquidityBalance,
+                }),
+              )} times greater than ${isLaunchpadCreator ? 'your' : 'the'} crowdfunding price.`}
             >
-              Reward Pool
+              Initial price
             </InfoTooltip>
           </StatLabel>
           <StatNumber>
-            <Tooltip label={`${formatCurrency(poolDetail?.launchpadBalance)}`}>
-              {abbreviateNumber(poolDetail?.launchpadBalance)}
-            </Tooltip>
-            {` `}
-            {poolDetail?.launchpadToken?.symbol}
+            <>{`${formatCurrency(
+              calcLaunchpadInitialPrice({
+                launchpadBalance: poolDetail?.launchpadBalance,
+                liquidityRatioArg: poolDetail?.liquidityRatio,
+                liquidityBalance: poolDetail?.liquidityBalance,
+              }),
+            )} times`}</>
           </StatNumber>
         </Stat>
         <Stat className={styles.infoColumn}>

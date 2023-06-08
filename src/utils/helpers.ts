@@ -71,3 +71,22 @@ export const getDefaultGasPrice = () => {
 export const getLiquidityRatio = (ratio: any) => {
   return new BigNumber(web3.utils.toWei(ratio).toString()).dividedBy(10000);
 };
+
+export const calcLaunchpadInitialPrice = ({
+  launchpadBalance,
+  liquidityBalance,
+  liquidityRatioArg,
+}: {
+  launchpadBalance: string;
+  liquidityBalance: string;
+  liquidityRatioArg: string;
+}) => {
+  let price = '0';
+  if (launchpadBalance && liquidityBalance) {
+    price = new BigNumber(launchpadBalance)
+      .multipliedBy(new BigNumber(liquidityRatioArg).dividedBy(100))
+      .dividedBy(liquidityBalance)
+      .toString();
+  }
+  return price;
+};

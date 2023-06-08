@@ -124,9 +124,9 @@ const AlertInfoProcess: React.FC<AlertInfoProcessProps> = ({
       py={processInfo?.size === 'sm' ? 2 : 4}
       gap={2}
       mb={3}
-      backgroundColor={theme === 'dark' ? colors.dark : colors.white}
+      backgroundColor={theme === 'dark' ? colors.dark : colors.dark100}
       border={`1px solid ${
-        theme === 'dark' ? colors.darkBorderColor : colors.white500
+        theme === 'dark' ? colors.darkBorderColor : colors.dark100
       }`}
     >
       <AlertIcon boxSize="40px" mr={0} mb={2} />

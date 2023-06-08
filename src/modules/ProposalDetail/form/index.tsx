@@ -3,30 +3,26 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import FiledButton from '@/components/Swap/button/filedButton';
 import WrapperConnected from '@/components/WrapperConnected';
-import {toastError} from '@/constants/error';
+import { toastError } from '@/constants/error';
 import VoteForm from '@/modules/ProposalDetail/voteForm';
-import {logErrorToServer} from '@/services/swap';
-import {useAppDispatch} from '@/state/hooks';
-import {closeModal, openModal} from '@/state/modal';
-import {updateCurrentTransaction,} from '@/state/pnftExchange';
-import {showError} from '@/utils/toast';
-import {Box, Flex, forwardRef, Text} from '@chakra-ui/react';
-import {useWindowSize} from '@trustless-computer/dapp-core';
-import {useWeb3React} from '@web3-react/core';
-import {useImperativeHandle, useRef, useState} from 'react';
-import {Form, useForm} from 'react-final-form';
+import { logErrorToServer } from '@/services/swap';
+import { useAppDispatch } from '@/state/hooks';
+import { closeModal, openModal } from '@/state/modal';
+import { updateCurrentTransaction } from '@/state/pnftExchange';
+import { showError } from '@/utils/toast';
+import { Box, Flex, forwardRef, Text } from '@chakra-ui/react';
+import { useWindowSize } from '@trustless-computer/dapp-core';
+import { useWeb3React } from '@web3-react/core';
+import { useImperativeHandle, useRef, useState } from 'react';
+import { Form, useForm } from 'react-final-form';
 import styles from './styles.module.scss';
-import {ILaunchpad} from "@/interfaces/launchpad";
-import {TM_ADDRESS} from "@/configs";
-import {LAUNCHPAD_STATUS} from "@/modules/Launchpad/Launchpad.Status";
-import px2rem from "@/utils/px2rem";
+import { ILaunchpad } from '@/interfaces/launchpad';
+import { TM_ADDRESS } from '@/configs';
+import { LAUNCHPAD_STATUS } from '@/modules/Launchpad/Launchpad.Status';
+import px2rem from '@/utils/px2rem';
 
 export const MakeFormSwap = forwardRef((props, ref) => {
-  const {
-    onSubmit,
-    submitting,
-    poolDetail,
-  } = props;
+  const { onSubmit, submitting, poolDetail } = props;
   const { isActive } = useWeb3React();
 
   const { change, restart } = useForm();
@@ -66,18 +62,22 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             >
               Support this Project
             </FiledButton>
-          ) : 'Support this Project'
-          }
+          ) : (
+            'Support this Project'
+          )}
         </>
       </WrapperConnected>
-      {!isActive && <Text
+      {!isActive && (
+        <Text
           fontSize={px2rem(14)}
-          fontWeight={"400"}
-          color={"rgba(255, 255, 255, 0.7)"}
-          textAlign={"center"}
+          fontWeight={'400'}
+          color={'rgba(255, 255, 255, 0.7)'}
+          textAlign={'center'}
           mt={2}
-      >Connect a wallet to vote.</Text>
-      }
+        >
+          Connect a wallet to vote.
+        </Text>
+      )}
     </form>
   );
 });
@@ -92,7 +92,7 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
     address: TM_ADDRESS,
     thumbnail: 'https://i.ibb.co/TbshdC0/Icon-Token-TM-04.png',
     decimal: 18,
-    symbol: 'TM'
+    symbol: 'TM',
   };
 
   const handleSubmit = async (values: any) => {
@@ -112,7 +112,11 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
         },
         render: () => (
           <Flex>
-            <VoteForm poolDetail={poolDetail} votingToken={votingToken} onClose={close} />
+            <VoteForm
+              poolDetail={poolDetail}
+              votingToken={votingToken}
+              onClose={close}
+            />
           </Flex>
         ),
       }),
