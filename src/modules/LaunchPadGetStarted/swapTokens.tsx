@@ -16,7 +16,7 @@ const STEPS = [
             <img
               alt="swap_step1_1"
               className={styles.introImg}
-              src={`${CDN_URL}/upload/1683705812924381070-1683705812-swap_step1_1.png`}
+              src={`${CDN_URL}/pages/trustlessmarket/get_started/step_1.1_2023_06_08.png`}
             />
           </ListItem>
           <ListItem>
@@ -24,7 +24,7 @@ const STEPS = [
             <img
               alt="swap_step1_1"
               className={styles.introImg}
-              src={`${CDN_URL}/pages/trustlessmarket/get_started/swap_step_1.2_v1.png`}
+              src={`${CDN_URL}/pages/trustlessmarket/get_started/step_1.2_2023_06_08.png`}
             />
           </ListItem>
         </UnorderedList>
@@ -42,7 +42,7 @@ const STEPS = [
               <img
                 alt="swap_step1_1"
                 className={styles.introImg}
-                src={`${CDN_URL}/pages/trustlessmarket/get_started/swap_step_2.1_v1.png`}
+                src={`${CDN_URL}/pages/trustlessmarket/get_started/step_2.1_2023_06_08.png`}
               />
             </ListItem>
             <ListItem>
@@ -51,7 +51,7 @@ const STEPS = [
               <img
                 alt="swap_step1_1"
                 className={styles.introImg}
-                src={`${CDN_URL}/pages/trustlessmarket/get_started/swap_step_2.2_v1.png`}
+                src={`${CDN_URL}/pages/trustlessmarket/get_started/step_2.2_2023_06_08.png`}
               />
             </ListItem>
           </UnorderedList>
@@ -120,7 +120,7 @@ const STEPS = [
               <img
                 alt="swap_step1_1"
                 className={styles.introImg}
-                src={`${CDN_URL}/pages/trustlessmarket/get_started/launchpad_step_4.png`}
+                src={`${CDN_URL}/pages/trustlessmarket/get_started/launchpad/step_4.1_2023_06_08.png`}
               />
             </ListItem>
           </UnorderedList>
@@ -131,7 +131,7 @@ const STEPS = [
               <img
                 alt="launchpad_step1_1"
                 className={styles.introImg}
-                src={`${CDN_URL}/pages/trustlessmarket/get_started/launchpad_step_4.1.1.png`}
+                src={`${CDN_URL}/pages/trustlessmarket/get_started/launchpad/step_4_1.1_2023_06_08.png`}
               />
             </ListItem>
             <ListItem>
@@ -139,7 +139,7 @@ const STEPS = [
               <img
                 alt="launchpad_step1_1"
                 className={styles.introImg}
-                src={`${CDN_URL}/pages/trustlessmarket/get_started/launchpad_step_4.1.2.png`}
+                src={`${CDN_URL}/pages/trustlessmarket/get_started/launchpad/step_4_1.2_2023_06_08.png`}
               />
             </ListItem>
             <ListItem>
@@ -147,7 +147,7 @@ const STEPS = [
               <img
                 alt="launchpad_step1_1"
                 className={styles.introImg}
-                src={`${CDN_URL}/pages/trustlessmarket/get_started/launchpad_step_4.1.3.png`}
+                src={`${CDN_URL}/pages/trustlessmarket/get_started/launchpad/step_4_1.3_2023_06_08.png`}
               />
             </ListItem>
             <ListItem>
@@ -165,7 +165,7 @@ const STEPS = [
               <img
                 alt="launchpad_step1_1"
                 className={styles.introImg}
-                src={`${CDN_URL}/pages/trustlessmarket/get_started/launchpad_step_4.2.1.png`}
+                src={`${CDN_URL}/pages/trustlessmarket/get_started/launchpad/step_4_2.1_2023_06_08.png`}
               />
             </ListItem>
             <ListItem>

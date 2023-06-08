@@ -1,49 +1,57 @@
 /* eslint-disable react/no-children-prop */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import {transactionType} from '@/components/Swap/alertInfoProcessing/types';
+import { transactionType } from '@/components/Swap/alertInfoProcessing/types';
 import FiledButton from '@/components/Swap/button/filedButton';
 import WrapperConnected from '@/components/WrapperConnected';
-import {TRUSTLESS_GASSTATION} from '@/constants/common';
-import {toastError} from '@/constants/error';
-import {AssetsContext} from '@/contexts/assets-context';
+import { TRUSTLESS_GASSTATION } from '@/constants/common';
+import { toastError } from '@/constants/error';
+import { AssetsContext } from '@/contexts/assets-context';
 import useContractOperation from '@/hooks/contract-operations/useContractOperation';
-import {TransactionStatus} from '@/interfaces/walletTransaction';
-import {logErrorToServer} from '@/services/swap';
-import {useAppDispatch, useAppSelector} from '@/state/hooks';
+import { TransactionStatus } from '@/interfaces/walletTransaction';
+import { logErrorToServer } from '@/services/swap';
+import { useAppDispatch, useAppSelector } from '@/state/hooks';
 import {
   requestReload,
   requestReloadRealtime,
   selectPnftExchange,
   updateCurrentTransaction,
 } from '@/state/pnftExchange';
-import {showError} from '@/utils/toast';
-import {Box, Center, Flex, forwardRef, Text,} from '@chakra-ui/react';
-import {useWeb3React} from '@web3-react/core';
+import { showError } from '@/utils/toast';
+import { Box, Center, Flex, forwardRef, Text } from '@chakra-ui/react';
+import { useWeb3React } from '@web3-react/core';
 import BigNumber from 'bignumber.js';
 import Link from 'next/link';
-import {useContext, useEffect, useImperativeHandle, useMemo, useRef, useState} from 'react';
-import {Field, Form, useForm, useFormState} from 'react-final-form';
+import {
+  useContext,
+  useEffect,
+  useImperativeHandle,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
+import { Field, Form, useForm, useFormState } from 'react-final-form';
 import toast from 'react-hot-toast';
-import {BiBell} from 'react-icons/bi';
-import {useDispatch} from 'react-redux';
+import { BiBell } from 'react-icons/bi';
+import { useDispatch } from 'react-redux';
 import styles from './styles.module.scss';
-import cx from "classnames";
-import px2rem from "@/utils/px2rem";
-import FieldAmount from "@/components/Swap/form/fieldAmount";
-import {composeValidators, required} from "@/utils/formValidate";
-import {CDN_URL} from "@/configs";
-import TokenBalance from "@/components/Swap/tokenBalance";
-import InputWrapper from "@/components/Swap/form/inputWrapper";
-import Web3 from "web3";
-import {IToken} from "@/interfaces/token";
-import useIsApproveERC20Token from "@/hooks/contract-operations/token/useIsApproveERC20Token";
-import useBalanceERC20Token from "@/hooks/contract-operations/token/useBalanceERC20Token";
-import useApproveERC20Token from "@/hooks/contract-operations/token/useApproveERC20Token";
-import {closeModal, openModal} from "@/state/modal";
-import ModalConfirmApprove from "@/components/ModalConfirmApprove";
-import useVoteLaunchpad from "@/hooks/contract-operations/launchpad/useVote";
-import moment from "moment";
+import cx from 'classnames';
+import px2rem from '@/utils/px2rem';
+import FieldAmount from '@/components/Swap/form/fieldAmount';
+import { composeValidators, required } from '@/utils/formValidate';
+import { CDN_URL } from '@/configs';
+import TokenBalance from '@/components/Swap/tokenBalance';
+import InputWrapper from '@/components/Swap/form/inputWrapper';
+import Web3 from 'web3';
+import { IToken } from '@/interfaces/token';
+import useIsApproveERC20Token from '@/hooks/contract-operations/token/useIsApproveERC20Token';
+import useBalanceERC20Token from '@/hooks/contract-operations/token/useBalanceERC20Token';
+import useApproveERC20Token from '@/hooks/contract-operations/token/useApproveERC20Token';
+import { closeModal, openModal } from '@/state/modal';
+import ModalConfirmApprove from '@/components/ModalConfirmApprove';
+import useVoteLaunchpad from '@/hooks/contract-operations/launchpad/useVote';
+import moment from 'moment';
+import { colors } from '@/theme/colors';
 
 const validateBaseAmount = (_amount: any, values: any) => {
   if (!_amount) {
@@ -60,13 +68,8 @@ const validateBaseAmount = (_amount: any, values: any) => {
 };
 
 export const MakeFormSwap = forwardRef((props, ref) => {
-  const {
-    onSubmit,
-    submitting,
-    isStartingProposal,
-    poolDetail,
-    votingToken,
-  } = props;
+  const { onSubmit, submitting, isStartingProposal, poolDetail, votingToken } =
+    props;
   const [loading, setLoading] = useState(false);
   const [baseBalance, setBaseBalance] = useState<any>('0');
   const { juiceBalance, isLoadedAssets } = useContext(AssetsContext);
@@ -202,7 +205,6 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     // onChangeValueBaseAmount(baseBalance);
   };
 
-
   const onChangeValueBaseAmount = (amount: any) => {
     // onBaseAmountChange({
     //   amount,
@@ -253,8 +255,11 @@ export const MakeFormSwap = forwardRef((props, ref) => {
 
   return (
     <form onSubmit={onSubmit} style={{ height: '100%' }}>
-      <Text color={"#1C1C1C"}>
-        Your vote will confirm your support for this project. Note, that when you pledge your token onto the platform, it stays locked for 30 days and earns {configs?.percentRewardForVoter}% of the total funds raised, paid via project tokens.
+      <Text color={'#1C1C1C'}>
+        Your vote will confirm your support for this project. Note, that when you
+        pledge your token onto the platform, it stays locked for 30 days and earns{' '}
+        {configs?.percentRewardForVoter}% of the total funds raised, paid via project
+        tokens.
       </Text>
       <InputWrapper
         className={cx(styles.inputAmountWrap, styles.inputBaseAmountWrap)}
@@ -269,7 +274,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             <Flex
               gap={1}
               alignItems={'center'}
-              color={'#B6B6B6'}
+              color={colors.hLabelColor}
               fontSize={px2rem(14)}
               fontWeight={'400'}
             >
@@ -320,7 +325,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
                     padding={'1px 12px'}
                     fontSize={px2rem(16)}
                     fontWeight={'600'}
-                    border={"1px solid #3385FF"}
+                    border={'1px solid #3385FF'}
                   >
                     Max
                   </Text>
@@ -358,7 +363,8 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             </Text>
           </Flex>
         )}
-      {(isAuthenticated) && (
+      <Box mt={6} />
+      {isAuthenticated && (
         <WrapperConnected
           type={isRequireApprove ? 'button' : 'submit'}
           className={styles.submitButton}
@@ -369,10 +375,11 @@ export const MakeFormSwap = forwardRef((props, ref) => {
               isDisabled={loading}
               loadingText="Processing"
               btnSize={'h'}
-              containerConfig={{ flex: 1, mt: 6 }}
+              containerConfig={{ flex: 1 }}
               onClick={onShowModalApprove}
               processInfo={{
                 id: transactionType.createPoolApprove,
+                theme: 'light',
               }}
             >
               APPROVE USE OF {votingToken?.symbol}
@@ -383,10 +390,11 @@ export const MakeFormSwap = forwardRef((props, ref) => {
               isLoading={submitting}
               type="submit"
               btnSize={'h'}
-              containerConfig={{ flex: 1, mt: 6 }}
+              containerConfig={{ flex: 1 }}
               loadingText={submitting ? 'Processing' : ' '}
               processInfo={{
                 id: transactionType.votingProposal,
+                theme: 'light',
               }}
             >
               VOTE
@@ -409,7 +417,7 @@ const BuyForm = ({ poolDetail, votingToken, onClose }: any) => {
   });
 
   const handleSubmit = async (values: any) => {
-    if(moment().unix() >= moment(poolDetail?.voteEnd).unix()) {
+    if (moment().unix() >= moment(poolDetail?.voteEnd).unix()) {
       toast.error('This project is overdue for voting.');
       return;
     }

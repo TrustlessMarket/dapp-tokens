@@ -1,25 +1,37 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import {Box, Flex, SimpleGrid, Stat, StatLabel, StatNumber, Text, Tooltip,} from '@chakra-ui/react';
-import {abbreviateNumber, compareString, formatCurrency} from '@/utils';
-import React, {useMemo} from 'react';
-import {ILaunchpad} from '@/interfaces/launchpad';
+import {
+  Box,
+  Flex,
+  SimpleGrid,
+  Stat,
+  StatLabel,
+  StatNumber,
+  Text,
+  Tooltip,
+} from '@chakra-ui/react';
+import { abbreviateNumber, compareString, formatCurrency } from '@/utils';
+import React, { useMemo } from 'react';
+import { ILaunchpad } from '@/interfaces/launchpad';
 import InfoTooltip from '@/components/Swap/infoTooltip';
 import CountDownTimer from '@/components/Countdown';
-import {useAppSelector} from '@/state/hooks';
-import {selectPnftExchange} from '@/state/pnftExchange';
-import {useWeb3React} from '@web3-react/core';
-import {LAUNCHPAD_STATUS} from '@/modules/Launchpad/Launchpad.Status';
+import { useAppSelector } from '@/state/hooks';
+import { selectPnftExchange } from '@/state/pnftExchange';
+import { useWeb3React } from '@web3-react/core';
+import { LAUNCHPAD_STATUS } from '@/modules/Launchpad/Launchpad.Status';
 import moment from 'moment/moment';
-import styles from "@/modules/LaunchPadDetail/form/styles.module.scss";
-import {CDN_URL} from "@/configs";
-import BigNumber from "bignumber.js";
+import styles from '@/modules/LaunchPadDetail/form/styles.module.scss';
+import { CDN_URL } from '@/configs';
+import BigNumber from 'bignumber.js';
+import { TOKEN_ICON_DEFAULT } from '@/constants/common';
+import tokenIcons from '@/constants/tokenIcons';
+import { IToken } from '@/interfaces/token';
 
 const ProposalInfo = ({ poolDetail }: ILaunchpad | any) => {
   const configs = useAppSelector(selectPnftExchange).configs;
   const { account } = useWeb3React();
   const isLaunchpadCreator = compareString(poolDetail?.creatorAddress, account);
   const needReload = useAppSelector(selectPnftExchange).needReload;
-  const liquidityToken = poolDetail?.liquidityToken;
+  const liquidityToken: IToken = poolDetail?.liquidityToken;
 
   const percent = useMemo(() => {
     if (poolDetail?.id) {
@@ -47,7 +59,8 @@ const ProposalInfo = ({ poolDetail }: ILaunchpad | any) => {
                   <img
                     src={
                       liquidityToken?.thumbnail ||
-                      `${CDN_URL}/upload/1683530065704444020-1683530065-default-coin.svg`
+                      tokenIcons?.[liquidityToken?.symbol?.toLowerCase()] ||
+                      TOKEN_ICON_DEFAULT
                     }
                     alt={liquidityToken?.thumbnail || 'default-icon'}
                     className={'liquidity-token-avatar'}
