@@ -42,7 +42,7 @@ const MenuMobile = React.forwardRef(
             justifyContent={'space-between'}
           >
             <Box className="menu-container" flex={1}>
-              {HEADER_MENUS.map((item) => {
+              {HEADER_MENUS(router).map((item) => {
                 return (
                   <StyledLink
                     active={router?.pathname?.includes(item.key)}
