@@ -39,6 +39,7 @@ export const TRUSTLESS_GASSTATION = 'https://tcgasstation.com/';
 export const TRUSTLESS_BRIDGE = 'https://trustlessbridge.io/';
 export const TRUSTLESS_COMPUTER = 'https://trustless.computer/';
 export const GENERATIVE_DISCORD = 'https://generative.xyz/discord';
+export const NEW_BITCOIN_CITY = 'https://newbitcoincity.com/';
 
 export const TOKEN_ICON_DEFAULT =
   'https://cdn.trustless.computer/upload/1683530065704444020-1683530065-default-coin.svg';
