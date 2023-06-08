@@ -20,6 +20,7 @@ import { RiArrowRightUpLine } from 'react-icons/ri';
 import { Wrapper } from './Header.styled';
 import MenuMobile from './MenuMobile';
 import WalletHeader from './Wallet';
+import {ScreenType} from "@/modules/Pools";
 
 export const isScreenDarkMode = () => {
   return true;
@@ -192,6 +193,28 @@ const Header = () => {
           </Text>
         </Flex>
       )}
+      <Flex
+        height={10}
+        alignItems="center"
+        justifyContent="center"
+        bgColor={`#1e1e22`}
+      >
+        <Text
+          fontWeight="medium"
+          fontSize="sm"
+          color={isScreenDarkMode() ? 'white' : 'black'}
+        >
+          $OXBT & $MXRC are now tradable. For a limited time, you can earn 2 $TM each time you add liquidity to <LinkText
+          fontWeight="bold"
+          color="brand.info.400"
+          href={`${ROUTE_PATH.POOLS}?type=${ScreenType.add_liquid}&f=0x4A50C02CA92B363E337e79F1977865BBCF0b4630&t=0xfB83c18569fB43f1ABCbae09Baf7090bFFc8CBBD`}
+        >OXBT/WBTC</LinkText> or <LinkText
+          fontWeight="bold"
+          color="brand.info.400"
+          href={`${ROUTE_PATH.POOLS}?type=${ScreenType.add_liquid}&f=0x0deD162F7ad87A29c43923103141f4Dc86a01AA1&t=0xfB83c18569fB43f1ABCbae09Baf7090bFFc8CBBD`}
+        >MXRC/WBTC</LinkText> pool.
+        </Text>
+      </Flex>
     </Wrapper>
   );
 };

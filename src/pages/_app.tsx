@@ -21,7 +21,7 @@ import {Toaster} from 'react-hot-toast';
 import {Provider} from 'react-redux';
 import GoogleAnalytics from "../components/GA/GoogleAnalytics";
 import {getConfigs} from "@/services";
-import {updateConfigs} from "@/state/pnftExchange";``
+import {updateConfigs} from "@/state/pnftExchange";
 
 export default function App({ Component, pageProps }: AppProps) {
   const { seoInfo = {} } = pageProps;
