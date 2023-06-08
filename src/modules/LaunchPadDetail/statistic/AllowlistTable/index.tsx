@@ -69,16 +69,23 @@ const AllowlistTable = ({ poolDetail, isFull = true, handleViewMore }: any) => {
         isCurrentUser: compareString(item?.userAddress, account),
       }));
       setRawDepositList(list);
+      const you = list.find((item: any) => item?.isCurrentUser);
+
+      if(!you && userDeposit?.userAddress) {
+        setRawDepositList([...list, { ...userDeposit, index: list?.length + 1, isCurrentUser: true }]);
+      }
+
       if (isFull) {
         setDepositList(list);
       } else {
-        const you = list.find((item: any) => item?.isCurrentUser);
         if (you) {
           setDepositList([you]);
-        } else if (userDeposit?.userAddress) {
-          setDepositList([{ ...userDeposit, index: 1, isCurrentUser: true }]);
-        } else if (list?.length > 0) {
-          setDepositList([list[0]]);
+        } else {
+          if (userDeposit?.userAddress) {
+            setDepositList([{ ...userDeposit, index: 1, isCurrentUser: true }]);
+          } else if (list?.length > 0) {
+            setDepositList([list[0]]);
+          }
         }
       }
     } catch (err: unknown) {
@@ -263,9 +270,9 @@ const AllowlistTable = ({ poolDetail, isFull = true, handleViewMore }: any) => {
           <List
             height={height}
             width={1}
-            rowCount={depositList.length}
+            rowCount={rawDepositList.length}
             rowHeight={getRowHeight()}
-            rowRenderer={(props) => <RowRenderer {...props} data={depositList} />}
+            rowRenderer={(props) => <RowRenderer {...props} data={rawDepositList} />}
             containerStyle={{
               width: '100%',
               maxWidth: '100%',
