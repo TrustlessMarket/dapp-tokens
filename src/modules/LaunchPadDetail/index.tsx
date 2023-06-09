@@ -77,7 +77,9 @@ const IdoDetailContainer = () => {
   return (
     <BodyContainer className={styles.wrapper}>
       {
-        [LAUNCHPAD_STATUS.Voting, LAUNCHPAD_STATUS.NotPassed].includes(poolDetail?.state) ? (
+        [LAUNCHPAD_STATUS.Voting, LAUNCHPAD_STATUS.NotPassed, LAUNCHPAD_STATUS.PrepareLaunching].includes(
+          poolDetail?.state
+        ) ? (
           <AboveTheFoldVoting poolDetail={poolDetail} />
         ) : (
           <AboveTheFoldLaunchpad poolDetail={poolDetail} />

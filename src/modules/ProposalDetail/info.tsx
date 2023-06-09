@@ -121,13 +121,17 @@ const ProposalInfo = ({ poolDetail }: ILaunchpad | any) => {
         </Stat>
         <Stat className={styles.infoColumn}>
           <StatLabel>
-            {[LAUNCHPAD_STATUS.Voting].includes(poolDetail?.state)
-              ? 'Voting Ends in'
-              : 'Voting Ended at'}
+            {
+              [LAUNCHPAD_STATUS.Voting].includes(poolDetail?.state) ? 'Voting Ends in'
+                : [LAUNCHPAD_STATUS.PrepareLaunching].includes(poolDetail?.state) ? 'Funding Starts in'
+                  : 'Voting Ended at'
+            }
           </StatLabel>
           <StatNumber>
             {[LAUNCHPAD_STATUS.Voting].includes(poolDetail?.state) ? (
               <CountDownTimer end_time={poolDetail?.voteEnd} />
+            ) : [LAUNCHPAD_STATUS.PrepareLaunching].includes(poolDetail?.state) ? (
+              <CountDownTimer end_time={poolDetail?.launchStart} />
             ) : (
               moment(poolDetail?.voteEnd).format('LLL')
             )}
