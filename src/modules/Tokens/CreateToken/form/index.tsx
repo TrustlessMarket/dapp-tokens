@@ -194,7 +194,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           theme="light"
           label={
             <Text color={'#1C1C1C'}>
-              DISCORD
+              SYMBOL
             </Text>
           }
         >
