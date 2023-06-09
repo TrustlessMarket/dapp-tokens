@@ -19,19 +19,15 @@ import {Box, Flex, Progress, Text, Tooltip} from '@chakra-ui/react';
 import {useWeb3React} from '@web3-react/core';
 import BigNumber from 'bignumber.js';
 import moment from 'moment';
-import { useRouter } from 'next/router';
-import { useEffect, useMemo, useState } from 'react';
-import { BsPencil, BsPencilFill } from 'react-icons/bs';
-import { FaFireAlt } from 'react-icons/fa';
-import { ImClock2 } from 'react-icons/im';
-import { useDispatch } from 'react-redux';
-import LaunchpadStatus, {
-  LAUNCHPAD_STATUS,
-  LaunchpadLabelStatus,
-  useLaunchPadStatus,
-} from './Launchpad.Status';
-import { StyledIdoContainer } from './Launchpad.styled';
-import { FAQStyled } from '../LaunchpadManage/LaunchpadManage.styled';
+import {useRouter} from 'next/router';
+import {useEffect, useMemo, useState} from 'react';
+import {BsPencil, BsPencilFill} from 'react-icons/bs';
+import {FaFireAlt} from 'react-icons/fa';
+import {ImClock2} from 'react-icons/im';
+import {useDispatch} from 'react-redux';
+import LaunchpadStatus, {LAUNCHPAD_STATUS, LaunchpadLabelStatus, useLaunchPadStatus,} from './Launchpad.Status';
+import {StyledIdoContainer} from './Launchpad.styled';
+import {FAQStyled} from '../LaunchpadManage/LaunchpadManage.styled';
 import Faq from '@/components/Swap/faq';
 import SectionContainer from '@/components/Swap/sectionContainer';
 import VerifiedBadgeLaunchpad from '@/modules/Launchpad/verifiedBadgeLaunchpad';
@@ -428,7 +424,12 @@ const LaunchpadContainer = () => {
               <LaunchpadStatus row={row} />
               {
                 compareString(row.creatorAddress, account) &&
-                [LAUNCHPAD_STATUS.Draft, LAUNCHPAD_STATUS.Pending].includes(row?.state) && (
+                [
+                  LAUNCHPAD_STATUS.Draft,
+                  LAUNCHPAD_STATUS.Pending,
+                  LAUNCHPAD_STATUS.Voting,
+                  LAUNCHPAD_STATUS.PrepareLaunching
+                ].includes(row?.state) && (
                   <Box
                     cursor={'pointer'}
                     onClick={(e) => {
