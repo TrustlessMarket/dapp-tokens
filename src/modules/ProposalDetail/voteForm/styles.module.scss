@@ -15,7 +15,7 @@
   :global .chakra-input__left-element {
     margin: 0;
     width: unset;
-    border-right: 1px solid #ECECED;
+    border-right: 1px solid #ececed;
     height: 60px;
   }
 
@@ -31,6 +31,7 @@
 
   :global .chakra-input__group {
     background: transparent;
+    align-items: center;
   }
 
   :global {
@@ -101,10 +102,10 @@
 .progressBar {
   position: relative;
   > div {
-    background: #1C1C1C;
+    background: #1c1c1c;
 
     > div:first-child {
-      background: linear-gradient(90deg, #3385FF 0%, #96C0FF 100%);
+      background: linear-gradient(90deg, #3385ff 0%, #96c0ff 100%);
     }
   }
 
@@ -130,7 +131,7 @@
   color: #000000;
   :global {
     .chakra-stat__label {
-      color: #B6B6B6;
+      color: #b6b6b6;
       font-weight: 300;
       font-size: rem(16);
     }
@@ -152,9 +153,7 @@
 }
 
 .btnVoteUp {
-
 }
 
 .btnVoteDown {
-
 }

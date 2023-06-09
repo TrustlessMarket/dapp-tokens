@@ -277,12 +277,43 @@ export const StyledLaunchpadFormStep1 = styled(Flex)`
       text-align: left;
     }
 
-    img {
+    .token-avatar-edit {
+      position: relative;
       border-radius: 100%;
       width: 80px;
       height: 80px;
       border: 1px solid rgba(0, 0, 0, 0.08);
       margin: 16px 0px;
+      img {
+        width: 100%;
+        height: 100%;
+      }
+      &:hover {
+        .update-info {
+          display: flex;
+        }
+      }
+      .update-info {
+        display: none;
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background-color: #0000007a;
+        align-items: center;
+        justify-content: center;
+        border-radius: 100%;
+        animation: ease-in 100ms;
+        border: 1px solid #ffffff87;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 2;
+        svg {
+          color: ${colors.white};
+        }
+      }
     }
 
     p {
@@ -367,6 +398,14 @@ export const StyledLaunchpadFormStep1 = styled(Flex)`
         cursor: default;
       }
     }
+  }
+
+  .btn-twitter-container {
+    background-color: rgb(29, 155, 240) !important;
+    color: white !important;
+    padding: 0 10px !important;
+    border-radius: 6px;
+    cursor: pointer;
   }
   &.step-2-container {
     padding: ${px2rem(40)};

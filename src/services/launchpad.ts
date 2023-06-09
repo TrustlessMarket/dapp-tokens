@@ -97,6 +97,7 @@ export const createLaunchpad = async (data: {
   liquidity_ratio: string;
   goal_balance: string;
   threshold_balance: string;
+  twitter_post_url: string;
   id?: string;
   duration: number;
 }) => {
@@ -144,9 +145,7 @@ export const importBoost = async (
   });
 };
 
-export const getVoteResultLaunchpad = async (params: {
-  pool_address?: any;
-}) => {
+export const getVoteResultLaunchpad = async (params: { pool_address?: any }) => {
   const qs = '?' + queryString.stringify(params);
   return swrFetcher(`${API_EXCHANGE_URL}${API_PATH}/vote-result${qs}`, {
     method: 'GET',
