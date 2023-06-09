@@ -7,14 +7,22 @@ import FieldAmount from '@/components/Swap/form/fieldAmount';
 import FieldSelect from '@/components/Swap/form/fieldDropdown';
 import HorizontalItem from '@/components/Swap/horizontalItem';
 import InfoTooltip from '@/components/Swap/infoTooltip';
-import { TOKEN_ICON_DEFAULT } from '@/constants/common';
-import tokenIcons from '@/constants/tokenIcons';
 import { ILaunchpad } from '@/interfaces/launchpad';
 import { IToken } from '@/interfaces/token';
 import { colors } from '@/theme/colors';
-import { calcLaunchpadInitialPrice, compareString, formatCurrency } from '@/utils';
+import {
+  calcLaunchpadInitialPrice,
+  compareString,
+  formatCurrency,
+  getTokenIconUrl,
+} from '@/utils';
 import { isProduction } from '@/utils/commons';
-import { composeValidators, required, requiredAmount } from '@/utils/formValidate';
+import {
+  composeValidators,
+  isTwitter,
+  required,
+  requiredAmount,
+} from '@/utils/formValidate';
 import { Box, Divider, Flex, FormLabel, Spinner, Text } from '@chakra-ui/react';
 import { px2rem } from '@trustless-computer/dapp-core';
 import BigNumber from 'bignumber.js';
@@ -23,6 +31,11 @@ import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 import { Field, useForm, useFormState } from 'react-final-form';
 import { StyledLaunchpadFormStep1 } from './LaunchpadManage.styled';
+import { BsPencilFill } from 'react-icons/bs';
+import { ROUTE_PATH } from '@/constants/route-path';
+import FieldText from '@/components/Swap/form/fieldText';
+import { TwitterShareButton } from 'react-share';
+import { BiCheckShield } from 'react-icons/bi';
 
 interface ILaunchpadFormStep1 {
   detail?: ILaunchpad;
@@ -278,6 +291,50 @@ const LaunchpadFormStep1: React.FC<ILaunchpadFormStep1> = ({
             <Text color={colors.white500}>{liquidityTokenSelected?.symbol}</Text>
           }
         />
+        {tokenSelected && (
+          <>
+            <Box mb={6} />
+            <Box>
+              <FormLabel fontSize="xs" fontWeight="medium">
+                <Flex alignItems={'center'} gap={1}>
+                  <Text>Verify Twitter</Text>
+                  {detail?.isVerifiedTwitter ? (
+                    <BiCheckShield
+                      style={{ fontSize: 18 }}
+                      color={colors.bluePrimary}
+                    />
+                  ) : tokenSelected?.social?.twitter ? (
+                    <TwitterShareButton
+                      title="Verify now"
+                      url={`${tokenSelected?.verifyCode}`}
+                      className="btn-twitter-container"
+                    >
+                      Post verify
+                    </TwitterShareButton>
+                  ) : (
+                    <Box
+                      onClick={() =>
+                        router.push(
+                          `${ROUTE_PATH.UPDATE_TOKEN_INFO}?address=${tokenSelected.address}`,
+                        )
+                      }
+                      className="btn-twitter-container"
+                    >
+                      Update twitter info
+                    </Box>
+                  )}
+                </Flex>
+              </FormLabel>
+              <Field
+                name="twitterPostUrl"
+                placeholder="Enter twitter post url"
+                children={FieldText}
+                validate={composeValidators(required, isTwitter)}
+                disabled={detail?.isVerifiedTwitter}
+              />
+            </Box>
+          </>
+        )}
       </Box>
       <Box className="fields-right-container" flex={1}>
         <Box>
@@ -300,7 +357,7 @@ const LaunchpadFormStep1: React.FC<ILaunchpadFormStep1> = ({
                   } ${isFirstDisabled ? 'disabled' : ''}`}
                   key={liq.symbol}
                 >
-                  <img src={tokenIcons[liq.symbol.toLowerCase()]} />
+                  <img src={getTokenIconUrl(liq)} />
                   <Text>{liq.symbol}</Text>
                 </Flex>
               ))
@@ -380,10 +437,20 @@ const LaunchpadFormStep1: React.FC<ILaunchpadFormStep1> = ({
             height={'100%'}
           >
             <Box>
-              <img
-                src={tokenSelected?.thumbnail || TOKEN_ICON_DEFAULT}
-                alt="token-avatar"
-              />
+              <Box className="token-avatar-edit">
+                <img src={getTokenIconUrl(tokenSelected)} alt="token-avatar" />
+                <Box
+                  onClick={() =>
+                    router.push(
+                      `${ROUTE_PATH.UPDATE_TOKEN_INFO}?address=${tokenSelected.address}`,
+                    )
+                  }
+                  title="Update token info"
+                  className="update-info"
+                >
+                  <BsPencilFill attributeName="action" />
+                </Box>
+              </Box>
 
               <Box>
                 <SocialToken theme="dark" socials={tokenSelected.social} />
@@ -430,12 +497,12 @@ const LaunchpadFormStep1: React.FC<ILaunchpadFormStep1> = ({
                 value={
                   <>
                     <div>{`${formatCurrency(values?.liquidityBalance || '0')}`}</div>
-                    <div className="note">{`(${new BigNumber(
-                      values?.liquidityBalance || '0',
-                    )
-                      .dividedBy(tokenSelected.totalSupply)
-                      .multipliedBy(100)
-                      .toFixed()}% supply)`}</div>
+                    <div className="note">{`(${formatCurrency(
+                      new BigNumber(values?.liquidityBalance || '0')
+                        .dividedBy(tokenSelected.totalSupply)
+                        .multipliedBy(100)
+                        .toFixed(),
+                    )}% supply)`}</div>
                   </>
                 }
               />

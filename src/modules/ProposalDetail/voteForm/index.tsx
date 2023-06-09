@@ -274,7 +274,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             <Flex
               gap={1}
               alignItems={'center'}
-              color={colors.hLabelColor}
+              color={colors.darkBorderColor}
               fontSize={px2rem(14)}
               fontWeight={'400'}
             >
@@ -300,7 +300,13 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             className={styles.inputAmount}
             prependComp={
               votingToken && (
-                <Flex gap={1} alignItems={'center'} color={'#000000'} paddingX={2}>
+                <Flex
+                  gap={1}
+                  alignItems={'center'}
+                  color={'#000000'}
+                  paddingX={2}
+                  height={'100%'}
+                >
                   <img
                     src={
                       votingToken?.thumbnail ||

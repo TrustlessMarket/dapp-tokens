@@ -251,6 +251,7 @@ const LaunchpadManageFormContainer: React.FC<LaunchpadManageFormContainerProps> 
         startTimeArg: new Date(detail.launchStart),
         endTimeArg: new Date(detail.launchEnd),
         description: detail.description,
+        twitterPostUrl: detail.twitterPostUrl,
         video: detail.video,
         image: detail.image,
         boost_url: detail.boostUrl,
