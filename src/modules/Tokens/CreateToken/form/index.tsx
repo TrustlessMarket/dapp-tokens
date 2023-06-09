@@ -8,10 +8,10 @@ import {toastError} from '@/constants/error';
 import {IToken} from '@/interfaces/token';
 import {logErrorToServer} from '@/services/swap';
 import {useAppDispatch} from '@/state/hooks';
-import {requestReload, requestReloadRealtime,} from '@/state/pnftExchange';
+import {requestReload, requestReloadRealtime, updateCurrentTransaction,} from '@/state/pnftExchange';
 import px2rem from '@/utils/px2rem';
 import {showError} from '@/utils/toast';
-import {Box, Center, Flex, forwardRef, SimpleGrid, Text,} from '@chakra-ui/react';
+import {Box, Flex, forwardRef, SimpleGrid, Text,} from '@chakra-ui/react';
 import {useWeb3React} from '@web3-react/core';
 import cx from 'classnames';
 import {useRouter} from 'next/router';
@@ -26,31 +26,13 @@ import {uploadFile} from '@/services/file';
 import {ROUTE_PATH} from '@/constants/route-path';
 import {composeValidators, required} from "@/utils/formValidate";
 import FieldAmount from "@/components/Swap/form/fieldAmount";
+import useContractOperation from "@/hooks/contract-operations/useContractOperation";
+import useCreateToken, {ICreateTokenParams} from "@/hooks/contract-operations/token/useCreateToken";
+import {DeployContractResponse} from "@/interfaces/contract-operation";
+import {TransactionStatus} from "@/interfaces/walletTransaction";
+import {transactionType} from "@/components/Swap/alertInfoProcessing/types";
 
 export const MAX_FILE_SIZE = 1024 * 1024; // 375 MB
-
-const Avatar = ({ img, alt }: { img: string | any; alt: string | undefined }) => {
-  return (
-    <Center w={50} h={50} bg={'#FFFFFF10'} borderRadius={'50%'}>
-      <img width={30} height={30} src={img} alt={alt} />
-    </Center>
-  );
-};
-
-const HorizontalItem = ({
-  label,
-  value,
-}: {
-  label: string | any;
-  value: string | any;
-}) => {
-  return (
-    <Flex gap={2} alignItems={'center'} justifyContent={'space-between'}>
-      {label}
-      {value}
-    </Flex>
-  );
-};
 
 export const MakeFormSwap = forwardRef((props, ref) => {
   const { onSubmit, submitting } = props;
@@ -294,6 +276,10 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           type="submit"
           // borderRadius={'100px !important'}
           // className="btn-submit"
+          processInfo={{
+            id: transactionType.createToken,
+            theme: 'light',
+          }}
           btnSize={'h'}
           containerConfig={{ flex: 1, mt: 4 }}
           loadingText={submitting ? 'Processing' : ' '}
@@ -311,17 +297,36 @@ const CreateTokenForm = () => {
   const dispatch = useAppDispatch();
   const { account } = useWeb3React();
   const router = useRouter();
+  const { run: createToken } = useContractOperation<
+    ICreateTokenParams,
+    DeployContractResponse | null
+  >({
+    operation: useCreateToken,
+  });
 
   const handleSubmit = async (values: any) => {
-    const { tokenInfo } = values;
-    console.log('handleSubmit', values);
     try {
       setSubmitting(true);
+      dispatch(
+        updateCurrentTransaction({
+          status: TransactionStatus.info,
+          id: transactionType.createToken,
+        }),
+      );
+      const res = await createToken({
+        name: values?.tokenName,
+        symbol: values?.tokenSymbol,
+        maxSupply: Number(values?.tokenMaxSupply),
+      });
+
+      if(!res) {
+        throw Error('Cannot create new Smart BRC-20 Token');
+      }
 
       const data: IUpdateTokenPayload = {
-        name: tokenInfo?.name,
-        symbol: tokenInfo?.symbol,
-        thumbnail: values?.thumbnail || tokenInfo.thumbnail,
+        name: values?.tokenName,
+        symbol: values?.tokenSymbol,
+        thumbnail: values?.thumbnail,
         description: values?.description,
         social: {
           discord: values?.discord,
@@ -333,10 +338,10 @@ const CreateTokenForm = () => {
         },
       };
 
-      const response = await updateTokenInfo(tokenInfo?.address, data);
+      const response = await updateTokenInfo(res.contractAddress, data);
 
-      router.push(`${ROUTE_PATH.TOKEN}?address=${tokenInfo?.address}`);
-      toast.success('Update token info successfully!');
+      router.push(`${ROUTE_PATH.TOKEN}?address=${res.contractAddress}`);
+      toast.success('Transaction has been created. Please wait for few minutes.');
       refForm.current?.reset();
       dispatch(requestReload());
       dispatch(requestReloadRealtime());
@@ -354,6 +359,7 @@ const CreateTokenForm = () => {
       // });
     } finally {
       setSubmitting(false);
+      dispatch(updateCurrentTransaction(null));
     }
   };
 

@@ -1,23 +1,18 @@
 import ERC20ABIJson from '@/abis/erc20.json';
-import { ERROR_CODE } from '@/constants/error';
-import { AssetsContext } from '@/contexts/assets-context';
-import { TransactionEventType } from '@/enums/transaction';
-import {
-  ContractOperationHook,
-  DAppType,
-  DeployContractResponse,
-} from '@/interfaces/contract-operation';
-import { useWeb3React } from '@web3-react/core';
-import BigNumber from 'bignumber.js';
-import { ContractFactory } from 'ethers';
-import { useCallback, useContext } from 'react';
-import * as TC_SDK from 'trustless-computer-sdk';
+import {TransactionEventType} from '@/enums/transaction';
+import {ContractOperationHook, DAppType, DeployContractResponse,} from '@/interfaces/contract-operation';
+import {useWeb3React} from '@web3-react/core';
+import {ContractFactory} from 'ethers';
+import {useCallback} from 'react';
+import store from "@/state";
+import {updateCurrentTransaction} from "@/state/pnftExchange";
+import {TransactionStatus} from "@/interfaces/walletTransaction";
+import {transactionType} from "@/components/Swap/alertInfoProcessing/types";
 
 export interface ICreateTokenParams {
   name: string;
   symbol: string;
   maxSupply: number;
-  selectFee: number;
 }
 
 const useCreateToken: ContractOperationHook<
@@ -25,37 +20,11 @@ const useCreateToken: ContractOperationHook<
   DeployContractResponse | null
 > = () => {
   const { account, provider } = useWeb3React();
-  const { btcBalance, feeRate } = useContext(AssetsContext);
 
   const call = useCallback(
     async (params: ICreateTokenParams): Promise<DeployContractResponse | null> => {
       if (account && provider) {
-        const { name, symbol, maxSupply, selectFee } = params;
-
-        const byteCode = ERC20ABIJson.bytecode;
-
-        console.log({
-          tcTxSizeByte: Buffer.byteLength(byteCode),
-          feeRatePerByte: selectFee,
-        });
-        console.log('aaaaaa');
-
-        // TC_SDK.signTransaction({
-
-        // });
-        const estimatedFee = TC_SDK.estimateInscribeFee({
-          tcTxSizeByte: Buffer.byteLength(byteCode),
-          feeRatePerByte: selectFee,
-        });
-
-        const balanceInBN = new BigNumber(btcBalance);
-
-        console.log('estimatedFee', estimatedFee.totalFee.toString());
-        console.log('balanceInBN', balanceInBN.toString());
-
-        if (balanceInBN.isLessThan(estimatedFee.totalFee)) {
-          throw Error(ERROR_CODE.INSUFFICIENT_BALANCE);
-        }
+        const { name, symbol, maxSupply } = params;
 
         const factory = new ContractFactory(
           ERC20ABIJson.abi,
@@ -63,6 +32,17 @@ const useCreateToken: ContractOperationHook<
           provider.getSigner(),
         );
         const contract = await factory.deploy(name, symbol, maxSupply);
+
+        store.dispatch(
+          updateCurrentTransaction({
+            status: TransactionStatus.pending,
+            id: transactionType.createToken,
+            hash: contract.deployTransaction.hash,
+            infoTexts: {
+              pending: `Transaction confirmed. Please wait for it to be processed on the Bitcoin. Note that it may take up to 10 minutes for a block confirmation on the Bitcoin blockchain.`,
+            },
+          }),
+        );
 
         return {
           hash: contract.deployTransaction.hash,
@@ -73,7 +53,7 @@ const useCreateToken: ContractOperationHook<
 
       return null;
     },
-    [account, provider, btcBalance, feeRate],
+    [account, provider],
   );
 
   return {
