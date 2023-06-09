@@ -26,7 +26,7 @@ export const isScreenDarkMode = () => {
   return true;
 };
 
-export const HEADER_MENUS = (router: any) => ([
+export const HEADER_MENUS = () => ([
   {
     key: ROUTE_PATH.MARKETS,
     route: ROUTE_PATH.MARKETS,
@@ -98,7 +98,7 @@ const Header = () => {
           {!mobileScreen && (
             <div className={'leftContainer'}>
               <div className="external-link">
-                {HEADER_MENUS(router).map((m) => (
+                {HEADER_MENUS().map((m) => (
                   <Link
                     key={m.route}
                     href={m.route}
