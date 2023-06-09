@@ -435,9 +435,12 @@ const LaunchpadContainer = () => {
                 [LAUNCHPAD_STATUS.Draft, LAUNCHPAD_STATUS.Pending].includes(row?.state) && (
                   <Box
                     cursor={'pointer'}
-                    onClick={() =>
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      e.preventDefault();
                       router.push(`${ROUTE_PATH.LAUNCHPAD_MANAGE}?id=${row.id}`)
-                    }
+                    }}
+                    paddingX={2}
                   >
                     <BsPencil />
                   </Box>
