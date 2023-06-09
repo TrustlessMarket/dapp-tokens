@@ -411,7 +411,24 @@ const LaunchpadContainer = () => {
           borderBottom: 'none',
         },
         render(row: ILaunchpad) {
-          return <LaunchpadStatus row={row} />;
+          return (
+            <Flex alignItems={'center'} gap={2}>
+              <LaunchpadStatus row={row} />
+              {
+                compareString(row.creatorAddress, account) &&
+                [LAUNCHPAD_STATUS.Draft, LAUNCHPAD_STATUS.Pending].includes(row?.state) && (
+                  <Box
+                    cursor={'pointer'}
+                    onClick={() =>
+                      router.push(`${ROUTE_PATH.LAUNCHPAD_MANAGE}?id=${row.id}`)
+                    }
+                  >
+                    <BsPencil />
+                  </Box>
+                )
+              }
+            </Flex>
+          );
         },
       },
       {
@@ -428,40 +445,6 @@ const LaunchpadContainer = () => {
         render(row: ILaunchpad) {
           const token: IToken = row.launchpadToken;
           return <SocialToken socials={token.social} />;
-        },
-      },
-      {
-        id: 'action',
-        label: '',
-        labelConfig: {
-          fontSize: '12px',
-          fontWeight: '500',
-          color: '#B1B5C3',
-        },
-        config: {
-          borderBottom: 'none',
-        },
-        render(row: ILaunchpad) {
-          if (
-            compareString(row.creatorAddress, account) &&
-            [LAUNCHPAD_STATUS.Draft, LAUNCHPAD_STATUS.Pending].includes(row?.state)
-          ) {
-            return (
-              <Flex alignItems={'center'} gap={4}>
-                <Box
-                  cursor={'pointer'}
-                  onClick={() =>
-                    router.push(`${ROUTE_PATH.LAUNCHPAD_MANAGE}?id=${row.id}`)
-                  }
-                >
-                  <BsPencil />
-                </Box>
-                {/* <Box cursor={'pointer'} onClick={() => onShowCreateIDO(row, true)}>
-                  <BsTrash style={{ color: colors.redPrimary }} />
-                </Box> */}
-              </Flex>
-            );
-          }
         },
       },
     ];
