@@ -19,19 +19,15 @@ import {Box, Flex, Progress, Text, Tooltip} from '@chakra-ui/react';
 import {useWeb3React} from '@web3-react/core';
 import BigNumber from 'bignumber.js';
 import moment from 'moment';
-import { useRouter } from 'next/router';
-import { useEffect, useMemo, useState } from 'react';
-import { BsPencil, BsPencilFill } from 'react-icons/bs';
-import { FaFireAlt } from 'react-icons/fa';
-import { ImClock2 } from 'react-icons/im';
-import { useDispatch } from 'react-redux';
-import LaunchpadStatus, {
-  LAUNCHPAD_STATUS,
-  LaunchpadLabelStatus,
-  useLaunchPadStatus,
-} from './Launchpad.Status';
-import { StyledIdoContainer } from './Launchpad.styled';
-import { FAQStyled } from '../LaunchpadManage/LaunchpadManage.styled';
+import {useRouter} from 'next/router';
+import {useEffect, useMemo, useState} from 'react';
+import {BsPencil, BsPencilFill} from 'react-icons/bs';
+import {FaFireAlt} from 'react-icons/fa';
+import {ImClock2} from 'react-icons/im';
+import {useDispatch} from 'react-redux';
+import LaunchpadStatus, {LAUNCHPAD_STATUS, LaunchpadLabelStatus, useLaunchPadStatus,} from './Launchpad.Status';
+import {StyledIdoContainer} from './Launchpad.styled';
+import {FAQStyled} from '../LaunchpadManage/LaunchpadManage.styled';
 import Faq from '@/components/Swap/faq';
 import SectionContainer from '@/components/Swap/sectionContainer';
 import VerifiedBadgeLaunchpad from '@/modules/Launchpad/verifiedBadgeLaunchpad';
@@ -339,8 +335,7 @@ const LaunchpadContainer = () => {
           borderBottom: 'none',
         },
         render(row: ILaunchpad) {
-          const [status] = useLaunchPadStatus({ row });
-          if ([LaunchpadLabelStatus.pending.value].includes(status.value)) {
+          if ([LAUNCHPAD_STATUS.Pending].includes(row?.state)) {
             return (
               <Box>
                 <Flex mt={1} alignItems={'center'} gap={2}>
@@ -353,7 +348,7 @@ const LaunchpadContainer = () => {
               </Box>
             );
           }
-          if (status.value === LaunchpadLabelStatus.voting.value) {
+          if ([LAUNCHPAD_STATUS.Voting].includes(row?.state)) {
             return (
               <Box>
                 <Flex mt={1} alignItems={'center'} gap={2}>
@@ -366,7 +361,20 @@ const LaunchpadContainer = () => {
               </Box>
             );
           }
-          if (status.value === LaunchpadLabelStatus.launching.value) {
+          if ([LAUNCHPAD_STATUS.PrepareLaunching].includes(row?.state)) {
+            return (
+              <Box>
+                <Flex mt={1} alignItems={'center'} gap={2}>
+                  <FaFireAlt />
+                  <Text>
+                    <CountDownTimer end_time={row.launchStart} />
+                  </Text>
+                </Flex>
+                <Text className="note">Time left</Text>
+              </Box>
+            );
+          }
+          if ([LAUNCHPAD_STATUS.Launching].includes(row?.state)) {
             return (
               <Box>
                 <Flex mt={1} alignItems={'center'} gap={2}>
@@ -381,9 +389,9 @@ const LaunchpadContainer = () => {
           }
           if (
             [
-              LaunchpadLabelStatus.successful.value,
-              LaunchpadLabelStatus.failed.value,
-            ].includes(status.value)
+              LAUNCHPAD_STATUS.Successful,
+              LAUNCHPAD_STATUS.Failed,
+            ].includes(row?.state)
           ) {
             return (
               <Box>
@@ -416,12 +424,20 @@ const LaunchpadContainer = () => {
               <LaunchpadStatus row={row} />
               {
                 compareString(row.creatorAddress, account) &&
-                [LAUNCHPAD_STATUS.Draft, LAUNCHPAD_STATUS.Pending].includes(row?.state) && (
+                [
+                  LAUNCHPAD_STATUS.Draft,
+                  LAUNCHPAD_STATUS.Pending,
+                  LAUNCHPAD_STATUS.Voting,
+                  LAUNCHPAD_STATUS.PrepareLaunching
+                ].includes(row?.state) && (
                   <Box
                     cursor={'pointer'}
-                    onClick={() =>
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      e.preventDefault();
                       router.push(`${ROUTE_PATH.LAUNCHPAD_MANAGE}?id=${row.id}`)
-                    }
+                    }}
+                    paddingX={2}
                   >
                     <BsPencil />
                   </Box>
