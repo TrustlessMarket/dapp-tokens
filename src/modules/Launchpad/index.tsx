@@ -343,8 +343,7 @@ const LaunchpadContainer = () => {
           borderBottom: 'none',
         },
         render(row: ILaunchpad) {
-          const [status] = useLaunchPadStatus({ row });
-          if ([LaunchpadLabelStatus.pending.value].includes(status.value)) {
+          if ([LAUNCHPAD_STATUS.Pending].includes(row?.state)) {
             return (
               <Box>
                 <Flex mt={1} alignItems={'center'} gap={2}>
@@ -357,7 +356,7 @@ const LaunchpadContainer = () => {
               </Box>
             );
           }
-          if (status.value === LaunchpadLabelStatus.voting.value) {
+          if ([LAUNCHPAD_STATUS.Voting].includes(row?.state)) {
             return (
               <Box>
                 <Flex mt={1} alignItems={'center'} gap={2}>
@@ -370,7 +369,20 @@ const LaunchpadContainer = () => {
               </Box>
             );
           }
-          if (status.value === LaunchpadLabelStatus.launching.value) {
+          if ([LAUNCHPAD_STATUS.PrepareLaunching].includes(row?.state)) {
+            return (
+              <Box>
+                <Flex mt={1} alignItems={'center'} gap={2}>
+                  <FaFireAlt />
+                  <Text>
+                    <CountDownTimer end_time={row.launchStart} />
+                  </Text>
+                </Flex>
+                <Text className="note">Time left</Text>
+              </Box>
+            );
+          }
+          if ([LAUNCHPAD_STATUS.Launching].includes(row?.state)) {
             return (
               <Box>
                 <Flex mt={1} alignItems={'center'} gap={2}>
@@ -385,9 +397,9 @@ const LaunchpadContainer = () => {
           }
           if (
             [
-              LaunchpadLabelStatus.successful.value,
-              LaunchpadLabelStatus.failed.value,
-            ].includes(status.value)
+              LAUNCHPAD_STATUS.Successful,
+              LAUNCHPAD_STATUS.Failed,
+            ].includes(row?.state)
           ) {
             return (
               <Box>
