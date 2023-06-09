@@ -62,7 +62,7 @@ const ConnectWallet: React.FC = (): React.ReactElement => {
         <div className="mainContent">
           <h1 className="title">{`Connect Wallet`}</h1>
           <p className="desc">
-            {`Connect your wallet to access Trustless Market on Trustless Computer.`}
+            {`Connect your wallet to access New Bitcoin DEX on Trustless Computer.`}
           </p>
           <ConnectWalletButton disabled={isConnecting} onClick={handleConnectWallet}>
             {isConnecting ? 'Connecting...' : 'Connect wallet'}

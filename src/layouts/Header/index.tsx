@@ -90,7 +90,7 @@ const Header = () => {
           <Link className="logo" href={ROUTE_PATH.HOME}>
             <img
               src={`${CDN_URL}/icons/logo-tc-market.svg`}
-              alt="Trustless Market logo"
+              alt="New Bitcoin DEX logo"
               width={40}
               height={40}
             />

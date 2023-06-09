@@ -469,12 +469,12 @@ const LiquidityContainer = () => {
     tokens.push(row?.token0Obj?.symbol);
     tokens.push(row?.token1Obj?.symbol);
 
-    const content = `Great news! I have added liquidity to Trustless Market for ${tokens.join(
+    const content = `Great news! I have added liquidity to New Bitcoin DEX for ${tokens.join(
       ', ',
     )} token. Now you can easily trade ${tokens.join(
       ', ',
-    )} on Trustless Market with ease and convenience.`;
-    const hashtags = `TrustlessMarket,LiquidityProvider,TradeNow,${tokens.join(
+    )} on New Bitcoin DEX with ease and convenience.`;
+    const hashtags = `NewBitcoinDEX,LiquidityProvider,TradeNow,${tokens.join(
       ',',
     )}`;
     console.log('shareUrl', shareUrl);

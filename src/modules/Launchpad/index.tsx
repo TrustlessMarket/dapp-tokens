@@ -509,7 +509,7 @@ const LaunchpadContainer = () => {
           <Faq
             data={[
               {
-                q: 'I am new to Trustless Market. How do I start voting and contributing to projects on the launchpad?',
+                q: 'I am new to New Bitcoin DEX. How do I start voting and contributing to projects on the launchpad?',
                 a: `You can follow this step-by-step instruction: <a href="${ROUTE_PATH.LAUNCHPAD_GET_STARTED}">Get started</a>`,
               },
               {
@@ -523,7 +523,7 @@ const LaunchpadContainer = () => {
               },
               {
                 q: 'How do I get TM token to vote for projects?',
-                a: `If you don’t have $TM, you can earn 1 $TM for each time you add liquidity and 0.1 $TM for each swap on <a href="${ROUTE_PATH.MARKETS}">Trustless Market DEX</a>. Alternatively, join our <a href="https://discord.com/invite/HPuZHUexgv">Discord channel</a> for updates about potential $TM airdrops.
+                a: `If you don’t have $TM, you can earn 1 $TM for each time you add liquidity and 0.1 $TM for each swap on <a href="${ROUTE_PATH.MARKETS}">New Bitcoin DEX</a>. Alternatively, join our <a href="https://discord.com/invite/HPuZHUexgv">Discord channel</a> for updates about potential $TM airdrops.
             `,
               },
             ]}
