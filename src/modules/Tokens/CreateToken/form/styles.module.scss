@@ -52,13 +52,11 @@
 }
 
 .inputDescription {
-  color: #FFFFFF !important;
   font-size: 16px !important;
   padding: 10px;
 }
 
 .inputAmount {
-  color: #FFFFFF !important;
   font-size: 16px !important;
   height: 54px !important;
   font-weight: 400 !important;
@@ -70,10 +68,6 @@
   @media screen and (max-width: 768px) {
     font-size: 16px !important;
   }
-}
-
-.collateralAmount {
-  //padding-left: 50px !important;
 }
 
 .submitButton {

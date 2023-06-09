@@ -4,47 +4,28 @@
 import FiledButton from '@/components/Swap/button/filedButton';
 import InputWrapper from '@/components/Swap/form/inputWrapper';
 import WrapperConnected from '@/components/WrapperConnected';
-import { toastError } from '@/constants/error';
-import { IToken } from '@/interfaces/token';
-import { logErrorToServer } from '@/services/swap';
-import { useAppDispatch, useAppSelector } from '@/state/hooks';
-import {
-  requestReload,
-  requestReloadRealtime,
-  selectPnftExchange,
-} from '@/state/pnftExchange';
-import { getIsAuthenticatedSelector } from '@/state/user/selector';
+import {toastError} from '@/constants/error';
+import {IToken} from '@/interfaces/token';
+import {logErrorToServer} from '@/services/swap';
+import {useAppDispatch} from '@/state/hooks';
+import {requestReload, requestReloadRealtime,} from '@/state/pnftExchange';
 import px2rem from '@/utils/px2rem';
-import { showError } from '@/utils/toast';
-import {
-  Box,
-  Center,
-  Flex,
-  forwardRef,
-  Grid,
-  GridItem, SimpleGrid,
-  Text,
-} from '@chakra-ui/react';
-import { useWeb3React } from '@web3-react/core';
+import {showError} from '@/utils/toast';
+import {Box, Center, Flex, forwardRef, SimpleGrid, Text,} from '@chakra-ui/react';
+import {useWeb3React} from '@web3-react/core';
 import cx from 'classnames';
-import { useRouter } from 'next/router';
-import { useEffect, useImperativeHandle, useRef, useState } from 'react';
-import { Field, Form, useForm, useFormState } from 'react-final-form';
+import {useRouter} from 'next/router';
+import {useImperativeHandle, useRef, useState} from 'react';
+import {Field, Form, useForm, useFormState} from 'react-final-form';
 import toast from 'react-hot-toast';
-import { useSelector } from 'react-redux';
 import styles from './styles.module.scss';
-import {
-  getTokenDetail,
-  IUpdateTokenPayload,
-  updateTokenInfo,
-} from '@/services/token-explorer';
+import {IUpdateTokenPayload, updateTokenInfo,} from '@/services/token-explorer';
 import FieldText from '@/components/Swap/form/fieldText';
 import FileDropzoneUpload from '@/components/Swap/form/fileDropzoneUpload';
-import { uploadFile } from '@/services/file';
-import { compareString, formatCurrency, shortenAddress } from '@/utils';
-import BigNumber from 'bignumber.js';
-import { decimalToExponential } from '@/utils/format';
-import { ROUTE_PATH } from '@/constants/route-path';
+import {uploadFile} from '@/services/file';
+import {ROUTE_PATH} from '@/constants/route-path';
+import {composeValidators, required} from "@/utils/formValidate";
+import FieldAmount from "@/components/Swap/form/fieldAmount";
 
 export const MAX_FILE_SIZE = 1024 * 1024; // 375 MB
 
@@ -73,21 +54,17 @@ const HorizontalItem = ({
 
 export const MakeFormSwap = forwardRef((props, ref) => {
   const { onSubmit, submitting } = props;
-  const [loading, setLoading] = useState(false);
   const [tokenInfo, setTokenInfo] = useState<IToken>();
-  const isAuthenticated = useSelector(getIsAuthenticatedSelector);
-  const router = useRouter();
   const [file, setFile] = useState<any>();
   const [uploading, setUploading] = useState(false);
 
   const { account } = useWeb3React();
-  const needReload = useAppSelector(selectPnftExchange).needReload;
 
   const { values } = useFormState();
   const { change, restart } = useForm();
-  const btnDisabled = loading || !compareString(tokenInfo?.owner, account);
+  const btnDisabled = submitting;
 
-  // console.log('values', values);
+  console.log('values', values);
   // console.log('file', file);
   // console.log('account', account);
   // console.log('isAuthenticated', isAuthenticated);
@@ -105,39 +82,6 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     restart({});
     setFile(null);
   };
-
-  useEffect(() => {
-    if (router?.query?.address) {
-      fetchTokenDetail(router?.query?.address);
-    }
-  }, [needReload, router?.query?.address]);
-
-  const fetchTokenDetail = async (address: any) => {
-    try {
-      setLoading(true);
-      const res = await getTokenDetail(address);
-      setTokenInfo(res);
-      change('tokenInfo', res);
-    } catch (err: unknown) {
-      console.log('Failed to fetch tokens owned');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    if (tokenInfo) {
-      change('description', tokenInfo?.description);
-      change('website', tokenInfo?.social?.website);
-      change('discord', tokenInfo?.social?.discord);
-      change('instagram', tokenInfo?.social?.instagram);
-      change('medium', tokenInfo?.social?.medium);
-      change('telegram', tokenInfo?.social?.telegram);
-      change('telegram', tokenInfo?.social?.telegram);
-      change('twitter', tokenInfo?.social?.twitter);
-      change('thumbnail', tokenInfo?.thumbnail);
-    }
-  }, [JSON.stringify(tokenInfo)]);
 
   const onFileChange = async (file: File) => {
     console.log('onFileChange', file);
@@ -183,9 +127,10 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           <Field
             name="tokenName"
             children={FieldText}
+            validate={composeValidators(required)}
             disabled={submitting}
             placeholder={'Enter token name'}
-            className={cx(styles.inputAmount, styles.collateralAmount)}
+            className={cx(styles.inputAmount, )}
             borderColor={'#ECECED'}
           />
         </InputWrapper>
@@ -201,9 +146,10 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           <Field
             name="tokenSymbol"
             children={FieldText}
+            validate={composeValidators(required)}
             disabled={submitting}
             placeholder={'Enter symbol'}
-            className={cx(styles.inputAmount, styles.collateralAmount)}
+            className={cx(styles.inputAmount, )}
             borderColor={'#ECECED'}
           />
         </InputWrapper>
@@ -218,11 +164,12 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         }
       >
         <Field
-          name="tokenSymbol"
-          children={FieldText}
+          name="tokenMaxSupply"
+          children={FieldAmount}
+          validate={composeValidators(required)}
           disabled={submitting}
           placeholder={'Enter max supply'}
-          className={cx(styles.inputAmount, styles.collateralAmount)}
+          className={cx(styles.inputAmount, )}
           borderColor={'#ECECED'}
         />
       </InputWrapper>
@@ -239,7 +186,6 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           <Field
             name="description"
             children={FieldText}
-            // validate={composeValidators(required, validateQuoteAmount)}
             // fieldChanged={onChangeValueQuoteAmount}
             disabled={submitting}
             placeholder={'Enter description'}
@@ -247,7 +193,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             // hideError={true}
             inputType={'textarea'}
             borderColor={'#ECECED'}
-            rows="4"
+            rows="3"
           />
         </Flex>
       </InputWrapper>
@@ -282,7 +228,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             children={FieldText}
             disabled={submitting}
             placeholder={'Enter Website'}
-            className={cx(styles.inputAmount, styles.collateralAmount)}
+            className={cx(styles.inputAmount, )}
             borderColor={'#ECECED'}
           />
         </InputWrapper>
@@ -300,7 +246,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             children={FieldText}
             disabled={submitting}
             placeholder={'Enter Discord'}
-            className={cx(styles.inputAmount, styles.collateralAmount)}
+            className={cx(styles.inputAmount, )}
             borderColor={'#ECECED'}
           />
         </InputWrapper>
@@ -318,7 +264,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             children={FieldText}
             disabled={submitting}
             placeholder={'Enter Twitter'}
-            className={cx(styles.inputAmount, styles.collateralAmount)}
+            className={cx(styles.inputAmount, )}
             borderColor={'#ECECED'}
           />
         </InputWrapper>
@@ -336,7 +282,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             children={FieldText}
             disabled={submitting}
             placeholder={'Enter Telegram'}
-            className={cx(styles.inputAmount, styles.collateralAmount)}
+            className={cx(styles.inputAmount, )}
             borderColor={'#ECECED'}
           />
         </InputWrapper>
@@ -352,7 +298,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           containerConfig={{ flex: 1, mt: 4 }}
           loadingText={submitting ? 'Processing' : ' '}
         >
-          UPDATE
+          Create
         </FiledButton>
       </WrapperConnected>
     </form>
