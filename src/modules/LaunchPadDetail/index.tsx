@@ -77,13 +77,15 @@ const IdoDetailContainer = () => {
 
   return (
     <BodyContainer className={styles.wrapper}>
-      {[LAUNCHPAD_STATUS.Voting, LAUNCHPAD_STATUS.NotPassed, LAUNCHPAD_STATUS.PrepareLaunching].includes(
-        status?.key,
-      ) ? (
-        <AboveTheFoldVoting poolDetail={poolDetail} />
-      ) : (
-        <AboveTheFoldLaunchpad poolDetail={poolDetail} />
-      )}
+      {
+        [LAUNCHPAD_STATUS.Voting, LAUNCHPAD_STATUS.NotPassed, LAUNCHPAD_STATUS.PrepareLaunching].includes(
+          poolDetail?.state
+        ) ? (
+          <AboveTheFoldVoting poolDetail={poolDetail} />
+        ) : (
+          <AboveTheFoldLaunchpad poolDetail={poolDetail} />
+        )
+      }
       <SectionContainer>
         <Tabs className={cx(styles.tabContainer)} mt={16}>
           <TabList mb={8} mt={8}>
