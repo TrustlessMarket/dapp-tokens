@@ -81,7 +81,7 @@ const STEPS = [
   },
   {
     step: '4',
-    title: 'Start trading Smart BRC-20 tokens with Trustless Market',
+    title: 'Start trading Smart BRC-20 tokens with New Bitcoin DEX',
     desc: (
         <Box>
           <UnorderedList>

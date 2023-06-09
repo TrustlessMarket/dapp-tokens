@@ -1,20 +1,19 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 // import IcAvatarDefault from '@/assets/icons/ic-avatar.svg';
 // import IcMenuClose from '@/assets/icons/ic_close_menu.svg';
-import { CDN_URL } from '@/configs';
-import { ROUTE_PATH } from '@/constants/route-path';
-import { AssetsContext } from '@/contexts/assets-context';
-import { getIsAuthenticatedSelector } from '@/state/user/selector';
-import { formatBTCPrice, formatEthPriceFloor } from '@/utils/format';
-import { useRouter } from 'next/router';
-import React, { ForwardedRef, useContext } from 'react';
-import { useSelector } from 'react-redux';
-import { HEADER_MENUS } from '..';
-import { ConnectWalletButton, StyledLink, WalletBalance } from '../Header.styled';
-import { Wrapper } from './MenuMobile.styled';
-import { Box, Flex, Text } from '@chakra-ui/react';
-import { GENERATIVE_DISCORD, TRUSTLESS_COMPUTER } from '@/constants/common';
-import { RiArrowRightUpLine } from 'react-icons/ri';
+import {CDN_URL} from '@/configs';
+import {ROUTE_PATH} from '@/constants/route-path';
+import {AssetsContext} from '@/contexts/assets-context';
+import {getIsAuthenticatedSelector} from '@/state/user/selector';
+import {useRouter} from 'next/router';
+import React, {ForwardedRef, useContext} from 'react';
+import {useSelector} from 'react-redux';
+import {HEADER_MENUS} from '..';
+import {StyledLink} from '../Header.styled';
+import {Wrapper} from './MenuMobile.styled';
+import {Box, Flex, Text} from '@chakra-ui/react';
+import {GENERATIVE_DISCORD, TRUSTLESS_COMPUTER} from '@/constants/common';
+import {RiArrowRightUpLine} from 'react-icons/ri';
 
 interface IProp {
   onCloseMenu: () => void;
@@ -42,7 +41,7 @@ const MenuMobile = React.forwardRef(
             justifyContent={'space-between'}
           >
             <Box className="menu-container" flex={1}>
-              {HEADER_MENUS(router).map((item) => {
+              {HEADER_MENUS().map((item) => {
                 return (
                   <StyledLink
                     active={router?.pathname?.includes(item.key)}

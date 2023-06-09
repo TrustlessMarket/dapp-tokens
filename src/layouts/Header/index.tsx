@@ -10,8 +10,8 @@ import {
 } from '@/constants/common';
 import {ROUTE_PATH} from '@/constants/route-path';
 import {defaultProvider} from '@/contexts/screen-context';
+import {Flex, Link as LinkText, Text} from "@chakra-ui/react";
 import {useScreenLayout} from '@/hooks/useScreenLayout';
-import {Flex, Text} from '@chakra-ui/react';
 import {useWindowSize} from '@trustless-computer/dapp-core';
 import {gsap} from 'gsap';
 import Link from 'next/link';
@@ -26,7 +26,7 @@ export const isScreenDarkMode = () => {
   return true;
 };
 
-export const HEADER_MENUS = (router: any) => ([
+export const HEADER_MENUS = () => ([
   {
     key: ROUTE_PATH.MARKETS,
     route: ROUTE_PATH.MARKETS,
@@ -47,11 +47,11 @@ export const HEADER_MENUS = (router: any) => ([
     route: ROUTE_PATH.LAUNCHPAD,
     name: 'Launchpad',
   },
-  {
-    key: router?.pathname?.includes(ROUTE_PATH.LAUNCHPAD) ? ROUTE_PATH.LAUNCHPAD_GET_STARTED : ROUTE_PATH.GET_STARTED,
-    route: router?.pathname?.includes(ROUTE_PATH.LAUNCHPAD) ? ROUTE_PATH.LAUNCHPAD_GET_STARTED : ROUTE_PATH.GET_STARTED,
-    name: 'Get Started',
-  },
+  // {
+  //   key: ROUTE_PATH.PROPOSAL,
+  //   route: ROUTE_PATH.PROPOSAL,
+  //   name: 'Proposal',
+  // },
 ]);
 
 const Header = () => {
@@ -59,7 +59,7 @@ const Header = () => {
   const [isOpenMenu, setIsOpenMenu] = useState<boolean>(false);
   const { mobileScreen } = useWindowSize();
   const router = useRouter();
-  const { headerHeight, /*showGetStarted, showLaunchpadGetStarted*/ } =
+  const { headerHeight, showGetStarted, showLaunchpadGetStarted, showBannerPromotion } =
     useScreenLayout();
 
   // const isTokensPage = useMemo(() => {
@@ -90,7 +90,7 @@ const Header = () => {
           <Link className="logo" href={ROUTE_PATH.HOME}>
             <img
               src={`${CDN_URL}/icons/logo-tc-market.svg`}
-              alt="Trustless Market logo"
+              alt="New Bitcoin DEX logo"
               width={40}
               height={40}
             />
@@ -98,7 +98,7 @@ const Header = () => {
           {!mobileScreen && (
             <div className={'leftContainer'}>
               <div className="external-link">
-                {HEADER_MENUS(router).map((m) => (
+                {HEADER_MENUS().map((m) => (
                   <Link
                     key={m.route}
                     href={m.route}
@@ -156,7 +156,7 @@ const Header = () => {
           )}
         </div>
       </div>
-      {/*{showGetStarted && (
+      {showGetStarted && (
         <Flex
           height={10}
           alignItems="center"
@@ -201,8 +201,12 @@ const Header = () => {
             </LinkText>{' '}
           </Text>
         </Flex>
-      )}*/}
-      <Banner />
+      )}
+      {
+        showBannerPromotion && (
+          <Banner />
+        )
+      }
     </Wrapper>
   );
 };

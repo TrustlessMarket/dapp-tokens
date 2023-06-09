@@ -411,7 +411,24 @@ const LaunchpadContainer = () => {
           borderBottom: 'none',
         },
         render(row: ILaunchpad) {
-          return <LaunchpadStatus row={row} />;
+          return (
+            <Flex alignItems={'center'} gap={2}>
+              <LaunchpadStatus row={row} />
+              {
+                compareString(row.creatorAddress, account) &&
+                [LAUNCHPAD_STATUS.Draft, LAUNCHPAD_STATUS.Pending].includes(row?.state) && (
+                  <Box
+                    cursor={'pointer'}
+                    onClick={() =>
+                      router.push(`${ROUTE_PATH.LAUNCHPAD_MANAGE}?id=${row.id}`)
+                    }
+                  >
+                    <BsPencil />
+                  </Box>
+                )
+              }
+            </Flex>
+          );
         },
       },
       {
@@ -428,40 +445,6 @@ const LaunchpadContainer = () => {
         render(row: ILaunchpad) {
           const token: IToken = row.launchpadToken;
           return <SocialToken socials={token.social} />;
-        },
-      },
-      {
-        id: 'action',
-        label: '',
-        labelConfig: {
-          fontSize: '12px',
-          fontWeight: '500',
-          color: '#B1B5C3',
-        },
-        config: {
-          borderBottom: 'none',
-        },
-        render(row: ILaunchpad) {
-          if (
-            compareString(row.creatorAddress, account) &&
-            [LAUNCHPAD_STATUS.Draft, LAUNCHPAD_STATUS.Pending].includes(row?.state)
-          ) {
-            return (
-              <Flex alignItems={'center'} gap={4}>
-                <Box
-                  cursor={'pointer'}
-                  onClick={() =>
-                    router.push(`${ROUTE_PATH.LAUNCHPAD_MANAGE}?id=${row.id}`)
-                  }
-                >
-                  <BsPencil />
-                </Box>
-                {/* <Box cursor={'pointer'} onClick={() => onShowCreateIDO(row, true)}>
-                  <BsTrash style={{ color: colors.redPrimary }} />
-                </Box> */}
-              </Flex>
-            );
-          }
         },
       },
     ];
@@ -526,7 +509,7 @@ const LaunchpadContainer = () => {
           <Faq
             data={[
               {
-                q: 'I am new to Trustless Market. How do I start voting and contributing to projects on the launchpad?',
+                q: 'I am new to New Bitcoin DEX. How do I start voting and contributing to projects on the launchpad?',
                 a: `You can follow this step-by-step instruction: <a href="${ROUTE_PATH.LAUNCHPAD_GET_STARTED}">Get started</a>`,
               },
               {
@@ -540,7 +523,7 @@ const LaunchpadContainer = () => {
               },
               {
                 q: 'How do I get TM token to vote for projects?',
-                a: `If you don’t have $TM, you can earn 1 $TM for each time you add liquidity and 0.1 $TM for each swap on <a href="${ROUTE_PATH.MARKETS}">Trustless Market DEX</a>. Alternatively, join our <a href="https://discord.com/invite/HPuZHUexgv">Discord channel</a> for updates about potential $TM airdrops.
+                a: `If you don’t have $TM, you can earn 1 $TM for each time you add liquidity and 0.1 $TM for each swap on <a href="${ROUTE_PATH.MARKETS}">New Bitcoin DEX</a>. Alternatively, join our <a href="https://discord.com/invite/HPuZHUexgv">Discord channel</a> for updates about potential $TM airdrops.
             `,
               },
             ]}
