@@ -161,7 +161,7 @@ const STEPS = [
               Select the project with the “Funding” status.
             </ListItem>
             <ListItem>
-              Put in the amount you want to contribute (in WETH or WBTC). Then click “Approve” {"=>"} Click “Confirm”
+              Put in the amount you want to contribute (in WETH or WBTC). Then click “Contribute to this project” {"=>"} Click “Confirm”
               <img
                 alt="launchpad_step1_1"
                 className={styles.introImg}
