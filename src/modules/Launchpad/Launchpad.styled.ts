@@ -181,6 +181,7 @@ export const StyledIdoStatus = styled(Badge)`
       background: #95a4fc;
     }
   }
+  &.preparelaunching,
   &.launching {
     color: rgba(51, 133, 255, 1);
     background-color: rgba(51, 133, 255, 0.2);
