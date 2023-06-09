@@ -20,6 +20,7 @@ export const defaultProvider = {
   showLaunchpadGetStarted: false,
   bannerHeight: 40,
   bannerHeightMobile: 40,
+  showBannerPromotion: false
 };
 
 const ScreenLayoutContext = createContext(defaultProvider);
@@ -53,8 +54,9 @@ const ScreenLayoutProvider: React.FC<any> = ({ children }) => {
       : 0;
   }, [_isMobile, showBanner]);
 
-  const showGetStarted = !router?.pathname?.includes(ROUTE_PATH.LAUNCHPAD);
-  const showLaunchpadGetStarted = router?.pathname?.includes(ROUTE_PATH.LAUNCHPAD);
+  const showBannerPromotion = router?.pathname?.includes(ROUTE_PATH.POOLS);
+  const showGetStarted = !router?.pathname?.includes(ROUTE_PATH.LAUNCHPAD) && !showBannerPromotion;
+  const showLaunchpadGetStarted = router?.pathname?.includes(ROUTE_PATH.LAUNCHPAD) && !showBannerPromotion;
 
   useEffect(() => {
     let height = _isMobile
@@ -65,9 +67,9 @@ const ScreenLayoutProvider: React.FC<any> = ({ children }) => {
     // }
 
     // if (!_isMobile) {
-    // height += showGetStarted ? bannerHeight : 0;
-    // height += showLaunchpadGetStarted ? bannerHeight : 0;
-    height += bannerHeight;//banner for $OXBT & $MXRC
+    height += showGetStarted ? bannerHeight : 0;
+    height += showLaunchpadGetStarted ? bannerHeight : 0;
+    height += showBannerPromotion ? bannerHeight : 0;//banner for $OXBT & $MXRC
     // }
 
     setHeaderHeight(height);
@@ -80,6 +82,7 @@ const ScreenLayoutProvider: React.FC<any> = ({ children }) => {
     showGetStarted,
     showLaunchpadGetStarted,
     bannerHeight,
+    showBannerPromotion
   };
 
   return (
