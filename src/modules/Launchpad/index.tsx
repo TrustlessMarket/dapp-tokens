@@ -4,37 +4,41 @@
 import CountDownTimer from '@/components/Countdown';
 import SocialToken from '@/components/Social';
 import FiledButton from '@/components/Swap/button/filedButton';
+import Faq from '@/components/Swap/faq';
 import InfoTooltip from '@/components/Swap/infoTooltip';
-import ListTable, {ColumnProp} from '@/components/Swap/listTable';
-import {TOKEN_ICON_DEFAULT} from '@/constants/common';
-import {ROUTE_PATH} from '@/constants/route-path';
-import {ILaunchpad} from '@/interfaces/launchpad';
-import {IToken} from '@/interfaces/token';
-import {getListLaunchpad} from '@/services/launchpad';
-import {useAppSelector} from '@/state/hooks';
-import {selectPnftExchange} from '@/state/pnftExchange';
-import {colors} from '@/theme/colors';
-import {abbreviateNumber, compareString, formatCurrency} from '@/utils';
-import {Box, Flex, Progress, Text, Tooltip} from '@chakra-ui/react';
-import {useWeb3React} from '@web3-react/core';
+import ListTable, { ColumnProp } from '@/components/Swap/listTable';
+import SectionContainer from '@/components/Swap/sectionContainer';
+import { TOKEN_ICON_DEFAULT } from '@/constants/common';
+import { ROUTE_PATH } from '@/constants/route-path';
+import { ILaunchpad } from '@/interfaces/launchpad';
+import { IToken } from '@/interfaces/token';
+import VerifiedBadgeLaunchpad from '@/modules/Launchpad/verifiedBadgeLaunchpad';
+import { getListLaunchpad } from '@/services/launchpad';
+import { useAppSelector } from '@/state/hooks';
+import { selectPnftExchange } from '@/state/pnftExchange';
+import { colors } from '@/theme/colors';
+import {
+  abbreviateNumber,
+  compareString,
+  formatCurrency,
+  getTokenIconUrl,
+} from '@/utils';
+import { Box, Flex, Progress, Text, Tooltip } from '@chakra-ui/react';
+import { useWeb3React } from '@web3-react/core';
 import BigNumber from 'bignumber.js';
 import moment from 'moment';
 import { useRouter } from 'next/router';
 import { useEffect, useMemo, useState } from 'react';
 import { BsPencil, BsPencilFill } from 'react-icons/bs';
 import { FaFireAlt } from 'react-icons/fa';
-import { ImClock2 } from 'react-icons/im';
 import { useDispatch } from 'react-redux';
+import { FAQStyled } from '../LaunchpadManage/LaunchpadManage.styled';
 import LaunchpadStatus, {
   LAUNCHPAD_STATUS,
   LaunchpadLabelStatus,
   useLaunchPadStatus,
 } from './Launchpad.Status';
 import { StyledIdoContainer } from './Launchpad.styled';
-import { FAQStyled } from '../LaunchpadManage/LaunchpadManage.styled';
-import Faq from '@/components/Swap/faq';
-import SectionContainer from '@/components/Swap/sectionContainer';
-import VerifiedBadgeLaunchpad from '@/modules/Launchpad/verifiedBadgeLaunchpad';
 
 const LaunchpadContainer = () => {
   const [data, setData] = useState<any[]>();
@@ -94,7 +98,7 @@ const LaunchpadContainer = () => {
                     />
                   </Box>
                 )}
-                <img src={token.thumbnail || TOKEN_ICON_DEFAULT} />
+                <img src={getTokenIconUrl(token)} />
               </div>
               <Box>
                 <Flex gap={1} alignItems={'center'} className="record-title">
@@ -278,7 +282,7 @@ const LaunchpadContainer = () => {
               <Flex color={color} alignItems={'center'} gap={1}>
                 {`${row.totalValue} / ${row.goalBalance} `}
                 <Flex className={'liquidity-token'} alignItems={'center'} gap={1}>
-                  <img src={row.liquidityToken.thumbnail || TOKEN_ICON_DEFAULT} />
+                  <img src={getTokenIconUrl(row.liquidityToken)} />
                   {row.liquidityToken.symbol}
                 </Flex>
               </Flex>
@@ -344,7 +348,7 @@ const LaunchpadContainer = () => {
             return (
               <Box>
                 <Flex mt={1} alignItems={'center'} gap={2}>
-                  <ImClock2 />
+                  <FaFireAlt />
                   <Text>
                     <CountDownTimer end_time={row.voteStart} />
                   </Text>
@@ -411,7 +415,24 @@ const LaunchpadContainer = () => {
           borderBottom: 'none',
         },
         render(row: ILaunchpad) {
-          return <LaunchpadStatus row={row} />;
+          return (
+            <Flex alignItems={'center'} gap={2}>
+              <LaunchpadStatus row={row} />
+              {
+                compareString(row.creatorAddress, account) &&
+                [LAUNCHPAD_STATUS.Draft, LAUNCHPAD_STATUS.Pending].includes(row?.state) && (
+                  <Box
+                    cursor={'pointer'}
+                    onClick={() =>
+                      router.push(`${ROUTE_PATH.LAUNCHPAD_MANAGE}?id=${row.id}`)
+                    }
+                  >
+                    <BsPencil />
+                  </Box>
+                )
+              }
+            </Flex>
+          );
         },
       },
       {
@@ -428,40 +449,6 @@ const LaunchpadContainer = () => {
         render(row: ILaunchpad) {
           const token: IToken = row.launchpadToken;
           return <SocialToken socials={token.social} />;
-        },
-      },
-      {
-        id: 'action',
-        label: '',
-        labelConfig: {
-          fontSize: '12px',
-          fontWeight: '500',
-          color: '#B1B5C3',
-        },
-        config: {
-          borderBottom: 'none',
-        },
-        render(row: ILaunchpad) {
-          if (
-            compareString(row.creatorAddress, account) &&
-            [LAUNCHPAD_STATUS.Draft, LAUNCHPAD_STATUS.Pending].includes(row?.state)
-          ) {
-            return (
-              <Flex alignItems={'center'} gap={4}>
-                <Box
-                  cursor={'pointer'}
-                  onClick={() =>
-                    router.push(`${ROUTE_PATH.LAUNCHPAD_MANAGE}?id=${row.id}`)
-                  }
-                >
-                  <BsPencil />
-                </Box>
-                {/* <Box cursor={'pointer'} onClick={() => onShowCreateIDO(row, true)}>
-                  <BsTrash style={{ color: colors.redPrimary }} />
-                </Box> */}
-              </Flex>
-            );
-          }
         },
       },
     ];
@@ -526,7 +513,7 @@ const LaunchpadContainer = () => {
           <Faq
             data={[
               {
-                q: 'I am new to Trustless Market. How do I start voting and contributing to projects on the launchpad?',
+                q: 'I am new to New Bitcoin DEX. How do I start voting and contributing to projects on the launchpad?',
                 a: `You can follow this step-by-step instruction: <a href="${ROUTE_PATH.LAUNCHPAD_GET_STARTED}">Get started</a>`,
               },
               {
@@ -540,7 +527,7 @@ const LaunchpadContainer = () => {
               },
               {
                 q: 'How do I get TM token to vote for projects?',
-                a: `If you don’t have $TM, you can earn 1 $TM for each time you add liquidity and 0.1 $TM for each swap on <a href="${ROUTE_PATH.MARKETS}">Trustless Market DEX</a>. Alternatively, join our <a href="https://discord.com/invite/HPuZHUexgv">Discord channel</a> for updates about potential $TM airdrops.
+                a: `If you don’t have $TM, you can earn 1 $TM for each time you add liquidity and 0.1 $TM for each swap on <a href="${ROUTE_PATH.MARKETS}">New Bitcoin DEX</a>. Alternatively, join our <a href="https://discord.com/invite/HPuZHUexgv">Discord channel</a> for updates about potential $TM airdrops.
             `,
               },
             ]}

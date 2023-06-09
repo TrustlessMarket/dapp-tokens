@@ -81,10 +81,9 @@ import { closeModal, openModal } from '@/state/modal';
 import { useWindowSize } from '@trustless-computer/dapp-core';
 import InfoTooltip from '@/components/Swap/infoTooltip';
 import ModalConfirmApprove from '@/components/ModalConfirmApprove';
-import { MdHelpOutline } from 'react-icons/md';
 import tokenIcons from '@/constants/tokenIcons';
 
-const LIMIT_PAGE = 50;
+const LIMIT_PAGE = 500;
 const FEE = 2;
 export const MakeFormSwap = forwardRef((props, ref) => {
   const { onSubmit, submitting } = props;

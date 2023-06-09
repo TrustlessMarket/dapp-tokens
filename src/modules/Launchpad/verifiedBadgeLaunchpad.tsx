@@ -30,7 +30,7 @@ const VerifiedBadgeLaunchpad: React.FC<any> = ({launchpad} : {launchpad: ILaunch
           {/*<Icon as={ImWarning} fontSize={"12px"}/>*/}
           <img
             src={`${CDN_URL}/icons/warning.svg`}
-            alt="Trustless Market logo"
+            alt="New Bitcoin DEX logo"
             style={{width: '18px', height: '18px'}}
           />
         </Flex>

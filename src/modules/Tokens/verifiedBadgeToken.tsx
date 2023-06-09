@@ -67,7 +67,7 @@ const VerifiedBadge: React.FC<any> = ({token} : {token: IToken}): React.ReactEle
             >
               <img
                 src={`${CDN_URL}/icons/warning.svg`}
-                alt="Trustless Market logo"
+                alt="New Bitcoin DEX logo"
                 style={{width: '18px', height: '18px'}}
               />
             </Flex>

@@ -42,7 +42,7 @@ const TMTransferHistory = () => {
   return (
     <BodyContainer className={styles.wrapper}>
       <SectionContainer>
-        <Text fontSize={px2rem(24)} color={"#FFFFFF"} textAlign={"center"} paddingX={[0, 0]}>TM is both the governance and utility token of Trustless Market.  Early users who swap tokens or provide liquidity receive TM rewards. The more activities you do, the more TM tokens you earn.</Text>
+        <Text fontSize={px2rem(24)} color={"#FFFFFF"} textAlign={"center"} paddingX={[0, 0]}>TM is both the governance and utility token of New Bitcoin DEX.  Early users who swap tokens or provide liquidity receive TM rewards. The more activities you do, the more TM tokens you earn.</Text>
         <Flex gap={8} mt={6} mb={12} justifyContent={"center"} w={"100%"}>
           <Link
             href={`${ROUTE_PATH.SWAP}?from_token=${WETH_ADDRESS}&to_token=${GM_ADDRESS}`}

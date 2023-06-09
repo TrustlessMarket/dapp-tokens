@@ -135,7 +135,7 @@ const STEPS = [
               />
             </ListItem>
             <ListItem>
-              Put in the amount of $TM you want to vote. If you don’t have $TM, you can earn 1 $TM for each time you add liquidity and 0.1 $TM for each swap on <Link href={"https://trustless.market/"} style={{textDecoration: 'underline'}}>Trustless Market DEX</Link>. Alternatively, join our <Link href={"https://discord.gg/HPuZHUexgv"} style={{textDecoration: 'underline'}}>Discord channel</Link> for updates about potential $TM airdrops.
+              Put in the amount of $TM you want to vote. If you don’t have $TM, you can earn 1 $TM for each time you add liquidity and 0.1 $TM for each swap on <Link href={"https://trustless.market/"} style={{textDecoration: 'underline'}}>New Bitcoin DEX</Link>. Alternatively, join our <Link href={"https://discord.gg/HPuZHUexgv"} style={{textDecoration: 'underline'}}>Discord channel</Link> for updates about potential $TM airdrops.
               <img
                 alt="launchpad_step1_1"
                 className={styles.introImg}
@@ -161,7 +161,7 @@ const STEPS = [
               Select the project with the “Funding” status.
             </ListItem>
             <ListItem>
-              Put in the amount you want to contribute (in WETH or WBTC). Then click “Approve” {"=>"} Click “Confirm”
+              Put in the amount you want to contribute (in WETH or WBTC). Then click “Contribute to this project” {"=>"} Click “Confirm”
               <img
                 alt="launchpad_step1_1"
                 className={styles.introImg}
