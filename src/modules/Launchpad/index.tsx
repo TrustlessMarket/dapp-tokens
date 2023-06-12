@@ -6,39 +6,29 @@ import SocialToken from '@/components/Social';
 import FiledButton from '@/components/Swap/button/filedButton';
 import Faq from '@/components/Swap/faq';
 import InfoTooltip from '@/components/Swap/infoTooltip';
-import ListTable, { ColumnProp } from '@/components/Swap/listTable';
+import ListTable, {ColumnProp} from '@/components/Swap/listTable';
 import SectionContainer from '@/components/Swap/sectionContainer';
-import { TOKEN_ICON_DEFAULT } from '@/constants/common';
-import { ROUTE_PATH } from '@/constants/route-path';
-import { ILaunchpad } from '@/interfaces/launchpad';
-import { IToken } from '@/interfaces/token';
+import {ROUTE_PATH} from '@/constants/route-path';
+import {ILaunchpad} from '@/interfaces/launchpad';
+import {IToken} from '@/interfaces/token';
 import VerifiedBadgeLaunchpad from '@/modules/Launchpad/verifiedBadgeLaunchpad';
-import { getListLaunchpad } from '@/services/launchpad';
-import { useAppSelector } from '@/state/hooks';
-import { selectPnftExchange } from '@/state/pnftExchange';
-import { colors } from '@/theme/colors';
-import {
-  abbreviateNumber,
-  compareString,
-  formatCurrency,
-  getTokenIconUrl,
-} from '@/utils';
-import { Box, Flex, Progress, Text, Tooltip } from '@chakra-ui/react';
-import { useWeb3React } from '@web3-react/core';
+import {getListLaunchpad} from '@/services/launchpad';
+import {useAppSelector} from '@/state/hooks';
+import {selectPnftExchange} from '@/state/pnftExchange';
+import {colors} from '@/theme/colors';
+import {abbreviateNumber, compareString, formatCurrency, getTokenIconUrl,} from '@/utils';
+import {Box, Flex, Progress, Text, Tooltip} from '@chakra-ui/react';
+import {useWeb3React} from '@web3-react/core';
 import BigNumber from 'bignumber.js';
 import moment from 'moment';
-import { useRouter } from 'next/router';
-import { useEffect, useMemo, useState } from 'react';
-import { BsPencil, BsPencilFill } from 'react-icons/bs';
-import { FaFireAlt } from 'react-icons/fa';
-import { useDispatch } from 'react-redux';
-import { FAQStyled } from '../LaunchpadManage/LaunchpadManage.styled';
-import LaunchpadStatus, {
-  LAUNCHPAD_STATUS,
-  LaunchpadLabelStatus,
-  useLaunchPadStatus,
-} from './Launchpad.Status';
-import { StyledIdoContainer } from './Launchpad.styled';
+import {useRouter} from 'next/router';
+import {useEffect, useMemo, useState} from 'react';
+import {BsPencil, BsPencilFill} from 'react-icons/bs';
+import {FaFireAlt} from 'react-icons/fa';
+import {useDispatch} from 'react-redux';
+import {FAQStyled} from '../LaunchpadManage/LaunchpadManage.styled';
+import LaunchpadStatus, {LAUNCHPAD_STATUS, LaunchpadLabelStatus, useLaunchPadStatus,} from './Launchpad.Status';
+import {StyledIdoContainer} from './Launchpad.styled';
 
 const LaunchpadContainer = () => {
   const [data, setData] = useState<any[]>();
@@ -432,7 +422,12 @@ const LaunchpadContainer = () => {
               <LaunchpadStatus row={row} />
               {
                 compareString(row.creatorAddress, account) &&
-                [LAUNCHPAD_STATUS.Draft, LAUNCHPAD_STATUS.Pending].includes(row?.state) && (
+                [
+                  LAUNCHPAD_STATUS.Draft,
+                  LAUNCHPAD_STATUS.Pending,
+                  LAUNCHPAD_STATUS.Voting,
+                  LAUNCHPAD_STATUS.PrepareLaunching
+                ].includes(row?.state) && (
                   <Box
                     cursor={'pointer'}
                     onClick={(e) => {

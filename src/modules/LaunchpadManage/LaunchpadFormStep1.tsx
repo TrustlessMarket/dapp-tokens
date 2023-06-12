@@ -305,8 +305,8 @@ const LaunchpadFormStep1: React.FC<ILaunchpadFormStep1> = ({
                     />
                   ) : tokenSelected?.social?.twitter ? (
                     <TwitterShareButton
-                      title="Verify now"
-                      url={`${tokenSelected?.verifyCode}`}
+                      title="We are verifying our project on New Bitcoin DEX Launchpad"
+                      url={`\n\nVerification code: ${tokenSelected?.verifyCode}\n\nSupport our project on:\nhttps://trustless.market/launchpad`}
                       className="btn-twitter-container"
                     >
                       Post verify
