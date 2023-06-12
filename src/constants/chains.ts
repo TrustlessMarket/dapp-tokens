@@ -1,10 +1,10 @@
-import { TC_EXPLORER, TC_NETWORK_RPC } from '@/configs';
+import {CHAIN_ID, TC_EXPLORER, TC_NETWORK_RPC} from '@/configs';
 
 export enum SupportedChainId {
   MAINNET = 1,
   GOERLI = 5,
   POLYGON_MUMBAI = 80001,
-  TRUSTLESS_COMPUTER = 22213,
+  TRUSTLESS_COMPUTER = Number(CHAIN_ID),
 }
 
 export const TRUSTLESS_COMPUTER_CHAIN_INFO = {
