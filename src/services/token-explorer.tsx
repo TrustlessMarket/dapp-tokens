@@ -29,7 +29,7 @@ export const getTokensByWallet = async (
 };
 
 export const getTokenDetail = async (address: string): Promise<IToken> => {
-  return swrFetcher(`${API_URL}${API_PATH}/token/${address}`, {
+  return swrFetcher(`${API_EXCHANGE_URL}${API_PATH}/token/${address}`, {
     method: 'GET',
     error: 'Fail to get token detail',
   });
