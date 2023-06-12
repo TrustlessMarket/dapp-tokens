@@ -1,33 +1,31 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import IconSVG from '@/components/IconSVG';
-import { CDN_URL, TM_ADDRESS, WALLET_URL } from '@/configs';
-// import { ROUTE_PATH } from '@/constants/route-path';
-import { AssetsContext } from '@/contexts/assets-context';
-import { getIsAuthenticatedSelector, getUserSelector } from '@/state/user/selector';
-import { formatBTCPrice } from '@/utils/format';
-import { useWeb3React } from '@web3-react/core';
+import {CDN_URL, TM_ADDRESS, WALLET_URL} from '@/configs';
+import {AssetsContext} from '@/contexts/assets-context';
+import {getIsAuthenticatedSelector, getUserSelector} from '@/state/user/selector';
+import {formatBTCPrice} from '@/utils/format';
+import {useWeb3React} from '@web3-react/core';
 import copy from 'copy-to-clipboard';
-// import { useRouter } from 'next/router';
 import SelectedNetwork from '@/components/Swap/selectNetwork';
 import Text from '@/components/Text';
-import { SupportedChainId } from '@/constants/chains';
-import { TRUSTLESS_BRIDGE, TRUSTLESS_FAUCET } from '@/constants/common';
-import { ROUTE_PATH } from '@/constants/route-path';
-import { WalletContext } from '@/contexts/wallet-context';
+import {SupportedChainId} from '@/constants/chains';
+import {TRUSTLESS_BRIDGE} from '@/constants/common';
+import {ROUTE_PATH} from '@/constants/route-path';
+import {WalletContext} from '@/contexts/wallet-context';
 import useBalanceERC20Token from '@/hooks/contract-operations/token/useBalanceERC20Token';
-import { compareString, formatCurrency, formatLongAddress } from '@/utils';
-import { showError } from '@/utils/toast';
-import { useWindowSize } from '@trustless-computer/dapp-core';
-import { useRouter } from 'next/router';
-import { useContext, useEffect, useMemo, useRef, useState } from 'react';
-import { OverlayTrigger } from 'react-bootstrap';
-import { toast } from 'react-hot-toast';
-import Jazzicon, { jsNumberForAddress } from 'react-jazzicon';
-import { useSelector } from 'react-redux';
+import {compareString, formatCurrency, formatLongAddress} from '@/utils';
+import {showError} from '@/utils/toast';
+import {useWindowSize} from '@trustless-computer/dapp-core';
+import {useRouter} from 'next/router';
+import {useContext, useEffect, useMemo, useRef, useState} from 'react';
+import {OverlayTrigger} from 'react-bootstrap';
+import {toast} from 'react-hot-toast';
+import Jazzicon, {jsNumberForAddress} from 'react-jazzicon';
+import {useSelector} from 'react-redux';
 import web3 from 'web3';
-import { isScreenDarkMode } from '..';
-import { ConnectWalletButton, WalletBalance } from '../Header.styled';
-import { WalletPopover } from './Wallet.styled';
+import {isScreenDarkMode} from '..';
+import {ConnectWalletButton, WalletBalance} from '../Header.styled';
+import {WalletPopover} from './Wallet.styled';
 
 const WalletHeader = () => {
   const router = useRouter();
@@ -169,10 +167,10 @@ const WalletHeader = () => {
           />
           <Text size="medium">Wallet</Text>
         </div>
-        <div className="wallet-link" onClick={() => window.open(TRUSTLESS_FAUCET)}>
+        {/*<div className="wallet-link" onClick={() => window.open(TRUSTLESS_FAUCET)}>
           <IconSVG src={`${CDN_URL}/icons/ic-menu-faucet.svg`} />
           <Text className="label">Faucet</Text>
-        </div>
+        </div>*/}
         <div className="wallet-link" onClick={() => gotoBridge('deposit', 'btc')}>
           <IconSVG src={`/wrapbtc.svg`} maxWidth="20" color="black" type="fill" />
           <Text size="medium">Wrap BTC</Text>
@@ -181,10 +179,10 @@ const WalletHeader = () => {
           <IconSVG src={`/wrapbtc.svg`} maxWidth="20" color="black" type="fill" />
           <Text size="medium">Wrap ETH</Text>
         </div>
-        <div className="wallet-link" onClick={() => gotoBridge('deposit', 'usdc')}>
+        {/*<div className="wallet-link" onClick={() => gotoBridge('deposit', 'usdc')}>
           <IconSVG src={`${CDN_URL}/icons/ic-menu-convert.svg`} />
           <Text className="label">Wrap USDC</Text>
-        </div>
+        </div>*/}
         {user?.walletAddress && (
           <div
             className="wallet-link"
