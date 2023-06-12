@@ -32,7 +32,7 @@ import {VscArrowSwap} from 'react-icons/vsc';
 import styles from './styles.module.scss';
 import TokenChartLast7Day from './Token.ChartLast7Day';
 import VerifiedBadgeToken from "./verifiedBadgeToken";
-import {openModal} from "@/state/modal";
+import {closeModal, openModal} from "@/state/modal";
 import {useWindowSize} from "@trustless-computer/dapp-core";
 import CreateTokenForm from './CreateToken/form';
 
@@ -103,8 +103,8 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       handleConnectWallet();
       // router.push(ROUTE_PATH.CONNECT_WALLET);
     } else {
-      const id = 'modalContributionList';
-      // const close = () => dispatch(closeModal({id}));
+      const id = 'modalCreateToken';
+      const close = () => dispatch(closeModal({id}));
       dispatch(
         openModal({
           id,
@@ -117,7 +117,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             zIndex: 9999999,
           },
           render: () => (
-            <CreateTokenForm />
+            <CreateTokenForm onClose={close}/>
           ),
         }),
       );

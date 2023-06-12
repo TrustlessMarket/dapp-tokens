@@ -284,7 +284,8 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   );
 });
 
-const CreateTokenForm = () => {
+const CreateTokenForm = (props: any) => {
+  const { onClose } = props;
   const refForm = useRef<any>();
   const [submitting, setSubmitting] = useState(false);
   const dispatch = useAppDispatch();
@@ -346,6 +347,7 @@ const CreateTokenForm = () => {
       refForm.current?.reset();
       dispatch(requestReload());
       dispatch(requestReloadRealtime());
+      onClose && onClose();
     } catch (err: any) {
       toastError(showError, err, { address: account });
       logErrorToServer({
