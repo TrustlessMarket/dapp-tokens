@@ -44,6 +44,8 @@ const useCreateToken: ContractOperationHook<
           }),
         );
 
+        console.log('contract', contract);
+
         return {
           hash: contract.deployTransaction.hash,
           contractAddress: contract.address,
