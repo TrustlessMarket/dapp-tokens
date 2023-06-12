@@ -11,7 +11,7 @@ import {getVoteResultLaunchpad} from "@/services/launchpad";
 import {ILaunchpad} from '@/interfaces/launchpad';
 import px2rem from "@/utils/px2rem";
 import {LAUNCHPAD_STATUS} from "@/modules/Launchpad/Launchpad.Status";
-import BuyForm from "@/modules/ProposalDetail/form";
+import BuyForm from "@/modules/LaunchPadDetail/form";
 
 const ProposalResult = ({poolDetail}: { poolDetail: ILaunchpad }) => {
   const needReload = useAppSelector(selectPnftExchange).needReload;
