@@ -121,7 +121,7 @@ const LaunchpadFormStep4: React.FC<ILaunchpadFormStep4> = ({
             className="btn-download-template"
             onClick={() =>
               window.open(
-                'https://storage.googleapis.com/tc-cdn-prod/upload/boost_template.csv',
+                'https://storage.googleapis.com/tc-cdn-prod/trustless-market/upload/boost_template_9623.csv',
                 '_blank',
               )
             }

@@ -17,14 +17,15 @@ import React, {useEffect, useState} from 'react';
 import IdoFaqs from './faqs';
 import styles from './styles.module.scss';
 import px2rem from '@/utils/px2rem';
-import {LAUNCHPAD_STATUS} from "@/modules/Launchpad/Launchpad.Status";
-import Intro from "@/modules/LaunchPadDetail/intro";
-import SectionContainer from "@/components/Swap/sectionContainer";
+import {LAUNCHPAD_STATUS, useLaunchPadStatus,} from '@/modules/Launchpad/Launchpad.Status';
+import Intro from '@/modules/LaunchPadDetail/intro';
+import SectionContainer from '@/components/Swap/sectionContainer';
 
 const IdoDetailContainer = () => {
   const router = useRouter();
   const [poolDetail, setPoolDetail] = useState<ILaunchpad | any>(undefined);
   const needReload = useAppSelector(selectPnftExchange).needReload;
+  const [status] = useLaunchPadStatus({ row: poolDetail });
 
   const [loading, setLoading] = useState(true);
 
@@ -93,14 +94,17 @@ const IdoDetailContainer = () => {
           </TabList>
           <TabPanels>
             <TabPanel>
-              {
-                [LAUNCHPAD_STATUS.Voting].includes(poolDetail?.state) && (
-                  <Box h={"738px"}>
-                    <Intro poolDetail={poolDetail}/>
-                  </Box>
-                )
-              }
-              <Text fontSize={px2rem(24)} fontWeight={'500'} color={'#FFFFFF'} mt={8}>
+              {[LAUNCHPAD_STATUS.Voting].includes(status?.key) && (
+                <Box h={'738px'}>
+                  <Intro poolDetail={poolDetail} />
+                </Box>
+              )}
+              <Text
+                fontSize={px2rem(24)}
+                fontWeight={'500'}
+                color={'#FFFFFF'}
+                mt={8}
+              >
                 Description
               </Text>
               <Box mt={8}></Box>

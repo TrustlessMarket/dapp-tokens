@@ -39,4 +39,6 @@ export interface ILaunchpad {
   voteEnd: string;
   voteGoal: string;
   warningNote?: string;
+  twitterPostUrl?: string;
+  isVerifiedTwitter?: any;
 }

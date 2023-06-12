@@ -81,13 +81,15 @@ const LaunchpadManage = () => {
         return toast.error(`Select Funding token, please.`);
       }
 
-      localStorage.setItem(
-        LAUNCHPAD_FORM_STEP,
-        JSON.stringify({
-          step,
-          values,
-        }),
-      );
+      if (!detail) {
+        localStorage.setItem(
+          LAUNCHPAD_FORM_STEP,
+          JSON.stringify({
+            step,
+            values,
+          }),
+        );
+      }
 
       if ((values?.isLastStep || step > 1) && account) {
         if (!values.isApprove && !detail) {
@@ -128,6 +130,7 @@ const LaunchpadManage = () => {
             liquidity_balance: values.liquidityBalance,
             liquidity_ratio: values.liquidityRatioArg,
             goal_balance: values.goalBalance,
+            twitter_post_url: values.twitterPostUrl,
             threshold_balance: values.thresholdBalance || '0',
             duration: Number(seconds),
           });

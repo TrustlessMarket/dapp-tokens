@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { DEFAULT_GAS_PRICE } from '@/constants/common';
+import { DEFAULT_GAS_PRICE, TOKEN_ICON_DEFAULT } from '@/constants/common';
+import tokenIcons from '@/constants/tokenIcons';
 import { IToken } from '@/interfaces/token';
 import { getAddress } from '@ethersproject/address';
 import BigNumber from 'bignumber.js';
@@ -89,4 +90,14 @@ export const calcLaunchpadInitialPrice = ({
       .toString();
   }
   return price;
+};
+
+export const getTokenIconUrl = (token: IToken) => {
+  let url = TOKEN_ICON_DEFAULT;
+  if (token?.thumbnail) {
+    url = token?.thumbnail;
+  } else if (tokenIcons?.[token?.symbol?.toLowerCase()]) {
+    url = tokenIcons?.[token?.symbol?.toLowerCase()];
+  }
+  return url;
 };
