@@ -19,7 +19,7 @@ import React, {useImperativeHandle, useRef, useState} from 'react';
 import {Field, Form, useForm, useFormState} from 'react-final-form';
 import toast from 'react-hot-toast';
 import styles from './styles.module.scss';
-import {IUpdateTokenPayload, updateTokenInfo,} from '@/services/token-explorer';
+import {createTokenInfo, IUpdateTokenPayload,} from '@/services/token-explorer';
 import FieldText from '@/components/Swap/form/fieldText';
 import FileDropzoneUpload from '@/components/Swap/form/fileDropzoneUpload';
 import {uploadFile} from '@/services/file';
@@ -284,7 +284,8 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   );
 });
 
-const CreateTokenForm = () => {
+const CreateTokenForm = (props: any) => {
+  // const { onClose } = props;
   const refForm = useRef<any>();
   const [submitting, setSubmitting] = useState(false);
   const dispatch = useAppDispatch();
@@ -329,15 +330,24 @@ const CreateTokenForm = () => {
           twitter: values?.twitter,
           website: values?.website,
         },
+        contract_address: res.contractAddress,
+        tx_hash: res.hash,
+        total_supply: values?.tokenMaxSupply,
       };
 
-      const response = await updateTokenInfo(res.contractAddress, data);
+      const params = {
+        network: 'tc',
+        address: account
+      };
+
+      const response = await createTokenInfo(params, data);
 
       router.push(`${ROUTE_PATH.TOKEN}?address=${res.contractAddress}`);
       toast.success('Transaction has been created. Please wait for few minutes.');
       refForm.current?.reset();
       dispatch(requestReload());
       dispatch(requestReloadRealtime());
+      // onClose && onClose();
     } catch (err: any) {
       toastError(showError, err, { address: account });
       logErrorToServer({

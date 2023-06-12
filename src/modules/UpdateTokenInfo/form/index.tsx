@@ -369,11 +369,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
               }
               value={
                 <Text fontSize={px2rem(16)} color={'#FFFFFFAA'}>
-                  {formatCurrency(
-                    new BigNumber(tokenInfo?.totalSupply || 0)
-                      .div(decimalToExponential(Number(tokenInfo?.decimal || 18)))
-                      .toString(),
-                  )}
+                  {formatCurrency(tokenInfo?.totalSupply || 0)}
                 </Text>
               }
             />
