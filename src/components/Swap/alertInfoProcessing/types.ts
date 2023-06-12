@@ -6,4 +6,5 @@ export const transactionType = {
   createLaunchpad: 'createLaunchpad',
   depositLaunchpad: 'depositLaunchpad',
   votingProposal: 'votingProposal',
+  createToken: 'createToken',
 };

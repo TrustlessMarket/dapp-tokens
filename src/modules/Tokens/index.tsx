@@ -10,8 +10,7 @@ import {debounce} from 'lodash';
 import React, {useContext, useEffect, useMemo, useRef, useState} from 'react';
 import Spinner from 'react-bootstrap/Spinner';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import {useSelector} from 'react-redux';
-import ModalCreateToken from './ModalCreateToken';
+import {useDispatch, useSelector} from 'react-redux';
 import {StyledTokens, UploadFileContainer} from './Tokens.styled';
 import {ROUTE_PATH} from '@/constants/route-path';
 import {WalletContext} from '@/contexts/wallet-context';
@@ -33,12 +32,14 @@ import {VscArrowSwap} from 'react-icons/vsc';
 import styles from './styles.module.scss';
 import TokenChartLast7Day from './Token.ChartLast7Day';
 import VerifiedBadgeToken from "./verifiedBadgeToken";
+import {openModal} from "@/state/modal";
+import {useWindowSize} from "@trustless-computer/dapp-core";
+import CreateTokenForm from './CreateToken/form';
 
 const LIMIT_PAGE = 100;
 
 export const MakeFormSwap = forwardRef((props, ref) => {
   const router = useRouter();
-  const [showModal, setShowModal] = useState(false);
   const [isFetching, setIsFetching] = useState(false);
 
   const isAuthenticated = useSelector(getIsAuthenticatedSelector);
@@ -46,6 +47,8 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const [tokensList, setTokensList] = useState<IToken[]>([]);
   const [sort, setSort] = useState({ sort: '' });
   const { values } = useFormState();
+  const dispatch = useDispatch();
+  const { mobileScreen } = useWindowSize();
 
   const handleConnectWallet = async () => {
     try {
@@ -100,7 +103,24 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       handleConnectWallet();
       // router.push(ROUTE_PATH.CONNECT_WALLET);
     } else {
-      setShowModal(true);
+      const id = 'modalContributionList';
+      // const close = () => dispatch(closeModal({id}));
+      dispatch(
+        openModal({
+          id,
+          theme: 'dark',
+          title: 'Create Smart BRC-20',
+          className: styles.modalContent,
+          modalProps: {
+            centered: true,
+            size: mobileScreen ? 'full' : 'xl',
+            zIndex: 9999999,
+          },
+          render: () => (
+            <CreateTokenForm />
+          ),
+        }),
+      );
     }
   };
 
@@ -548,7 +568,6 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           showEmpty={false}
         />
       </InfiniteScroll>
-      <ModalCreateToken show={showModal} handleClose={() => setShowModal(false)} />
     </StyledTokens>
   );
 });

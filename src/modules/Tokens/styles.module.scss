@@ -11,3 +11,16 @@
     }
   }
 }
+
+.modalContent {
+  min-width: 800px !important;
+  max-width: 800px !important;
+  :global {
+    .modal-header-wrap {
+      margin-bottom: 0;
+    }
+    .chakra-modal__body {
+      //padding: 0;
+    }
+  }
+}
