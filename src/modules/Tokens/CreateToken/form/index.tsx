@@ -15,7 +15,7 @@ import {Box, Flex, forwardRef, SimpleGrid, Text,} from '@chakra-ui/react';
 import {useWeb3React} from '@web3-react/core';
 import cx from 'classnames';
 import {useRouter} from 'next/router';
-import {useImperativeHandle, useRef, useState} from 'react';
+import React, {useImperativeHandle, useRef, useState} from 'react';
 import {Field, Form, useForm, useFormState} from 'react-final-form';
 import toast from 'react-hot-toast';
 import styles from './styles.module.scss';
@@ -31,6 +31,7 @@ import useCreateToken, {ICreateTokenParams} from "@/hooks/contract-operations/to
 import {DeployContractResponse} from "@/interfaces/contract-operation";
 import {TransactionStatus} from "@/interfaces/walletTransaction";
 import {transactionType} from "@/components/Swap/alertInfoProcessing/types";
+import {BiUpload} from "react-icons/bi";
 
 export const MAX_FILE_SIZE = 1024 * 1024; // 375 MB
 
@@ -46,14 +47,6 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const { change, restart } = useForm();
   const btnDisabled = submitting;
 
-  console.log('values', values);
-  // console.log('file', file);
-  // console.log('account', account);
-  // console.log('isAuthenticated', isAuthenticated);
-  // console.log('router', router);
-  // console.log('tokenInfo', tokenInfo);
-  // console.log('=====');
-
   useImperativeHandle(ref, () => {
     return {
       reset: reset,
@@ -66,8 +59,6 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   };
 
   const onFileChange = async (file: File) => {
-    console.log('onFileChange', file);
-
     setFile(file);
 
     if (!file) {
@@ -190,6 +181,8 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           onChange={onFileChange}
           url={values?.thumbnail || tokenInfo?.thumbnail}
           loading={uploading}
+          text={<Text fontSize={""} color={"#000000"}>Upload token icon</Text>}
+          icon={<BiUpload color={"#000000"} fontSize={"20px"} fontWeight={700}/>}
         />
       </InputWrapper>
       <Text fontSize={px2rem(18)} fontWeight={500} color={'#1C1C1C'} opacity={"0.7"}>

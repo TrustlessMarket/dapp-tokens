@@ -8,20 +8,16 @@ import { Skeleton } from '@chakra-ui/react';
 import { toast } from 'react-hot-toast';
 
 const FileDropzoneUpload = (props) => {
-  const { className, accept, onChange, url, loading, icon, maxSize, } = props;
+  const { className, accept, onChange, url, loading, icon, maxSize, text} = props;
   const [file, setFile] = useState(null);
 
   const handleOnDrop = (files) => {
-
     if (file?.[0]?.size > maxSize) {
       toast.error('Max image size: 1MB');
     } else {
       setFile(files[0]);
       if (onChange) onChange(files[0]);
     }
-
-
-
   };
 
   const handleRemove = () => {
@@ -35,7 +31,7 @@ const FileDropzoneUpload = (props) => {
         ? <>
           <div className={cx(styles.file, 'uploaded')}>
             <Skeleton isLoaded={!loading}>
-              {!loading && icon || <img alt="img-upload" src={url} />}
+              {!loading && (<img alt="img-upload" src={url} /> || icon)}
             </Skeleton>
 
             <div>
@@ -53,8 +49,9 @@ const FileDropzoneUpload = (props) => {
                   {
                     icon || <img className={cx(styles.iconFile, 'img-upload')} alt="" src={url || IconFile} />
                   }
-
-                  <div>Drag files here<br /> or click to upload</div>
+                  {
+                    text || <div>Drag files here<br /> or click to upload</div>
+                  }
                 </div>
               </div>
             )}

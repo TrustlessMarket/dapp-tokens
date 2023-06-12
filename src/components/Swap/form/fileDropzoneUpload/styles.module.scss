@@ -31,7 +31,7 @@
     padding: 20px;
     img {
       height: 100%;
-      margin-right: 10px;
+      margin-right: 16px;
     }
     > div {
       display: flex;
@@ -39,11 +39,11 @@
     }
     span {
       max-width: 200px;
-      margin-bottom: 10px;
+      //margin-bottom: 10px;
     }
     button {
       width: 120px;
-      height: 40px;
+      height: 32px;
       border-radius: 20px;
       background: #E64759;
       color: white;
