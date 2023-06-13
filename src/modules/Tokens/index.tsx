@@ -35,6 +35,7 @@ import VerifiedBadgeToken from "./verifiedBadgeToken";
 import {closeModal, openModal} from "@/state/modal";
 import {useWindowSize} from "@trustless-computer/dapp-core";
 import CreateTokenForm from './CreateToken/form';
+import {updateCurrentTransaction} from "@/state/pnftExchange";
 
 const LIMIT_PAGE = 100;
 
@@ -105,6 +106,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     } else {
       const id = 'modalCreateToken';
       const close = () => dispatch(closeModal({id}));
+      dispatch(updateCurrentTransaction(null));
       dispatch(
         openModal({
           id,

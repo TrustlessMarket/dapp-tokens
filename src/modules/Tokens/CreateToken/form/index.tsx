@@ -351,6 +351,16 @@ const CreateTokenForm = (props: any) => {
       // refForm.current?.reset();
       dispatch(requestReload());
       dispatch(requestReloadRealtime());
+      dispatch(
+        updateCurrentTransaction({
+          status: TransactionStatus.success,
+          id: transactionType.createToken,
+          hash: res.hash,
+          infoTexts: {
+            success: 'Token has been created successfully.',
+          },
+        }),
+      );
       // onClose && onClose();
     } catch (err: any) {
       toastError(showError, err, { address: account });
@@ -366,7 +376,7 @@ const CreateTokenForm = (props: any) => {
       // });
     } finally {
       // setSubmitting(false);
-      dispatch(updateCurrentTransaction(null));
+      // dispatch(updateCurrentTransaction(null));
     }
   };
 
