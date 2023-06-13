@@ -72,6 +72,7 @@ import useVoteReleaseLaunchpad from '@/hooks/contract-operations/launchpad/useVo
 import tokenIcons from '@/constants/tokenIcons';
 import DepositEth from "@/modules/LaunchPadDetail/depositEth";
 import {CDN_URL} from "@/configs";
+import ContributeForm from "@/modules/LaunchPadDetail/contributeForm";
 
 const CONTRIBUTION_METHODS = [
   {
@@ -1014,9 +1015,8 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
   };
 
 
-
-  const showContributeDirectFromEth = () => {
-    const id = 'modalDepositEth';
+  const showContributeFromEthWallet = () => {
+    const id = 'modalDepositEthFromEthWallet';
     const close = () => dispatch(closeModal({id}));
     dispatch(
       openModal({
@@ -1036,6 +1036,27 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
     );
   }
 
+  const showContributeFromTCWallet = () => {
+    const id = 'modalDepositEthFromTCWallet';
+    const close = () => dispatch(closeModal({id}));
+    dispatch(
+      openModal({
+        id,
+        theme: 'dark',
+        title: 'Project Contribution',
+        className: cx(styles.modalContent, styles.modalDeposit),
+        modalProps: {
+          centered: true,
+          size: mobileScreen ? 'full' : 'xl',
+          zIndex: 9999999,
+        },
+        render: () => {
+          return <ContributeForm poolDetail={poolDetail} onContribute={confirmDeposit}/>;
+        },
+      }),
+    );
+  }
+
   const handleSubmit = async (values: any) => {
     console.log('handleSubmit', values);
 
@@ -1043,9 +1064,9 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
     if([LAUNCHPAD_STATUS.Launching].includes(poolDetail?.state) && compareString(liquidityToken?.address, WETH_ADDRESS)) {
       const { contributeMethod } = values;
       if(contributeMethod === 'eth') {
-        showContributeDirectFromEth();
+        showContributeFromEthWallet();
       } else {
-
+        showContributeFromTCWallet();
       }
     } else {
       confirmDeposit(values);
