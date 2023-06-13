@@ -61,7 +61,7 @@ import {
   Progress,
   Stat,
   StatLabel,
-  StatNumber,
+  StatNumber, Tab, TabList, TabPanel, TabPanels, Tabs,
   Text,
   Tooltip,
 } from '@chakra-ui/react';
@@ -95,6 +95,8 @@ import useIsAbleCancel from '@/hooks/contract-operations/launchpad/useIsAbleCanc
 import useCancelLaunchPad from '@/hooks/contract-operations/launchpad/useCancel';
 import useVoteReleaseLaunchpad from '@/hooks/contract-operations/launchpad/useVoteRelease';
 import tokenIcons from '@/constants/tokenIcons';
+import SwapTokens from "@/modules/GetStarted/swapTokens";
+import CreateTokens from "@/modules/GetStarted/createTokens";
 
 export const MakeFormSwap = forwardRef((props, ref) => {
   const {
@@ -376,18 +378,62 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     }
   };
 
-  return (
-    <form onSubmit={onSubmit} style={{ height: '100%' }}>
-      <Flex justifyContent={'space-between'}>
-        <Stat className={styles.infoColumn}>
-          <StatLabel>Funded</StatLabel>
-          <StatNumber>
-            <InfoTooltip
-              label={`$${formatCurrency(poolDetail?.totalValueUsd || 0, 2)}`}
-            >
-              <Flex gap={1} alignItems={'center'}>
+  const getInputUI = () => {
+    return (
+      <>
+        <Flex justifyContent={'space-between'}>
+          <Stat className={styles.infoColumn}>
+            <StatLabel>Funded</StatLabel>
+            <StatNumber>
+              <InfoTooltip
+                label={`$${formatCurrency(poolDetail?.totalValueUsd || 0, 2)}`}
+              >
                 <Flex gap={1} alignItems={'center'}>
-                  {formatCurrency(poolDetail?.totalValue || 0)}{' '}
+                  <Flex gap={1} alignItems={'center'}>
+                    {formatCurrency(poolDetail?.totalValue || 0)}{' '}
+                    <img
+                      src={
+                        liquidityToken?.thumbnail ||
+                        tokenIcons?.[liquidityToken?.symbol?.toLowerCase()] ||
+                        TOKEN_ICON_DEFAULT
+                      }
+                      alt={liquidityToken?.thumbnail || 'default-icon'}
+                      className={'liquidity-token-avatar'}
+                    />
+                  </Flex>
+                  <Text fontSize={'20px'} fontWeight={'400'}>
+                    ({formatCurrency(percent, 2)}% funded)
+                  </Text>
+                </Flex>
+              </InfoTooltip>
+            </StatNumber>
+          </Stat>
+          <Stat className={styles.infoColumn} textAlign={'left'}>
+            <StatLabel>
+              <Flex gap={1} justifyContent={'flex-end'}>
+                <InfoTooltip
+                  showIcon={true}
+                  label={`The minimum amount ${
+                    isLaunchpadCreator ? 'you' : 'that the project'
+                  } would like to raise. If the crowdfunding does not reach the Funding Goal, the funded amount will be returned to the contributors`}
+                >
+                  {`Funding goal`}
+                </InfoTooltip>
+                /
+                <InfoTooltip
+                  showIcon={true}
+                  label={`The maximum amount ${
+                    isLaunchpadCreator ? 'you' : 'that the project'
+                  } would like to raise. The crowdfunding will stop upon reaching its hard cap`}
+                >
+                  Hard Cap
+                </InfoTooltip>
+              </Flex>
+            </StatLabel>
+            <StatNumber>
+              <Flex gap={1} justifyContent={'flex-end'}>
+                <Flex gap={1} alignItems={'center'}>
+                  {formatCurrency(poolDetail?.goalBalance || 0)}
                   <img
                     src={
                       liquidityToken?.thumbnail ||
@@ -398,372 +444,360 @@ export const MakeFormSwap = forwardRef((props, ref) => {
                     className={'liquidity-token-avatar'}
                   />
                 </Flex>
-                <Text fontSize={'20px'} fontWeight={'400'}>
-                  ({formatCurrency(percent, 2)}% funded)
-                </Text>
-              </Flex>
-            </InfoTooltip>
-          </StatNumber>
-        </Stat>
-        <Stat className={styles.infoColumn} textAlign={'left'}>
-          <StatLabel>
-            <Flex gap={1} justifyContent={'flex-end'}>
-              <InfoTooltip
-                showIcon={true}
-                label={`The minimum amount ${
-                  isLaunchpadCreator ? 'you' : 'that the project'
-                } would like to raise. If the crowdfunding does not reach the Funding Goal, the funded amount will be returned to the contributors`}
-              >
-                {`Funding goal`}
-              </InfoTooltip>
-              /
-              <InfoTooltip
-                showIcon={true}
-                label={`The maximum amount ${
-                  isLaunchpadCreator ? 'you' : 'that the project'
-                } would like to raise. The crowdfunding will stop upon reaching its hard cap`}
-              >
-                Hard Cap
-              </InfoTooltip>
-            </Flex>
-          </StatLabel>
-          <StatNumber>
-            <Flex gap={1} justifyContent={'flex-end'}>
-              <Flex gap={1} alignItems={'center'}>
-                {formatCurrency(poolDetail?.goalBalance || 0)}
-                <img
-                  src={
-                    liquidityToken?.thumbnail ||
-                    tokenIcons?.[liquidityToken?.symbol?.toLowerCase()] ||
-                    TOKEN_ICON_DEFAULT
-                  }
-                  alt={liquidityToken?.thumbnail || 'default-icon'}
-                  className={'liquidity-token-avatar'}
-                />
-              </Flex>
-              /
-              <Flex gap={1} alignItems={'center'}>
-                {Number(poolDetail?.thresholdBalance || 0) > 0 ? (
-                  <>
-                    {formatCurrency(poolDetail?.thresholdBalance || 0)}{' '}
-                    <img
-                      src={
-                        liquidityToken?.thumbnail ||
-                        tokenIcons?.[liquidityToken?.symbol?.toLowerCase()] ||
-                        TOKEN_ICON_DEFAULT
-                      }
-                      alt={liquidityToken?.thumbnail || 'default-icon'}
-                      className={'liquidity-token-avatar'}
-                    />
-                  </>
-                ) : (
-                  'N/A'
-                )}
-              </Flex>
-            </Flex>
-          </StatNumber>
-        </Stat>
-      </Flex>
-      <Box className={styles.progressBar} mt={4}>
-        <Progress
-          w={['100%', '100%']}
-          h="10px"
-          value={percent}
-          borderRadius={20}
-        ></Progress>
-        {/*<Image src={fireImg} className={styles.fireImg} />*/}
-      </Box>
-      <Flex gap={6} color={'#FFFFFF'} mt={8} justifyContent={'space-between'}>
-        <Stat className={styles.infoColumn} flex={1}>
-          <StatLabel>
-            <InfoTooltip
-              showIcon={true}
-              label="The total number of tokens that the contributors will receive after the crowdfunding ends."
-            >
-              {`Reward pool`}
-            </InfoTooltip>
-          </StatLabel>
-          <StatNumber>
-            <Tooltip label={formatCurrency(poolDetail?.launchpadBalance || 0)}>
-              {abbreviateNumber(poolDetail?.launchpadBalance || 0)}
-            </Tooltip>
-          </StatNumber>
-        </Stat>
-        <Stat className={styles.infoColumn} flex={1} textAlign={"right"}>
-          <StatLabel>Contributors</StatLabel>
-          <StatNumber>
-            {formatCurrency(poolDetail?.contributors || 0, 0)}
-          </StatNumber>
-        </Stat>
-      </Flex>
-      {isStarting && (
-        <InputWrapper
-          className={cx(styles.inputAmountWrap, styles.inputBaseAmountWrap)}
-          theme="light"
-          label={
-            <Text fontSize={px2rem(14)} color={'#FFFFFF'}>
-              Amount
-            </Text>
-          }
-        >
-          <Flex gap={4} direction={'column'}>
-            <Field
-              name="baseAmount"
-              children={FieldAmount}
-              validate={composeValidators(required, validateBaseAmount)}
-              fieldChanged={onChangeValueBaseAmount}
-              disabled={submitting}
-              // placeholder={"Enter number of tokens"}
-              decimals={liquidityToken?.decimal || 18}
-              className={styles.inputAmount}
-              prependComp={
-                liquidityToken && (
-                  <Flex gap={1} alignItems={'center'} color={'#FFFFFF'} paddingX={2}>
-                    <img
-                      src={tokenIcons[liquidityToken?.symbol?.toLowerCase()]}
-                      alt={liquidityToken?.thumbnail || 'default-icon'}
-                      className={'avatar'}
-                    />
-                    <Text fontSize={'sm'}>{liquidityToken?.symbol}</Text>
-                  </Flex>
-                )
-              }
-              appendComp={
-                liquidityToken && (
-                  <Flex gap={2} fontSize={px2rem(14)} color={'#FFFFFF'}>
-                    <Flex
-                      gap={1}
-                      alignItems={'center'}
-                      color={'#B6B6B6'}
-                      fontSize={px2rem(16)}
-                      fontWeight={'400'}
-                    >
-                      Balance:
-                      <TokenBalance
-                        token={liquidityToken}
-                        onBalanceChange={(_amount) => setBaseBalance(_amount)}
+                /
+                <Flex gap={1} alignItems={'center'}>
+                  {Number(poolDetail?.thresholdBalance || 0) > 0 ? (
+                    <>
+                      {formatCurrency(poolDetail?.thresholdBalance || 0)}{' '}
+                      <img
+                        src={
+                          liquidityToken?.thumbnail ||
+                          tokenIcons?.[liquidityToken?.symbol?.toLowerCase()] ||
+                          TOKEN_ICON_DEFAULT
+                        }
+                        alt={liquidityToken?.thumbnail || 'default-icon'}
+                        className={'liquidity-token-avatar'}
                       />
-                      {liquidityToken?.symbol}
-                    </Flex>
-                    <Text
-                      cursor={'pointer'}
-                      color={'#3385FF'}
-                      onClick={handleChangeMaxBaseAmount}
-                      bgColor={'#2E2E2E'}
-                      borderRadius={'4px'}
-                      padding={'1px 12px'}
-                      fontSize={px2rem(16)}
-                      fontWeight={'600'}
-                    >
-                      Max
-                    </Text>
-                  </Flex>
-                )
-              }
-              borderColor={'#353945'}
-            />
-          </Flex>
-        </InputWrapper>
-      )}
-      {values?.baseAmount && (
-        <Box mt={1}>
-          <HorizontalItem
-            label={
-              <Text fontSize={'sm'} color={'#B1B5C3'}>
-                Estimate receive amount
-              </Text>
-            }
-            value={
-              <Text fontSize={'sm'} color={'#FFFFFF'}>
-                {formatCurrency(values?.quoteAmount, 6)}{' '}
-                {poolDetail?.launchpadToken?.symbol}
-              </Text>
-            }
-          />
+                    </>
+                  ) : (
+                    'N/A'
+                  )}
+                </Flex>
+              </Flex>
+            </StatNumber>
+          </Stat>
+        </Flex>
+        <Box className={styles.progressBar} mt={4}>
+          <Progress
+            w={['100%', '100%']}
+            h="10px"
+            value={percent}
+            borderRadius={20}
+          ></Progress>
+          {/*<Image src={fireImg} className={styles.fireImg} />*/}
         </Box>
-      )}
-      {isAuthenticated &&
-        isStarting &&
-        isLoadedAssets &&
-        new BigNumber(juiceBalance || 0).lte(0) && (
-          <Flex gap={3} mt={2}>
-            <Center
-              w={'24px'}
-              h={'24px'}
-              borderRadius={'50%'}
-              bg={'rgba(255, 126, 33, 0.2)'}
-              as={'span'}
-            >
-              <BiBell color="#FF7E21" />
-            </Center>
-            <Text fontSize="sm" color="#FF7E21" textAlign={'left'}>
-              Your TC balance is insufficient. You can receive free TC on our faucet
-              site{' '}
-              <Link
-                href={TRUSTLESS_FAUCET}
-                target={'_blank'}
-                style={{ textDecoration: 'underline' }}
+        <Flex gap={6} color={'#FFFFFF'} mt={8} justifyContent={'space-between'}>
+          <Stat className={styles.infoColumn} flex={1}>
+            <StatLabel>
+              <InfoTooltip
+                showIcon={true}
+                label="The total number of tokens that the contributors will receive after the crowdfunding ends."
               >
-                here
-              </Link>
-              .
-            </Text>
-          </Flex>
-        )}
-      {isAuthenticated &&
-        isStarting &&
-        liquidityToken &&
-        BRIDGE_SUPPORT_TOKEN.includes(liquidityToken?.symbol) &&
-        new BigNumber(baseBalance || 0).lte(0) && (
-          <Flex gap={3} mt={2}>
-            <Center
-              w={'24px'}
-              h={'24px'}
-              borderRadius={'50%'}
-              bg={'rgba(255, 126, 33, 0.2)'}
-              as={'span'}
-            >
-              <BiBell color="#FF7E21" />
-            </Center>
-            <Text fontSize="sm" color="#FF7E21" textAlign={'left'}>
-              Insufficient {liquidityToken?.symbol} balance! Consider swapping your{' '}
-              {liquidityToken?.symbol?.replace('W', '')} to trustless network{' '}
-              <Link
-                href={`${TRUSTLESS_BRIDGE}${liquidityToken?.symbol
-                  ?.replace('W', '')
-                  ?.toLowerCase()}`}
-                target={'_blank'}
-                style={{ textDecoration: 'underline' }}
-              >
-                here
-              </Link>
-              .
-            </Text>
-          </Flex>
-        )}
-      <Box mt={6} />
-      {(isStarting ||
-        isEndLaunchpad ||
-        isClaimLaunchpad ||
-        isCancelLaunchpad ||
-        isVoteRelease) && (
-        <WrapperConnected
-          type={isRequireApprove ? 'button' : 'submit'}
-          className={styles.submitButton}
-        >
-          {isRequireApprove ? (
-            <FiledButton
-              isLoading={loading}
-              isDisabled={loading}
-              loadingText="Processing"
-              btnSize={'h'}
-              containerConfig={{ flex: 1, mt: 6 }}
-              onClick={onShowModalApprove}
-              processInfo={{
-                id: transactionType.createPoolApprove,
-              }}
-            >
-              APPROVE USE OF {liquidityToken?.symbol}
-            </FiledButton>
-          ) : (
-            <FiledButton
-              isDisabled={submitting || btnDisabled}
-              isLoading={submitting}
-              type="submit"
-              btnSize={'h'}
-              containerConfig={{ flex: 1, mt: 6 }}
-              loadingText={submitting ? 'Processing' : ' '}
-              processInfo={{
-                id: transactionType.depositLaunchpad,
-              }}
-              style={{
-                backgroundColor: isEndLaunchpad
-                  ? colors.redPrimary
-                  : isClaimLaunchpad
-                  ? colors.greenPrimary
-                  : isCancelLaunchpad
-                  ? colors.redPrimary
-                  : isVoteRelease
-                  ? colors.bluePrimary
-                  : colors.bluePrimary,
-              }}
-            >
-              {isEndLaunchpad
-                ? 'END THIS PROJECT'
-                : isClaimLaunchpad
-                ? 'CLAIM THIS PROJECT'
-                : isCancelLaunchpad
-                ? 'CANCEL THIS PROJECT'
-                : isVoteRelease
-                ? 'RELEASE VOTE'
-                : 'CONTRIBUTE TO THIS PROJECT '}
-            </FiledButton>
-          )}
-        </WrapperConnected>
-      )}
-      <Flex direction={'column'} mt={4}>
-        {Object.values(poolDetail?.launchpadToken?.social).join('')?.length > 0 && (
-          <Text
-            fontSize={px2rem(16)}
-            fontWeight={400}
-            color={'#B6B6B6'}
-            mb={'8px !important'}
-            mt={2}
+                {`Reward pool`}
+              </InfoTooltip>
+            </StatLabel>
+            <StatNumber>
+              <Tooltip label={formatCurrency(poolDetail?.launchpadBalance || 0)}>
+                {abbreviateNumber(poolDetail?.launchpadBalance || 0)}
+              </Tooltip>
+            </StatNumber>
+          </Stat>
+          <Stat className={styles.infoColumn} flex={1} textAlign={"right"}>
+            <StatLabel>Contributors</StatLabel>
+            <StatNumber>
+              {formatCurrency(poolDetail?.contributors || 0, 0)}
+            </StatNumber>
+          </Stat>
+        </Flex>
+        {isStarting && (
+          <InputWrapper
+            className={cx(styles.inputAmountWrap, styles.inputBaseAmountWrap)}
+            theme="light"
+            label={
+              <Text fontSize={px2rem(14)} color={'#FFFFFF'}>
+                Amount
+              </Text>
+            }
           >
-            Link
-          </Text>
+            <Flex gap={4} direction={'column'}>
+              <Field
+                name="baseAmount"
+                children={FieldAmount}
+                validate={composeValidators(required, validateBaseAmount)}
+                fieldChanged={onChangeValueBaseAmount}
+                disabled={submitting}
+                // placeholder={"Enter number of tokens"}
+                decimals={liquidityToken?.decimal || 18}
+                className={styles.inputAmount}
+                prependComp={
+                  liquidityToken && (
+                    <Flex gap={1} alignItems={'center'} color={'#FFFFFF'} paddingX={2}>
+                      <img
+                        src={tokenIcons[liquidityToken?.symbol?.toLowerCase()]}
+                        alt={liquidityToken?.thumbnail || 'default-icon'}
+                        className={'avatar'}
+                      />
+                      <Text fontSize={'sm'}>{liquidityToken?.symbol}</Text>
+                    </Flex>
+                  )
+                }
+                appendComp={
+                  liquidityToken && (
+                    <Flex gap={2} fontSize={px2rem(14)} color={'#FFFFFF'}>
+                      <Flex
+                        gap={1}
+                        alignItems={'center'}
+                        color={'#B6B6B6'}
+                        fontSize={px2rem(16)}
+                        fontWeight={'400'}
+                      >
+                        Balance:
+                        <TokenBalance
+                          token={liquidityToken}
+                          onBalanceChange={(_amount) => setBaseBalance(_amount)}
+                        />
+                        {liquidityToken?.symbol}
+                      </Flex>
+                      <Text
+                        cursor={'pointer'}
+                        color={'#3385FF'}
+                        onClick={handleChangeMaxBaseAmount}
+                        bgColor={'#2E2E2E'}
+                        borderRadius={'4px'}
+                        padding={'1px 12px'}
+                        fontSize={px2rem(16)}
+                        fontWeight={'600'}
+                      >
+                        Max
+                      </Text>
+                    </Flex>
+                  )
+                }
+                borderColor={'#353945'}
+              />
+            </Flex>
+          </InputWrapper>
         )}
-        <SocialToken socials={poolDetail?.launchpadToken?.social} />
-      </Flex>
-      {[LAUNCHPAD_STATUS.Pending].includes(status.key) ? (
-        <Text
-          mt={6}
-          fontSize={px2rem(16)}
-          fontWeight={'400'}
-          color={'#FFFFFF'}
-          bgColor={'rgba(255, 255, 255, 0.05)'}
-          borderRadius={'8px'}
-          px={4}
-          py={3}
-        >
-          This project requires community votes to initiate crowdfunding. Please
-          prepare your TM token to participate in the voting process.
-        </Text>
-      ) : [LAUNCHPAD_STATUS.Voting].includes(status.key) ? (
-        <Text
-          mt={6}
-          fontSize={px2rem(16)}
-          fontWeight={'400'}
-          color={'#FFFFFF'}
-          bgColor={'rgba(255, 255, 255, 0.05)'}
-          borderRadius={'8px'}
-          px={4}
-          py={3}
-        >
-          If you enjoy this project, please show your support by voting for it.
-        </Text>
-      ) : [LAUNCHPAD_STATUS.Launching].includes(status.key) ? (
-        <Text
-          mt={6}
-          fontSize={px2rem(16)}
-          fontWeight={'400'}
-          color={'#FFFFFF'}
-          bgColor={'rgba(255, 255, 255, 0.05)'}
-          borderRadius={'8px'}
-          px={4}
-          py={3}
-        >
-          All or nothing. This project will only be funded if it reaches its goal by{' '}
-          <Text as={'span'} color={'#FF7E21'}>
-            {moment
-              .utc(poolDetail?.launchEnd)
-              .format('ddd, MMMM Do YYYY HH:mm:ss Z')}
+        {values?.baseAmount && (
+          <Box mt={1}>
+            <HorizontalItem
+              label={
+                <Text fontSize={'sm'} color={'#B1B5C3'}>
+                  Estimate receive amount
+                </Text>
+              }
+              value={
+                <Text fontSize={'sm'} color={'#FFFFFF'}>
+                  {formatCurrency(values?.quoteAmount, 6)}{' '}
+                  {poolDetail?.launchpadToken?.symbol}
+                </Text>
+              }
+            />
+          </Box>
+        )}
+        {isAuthenticated &&
+          isStarting &&
+          isLoadedAssets &&
+          new BigNumber(juiceBalance || 0).lte(0) && (
+            <Flex gap={3} mt={2}>
+              <Center
+                w={'24px'}
+                h={'24px'}
+                borderRadius={'50%'}
+                bg={'rgba(255, 126, 33, 0.2)'}
+                as={'span'}
+              >
+                <BiBell color="#FF7E21" />
+              </Center>
+              <Text fontSize="sm" color="#FF7E21" textAlign={'left'}>
+                Your TC balance is insufficient. You can receive free TC on our faucet
+                site{' '}
+                <Link
+                  href={TRUSTLESS_FAUCET}
+                  target={'_blank'}
+                  style={{ textDecoration: 'underline' }}
+                >
+                  here
+                </Link>
+                .
+              </Text>
+            </Flex>
+          )}
+        {isAuthenticated &&
+          isStarting &&
+          liquidityToken &&
+          BRIDGE_SUPPORT_TOKEN.includes(liquidityToken?.symbol) &&
+          new BigNumber(baseBalance || 0).lte(0) && (
+            <Flex gap={3} mt={2}>
+              <Center
+                w={'24px'}
+                h={'24px'}
+                borderRadius={'50%'}
+                bg={'rgba(255, 126, 33, 0.2)'}
+                as={'span'}
+              >
+                <BiBell color="#FF7E21" />
+              </Center>
+              <Text fontSize="sm" color="#FF7E21" textAlign={'left'}>
+                Insufficient {liquidityToken?.symbol} balance! Consider swapping your{' '}
+                {liquidityToken?.symbol?.replace('W', '')} to trustless network{' '}
+                <Link
+                  href={`${TRUSTLESS_BRIDGE}${liquidityToken?.symbol
+                    ?.replace('W', '')
+                    ?.toLowerCase()}`}
+                  target={'_blank'}
+                  style={{ textDecoration: 'underline' }}
+                >
+                  here
+                </Link>
+                .
+              </Text>
+            </Flex>
+          )}
+        <Box mt={6} />
+        {(isStarting ||
+          isEndLaunchpad ||
+          isClaimLaunchpad ||
+          isCancelLaunchpad ||
+          isVoteRelease) && (
+          <WrapperConnected
+            type={isRequireApprove ? 'button' : 'submit'}
+            className={styles.submitButton}
+          >
+            {isRequireApprove ? (
+              <FiledButton
+                isLoading={loading}
+                isDisabled={loading}
+                loadingText="Processing"
+                btnSize={'h'}
+                containerConfig={{ flex: 1, mt: 6 }}
+                onClick={onShowModalApprove}
+                processInfo={{
+                  id: transactionType.createPoolApprove,
+                }}
+              >
+                APPROVE USE OF {liquidityToken?.symbol}
+              </FiledButton>
+            ) : (
+              <FiledButton
+                isDisabled={submitting || btnDisabled}
+                isLoading={submitting}
+                type="submit"
+                btnSize={'h'}
+                containerConfig={{ flex: 1, mt: 6 }}
+                loadingText={submitting ? 'Processing' : ' '}
+                processInfo={{
+                  id: transactionType.depositLaunchpad,
+                }}
+                style={{
+                  backgroundColor: isEndLaunchpad
+                    ? colors.redPrimary
+                    : isClaimLaunchpad
+                      ? colors.greenPrimary
+                      : isCancelLaunchpad
+                        ? colors.redPrimary
+                        : isVoteRelease
+                          ? colors.bluePrimary
+                          : colors.bluePrimary,
+                }}
+              >
+                {isEndLaunchpad
+                  ? 'END THIS PROJECT'
+                  : isClaimLaunchpad
+                    ? 'CLAIM THIS PROJECT'
+                    : isCancelLaunchpad
+                      ? 'CANCEL THIS PROJECT'
+                      : isVoteRelease
+                        ? 'RELEASE VOTE'
+                        : 'CONTRIBUTE TO THIS PROJECT '}
+              </FiledButton>
+            )}
+          </WrapperConnected>
+        )}
+        <Flex direction={'column'} mt={4}>
+          {Object.values(poolDetail?.launchpadToken?.social).join('')?.length > 0 && (
+            <Text
+              fontSize={px2rem(16)}
+              fontWeight={400}
+              color={'#B6B6B6'}
+              mb={'8px !important'}
+              mt={2}
+            >
+              Link
+            </Text>
+          )}
+          <SocialToken socials={poolDetail?.launchpadToken?.social} />
+        </Flex>
+        {[LAUNCHPAD_STATUS.Pending].includes(status.key) ? (
+          <Text
+            mt={6}
+            fontSize={px2rem(16)}
+            fontWeight={'400'}
+            color={'#FFFFFF'}
+            bgColor={'rgba(255, 255, 255, 0.05)'}
+            borderRadius={'8px'}
+            px={4}
+            py={3}
+          >
+            This project requires community votes to initiate crowdfunding. Please
+            prepare your TM token to participate in the voting process.
           </Text>
-          .
+        ) : [LAUNCHPAD_STATUS.Voting].includes(status.key) ? (
+          <Text
+            mt={6}
+            fontSize={px2rem(16)}
+            fontWeight={'400'}
+            color={'#FFFFFF'}
+            bgColor={'rgba(255, 255, 255, 0.05)'}
+            borderRadius={'8px'}
+            px={4}
+            py={3}
+          >
+            If you enjoy this project, please show your support by voting for it.
+          </Text>
+        ) : [LAUNCHPAD_STATUS.Launching].includes(status.key) ? (
+          <Text
+            mt={6}
+            fontSize={px2rem(16)}
+            fontWeight={'400'}
+            color={'#FFFFFF'}
+            bgColor={'rgba(255, 255, 255, 0.05)'}
+            borderRadius={'8px'}
+            px={4}
+            py={3}
+          >
+            All or nothing. This project will only be funded if it reaches its goal by{' '}
+            <Text as={'span'} color={'#FF7E21'}>
+              {moment
+                .utc(poolDetail?.launchEnd)
+                .format('ddd, MMMM Do YYYY HH:mm:ss Z')}
+            </Text>
+            .
+          </Text>
+        ) : (
+          <></>
+        )}
+      </>
+    )
+  }
+
+  const getDirectUI = () => {
+    return (
+      <Box>
+        <Text>
+          Please send BTC to the following address.
         </Text>
-      ) : (
-        <></>
-      )}
+
+      </Box>
+    )
+  }
+
+  return (
+    <form onSubmit={onSubmit} style={{ height: '100%' }}>
+      <Tabs isFitted variant='soft-rounded'>
+        <TabList mb={6} mt={6}>
+          <Tab>INPUT</Tab>
+          <Tab>DIRECT</Tab>
+        </TabList>
+        <TabPanels>
+          <TabPanel>
+            {getInputUI()}
+          </TabPanel>
+          <TabPanel>
+            {getDirectUI()}
+          </TabPanel>
+        </TabPanels>
+      </Tabs>
     </form>
   );
 });
