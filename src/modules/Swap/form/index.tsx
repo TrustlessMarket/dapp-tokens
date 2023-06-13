@@ -1351,6 +1351,12 @@ const TradingForm = () => {
   const slippage = useAppSelector(selectPnftExchange).slippage;
   const { mobileScreen } = useWindowSize();
 
+  useEffect(() => {
+    return () => {
+      dispatch(updateCurrentTransaction(null));
+    };
+  }, []);
+
   const confirmSwap = (values: any) => {
     const { baseToken, quoteToken, baseAmount, quoteAmount, onConfirm } = values;
     const id = 'modalSwapConfirm';
