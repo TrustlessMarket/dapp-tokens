@@ -11,7 +11,13 @@ import HorizontalItem from '@/components/Swap/horizontalItem';
 import InfoTooltip from '@/components/Swap/infoTooltip';
 import TokenBalance from '@/components/Swap/tokenBalance';
 import WrapperConnected from '@/components/WrapperConnected';
-import {BRIDGE_SUPPORT_TOKEN, TOKEN_ICON_DEFAULT, TRUSTLESS_BRIDGE, TRUSTLESS_FAUCET,} from '@/constants/common';
+import {
+  BRIDGE_SUPPORT_TOKEN,
+  TOKEN_ICON_DEFAULT,
+  TRUSTLESS_BRIDGE,
+  TRUSTLESS_FAUCET,
+  WETH_ADDRESS,
+} from '@/constants/common';
 import {toastError} from '@/constants/error';
 import {AssetsContext} from '@/contexts/assets-context';
 import useClaimLaunchPad from '@/hooks/contract-operations/launchpad/useClaim';
@@ -65,6 +71,66 @@ import useCancelLaunchPad from '@/hooks/contract-operations/launchpad/useCancel'
 import useVoteReleaseLaunchpad from '@/hooks/contract-operations/launchpad/useVoteRelease';
 import tokenIcons from '@/constants/tokenIcons';
 import DepositEth from "@/modules/LaunchPadDetail/depositEth";
+import {CDN_URL} from "@/configs";
+
+const CONTRIBUTION_METHODS = [
+  {
+    id: 'tc',
+    title: 'From Your TC wallet',
+    desc: '',
+    img: `${CDN_URL}/pages/trustlessmarket/launchpad/ic-tc.png`,
+  },
+  {
+    id: 'eth',
+    title: 'From Ethereum wallet',
+    desc: 'Transferring funds from an Ethereum wallet or directly from an exchange.',
+    img: `${CDN_URL}/pages/trustlessmarket/launchpad/ic-eth.png`,
+  },
+]
+
+const ContributionMethods = () => {
+  const [selectId, setSelectedId] = useState('tc');
+
+  return (
+    <Flex gap={3}>
+      {
+        CONTRIBUTION_METHODS.map(method => {
+          return (
+            <Flex
+              key={method.id}
+              flex={1}
+              gap={3}
+              onClick={() => setSelectedId(method.id)} cursor={"pointer"}
+              borderRadius={"8px"}
+              bgColor={"#000000"}
+              border={`1px solid ${selectId === method.id ? '#3385FF' : '#353945'}`}
+              alignItems={"center"}
+              paddingX={px2rem(20)}
+              paddingY={px2rem(16)}
+            >
+              <img
+                width={40}
+                height={40}
+                alt={"network"}
+                src={method.img}
+              />
+              <Flex direction={"column"} flex={1} justifyContent={"flex-start"}>
+                <Text color={"#FFFFFF"} fontSize={px2rem(20)} fontWeight={500}>{method.title}</Text>
+                <Text color={"#FFFFFF"} fontSize={px2rem(14)} fontWeight={400} opacity={0.7} mt={1}>{method.desc}</Text>
+              </Flex>
+              <img
+                width={20}
+                height={20}
+                alt={"select"}
+                src={`${CDN_URL}/pages/trustlessmarket/launchpad/${selectId === method.id ? 'ic-method-selected.png' : 'ic-method.png'}`}
+              />
+            </Flex>
+          )
+        })
+      }
+    </Flex>
+  );
+};
 
 export const MakeFormSwap = forwardRef((props, ref) => {
   const {
@@ -489,73 +555,90 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         </Stat>
       </Flex>
       {isStarting && (
-        <InputWrapper
-          className={cx(styles.inputAmountWrap, styles.inputBaseAmountWrap)}
-          theme="light"
-          label={
-            <Text fontSize={px2rem(14)} color={'#FFFFFF'}>
-              Amount
-            </Text>
+        <>
+          {
+            compareString(liquidityToken?.address, WETH_ADDRESS) ? (
+              <Flex mt={8}>
+                <Stat className={styles.infoColumn} flex={1}>
+                  <StatLabel>
+                    Contribution method
+                  </StatLabel>
+                  <StatNumber mt={2}>
+                    <ContributionMethods />
+                  </StatNumber>
+                </Stat>
+              </Flex>
+            ) : (
+              <InputWrapper
+                className={cx(styles.inputAmountWrap, styles.inputBaseAmountWrap)}
+                theme="light"
+                label={
+                  <Text fontSize={px2rem(14)} color={'#FFFFFF'}>
+                    Amount
+                  </Text>
+                }
+              >
+                <Flex gap={4} direction={'column'}>
+                  <Field
+                    name="baseAmount"
+                    children={FieldAmount}
+                    validate={composeValidators(required, validateBaseAmount)}
+                    fieldChanged={onChangeValueBaseAmount}
+                    disabled={submitting}
+                    // placeholder={"Enter number of tokens"}
+                    decimals={liquidityToken?.decimal || 18}
+                    className={styles.inputAmount}
+                    prependComp={
+                      liquidityToken && (
+                        <Flex gap={1} alignItems={'center'} color={'#FFFFFF'} paddingX={2}>
+                          <img
+                            src={tokenIcons[liquidityToken?.symbol?.toLowerCase()]}
+                            alt={liquidityToken?.thumbnail || 'default-icon'}
+                            className={'avatar'}
+                          />
+                          <Text fontSize={'sm'}>{liquidityToken?.symbol}</Text>
+                        </Flex>
+                      )
+                    }
+                    appendComp={
+                      liquidityToken && (
+                        <Flex gap={2} fontSize={px2rem(14)} color={'#FFFFFF'}>
+                          <Flex
+                            gap={1}
+                            alignItems={'center'}
+                            color={'#B6B6B6'}
+                            fontSize={px2rem(16)}
+                            fontWeight={'400'}
+                          >
+                            Balance:
+                            <TokenBalance
+                              token={liquidityToken}
+                              onBalanceChange={(_amount) => setBaseBalance(_amount)}
+                            />
+                            {liquidityToken?.symbol}
+                          </Flex>
+                          <Text
+                            cursor={'pointer'}
+                            color={'#3385FF'}
+                            onClick={handleChangeMaxBaseAmount}
+                            bgColor={'#2E2E2E'}
+                            borderRadius={'4px'}
+                            padding={'1px 12px'}
+                            fontSize={px2rem(16)}
+                            fontWeight={'600'}
+                          >
+                            Max
+                          </Text>
+                        </Flex>
+                      )
+                    }
+                    borderColor={'#353945'}
+                  />
+                </Flex>
+              </InputWrapper>
+            )
           }
-        >
-          <Flex gap={4} direction={'column'}>
-            <Field
-              name="baseAmount"
-              children={FieldAmount}
-              validate={composeValidators(required, validateBaseAmount)}
-              fieldChanged={onChangeValueBaseAmount}
-              disabled={submitting}
-              // placeholder={"Enter number of tokens"}
-              decimals={liquidityToken?.decimal || 18}
-              className={styles.inputAmount}
-              prependComp={
-                liquidityToken && (
-                  <Flex gap={1} alignItems={'center'} color={'#FFFFFF'} paddingX={2}>
-                    <img
-                      src={tokenIcons[liquidityToken?.symbol?.toLowerCase()]}
-                      alt={liquidityToken?.thumbnail || 'default-icon'}
-                      className={'avatar'}
-                    />
-                    <Text fontSize={'sm'}>{liquidityToken?.symbol}</Text>
-                  </Flex>
-                )
-              }
-              appendComp={
-                liquidityToken && (
-                  <Flex gap={2} fontSize={px2rem(14)} color={'#FFFFFF'}>
-                    <Flex
-                      gap={1}
-                      alignItems={'center'}
-                      color={'#B6B6B6'}
-                      fontSize={px2rem(16)}
-                      fontWeight={'400'}
-                    >
-                      Balance:
-                      <TokenBalance
-                        token={liquidityToken}
-                        onBalanceChange={(_amount) => setBaseBalance(_amount)}
-                      />
-                      {liquidityToken?.symbol}
-                    </Flex>
-                    <Text
-                      cursor={'pointer'}
-                      color={'#3385FF'}
-                      onClick={handleChangeMaxBaseAmount}
-                      bgColor={'#2E2E2E'}
-                      borderRadius={'4px'}
-                      padding={'1px 12px'}
-                      fontSize={px2rem(16)}
-                      fontWeight={'600'}
-                    >
-                      Max
-                    </Text>
-                  </Flex>
-                )
-              }
-              borderColor={'#353945'}
-            />
-          </Flex>
-        </InputWrapper>
+        </>
       )}
       {values?.baseAmount && (
         <Box mt={1}>
