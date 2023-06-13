@@ -14,6 +14,33 @@ export const isEmail = (message?: string) => (value: string) =>
     ? message || 'Invalid email address'
     : undefined;
 
+export const isTwitter = (value: string) =>
+  value && !/http(?:s)?:\/\/(?:www\.)?twitter\.com\/([a-zA-Z0-9_]+)/i.test(value)
+    ? 'Invalid twitter address'
+    : undefined;
+
+export const isDiscord = (value: string) =>
+  value &&
+  !/(https?:\/\/)?(www\.)?(discord\.(gg|io|me|li)|discordapp\.com\/invite)\/.+[a-z]/i.test(
+    value,
+  )
+    ? 'Invalid discord address'
+    : undefined;
+
+export const isTelegram = (value: string) =>
+  value &&
+  !/^(?:|(https?:\/\/)?(|www)[.]?((t|telegram)\.me)\/)[a-zA-Z0-9_]{5,32}/i.test(
+    value,
+  )
+    ? 'Invalid telegram address'
+    : undefined;
+
+export const isWebsite = (value: string) =>
+  value &&
+  !/[a-zA-Z0-9][a-zA-Z0-9-]{1,61}[a-zA-Z0-9](?:\.[a-zA-Z]{2,})+/i.test(value)
+    ? 'Invalid website address'
+    : undefined;
+
 export const composeValidators =
   (...validators: any[]) =>
   (value: unknown, values: unknown, props: any) =>

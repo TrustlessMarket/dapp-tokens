@@ -1,18 +1,32 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import {Box, Flex, SimpleGrid, Stat, StatLabel, StatNumber, Tooltip,} from '@chakra-ui/react';
-import {abbreviateNumber, calcLaunchpadInitialPrice, compareString, formatCurrency} from '@/utils';
+import {
+  Box,
+  Flex,
+  SimpleGrid,
+  Stat,
+  StatLabel,
+  StatNumber,
+  Tooltip,
+} from '@chakra-ui/react';
+import {
+  abbreviateNumber,
+  calcLaunchpadInitialPrice,
+  compareString,
+  formatCurrency,
+  getTokenIconUrl,
+} from '@/utils';
 import React from 'react';
-import {ILaunchpad} from '@/interfaces/launchpad';
+import { ILaunchpad } from '@/interfaces/launchpad';
 import InfoTooltip from '@/components/Swap/infoTooltip';
 import CountDownTimer from '@/components/Countdown';
-import {useAppSelector} from '@/state/hooks';
-import {selectPnftExchange} from '@/state/pnftExchange';
-import {useWeb3React} from '@web3-react/core';
-import {LAUNCHPAD_STATUS} from '@/modules/Launchpad/Launchpad.Status';
+import { useAppSelector } from '@/state/hooks';
+import { selectPnftExchange } from '@/state/pnftExchange';
+import { useWeb3React } from '@web3-react/core';
+import { LAUNCHPAD_STATUS } from '@/modules/Launchpad/Launchpad.Status';
 import moment from 'moment/moment';
 import styles from '@/modules/LaunchPadDetail/form/styles.module.scss';
-import {CDN_URL} from '@/configs';
-import {IToken} from '@/interfaces/token';
+import { CDN_URL } from '@/configs';
+import { IToken } from '@/interfaces/token';
 
 const ProposalInfo = ({ poolDetail }: ILaunchpad | any) => {
   const configs = useAppSelector(selectPnftExchange).configs;
@@ -55,10 +69,7 @@ const ProposalInfo = ({ poolDetail }: ILaunchpad | any) => {
             <Flex gap={1} alignItems={'center'}>
               {formatCurrency(poolDetail?.goalBalance || 0)}
               <img
-                src={
-                  liquidityToken?.thumbnail ||
-                  `${CDN_URL}/upload/1683530065704444020-1683530065-default-coin.svg`
-                }
+                src={getTokenIconUrl(liquidityToken)}
                 alt={liquidityToken?.thumbnail || 'default-icon'}
                 className={'liquidity-token-avatar'}
               />

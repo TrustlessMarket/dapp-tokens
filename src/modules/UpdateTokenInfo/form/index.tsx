@@ -45,6 +45,7 @@ import { compareString, formatCurrency, shortenAddress } from '@/utils';
 import BigNumber from 'bignumber.js';
 import { decimalToExponential } from '@/utils/format';
 import { ROUTE_PATH } from '@/constants/route-path';
+import { composeValidators, isTwitter } from '@/utils/formValidate';
 
 export const MAX_FILE_SIZE = 1024 * 1024; // 375 MB
 
@@ -272,9 +273,11 @@ export const MakeFormSwap = forwardRef((props, ref) => {
                 placeholder={'Enter Twitter'}
                 className={cx(styles.inputAmount, styles.collateralAmount)}
                 borderColor={'#353945'}
+                validate={composeValidators(isTwitter)}
               />
             </Flex>
           </InputWrapper>
+          <Box mt={6} />
           <WrapperConnected type={'submit'} className={styles.submitButton}>
             <FiledButton
               isDisabled={submitting || btnDisabled}
