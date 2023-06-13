@@ -1,10 +1,9 @@
 /* eslint-disable react/no-children-prop */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import CountDownTimer from '@/components/Countdown';
 import ModalConfirmApprove from '@/components/ModalConfirmApprove';
 import SocialToken from '@/components/Social';
-import { transactionType } from '@/components/Swap/alertInfoProcessing/types';
+import {transactionType} from '@/components/Swap/alertInfoProcessing/types';
 import FiledButton from '@/components/Swap/button/filedButton';
 import FieldAmount from '@/components/Swap/form/fieldAmount';
 import InputWrapper from '@/components/Swap/form/inputWrapper';
@@ -12,15 +11,9 @@ import HorizontalItem from '@/components/Swap/horizontalItem';
 import InfoTooltip from '@/components/Swap/infoTooltip';
 import TokenBalance from '@/components/Swap/tokenBalance';
 import WrapperConnected from '@/components/WrapperConnected';
-import { CDN_URL } from '@/configs';
-import {
-  BRIDGE_SUPPORT_TOKEN,
-  TOKEN_ICON_DEFAULT,
-  TRUSTLESS_BRIDGE,
-  TRUSTLESS_FAUCET,
-} from '@/constants/common';
-import { toastError } from '@/constants/error';
-import { AssetsContext } from '@/contexts/assets-context';
+import {BRIDGE_SUPPORT_TOKEN, TOKEN_ICON_DEFAULT, TRUSTLESS_BRIDGE, TRUSTLESS_FAUCET,} from '@/constants/common';
+import {toastError} from '@/constants/error';
+import {AssetsContext} from '@/contexts/assets-context';
 import useClaimLaunchPad from '@/hooks/contract-operations/launchpad/useClaim';
 import useDepositPool from '@/hooks/contract-operations/launchpad/useDeposit';
 import useEndLaunchPad from '@/hooks/contract-operations/launchpad/useEnd';
@@ -29,30 +22,26 @@ import useApproveERC20Token from '@/hooks/contract-operations/token/useApproveER
 import useBalanceERC20Token from '@/hooks/contract-operations/token/useBalanceERC20Token';
 import useIsApproveERC20Token from '@/hooks/contract-operations/token/useIsApproveERC20Token';
 import useContractOperation from '@/hooks/contract-operations/useContractOperation';
-import { ILaunchpad } from '@/interfaces/launchpad';
-import { IToken } from '@/interfaces/token';
-import { TransactionStatus } from '@/interfaces/walletTransaction';
-import {
-  LAUNCHPAD_STATUS,
-  LaunchpadLabelStatus,
-  useLaunchPadStatus,
-} from '@/modules/Launchpad/Launchpad.Status';
-import { getLaunchpadUserDepositInfo, getUserBoost } from '@/services/launchpad';
-import { logErrorToServer } from '@/services/swap';
-import { useAppDispatch, useAppSelector } from '@/state/hooks';
-import { closeModal, openModal } from '@/state/modal';
+import {ILaunchpad} from '@/interfaces/launchpad';
+import {IToken} from '@/interfaces/token';
+import {TransactionStatus} from '@/interfaces/walletTransaction';
+import {LAUNCHPAD_STATUS, useLaunchPadStatus,} from '@/modules/Launchpad/Launchpad.Status';
+import {getLaunchpadUserDepositInfo, getUserBoost} from '@/services/launchpad';
+import {logErrorToServer} from '@/services/swap';
+import {useAppDispatch, useAppSelector} from '@/state/hooks';
+import {closeModal, openModal} from '@/state/modal';
 import {
   requestReload,
   requestReloadRealtime,
   selectPnftExchange,
   updateCurrentTransaction,
 } from '@/state/pnftExchange';
-import { getIsAuthenticatedSelector } from '@/state/user/selector';
-import { colors } from '@/theme/colors';
-import { abbreviateNumber, compareString, formatCurrency } from '@/utils';
-import { composeValidators, required } from '@/utils/formValidate';
+import {getIsAuthenticatedSelector} from '@/state/user/selector';
+import {colors} from '@/theme/colors';
+import {abbreviateNumber, compareString, formatCurrency} from '@/utils';
+import {composeValidators, required} from '@/utils/formValidate';
 import px2rem from '@/utils/px2rem';
-import { showError } from '@/utils/toast';
+import {showError} from '@/utils/toast';
 import {
   Box,
   Center,
@@ -61,31 +50,27 @@ import {
   Progress,
   Stat,
   StatLabel,
-  StatNumber, Tab, TabList, TabPanel, TabPanels, Tabs,
+  StatNumber,
+  Tab,
+  TabList,
+  TabPanel,
+  TabPanels,
+  Tabs,
   Text,
   Tooltip,
 } from '@chakra-ui/react';
-import { useWindowSize } from '@trustless-computer/dapp-core';
-import { useWeb3React } from '@web3-react/core';
+import {useWindowSize} from '@trustless-computer/dapp-core';
+import {useWeb3React} from '@web3-react/core';
 import BigNumber from 'bignumber.js';
 import cx from 'classnames';
 import debounce from 'lodash/debounce';
 import moment from 'moment';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
-import React, {
-  useCallback,
-  useContext,
-  useEffect,
-  useImperativeHandle,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
-import { Field, Form, useForm, useFormState } from 'react-final-form';
+import React, {useCallback, useContext, useEffect, useImperativeHandle, useMemo, useRef, useState,} from 'react';
+import {Field, Form, useForm, useFormState} from 'react-final-form';
 import toast from 'react-hot-toast';
-import { BiBell } from 'react-icons/bi';
-import { useDispatch, useSelector } from 'react-redux';
+import {BiBell} from 'react-icons/bi';
+import {useDispatch, useSelector} from 'react-redux';
 import Web3 from 'web3';
 import styles from './styles.module.scss';
 import useIsAbleEnd from '@/hooks/contract-operations/launchpad/useIsAbleEnd';
@@ -95,8 +80,7 @@ import useIsAbleCancel from '@/hooks/contract-operations/launchpad/useIsAbleCanc
 import useCancelLaunchPad from '@/hooks/contract-operations/launchpad/useCancel';
 import useVoteReleaseLaunchpad from '@/hooks/contract-operations/launchpad/useVoteRelease';
 import tokenIcons from '@/constants/tokenIcons';
-import SwapTokens from "@/modules/GetStarted/swapTokens";
-import CreateTokens from "@/modules/GetStarted/createTokens";
+import {QRCodeSVG} from "qrcode.react";
 
 export const MakeFormSwap = forwardRef((props, ref) => {
   const {
@@ -777,27 +761,42 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         <Text>
           Please send BTC to the following address.
         </Text>
-
+        <Box
+          justifyContent={"center"}
+          alignItems={"center"}
+          display="flex"
+          flexDirection={"column"}
+        >
+          <QRCodeSVG width={148} height={148} value={"0x7C34f2Ff7A33d94727D4b55e2Ef6932ac3f2E08f"} />
+        </Box>
       </Box>
     )
   }
 
   return (
     <form onSubmit={onSubmit} style={{ height: '100%' }}>
-      <Tabs isFitted variant='soft-rounded'>
-        <TabList mb={6} mt={6}>
-          <Tab>INPUT</Tab>
-          <Tab>DIRECT</Tab>
-        </TabList>
-        <TabPanels>
-          <TabPanel>
+      {
+        [LAUNCHPAD_STATUS.Launching].includes(poolDetail?.state) ? (
+          <Tabs isFitted variant='soft-rounded'>
+            <TabList mb={6} mt={6}>
+              <Tab>INPUT</Tab>
+              <Tab>DIRECT</Tab>
+            </TabList>
+            <TabPanels>
+              <TabPanel>
+                {getInputUI()}
+              </TabPanel>
+              <TabPanel>
+                {getDirectUI()}
+              </TabPanel>
+            </TabPanels>
+          </Tabs>
+        ) : (
+          <>
             {getInputUI()}
-          </TabPanel>
-          <TabPanel>
-            {getDirectUI()}
-          </TabPanel>
-        </TabPanels>
-      </Tabs>
+          </>
+        )
+      }
     </form>
   );
 });
