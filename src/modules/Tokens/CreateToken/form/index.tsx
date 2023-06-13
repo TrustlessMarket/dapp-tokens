@@ -347,8 +347,8 @@ const CreateTokenForm = (props: any) => {
       const response = await createTokenInfo(params, data);
 
       // router.push(`${ROUTE_PATH.TOKEN}?address=${res.contractAddress}`);
-      toast.success('Transaction has been created. Please wait for few minutes.');
-      refForm.current?.reset();
+      toast.success('Transaction has been created. Please wait for few minutes.', {duration: 5000});
+      // refForm.current?.reset();
       dispatch(requestReload());
       dispatch(requestReloadRealtime());
       // onClose && onClose();
@@ -365,7 +365,7 @@ const CreateTokenForm = (props: any) => {
       //     (err as Error).message || 'Something went wrong. Please try again later.',
       // });
     } finally {
-      setSubmitting(false);
+      // setSubmitting(false);
       dispatch(updateCurrentTransaction(null));
     }
   };
