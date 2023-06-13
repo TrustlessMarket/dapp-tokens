@@ -17,13 +17,14 @@ interface IDepositPoolParams {
   launchpadAddress: string;
   boostRatio?: string;
   signature?: string;
+  onBehalf?: string;
 }
 
 const useDepositPool: ContractOperationHook<IDepositPoolParams, boolean> = () => {
   const { account, provider } = useWeb3React();
   const call = useCallback(
     async (params: IDepositPoolParams): Promise<boolean> => {
-      const { amount, launchpadAddress, boostRatio, signature } = params;
+      const { amount, launchpadAddress, boostRatio, signature, onBehalf } = params;
       if (account && provider && launchpadAddress) {
         const contract = getContract(
           launchpadAddress,
@@ -38,6 +39,7 @@ const useDepositPool: ContractOperationHook<IDepositPoolParams, boolean> = () =>
             web3.utils.toWei(amount),
             boostRatio,
             signature || Buffer.from([]),
+            onBehalf,
             {
               gasLimit: '250000',
               gasPrice: getDefaultGasPrice(),
