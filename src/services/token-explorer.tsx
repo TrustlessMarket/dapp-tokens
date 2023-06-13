@@ -33,12 +33,12 @@ export const getTokenDetail = async (address: string): Promise<IToken> => {
     method: 'GET',
     error: 'Fail to get token detail',
   });
-}
+};
 
 export interface IUpdateTokenPayload {
   description?: string;
   name?: string;
-  social? : {
+  social?: {
     discord?: string;
     instagram?: string;
     medium?: string;
@@ -58,10 +58,13 @@ export interface IUpdateTokenResponse {
   status: boolean;
   data: {
     status: boolean;
-  }
+  };
 }
 
-export const updateTokenInfo = (address: string, payload: IUpdateTokenPayload): Promise<IUpdateTokenResponse> => {
+export const updateTokenInfo = (
+  address: string,
+  payload: IUpdateTokenPayload,
+): Promise<IUpdateTokenResponse> => {
   return swrFetcher(`${API_EXCHANGE_URL}${API_PATH}/token/${address}`, {
     method: 'PUT',
     data: payload,
@@ -80,5 +83,16 @@ export const createTokenInfo = (params: ICreateTokenParams, payload: IUpdateToke
     method: 'POST',
     data: payload,
     error: 'Failed to create token info',
+  });
+};
+
+export const updateTwitterTokenInfo = (
+  address: string,
+  payload: IUpdateTokenPayload,
+): Promise<IUpdateTokenResponse> => {
+  return swrFetcher(`${API_EXCHANGE_URL}${API_PATH}/token/${address}/twitter`, {
+    method: 'PUT',
+    data: payload,
+    error: 'Failed to update token info',
   });
 };

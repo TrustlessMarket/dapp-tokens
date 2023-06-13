@@ -13,6 +13,9 @@ import {
   getDetailLaunchpad,
   importBoost,
 } from '@/services/launchpad';
+import { useAppSelector } from '@/state/hooks';
+import { selectPnftExchange } from '@/state/pnftExchange';
+import { colors } from '@/theme/colors';
 import { showError } from '@/utils/toast';
 import {
   PopoverArrow,
@@ -38,7 +41,6 @@ import {
   PopoverNeedHelp,
   StyledLaunchpadManage,
 } from './LaunchpadManage.styled';
-import { colors } from '@/theme/colors';
 
 const LaunchpadManage = () => {
   const { getSignature } = useContext(WalletContext);
@@ -53,13 +55,14 @@ const LaunchpadManage = () => {
   const [detail, setDetail] = useState<ILaunchpad | undefined>(undefined);
   const [error, setMessageError] = useState('');
   const { isOpen, onToggle, onClose } = useDisclosure();
+  const needReload = useAppSelector(selectPnftExchange).needReload;
 
   const router = useRouter();
   const id = router.query?.id;
 
   useEffect(() => {
     getData();
-  }, [id]);
+  }, [id, needReload]);
 
   const getData = async () => {
     if (!id) {

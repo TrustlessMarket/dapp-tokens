@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // import { WALLET_URL } from '@/configs';
+import { TC_EXPLORER } from '@/configs';
 import useInterval from '@/hooks/useInterval';
 import {
   TransactionStatus,
@@ -143,7 +144,17 @@ const AlertInfoProcess: React.FC<AlertInfoProcessProps> = ({
             color={theme === 'dark' ? colors.white : colors.black}
             fontSize="x-small"
           >
-            {shortCryptoAddress(currentTransaction.hash, 30)}
+            {currentTransaction?.status === TransactionStatus.success ? (
+              <a
+                target="_blank"
+                href={`${TC_EXPLORER}/tx/${currentTransaction.hash}`}
+                style={{ color: colors.bluePrimary }}
+              >
+                {shortCryptoAddress(currentTransaction.hash, 30)}
+              </a>
+            ) : (
+              shortCryptoAddress(currentTransaction.hash, 30)
+            )}
           </AlertDescription>
         )}
         {/* {count >= MAXIMUM_TIME_REQUEST &&

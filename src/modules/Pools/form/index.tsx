@@ -67,11 +67,12 @@ import {
   Text,
   forwardRef,
   Center,
+  SkeletonText,
 } from '@chakra-ui/react';
 import { useWeb3React } from '@web3-react/core';
 import BigNumber from 'bignumber.js';
 import cx from 'classnames';
-import { isEmpty } from 'lodash';
+import { isEmpty, isNaN, isNumber } from 'lodash';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import Slider from 'rc-slider';
@@ -100,6 +101,8 @@ const LIMIT_PAGE = 50;
 export const MakeFormSwap = forwardRef((props, ref) => {
   const { onSubmit, submitting, fromAddress, toAddress } = props;
   const [loading, setLoading] = useState(false);
+  const [loadingBaseBalance, setLoadingBaseBalance] = useState(false);
+  const [loadingQuoteBalance, setLoadingQuoteBalance] = useState(false);
   const [baseToken, setBaseToken] = useState<IToken>();
   const [quoteToken, setQuoteToken] = useState<IToken>();
   const [isApproveBaseToken, setIsApproveBaseToken] = useState<boolean>(true);
@@ -156,7 +159,11 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const { account } = useWeb3React();
   const { values } = useFormState();
   const { change, restart } = useForm();
-  const btnDisabled = loading || (isScreenRemove && !isPaired);
+  const btnDisabled =
+    loading ||
+    (isScreenRemove && !isPaired) ||
+    (isScreenRemove &&
+      (!isNumber(values?.sliderPercent) || Number(values?.sliderPercent) <= 0));
 
   useImperativeHandle(ref, () => {
     return {
@@ -423,6 +430,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const handleSelectBaseToken = async (token: IToken) => {
     setBaseToken(token);
     change('baseToken', token);
+    setLoadingBaseBalance(true);
     try {
       const [_isApprove, _tokenBalance] = await Promise.all([
         checkTokenApprove(token),
@@ -434,12 +442,15 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       }
     } catch (error) {
       throw error;
+    } finally {
+      setLoadingBaseBalance(false);
     }
   };
 
   const handleSelectQuoteToken = async (token: IToken) => {
     setQuoteToken(token);
     change('quoteToken', token);
+    setLoadingQuoteBalance(true);
     try {
       const [_isApprove, _tokenBalance] = await Promise.all([
         checkTokenApprove(token),
@@ -452,12 +463,14 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       }
     } catch (error) {
       throw error;
+    } finally {
+      setLoadingQuoteBalance(false);
     }
   };
 
   const validateBaseAmount = useCallback(
     (_amount: any) => {
-      if (Number(_amount) > Number(baseBalance)) {
+      if (new BigNumber(formatCurrency(_amount)).gt(formatCurrency(baseBalance))) {
         return `Max amount is ${formatCurrency(baseBalance)}`;
       }
 
@@ -468,7 +481,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
 
   const validateQuoteAmount = useCallback(
     (_amount: any) => {
-      if (Number(_amount) > Number(quoteBalance)) {
+      if (new BigNumber(formatCurrency(_amount)).gt(formatCurrency(quoteBalance))) {
         return `Max amount is ${formatCurrency(quoteBalance)}`;
       }
       return undefined;
@@ -701,7 +714,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       case ScreenType.remove:
         return {
           title: 'Remove liquidity',
-          btnTitle: 'Remove',
+          btnTitle: 'Remove your liquidity',
           btnBgColor: '#BC1756',
         };
 
@@ -799,7 +812,11 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           !isEmpty(baseToken) && (
             <Flex gap={2} fontSize={px2rem(14)} color={'#FFFFFF'}>
               <Flex gap={1} alignItems={'center'}>
-                Balance: {formatCurrency(baseBalance)} {baseToken?.symbol}
+                Balance:{' '}
+                <SkeletonText noOfLines={1} isLoaded={!loadingBaseBalance}>
+                  {formatCurrency(baseBalance)}
+                </SkeletonText>{' '}
+                {baseToken?.symbol}
               </Flex>
               {!isScreenRemove && (
                 <Text
@@ -866,7 +883,11 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           !isEmpty(quoteToken) && (
             <Flex gap={2} fontSize={px2rem(14)} color={'#FFFFFF'}>
               <Flex gap={1} alignItems={'center'}>
-                Balance: {formatCurrency(quoteBalance)} {quoteToken?.symbol}
+                Balance:{' '}
+                <SkeletonText noOfLines={1} isLoaded={!loadingQuoteBalance}>
+                  {formatCurrency(quoteBalance)}
+                </SkeletonText>
+                {quoteToken?.symbol}
               </Flex>
               {!isScreenRemove && (
                 <Text
@@ -1091,6 +1112,12 @@ const CreateMarket = ({
 
   const isRemove = compareString(type, ScreenType.remove);
 
+  useEffect(() => {
+    return () => {
+      dispatch(updateCurrentTransaction(null));
+    };
+  }, []);
+
   const checkPair = async (baseToken: IToken, quoteToken: IToken) => {
     try {
       const response = await getPair({
@@ -1210,7 +1237,9 @@ const CreateMarket = ({
           id: transactionType.createPoolApprove,
           hash: response.hash,
           infoTexts: {
-            success: 'Pool has been created successfully.',
+            success: isRemove
+              ? 'Your liquidity has been removed successfully.'
+              : 'Pool has been created successfully.',
           },
         }),
       );
