@@ -364,7 +364,7 @@ const LaunchpadFormStep1: React.FC<ILaunchpadFormStep1> = ({
                 validate={composeValidators(required, isTwitter)}
                 disabled={
                   detail?.isVerifiedTwitter ||
-                  !detail?.launchpadToken?.social?.twitter
+                  !tokenSelected?.social?.twitter
                 }
               />
             </Box>
