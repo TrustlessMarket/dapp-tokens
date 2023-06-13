@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {Box, Center, Flex, Input, InputGroup, InputRightElement, Text} from "@chakra-ui/react";
 import FiledButton from "@/components/Swap/button/filedButton";
 import {QRCodeSVG} from "qrcode.react";
