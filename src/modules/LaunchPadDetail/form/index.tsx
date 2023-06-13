@@ -44,7 +44,7 @@ import {
 } from '@/state/pnftExchange';
 import {getIsAuthenticatedSelector} from '@/state/user/selector';
 import {colors} from '@/theme/colors';
-import {abbreviateNumber, compareString, formatCurrency} from '@/utils';
+import {abbreviateNumber, compareString, formatCurrency, getTokenIconUrl} from '@/utils';
 import {composeValidators, required} from '@/utils/formValidate';
 import px2rem from '@/utils/px2rem';
 import {showError} from '@/utils/toast';
@@ -88,8 +88,13 @@ const CONTRIBUTION_METHODS = [
   },
 ]
 
-const ContributionMethods = () => {
+const ContributionMethods = (props: any) => {
+  const {onSelect} = props;
   const [selectId, setSelectedId] = useState('tc');
+
+  useEffect(() => {
+    onSelect && onSelect(selectId);
+  }, [selectId]);
 
   return (
     <Flex gap={3}>
@@ -100,7 +105,10 @@ const ContributionMethods = () => {
               key={method.id}
               flex={1}
               gap={3}
-              onClick={() => setSelectedId(method.id)} cursor={"pointer"}
+              onClick={() => {
+                setSelectedId(method.id);
+              }}
+              cursor={"pointer"}
               borderRadius={"8px"}
               bgColor={"#000000"}
               border={`1px solid ${selectId === method.id ? '#3385FF' : '#353945'}`}
@@ -146,11 +154,11 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const [loading, setLoading] = useState(false);
   const [liquidityToken, setLiquidityToken] = useState<any>();
   const [launchpadToken, setLaunchpadToken] = useState<any>();
-  const [amountBaseTokenApproved, setAmountBaseTokenApproved] = useState('0');
+  const [amountLiquidityTokenApproved, setAmountLiquidityTokenApproved] = useState('0');
   const { call: isApproved } = useIsApproveERC20Token();
   const { call: tokenBalance } = useBalanceERC20Token();
   const { call: approveToken } = useApproveERC20Token();
-  const [baseBalance, setBaseBalance] = useState<any>('0');
+  const [liquidityBalance, setLiquidityBalance] = useState<any>('0');
   const { juiceBalance, isLoadedAssets } = useContext(AssetsContext);
   const isAuthenticated = useSelector(getIsAuthenticatedSelector);
   const dispatch = useDispatch();
@@ -172,7 +180,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         isAuthenticated &&
         values?.baseAmount &&
         !isNaN(Number(values?.baseAmount)) &&
-        new BigNumber(amountBaseTokenApproved || 0).lt(
+        new BigNumber(amountLiquidityTokenApproved || 0).lt(
           Web3.utils.toWei(`${values?.baseAmount || 0}`, 'ether'),
         );
     } catch (err: any) {
@@ -186,7 +194,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     }
 
     return result;
-  }, [isAuthenticated, amountBaseTokenApproved, values?.baseAmount]);
+  }, [isAuthenticated, amountLiquidityTokenApproved, values?.liquidityAmount]);
 
   const percent = useMemo(() => {
     if (poolDetail?.id) {
@@ -212,16 +220,16 @@ export const MakeFormSwap = forwardRef((props, ref) => {
 
   const reset = async () => {
     restart({
-      baseToken: values?.baseToken,
-      quoteToken: values?.quoteToken,
+      liquidityToken: values?.liquidityToken,
+      launchpadToken: values?.launchpadToken,
     });
 
     try {
       const [_baseBalance] = await Promise.all([
-        getTokenBalance(values?.baseToken),
-        // getTokenBalance(values?.quoteToken),
+        getTokenBalance(values?.liquidityToken),
+        // getTokenBalance(values?.launchpadToken),
       ]);
-      setBaseBalance(_baseBalance);
+      setLiquidityBalance(_baseBalance);
     } catch (error) {
       throw error;
     }
@@ -231,14 +239,14 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     if (poolDetail?.id) {
       setLiquidityToken(poolDetail?.liquidityToken);
       setLaunchpadToken(poolDetail?.launchpadToken);
-      change('baseToken', poolDetail?.liquidityToken);
-      change('quoteToken', poolDetail?.launchpadToken);
+      change('liquidityToken', poolDetail?.liquidityToken);
+      change('launchpadToken', poolDetail?.launchpadToken);
     }
   }, [poolDetail?.id]);
 
   useEffect(() => {
-    change('baseBalance', baseBalance);
-  }, [baseBalance]);
+    change('liquidityBalance', liquidityBalance);
+  }, [liquidityBalance]);
 
   useEffect(() => {
     if (account && liquidityToken?.address && poolDetail?.launchpad) {
@@ -248,7 +256,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
 
   const checkApproveBaseToken = async (token: any) => {
     const [_isApprove] = await Promise.all([checkTokenApprove(token)]);
-    setAmountBaseTokenApproved(_isApprove);
+    setAmountLiquidityTokenApproved(_isApprove);
   };
 
   const checkTokenApprove = async (token: IToken) => {
@@ -313,7 +321,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       if (new BigNumber(_amount).lte(0)) {
         return `Required`;
       }
-      if (new BigNumber(_amount).gt(baseBalance)) {
+      if (new BigNumber(_amount).gt(liquidityBalance)) {
         return `Insufficient balance.`;
       }
 
@@ -332,7 +340,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
 
       return undefined;
     },
-    [values.baseAmount],
+    [values.liquidityAmount],
   );
 
   const onChangeValueBaseAmount = (amount: any) => {
@@ -352,10 +360,10 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     try {
       if (!amount || isNaN(Number(amount))) return;
 
-      const quoteAmount = new BigNumber(amount)
+      const launchpadAmount = new BigNumber(amount)
         .div(new BigNumber(poolDetail?.totalValue || 0).plus(amount))
         .multipliedBy(poolDetail?.launchpadBalance || 0);
-      change('quoteAmount', quoteAmount.toFixed());
+      change('launchpadAmount', launchpadAmount.toFixed());
     } catch (err: any) {
       logErrorToServer({
         type: 'error',
@@ -368,8 +376,8 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   };
 
   const handleChangeMaxBaseAmount = () => {
-    change('baseAmount', baseBalance);
-    onChangeValueBaseAmount(baseBalance);
+    change('liquidityAmount', liquidityBalance);
+    onChangeValueBaseAmount(liquidityBalance);
   };
 
   const onShowModalApprove = () => {
@@ -413,25 +421,8 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     }
   };
 
-  const showContributeDirectFromEth = () => {
-    const id = 'modalDepositEth';
-    const close = () => dispatch(closeModal({id}));
-    dispatch(
-      openModal({
-        id,
-        theme: 'dark',
-        title: 'Project Contribution',
-        className: cx(styles.modalContent, styles.hideCloseButton),
-        modalProps: {
-          centered: true,
-          size: mobileScreen ? 'full' : 'xl',
-          zIndex: 9999999,
-        },
-        render: () => {
-          return <DepositEth onClose={close} address={"0x7C34f2Ff7A33d94727D4b55e2Ef6932ac3f2E08f"}/>;
-        },
-      }),
-    );
+  const onSelectContributeMethod = (method: any) => {
+    change('contributeMethod', method);
   }
 
   return (
@@ -490,11 +481,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
               <Flex gap={1} alignItems={'center'}>
                 {formatCurrency(poolDetail?.goalBalance || 0)}
                 <img
-                  src={
-                    liquidityToken?.thumbnail ||
-                    tokenIcons?.[liquidityToken?.symbol?.toLowerCase()] ||
-                    TOKEN_ICON_DEFAULT
-                  }
+                  src={getTokenIconUrl(liquidityToken)}
                   alt={liquidityToken?.thumbnail || 'default-icon'}
                   className={'liquidity-token-avatar'}
                 />
@@ -505,11 +492,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
                   <>
                     {formatCurrency(poolDetail?.thresholdBalance || 0)}{' '}
                     <img
-                      src={
-                        liquidityToken?.thumbnail ||
-                        tokenIcons?.[liquidityToken?.symbol?.toLowerCase()] ||
-                        TOKEN_ICON_DEFAULT
-                      }
+                      src={getTokenIconUrl(liquidityToken)}
                       alt={liquidityToken?.thumbnail || 'default-icon'}
                       className={'liquidity-token-avatar'}
                     />
@@ -564,7 +547,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
                     Contribution method
                   </StatLabel>
                   <StatNumber mt={2}>
-                    <ContributionMethods />
+                    <ContributionMethods onSelect={onSelectContributeMethod}/>
                   </StatNumber>
                 </Stat>
               </Flex>
@@ -580,7 +563,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
               >
                 <Flex gap={4} direction={'column'}>
                   <Field
-                    name="baseAmount"
+                    name="liquidityAmount"
                     children={FieldAmount}
                     validate={composeValidators(required, validateBaseAmount)}
                     fieldChanged={onChangeValueBaseAmount}
@@ -613,7 +596,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
                             Balance:
                             <TokenBalance
                               token={liquidityToken}
-                              onBalanceChange={(_amount) => setBaseBalance(_amount)}
+                              onBalanceChange={(_amount) => setLiquidityBalance(_amount)}
                             />
                             {liquidityToken?.symbol}
                           </Flex>
@@ -640,7 +623,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           }
         </>
       )}
-      {values?.baseAmount && (
+      {values?.liquidityAmount && (
         <Box mt={1}>
           <HorizontalItem
             label={
@@ -650,7 +633,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             }
             value={
               <Text fontSize={'sm'} color={'#FFFFFF'}>
-                {formatCurrency(values?.quoteAmount, 6)}{' '}
+                {formatCurrency(values?.launchpadAmount, 6)}{' '}
                 {poolDetail?.launchpadToken?.symbol}
               </Text>
             }
@@ -689,7 +672,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         isStarting &&
         liquidityToken &&
         BRIDGE_SUPPORT_TOKEN.includes(liquidityToken?.symbol) &&
-        new BigNumber(baseBalance || 0).lte(0) && (
+        new BigNumber(liquidityBalance || 0).lte(0) && (
           <Flex gap={3} mt={2}>
             <Center
               w={'24px'}
@@ -958,7 +941,7 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
   };
 
   const getConfirmContent = (values: any) => {
-    const { baseAmount, quoteAmount, onConfirm } = values;
+    const { liquidityAmount, launchpadAmount, onConfirm } = values;
     return (
       <Flex direction={'column'} gap={2}>
         {canEnd ? (
@@ -990,7 +973,7 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
               }
               value={
                 <Text fontSize={'sm'}>
-                  {formatCurrency(baseAmount, 6)}{' '}
+                  {formatCurrency(liquidityAmount, 6)}{' '}
                   {poolDetail?.liquidityToken?.symbol}
                 </Text>
               }
@@ -1003,7 +986,7 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
               }
               value={
                 <Text fontSize={'sm'}>
-                  {formatCurrency(quoteAmount, 6)}{' '}
+                  {formatCurrency(launchpadAmount, 6)}{' '}
                   {poolDetail?.launchpadToken?.symbol}
                 </Text>
               }
@@ -1030,10 +1013,48 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
     );
   };
 
+
+
+  const showContributeDirectFromEth = () => {
+    const id = 'modalDepositEth';
+    const close = () => dispatch(closeModal({id}));
+    dispatch(
+      openModal({
+        id,
+        theme: 'dark',
+        title: 'Project Contribution',
+        className: cx(styles.modalContent, styles.hideCloseButton),
+        modalProps: {
+          centered: true,
+          size: mobileScreen ? 'full' : 'xl',
+          zIndex: 9999999,
+        },
+        render: () => {
+          return <DepositEth onClose={close} address={"0x7C34f2Ff7A33d94727D4b55e2Ef6932ac3f2E08f"}/>;
+        },
+      }),
+    );
+  }
+
+  const handleSubmit = async (values: any) => {
+    console.log('handleSubmit', values);
+
+    const liquidityToken = poolDetail?.liquidityToken;
+    if([LAUNCHPAD_STATUS.Launching].includes(poolDetail?.state) && compareString(liquidityToken?.address, WETH_ADDRESS)) {
+      const { contributeMethod } = values;
+      if(contributeMethod === 'eth') {
+        showContributeDirectFromEth();
+      } else {
+
+      }
+    } else {
+      confirmDeposit(values);
+    }
+  };
+
   const confirmDeposit = (values: any) => {
-    const { onConfirm } = values;
     const id = 'modalDepositConfirm';
-    // const close = () => dispatch(closeModal({id}));
+    const close = () => dispatch(closeModal({id}));
     dispatch(
       openModal({
         id,
@@ -1046,24 +1067,16 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
           zIndex: 9999999,
         },
         render: () => {
-          return getConfirmContent(values);
+          return getConfirmContent({
+            ...values,
+            onConfirm: () => {
+              close();
+              handleDeposit(values);
+            },
+          });
         },
       }),
     );
-  };
-
-  const handleSubmit = async (values: any) => {
-    console.log('handleSubmit', values);
-    const id = 'modalDepositConfirm';
-    const close = () => dispatch(closeModal({ id }));
-
-    confirmDeposit({
-      ...values,
-      onConfirm: () => {
-        close();
-        handleDeposit(values);
-      },
-    });
   };
 
   const handleDeposit = async (values: any) => {
@@ -1094,9 +1107,9 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
           launchpadAddress: poolDetail?.launchpad,
         });
       } else {
-        const { baseAmount } = values;
+        const { liquidityAmount } = values;
         const data = {
-          amount: baseAmount,
+          amount: liquidityAmount,
           launchpadAddress: poolDetail?.launchpad,
           boostRatio: '0',
           signature: '',
