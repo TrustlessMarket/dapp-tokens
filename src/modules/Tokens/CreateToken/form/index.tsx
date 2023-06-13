@@ -23,7 +23,6 @@ import {createTokenInfo, IUpdateTokenPayload,} from '@/services/token-explorer';
 import FieldText from '@/components/Swap/form/fieldText';
 import FileDropzoneUpload from '@/components/Swap/form/fileDropzoneUpload';
 import {uploadFile} from '@/services/file';
-import {ROUTE_PATH} from '@/constants/route-path';
 import {composeValidators, required} from "@/utils/formValidate";
 import FieldAmount from "@/components/Swap/form/fieldAmount";
 import useContractOperation from "@/hooks/contract-operations/useContractOperation";
@@ -159,7 +158,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           <Field
             name="description"
             children={FieldText}
-            // fieldChanged={onChangeValueQuoteAmount}
+            validate={composeValidators(required)}
             disabled={submitting}
             placeholder={'Enter description'}
             className={cx(styles.inputDescription)}
@@ -184,6 +183,11 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           text={<Text fontSize={""} color={"#000000"}>Upload token icon</Text>}
           icon={<BiUpload color={"#000000"} fontSize={"20px"} fontWeight={700}/>}
         />
+        {/*{touched?.quoteAmount && errors.quoteAmount && (
+          <Text fontSize="xs" color="brand.danger.400" mt={2}>
+            {errors.quoteAmount}
+          </Text>
+        )}*/}
       </InputWrapper>
       <Text fontSize={px2rem(18)} fontWeight={500} color={'#1C1C1C'} opacity={"0.7"}>
         Social media
