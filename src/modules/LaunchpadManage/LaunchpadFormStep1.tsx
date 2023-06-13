@@ -36,6 +36,9 @@ import { ROUTE_PATH } from '@/constants/route-path';
 import FieldText from '@/components/Swap/form/fieldText';
 import { TwitterShareButton } from 'react-share';
 import { BiCheckShield } from 'react-icons/bi';
+import { useDispatch } from 'react-redux';
+import { closeModal, openModal } from '@/state/modal';
+import LaunchpadFormStep1UpdateSocial from './LaunchpadFormStep1.UpdateSocial';
 
 interface ILaunchpadFormStep1 {
   detail?: ILaunchpad;
@@ -149,6 +152,8 @@ const LaunchpadFormStep1: React.FC<ILaunchpadFormStep1> = ({
 
   const isFirstDisabled = Boolean(detail?.launchpad);
 
+  const dispatch = useDispatch();
+
   useEffect(() => {
     const multiX = new BigNumber(launchpadConfigs.rewardVoteRatio)
       .dividedBy(1000000)
@@ -168,6 +173,37 @@ const LaunchpadFormStep1: React.FC<ILaunchpadFormStep1> = ({
     values?.liquidityBalance,
     launchpadConfigs.rewardVoteRatio,
   ]);
+
+  const onUpdateTokenSelect = (_tokenUpdate: IToken) => {
+    console.log('_tokenUpdate', _tokenUpdate);
+
+    change('launchpadTokenArg', _tokenUpdate);
+  };
+
+  const showFormUpdateTwitter = () => {
+    const id = 'showFormUpdateTwitter';
+    const onClose = () => dispatch(closeModal({ id }));
+    dispatch(
+      openModal({
+        id,
+        theme: 'dark',
+        title: `Update twitter url profile`,
+        // className: styles.modalContent,
+        modalProps: {
+          centered: true,
+          // size: mobileScreen ? 'full' : 'xl',
+          zIndex: 9999999,
+        },
+        render: () => (
+          <LaunchpadFormStep1UpdateSocial
+            onClose={onClose}
+            detail={tokenSelected}
+            onUpdateTokenSelect={onUpdateTokenSelect}
+          />
+        ),
+      }),
+    );
+  };
 
   return (
     <StyledLaunchpadFormStep1>
@@ -313,11 +349,7 @@ const LaunchpadFormStep1: React.FC<ILaunchpadFormStep1> = ({
                     </TwitterShareButton>
                   ) : (
                     <Box
-                      onClick={() =>
-                        router.push(
-                          `${ROUTE_PATH.UPDATE_TOKEN_INFO}?address=${tokenSelected.address}`,
-                        )
-                      }
+                      onClick={showFormUpdateTwitter}
                       className="btn-twitter-container"
                     >
                       Update twitter info
@@ -330,7 +362,10 @@ const LaunchpadFormStep1: React.FC<ILaunchpadFormStep1> = ({
                 placeholder="Enter twitter post url"
                 children={FieldText}
                 validate={composeValidators(required, isTwitter)}
-                disabled={detail?.isVerifiedTwitter}
+                disabled={
+                  detail?.isVerifiedTwitter ||
+                  !detail?.launchpadToken?.social?.twitter
+                }
               />
             </Box>
           </>
@@ -547,32 +582,27 @@ const LaunchpadFormStep1: React.FC<ILaunchpadFormStep1> = ({
                 }
                 className="horizontal-item"
                 value={
-                  <b>{`${formatCurrency(
-                    calcLaunchpadInitialPrice({
-                      launchpadBalance: values?.launchpadBalance,
-                      liquidityRatioArg: values?.liquidityRatioArg,
-                      liquidityBalance: values?.liquidityBalance,
-                    }),
-                  )} Crowdfunding price`}</b>
+                  <InfoTooltip
+                    showIcon
+                    label={`The initial price—set at the start of the public sale—is ${formatCurrency(
+                      calcLaunchpadInitialPrice({
+                        launchpadBalance: values?.launchpadBalance,
+                        liquidityRatioArg: values?.liquidityRatioArg,
+                        liquidityBalance: values?.liquidityBalance,
+                      }),
+                    )} times higher than the crowdfunding price.`}
+                  >
+                    <b>{`${formatCurrency(
+                      calcLaunchpadInitialPrice({
+                        launchpadBalance: values?.launchpadBalance,
+                        liquidityRatioArg: values?.liquidityRatioArg,
+                        liquidityBalance: values?.liquidityBalance,
+                      }),
+                    )}x Crowdfunding price`}</b>
+                  </InfoTooltip>
                 }
               />
             </Box>
-
-            {/* <Box>
-              <Box mt={6} />
-              <FiledButton
-                btnSize="l"
-                variant={'outline'}
-                className="btn-update-info"
-                onClick={() => {
-                  router.push(
-                    `${ROUTE_PATH.UPDATE_TOKEN_INFO}?address=${tokenSelected?.address}`,
-                  );
-                }}
-              >
-                Update token info
-              </FiledButton>
-            </Box> */}
           </Flex>
         )}
       </Box>

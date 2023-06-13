@@ -1,7 +1,7 @@
-import {API_URL} from '@/configs';
-import {IPagingParams} from '@/interfaces/api/query';
-import {IToken} from '@/interfaces/token';
-import {swrFetcher} from '@/utils/swr';
+import { API_EXCHANGE_URL, API_URL } from '@/configs';
+import { IPagingParams } from '@/interfaces/api/query';
+import { IToken } from '@/interfaces/token';
+import { swrFetcher } from '@/utils/swr';
 import queryString from 'query-string';
 
 const API_PATH = '/token-explorer';
@@ -32,12 +32,12 @@ export const getTokenDetail = async (address: string): Promise<IToken> => {
     method: 'GET',
     error: 'Fail to get token detail',
   });
-}
+};
 
 export interface IUpdateTokenPayload {
   description?: string;
   name?: string;
-  social? : {
+  social?: {
     discord?: string;
     instagram?: string;
     medium?: string;
@@ -54,11 +54,25 @@ export interface IUpdateTokenResponse {
   status: boolean;
   data: {
     status: boolean;
-  }
+  };
 }
 
-export const updateTokenInfo = (address: string, payload: IUpdateTokenPayload): Promise<IUpdateTokenResponse> => {
-  return swrFetcher(`${API_URL}${API_PATH}/token/${address}`, {
+export const updateTokenInfo = (
+  address: string,
+  payload: IUpdateTokenPayload,
+): Promise<IUpdateTokenResponse> => {
+  return swrFetcher(`${API_EXCHANGE_URL}${API_PATH}/token/${address}`, {
+    method: 'PUT',
+    data: payload,
+    error: 'Failed to update token info',
+  });
+};
+
+export const updateTwitterTokenInfo = (
+  address: string,
+  payload: IUpdateTokenPayload,
+): Promise<IUpdateTokenResponse> => {
+  return swrFetcher(`${API_EXCHANGE_URL}${API_PATH}/token/${address}/twitter`, {
     method: 'PUT',
     data: payload,
     error: 'Failed to update token info',

@@ -117,13 +117,24 @@ const ProposalInfo = ({ poolDetail }: ILaunchpad | any) => {
             </InfoTooltip>
           </StatLabel>
           <StatNumber>
-            <>{`${formatCurrency(
-              calcLaunchpadInitialPrice({
-                launchpadBalance: poolDetail?.launchpadBalance,
-                liquidityRatioArg: poolDetail?.liquidityRatio,
-                liquidityBalance: poolDetail?.liquidityBalance,
-              }),
-            )} Crowdfunding price`}</>
+            <InfoTooltip
+              showIcon
+              label={`The initial price—set at the start of the public sale—is ${formatCurrency(
+                calcLaunchpadInitialPrice({
+                  launchpadBalance: poolDetail?.launchpadBalance,
+                  liquidityRatioArg: poolDetail?.liquidityRatioArg,
+                  liquidityBalance: poolDetail?.liquidityBalance,
+                }),
+              )} times higher than the crowdfunding price.`}
+            >
+              <b>{`${formatCurrency(
+                calcLaunchpadInitialPrice({
+                  launchpadBalance: poolDetail?.launchpadBalance,
+                  liquidityRatioArg: poolDetail?.liquidityRatioArg,
+                  liquidityBalance: poolDetail?.liquidityBalance,
+                }),
+              )}x Crowdfunding price`}</b>
+            </InfoTooltip>
           </StatNumber>
         </Stat>
         <Stat className={styles.infoColumn}>
@@ -132,11 +143,11 @@ const ProposalInfo = ({ poolDetail }: ILaunchpad | any) => {
         </Stat>
         <Stat className={styles.infoColumn}>
           <StatLabel>
-            {
-              [LAUNCHPAD_STATUS.Voting].includes(poolDetail?.state) ? 'Voting Ends in'
-                : [LAUNCHPAD_STATUS.PrepareLaunching].includes(poolDetail?.state) ? 'Funding Starts in'
-                  : 'Voting Ended at'
-            }
+            {[LAUNCHPAD_STATUS.Voting].includes(poolDetail?.state)
+              ? 'Voting Ends in'
+              : [LAUNCHPAD_STATUS.PrepareLaunching].includes(poolDetail?.state)
+              ? 'Funding Starts in'
+              : 'Voting Ended at'}
           </StatLabel>
           <StatNumber>
             {[LAUNCHPAD_STATUS.Voting].includes(poolDetail?.state) ? (
