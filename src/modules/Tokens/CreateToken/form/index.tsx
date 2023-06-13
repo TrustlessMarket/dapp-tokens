@@ -342,7 +342,7 @@ const CreateTokenForm = (props: any) => {
 
       const response = await createTokenInfo(params, data);
 
-      router.push(`${ROUTE_PATH.TOKEN}?address=${res.contractAddress}`);
+      // router.push(`${ROUTE_PATH.TOKEN}?address=${res.contractAddress}`);
       toast.success('Transaction has been created. Please wait for few minutes.');
       refForm.current?.reset();
       dispatch(requestReload());
