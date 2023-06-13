@@ -40,8 +40,6 @@ const WalletHeader = () => {
   const { call: getBalanceErc20 } = useBalanceERC20Token();
   const [balanceTM, setBalanceTM] = useState('0');
 
-
-
   const isTokenPage = useMemo(() => {
     return isScreenDarkMode();
   }, [router?.pathname]);
