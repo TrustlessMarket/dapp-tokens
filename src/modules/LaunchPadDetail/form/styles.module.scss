@@ -110,6 +110,14 @@
       //padding: 0;
     }
   }
+
+  &.hideCloseButton {
+    :global {
+      .modal-close-btn {
+        display: none;
+      }
+    }
+  }
 }
 
 .progressBar {
