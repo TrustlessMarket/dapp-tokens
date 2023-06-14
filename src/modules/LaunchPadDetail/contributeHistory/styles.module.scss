@@ -1,5 +1,4 @@
 .wrapper {
-
   .tabContainer {
     max-width: 800px;
     margin: 0 auto;
@@ -23,8 +22,8 @@
         height: calc(100% - 53px);
       }
       .chakra-tabs__tab-panel {
-        padding: 10px;
-        padding-bottom: 0px;
+        padding: 0px;
+        //padding-bottom: 0px;
         height: 100%;
         > div {
           height: 100%;
@@ -47,6 +46,33 @@
         &[aria-selected='true'] {
           background: #000000;
           color: #FFFFFF;
+        }
+      }
+
+      .chakra-table__container {
+        border: 1px solid #ECECEC;
+      }
+      .chakra-table {
+        overflow: hidden;
+        thead {
+          background-color: #F7F7FA;
+          th {
+            div {
+              text-transform: uppercase;
+            }
+            padding: 12px 16px !important;
+          }
+        }
+        tbody {
+          tr {
+            &:hover {
+              background-color: #F7F7FA;
+            }
+          }
+          td {
+            padding: 20px 16px !important;
+            vertical-align: middle;
+          }
         }
       }
     }

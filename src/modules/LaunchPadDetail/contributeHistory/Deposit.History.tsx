@@ -80,16 +80,14 @@ const DepositHistory = (props: any) => {
         render(row: any) {
           return (
             <Flex direction={"column"} color={"#FFFFFF"}>
-              <Text fontWeight={"medium"}>
-                <a
-                  title="explorer"
-                  href={`${ETHERSCAN_URL}/tx/${row?.hash}`}
-                  target="_blank"
-                  style={{textDecoration: 'underline', color: colors.bluePrimary}}
-                >
+              <a
+                title="explorer"
+                href={`${ETHERSCAN_URL}/tx/${row?.hash}`}
+                target="_blank"
+                style={{textDecoration: 'underline', color: colors.bluePrimary}}
+              >
                 {formatLongAddress(row?.hash)}
-                </a>
-              </Text>
+              </a>
             </Flex>
           );
         },

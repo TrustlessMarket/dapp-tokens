@@ -10,10 +10,6 @@ const TMTransferHistory = (props: any) => {
     <Box className={styles.wrapper}>
       <Box
         className={styles.tabContainer}
-        // style={{
-        //   borderTop: `1px solid ${colors.darkBorderColor}`,
-        //   maxHeight: '300px',
-        // }}
         flex={1}
         mt={6}
       >
