@@ -160,3 +160,11 @@ export const getLaunchpadDepositAddress = async (params: any ) => {
     error: 'getLaunchpadDepositAddress fail',
   });
 };
+
+export const getLaunchpadUserResultDetail = async (params: any ) => {
+  const qs = '?' + queryString.stringify(params);
+  return swrFetcher(`${API_EXCHANGE_URL}${API_PATH}/user-result-detail${qs}`, {
+    method: 'GET',
+    error: 'getLaunchpadUserResultDetail fail',
+  });
+};
