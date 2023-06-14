@@ -36,6 +36,7 @@ const ContributeHistory = (props: any) => {
   const { poolDetail } = props;
   const [list, setList] = useState<any[]>([]);
   const { account } = useWeb3React();
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if(account && poolDetail?.launchpad) {
@@ -52,7 +53,11 @@ const ContributeHistory = (props: any) => {
         limit: 30,
       });
       setList(response || []);
-    } catch (error) {}
+    } catch (error) {
+
+    } finally {
+      setLoading(false);
+    }
   };
 
   const columns: ColumnProp[] = useMemo(
@@ -143,7 +148,7 @@ const ContributeHistory = (props: any) => {
   );
 
   return (
-    <ListTable data={list} columns={columns} />
+    <ListTable data={list} columns={columns} initialLoading={loading}/>
   );
 };
 
