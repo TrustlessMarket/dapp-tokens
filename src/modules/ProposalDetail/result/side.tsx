@@ -13,6 +13,7 @@ import Slider from "react-slick";
 import styles from './styles.module.scss';
 import {chunk} from "lodash";
 import {HiArrowLeft, HiArrowRight} from "react-icons/hi";
+import px2rem from "@/utils/px2rem";
 
 const ProposalResult = ({title, totalVote, className, data}: any) => {
   const {mobileScreen, tabletScreen} = useWindowSize();
@@ -115,7 +116,7 @@ const ProposalResult = ({title, totalVote, className, data}: any) => {
                               />
                             </a>
                             {compareString(account, d.voter) &&
-                                <Text color={"rgba(255, 255, 255, 0.7)"} textAlign={"center"} mt={-2}>You</Text>}
+                                <Text color={"rgba(255, 255, 255, 0.7)"} textAlign={"center"} mt={-2} w={px2rem(mobileScreen || tabletScreen ? 40 : 60)}>You</Text>}
                           </Box>
                         </InfoTooltip>
                       ) : (
