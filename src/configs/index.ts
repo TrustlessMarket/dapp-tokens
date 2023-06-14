@@ -11,6 +11,7 @@ export const API_FAUCET: string = process.env.NEXT_PUBLIC_API_FAUCET!;
 export const WALLET_URL: string = process.env.NEXT_PUBLIC_WALLET_URL!;
 export const TRUSTLESS_MARKET_URL: string = process.env.NEXT_PUBLIC_TRUSTLESS_MARKET_URL!;
 export const CHAIN_ID: string = process.env.NEXT_PUBLIC_CHAIN_ID!;
+export const ALCHEMY_API_KEY: string = process.env.NEXT_PUBLIC_ALCHEMY_API_KEY!;
 
 // Contract configs
 export const ARTIFACT_CONTRACT: string = process.env.NEXT_PUBLIC_ARTIFACT_CONTRACT!;
@@ -31,4 +32,5 @@ export const DEFAULT_FROM_ADDRESS = process.env.NEXT_PUBLIC_DEFAULT_FROM_ADDRESS
 export const DEFAULT_TO_ADDRESS = process.env.NEXT_PUBLIC_DEFAULT_ADDRESS!;
 
 export const MEMPOOL_URL = 'https://mempool.space';
+export const ETHERSCAN_URL = 'https://etherscan.io';
 /* eslint-enable @typescript-eslint/no-non-null-assertion */
