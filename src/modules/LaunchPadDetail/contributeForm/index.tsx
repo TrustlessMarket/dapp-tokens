@@ -605,7 +605,6 @@ const ContributeForm = ({ poolDetail, boostInfo }: { poolDetail: ILaunchpad, boo
         }),
       );
 
-      let response;
       const { liquidityAmount } = values;
       const data = {
         amount: liquidityAmount,
@@ -619,7 +618,7 @@ const ContributeForm = ({ poolDetail, boostInfo }: { poolDetail: ILaunchpad, boo
         data.boostRatio = boostInfo.boostSign;
         data.signature = boostInfo.adminSignature;
       }
-      response = await depositLaunchpad(data);
+      const response = await depositLaunchpad(data);
 
       toast.success('Transaction has been created. Please wait for few minutes.');
       refForm.current?.reset();
