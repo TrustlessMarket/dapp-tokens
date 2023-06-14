@@ -27,7 +27,7 @@ const TMTransferHistory = (props: any) => {
               <DepositHistory poolDetail={poolDetail} />
             </TabPanel>
             <TabPanel>
-              <ContributeHistory />
+              <ContributeHistory poolDetail={poolDetail} />
             </TabPanel>
           </TabPanels>
         </Tabs>

@@ -10,6 +10,7 @@ import {Alchemy, AssetTransfersCategory, Network} from "alchemy-sdk";
 import {getLaunchpadDepositAddress} from "@/services/launchpad";
 import {useSelector} from "react-redux";
 import {getIsAuthenticatedSelector} from "@/state/user/selector";
+import {colors} from "@/theme/colors";
 
 const config = {
   apiKey: ALCHEMY_API_KEY,
@@ -25,8 +26,10 @@ const DepositHistory = (props: any) => {
   const isAuthenticated = useSelector(getIsAuthenticatedSelector);
 
   useEffect(() => {
-    fetchData();
-  }, [account, isAuthenticated, JSON.stringify(poolDetail)]);
+    if(account && poolDetail?.id) {
+      fetchData();
+    }
+  }, [account, isAuthenticated, poolDetail?.id]);
 
   useEffect(() => {
     if(depositAddressInfo?.depositAddress) {
@@ -83,7 +86,7 @@ const DepositHistory = (props: any) => {
                   title="explorer"
                   href={`${ETHERSCAN_URL}/tx/${row?.hash}`}
                   target="_blank"
-                  style={{textDecoration: 'underline', color: 'rgb(177, 227, 255)'}}
+                  style={{textDecoration: 'underline', color: colors.bluePrimary}}
                 >
                 {formatLongAddress(row?.hash)}
                 </a>
@@ -94,7 +97,7 @@ const DepositHistory = (props: any) => {
       },
       {
         id: 'amount_in',
-        label: 'Amount In',
+        label: 'Amount',
         labelConfig: {
           fontSize: '12px',
           fontWeight: '500',

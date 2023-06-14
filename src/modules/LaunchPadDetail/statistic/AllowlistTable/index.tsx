@@ -308,7 +308,7 @@ const AllowlistTable = ({ poolDetail, isFull = true, handleViewMore }: any) => {
           zIndex: 9999999,
         },
         render: () => {
-          return <ContributeHistory onClose={close} />;
+          return <ContributeHistory onClose={close} poolDetail={poolDetail} />;
         },
       }),
     );
