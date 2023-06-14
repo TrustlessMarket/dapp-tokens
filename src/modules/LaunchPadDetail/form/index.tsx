@@ -59,7 +59,7 @@ import React, {useCallback, useContext, useEffect, useImperativeHandle, useMemo,
 import {Field, Form, useForm, useFormState} from 'react-final-form';
 import toast from 'react-hot-toast';
 import {BiBell} from 'react-icons/bi';
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import Web3 from 'web3';
 import styles from './styles.module.scss';
 import useIsAbleEnd from '@/hooks/contract-operations/launchpad/useIsAbleEnd';
@@ -72,6 +72,7 @@ import tokenIcons from '@/constants/tokenIcons';
 import DepositEth from "@/modules/LaunchPadDetail/depositEth";
 import {CDN_URL} from "@/configs";
 import ContributeForm from "@/modules/LaunchPadDetail/contributeForm";
+import {getIsAuthenticatedSelector} from "@/state/user/selector";
 
 const CONTRIBUTION_METHODS = [
   {
@@ -160,9 +161,10 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const { call: approveToken } = useApproveERC20Token();
   const [liquidityBalance, setLiquidityBalance] = useState<any>('0');
   const { juiceBalance, isLoadedAssets } = useContext(AssetsContext);
+  const isAuthenticated = useSelector(getIsAuthenticatedSelector);
   const dispatch = useDispatch();
 
-  const { account, isActive } = useWeb3React();
+  const { account } = useWeb3React();
   const needReload = useAppSelector(selectPnftExchange).needReload;
   const isLaunchpadCreator = compareString(poolDetail?.creatorAddress, account);
   const trustChain = isConnectedTrustChain();
@@ -175,7 +177,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     let result = false;
     try {
       result =
-        isActive &&
+        isAuthenticated &&
         values?.liquidityAmount &&
         !isNaN(Number(values?.liquidityAmount)) &&
         new BigNumber(amountLiquidityTokenApproved || 0).lt(
@@ -192,7 +194,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     }
 
     return result;
-  }, [isActive, amountLiquidityTokenApproved, values?.liquidityAmount]);
+  }, [isAuthenticated, amountLiquidityTokenApproved, values?.liquidityAmount]);
 
   const percent = useMemo(() => {
     if (poolDetail?.id) {
@@ -640,7 +642,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       )}
       {
         trustChain &&
-        isActive &&
+        isAuthenticated &&
         isStarting &&
         isLoadedAssets &&
         new BigNumber(juiceBalance || 0).lte(0) && (
@@ -670,7 +672,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         )}
       {
         trustChain &&
-        isActive &&
+        isAuthenticated &&
         isStarting &&
         liquidityToken &&
         BRIDGE_SUPPORT_TOKEN.includes(liquidityToken?.symbol) &&
@@ -832,7 +834,8 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
   const refForm = useRef<any>();
   const [submitting, setSubmitting] = useState(false);
   const dispatch = useAppDispatch();
-  const { account, isActive } = useWeb3React();
+  const isAuthenticated = useSelector(getIsAuthenticatedSelector);
+  const { account } = useWeb3React();
   const { run: depositLaunchpad } = useContractOperation({
     operation: useDepositPool,
   });
@@ -880,7 +883,7 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
     if (![LAUNCHPAD_STATUS.Draft].includes(poolDetail?.state)) {
       fetchData();
     }
-  }, [account, isActive, JSON.stringify(poolDetail)]);
+  }, [account, isAuthenticated, JSON.stringify(poolDetail)]);
 
   const fetchData = async () => {
     try {
