@@ -1009,8 +1009,6 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
   };
 
   const handleDeposit = async (values: any) => {
-    const { baseAmount } = values;
-
     try {
       setSubmitting(true);
       dispatch(
@@ -1019,18 +1017,6 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
           id: transactionType.depositLaunchpad,
         }),
       );
-
-      const data = {
-        amount: baseAmount,
-        launchpadAddress: poolDetail?.launchpad,
-        boostRatio: '0',
-        signature: '',
-      };
-
-      if (boostInfo) {
-        data.boostRatio = boostInfo.boostSign;
-        data.signature = boostInfo.adminSignature;
-      }
 
       let response;
       if (canClaim) {
@@ -1050,6 +1036,19 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
           launchpadAddress: poolDetail?.launchpad,
         });
       } else {
+        const { baseAmount } = values;
+        const data = {
+          amount: baseAmount,
+          launchpadAddress: poolDetail?.launchpad,
+          boostRatio: '0',
+          signature: '',
+          onBehalf: account
+        };
+
+        if (boostInfo) {
+          data.boostRatio = boostInfo.boostSign;
+          data.signature = boostInfo.adminSignature;
+        }
         response = await depositLaunchpad(data);
       }
 

@@ -261,7 +261,7 @@ export const StyledLaunchpadManageHeader = styled(Flex)`
 
 export const StyledLaunchpadFormStep1 = styled(Flex)`
   border: 1px solid #353945;
-  gap: 24px;
+  /* gap: 24px; */
   margin-top: ${px2rem(32)};
   .token-info {
     display: flex;
