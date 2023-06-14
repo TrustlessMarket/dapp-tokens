@@ -31,7 +31,7 @@ import useContractOperation from '@/hooks/contract-operations/useContractOperati
 import {ILaunchpad} from '@/interfaces/launchpad';
 import {IToken} from '@/interfaces/token';
 import {TransactionStatus} from '@/interfaces/walletTransaction';
-import {LAUNCHPAD_STATUS, useLaunchPadStatus,} from '@/modules/Launchpad/Launchpad.Status';
+import {LAUNCHPAD_STATUS,} from '@/modules/Launchpad/Launchpad.Status';
 import {getLaunchpadDepositAddress, getLaunchpadUserDepositInfo, getUserBoost} from '@/services/launchpad';
 import {logErrorToServer} from '@/services/swap';
 import {useAppDispatch, useAppSelector} from '@/state/hooks';
@@ -42,7 +42,6 @@ import {
   selectPnftExchange,
   updateCurrentTransaction,
 } from '@/state/pnftExchange';
-import {getIsAuthenticatedSelector} from '@/state/user/selector';
 import {colors} from '@/theme/colors';
 import {abbreviateNumber, compareString, formatCurrency, getTokenIconUrl, isConnectedTrustChain} from '@/utils';
 import {composeValidators, required} from '@/utils/formValidate';
@@ -60,7 +59,7 @@ import React, {useCallback, useContext, useEffect, useImperativeHandle, useMemo,
 import {Field, Form, useForm, useFormState} from 'react-final-form';
 import toast from 'react-hot-toast';
 import {BiBell} from 'react-icons/bi';
-import {useDispatch, useSelector} from 'react-redux';
+import {useDispatch} from 'react-redux';
 import Web3 from 'web3';
 import styles from './styles.module.scss';
 import useIsAbleEnd from '@/hooks/contract-operations/launchpad/useIsAbleEnd';
@@ -161,10 +160,9 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const { call: approveToken } = useApproveERC20Token();
   const [liquidityBalance, setLiquidityBalance] = useState<any>('0');
   const { juiceBalance, isLoadedAssets } = useContext(AssetsContext);
-  const isAuthenticated = useSelector(getIsAuthenticatedSelector);
   const dispatch = useDispatch();
 
-  const { account } = useWeb3React();
+  const { account, isActive } = useWeb3React();
   const needReload = useAppSelector(selectPnftExchange).needReload;
   const isLaunchpadCreator = compareString(poolDetail?.creatorAddress, account);
   const trustChain = isConnectedTrustChain();
@@ -177,7 +175,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     let result = false;
     try {
       result =
-        isAuthenticated &&
+        isActive &&
         values?.liquidityAmount &&
         !isNaN(Number(values?.liquidityAmount)) &&
         new BigNumber(amountLiquidityTokenApproved || 0).lt(
@@ -194,7 +192,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     }
 
     return result;
-  }, [isAuthenticated, amountLiquidityTokenApproved, values?.liquidityAmount]);
+  }, [isActive, amountLiquidityTokenApproved, values?.liquidityAmount]);
 
   const percent = useMemo(() => {
     if (poolDetail?.id) {
@@ -640,11 +638,13 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           />
         </Box>
       )}
-      {isAuthenticated &&
+      {
+        trustChain &&
+        isActive &&
         isStarting &&
         isLoadedAssets &&
         new BigNumber(juiceBalance || 0).lte(0) && (
-          <Flex gap={3} mt={2}>
+          <Flex gap={3} mt={4}>
             <Center
               w={'24px'}
               h={'24px'}
@@ -668,12 +668,14 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             </Text>
           </Flex>
         )}
-      {isAuthenticated &&
+      {
+        trustChain &&
+        isActive &&
         isStarting &&
         liquidityToken &&
         BRIDGE_SUPPORT_TOKEN.includes(liquidityToken?.symbol) &&
         new BigNumber(liquidityBalance || 0).lte(0) && (
-          <Flex gap={3} mt={2}>
+          <Flex gap={3} mt={4}>
             <Center
               w={'24px'}
               h={'24px'}
