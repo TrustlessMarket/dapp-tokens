@@ -17,9 +17,14 @@ import {ILaunchpad} from '@/interfaces/launchpad';
 import {IToken} from '@/interfaces/token';
 import {TransactionStatus} from '@/interfaces/walletTransaction';
 import {logErrorToServer} from '@/services/swap';
-import {useAppSelector} from '@/state/hooks';
+import {useAppDispatch, useAppSelector} from '@/state/hooks';
 import {closeModal, openModal} from '@/state/modal';
-import {selectPnftExchange, updateCurrentTransaction,} from '@/state/pnftExchange';
+import {
+  requestReload,
+  requestReloadRealtime,
+  selectPnftExchange,
+  updateCurrentTransaction,
+} from '@/state/pnftExchange';
 import {getIsAuthenticatedSelector} from '@/state/user/selector';
 import {colors} from '@/theme/colors';
 import {formatCurrency} from '@/utils';
@@ -37,6 +42,10 @@ import {useDispatch, useSelector} from 'react-redux';
 import Web3 from 'web3';
 import styles from './styles.module.scss';
 import tokenIcons from '@/constants/tokenIcons';
+import toast from "react-hot-toast";
+import {useWindowSize} from "@trustless-computer/dapp-core";
+import useContractOperation from "@/hooks/contract-operations/useContractOperation";
+import useDepositPool from "@/hooks/contract-operations/launchpad/useDeposit";
 
 export const MakeFormSwap = forwardRef((props, ref) => {
   const {
@@ -507,14 +516,131 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   );
 });
 
-const ContributeForm = ({ poolDetail, onContribute }: { poolDetail: ILaunchpad, onContribute: any }) => {
+const ContributeForm = ({ poolDetail, boostInfo }: { poolDetail: ILaunchpad, boostInfo: any }) => {
   const refForm = useRef<any>();
   const [submitting, setSubmitting] = useState(false);
+  const dispatch = useAppDispatch();
+  const { mobileScreen } = useWindowSize();
+  const { account, isActive } = useWeb3React();
+
+  const { run: depositLaunchpad } = useContractOperation({
+    operation: useDepositPool,
+  });
 
   const handleSubmit = async (values: any) => {
     console.log('handleSubmit', values);
 
-    onContribute && onContribute(values);
+    confirmDeposit(values);
+  };
+
+  const confirmDeposit = (values: any) => {
+    const { liquidityAmount, launchpadAmount, onConfirm } = values;
+    const id = 'modalDepositConfirm';
+    const close = () => dispatch(closeModal({id}));
+    dispatch(
+      openModal({
+        id,
+        theme: 'dark',
+        title: 'Confirm deposit',
+        className: styles.modalContent,
+        modalProps: {
+          centered: true,
+          size: mobileScreen ? 'full' : 'xl',
+          zIndex: 9999999,
+        },
+        render: () => {
+          return (
+            <Box>
+              <HorizontalItem
+                label={
+                  <Text fontSize={'sm'} color={'#B1B5C3'}>
+                    Deposit amount
+                  </Text>
+                }
+                value={
+                  <Text fontSize={'sm'}>
+                    {formatCurrency(liquidityAmount, 6)}{' '}
+                    {poolDetail?.liquidityToken?.symbol}
+                  </Text>
+                }
+              />
+              <HorizontalItem
+                label={
+                  <Text fontSize={'sm'} color={'#B1B5C3'}>
+                    Estimate receive amount
+                  </Text>
+                }
+                value={
+                  <Text fontSize={'sm'}>
+                    {formatCurrency(launchpadAmount, 6)}{' '}
+                    {poolDetail?.launchpadToken?.symbol}
+                  </Text>
+                }
+              />
+              <FiledButton
+                loadingText="Processing"
+                btnSize={'h'}
+                onClick={() => {
+                  close();
+                  handleDeposit(values);
+                }}
+                mt={4}
+              >
+                Confirm
+              </FiledButton>
+            </Box>
+          );
+        },
+      }),
+    );
+  };
+
+  const handleDeposit = async (values: any) => {
+    try {
+      setSubmitting(true);
+      dispatch(
+        updateCurrentTransaction({
+          status: TransactionStatus.info,
+          id: transactionType.depositLaunchpad,
+        }),
+      );
+
+      let response;
+      const { liquidityAmount } = values;
+      const data = {
+        amount: liquidityAmount,
+        launchpadAddress: poolDetail?.launchpad,
+        boostRatio: '0',
+        signature: '',
+        onBehalf: account
+      };
+
+      if (boostInfo) {
+        data.boostRatio = boostInfo.boostSign;
+        data.signature = boostInfo.adminSignature;
+      }
+      response = await depositLaunchpad(data);
+
+      toast.success('Transaction has been created. Please wait for few minutes.');
+      refForm.current?.reset();
+      dispatch(requestReload());
+      dispatch(requestReloadRealtime());
+    } catch (err: any) {
+      toastError(showError, err, { address: account });
+      logErrorToServer({
+        type: 'error',
+        address: account,
+        error: JSON.stringify(err),
+        message: err?.message,
+      });
+      // showError({
+      //   message:
+      //     (err as Error).message || 'Something went wrong. Please try again later.',
+      // });
+    } finally {
+      setSubmitting(false);
+      dispatch(updateCurrentTransaction(null));
+    }
   };
 
   return (

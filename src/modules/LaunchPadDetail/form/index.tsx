@@ -1051,7 +1051,7 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
           zIndex: 9999999,
         },
         render: () => {
-          return <ContributeForm poolDetail={poolDetail} onContribute={confirmDeposit}/>;
+          return <ContributeForm poolDetail={poolDetail} boostInfo={boostInfo}/>;
         },
       }),
     );
