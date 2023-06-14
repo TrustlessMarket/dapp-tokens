@@ -152,3 +152,11 @@ export const getVoteResultLaunchpad = async (params: { pool_address?: any }) => 
     error: 'getVoteResultLaunchpad fail',
   });
 };
+
+export const getLaunchpadDepositAddress = async (params: any ) => {
+  const qs = '?' + queryString.stringify(params);
+  return swrFetcher(`${API_EXCHANGE_URL}${API_PATH}/deposit-address${qs}`, {
+    method: 'GET',
+    error: 'getLaunchpadDepositAddress fail',
+  });
+};
