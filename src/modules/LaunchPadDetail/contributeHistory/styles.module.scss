@@ -31,19 +31,21 @@
         }
       }
       .chakra-tabs__tablist {
-        border: 1px solid #898989;
+        border: 1px solid #ECECEC;
         border-radius: 100px;
         padding: 6px;
+        background: #FAFAFA;
         button {
-          font-size: 20px;
+          font-size: 16px;
+          font-width: 500;
         }
       }
       .chakra-tabs__tab {
-        color: rgba(0, 0, 0, 0.3);
+        color: #000000;
         border-radius: 100px;
         height: 42px;
         &[aria-selected='true'] {
-          background: #5B5B5B;
+          background: #000000;
           color: #FFFFFF;
         }
       }

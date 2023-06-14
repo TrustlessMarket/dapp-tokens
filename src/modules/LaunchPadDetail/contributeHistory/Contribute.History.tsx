@@ -9,6 +9,29 @@ import {useWeb3React} from "@web3-react/core";
 import {getLaunchpadUserResultDetail} from "@/services/launchpad";
 import {colors} from "@/theme/colors";
 
+interface LabelStatusMap {
+  [name: string]: any;
+}
+
+const CONTRIBUTE_STATUS: LabelStatusMap = {
+  pending: {
+    label: 'Pending',
+    color: '#FFE899',
+  },
+  processing: {
+    label: 'Processing',
+    color: 'rgba(51, 133, 255, 1)',
+  },
+  done: {
+    label: 'Success',
+    color: 'rgba(4, 197, 127, 1)',
+  },
+  failed: {
+    label: 'Failed',
+    color: 'rgba(255, 71, 71, 1)',
+  },
+};
+
 const ContributeHistory = (props: any) => {
   const { poolDetail } = props;
   const [list, setList] = useState<any[]>([]);
@@ -91,7 +114,7 @@ const ContributeHistory = (props: any) => {
           borderBottom: 'none',
         },
         render(row: any) {
-          return <Text color={"#000000"}>{row?.createdAt ? moment(row.createdAt).format('lll') : '-'}</Text>;
+          return <Text color={"#000000"}>{row?.timestamp ? moment(row.timestamp).format('lll') : '-'}</Text>;
         },
       },
       {
@@ -106,11 +129,11 @@ const ContributeHistory = (props: any) => {
           borderBottom: 'none',
         },
         render(row: any) {
-          return <Text color={row?.status === 'pending' ? "#FFE899" : "rgb(0, 170, 108)"}>
+          const status = CONTRIBUTE_STATUS[row?.status];
+
+          return <Text color={status.color}>
             {
-              row?.status === 'pending' ?
-              'Process' :
-              'Success'
+              status.label
             }
           </Text>;
         },
