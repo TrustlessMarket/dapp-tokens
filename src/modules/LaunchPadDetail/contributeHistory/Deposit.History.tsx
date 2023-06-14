@@ -24,6 +24,7 @@ const DepositHistory = (props: any) => {
   const [depositAddressInfo, setDepositAddressInfo] = useState<any>();
   const alchemy = new Alchemy(config);
   const isAuthenticated = useSelector(getIsAuthenticatedSelector);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if(account && poolDetail?.id) {
@@ -61,7 +62,11 @@ const DepositHistory = (props: any) => {
         category: [AssetTransfersCategory.EXTERNAL, AssetTransfersCategory.INTERNAL],
       });
       setList(data?.transfers || []);
-    } catch (error) {}
+    } catch (error) {
+
+    } finally {
+      setLoading(false);
+    }
   };
 
   const columns: ColumnProp[] = useMemo(
@@ -133,7 +138,7 @@ const DepositHistory = (props: any) => {
   );
 
   return (
-    <ListTable data={list} columns={columns} />
+    <ListTable data={list} columns={columns} initialLoading={loading}/>
   );
 };
 
