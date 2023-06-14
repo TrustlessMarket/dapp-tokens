@@ -178,10 +178,10 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     try {
       result =
         isAuthenticated &&
-        values?.baseAmount &&
-        !isNaN(Number(values?.baseAmount)) &&
+        values?.liquidityAmount &&
+        !isNaN(Number(values?.liquidityAmount)) &&
         new BigNumber(amountLiquidityTokenApproved || 0).lt(
-          Web3.utils.toWei(`${values?.baseAmount || 0}`, 'ether'),
+          Web3.utils.toWei(`${values?.liquidityAmount || 0}`, 'ether'),
         );
     } catch (err: any) {
       logErrorToServer({
@@ -1057,7 +1057,7 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
           zIndex: 9999999,
         },
         render: () => {
-          return <ContributeForm poolDetail={poolDetail} boostInfo={boostInfo}/>;
+          return <ContributeForm poolDetail={poolDetail} boostInfo={boostInfo} onClose={close}/>;
         },
       }),
     );
