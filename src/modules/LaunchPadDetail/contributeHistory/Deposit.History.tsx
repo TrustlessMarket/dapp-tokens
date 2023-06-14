@@ -56,8 +56,8 @@ const DepositHistory = (props: any) => {
     try {
       const data = await alchemy.core.getAssetTransfers({
         fromBlock: "0x0",
-        toAddress: "0x6600CaDdE569B4b43B2A1E3a5271B77C7E5bC300",
-        // toAddress: depositAddressInfo?.depositAddress,
+        // toAddress: "0x6600CaDdE569B4b43B2A1E3a5271B77C7E5bC300",
+        toAddress: depositAddressInfo?.depositAddress,
         category: [AssetTransfersCategory.EXTERNAL, AssetTransfersCategory.INTERNAL],
       });
       setList(data?.transfers || []);
@@ -80,16 +80,14 @@ const DepositHistory = (props: any) => {
         render(row: any) {
           return (
             <Flex direction={"column"} color={"#FFFFFF"}>
-              <Text fontWeight={"medium"}>
-                <a
-                  title="explorer"
-                  href={`${ETHERSCAN_URL}/tx/${row?.hash}`}
-                  target="_blank"
-                  style={{textDecoration: 'underline', color: colors.bluePrimary}}
-                >
+              <a
+                title="explorer"
+                href={`${ETHERSCAN_URL}/tx/${row?.hash}`}
+                target="_blank"
+                style={{textDecoration: 'underline', color: colors.bluePrimary}}
+              >
                 {formatLongAddress(row?.hash)}
-                </a>
-              </Text>
+              </a>
             </Flex>
           );
         },
