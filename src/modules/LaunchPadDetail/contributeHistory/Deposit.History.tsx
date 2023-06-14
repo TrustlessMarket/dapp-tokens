@@ -78,7 +78,6 @@ const DepositHistory = (props: any) => {
           borderBottom: 'none',
         },
         render(row: any) {
-          console.log('row', row);
           return (
             <Flex direction={"column"} color={"#FFFFFF"}>
               <Text fontWeight={"medium"}>
@@ -125,7 +124,7 @@ const DepositHistory = (props: any) => {
         config: {
           borderBottom: 'none',
         },
-        render(row: any) {
+        render() {
           return <Text color={"rgb(0, 170, 108)"}>
             Success
           </Text>;
