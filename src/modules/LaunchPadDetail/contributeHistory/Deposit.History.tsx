@@ -6,9 +6,8 @@ import {Flex, Text} from '@chakra-ui/react';
 import {useEffect, useMemo, useState} from 'react';
 import {useWeb3React} from "@web3-react/core";
 
-import {Alchemy, Network, AssetTransfersCategory} from "alchemy-sdk";
+import {Alchemy, AssetTransfersCategory, Network} from "alchemy-sdk";
 import {getLaunchpadDepositAddress} from "@/services/launchpad";
-import {LAUNCHPAD_STATUS} from "@/modules/Launchpad/Launchpad.Status";
 import {useSelector} from "react-redux";
 import {getIsAuthenticatedSelector} from "@/state/user/selector";
 
@@ -26,9 +25,7 @@ const DepositHistory = (props: any) => {
   const isAuthenticated = useSelector(getIsAuthenticatedSelector);
 
   useEffect(() => {
-    if (![LAUNCHPAD_STATUS.Draft].includes(poolDetail?.state)) {
-      fetchData();
-    }
+    fetchData();
   }, [account, isAuthenticated, JSON.stringify(poolDetail)]);
 
   useEffect(() => {
@@ -112,6 +109,23 @@ const DepositHistory = (props: any) => {
               {formatCurrency(row?.value)} {row?.asset}
             </Text>
           );
+        },
+      },
+      {
+        id: 'status',
+        label: 'Status',
+        labelConfig: {
+          fontSize: '12px',
+          fontWeight: '500',
+          color: '#B1B5C3',
+        },
+        config: {
+          borderBottom: 'none',
+        },
+        render(row: any) {
+          return <Text color={"rgb(0, 170, 108)"}>
+            Success
+          </Text>;
         },
       },
     ],
