@@ -13,7 +13,6 @@ import {toastError} from '@/constants/error';
 import useApproveERC20Token from '@/hooks/contract-operations/token/useApproveERC20Token';
 import useBalanceERC20Token from '@/hooks/contract-operations/token/useBalanceERC20Token';
 import useIsApproveERC20Token from '@/hooks/contract-operations/token/useIsApproveERC20Token';
-import {ILaunchpad} from '@/interfaces/launchpad';
 import {IToken} from '@/interfaces/token';
 import {TransactionStatus} from '@/interfaces/walletTransaction';
 import {logErrorToServer} from '@/services/swap';
@@ -76,10 +75,10 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     try {
       result =
         isAuthenticated &&
-        values?.baseAmount &&
-        !isNaN(Number(values?.baseAmount)) &&
+        values?.liquidityAmount &&
+        !isNaN(Number(values?.liquidityAmount)) &&
         new BigNumber(amountLiquidityTokenApproved || 0).lt(
-          Web3.utils.toWei(`${values?.baseAmount || 0}`, 'ether'),
+          Web3.utils.toWei(`${values?.liquidityAmount || 0}`, 'ether'),
         );
     } catch (err: any) {
       logErrorToServer({
@@ -93,17 +92,6 @@ export const MakeFormSwap = forwardRef((props, ref) => {
 
     return result;
   }, [isAuthenticated, amountLiquidityTokenApproved, values?.liquidityAmount]);
-
-  const percent = useMemo(() => {
-    if (poolDetail?.id) {
-      return new BigNumber(poolDetail?.totalValue)
-        .div(poolDetail?.goalBalance)
-        .multipliedBy(100)
-        .toNumber();
-    }
-
-    return 0;
-  }, [poolDetail?.id, needReload]);
 
   const onBaseAmountChange = useCallback(
     debounce((p) => handleBaseAmountChange(p), 1000),
@@ -516,7 +504,8 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   );
 });
 
-const ContributeForm = ({ poolDetail, boostInfo }: { poolDetail: ILaunchpad, boostInfo: any }) => {
+const ContributeForm = (props: any) => {
+  const { poolDetail, boostInfo, onClose } = props;
   const refForm = useRef<any>();
   const [submitting, setSubmitting] = useState(false);
   const dispatch = useAppDispatch();
@@ -624,6 +613,7 @@ const ContributeForm = ({ poolDetail, boostInfo }: { poolDetail: ILaunchpad, boo
       refForm.current?.reset();
       dispatch(requestReload());
       dispatch(requestReloadRealtime());
+      onClose && onClose();
     } catch (err: any) {
       toastError(showError, err, { address: account });
       logErrorToServer({

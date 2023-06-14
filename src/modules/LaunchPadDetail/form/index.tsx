@@ -44,7 +44,7 @@ import {
 } from '@/state/pnftExchange';
 import {getIsAuthenticatedSelector} from '@/state/user/selector';
 import {colors} from '@/theme/colors';
-import {abbreviateNumber, compareString, formatCurrency, getTokenIconUrl} from '@/utils';
+import {abbreviateNumber, compareString, formatCurrency, getTokenIconUrl, isConnectedTrustChain} from '@/utils';
 import {composeValidators, required} from '@/utils/formValidate';
 import px2rem from '@/utils/px2rem';
 import {showError} from '@/utils/toast';
@@ -163,12 +163,11 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const { juiceBalance, isLoadedAssets } = useContext(AssetsContext);
   const isAuthenticated = useSelector(getIsAuthenticatedSelector);
   const dispatch = useDispatch();
-  const { mobileScreen } = useWindowSize();
 
   const { account } = useWeb3React();
   const needReload = useAppSelector(selectPnftExchange).needReload;
   const isLaunchpadCreator = compareString(poolDetail?.creatorAddress, account);
-  const [status] = useLaunchPadStatus({ row: poolDetail });
+  const trustChain = isConnectedTrustChain();
 
   const { values } = useFormState();
   const { change, restart } = useForm();
@@ -179,10 +178,10 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     try {
       result =
         isAuthenticated &&
-        values?.baseAmount &&
-        !isNaN(Number(values?.baseAmount)) &&
+        values?.liquidityAmount &&
+        !isNaN(Number(values?.liquidityAmount)) &&
         new BigNumber(amountLiquidityTokenApproved || 0).lt(
-          Web3.utils.toWei(`${values?.baseAmount || 0}`, 'ether'),
+          Web3.utils.toWei(`${values?.liquidityAmount || 0}`, 'ether'),
         );
     } catch (err: any) {
       logErrorToServer({
@@ -774,7 +773,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         )}
         <SocialToken socials={poolDetail?.launchpadToken?.social} />
       </Flex>
-      {[LAUNCHPAD_STATUS.Pending].includes(status.key) ? (
+      {[LAUNCHPAD_STATUS.Pending].includes(poolDetail?.state) ? (
         <Text
           mt={6}
           fontSize={px2rem(16)}
@@ -788,7 +787,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           This project requires community votes to initiate crowdfunding. Please
           prepare your TM token to participate in the voting process.
         </Text>
-      ) : [LAUNCHPAD_STATUS.Voting].includes(status.key) ? (
+      ) : [LAUNCHPAD_STATUS.Voting].includes(poolDetail?.state) ? (
         <Text
           mt={6}
           fontSize={px2rem(16)}
@@ -801,7 +800,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         >
           If you enjoy this project, please show your support by voting for it.
         </Text>
-      ) : [LAUNCHPAD_STATUS.Launching].includes(status.key) ? (
+      ) : [LAUNCHPAD_STATUS.Launching].includes(poolDetail?.state) ? (
         <Text
           mt={6}
           fontSize={px2rem(16)}
@@ -852,7 +851,6 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
   const { call: isAbleCancel } = useIsAbleCancel();
 
   const { mobileScreen } = useWindowSize();
-  const [status] = useLaunchPadStatus({ row: poolDetail });
   const [canClaim, setCanClaim] = useState(false);
   const [canEnd, setCanEnd] = useState(false);
   const [canClose, setCanClose] = useState(false);
@@ -874,10 +872,10 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
   // console.log('=====');
   const isLaunchpadCreator = compareString(poolDetail?.creatorAddress, account);
 
-  const isStarting = [LAUNCHPAD_STATUS.Launching].includes(status.key);
+  const isStarting = [LAUNCHPAD_STATUS.Launching].includes(poolDetail?.state);
 
   useEffect(() => {
-    if (![LAUNCHPAD_STATUS.Draft].includes(status.key)) {
+    if (![LAUNCHPAD_STATUS.Draft].includes(poolDetail?.state)) {
       fetchData();
     }
   }, [account, isActive, JSON.stringify(poolDetail)]);
@@ -1059,7 +1057,7 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
           zIndex: 9999999,
         },
         render: () => {
-          return <ContributeForm poolDetail={poolDetail} boostInfo={boostInfo}/>;
+          return <ContributeForm poolDetail={poolDetail} boostInfo={boostInfo} onClose={close}/>;
         },
       }),
     );
