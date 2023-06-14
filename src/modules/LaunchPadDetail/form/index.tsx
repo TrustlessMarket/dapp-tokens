@@ -32,7 +32,7 @@ import {ILaunchpad} from '@/interfaces/launchpad';
 import {IToken} from '@/interfaces/token';
 import {TransactionStatus} from '@/interfaces/walletTransaction';
 import {LAUNCHPAD_STATUS, useLaunchPadStatus,} from '@/modules/Launchpad/Launchpad.Status';
-import {getLaunchpadUserDepositInfo, getUserBoost} from '@/services/launchpad';
+import {getLaunchpadDepositAddress, getLaunchpadUserDepositInfo, getUserBoost} from '@/services/launchpad';
 import {logErrorToServer} from '@/services/swap';
 import {useAppDispatch, useAppSelector} from '@/state/hooks';
 import {closeModal, openModal} from '@/state/modal';
@@ -860,6 +860,7 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
   const [canCancel, setCanCancel] = useState(false);
   const [userDeposit, setUserDeposit] = useState<any>();
   const [boostInfo, setBoostInfo] = useState<any>();
+  const [depositAddressInfo, setDepositAddressInfo] = useState<any>();
 
   // console.log('poolDetail', poolDetail);
   // console.log('canEnd', canEnd);
@@ -869,6 +870,7 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
   // console.log('canCancel', canCancel);
   // console.log('userDeposit', userDeposit);
   // console.log('boostInfo', boostInfo);
+  // console.log('depositAddressInfo', depositAddressInfo);
   // console.log('=====');
   const isLaunchpadCreator = compareString(poolDetail?.creatorAddress, account);
 
@@ -908,6 +910,11 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
           address: account,
           pool_address: poolDetail?.launchpad,
         }),
+        getLaunchpadDepositAddress({
+          network: 'ethereum',
+          address: account,
+          launchpad_id: poolDetail?.id,
+        }),
       ]);
       setCanEnd(response[0]);
       setCanClose(response[1]);
@@ -920,6 +927,7 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
       );
       setUserDeposit(response[5]);
       setBoostInfo(response[6]);
+      setDepositAddressInfo(response[7]);
     } catch (error) {
       console.log('Launchpad detail form fetchData', error);
     }
@@ -1030,7 +1038,7 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
           zIndex: 9999999,
         },
         render: () => {
-          return <DepositEth onClose={close} address={"0x7C34f2Ff7A33d94727D4b55e2Ef6932ac3f2E08f"}/>;
+          return <DepositEth onClose={close} address={depositAddressInfo?.depositAddress}/>;
         },
       }),
     );
