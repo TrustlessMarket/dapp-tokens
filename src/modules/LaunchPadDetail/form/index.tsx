@@ -32,7 +32,12 @@ import {ILaunchpad} from '@/interfaces/launchpad';
 import {IToken} from '@/interfaces/token';
 import {TransactionStatus} from '@/interfaces/walletTransaction';
 import {LAUNCHPAD_STATUS,} from '@/modules/Launchpad/Launchpad.Status';
-import {getLaunchpadDepositAddress, getUserBoost, getVoteResultLaunchpad} from '@/services/launchpad';
+import {
+  getDepositResultLaunchpad,
+  getLaunchpadDepositAddress,
+  getUserBoost,
+  getVoteResultLaunchpad
+} from '@/services/launchpad';
 import {logErrorToServer} from '@/services/swap';
 import {useAppDispatch, useAppSelector} from '@/state/hooks';
 import {closeModal, openModal} from '@/state/modal';
@@ -969,7 +974,8 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
         ableCancel,
         userBoost,
         depositAddress,
-        voteResults
+        voteResults,
+        depositResults,
       ] = await Promise.all([
         isAbleEnd({
           launchpad_address: poolDetail.launchpad,
@@ -1000,13 +1006,17 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
         getVoteResultLaunchpad({
           pool_address: poolDetail?.launchpad,
         }),
+        getDepositResultLaunchpad({
+          pool_address: poolDetail?.launchpad
+        }),
       ]);
+
       setCanEnd(
         ableEnd &&
         (
           isLaunchpadCreator ||
           voteResults?.voters?.some((voter: any) => compareString(voter?.voter, account)) ||
-          true
+          depositResults?.some((depositer: any) => compareString(depositer?.userAddress, account))
         )
       );
       setCanClose(ableClose);

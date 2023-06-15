@@ -108,7 +108,7 @@ export const createLaunchpad = async (data: {
   });
 };
 
-export const getLaunchpadDepositInfo = async (params: { pool_address?: any }) => {
+export const getDepositResultLaunchpad = async (params: { pool_address?: any }) => {
   const qs = '?' + queryString.stringify(params);
   return swrFetcher(`${API_EXCHANGE_URL}${API_PATH}/result${qs}`, {
     method: 'GET',
@@ -116,7 +116,7 @@ export const getLaunchpadDepositInfo = async (params: { pool_address?: any }) =>
   });
 };
 
-export const getLaunchpadUserDepositInfo = async (params: {
+export const getUserDepositInfoLaunchpad = async (params: {
   pool_address?: any;
   address?: any;
 }) => {
