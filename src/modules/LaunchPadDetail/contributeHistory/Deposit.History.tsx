@@ -62,7 +62,7 @@ const DepositHistory = (props: any) => {
         toAddress: depositAddressInfo?.depositAddress,
         category: [AssetTransfersCategory.EXTERNAL, AssetTransfersCategory.INTERNAL],
       });
-      setList(data?.transfers || []);
+      setList(data?.transfers?.reverse() || []);
     } catch (error) {
 
     } finally {
