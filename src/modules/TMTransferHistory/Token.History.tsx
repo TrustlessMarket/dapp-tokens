@@ -197,7 +197,13 @@ const TokenHistory = () => {
       }
       next={debounceLoadMore}
     >
-      <ListTable data={list} columns={columns} />
+      <ListTable
+        data={list}
+        columns={columns}
+        showEmpty={true}
+        hideIcon={true}
+        theme={'dark'}
+      />
     </InfiniteScroll>
   );
 };

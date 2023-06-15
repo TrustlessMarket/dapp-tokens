@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import styles from "@/modules/TMTransferHistory/styles.module.scss";
+import styles from "./styles.module.scss";
 import BodyContainer from "@/components/Swap/bodyContainer";
 import SectionContainer from "@/components/Swap/sectionContainer";
 import TokenHistory from "@/modules/SwapHistory/Token.History";
