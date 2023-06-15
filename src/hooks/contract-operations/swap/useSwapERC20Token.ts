@@ -1,20 +1,21 @@
 import UniswapV2RouterJson from '@/abis/UniswapV2Router.json';
 import { transactionType } from '@/components/Swap/alertInfoProcessing/types';
-import { TRANSFER_TX_SIZE, UNIV2_ROUTER_ADDRESS } from '@/configs';
+import { TC_WEB_URL, UNIV2_ROUTER_ADDRESS } from '@/configs';
 import { ERROR_CODE } from '@/constants/error';
 import { CONTRACT_METHOD_IDS } from '@/constants/methodId';
 import { MaxUint256 } from '@/constants/url';
-import { AssetsContext } from '@/contexts/assets-context';
 import { TransactionEventType } from '@/enums/transaction';
 import useBitcoin from '@/hooks/useBitcoin';
+import useCheckTxsBitcoin from '@/hooks/useCheckTxsBitcoin';
 import { ContractOperationHook, DAppType } from '@/interfaces/contract-operation';
 import { TransactionStatus } from '@/interfaces/walletTransaction';
 import { logErrorToServer, scanTrx } from '@/services/swap';
 import store from '@/state';
 import { updateCurrentTransaction } from '@/state/pnftExchange';
+import { colors } from '@/theme/colors';
 import { compareString, getContract, getDefaultGasPrice } from '@/utils';
 import { useWeb3React } from '@web3-react/core';
-import { useCallback, useContext } from 'react';
+import { useCallback } from 'react';
 import Web3 from 'web3';
 
 export interface ISwapERC20TokenParams {
@@ -29,8 +30,8 @@ const useSwapERC20Token: ContractOperationHook<
   boolean
 > = () => {
   const { account, provider } = useWeb3React();
-  const { btcBalance, feeRate } = useContext(AssetsContext);
   const { getUnInscribedTransactionDetailByAddress, getTCTxByHash } = useBitcoin();
+  const { call: checkTxsBitcoin } = useCheckTxsBitcoin();
 
   const call = useCallback(
     async (params: ISwapERC20TokenParams): Promise<boolean> => {
@@ -42,10 +43,6 @@ const useSwapERC20Token: ContractOperationHook<
           provider,
           account,
         );
-        console.log({
-          tcTxSizeByte: TRANSFER_TX_SIZE,
-          feeRatePerByte: feeRate.fastestFee,
-        });
 
         let isPendingTx = false;
 
@@ -55,8 +52,6 @@ const useSwapERC20Token: ContractOperationHook<
 
         for await (const unInscribedTxID of unInscribedTxIDs) {
           const _getTxDetail = await getTCTxByHash(unInscribedTxID.Hash);
-          console.log('_getTxDetail', _getTxDetail);
-
           const _inputStart = _getTxDetail.input.slice(0, 10);
 
           if (compareString(CONTRACT_METHOD_IDS.SWAP, _inputStart)) {
@@ -91,27 +86,31 @@ const useSwapERC20Token: ContractOperationHook<
           message: `gasLimit: '${gasLimit}'`,
         });
 
-        // TC_SDK.signTransaction({
-        //   method: `${DAppType.ERC20} - ${TransactionEventType.CREATE}`,
-        //   hash: transaction.hash,
-        //   dappURL: window.location.origin,
-        //   isRedirect: true,
-        //   target: '_blank',
-        //   isMainnet: isProduction(),
-        // });
-
         store.dispatch(
           updateCurrentTransaction({
             status: TransactionStatus.pending,
             id: transactionType.createPoolApprove,
             hash: transaction.hash,
             infoTexts: {
-              pending: `Transaction confirmed. Please wait for it to be processed on the Bitcoin. Note that it may take up to 10 minutes for a block confirmation on the Bitcoin blockchain.`,
+              pending: `Please go to the trustless wallet and click on <a style="color: ${colors.bluePrimary}" href="${TC_WEB_URL}" target="_blank" >"Process Transaction"</a> for Bitcoin to complete this process.`,
             },
           }),
         );
 
-        // await transaction.wait();
+        checkTxsBitcoin({
+          txHash: transaction.hash,
+          fnAction: () =>
+            store.dispatch(
+              updateCurrentTransaction({
+                id: transactionType.createPoolApprove,
+                status: TransactionStatus.pending,
+                hash: transaction.hash,
+                infoTexts: {
+                  pending: `Transaction confirmed. Please wait for it to be processed on the Bitcoin. Note that it may take up to 10 minutes for a block confirmation on the Bitcoin blockchain.`,
+                },
+              }),
+            ),
+        });
 
         await scanTrx({
           tx_hash: transaction.hash,
@@ -122,7 +121,7 @@ const useSwapERC20Token: ContractOperationHook<
 
       return false;
     },
-    [account, provider, btcBalance, feeRate],
+    [account, provider],
   );
 
   return {
