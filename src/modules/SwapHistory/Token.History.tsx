@@ -196,7 +196,13 @@ const TokenHistory = () => {
   );
 
   return (
-    <ListTable data={[...listPending, ...list]} columns={columns} />
+    <ListTable
+      data={[...listPending, ...list]}
+      columns={columns}
+      showEmpty={true}
+      hideIcon={true}
+      theme={'dark'}
+    />
   );
 };
 

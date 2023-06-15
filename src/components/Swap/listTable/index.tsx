@@ -54,6 +54,8 @@ interface ListTableProps {
   initialLoading?: boolean;
   className?: any;
   showEmpty?: boolean;
+  hideIcon?: boolean;
+  theme?: 'light' | 'dark';
 }
 
 const ItemTable = ({
@@ -137,6 +139,8 @@ const ListTable: React.FC<ListTableProps> = ({
   onTdRow,
   className,
   showEmpty,
+  hideIcon,
+  theme = 'dark'
 }) => {
   // const { currentWallet } = useCurrentWallet();
   const [rows, setRows] = useState(data);
@@ -211,7 +215,7 @@ const ListTable: React.FC<ListTableProps> = ({
         <Tbody className={styles.item}>
           <Tr className="notOnTdRow">
             <Td colSpan={columns.length} textAlign="center">
-              <EmptyList labelText={emptyLabel} />
+              <EmptyList labelText={emptyLabel} hideIcon={hideIcon} theme={theme}/>
             </Td>
           </Tr>
         </Tbody>

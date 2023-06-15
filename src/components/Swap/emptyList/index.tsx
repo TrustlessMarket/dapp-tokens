@@ -3,6 +3,7 @@ import React from 'react';
 
 import { Center, Text } from '@chakra-ui/react';
 import { BsInbox } from 'react-icons/bs';
+import {colors} from "@/theme/colors";
 
 interface EmptyListProps {
   className?: string;
@@ -11,7 +12,7 @@ interface EmptyListProps {
   labelText?: React.ReactNode;
   type?: string;
   imageSize?: number;
-  dark?: boolean;
+  theme?: 'light' | 'dark';
   positive?: boolean;
   hideIcon?: boolean;
 }
@@ -22,6 +23,7 @@ const EmptyList = (props: EmptyListProps) => {
     labelText = 'No result found',
     imageSize = 80,
     // positive = false,
+    theme = 'dark'
   } = props;
 
   return (
@@ -34,7 +36,7 @@ const EmptyList = (props: EmptyListProps) => {
         //   alt={'icon'}
         // />
       )}
-      <Text fontSize="lg" color="text.secondary" fontWeight="semibold">
+      <Text fontSize="md" color={theme === 'dark' ? colors.white : colors.black} fontWeight="semibold">
         {labelText}
       </Text>
     </Center>
