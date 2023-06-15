@@ -178,6 +178,7 @@ const TokenListPaired = ({ data }: { data: IToken }) => {
         <Box>
           <Empty isTable={false} />
           <Text className="empty-pool">Empty pool</Text>
+          <Box mt={6} />
           <FiledButton
             onClick={() =>
               router.push(
