@@ -40,8 +40,6 @@ const useCreateLaunchpad: ContractOperationHook<
         liquidityBalance,
       } = params;
 
-      console.log('params', params);
-
       if (account && provider) {
         const contract = getContract(
           LAUNCHPAD_FACTORY_ADDRESS,
@@ -77,17 +75,6 @@ const useCreateLaunchpad: ContractOperationHook<
           error: JSON.stringify(transaction),
           message: "gasLimit: '150000'",
         });
-
-        // store.dispatch(
-        //   updateCurrentTransaction({
-        //     id: transactionType.createLaunchpad,
-        //     status: TransactionStatus.pending,
-        //     hash: transaction.hash,
-        //     infoTexts: {
-        //       pending: `Transaction confirmed. Please wait for it to be processed on the Bitcoin. Note that it may take up to 10 minutes for a block confirmation on the Bitcoin blockchain.`,
-        //     },
-        //   }),
-        // );
 
         return transaction;
       }
