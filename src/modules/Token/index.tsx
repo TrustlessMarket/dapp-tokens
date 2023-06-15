@@ -72,7 +72,6 @@ const TokenDetail = () => {
           chart_type: 'minute',
         }),
       ]);
-      console.log('resChart', resToken.length);
       if (resToken.length === 0) {
         throw 'Token not found';
       }

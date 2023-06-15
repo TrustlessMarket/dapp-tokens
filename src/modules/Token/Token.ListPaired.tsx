@@ -6,7 +6,7 @@ import { ROUTE_PATH } from '@/constants/route-path';
 import useGetReserves from '@/hooks/contract-operations/swap/useReserves';
 import useSupplyERC20Liquid from '@/hooks/contract-operations/token/useSupplyERC20Liquid';
 import { IToken } from '@/interfaces/token';
-import { getListPaired, getPairAPR } from '@/services/pool';
+import { getListPaired } from '@/services/pool';
 import { abbreviateNumber, formatCurrency } from '@/utils';
 import {
   Accordion,
@@ -39,8 +39,6 @@ const TokenPoolDetail = ({ paired }: { paired: any }) => {
     _reserve1: '0',
   });
 
-  const [apr, setAPR] = useState(0);
-
   const { call: getReserves } = useGetReserves();
   const { call: getSupply } = useSupplyERC20Liquid();
 
@@ -55,15 +53,12 @@ const TokenPoolDetail = ({ paired }: { paired: any }) => {
 
     try {
       const pairAddress = paired?.pair;
-      const [resReserves, resSupply, resAPR] = await Promise.allSettled([
+      const [resReserves, resSupply] = await Promise.allSettled([
         getReserves({
           address: pairAddress,
         }),
         getSupply({
           liquidAddress: pairAddress,
-        }),
-        getPairAPR({
-          pair: pairAddress,
         }),
       ]);
       if (resReserves.status === 'fulfilled') {
@@ -71,9 +66,6 @@ const TokenPoolDetail = ({ paired }: { paired: any }) => {
       }
       if (resSupply.status === 'fulfilled') {
         setSupply(resSupply.value);
-      }
-      if (resAPR.status === 'fulfilled') {
-        setAPR(resAPR.value);
       }
     } catch (error) {
       console.log('error', error);
@@ -109,7 +101,10 @@ const TokenPoolDetail = ({ paired }: { paired: any }) => {
             10,
           )}`}
         />
-        <HorizontalItem label={`APR:`} value={`${formatCurrency(apr, 2)}%`} />
+        <HorizontalItem
+          label={`APR:`}
+          value={`${formatCurrency(paired?.apr, 2)}%`}
+        />
         <HorizontalItem
           label="Pool created:"
           value={moment(paired.created_at).format('YYYY-MM-DD HH:mm')}
