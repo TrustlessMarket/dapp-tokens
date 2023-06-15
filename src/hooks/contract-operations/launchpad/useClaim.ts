@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import LaunchpadPoolJson from '@/abis/LaunchpadPool.json';
 import { transactionType } from '@/components/Swap/alertInfoProcessing/types';
-import { TC_WEB_URL } from '@/configs';
+import { WALLET_URL } from '@/configs';
 import { TransactionEventType } from '@/enums/transaction';
 import useCheckTxsBitcoin from '@/hooks/useCheckTxsBitcoin';
 import { ContractOperationHook, DAppType } from '@/interfaces/contract-operation';
@@ -54,7 +54,7 @@ const useClaimLaunchPad: ContractOperationHook<
             id: transactionType.depositLaunchpad,
             hash: transaction.hash,
             infoTexts: {
-              pending: `Please go to the trustless wallet and click on <a style="color: ${colors.bluePrimary}" href="${TC_WEB_URL}" target="_blank" >"Process Transaction"</a> for Bitcoin to complete this process.`,
+              pending: `Please go to the trustless wallet and click on <a style="color: ${colors.bluePrimary}" href="${WALLET_URL}" target="_blank" >"Process Transaction"</a> for Bitcoin to complete this process.`,
             },
           }),
         );
