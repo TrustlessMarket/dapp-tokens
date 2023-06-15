@@ -32,7 +32,7 @@ import {ILaunchpad} from '@/interfaces/launchpad';
 import {IToken} from '@/interfaces/token';
 import {TransactionStatus} from '@/interfaces/walletTransaction';
 import {LAUNCHPAD_STATUS,} from '@/modules/Launchpad/Launchpad.Status';
-import {getLaunchpadDepositAddress, getLaunchpadUserDepositInfo, getUserBoost} from '@/services/launchpad';
+import {getLaunchpadDepositAddress, getUserBoost, getVoteResultLaunchpad} from '@/services/launchpad';
 import {logErrorToServer} from '@/services/swap';
 import {useAppDispatch, useAppSelector} from '@/state/hooks';
 import {closeModal, openModal} from '@/state/modal';
@@ -928,24 +928,23 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
   const [canClose, setCanClose] = useState(false);
   const [canVoteRelease, setCanVoteRelease] = useState(false);
   const [canCancel, setCanCancel] = useState(false);
-  const [userDeposit, setUserDeposit] = useState<any>();
   const [boostInfo, setBoostInfo] = useState<any>();
   const [depositAddressInfo, setDepositAddressInfo] = useState<any>();
-
-  // console.log('poolDetail', poolDetail);
-  // console.log('canEnd', canEnd);
-  // console.log('canClaim', canClaim);
-  // console.log('canClose', canClose);
-  // console.log('canVoteRelease', canVoteRelease);
-  // console.log('canCancel', canCancel);
-  // console.log('userDeposit', userDeposit);
-  // console.log('boostInfo', boostInfo);
-  // console.log('depositAddressInfo', depositAddressInfo);
-  // console.log('=====');
   const isLaunchpadCreator = compareString(poolDetail?.creatorAddress, account);
 
   const isFunding = [LAUNCHPAD_STATUS.Launching].includes(poolDetail?.state);
   const isVoting = [LAUNCHPAD_STATUS.Voting].includes(poolDetail?.state);
+
+  console.log('poolDetail', poolDetail);
+  console.log('canEnd', canEnd);
+  console.log('canClaim', canClaim);
+  console.log('canClose', canClose);
+  console.log('canVoteRelease', canVoteRelease);
+  console.log('canCancel', canCancel);
+  console.log('boostInfo', boostInfo);
+  console.log('depositAddressInfo', depositAddressInfo);
+  console.log('isLaunchpadCreator', isLaunchpadCreator);
+  console.log('=====');
 
   const votingToken = {
     address: TM_ADDRESS,
@@ -962,7 +961,16 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
 
   const fetchData = async () => {
     try {
-      const response: any = await Promise.all([
+      const [
+        ableEnd,
+        ableClose,
+        ableRedeem,
+        ableVoteRelease,
+        ableCancel,
+        userBoost,
+        depositAddress,
+        voteResults
+      ] = await Promise.all([
         isAbleEnd({
           launchpad_address: poolDetail.launchpad,
         }),
@@ -980,10 +988,6 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
         isAbleCancel({
           launchpad_address: poolDetail.launchpad,
         }),
-        getLaunchpadUserDepositInfo({
-          pool_address: poolDetail?.launchpad,
-          address: account,
-        }),
         getUserBoost({
           address: account,
           pool_address: poolDetail?.launchpad,
@@ -993,19 +997,28 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
           address: account,
           launchpad_id: poolDetail?.id,
         }),
+        getVoteResultLaunchpad({
+          pool_address: poolDetail?.launchpad,
+        }),
       ]);
-      setCanEnd(response[0]);
-      setCanClose(response[1]);
-      setCanClaim(response[2]);
-      setCanVoteRelease(response[3]);
-      setCanCancel(
-        response[4] &&
-          compareString(poolDetail.creatorAddress, account) &&
-          [LAUNCHPAD_STATUS.Pending].includes(poolDetail?.state),
+      setCanEnd(
+        ableEnd &&
+        (
+          isLaunchpadCreator ||
+          voteResults?.voters?.some((voter: any) => compareString(voter?.voter, account)) ||
+          true
+        )
       );
-      setUserDeposit(response[5]);
-      setBoostInfo(response[6]);
-      setDepositAddressInfo(response[7]);
+      setCanClose(ableClose);
+      setCanClaim(ableRedeem);
+      setCanVoteRelease(ableVoteRelease);
+      setCanCancel(
+        ableCancel &&
+        isLaunchpadCreator &&
+        [LAUNCHPAD_STATUS.Pending].includes(poolDetail?.state),
+      );
+      setBoostInfo(userBoost);
+      setDepositAddressInfo(depositAddress);
     } catch (error) {
       console.log('Launchpad detail form fetchData', error);
     }
