@@ -76,7 +76,7 @@ const ProposalResult = ({title, totalVote, className, data}: any) => {
       </Flex>
       <Progress
         max={100}
-        value={(Number(data?.totalAmount) / totalVote) * 100}
+        value={(Number(data?.totalAmount || 0) / totalVote) * 100}
         h="20px"
         className={"progress-bar"}
         mt={4}
