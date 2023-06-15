@@ -2,7 +2,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // import { WALLET_URL } from '@/configs';
 import { TC_EXPLORER } from '@/configs';
-import useInterval from '@/hooks/useInterval';
 import {
   TransactionStatus,
   WalletTransactionData,
@@ -23,15 +22,8 @@ import {
   Flex,
   useDisclosure,
 } from '@chakra-ui/react';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import styled from 'styled-components';
-
-const StyledWarningNote = styled(AlertDescription)`
-  color: #bc1756;
-  font-size: 12px;
-  font-weight: 400;
-`;
 
 interface AlertInfoProcessProps {
   loading?: boolean;
@@ -57,35 +49,6 @@ const AlertInfoProcess: React.FC<AlertInfoProcessProps> = ({
   const { isOpen: isVisible, onClose } = useDisclosure({ defaultIsOpen: true });
   const dispatch = useDispatch();
   const [count, setCount] = useState(1);
-
-  // useInterval(
-  //   () => {
-  //     setCount((c) => c + 1);
-  //   },
-  //   // Delay in milliseconds or null to stop it
-  //   loading &&
-  //     Boolean(processInfo) &&
-  //     compareString(currentTransaction?.status, TransactionStatus.pending)
-  //     ? 1000
-  //     : null,
-  // );
-
-  // useEffect(() => {
-  //   if (!loading) {
-  //     setCount(1);
-  //   }
-  // }, [loading]);
-
-  // useEffect(() => {
-  //   getTransactionInfo();
-  // }, [JSON.stringify(currentTransaction)]);
-
-  // const getTransactionInfo = async () => {
-  //   try {
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
 
   const handleClose = () => {
     dispatch(updateCurrentTransaction(null));
@@ -136,9 +99,8 @@ const AlertInfoProcess: React.FC<AlertInfoProcessProps> = ({
           fontSize={processInfo?.size === 'sm' ? 'smaller' : 'sm'}
           lineHeight={processInfo?.size === 'sm' ? 'xs' : 'md'}
           color={theme === 'dark' ? colors.white : colors.black}
-        >
-          {_title}
-        </AlertTitle>
+          dangerouslySetInnerHTML={{ __html: _title }}
+        />
         {currentTransaction && currentTransaction.hash && (
           <AlertDescription
             color={theme === 'dark' ? colors.white : colors.black}
