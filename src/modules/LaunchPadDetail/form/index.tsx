@@ -721,7 +721,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         isVoteRelease) && (
         <>
           {
-            !trustChain && (
+            isAuthenticated && !trustChain && (
               <Flex
                 bg={"#FFFFFF"}
                 borderRadius={"8px"}
