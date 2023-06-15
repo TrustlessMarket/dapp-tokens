@@ -1,25 +1,18 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import Empty from '@/components/Empty';
-import { AutoSizer, List } from '@/components/ReactVirtualized';
+import {AutoSizer, List} from '@/components/ReactVirtualized';
 import SvgInset from '@/components/SvgInset';
-import { CDN_URL } from '@/configs';
+import {CDN_URL} from '@/configs';
 import Search from '@/modules/LaunchPadDetail/statistic/Search';
-import {
-  getLaunchpadDepositInfo,
-  getLaunchpadUserDepositInfo,
-} from '@/services/launchpad';
+import {getLaunchpadDepositInfo, getLaunchpadUserDepositInfo,} from '@/services/launchpad';
 import {useAppDispatch, useAppSelector} from '@/state/hooks';
-import { selectPnftExchange } from '@/state/pnftExchange';
-import {
-  abbreviateNumber,
-  compareString,
-  formatCurrency,
-  shortenAddress,
-} from '@/utils';
+import {selectPnftExchange} from '@/state/pnftExchange';
+import {abbreviateNumber, compareString, formatCurrency, shortenAddress,} from '@/utils';
 import px2rem from '@/utils/px2rem';
 import {
   Box,
+  Flex,
   Popover,
   PopoverArrow,
   PopoverBody,
@@ -28,16 +21,15 @@ import {
   Spinner,
   Text,
 } from '@chakra-ui/react';
-import { useWindowSize } from '@trustless-computer/dapp-core';
-import { useWeb3React } from '@web3-react/core';
-import cs from 'classnames';
+import {useWindowSize} from '@trustless-computer/dapp-core';
+import {useWeb3React} from '@web3-react/core';
+import cx from 'classnames';
 import Image from 'next/image';
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import toast from 'react-hot-toast';
-import Jazzicon, { jsNumberForAddress } from 'react-jazzicon';
+import Jazzicon, {jsNumberForAddress} from 'react-jazzicon';
 import styles from './styles.module.scss';
 import {closeModal, openModal} from "@/state/modal";
-import cx from "classnames";
 import ContributeHistory from "@/modules/LaunchPadDetail/contributeHistory";
 
 const AllowlistTable = ({ poolDetail, isFull = true, handleViewMore }: any) => {
@@ -46,7 +38,7 @@ const AllowlistTable = ({ poolDetail, isFull = true, handleViewMore }: any) => {
   const [rawDepositList, setRawDepositList] = useState<any[]>([]);
   const [scrollToIndex, setScrollToIndex] = useState<any>(undefined);
   const { mobileScreen, tabletScreen } = useWindowSize();
-  const [isLoadingDepositList, setIsLoadingDepositList] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
 
   const { account } = useWeb3React();
   const dispatch = useAppDispatch();
@@ -59,7 +51,7 @@ const AllowlistTable = ({ poolDetail, isFull = true, handleViewMore }: any) => {
 
   const fetchDepositInfo = async () => {
     try {
-      setIsLoadingDepositList(true);
+      setIsLoading(true);
       const [deposits, userDeposit] = await Promise.all([
         getLaunchpadDepositInfo({ pool_address: poolDetail?.launchpad }),
         getLaunchpadUserDepositInfo({
@@ -95,7 +87,7 @@ const AllowlistTable = ({ poolDetail, isFull = true, handleViewMore }: any) => {
     } catch (err: unknown) {
       console.log(err);
     } finally {
-      setIsLoadingDepositList(false);
+      setIsLoading(false);
     }
   };
 
@@ -114,14 +106,14 @@ const AllowlistTable = ({ poolDetail, isFull = true, handleViewMore }: any) => {
       <Box
         key={key}
         style={style}
-        className={cs(styles.dataItem, {
+        className={cx(styles.dataItem, {
           [`${styles.dataItem__currentUser}`]: item.isCurrentUser,
           [`${styles.dataItem__searchHighlight}`]: index === scrollToIndex,
         })}
         cursor={onShowContributeHistory && item.isCurrentUser ? 'pointer' : 'default'}
         onClick={() => onShowContributeHistory && item.isCurrentUser && onShowContributeHistory()}
       >
-        <div className={cs(styles.dataItemInner, item.isCurrentUser && styles.currentUser)}>
+        <div className={cx(styles.dataItemInner, item.isCurrentUser && styles.currentUser)}>
           <div className={styles.dataId}>{item?.index}</div>
           <div className={styles.dataUserInfo}>
             {item.avatar ? (
@@ -141,7 +133,7 @@ const AllowlistTable = ({ poolDetail, isFull = true, handleViewMore }: any) => {
 
             <Text
               as="span"
-              className={cs(
+              className={cx(
                 styles.userWallet,
                 item.isCurrentUser ? styles.userWallet__black : styles.userWallet__white,
               )}
@@ -159,7 +151,7 @@ const AllowlistTable = ({ poolDetail, isFull = true, handleViewMore }: any) => {
           <div className={styles.dataContribute}>
             <span className={styles.dataLabel}>Contribution</span>
             <span
-              className={cs(
+              className={cx(
                 styles.dataValue,
                 item.isCurrentUser ? styles.dataValue__black : styles.dataValue__white,
               )}
@@ -208,7 +200,7 @@ const AllowlistTable = ({ poolDetail, isFull = true, handleViewMore }: any) => {
                     poolDetail?.launchpadToken?.symbol
                   }`}{' '}
                   <span
-                    className={cs(
+                    className={cx(
                       styles.percentage,
                       item.isCurrentUser ? styles.dataValue__black : styles.dataValue__white,
                     )}
@@ -315,18 +307,22 @@ const AllowlistTable = ({ poolDetail, isFull = true, handleViewMore }: any) => {
   }
 
   return (
-    <div className={cs(styles.allowListTable)}>
+    <div className={cx(styles.allowListTable)}>
       <div className={styles.allowListTableWrapper}>
-        {isLoadingDepositList ? (
-          <div className={styles.loadingWrapper}>
-            <Spinner size={'xl'} />
-          </div>
+        {isLoading ? (
+          <Flex justifyContent={"center"} alignItems={"center"}>
+            <Spinner
+              speed="0.65s"
+              emptyColor="gray.200"
+              color="blue.500"
+            />
+          </Flex>
         ) : (
           <>
             {isFull ? (
               <>
                 <Search onSearch={onSearchAddress} />
-                <div className={cs(styles.dataListWrapper)}>
+                <div className={cx(styles.dataListWrapper)}>
                   {depositList.length === 0 && <Empty isTable={false} />}
                   {depositList.length > 0 && <DataTable />}
                 </div>
