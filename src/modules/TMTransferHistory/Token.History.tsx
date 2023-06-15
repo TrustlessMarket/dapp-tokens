@@ -3,13 +3,12 @@ import ListTable, {ColumnProp} from '@/components/Swap/listTable';
 import {CDN_URL, TC_EXPLORER} from '@/configs';
 import {getTMTransferHistory} from '@/services/swap';
 import {compareString, formatCurrency} from '@/utils';
-import {Flex, Text} from '@chakra-ui/react';
+import {Flex, Spinner, Text} from '@chakra-ui/react';
 import moment from 'moment';
-import {useEffect, useMemo, useState} from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 import {RxExternalLink} from 'react-icons/rx';
 import {useWeb3React} from "@web3-react/core";
 import {debounce} from "lodash";
-import Spinner from "react-bootstrap/Spinner";
 import InfiniteScroll from "react-infinite-scroll-component";
 import {colors} from "@/theme/colors";
 import styles from './styles.module.scss';
@@ -190,9 +189,13 @@ const TokenHistory = () => {
       hasMore={true}
       loader={
         isFetching && (
-          <div className="loading">
-            <Spinner animation="border" variant="primary" />
-          </div>
+          <Flex justifyContent={"center"} alignItems={"center"}>
+            <Spinner
+              speed="0.65s"
+              emptyColor="gray.200"
+              color="blue.500"
+            />
+          </Flex>
         )
       }
       next={debounceLoadMore}
