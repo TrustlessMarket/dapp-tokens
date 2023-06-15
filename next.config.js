@@ -28,7 +28,7 @@ const nextConfig = removeImports()({
       },
       {
         protocol: 'https',
-        hostname: '**.trustless.market',
+        hostname: '**.newbitcoindex.com',
       },
       {
         protocol: "https",
