@@ -539,7 +539,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   }
 
   if([LAUNCHPAD_STATUS.Voting, LAUNCHPAD_STATUS.NotPassed].includes(poolDetail?.state)) {
-    return (isEndLaunchpad || isVoteRelease) ? (
+    return ([LAUNCHPAD_STATUS.Voting].includes(poolDetail?.state) || isEndLaunchpad || isVoteRelease) ? (
       <form onSubmit={onSubmit} style={{ height: '100%'}}>
         <Box mb={12}>
           {renderActionButtons()}
@@ -830,96 +830,6 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         <Box mt={6}>
           {renderActionButtons()}
         </Box>
-      {/*{(
-        isFunding ||
-        isEndLaunchpad ||
-        isClaimLaunchpad ||
-        isCancelLaunchpad ||
-        isVoteRelease) && (
-        <>
-          {
-            isAuthenticated && !trustChain && (
-              <Flex
-                bg={"#FFFFFF"}
-                borderRadius={"8px"}
-                gap={2}
-                alignItems={"center"}
-                justifyContent={"center"}
-                p={2}
-                width={"80%"}
-                marginX={"auto"}
-              >
-                <IoWarningOutline color="#FF7E21" fontSize={"20px"}/>
-                <Text color={"#000000"}>You must switch to <Text as={"span"} color="#FF7E21" fontWeight={700}>Trustless Computer Network</Text> to do action.</Text>
-              </Flex>
-            )
-          }
-          <WrapperConnected
-            type={isRequireApprove ? 'button' : 'submit'}
-            className={styles.submitButton}
-          >
-            {isRequireApprove ? (
-              <FiledButton
-                isLoading={loading}
-                isDisabled={loading}
-                loadingText="Processing"
-                btnSize={'h'}
-                containerConfig={{ flex: 1, mt: 6 }}
-                onClick={onShowModalApprove}
-                processInfo={{
-                  id: transactionType.createPoolApprove,
-                }}
-              >
-                APPROVE USE OF {liquidityToken?.symbol}
-              </FiledButton>
-            ) : (
-              <FiledButton
-                isDisabled={submitting || btnDisabled}
-                isLoading={submitting}
-                type="submit"
-                btnSize={'h'}
-                containerConfig={{ flex: 1, mt: 6 }}
-                loadingText={submitting ? 'Processing' : ' '}
-                processInfo={{
-                  id: transactionType.depositLaunchpad,
-                }}
-                style={{
-                  backgroundColor: isEndLaunchpad
-                    ? colors.redPrimary
-                    : isClaimLaunchpad
-                      ? colors.greenPrimary
-                      : isCancelLaunchpad
-                        ? colors.redPrimary
-                        : isVoteRelease
-                          ? colors.bluePrimary
-                          : colors.bluePrimary,
-                }}
-              >
-                {isEndLaunchpad
-                  ? 'END THIS PROJECT'
-                  : isClaimLaunchpad
-                    ? 'CLAIM THIS PROJECT'
-                    : isCancelLaunchpad
-                      ? 'CANCEL THIS PROJECT'
-                      : isVoteRelease
-                        ? 'RELEASE VOTE'
-                        : 'CONTRIBUTE TO THIS PROJECT '}
-              </FiledButton>
-            )}
-          </WrapperConnected>
-        </>
-      )}
-      {!isActive && isVoting && (
-        <Text
-          fontSize={px2rem(14)}
-          fontWeight={'400'}
-          color={'rgba(255, 255, 255, 0.7)'}
-          textAlign={'center'}
-          mt={2}
-        >
-          Connect a wallet to vote.
-        </Text>
-      )}*/}
       <Flex direction={'column'} mt={4}>
         {Object.values(poolDetail?.launchpadToken?.social).join('')?.length > 0 && (
           <Text
