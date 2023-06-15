@@ -1,5 +1,5 @@
-import { StyledEmpty } from './Empty.styled';
 import { CDN_URL } from '@/configs';
+import { StyledEmpty } from './Empty.styled';
 
 export type TEmpty = {
   infoText?: string | React.ReactNode;
@@ -12,7 +12,7 @@ const Empty = ({ infoText = '', isTable = false }: TEmpty) => {
       <img
         width={95}
         height={95}
-        src={`${CDN_URL}/icons/ic-empty.svg`}
+        src={`${CDN_URL}/icons/empty-white.svg`}
         alt="Not found item"
         className={'notFound_image'}
       />
