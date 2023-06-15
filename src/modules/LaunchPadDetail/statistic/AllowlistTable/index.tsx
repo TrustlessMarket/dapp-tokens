@@ -300,7 +300,7 @@ const AllowlistTable = ({ poolDetail, isFull = true, handleViewMore }: any) => {
       openModal({
         id,
         theme: 'dark',
-        title: 'Contribution History',
+        title: 'Your contribution',
         className: cx(styles.modalContent, styles.hideCloseButton),
         modalProps: {
           centered: true,

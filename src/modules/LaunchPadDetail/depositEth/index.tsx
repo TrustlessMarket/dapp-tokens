@@ -19,7 +19,7 @@ const DepositEth = (props: any) => {
         color={"#1C1C1C"}
         opacity={0.7}
       >
-        Here is your unique Ethereum address. You can send your ETH to this address from your Metamask or your Exchange.
+        Here is your unique Ethereum address. You can send your ETH to this address from your Metamask or your Exchanges.
       </Text>
       <Flex justifyContent={"center"} mt={10} mb={10}>
         <QRCodeSVG width={175} height={175} value={address} />
