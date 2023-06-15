@@ -5,7 +5,7 @@ import {AutoSizer, List} from '@/components/ReactVirtualized';
 import SvgInset from '@/components/SvgInset';
 import {CDN_URL} from '@/configs';
 import Search from '@/modules/LaunchPadDetail/statistic/Search';
-import {getLaunchpadDepositInfo, getLaunchpadUserDepositInfo,} from '@/services/launchpad';
+import {getDepositResultLaunchpad, getUserDepositInfoLaunchpad,} from '@/services/launchpad';
 import {useAppDispatch, useAppSelector} from '@/state/hooks';
 import {selectPnftExchange} from '@/state/pnftExchange';
 import {abbreviateNumber, compareString, formatCurrency, shortenAddress,} from '@/utils';
@@ -53,8 +53,8 @@ const AllowlistTable = ({ poolDetail, isFull = true, handleViewMore }: any) => {
     try {
       setIsLoading(true);
       const [deposits, userDeposit] = await Promise.all([
-        getLaunchpadDepositInfo({ pool_address: poolDetail?.launchpad }),
-        getLaunchpadUserDepositInfo({
+        getDepositResultLaunchpad({ pool_address: poolDetail?.launchpad }),
+        getUserDepositInfoLaunchpad({
           pool_address: poolDetail?.launchpad,
           address: account,
         }),

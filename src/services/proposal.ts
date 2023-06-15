@@ -23,35 +23,3 @@ export const getDetailProposal = async (params: {
     error: 'getDetailProposal fail',
   });
 };
-
-export const getVoteSignatureProposal = async (params: {
-  proposal_id?: any;
-  address: any
-}) => {
-  const qs = '?' + queryString.stringify(params);
-  return swrFetcher(`${API_EXCHANGE_URL}${API_PATH}/vote${qs}`, {
-    method: 'GET',
-    error: 'getVoteSignatureProposal fail',
-  });
-};
-
-export const getVoteResultProposal = async (params: {
-  proposal_id?: any;
-}) => {
-  const qs = '?' + queryString.stringify(params);
-  return swrFetcher(`${API_EXCHANGE_URL}${API_PATH}/vote-result${qs}`, {
-    method: 'GET',
-    error: 'getVoteResultProposal fail',
-  });
-};
-
-export const getUserVoteProposal = async (params: {
-  proposal_id?: any;
-  address: any
-}) => {
-  const qs = '?' + queryString.stringify(params);
-  return swrFetcher(`${API_EXCHANGE_URL}${API_PATH}/user-vote${qs}`, {
-    method: 'GET',
-    error: 'getUserVoteProposal fail',
-  });
-};
