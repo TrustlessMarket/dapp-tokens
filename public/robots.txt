@@ -5,4 +5,4 @@ Disallow:
 User-agent: *
 Allow: /
 
-Sitemap: https://trustless.market/sitemap.xml
+Sitemap: https://newbitcoindex.com/sitemap.xml

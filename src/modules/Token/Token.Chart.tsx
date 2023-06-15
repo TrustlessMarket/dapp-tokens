@@ -72,7 +72,7 @@ const TokenChart: React.FC<TokenChartProps> = ({ chartData, dataSymbol }) => {
           },
         },
         watermark: {
-          text: 'trustless.market',
+          text: 'newbitcoindex.com',
           fontSize: 50,
           color: colors.white50,
           visible: true,
