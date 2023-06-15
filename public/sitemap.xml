@@ -1,39 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
-        <loc>https://trustless.market</loc>
+        <loc>https://newbitcoindex.com</loc>
         <lastmod>2023-06-01</lastmod>
     </url>
     <url>
-        <loc>https://trustless.market/pools</loc>
+        <loc>https://newbitcoindex.com/pools</loc>
         <lastmod>2023-06-01</lastmod>
     </url>
     <url>
-        <loc>https://trustless.market/add-pool</loc>
+        <loc>https://newbitcoindex.com/add-pool</loc>
         <lastmod>2023-06-01</lastmod>
     </url>
     <url>
-        <loc>https://trustless.market/swap</loc>
+        <loc>https://newbitcoindex.com/swap</loc>
         <lastmod>2023-06-01</lastmod>
     </url>
     <url>
-        <loc>https://trustless.market/markets</loc>
+        <loc>https://newbitcoindex.com/markets</loc>
         <lastmod>2023-06-01</lastmod>
     </url>
     <url>
-        <loc>https://trustless.market/token</loc>
+        <loc>https://newbitcoindex.com/token</loc>
         <lastmod>2023-06-01</lastmod>
     </url>
     <url>
-        <loc>https://trustless.market/update-token-info</loc>
+        <loc>https://newbitcoindex.com/update-token-info</loc>
         <lastmod>2023-06-01</lastmod>
     </url>
     <url>
-        <loc>https://trustless.market/tm-transfer-history</loc>
+        <loc>https://newbitcoindex.com/tm-transfer-history</loc>
         <lastmod>2023-06-01</lastmod>
     </url>
     <url>
-        <loc>https://trustless.market/swap-history</loc>
+        <loc>https://newbitcoindex.com/swap-history</loc>
         <lastmod>2023-06-01</lastmod>
     </url>
 </urlset>
