@@ -8,14 +8,13 @@ import {getIsAuthenticatedSelector} from '@/state/user/selector';
 import {formatCurrency} from '@/utils';
 import {debounce} from 'lodash';
 import React, {useContext, useEffect, useMemo, useRef, useState} from 'react';
-import Spinner from 'react-bootstrap/Spinner';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import {useDispatch, useSelector} from 'react-redux';
 import {StyledTokens, UploadFileContainer} from './Tokens.styled';
 import {ROUTE_PATH} from '@/constants/route-path';
 import {WalletContext} from '@/contexts/wallet-context';
 import {showError} from '@/utils/toast';
-import {Box, Flex, forwardRef, Icon, Text} from '@chakra-ui/react';
+import {Box, Flex, forwardRef, Icon, Spinner, Text} from '@chakra-ui/react';
 import BigNumber from 'bignumber.js';
 import Link from 'next/link';
 import {useRouter} from 'next/router';
@@ -556,9 +555,13 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         hasMore={true}
         loader={
           isFetching && (
-            <div className="loading">
-              <Spinner animation="border" variant="primary" />
-            </div>
+            <Flex justifyContent={"center"} alignItems={"center"}>
+              <Spinner
+                speed="0.65s"
+                emptyColor="gray.200"
+                color="blue.500"
+              />
+            </Flex>
           )
         }
         next={debounceLoadMore}

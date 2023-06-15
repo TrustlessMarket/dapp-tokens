@@ -50,7 +50,7 @@ const WrapperConnected: React.FC<WrapperConnectedProps> = ({
   if (!isAuthenticated || !trustChain) {
     return (
       <StyledWrapperConnected {...children?.props} type={(isAuthenticated || trustChain) ? type : 'button'} onClick={handleClick} className={className}>
-        {!isAuthenticated ? children?.props?.children : 'Switch to Trustless Computer Network'}
+        {!isAuthenticated ? children?.props?.children : 'Switch network now'}
       </StyledWrapperConnected>
     );
   }

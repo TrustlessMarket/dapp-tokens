@@ -1,28 +1,15 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { apiClient } from '@/services';
-import {
-  Box,
-  Flex,
-  Spinner,
-  Table,
-  TableContainer,
-  Tbody,
-  Td,
-  Tfoot,
-  Th,
-  Thead,
-  Tr,
-} from '@chakra-ui/react';
-import React, { Fragment, memo, ReactNode, useEffect, useState } from 'react';
-// import { useCurrentWallet } from "app/hooks/useCurrentWallet";
+import {apiClient} from '@/services';
+import {Box, Flex, Spinner, Table, TableContainer, Tbody, Td, Tfoot, Th, Thead, Tr,} from '@chakra-ui/react';
+import React, {Fragment, memo, ReactNode, useEffect, useState} from 'react';
 import EmptyList from '@/components/Swap/emptyList';
 import Pagination from '@/components/Swap/pagination';
-import { useAppSelector } from '@/state/hooks';
-import { selectPnftExchange } from '@/state/pnftExchange';
-import { compareString } from '@/utils';
+import {useAppSelector} from '@/state/hooks';
+import {selectPnftExchange} from '@/state/pnftExchange';
+import {compareString} from '@/utils';
 import cx from 'classnames';
-import { AiFillCaretDown, AiFillCaretUp } from 'react-icons/ai';
+import {AiFillCaretDown, AiFillCaretUp} from 'react-icons/ai';
 import styles from './styles.module.scss';
 
 export interface ColumnProp {
@@ -54,6 +41,8 @@ interface ListTableProps {
   initialLoading?: boolean;
   className?: any;
   showEmpty?: boolean;
+  hideIcon?: boolean;
+  theme?: 'light' | 'dark';
 }
 
 const ItemTable = ({
@@ -137,6 +126,8 @@ const ListTable: React.FC<ListTableProps> = ({
   onTdRow,
   className,
   showEmpty,
+  hideIcon,
+  theme = 'dark'
 }) => {
   // const { currentWallet } = useCurrentWallet();
   const [rows, setRows] = useState(data);
@@ -209,9 +200,14 @@ const ListTable: React.FC<ListTableProps> = ({
     if (showEmpty && (rows?.length === 0 || rows?.length === undefined))
       return (
         <Tbody className={styles.item}>
-          <Tr className="notOnTdRow">
+          <Tr
+            className="notOnTdRow"
+            _hover={{
+              backgroundColor: 'transparent !important'
+            }}
+          >
             <Td colSpan={columns.length} textAlign="center">
-              <EmptyList labelText={emptyLabel} />
+              <EmptyList labelText={emptyLabel} hideIcon={hideIcon} theme={theme}/>
             </Td>
           </Tr>
         </Tbody>

@@ -15,15 +15,15 @@ const TMTransferHistory = (props: any) => {
       >
         <Tabs isFitted variant='soft-rounded'>
           <TabList mb={6} mt={6}>
-            <Tab>Deposit</Tab>
-            <Tab>Contribute</Tab>
+            <Tab>TC Transaction</Tab>
+            <Tab>ETH Transaction</Tab>
           </TabList>
           <TabPanels>
             <TabPanel>
-              <DepositHistory poolDetail={poolDetail} />
+              <ContributeHistory poolDetail={poolDetail} />
             </TabPanel>
             <TabPanel>
-              <ContributeHistory poolDetail={poolDetail} />
+              <DepositHistory poolDetail={poolDetail} />
             </TabPanel>
           </TabPanels>
         </Tabs>

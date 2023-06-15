@@ -148,7 +148,14 @@ const ContributeHistory = (props: any) => {
   );
 
   return (
-    <ListTable data={list} columns={columns} initialLoading={loading}/>
+    <ListTable
+      data={list}
+      columns={columns}
+      initialLoading={loading}
+      showEmpty={true}
+      hideIcon={true}
+      theme={'light'}
+    />
   );
 };
 

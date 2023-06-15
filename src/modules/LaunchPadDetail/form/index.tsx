@@ -15,7 +15,7 @@ import {
   BRIDGE_SUPPORT_TOKEN,
   TOKEN_ICON_DEFAULT,
   TRUSTLESS_BRIDGE,
-  TRUSTLESS_FAUCET,
+  TRUSTLESS_GASSTATION,
   WETH_ADDRESS,
 } from '@/constants/common';
 import {toastError} from '@/constants/error';
@@ -43,7 +43,14 @@ import {
   updateCurrentTransaction,
 } from '@/state/pnftExchange';
 import {colors} from '@/theme/colors';
-import {abbreviateNumber, compareString, formatCurrency, getTokenIconUrl, isConnectedTrustChain} from '@/utils';
+import {
+  abbreviateNumber,
+  compareString,
+  formatCurrency,
+  formatLongAddress,
+  getTokenIconUrl,
+  isConnectedTrustChain
+} from '@/utils';
 import {composeValidators, required} from '@/utils/formValidate';
 import px2rem from '@/utils/px2rem';
 import {showError} from '@/utils/toast';
@@ -85,7 +92,7 @@ const CONTRIBUTION_METHODS = [
   {
     id: 'eth',
     title: 'From Ethereum wallet',
-    desc: 'Transferring funds from an Ethereum wallet or directly from an exchange.',
+    desc: 'Transfer your funds from an Ethereum wallet or directly from an exchange.',
     img: `${CDN_URL}/pages/trustlessmarket/launchpad/ic-eth.png`,
   },
 ]
@@ -93,6 +100,7 @@ const CONTRIBUTION_METHODS = [
 const ContributionMethods = (props: any) => {
   const {onSelect} = props;
   const [selectId, setSelectedId] = useState('tc');
+  const { account } = useWeb3React();
 
   useEffect(() => {
     onSelect && onSelect(selectId);
@@ -126,7 +134,7 @@ const ContributionMethods = (props: any) => {
               />
               <Flex direction={"column"} flex={1} justifyContent={"flex-start"}>
                 <Text color={"#FFFFFF"} fontSize={px2rem(20)} fontWeight={500}>{method.title}</Text>
-                <Text color={"#FFFFFF"} fontSize={px2rem(14)} fontWeight={400} opacity={0.7} mt={1}>{method.desc}</Text>
+                <Text color={"#FFFFFF"} fontSize={px2rem(14)} fontWeight={400} opacity={0.7} mt={1}>{method.desc ? method.desc : account ? formatLongAddress(account) : '' }</Text>
               </Flex>
               <img
                 width={20}
@@ -646,6 +654,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         isAuthenticated &&
         isStarting &&
         isLoadedAssets &&
+        values?.contributeMethod !== 'eth' &&
         new BigNumber(juiceBalance || 0).lte(0) && (
           <Flex gap={3} mt={4}>
             <Center
@@ -658,10 +667,9 @@ export const MakeFormSwap = forwardRef((props, ref) => {
               <BiBell color="#FF7E21" />
             </Center>
             <Text fontSize="sm" color="#FF7E21" textAlign={'left'}>
-              Your TC balance is insufficient. You can receive free TC on our faucet
-              site{' '}
+              Your TC balance is insufficient. Buy more TC{' '}
               <Link
-                href={TRUSTLESS_FAUCET}
+                href={TRUSTLESS_GASSTATION}
                 target={'_blank'}
                 style={{ textDecoration: 'underline' }}
               >
@@ -676,6 +684,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         isAuthenticated &&
         isStarting &&
         liquidityToken &&
+        values?.contributeMethod !== 'eth' &&
         BRIDGE_SUPPORT_TOKEN.includes(liquidityToken?.symbol) &&
         new BigNumber(liquidityBalance || 0).lte(0) && (
           <Flex gap={3} mt={4}>
@@ -689,8 +698,8 @@ export const MakeFormSwap = forwardRef((props, ref) => {
               <BiBell color="#FF7E21" />
             </Center>
             <Text fontSize="sm" color="#FF7E21" textAlign={'left'}>
-              Insufficient {liquidityToken?.symbol} balance! Consider swapping your{' '}
-              {liquidityToken?.symbol?.replace('W', '')} to trustless network{' '}
+              You have an insufficient {liquidityToken?.symbol} balance. Consider swapping your{' '}
+              {liquidityToken?.symbol?.replace('W', '')} to Trustless Network{' '}
               <Link
                 href={`${TRUSTLESS_BRIDGE}${liquidityToken?.symbol
                   ?.replace('W', '')
@@ -712,7 +721,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         isVoteRelease) && (
         <>
           {
-            !trustChain && (
+            isAuthenticated && !trustChain && (
               <Flex
                 bg={"#FFFFFF"}
                 borderRadius={"8px"}

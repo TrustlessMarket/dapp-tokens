@@ -118,8 +118,8 @@ const AllowlistTable = ({ poolDetail, isFull = true, handleViewMore }: any) => {
           [`${styles.dataItem__currentUser}`]: item.isCurrentUser,
           [`${styles.dataItem__searchHighlight}`]: index === scrollToIndex,
         })}
-        cursor={onShowContributeHistory ? 'pointer' : 'default'}
-        onClick={() => onShowContributeHistory && onShowContributeHistory()}
+        cursor={onShowContributeHistory && item.isCurrentUser ? 'pointer' : 'default'}
+        onClick={() => onShowContributeHistory && item.isCurrentUser && onShowContributeHistory()}
       >
         <div className={cs(styles.dataItemInner, item.isCurrentUser && styles.currentUser)}>
           <div className={styles.dataId}>{item?.index}</div>
@@ -300,7 +300,7 @@ const AllowlistTable = ({ poolDetail, isFull = true, handleViewMore }: any) => {
       openModal({
         id,
         theme: 'dark',
-        title: 'Contribution History',
+        title: 'Your contribution',
         className: cx(styles.modalContent, styles.hideCloseButton),
         modalProps: {
           centered: true,
