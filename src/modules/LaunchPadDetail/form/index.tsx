@@ -362,7 +362,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
                 isDisabled={loading}
                 loadingText="Processing"
                 btnSize={'h'}
-                containerConfig={{ flex: 1, mt: 6 }}
+                containerConfig={{ flex: 1}}
                 onClick={onShowModalApprove}
                 processInfo={{
                   id: transactionType.createPoolApprove,
@@ -376,7 +376,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
                 isLoading={submitting}
                 type="submit"
                 btnSize={'h'}
-                containerConfig={{ flex: 1, mt: 6 }}
+                containerConfig={{ flex: 1}}
                 loadingText={submitting ? 'Processing' : ' '}
                 processInfo={{
                   id: transactionType.depositLaunchpad,
@@ -425,13 +425,14 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     )
   }
 
-  console.log('poolDetail?.state', poolDetail?.state);
   if([LAUNCHPAD_STATUS.Voting, LAUNCHPAD_STATUS.NotPassed].includes(poolDetail?.state)) {
-    return (
-      <form onSubmit={onSubmit} style={{ height: '100%' }}>
-        {renderActionButtons()}
+    return (isEndLaunchpad || isVoteRelease) ? (
+      <form onSubmit={onSubmit} style={{ height: '100%'}}>
+        <Box mb={12}>
+          {renderActionButtons()}
+        </Box>
       </form>
-    );
+    ) : <></>;
   }
 
   return (
@@ -699,8 +700,9 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             </Text>
           </Flex>
         )}
-      <Box mt={6} />
-      {renderActionButtons()}
+        <Box mt={6}>
+          {renderActionButtons()}
+        </Box>
       {/*{(
         isFunding ||
         isEndLaunchpad ||

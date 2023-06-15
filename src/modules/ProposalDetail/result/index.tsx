@@ -41,9 +41,7 @@ const ProposalResult = ({poolDetail}: { poolDetail: ILaunchpad }) => {
     <Box bgColor={"transparent"} paddingX={10} paddingTop={10} paddingBottom={px2rem(100)} border={"1px solid #353945"}>
       {
         [LAUNCHPAD_STATUS.Voting, LAUNCHPAD_STATUS.NotPassed].includes(poolDetail?.state) && (
-          <Box mb={12}>
-            <BuyForm poolDetail={poolDetail}/>
-          </Box>
+          <BuyForm poolDetail={poolDetail}/>
         )
       }
       <Side
