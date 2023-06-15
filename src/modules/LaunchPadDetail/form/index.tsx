@@ -341,6 +341,99 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     }
   };
 
+  const renderActionButtons = () => {
+    return (
+      <>
+        {(
+          isFunding ||
+          isEndLaunchpad ||
+          isClaimLaunchpad ||
+          isCancelLaunchpad ||
+          isVoteRelease ||
+          isVoting
+        ) && (
+          <WrapperConnected
+            type={isRequireApprove ? 'button' : 'submit'}
+            className={styles.submitButton}
+          >
+            {isRequireApprove ? (
+              <FiledButton
+                isLoading={loading}
+                isDisabled={loading}
+                loadingText="Processing"
+                btnSize={'h'}
+                containerConfig={{ flex: 1, mt: 6 }}
+                onClick={onShowModalApprove}
+                processInfo={{
+                  id: transactionType.createPoolApprove,
+                }}
+              >
+                APPROVE USE OF {liquidityToken?.symbol}
+              </FiledButton>
+            ) : (
+              <FiledButton
+                isDisabled={submitting || btnDisabled}
+                isLoading={submitting}
+                type="submit"
+                btnSize={'h'}
+                containerConfig={{ flex: 1, mt: 6 }}
+                loadingText={submitting ? 'Processing' : ' '}
+                processInfo={{
+                  id: transactionType.depositLaunchpad,
+                }}
+                style={{
+                  backgroundColor: isEndLaunchpad
+                    ? colors.redPrimary
+                    : isClaimLaunchpad
+                      ? colors.greenPrimary
+                      : isCancelLaunchpad
+                        ? colors.redPrimary
+                        : isVoteRelease
+                          ? colors.bluePrimary
+                          : isVoting
+                            ? colors.bluePrimary
+                            : colors.bluePrimary,
+                }}
+              >
+                {isEndLaunchpad
+                  ? 'END THIS PROJECT'
+                  : isClaimLaunchpad
+                    ? 'CLAIM THIS PROJECT'
+                    : isCancelLaunchpad
+                      ? 'CANCEL THIS PROJECT'
+                      : isVoteRelease
+                        ? 'RELEASE VOTE'
+                        : isVoting
+                          ? 'SUPPORT THIS PROJECT'
+                          : 'CONTRIBUTE TO THIS PROJECT '}
+              </FiledButton>
+            )}
+          </WrapperConnected>
+        )}
+        {!isActive && isVoting && (
+          <Text
+            fontSize={px2rem(14)}
+            fontWeight={'400'}
+            color={'rgba(255, 255, 255, 0.7)'}
+            textAlign={'center'}
+            mt={2}
+          >
+            Connect a wallet to vote.
+          </Text>
+        )}
+      </>
+    )
+  }
+
+  console.log('poolDetail?.state', poolDetail?.state);
+  if([LAUNCHPAD_STATUS.Voting, LAUNCHPAD_STATUS.NotPassed].includes(poolDetail?.state)) {
+    return (
+      <form onSubmit={onSubmit} style={{ height: '100%' }}>
+        {renderActionButtons()}
+      </form>
+    );
+  }
+
   return (
     <form onSubmit={onSubmit} style={{ height: '100%' }}>
       <Flex justifyContent={'space-between'}>
@@ -607,7 +700,8 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           </Flex>
         )}
       <Box mt={6} />
-      {(
+      {renderActionButtons()}
+      {/*{(
         isFunding ||
         isEndLaunchpad ||
         isClaimLaunchpad ||
@@ -683,7 +777,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         >
           Connect a wallet to vote.
         </Text>
-      )}
+      )}*/}
       <Flex direction={'column'} mt={4}>
         {Object.values(poolDetail?.launchpadToken?.social).join('')?.length > 0 && (
           <Text
