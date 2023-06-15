@@ -523,7 +523,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         ></Progress>
         {/*<Image src={fireImg} className={styles.fireImg} />*/}
       </Box>
-      <Flex gap={6} color={'#FFFFFF'} mt={8} justifyContent={'space-between'}>
+      <Flex gap={6} color={'#FFFFFF'} mt={4} justifyContent={'space-between'}>
         <Stat className={styles.infoColumn} flex={1}>
           <StatLabel>
             <InfoTooltip
@@ -550,7 +550,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         <>
           {
             compareString(liquidityToken?.address, WETH_ADDRESS) ? (
-              <Flex mt={8}>
+              <Flex mt={4}>
                 <Stat className={styles.infoColumn} flex={1}>
                   <StatLabel>
                     Contribution method
