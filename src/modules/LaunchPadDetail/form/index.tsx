@@ -11,9 +11,6 @@ import HorizontalItem from '@/components/Swap/horizontalItem';
 import InfoTooltip from '@/components/Swap/infoTooltip';
 import TokenBalance from '@/components/Swap/tokenBalance';
 import WrapperConnected from '@/components/WrapperConnected';
-import {BRIDGE_SUPPORT_TOKEN, TOKEN_ICON_DEFAULT, TRUSTLESS_BRIDGE, TRUSTLESS_FAUCET,} from '@/constants/common';
-import {toastError} from '@/constants/error';
-import {AssetsContext} from '@/contexts/assets-context';
 import {
   BRIDGE_SUPPORT_TOKEN,
   TOKEN_ICON_DEFAULT,
@@ -31,14 +28,6 @@ import useApproveERC20Token from '@/hooks/contract-operations/token/useApproveER
 import useBalanceERC20Token from '@/hooks/contract-operations/token/useBalanceERC20Token';
 import useIsApproveERC20Token from '@/hooks/contract-operations/token/useIsApproveERC20Token';
 import useContractOperation from '@/hooks/contract-operations/useContractOperation';
-import {ILaunchpad} from '@/interfaces/launchpad';
-import {IToken} from '@/interfaces/token';
-import {TransactionStatus} from '@/interfaces/walletTransaction';
-import {LAUNCHPAD_STATUS, useLaunchPadStatus,} from '@/modules/Launchpad/Launchpad.Status';
-import {getLaunchpadUserDepositInfo, getUserBoost} from '@/services/launchpad';
-import {logErrorToServer} from '@/services/swap';
-import {useAppDispatch, useAppSelector} from '@/state/hooks';
-import {closeModal, openModal} from '@/state/modal';
 import {ILaunchpad} from '@/interfaces/launchpad';
 import {IToken} from '@/interfaces/token';
 import {TransactionStatus} from '@/interfaces/walletTransaction';
@@ -63,9 +52,6 @@ import {
   isConnectedTrustChain
 } from '@/utils';
 import {composeValidators, required} from '@/utils/formValidate';
-import {colors} from '@/theme/colors';
-import {abbreviateNumber, compareString, formatCurrency} from '@/utils';
-import {composeValidators, required} from '@/utils/formValidate';
 import px2rem from '@/utils/px2rem';
 import {showError} from '@/utils/toast';
 import {Box, Center, Flex, forwardRef, Progress, Stat, StatLabel, StatNumber, Text, Tooltip,} from '@chakra-ui/react';
@@ -80,8 +66,6 @@ import React, {useCallback, useContext, useEffect, useImperativeHandle, useMemo,
 import {Field, Form, useForm, useFormState} from 'react-final-form';
 import toast from 'react-hot-toast';
 import {BiBell} from 'react-icons/bi';
-import {useDispatch} from 'react-redux';
-import {BiBell} from 'react-icons/bi';
 import {useDispatch, useSelector} from 'react-redux';
 import Web3 from 'web3';
 import styles from './styles.module.scss';
@@ -93,9 +77,8 @@ import useCancelLaunchPad from '@/hooks/contract-operations/launchpad/useCancel'
 import useVoteReleaseLaunchpad from '@/hooks/contract-operations/launchpad/useVoteRelease';
 import tokenIcons from '@/constants/tokenIcons';
 import VoteForm from "@/modules/ProposalDetail/voteForm";
-import {TM_ADDRESS} from "@/configs";
+import {CDN_URL, TM_ADDRESS} from "@/configs";
 import DepositEth from "@/modules/LaunchPadDetail/depositEth";
-import {CDN_URL} from "@/configs";
 import ContributeForm from "@/modules/LaunchPadDetail/contributeForm";
 import {getIsAuthenticatedSelector} from "@/state/user/selector";
 import {IoWarningOutline} from 'react-icons/io5';
