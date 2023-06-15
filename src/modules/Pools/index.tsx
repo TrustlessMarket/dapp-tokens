@@ -23,7 +23,7 @@ import {
   Flex,
   Heading,
   Icon,
-  IconButton,
+  IconButton, Spinner,
   Text,
 } from '@chakra-ui/react';
 import BigNumber from 'bignumber.js';
@@ -37,7 +37,6 @@ import CreateMarket from './form';
 import ImportPool from './form/importPool';
 import styles from './styles.module.scss';
 import SectionContainer from '@/components/Swap/sectionContainer';
-import Spinner from 'react-bootstrap/Spinner';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import {debounce} from 'lodash';
 import {getListLiquidity} from '@/services/swap';
@@ -404,9 +403,13 @@ const LiquidityContainer = () => {
               hasMore={true}
               loader={
                 isFetching && (
-                  <div className="loading">
-                    <Spinner animation="border" variant="primary" />
-                  </div>
+                  <Flex justifyContent={"center"} alignItems={"center"}>
+                    <Spinner
+                      speed="0.65s"
+                      emptyColor="gray.200"
+                      color="blue.500"
+                    />
+                  </Flex>
                 )
               }
               next={debounceLoadMore}

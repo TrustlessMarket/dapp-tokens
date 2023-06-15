@@ -1,25 +1,18 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import Empty from '@/components/Empty';
-import { AutoSizer, List } from '@/components/ReactVirtualized';
+import {AutoSizer, List} from '@/components/ReactVirtualized';
 import SvgInset from '@/components/SvgInset';
-import { CDN_URL } from '@/configs';
+import {CDN_URL} from '@/configs';
 import Search from '@/modules/LaunchPadDetail/statistic/Search';
-import {
-  getLaunchpadDepositInfo,
-  getLaunchpadUserDepositInfo,
-} from '@/services/launchpad';
-import { useAppSelector } from '@/state/hooks';
-import { selectPnftExchange } from '@/state/pnftExchange';
-import {
-  abbreviateNumber,
-  compareString,
-  formatCurrency,
-  shortenAddress,
-} from '@/utils';
+import {getLaunchpadDepositInfo, getLaunchpadUserDepositInfo,} from '@/services/launchpad';
+import {useAppDispatch, useAppSelector} from '@/state/hooks';
+import {selectPnftExchange} from '@/state/pnftExchange';
+import {abbreviateNumber, compareString, formatCurrency, shortenAddress,} from '@/utils';
 import px2rem from '@/utils/px2rem';
 import {
   Box,
+  Flex,
   Popover,
   PopoverArrow,
   PopoverBody,
@@ -28,14 +21,16 @@ import {
   Spinner,
   Text,
 } from '@chakra-ui/react';
-import { useWindowSize } from '@trustless-computer/dapp-core';
-import { useWeb3React } from '@web3-react/core';
-import cs from 'classnames';
+import {useWindowSize} from '@trustless-computer/dapp-core';
+import {useWeb3React} from '@web3-react/core';
+import cx from 'classnames';
 import Image from 'next/image';
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import toast from 'react-hot-toast';
-import Jazzicon, { jsNumberForAddress } from 'react-jazzicon';
-import s from './styles.module.scss';
+import Jazzicon, {jsNumberForAddress} from 'react-jazzicon';
+import styles from './styles.module.scss';
+import {closeModal, openModal} from "@/state/modal";
+import ContributeHistory from "@/modules/LaunchPadDetail/contributeHistory";
 
 const AllowlistTable = ({ poolDetail, isFull = true, handleViewMore }: any) => {
   const needReload = useAppSelector(selectPnftExchange).needReload;
@@ -43,9 +38,10 @@ const AllowlistTable = ({ poolDetail, isFull = true, handleViewMore }: any) => {
   const [rawDepositList, setRawDepositList] = useState<any[]>([]);
   const [scrollToIndex, setScrollToIndex] = useState<any>(undefined);
   const { mobileScreen, tabletScreen } = useWindowSize();
-  const [isLoadingDepositList, setIsLoadingDepositList] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
 
   const { account } = useWeb3React();
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     if (poolDetail?.id) {
@@ -55,7 +51,7 @@ const AllowlistTable = ({ poolDetail, isFull = true, handleViewMore }: any) => {
 
   const fetchDepositInfo = async () => {
     try {
-      setIsLoadingDepositList(true);
+      setIsLoading(true);
       const [deposits, userDeposit] = await Promise.all([
         getLaunchpadDepositInfo({ pool_address: poolDetail?.launchpad }),
         getLaunchpadUserDepositInfo({
@@ -91,7 +87,7 @@ const AllowlistTable = ({ poolDetail, isFull = true, handleViewMore }: any) => {
     } catch (err: unknown) {
       console.log(err);
     } finally {
-      setIsLoadingDepositList(false);
+      setIsLoading(false);
     }
   };
 
@@ -104,25 +100,27 @@ const AllowlistTable = ({ poolDetail, isFull = true, handleViewMore }: any) => {
     return 110;
   };
 
-  const RowRenderer = ({ index, key, style, data }: any) => {
+  const RowRenderer = ({ index, key, style, data, onShowContributeHistory }: any) => {
     const item = data[index];
     return (
-      <div
+      <Box
         key={key}
         style={style}
-        className={cs(s.dataItem, {
-          [`${s.dataItem__currentUser}`]: item.isCurrentUser,
-          [`${s.dataItem__searchHighlight}`]: index === scrollToIndex,
+        className={cx(styles.dataItem, {
+          [`${styles.dataItem__currentUser}`]: item.isCurrentUser,
+          [`${styles.dataItem__searchHighlight}`]: index === scrollToIndex,
         })}
+        cursor={onShowContributeHistory && item.isCurrentUser ? 'pointer' : 'default'}
+        onClick={() => onShowContributeHistory && item.isCurrentUser && onShowContributeHistory()}
       >
-        <div className={cs(s.dataItemInner, item.isCurrentUser && s.currentUser)}>
-          <div className={s.dataId}>{item?.index}</div>
-          <div className={s.dataUserInfo}>
+        <div className={cx(styles.dataItemInner, item.isCurrentUser && styles.currentUser)}>
+          <div className={styles.dataId}>{item?.index}</div>
+          <div className={styles.dataUserInfo}>
             {item.avatar ? (
               <Image
                 width={48}
                 height={48}
-                className={s.avatar}
+                className={styles.avatar}
                 src={item.avatar}
                 alt="avatar"
               />
@@ -135,9 +133,9 @@ const AllowlistTable = ({ poolDetail, isFull = true, handleViewMore }: any) => {
 
             <Text
               as="span"
-              className={cs(
-                s.userWallet,
-                item.isCurrentUser ? s.userWallet__black : s.userWallet__white,
+              className={cx(
+                styles.userWallet,
+                item.isCurrentUser ? styles.userWallet__black : styles.userWallet__white,
               )}
               title={item.userAddress}
               maxWidth={
@@ -150,25 +148,25 @@ const AllowlistTable = ({ poolDetail, isFull = true, handleViewMore }: any) => {
               )}
             </Text>
           </div>
-          <div className={s.dataContribute}>
-            <span className={s.dataLabel}>Contribution</span>
+          <div className={styles.dataContribute}>
+            <span className={styles.dataLabel}>Contribution</span>
             <span
-              className={cs(
-                s.dataValue,
-                item.isCurrentUser ? s.dataValue__black : s.dataValue__white,
+              className={cx(
+                styles.dataValue,
+                item.isCurrentUser ? styles.dataValue__black : styles.dataValue__white,
               )}
             >
               ${formatCurrency(item.amountUsd, 2)}
               {/*<span className={s.dataContribute_divider}></span>*/}
-              <span className={s.percentage}>
+              <span className={styles.percentage}>
                 ({formatCurrency(item.amount)} {poolDetail?.liquidityToken?.symbol})
               </span>
             </span>
           </div>
           <Popover trigger="hover" isLazy>
             <PopoverTrigger>
-              <div className={s.dataToken}>
-                <span className={s.dataLabel}>
+              <div className={styles.dataToken}>
+                <span className={styles.dataLabel}>
                   Allocation
                   {item.isCurrentUser && item.boost >= 0 && (
                     <Box
@@ -188,7 +186,7 @@ const AllowlistTable = ({ poolDetail, isFull = true, handleViewMore }: any) => {
                       <Text
                         color="white"
                         fontSize={`${px2rem(10)}`}
-                        className={s.boostTag}
+                        className={styles.boostTag}
                         fontWeight={700}
                         lineHeight={1.5}
                       >
@@ -197,14 +195,14 @@ const AllowlistTable = ({ poolDetail, isFull = true, handleViewMore }: any) => {
                     </Box>
                   )}
                 </span>
-                <span className={s.dataValue}>
+                <span className={styles.dataValue}>
                   {`${abbreviateNumber(item.userLaunchpadBalance)} ${
                     poolDetail?.launchpadToken?.symbol
                   }`}{' '}
                   <span
-                    className={cs(
-                      s.percentage,
-                      item.isCurrentUser ? s.dataValue__black : s.dataValue__white,
+                    className={cx(
+                      styles.percentage,
+                      item.isCurrentUser ? styles.dataValue__black : styles.dataValue__white,
                     )}
                   >
                     {`(${item.percentHolding.toFixed(2)}%)`}
@@ -213,7 +211,7 @@ const AllowlistTable = ({ poolDetail, isFull = true, handleViewMore }: any) => {
               </div>
             </PopoverTrigger>
             {item.isCurrentUser && (
-              <PopoverContent className={s.popoverWrapper} w={'fit-content'}>
+              <PopoverContent className={styles.popoverWrapper} w={'fit-content'}>
                 <PopoverArrow />
                 <PopoverBody p={`${px2rem(6)} ${px2rem(16)}`}>
                   <Text
@@ -241,7 +239,7 @@ const AllowlistTable = ({ poolDetail, isFull = true, handleViewMore }: any) => {
             )}
           </Popover>
         </div>
-      </div>
+      </Box>
     );
   };
 
@@ -287,19 +285,44 @@ const AllowlistTable = ({ poolDetail, isFull = true, handleViewMore }: any) => {
     );
   };
 
+  const handleShowContributeHistory = () => {
+    const id = 'modalDepositEthFromEthWallet';
+    const close = () => dispatch(closeModal({id}));
+    dispatch(
+      openModal({
+        id,
+        theme: 'dark',
+        title: 'Your contribution',
+        className: cx(styles.modalContent, styles.hideCloseButton),
+        modalProps: {
+          centered: true,
+          size: mobileScreen ? 'full' : 'xl',
+          zIndex: 9999999,
+        },
+        render: () => {
+          return <ContributeHistory onClose={close} poolDetail={poolDetail} />;
+        },
+      }),
+    );
+  }
+
   return (
-    <div className={cs(s.allowListTable)}>
-      <div className={s.allowListTableWrapper}>
-        {isLoadingDepositList ? (
-          <div className={s.loadingWrapper}>
-            <Spinner size={'xl'} />
-          </div>
+    <div className={cx(styles.allowListTable)}>
+      <div className={styles.allowListTableWrapper}>
+        {isLoading ? (
+          <Flex justifyContent={"center"} alignItems={"center"}>
+            <Spinner
+              speed="0.65s"
+              emptyColor="gray.200"
+              color="blue.500"
+            />
+          </Flex>
         ) : (
           <>
             {isFull ? (
               <>
                 <Search onSearch={onSearchAddress} />
-                <div className={cs(s.dataListWrapper)}>
+                <div className={cx(styles.dataListWrapper)}>
                   {depositList.length === 0 && <Empty isTable={false} />}
                   {depositList.length > 0 && <DataTable />}
                 </div>
@@ -309,7 +332,7 @@ const AllowlistTable = ({ poolDetail, isFull = true, handleViewMore }: any) => {
                 {depositList.length === 0 ? (
                   <Empty isTable={false} />
                 ) : (
-                  <RowRenderer index={0} key={'you'} data={depositList} />
+                  <RowRenderer index={0} key={'you'} data={depositList} onShowContributeHistory={handleShowContributeHistory}/>
                 )}
               </>
             )}

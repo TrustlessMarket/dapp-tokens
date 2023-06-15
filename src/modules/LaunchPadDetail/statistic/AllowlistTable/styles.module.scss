@@ -1,16 +1,7 @@
 .allowListTable {
   width: 100%;
   .allowListTableWrapper {
-    //background: #1E1E22;
-    //border-radius: 16px;
     width: 100%;
-    //padding: 24px 32px;
-    //font-family: var(--chakra-fonts-heading);
-    //margin-bottom: rem(32);
-
-    //@include max-tablet {
-    //  padding: rem(24) rem(16);
-    //}
   }
 
   .campaignEndText {
@@ -421,5 +412,29 @@
 
   .disableScroll {
     overflow: hidden !important;
+  }
+}
+
+.modalContent {
+  max-width: 800px !important;
+  min-width: 800px !important;
+  :global {
+    .chakra-modal__header {
+      padding-bottom: 0;
+    }
+    .modal-header-wrap {
+      margin-bottom: 0;
+    }
+    .chakra-modal__body {
+      //padding: 0;
+    }
+  }
+
+  &.hideCloseButton {
+    :global {
+      .modal-close-btn {
+        display: none;
+      }
+    }
   }
 }
