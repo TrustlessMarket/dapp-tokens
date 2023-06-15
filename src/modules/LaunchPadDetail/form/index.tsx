@@ -479,7 +479,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
                   isDisabled={loading}
                   loadingText="Processing"
                   btnSize={'h'}
-                  containerConfig={{ flex: 1, mt: 6 }}
+                  containerConfig={{ flex: 1 }}
                   onClick={onShowModalApprove}
                   processInfo={{
                     id: transactionType.createPoolApprove,
@@ -493,7 +493,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
                   isLoading={submitting}
                   type="submit"
                   btnSize={'h'}
-                  containerConfig={{ flex: 1, mt: 6 }}
+                  containerConfig={{ flex: 1 }}
                   loadingText={submitting ? 'Processing' : ' '}
                   processInfo={{
                     id: transactionType.depositLaunchpad,
