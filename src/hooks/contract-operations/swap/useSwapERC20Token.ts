@@ -1,6 +1,6 @@
 import UniswapV2RouterJson from '@/abis/UniswapV2Router.json';
 import { transactionType } from '@/components/Swap/alertInfoProcessing/types';
-import { TC_WEB_URL, UNIV2_ROUTER_ADDRESS } from '@/configs';
+import { UNIV2_ROUTER_ADDRESS, WALLET_URL } from '@/configs';
 import { ERROR_CODE } from '@/constants/error';
 import { CONTRACT_METHOD_IDS } from '@/constants/methodId';
 import { MaxUint256 } from '@/constants/url';
@@ -92,7 +92,7 @@ const useSwapERC20Token: ContractOperationHook<
             id: transactionType.createPoolApprove,
             hash: transaction.hash,
             infoTexts: {
-              pending: `Please go to the trustless wallet and click on <a style="color: ${colors.bluePrimary}" href="${TC_WEB_URL}" target="_blank" >"Process Transaction"</a> for Bitcoin to complete this process.`,
+              pending: `Please go to the trustless wallet and click on <a style="color: ${colors.bluePrimary}" href="${WALLET_URL}" target="_blank" >"Process Transaction"</a> for Bitcoin to complete this process.`,
             },
           }),
         );
