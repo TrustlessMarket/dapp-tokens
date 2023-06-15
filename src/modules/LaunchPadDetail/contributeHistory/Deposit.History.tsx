@@ -11,10 +11,11 @@ import {getLaunchpadDepositAddress} from "@/services/launchpad";
 import {useSelector} from "react-redux";
 import {getIsAuthenticatedSelector} from "@/state/user/selector";
 import {colors} from "@/theme/colors";
+import {isProduction} from "@/utils/commons";
 
 const config = {
   apiKey: ALCHEMY_API_KEY,
-  network: Network.ETH_MAINNET,
+  network: isProduction() ? Network.ETH_MAINNET : Network.ETH_GOERLI,
 };
 
 const DepositHistory = (props: any) => {
