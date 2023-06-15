@@ -8,9 +8,13 @@ import {FiCopy} from 'react-icons/fi';
 import px2rem from "@/utils/px2rem";
 import CopyToClipboard from "react-copy-to-clipboard";
 import {toast} from "react-hot-toast";
+import {useAppSelector} from "@/state/hooks";
+import {selectPnftExchange} from "@/state/pnftExchange";
 
 const DepositEth = (props: any) => {
   const {address, onClose} = props;
+  const configs = useAppSelector(selectPnftExchange).configs;
+
   return (
     <Box className={styles.wrapper}>
       <Text
@@ -55,10 +59,15 @@ const DepositEth = (props: any) => {
           </CopyToClipboard>
         </InputRightElement>
       </InputGroup>
+      <Text
+        fontSize={px2rem(16)}
+        fontWeight={500}
+        mt={2}
+      >Fee: {configs?.lpEthFee} ETH</Text>
       <FiledButton
         btnSize={'h'}
         onClick={onClose}
-        mt={8}
+        mt={6}
       >
         DONE
       </FiledButton>

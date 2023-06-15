@@ -76,8 +76,9 @@ import useIsAbleCancel from '@/hooks/contract-operations/launchpad/useIsAbleCanc
 import useCancelLaunchPad from '@/hooks/contract-operations/launchpad/useCancel';
 import useVoteReleaseLaunchpad from '@/hooks/contract-operations/launchpad/useVoteRelease';
 import tokenIcons from '@/constants/tokenIcons';
+import VoteForm from "@/modules/ProposalDetail/voteForm";
+import {CDN_URL, TM_ADDRESS} from "@/configs";
 import DepositEth from "@/modules/LaunchPadDetail/depositEth";
-import {CDN_URL} from "@/configs";
 import ContributeForm from "@/modules/LaunchPadDetail/contributeForm";
 import {getIsAuthenticatedSelector} from "@/state/user/selector";
 import {IoWarningOutline} from 'react-icons/io5';
@@ -155,10 +156,11 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     onSubmit,
     submitting,
     poolDetail,
-    isStarting,
+    isCancelLaunchpad,
+    isVoting,
+    isFunding,
     isEndLaunchpad,
     isClaimLaunchpad,
-    isCancelLaunchpad,
     isVoteRelease,
   } = props;
   const [loading, setLoading] = useState(false);
@@ -170,13 +172,13 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const { call: approveToken } = useApproveERC20Token();
   const [liquidityBalance, setLiquidityBalance] = useState<any>('0');
   const { juiceBalance, isLoadedAssets } = useContext(AssetsContext);
-  const isAuthenticated = useSelector(getIsAuthenticatedSelector);
   const dispatch = useDispatch();
 
-  const { account } = useWeb3React();
+  const { account, isActive } = useWeb3React();
   const needReload = useAppSelector(selectPnftExchange).needReload;
   const isLaunchpadCreator = compareString(poolDetail?.creatorAddress, account);
   const trustChain = isConnectedTrustChain();
+  const isAuthenticated = useSelector(getIsAuthenticatedSelector);
 
   const { values } = useFormState();
   const { change, restart } = useForm();
@@ -434,6 +436,118 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     change('contributeMethod', method);
   }
 
+  const renderActionButtons = () => {
+    return (
+      <>
+        {(isFunding ||
+          isEndLaunchpad ||
+          isClaimLaunchpad ||
+          isCancelLaunchpad ||
+          isVoteRelease ||
+          isVoting
+        ) && (
+          <>
+            {
+              isAuthenticated && !trustChain && (
+                <Flex
+                  bg={"#FFFFFF"}
+                  borderRadius={"8px"}
+                  gap={2}
+                  alignItems={"center"}
+                  justifyContent={"center"}
+                  p={2}
+                  width={"80%"}
+                  marginX={"auto"}
+                >
+                  <IoWarningOutline color="#FF7E21" fontSize={"20px"}/>
+                  <Text color={"#000000"}>You must switch to <Text as={"span"} color="#FF7E21" fontWeight={700}>Trustless Computer Network</Text> to do action.</Text>
+                </Flex>
+              )
+            }
+            <WrapperConnected
+              type={isRequireApprove ? 'button' : 'submit'}
+              className={styles.submitButton}
+            >
+              {isRequireApprove ? (
+                <FiledButton
+                  isLoading={loading}
+                  isDisabled={loading}
+                  loadingText="Processing"
+                  btnSize={'h'}
+                  containerConfig={{ flex: 1, mt: 6 }}
+                  onClick={onShowModalApprove}
+                  processInfo={{
+                    id: transactionType.createPoolApprove,
+                  }}
+                >
+                  APPROVE USE OF {liquidityToken?.symbol}
+                </FiledButton>
+              ) : (
+                <FiledButton
+                  isDisabled={submitting || btnDisabled}
+                  isLoading={submitting}
+                  type="submit"
+                  btnSize={'h'}
+                  containerConfig={{ flex: 1, mt: 6 }}
+                  loadingText={submitting ? 'Processing' : ' '}
+                  processInfo={{
+                    id: transactionType.depositLaunchpad,
+                  }}
+                  style={{
+                    backgroundColor: isEndLaunchpad
+                      ? colors.redPrimary
+                      : isClaimLaunchpad
+                        ? colors.greenPrimary
+                        : isCancelLaunchpad
+                          ? colors.redPrimary
+                          : isVoteRelease
+                            ? colors.bluePrimary
+                            : isVoting
+                              ? colors.bluePrimary
+                              : colors.bluePrimary,
+                  }}
+                >
+                  {isEndLaunchpad
+                    ? 'END THIS PROJECT'
+                    : isClaimLaunchpad
+                      ? 'CLAIM THIS PROJECT'
+                      : isCancelLaunchpad
+                        ? 'CANCEL THIS PROJECT'
+                        : isVoteRelease
+                          ? 'RELEASE VOTE'
+                          : isVoting
+                            ? 'SUPPORT THIS PROJECT'
+                            : 'CONTRIBUTE TO THIS PROJECT'}
+                </FiledButton>
+              )}
+            </WrapperConnected>
+          </>
+        )}
+        {!isActive && isVoting && (
+          <Text
+            fontSize={px2rem(14)}
+            fontWeight={'400'}
+            color={'rgba(255, 255, 255, 0.7)'}
+            textAlign={'center'}
+            mt={2}
+          >
+            Connect a wallet to vote.
+          </Text>
+        )}
+      </>
+    )
+  }
+
+  if([LAUNCHPAD_STATUS.Voting, LAUNCHPAD_STATUS.NotPassed].includes(poolDetail?.state)) {
+    return ([LAUNCHPAD_STATUS.Voting].includes(poolDetail?.state) || isEndLaunchpad || isVoteRelease) ? (
+      <form onSubmit={onSubmit} style={{ height: '100%'}}>
+        <Box mb={12}>
+          {renderActionButtons()}
+        </Box>
+      </form>
+    ) : <></>;
+  }
+
   return (
     <form onSubmit={onSubmit} style={{ height: '100%' }}>
       <Flex justifyContent={'space-between'}>
@@ -546,7 +660,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           </StatNumber>
         </Stat>
       </Flex>
-      {isStarting && (
+      {isFunding && (
         <>
           {
             compareString(liquidityToken?.address, WETH_ADDRESS) ? (
@@ -652,7 +766,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       {
         trustChain &&
         isAuthenticated &&
-        isStarting &&
+        isFunding &&
         isLoadedAssets &&
         values?.contributeMethod !== 'eth' &&
         new BigNumber(juiceBalance || 0).lte(0) && (
@@ -682,7 +796,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       {
         trustChain &&
         isAuthenticated &&
-        isStarting &&
+        isFunding &&
         liquidityToken &&
         values?.contributeMethod !== 'eth' &&
         BRIDGE_SUPPORT_TOKEN.includes(liquidityToken?.symbol) &&
@@ -713,85 +827,9 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             </Text>
           </Flex>
         )}
-      <Box mt={6} />
-      {(isStarting ||
-        isEndLaunchpad ||
-        isClaimLaunchpad ||
-        isCancelLaunchpad ||
-        isVoteRelease) && (
-        <>
-          {
-            isAuthenticated && !trustChain && (
-              <Flex
-                bg={"#FFFFFF"}
-                borderRadius={"8px"}
-                gap={2}
-                alignItems={"center"}
-                justifyContent={"center"}
-                p={2}
-                width={"80%"}
-                marginX={"auto"}
-              >
-                <IoWarningOutline color="#FF7E21" fontSize={"20px"}/>
-                <Text color={"#000000"}>You must switch to <Text as={"span"} color="#FF7E21" fontWeight={700}>Trustless Computer Network</Text> to do action.</Text>
-              </Flex>
-            )
-          }
-          <WrapperConnected
-            type={isRequireApprove ? 'button' : 'submit'}
-            className={styles.submitButton}
-          >
-            {isRequireApprove ? (
-              <FiledButton
-                isLoading={loading}
-                isDisabled={loading}
-                loadingText="Processing"
-                btnSize={'h'}
-                containerConfig={{ flex: 1, mt: 6 }}
-                onClick={onShowModalApprove}
-                processInfo={{
-                  id: transactionType.createPoolApprove,
-                }}
-              >
-                APPROVE USE OF {liquidityToken?.symbol}
-              </FiledButton>
-            ) : (
-              <FiledButton
-                isDisabled={submitting || btnDisabled}
-                isLoading={submitting}
-                type="submit"
-                btnSize={'h'}
-                containerConfig={{ flex: 1, mt: 6 }}
-                loadingText={submitting ? 'Processing' : ' '}
-                processInfo={{
-                  id: transactionType.depositLaunchpad,
-                }}
-                style={{
-                  backgroundColor: isEndLaunchpad
-                    ? colors.redPrimary
-                    : isClaimLaunchpad
-                      ? colors.greenPrimary
-                      : isCancelLaunchpad
-                        ? colors.redPrimary
-                        : isVoteRelease
-                          ? colors.bluePrimary
-                          : colors.bluePrimary,
-                }}
-              >
-                {isEndLaunchpad
-                  ? 'END THIS PROJECT'
-                  : isClaimLaunchpad
-                    ? 'CLAIM THIS PROJECT'
-                    : isCancelLaunchpad
-                      ? 'CANCEL THIS PROJECT'
-                      : isVoteRelease
-                        ? 'RELEASE VOTE'
-                        : 'CONTRIBUTE TO THIS PROJECT '}
-              </FiledButton>
-            )}
-          </WrapperConnected>
-        </>
-      )}
+        <Box mt={6}>
+          {renderActionButtons()}
+        </Box>
       <Flex direction={'column'} mt={4}>
         {Object.values(poolDetail?.launchpadToken?.social).join('')?.length > 0 && (
           <Text
@@ -906,7 +944,15 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
   // console.log('=====');
   const isLaunchpadCreator = compareString(poolDetail?.creatorAddress, account);
 
-  const isStarting = [LAUNCHPAD_STATUS.Launching].includes(poolDetail?.state);
+  const isFunding = [LAUNCHPAD_STATUS.Launching].includes(poolDetail?.state);
+  const isVoting = [LAUNCHPAD_STATUS.Voting].includes(poolDetail?.state);
+
+  const votingToken = {
+    address: TM_ADDRESS,
+    thumbnail: 'https://i.ibb.co/TbshdC0/Icon-Token-TM-04.png',
+    decimal: 18,
+    symbol: 'TM',
+  };
 
   useEffect(() => {
     if (![LAUNCHPAD_STATUS.Draft].includes(poolDetail?.state)) {
@@ -1054,6 +1100,32 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
     );
   };
 
+  const confirmVoting = (values: any) => {
+    const id = 'modalVoteConfirm';
+    const close = () => dispatch(closeModal({ id }));
+    dispatch(
+      openModal({
+        id,
+        theme: 'dark',
+        title: 'Support this Project',
+        className: styles.modalContent,
+        modalProps: {
+          centered: true,
+          size: mobileScreen ? 'full' : 'xl',
+          zIndex: 9999999,
+        },
+        render: () => (
+          <Flex>
+            <VoteForm
+              poolDetail={poolDetail}
+              votingToken={votingToken}
+              onClose={close}
+            />
+          </Flex>
+        ),
+      }),
+    );
+  }
 
   const showContributeFromEthWallet = () => {
     const id = 'modalDepositEthFromEthWallet';
@@ -1101,7 +1173,9 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
     console.log('handleSubmit', values);
 
     const liquidityToken = poolDetail?.liquidityToken;
-    if([LAUNCHPAD_STATUS.Launching].includes(poolDetail?.state) && compareString(liquidityToken?.address, WETH_ADDRESS)) {
+    if([LAUNCHPAD_STATUS.Voting].includes(poolDetail?.state)) {
+      confirmVoting(values);
+    } else if([LAUNCHPAD_STATUS.Launching].includes(poolDetail?.state) && compareString(liquidityToken?.address, WETH_ADDRESS)) {
       const { contributeMethod } = values;
       if(contributeMethod === 'eth') {
         showContributeFromEthWallet();
@@ -1215,10 +1289,11 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
             onSubmit={handleSubmit}
             submitting={submitting}
             poolDetail={poolDetail}
+            isCancelLaunchpad={canCancel}
+            isVoting={isVoting}
+            isFunding={isFunding}
             isEndLaunchpad={canEnd}
             isClaimLaunchpad={canClaim}
-            isStarting={isStarting}
-            isCancelLaunchpad={canCancel}
             isVoteRelease={canVoteRelease}
           />
         )}

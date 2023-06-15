@@ -11,7 +11,7 @@ import {getVoteResultLaunchpad} from "@/services/launchpad";
 import {ILaunchpad} from '@/interfaces/launchpad';
 import px2rem from "@/utils/px2rem";
 import {LAUNCHPAD_STATUS} from "@/modules/Launchpad/Launchpad.Status";
-import BuyForm from "@/modules/ProposalDetail/form";
+import BuyForm from "@/modules/LaunchPadDetail/form";
 
 const ProposalResult = ({poolDetail}: { poolDetail: ILaunchpad }) => {
   const needReload = useAppSelector(selectPnftExchange).needReload;
@@ -40,10 +40,8 @@ const ProposalResult = ({poolDetail}: { poolDetail: ILaunchpad }) => {
   return (
     <Box bgColor={"transparent"} paddingX={10} paddingTop={10} paddingBottom={px2rem(100)} border={"1px solid #353945"}>
       {
-        [LAUNCHPAD_STATUS.Voting].includes(poolDetail?.state) && (
-          <Box mb={12}>
-            <BuyForm poolDetail={poolDetail}/>
-          </Box>
+        [LAUNCHPAD_STATUS.Voting, LAUNCHPAD_STATUS.NotPassed].includes(poolDetail?.state) && (
+          <BuyForm poolDetail={poolDetail}/>
         )
       }
       <Side
