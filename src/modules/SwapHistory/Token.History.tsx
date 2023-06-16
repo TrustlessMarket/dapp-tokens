@@ -149,7 +149,7 @@ const TokenHistory = () => {
           borderBottom: 'none',
         },
         render(row: any) {
-          return <Text color={"#FFFFFF"}>{row?.createdAt ? moment(row.createdAt).format('lll') : '-'}</Text>;
+          return <Text color={"#FFFFFF"}>{row?.timestamp ? moment(row.timestamp).format('lll') : '-'}</Text>;
         },
       },
       {

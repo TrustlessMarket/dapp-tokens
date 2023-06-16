@@ -453,7 +453,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         ) && (
           <>
             {
-              isAuthenticated && !trustChain && (
+              isAuthenticated && !trustChain && values?.contributeMethod !== 'eth' && (
                 <Flex
                   bg={"#FFFFFF"}
                   borderRadius={"8px"}
@@ -472,6 +472,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             <WrapperConnected
               type={isRequireApprove ? 'button' : 'submit'}
               className={styles.submitButton}
+              forceSwitchChain={values?.contributeMethod !== 'eth'}
             >
               {isRequireApprove ? (
                 <FiledButton
@@ -479,7 +480,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
                   isDisabled={loading}
                   loadingText="Processing"
                   btnSize={'h'}
-                  containerConfig={{ flex: 1 }}
+                  containerConfig={{ flex: 1, mt: 6 }}
                   onClick={onShowModalApprove}
                   processInfo={{
                     id: transactionType.createPoolApprove,
@@ -493,7 +494,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
                   isLoading={submitting}
                   type="submit"
                   btnSize={'h'}
-                  containerConfig={{ flex: 1 }}
+                  containerConfig={{ flex: 1, mt: 6 }}
                   loadingText={submitting ? 'Processing' : ' '}
                   processInfo={{
                     id: transactionType.depositLaunchpad,

@@ -4,16 +4,13 @@
 import Button from '@/components/Button';
 import {IToken} from '@/interfaces/token';
 import {getTokenRp} from '@/services/swap';
-import {getIsAuthenticatedSelector} from '@/state/user/selector';
 import {formatCurrency} from '@/utils';
 import {debounce} from 'lodash';
-import React, {useContext, useEffect, useMemo, useRef, useState} from 'react';
+import React, {useEffect, useMemo, useRef, useState} from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import {useDispatch, useSelector} from 'react-redux';
+import {useDispatch} from 'react-redux';
 import {StyledTokens, UploadFileContainer} from './Tokens.styled';
 import {ROUTE_PATH} from '@/constants/route-path';
-import {WalletContext} from '@/contexts/wallet-context';
-import {showError} from '@/utils/toast';
 import {Box, Flex, forwardRef, Icon, Spinner, Text} from '@chakra-ui/react';
 import BigNumber from 'bignumber.js';
 import Link from 'next/link';
@@ -31,37 +28,36 @@ import {VscArrowSwap} from 'react-icons/vsc';
 import styles from './styles.module.scss';
 import TokenChartLast7Day from './Token.ChartLast7Day';
 import VerifiedBadgeToken from "./verifiedBadgeToken";
-import {closeModal, openModal} from "@/state/modal";
 import {useWindowSize} from "@trustless-computer/dapp-core";
-import CreateTokenForm from './CreateToken/form';
-import {updateCurrentTransaction} from "@/state/pnftExchange";
+import {FiSearch} from 'react-icons/fi';
 
 const LIMIT_PAGE = 100;
 
 export const MakeFormSwap = forwardRef((props, ref) => {
   const router = useRouter();
+  // const [showModal, setShowModal] = useState(false);
   const [isFetching, setIsFetching] = useState(false);
 
-  const isAuthenticated = useSelector(getIsAuthenticatedSelector);
-  const { onDisconnect, onConnect, requestBtcAddress } = useContext(WalletContext);
+  // const isAuthenticated = useSelector(getIsAuthenticatedSelector);
+  // const { onDisconnect, onConnect, requestBtcAddress } = useContext(WalletContext);
   const [tokensList, setTokensList] = useState<IToken[]>([]);
   const [sort, setSort] = useState({ sort: '' });
   const { values } = useFormState();
   const dispatch = useDispatch();
   const { mobileScreen } = useWindowSize();
 
-  const handleConnectWallet = async () => {
-    try {
-      await onConnect();
-      await requestBtcAddress();
-    } catch (err) {
-      showError({
-        message: (err as Error).message,
-      });
-      console.log(err);
-      onDisconnect();
-    }
-  };
+  // const handleConnectWallet = async () => {
+  //   try {
+  //     await onConnect();
+  //     await requestBtcAddress();
+  //   } catch (err) {
+  //     showError({
+  //       message: (err as Error).message,
+  //     });
+  //     console.log(err);
+  //     onDisconnect();
+  //   }
+  // };
 
   const fetchTokens = async (page = 1, isFetchMore = false) => {
     try {
@@ -98,32 +94,40 @@ export const MakeFormSwap = forwardRef((props, ref) => {
 
   const debounceLoadMore = debounce(onLoadMoreTokens, 300);
 
-  const handleCreateToken = () => {
-    if (!isAuthenticated) {
-      handleConnectWallet();
-      // router.push(ROUTE_PATH.CONNECT_WALLET);
-    } else {
-      const id = 'modalCreateToken';
-      const close = () => dispatch(closeModal({id}));
-      dispatch(updateCurrentTransaction(null));
-      dispatch(
-        openModal({
-          id,
-          theme: 'dark',
-          title: 'Create Smart BRC-20',
-          className: styles.modalContent,
-          modalProps: {
-            centered: true,
-            size: mobileScreen ? 'full' : 'xl',
-            zIndex: 9999999,
-          },
-          render: () => (
-            <CreateTokenForm onClose={close}/>
-          ),
-        }),
-      );
-    }
-  };
+  // const handleCreateToken = () => {
+  //   if (!isAuthenticated) {
+  //     handleConnectWallet();
+  //     // router.push(ROUTE_PATH.CONNECT_WALLET);
+  //   } else {
+  //     setShowModal(true);
+  //   }
+  // };
+  // const handleCreateToken = () => {
+  //   if (!isAuthenticated) {
+  //     handleConnectWallet();
+  //     // router.push(ROUTE_PATH.CONNECT_WALLET);
+  //   } else {
+  //     const id = 'modalCreateToken';
+  //     const close = () => dispatch(closeModal({id}));
+  //     dispatch(updateCurrentTransaction(null));
+  //     dispatch(
+  //       openModal({
+  //         id,
+  //         theme: 'dark',
+  //         title: 'Create Smart BRC-20',
+  //         className: styles.modalContent,
+  //         modalProps: {
+  //           centered: true,
+  //           size: mobileScreen ? 'full' : 'xl',
+  //           zIndex: 9999999,
+  //         },
+  //         render: () => (
+  //           <CreateTokenForm onClose={close}/>
+  //         ),
+  //       }),
+  //     );
+  //   }
+  // };
 
   const debounced = useDebounce(values?.search_text);
 
@@ -133,7 +137,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
 
   const columns: ColumnProp[] = useMemo(
     () => [
-      {
+      /*{
         id: 'index',
         label: '#',
         labelConfig: {
@@ -162,14 +166,14 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             </Text>
           );
         },
-      },
+      },*/
       {
         id: 'name',
         label: 'Name',
         labelConfig: {
           fontSize: '12px',
           fontWeight: '500',
-          color: '#B1B5C3',
+          color: '#FFFFFF',
         },
         config: {
           // borderBottom: 'none',
@@ -187,7 +191,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         sort: sort?.sort,
         render(row: any) {
           return (
-            <Flex gap={2} minW={px2rem(200)} alignItems={'center'}>
+            <Flex gap={4} minW={px2rem(200)} alignItems={'center'}>
               <img
                 // width={25}
                 // height={25}
@@ -198,7 +202,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
                 alt={row?.thumbnail || 'default-icon'}
                 className={'avatar'}
               />
-              <Flex direction={'column'}>
+              <Flex direction={'column'} gap={1}>
                 <Flex gap={1} alignItems={'center'} fontSize={px2rem(16)}>
                   <Box fontWeight={'500'} color={'#FFFFFF'}>
                     {row?.name}
@@ -220,7 +224,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         labelConfig: {
           fontSize: '12px',
           fontWeight: '500',
-          color: '#B1B5C3',
+          color: '#FFFFFF',
         },
         config: {
           // borderBottom: 'none',
@@ -253,7 +257,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         labelConfig: {
           fontSize: '12px',
           fontWeight: '500',
-          color: '#B1B5C3',
+          color: '#FFFFFF',
         },
         config: {
           // borderBottom: 'none',
@@ -295,7 +299,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       //   labelConfig: {
       //     fontSize: '12px',
       //     fontWeight: '500',
-      //     color: '#B1B5C3',
+      //     color: '#FFFFFF',
       //   },
       //   config: {
       //     // borderBottom: 'none',
@@ -332,7 +336,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         labelConfig: {
           fontSize: '12px',
           fontWeight: '500',
-          color: '#B1B5C3',
+          color: '#FFFFFF',
         },
         config: {
           // borderBottom: 'none',
@@ -362,7 +366,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         labelConfig: {
           fontSize: '12px',
           fontWeight: '500',
-          color: '#B1B5C3',
+          color: '#FFFFFF',
         },
         config: {
           // borderBottom: 'none',
@@ -392,7 +396,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         labelConfig: {
           fontSize: '12px',
           fontWeight: '500',
-          color: '#B1B5C3',
+          color: '#FFFFFF',
         },
         config: {
           // borderBottom: 'none',
@@ -422,7 +426,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         labelConfig: {
           fontSize: '12px',
           fontWeight: '500',
-          color: '#B1B5C3',
+          color: '#FFFFFF',
         },
         config: {
           // borderBottom: 'none',
@@ -437,7 +441,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         labelConfig: {
           fontSize: '12px',
           fontWeight: '500',
-          color: '#B1B5C3',
+          color: '#FFFFFF',
         },
         config: {
           // borderBottom: 'none',
@@ -459,9 +463,9 @@ export const MakeFormSwap = forwardRef((props, ref) => {
                 title="Swap now"
                 color={'#FFFFFF'}
                 bg={'#1E1E22'}
-                borderRadius={'4px'}
-                paddingX={2}
-                paddingY={1}
+                borderRadius={'100px'}
+                paddingX={4}
+                paddingY={2}
                 _hover={{
                   color: '#1E1E22',
                   bg: '#FFFFFF',
@@ -469,7 +473,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
                 fontWeight={'medium'}
               >
                 <Icon as={VscArrowSwap} fontWeight={'medium'} fontSize={'18px'} />
-                SWAP NOW
+                Swap now
               </Flex>
             </Flex>
           );
@@ -486,7 +490,29 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   return (
     <StyledTokens>
       <div className="max-content">
-        <h3 className="upload_title">Smart BRC-20</h3>
+        <Flex
+          justifyContent={"center"}
+          alignItems={"center"}
+          gap={2}
+          mb={4}
+          w={"fit-content"}
+          marginX={"auto"}
+          bg={"#1E1E22"}
+          borderRadius={"100px"}
+          paddingX={4}
+          paddingY={2}
+          fontSize={px2rem(16)}
+          fontWeight={400}
+        >
+          <Text color={"#CECECE"}>Powered by</Text>
+          <img
+            height={20}
+            src={`${CDN_URL}/icons/trussless-computer-logo.svg`}
+            alt="logo"
+          />
+          <Text color={"#FFFFFF"}>Trustless Computer</Text>
+        </Flex>
+        <h3 className="upload_title">New Bitcoin DEX</h3>
       </div>
       <UploadFileContainer className="max-content">
         <div className="upload_left">
@@ -494,32 +520,11 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           <div className="upload_content">
             {/* <h3 className="upload_title">BRC-20 on Bitcoin</h3> */}
             <Text className="upload_text" color={'rgba(255, 255, 255, 0.7)'}>
-              Smart BRC-20s are{' '}
-              <span style={{ color: '#FFFFFF' }}>
-                the first smart contracts deployed on Bitcoin
-              </span>
-              . They run exactly as programmed without any possibility of fraud,
-              third-party interference, or censorship. Issue your Smart BRC-20 on
-              Bitcoin for virtually anything: a cryptocurrency, a share in a company,
-              voting rights in a DAO, and more.
+              Swap, earn, and build on <Text as={"span"} color={"#FFFFFF"}>the first decentralized crypto trading protocol on Bitcoin</Text>.
             </Text>
           </div>
         </div>
         <div className="upload_right">
-          <Button
-            className="button-create-box"
-            background={'white'}
-            onClick={handleCreateToken}
-          >
-            <Text
-              size="medium"
-              color={'black'}
-              className="button-text"
-              fontWeight="medium"
-            >
-              Issue Smart BRC-20
-            </Text>
-          </Button>
           <Link
             href={`${ROUTE_PATH.SWAP}?from_token=${WETH_ADDRESS}&to_token=${GM_ADDRESS}`}
           >
@@ -530,13 +535,31 @@ export const MakeFormSwap = forwardRef((props, ref) => {
                 className="brc20-text"
                 fontWeight="medium"
               >
-                Swap Smart BRC-20
+                Trade now
+              </Text>
+            </Button>
+          </Link>
+          <Link
+            href={ROUTE_PATH.POOLS}
+          >
+            <Button
+              className="button-create-box"
+              background={'white'}
+              // onClick={handleCreateToken}
+            >
+              <Text
+                size="medium"
+                color={'black'}
+                className="button-text"
+                fontWeight="medium"
+              >
+                Provide liquidity
               </Text>
             </Button>
           </Link>
         </div>
       </UploadFileContainer>
-      <Flex mb={4} justifyContent={'flex-end'} mr={[0, 15]}>
+      <Flex mb={4} justifyContent={'flex-start'} mr={[0, 15]}>
         <Field
           component={FieldText}
           name="search_text"
@@ -547,6 +570,9 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           className={'search_text'}
           borderColor={'#353945'}
           // fieldChanged={onChange}
+          prependComp={
+            <FiSearch color={"rgba(255, 255, 255, 0.6)"} fontSize={"20px"}/>
+          }
         />
       </Flex>
       <InfiniteScroll
