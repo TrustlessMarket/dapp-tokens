@@ -8,7 +8,6 @@ import {formatCurrency} from '@/utils';
 import {debounce} from 'lodash';
 import React, {useEffect, useMemo, useRef, useState} from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import {useDispatch} from 'react-redux';
 import {StyledTokens, UploadFileContainer} from './Tokens.styled';
 import {ROUTE_PATH} from '@/constants/route-path';
 import {Box, Flex, forwardRef, Icon, Spinner, Text} from '@chakra-ui/react';
@@ -28,36 +27,17 @@ import {VscArrowSwap} from 'react-icons/vsc';
 import styles from './styles.module.scss';
 import TokenChartLast7Day from './Token.ChartLast7Day';
 import VerifiedBadgeToken from "./verifiedBadgeToken";
-import {useWindowSize} from "@trustless-computer/dapp-core";
 import {FiSearch} from 'react-icons/fi';
 
 const LIMIT_PAGE = 100;
 
 export const MakeFormSwap = forwardRef((props, ref) => {
   const router = useRouter();
-  // const [showModal, setShowModal] = useState(false);
   const [isFetching, setIsFetching] = useState(false);
 
-  // const isAuthenticated = useSelector(getIsAuthenticatedSelector);
-  // const { onDisconnect, onConnect, requestBtcAddress } = useContext(WalletContext);
   const [tokensList, setTokensList] = useState<IToken[]>([]);
   const [sort, setSort] = useState({ sort: '' });
   const { values } = useFormState();
-  const dispatch = useDispatch();
-  const { mobileScreen } = useWindowSize();
-
-  // const handleConnectWallet = async () => {
-  //   try {
-  //     await onConnect();
-  //     await requestBtcAddress();
-  //   } catch (err) {
-  //     showError({
-  //       message: (err as Error).message,
-  //     });
-  //     console.log(err);
-  //     onDisconnect();
-  //   }
-  // };
 
   const fetchTokens = async (page = 1, isFetchMore = false) => {
     try {
