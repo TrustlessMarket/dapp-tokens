@@ -166,7 +166,7 @@ const TokenHistory = ({ data, isOwner }: { data: IToken; isOwner?: boolean }) =>
           borderBottom: 'none',
         },
         render(row: any) {
-          return <Text>{moment(row.createdAt).format('lll')}</Text>;
+          return <Text>{moment(row.timestamp).format('lll')}</Text>;
         },
       },
       {
