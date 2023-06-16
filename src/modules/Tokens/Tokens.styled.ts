@@ -105,6 +105,10 @@ export const StyledTokens = styled.div`
         background-color: transparent;
       }
     }
+
+    @media screen and (max-width: 768px) {
+      max-width: unset;
+    }
   }
 
   .search_text {
@@ -116,7 +120,7 @@ export const StyledTokens = styled.div`
   }
 
   @media screen and (max-width: 768px) {
-    /* margin-top: ${px2rem(24)}; */
+    padding: ${px2rem(16)} ${px2rem(16)};
 
     .upload_title {
       margin-bottom: ${px2rem(16)};
@@ -188,7 +192,7 @@ export const UploadFileContainer = styled.div`
     min-width: ${px2rem(154)};
   }
   .upload_text {
-    font-size: ${px2rem(20)};
+    font-size: ${px2rem(24)};
     letter-spacing: -0.05em;
   }
 
@@ -198,11 +202,11 @@ export const UploadFileContainer = styled.div`
       font-size: 1rem;
     }
 
-    .upload_right {
-      display: flex;
-      flex-direction: column;
-      gap: ${px2rem(16)};
-      align-items: center;
-    }
+    // .upload_right {
+    //   display: flex;
+    //   flex-direction: column;
+    //   gap: ${px2rem(16)};
+    //   align-items: center;
+    // }
   }
 `;
