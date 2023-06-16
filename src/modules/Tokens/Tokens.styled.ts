@@ -192,7 +192,7 @@ export const UploadFileContainer = styled.div`
     min-width: ${px2rem(154)};
   }
   .upload_text {
-    font-size: ${px2rem(20)};
+    font-size: ${px2rem(24)};
     letter-spacing: -0.05em;
   }
 
