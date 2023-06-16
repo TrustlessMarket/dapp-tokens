@@ -32,8 +32,8 @@ export const StyledTokens = styled.div`
     }
 
     td {
-      padding-top: ${px2rem(24)};
-      padding-bottom: ${px2rem(24)};
+      padding-top: ${px2rem(22)};
+      padding-bottom: ${px2rem(22)};
     }
 
     thead {
