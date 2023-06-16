@@ -18,7 +18,7 @@ import { getAccessToken, setAccessToken } from '@/utils/auth-storage';
 import { clearAuthStorage } from '@/utils/auth-storage';
 import Web3 from 'web3';
 import { provider } from 'web3-core';
-import { switchChain } from '@/utils';
+import { isSupportedChain, switchChain } from '@/utils';
 import { SupportedChainId } from '@/constants/chains';
 // import { getCurrentProfile } from '@/services/profile';
 import useAsyncEffect from 'use-async-effect';
@@ -60,7 +60,7 @@ export const WalletProvider: React.FC<PropsWithChildren> = ({
         throw new Error('Get connection error.');
       }
       await connection.connector.activate();
-      if (chainId !== SupportedChainId.TRUSTLESS_COMPUTER) {
+      if (!isSupportedChain(chainId)) {
         await switchChain(SupportedChainId.TRUSTLESS_COMPUTER);
       }
       const addresses = await connector.provider?.request({
@@ -104,7 +104,7 @@ export const WalletProvider: React.FC<PropsWithChildren> = ({
       throw new Error('Get connection error.');
     }
     await connection.connector.activate();
-    if (chainId !== SupportedChainId.TRUSTLESS_COMPUTER) {
+    if (!isSupportedChain(chainId)) {
       await switchChain(SupportedChainId.TRUSTLESS_COMPUTER);
     }
     const addresses = await connector.provider?.request({
