@@ -296,12 +296,20 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   useEffect(() => {
     if (account && liquidityToken?.address && poolDetail?.launchpad) {
       checkApproveBaseToken(liquidityToken);
+      getLiquidityTokenBalance(liquidityToken);
     }
   }, [account, liquidityToken?.address, poolDetail?.launchpad]);
 
   const checkApproveBaseToken = async (token: any) => {
     const [_isApprove] = await Promise.all([checkTokenApprove(token)]);
     setAmountLiquidityTokenApproved(_isApprove);
+  };
+
+  const getLiquidityTokenBalance = async (token: any) => {
+    const [_baseBalance] = await Promise.all([
+      getTokenBalance(token),
+    ]);
+    setLiquidityBalance(_baseBalance);
   };
 
   const checkTokenApprove = async (token: IToken) => {
