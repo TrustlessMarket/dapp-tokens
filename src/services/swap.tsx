@@ -87,7 +87,7 @@ export const getTradeHistory = async (
   } & IPagingParams,
 ) => {
   const qs = '?' + queryString.stringify(params);
-  return swrFetcher(`${API_URL}${API_PATH}/pair/trade-histories${qs}`, {
+  return swrFetcher(`${API_EXCHANGE_URL}${API_PATH}/pair/trade-histories${qs}`, {
     method: 'GET',
     error: 'Fail to scan tx',
   });
@@ -123,7 +123,7 @@ export const getUserTradeHistory = async (
   } & IPagingParams,
 ) => {
   const qs = '?' + queryString.stringify(params);
-  return swrFetcher(`${API_URL}${API_PATH}/user/trade-histories${qs}`, {
+  return swrFetcher(`${API_EXCHANGE_URL}${API_PATH}/user/trade-histories${qs}`, {
     method: 'GET',
     error: 'Fail to get user trade history',
   });

@@ -31,6 +31,10 @@ export const StyledIdoContainer = styled(BodyContainer)`
     max-width: 1024px;
   }
 
+  .button-create-box {
+    padding: 0 16px;
+  }
+
   .chakra-table {
     /* border: 1px solid ${colors.darkBorderColor}!important; */
     /* border-radius: 6px;

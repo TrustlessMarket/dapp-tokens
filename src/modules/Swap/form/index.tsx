@@ -84,7 +84,6 @@ import ModalConfirmApprove from '@/components/ModalConfirmApprove';
 import tokenIcons from '@/constants/tokenIcons';
 
 const LIMIT_PAGE = 500;
-const FEE = 2;
 export const MakeFormSwap = forwardRef((props, ref) => {
   const { onSubmit, submitting } = props;
   const [loading, setLoading] = useState(false);
@@ -110,6 +109,8 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const [isChangeQuoteToken, setIsChangeQuoteToken] = useState(false);
   const router = useRouter();
   const [swapRoutes, setSwapRoutes] = useState<any[]>([]);
+  const configs = useAppSelector(selectPnftExchange).configs;
+  const swapFee = configs?.swapFee || 0.3;
 
   const { account } = useWeb3React();
   const needReload = useAppSelector(selectPnftExchange).needReload;
@@ -242,7 +243,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     reserveOut: BigNumber,
   ): BigNumber => {
     try {
-      const amountInWithFee = amountIn.multipliedBy(1000 - FEE * 10);
+      const amountInWithFee = amountIn.multipliedBy(1000 - swapFee * 10);
       const numerator = amountInWithFee.multipliedBy(reserveOut);
       const denominator = reserveIn.multipliedBy(1000).plus(amountInWithFee);
       const amountOut = numerator.div(denominator).decimalPlaces(18);
@@ -267,7 +268,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     reserveOut: BigNumber,
   ): BigNumber => {
     try {
-      const amountInWithFee = amountIn.multipliedBy(1000 + FEE * 10);
+      const amountInWithFee = amountIn.multipliedBy(1000 + swapFee * 10);
       const numerator = amountInWithFee.multipliedBy(reserveOut);
       const denominator = reserveIn.multipliedBy(1000).plus(amountInWithFee);
       const amountOut = numerator.div(denominator).decimalPlaces(18);
@@ -1213,7 +1214,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
               fontWeight={'medium'}
               color={'rgba(255, 255, 255, 0.7)'}
             >
-              Fee: {FEE * (swapRoutes?.length || 1)}%
+              Fee: {swapFee * (swapRoutes?.length || 1)}%
             </Text>
           }
         />

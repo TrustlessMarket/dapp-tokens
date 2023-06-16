@@ -59,7 +59,7 @@ const Header = () => {
   const [isOpenMenu, setIsOpenMenu] = useState<boolean>(false);
   const { mobileScreen } = useWindowSize();
   const router = useRouter();
-  const { headerHeight, showGetStarted, showLaunchpadGetStarted, showBannerPromotion } =
+  const { headerHeight, showGetStarted, showLaunchpadGetStarted, showBannerPromotion, bannerHeight } =
     useScreenLayout();
 
   // const isTokensPage = useMemo(() => {
@@ -158,7 +158,7 @@ const Header = () => {
       </div>
       {showGetStarted && (
         <Flex
-          height={10}
+          height={`${bannerHeight}px`}
           alignItems="center"
           justifyContent="center"
           bgColor={`#ebebeb${isScreenDarkMode() ? '33' : ''}`}
@@ -181,7 +181,7 @@ const Header = () => {
       )}
       {showLaunchpadGetStarted && (
         <Flex
-          height={10}
+          height={`${bannerHeight}px`}
           alignItems="center"
           justifyContent="center"
           bgColor={`#ebebeb${isScreenDarkMode() ? '33' : ''}`}

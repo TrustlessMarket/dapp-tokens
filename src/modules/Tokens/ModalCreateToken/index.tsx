@@ -196,7 +196,7 @@ const ModalCreateToken: React.FC<Props> = (props: Props) => {
         />
       </Modal.Header>
       <Modal.Body>
-        <Title className="font-medium">Create BRC-20</Title>
+        <Title className="font-medium">Create SMART BRC-20</Title>
         <Formik
           key="create"
           initialValues={{

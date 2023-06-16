@@ -7,18 +7,18 @@ import px2rem from "@/utils/px2rem";
 const DATA = [
   {
     img: `${CDN_URL}/icons/fund-project.svg`,
-    title: 'Fund projects',
-    desc: 'We connects creators with contributors to fund projects.'
+    title: 'Keep building',
+    desc: 'Provide builders the necessary support to make their visions a reality.'
   },
   {
     img: `${CDN_URL}/icons/reward.svg`,
-    title: 'Reward',
-    desc: 'The value of your reward tokens fluctuate with the market. However, creators will always keep you up to date.'
+    title: 'DYOR',
+    desc: 'Builders are expected to keep supporters updated on a regular basis, even though reward values may not be guaranteed.'
   },
   {
     img: `${CDN_URL}/icons/charge1.svg`,
-    title: 'Charge',
-    desc: 'You’re only charged if the project meets its funding goal by the campaign deadline.'
+    title: 'Reduce risk',
+    desc: 'Contributions from supporters will be processed if the project meets its funding goal within the campaign deadline.'
   },
 ]
 
