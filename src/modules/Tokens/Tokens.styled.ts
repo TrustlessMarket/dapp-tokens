@@ -14,7 +14,7 @@ export const StyledTokens = styled.div`
   }
 
   .chakra-table__container {
-    border-radius: 20px;
+    border-radius: 12px;
     border: 1px solid rgba(255, 255, 255, 0.1);
   }
   .chakra-table {
@@ -90,8 +90,8 @@ export const StyledTokens = styled.div`
   }
   
   .chakra-input__left-element {
-    height: 48px;
-    width: 48px;
+    height: 44px;
+    width: 44px;
   }
 
   .chakra-form-control {
@@ -112,6 +112,7 @@ export const StyledTokens = styled.div`
     color: #ffffff;
     font-weight: 400;
     padding-left: 0;
+    height: 44px;
   }
 
   @media screen and (max-width: 768px) {
@@ -150,7 +151,7 @@ export const UploadFileContainer = styled.div`
     display: flex;
     position: relative;
     overflow: hidden;
-    gap: ${px2rem(32)};
+    gap: ${px2rem(12)};
     margin-bottom: ${px2rem(16)};
   }
 
@@ -187,7 +188,7 @@ export const UploadFileContainer = styled.div`
     min-width: ${px2rem(154)};
   }
   .upload_text {
-    font-size: 1.5rem;
+    font-size: ${px2rem(16)};
     letter-spacing: -0.05em;
   }
 

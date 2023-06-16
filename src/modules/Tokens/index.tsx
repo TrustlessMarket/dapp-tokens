@@ -163,7 +163,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         sort: sort?.sort,
         render(row: any) {
           return (
-            <Flex gap={2} minW={px2rem(200)} alignItems={'center'}>
+            <Flex gap={4} minW={px2rem(200)} alignItems={'center'}>
               <img
                 // width={25}
                 // height={25}
@@ -174,7 +174,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
                 alt={row?.thumbnail || 'default-icon'}
                 className={'avatar'}
               />
-              <Flex direction={'column'}>
+              <Flex direction={'column'} gap={1}>
                 <Flex gap={1} alignItems={'center'} fontSize={px2rem(16)}>
                   <Box fontWeight={'500'} color={'#FFFFFF'}>
                     {row?.name}
@@ -436,7 +436,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
                 color={'#FFFFFF'}
                 bg={'#1E1E22'}
                 borderRadius={'100px'}
-                paddingX={3}
+                paddingX={4}
                 paddingY={2}
                 _hover={{
                   color: '#1E1E22',
@@ -445,7 +445,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
                 fontWeight={'medium'}
               >
                 <Icon as={VscArrowSwap} fontWeight={'medium'} fontSize={'18px'} />
-                SWAP NOW
+                Swap now
               </Flex>
             </Flex>
           );
@@ -543,7 +543,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           borderColor={'#353945'}
           // fieldChanged={onChange}
           prependComp={
-            <FiSearch color={"rgba(255, 255, 255, 0.6)"} fontSize={"24px"}/>
+            <FiSearch color={"rgba(255, 255, 255, 0.6)"} fontSize={"20px"}/>
           }
         />
       </Flex>
