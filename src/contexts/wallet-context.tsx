@@ -16,7 +16,7 @@ import React, { PropsWithChildren, useEffect, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 // import { getAccessToken, setAccessToken } from '@/utils/auth-storage';
 import { SupportedChainId } from '@/constants/chains';
-import { isConnectedTrustChain, switchChain } from '@/utils';
+import { isSupportedChain, switchChain } from '@/utils';
 import {
   clearAuthStorage,
   getAccessToken,
@@ -65,7 +65,7 @@ export const WalletProvider: React.FC<PropsWithChildren> = ({
         throw new Error('Get connection error.');
       }
       await connection.connector.activate();
-      if (!isConnectedTrustChain(chainId)) {
+      if (!isSupportedChain(chainId)) {
         await switchChain(SupportedChainId.TRUSTLESS_COMPUTER);
       }
       const addresses = await connector.provider?.request({
@@ -109,7 +109,7 @@ export const WalletProvider: React.FC<PropsWithChildren> = ({
       throw new Error('Get connection error.');
     }
     await connection.connector.activate();
-    if (!isConnectedTrustChain(chainId)) {
+    if (!isSupportedChain(chainId)) {
       await switchChain(SupportedChainId.TRUSTLESS_COMPUTER);
     }
     const addresses = await connector.provider?.request({
@@ -181,7 +181,7 @@ export const WalletProvider: React.FC<PropsWithChildren> = ({
         }
 
         const prevChainId: any = localStorage.getItem(PREV_CHAIN_ID);
-        if (!isConnectedTrustChain(prevChainId)) {
+        if (!isSupportedChain(prevChainId)) {
           await switchChain(SupportedChainId.TRUSTLESS_COMPUTER);
         }
 

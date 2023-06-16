@@ -6,7 +6,7 @@ import { AssetsContext } from '@/contexts/assets-context';
 import { ContractOperationHook } from '@/interfaces/contract-operation';
 import { logErrorToServer } from '@/services/swap';
 import { getIsAuthenticatedSelector, getUserSelector } from '@/state/user/selector';
-import { capitalizeFirstLetter, isConnectedTrustChain, switchChain } from '@/utils';
+import { capitalizeFirstLetter, isSupportedChain, switchChain } from '@/utils';
 import { isProduction } from '@/utils/commons';
 import { useWeb3React } from '@web3-react/core';
 import { useRouter } from 'next/router';
@@ -42,7 +42,7 @@ const useContractOperation = <P, R>(
   const router = useRouter();
 
   const checkAndSwitchChainIfNecessary = async (): Promise<void> => {
-    if (!isConnectedTrustChain(walletChainId)) {
+    if (!isSupportedChain(walletChainId)) {
       await switchChain(chainId);
     }
   };

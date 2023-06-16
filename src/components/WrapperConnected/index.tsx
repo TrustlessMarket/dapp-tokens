@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { WalletContext } from '@/contexts/wallet-context';
 import { getIsAuthenticatedSelector } from '@/state/user/selector';
-import { isConnectedTrustChain } from '@/utils';
+import { isSupportedChain } from '@/utils';
 import { showError } from '@/utils/toast';
 import { useWeb3React } from '@web3-react/core';
 import React, { useContext } from 'react';
@@ -25,7 +25,7 @@ const WrapperConnected: React.FC<WrapperConnectedProps> = ({
 }) => {
   const { chainId } = useWeb3React();
   const { onDisconnect, onConnect, requestBtcAddress } = useContext(WalletContext);
-  const trustChain = isConnectedTrustChain(chainId);
+  const trustChain = isSupportedChain(chainId);
   const isAuthenticated = useSelector(getIsAuthenticatedSelector);
 
   const handleConnectWallet = async () => {
