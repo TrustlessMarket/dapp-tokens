@@ -2,6 +2,7 @@ import { SupportedChainId, TRUSTLESS_COMPUTER_CHAIN_INFO } from '@/constants/cha
 import { IResourceChain } from '@/interfaces/chain';
 import Web3 from 'web3';
 import { setWalletChainId } from './auth-storage';
+import { isConnectedTrustChain } from './contract';
 
 const API_PATH = 'https://chainid.network/chains.json';
 
@@ -24,7 +25,7 @@ export function isSupportedChain(
 }
 
 export const switchChain = async (chainId: SupportedChainId) => {
-  if (!isSupportedChain(chainId)) {
+  if (!isConnectedTrustChain(chainId)) {
     throw new Error(`Chain ${chainId} not supported`);
   } else if (window.ethereum) {
     try {

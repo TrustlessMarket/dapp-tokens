@@ -2,7 +2,7 @@ import { CDN_URL } from '@/configs';
 import { TRUSTLESS_COMPUTER_CHAIN_INFO } from '@/constants/chains';
 import { TRUSTLESS_COMPUTER } from '@/constants/common';
 import { WalletContext } from '@/contexts/wallet-context';
-import { isSupportedChain } from '@/utils';
+import { isConnectedTrustChain } from '@/utils';
 import { Button, Spinner, Text } from '@chakra-ui/react';
 import { useWeb3React } from '@web3-react/core';
 import { useContext, useState } from 'react';
@@ -29,7 +29,7 @@ const SelectedNetwork = ({}) => {
     window.open(TRUSTLESS_COMPUTER, '_blank');
   };
 
-  if (!isSupportedChain(chainId)) {
+  if (!isConnectedTrustChain(chainId)) {
     return (
       <Button
         className={styles.btnButton}

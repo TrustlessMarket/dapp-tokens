@@ -10,6 +10,7 @@ import copy from 'copy-to-clipboard';
 // import { useRouter } from 'next/router';
 import SelectedNetwork from '@/components/Swap/selectNetwork';
 import Text from '@/components/Text';
+import { SupportedChainId } from '@/constants/chains';
 import { TRUSTLESS_BRIDGE } from '@/constants/common';
 import { ROUTE_PATH } from '@/constants/route-path';
 import { WalletContext } from '@/contexts/wallet-context';
@@ -18,7 +19,7 @@ import {
   compareString,
   formatCurrency,
   formatLongAddress,
-  isSupportedChain,
+  isConnectedTrustChain,
 } from '@/utils';
 import { showError } from '@/utils/toast';
 import { useWindowSize } from '@trustless-computer/dapp-core';
@@ -32,7 +33,6 @@ import web3 from 'web3';
 import { isScreenDarkMode } from '..';
 import { ConnectWalletButton, WalletBalance } from '../Header.styled';
 import { WalletPopover } from './Wallet.styled';
-import { SupportedChainId } from '@/constants/chains';
 
 const WalletHeader = () => {
   const router = useRouter();
@@ -212,7 +212,7 @@ const WalletHeader = () => {
     <>
       {account && isAuthenticated ? (
         <>
-          {!isSupportedChain(chainId) ? (
+          {!isConnectedTrustChain(chainId) ? (
             <SelectedNetwork />
           ) : (
             <OverlayTrigger
