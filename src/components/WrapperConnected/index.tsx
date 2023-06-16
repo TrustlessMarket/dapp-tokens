@@ -12,6 +12,7 @@ interface WrapperConnectedProps extends ButtonProps {
   children?: React.ReactElement;
   onClick?: () => void;
   className?: string;
+  forceSwitchChain?: boolean;
 }
 
 const WrapperConnected: React.FC<WrapperConnectedProps> = ({
@@ -19,6 +20,7 @@ const WrapperConnected: React.FC<WrapperConnectedProps> = ({
   onClick,
   className,
   type = 'button',
+  forceSwitchChain= true
 }) => {
   const { onDisconnect, onConnect, requestBtcAddress } = useContext(WalletContext);
   const trustChain = isConnectedTrustChain();
@@ -47,7 +49,7 @@ const WrapperConnected: React.FC<WrapperConnectedProps> = ({
     }
   };
 
-  if (!isAuthenticated || !trustChain) {
+  if (!isAuthenticated || (!trustChain && forceSwitchChain)) {
     return (
       <StyledWrapperConnected {...children?.props} type={(isAuthenticated || trustChain) ? type : 'button'} onClick={handleClick} className={className}>
         {!isAuthenticated ? children?.props?.children : 'Switch network now'}
