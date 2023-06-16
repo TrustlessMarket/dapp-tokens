@@ -48,7 +48,8 @@ import {USDC_ADDRESS, WBTC_ADDRESS, WETH_ADDRESS} from '@/constants/common';
 import {useWindowSize} from '@trustless-computer/dapp-core';
 import InfoTooltip from '@/components/Swap/infoTooltip';
 import {TbDiscount2} from "react-icons/tb";
-import {FEE} from "@/modules/Swap/form";
+import {useAppSelector} from "@/state/hooks";
+import {selectPnftExchange} from "@/state/pnftExchange";
 
 export enum ScreenType {
   default = 'default',
@@ -164,6 +165,8 @@ const LiquidityContainer = () => {
   const [liquidityList, setLiquidityList] = useState<ILiquidity[]>([]);
   const [isFetching, setIsFetching] = useState(false);
   const { mobileScreen } = useWindowSize();
+  const configs = useAppSelector(selectPnftExchange).configs;
+  const liquidityFee = configs?.liquidityFee || 0.15;
 
   const router = useRouter();
   const routerQuery = router.query;
@@ -877,7 +880,7 @@ const LiquidityContainer = () => {
               <Flex direction={"column"}>
                 <Text className="title">Liquidity provider rewards</Text>
                 <Text className="desc">
-                  Liquidity providers earn a {FEE/2}% fee on all trades proportional to their
+                  Liquidity providers earn a {liquidityFee}% fee on all trades proportional to their
                   share of the pool. Fees are added to the pool, accrue in real time and
                   can be claimed by withdrawing your liquidity.
                 </Text>
