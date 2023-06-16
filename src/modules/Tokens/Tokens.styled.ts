@@ -2,8 +2,9 @@ import px2rem from '@/utils/px2rem';
 import styled from 'styled-components';
 
 export const StyledTokens = styled.div`
-  padding-top: ${px2rem(24)};
-  padding-bottom: ${px2rem(48)};
+  //padding-top: ${px2rem(48)};
+  //padding-bottom: ${px2rem(48)};
+  padding: ${px2rem(48)} 3.75rem;
 
   .avatar {
     object-fit: cover;
@@ -12,10 +13,15 @@ export const StyledTokens = styled.div`
     border-radius: 50%;
   }
 
+  .chakra-table__container {
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
   .chakra-table {
     th:first-of-type {
       max-width: ${px2rem(50)};
       white-space: nowrap;
+      padding-left: ${px2rem(24)};
     }
 
     th:nth-child(4),
@@ -33,9 +39,9 @@ export const StyledTokens = styled.div`
     thead {
       tr {
         th {
-          background: #1e1e22;
+          background: #1E1E22;
           text-transform: uppercase;
-          border-bottom-color: rgb(34, 37, 49);
+          border-bottom-color: rgba(255, 255, 255, 0.1);
           padding-top: ${px2rem(12)};
           padding-bottom: ${px2rem(12)};
         }
@@ -46,11 +52,15 @@ export const StyledTokens = styled.div`
       tr {
         td {
           vertical-align: middle;
-          border-bottom-color: rgb(34, 37, 49);
+          border-bottom-color: transparent;
+          
+          &:first-of-type {
+            padding-left: ${px2rem(24)};
+          }
         }
 
         &:hover {
-          background-color: #1e1e22;
+          background-color: #1E1E22;
         }
       }
     }
@@ -63,7 +73,6 @@ export const StyledTokens = styled.div`
   }
 
   .upload_title {
-    //margin-bottom: ${px2rem(24)};
     margin-left: auto;
     margin-right: auto;
     width: fit-content;
@@ -71,15 +80,23 @@ export const StyledTokens = styled.div`
     position: relative;
     color: white;
     font-size: ${px2rem(48)};
-    line-height: 48 / 44;
+    line-height: ${px2rem(58)};
+    margin-bottom: 0;
+    letter-spacing: -0.05em;
   }
 
   .tokens-list {
     overflow: hidden !important;
   }
+  
+  .chakra-input__left-element {
+    height: 48px;
+    width: 48px;
+  }
 
   .chakra-form-control {
-    max-width: 300px;
+    max-width: ${px2rem(330)};
+    min-width: ${px2rem(330)};
 
     .chakra-input__group {
       background-color: transparent;
@@ -91,8 +108,10 @@ export const StyledTokens = styled.div`
   }
 
   .search_text {
-    font-size: 14px;
+    font-size: ${px2rem(14)};
     color: #ffffff;
+    font-weight: 400;
+    padding-left: 0;
   }
 
   @media screen and (max-width: 768px) {
@@ -137,14 +156,15 @@ export const UploadFileContainer = styled.div`
 
   .button-text {
     font-family: var(--font-heading) !important;
-    padding: ${px2rem(11)} ${px2rem(36)};
+    padding: ${px2rem(11)} 0;
   }
   .button-create-box {
     //margin-right: 30px;
+    min-width: ${px2rem(154)};
   }
   .brc20-text {
     font-family: var(--font-heading) !important;
-    padding: ${px2rem(11)} ${px2rem(36)};
+    padding: ${px2rem(11)} 0;
   }
   .comming-soon-text {
     font-family: var(--font-heading) !important;
@@ -164,9 +184,11 @@ export const UploadFileContainer = styled.div`
   .comming-soon-btn {
     //margin-left: 10px;
     vertical-align: top;
+    min-width: ${px2rem(154)};
   }
   .upload_text {
     font-size: 1.5rem;
+    letter-spacing: -0.05em;
   }
 
   @media screen and (max-width: 768px) {

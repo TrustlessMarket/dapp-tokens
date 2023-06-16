@@ -29,12 +29,13 @@ import {VscArrowSwap} from 'react-icons/vsc';
 import styles from './styles.module.scss';
 import TokenChartLast7Day from './Token.ChartLast7Day';
 import VerifiedBadgeToken from "./verifiedBadgeToken";
+import {FiSearch} from 'react-icons/fi';
 
 const LIMIT_PAGE = 100;
 
 export const MakeFormSwap = forwardRef((props, ref) => {
   const router = useRouter();
-  const [showModal, setShowModal] = useState(false);
+  // const [showModal, setShowModal] = useState(false);
   const [isFetching, setIsFetching] = useState(false);
 
   // const isAuthenticated = useSelector(getIsAuthenticatedSelector);
@@ -144,7 +145,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         labelConfig: {
           fontSize: '12px',
           fontWeight: '500',
-          color: '#B1B5C3',
+          color: '#FFFFFF',
         },
         config: {
           // borderBottom: 'none',
@@ -195,7 +196,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         labelConfig: {
           fontSize: '12px',
           fontWeight: '500',
-          color: '#B1B5C3',
+          color: '#FFFFFF',
         },
         config: {
           // borderBottom: 'none',
@@ -228,7 +229,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         labelConfig: {
           fontSize: '12px',
           fontWeight: '500',
-          color: '#B1B5C3',
+          color: '#FFFFFF',
         },
         config: {
           // borderBottom: 'none',
@@ -270,7 +271,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       //   labelConfig: {
       //     fontSize: '12px',
       //     fontWeight: '500',
-      //     color: '#B1B5C3',
+      //     color: '#FFFFFF',
       //   },
       //   config: {
       //     // borderBottom: 'none',
@@ -307,7 +308,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         labelConfig: {
           fontSize: '12px',
           fontWeight: '500',
-          color: '#B1B5C3',
+          color: '#FFFFFF',
         },
         config: {
           // borderBottom: 'none',
@@ -337,7 +338,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         labelConfig: {
           fontSize: '12px',
           fontWeight: '500',
-          color: '#B1B5C3',
+          color: '#FFFFFF',
         },
         config: {
           // borderBottom: 'none',
@@ -367,7 +368,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         labelConfig: {
           fontSize: '12px',
           fontWeight: '500',
-          color: '#B1B5C3',
+          color: '#FFFFFF',
         },
         config: {
           // borderBottom: 'none',
@@ -397,7 +398,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         labelConfig: {
           fontSize: '12px',
           fontWeight: '500',
-          color: '#B1B5C3',
+          color: '#FFFFFF',
         },
         config: {
           // borderBottom: 'none',
@@ -412,7 +413,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         labelConfig: {
           fontSize: '12px',
           fontWeight: '500',
-          color: '#B1B5C3',
+          color: '#FFFFFF',
         },
         config: {
           // borderBottom: 'none',
@@ -434,9 +435,9 @@ export const MakeFormSwap = forwardRef((props, ref) => {
                 title="Swap now"
                 color={'#FFFFFF'}
                 bg={'#1E1E22'}
-                borderRadius={'4px'}
-                paddingX={2}
-                paddingY={1}
+                borderRadius={'100px'}
+                paddingX={3}
+                paddingY={2}
                 _hover={{
                   color: '#1E1E22',
                   bg: '#FFFFFF',
@@ -461,12 +462,27 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   return (
     <StyledTokens>
       <div className="max-content">
-        <Flex color={"rgba(255, 255, 255, 0.7)"} justifyContent={"center"} alignItems={"center"} gap={2} mb={4}>
+        <Flex
+          justifyContent={"center"}
+          alignItems={"center"}
+          gap={2}
+          mb={4}
+          w={"fit-content"}
+          marginX={"auto"}
+          bg={"#1E1E22"}
+          borderRadius={"100px"}
+          paddingX={4}
+          paddingY={2}
+          fontSize={px2rem(16)}
+          fontWeight={400}
+        >
+          <Text color={"#CECECE"}>Powered by</Text>
           <img
             height={20}
-            src={`${CDN_URL}/icons/trustless-logo-frame.png`}
+            src={`${CDN_URL}/icons/trussless-computer-logo.svg`}
             alt="logo"
           />
+          <Text color={"#FFFFFF"}>Trustless Computer</Text>
         </Flex>
         <h3 className="upload_title">New Bitcoin DEX</h3>
       </div>
@@ -498,24 +514,24 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           <Link
             href={ROUTE_PATH.POOLS}
           >
-          <Button
-            className="button-create-box"
-            background={'white'}
-            // onClick={handleCreateToken}
-          >
-            <Text
-              size="medium"
-              color={'black'}
-              className="button-text"
-              fontWeight="medium"
+            <Button
+              className="button-create-box"
+              background={'white'}
+              // onClick={handleCreateToken}
             >
-              Provide liquidity
-            </Text>
-          </Button>
+              <Text
+                size="medium"
+                color={'black'}
+                className="button-text"
+                fontWeight="medium"
+              >
+                Provide liquidity
+              </Text>
+            </Button>
           </Link>
         </div>
       </UploadFileContainer>
-      <Flex mb={4} justifyContent={'flex-end'} mr={[0, 15]}>
+      <Flex mb={4} justifyContent={'flex-start'} mr={[0, 15]}>
         <Field
           component={FieldText}
           name="search_text"
@@ -526,6 +542,9 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           className={'search_text'}
           borderColor={'#353945'}
           // fieldChanged={onChange}
+          prependComp={
+            <FiSearch color={"rgba(255, 255, 255, 0.6)"} fontSize={"24px"}/>
+          }
         />
       </Flex>
       <InfiniteScroll
@@ -548,7 +567,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           showEmpty={false}
         />
       </InfiniteScroll>
-      <ModalCreateToken show={showModal} handleClose={() => setShowModal(false)} />
+      {/*<ModalCreateToken show={showModal} handleClose={() => setShowModal(false)} />*/}
     </StyledTokens>
   );
 });
