@@ -4,18 +4,14 @@
 import Button from '@/components/Button';
 import {IToken} from '@/interfaces/token';
 import {getTokenRp} from '@/services/swap';
-import {getIsAuthenticatedSelector} from '@/state/user/selector';
 import {formatCurrency} from '@/utils';
 import {debounce} from 'lodash';
-import React, {useContext, useEffect, useMemo, useRef, useState} from 'react';
+import React, {useEffect, useMemo, useRef, useState} from 'react';
 import Spinner from 'react-bootstrap/Spinner';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import {useSelector} from 'react-redux';
 import ModalCreateToken from './ModalCreateToken';
 import {StyledTokens, UploadFileContainer} from './Tokens.styled';
 import {ROUTE_PATH} from '@/constants/route-path';
-import {WalletContext} from '@/contexts/wallet-context';
-import {showError} from '@/utils/toast';
 import {Box, Flex, forwardRef, Icon, Text} from '@chakra-ui/react';
 import BigNumber from 'bignumber.js';
 import Link from 'next/link';
@@ -41,24 +37,24 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const [showModal, setShowModal] = useState(false);
   const [isFetching, setIsFetching] = useState(false);
 
-  const isAuthenticated = useSelector(getIsAuthenticatedSelector);
-  const { onDisconnect, onConnect, requestBtcAddress } = useContext(WalletContext);
+  // const isAuthenticated = useSelector(getIsAuthenticatedSelector);
+  // const { onDisconnect, onConnect, requestBtcAddress } = useContext(WalletContext);
   const [tokensList, setTokensList] = useState<IToken[]>([]);
   const [sort, setSort] = useState({ sort: '' });
   const { values } = useFormState();
 
-  const handleConnectWallet = async () => {
-    try {
-      await onConnect();
-      await requestBtcAddress();
-    } catch (err) {
-      showError({
-        message: (err as Error).message,
-      });
-      console.log(err);
-      onDisconnect();
-    }
-  };
+  // const handleConnectWallet = async () => {
+  //   try {
+  //     await onConnect();
+  //     await requestBtcAddress();
+  //   } catch (err) {
+  //     showError({
+  //       message: (err as Error).message,
+  //     });
+  //     console.log(err);
+  //     onDisconnect();
+  //   }
+  // };
 
   const fetchTokens = async (page = 1, isFetchMore = false) => {
     try {
@@ -95,14 +91,14 @@ export const MakeFormSwap = forwardRef((props, ref) => {
 
   const debounceLoadMore = debounce(onLoadMoreTokens, 300);
 
-  const handleCreateToken = () => {
-    if (!isAuthenticated) {
-      handleConnectWallet();
-      // router.push(ROUTE_PATH.CONNECT_WALLET);
-    } else {
-      setShowModal(true);
-    }
-  };
+  // const handleCreateToken = () => {
+  //   if (!isAuthenticated) {
+  //     handleConnectWallet();
+  //     // router.push(ROUTE_PATH.CONNECT_WALLET);
+  //   } else {
+  //     setShowModal(true);
+  //   }
+  // };
 
   const debounced = useDebounce(values?.search_text);
 
@@ -112,7 +108,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
 
   const columns: ColumnProp[] = useMemo(
     () => [
-      {
+      /*{
         id: 'index',
         label: '#',
         labelConfig: {
@@ -141,7 +137,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             </Text>
           );
         },
-      },
+      },*/
       {
         id: 'name',
         label: 'Name',
@@ -465,7 +461,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   return (
     <StyledTokens>
       <div className="max-content">
-        <h3 className="upload_title">Smart BRC-20</h3>
+        <h3 className="upload_title">New Bitcoin Decentralized Exchange</h3>
       </div>
       <UploadFileContainer className="max-content">
         <div className="upload_left">
@@ -473,32 +469,11 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           <div className="upload_content">
             {/* <h3 className="upload_title">BRC-20 on Bitcoin</h3> */}
             <Text className="upload_text" color={'rgba(255, 255, 255, 0.7)'}>
-              Smart BRC-20s are{' '}
-              <span style={{ color: '#FFFFFF' }}>
-                the first smart contracts deployed on Bitcoin
-              </span>
-              . They run exactly as programmed without any possibility of fraud,
-              third-party interference, or censorship. Issue your Smart BRC-20 on
-              Bitcoin for virtually anything: a cryptocurrency, a share in a company,
-              voting rights in a DAO, and more.
+              Swap, earn, and build on <Text as={"span"} color={"#FFFFFF"}>the first decentralized crypto trading protocol on Bitcoin</Text>.
             </Text>
           </div>
         </div>
         <div className="upload_right">
-          <Button
-            className="button-create-box"
-            background={'white'}
-            onClick={handleCreateToken}
-          >
-            <Text
-              size="medium"
-              color={'black'}
-              className="button-text"
-              fontWeight="medium"
-            >
-              Issue Smart BRC-20
-            </Text>
-          </Button>
           <Link
             href={`${ROUTE_PATH.SWAP}?from_token=${WETH_ADDRESS}&to_token=${GM_ADDRESS}`}
           >
@@ -509,9 +484,27 @@ export const MakeFormSwap = forwardRef((props, ref) => {
                 className="brc20-text"
                 fontWeight="medium"
               >
-                Swap Smart BRC-20
+                Trade now
               </Text>
             </Button>
+          </Link>
+          <Link
+            href={ROUTE_PATH.POOLS}
+          >
+          <Button
+            className="button-create-box"
+            background={'white'}
+            // onClick={handleCreateToken}
+          >
+            <Text
+              size="medium"
+              color={'black'}
+              className="button-text"
+              fontWeight="medium"
+            >
+              Provide liquidity
+            </Text>
+          </Button>
           </Link>
         </div>
       </UploadFileContainer>
