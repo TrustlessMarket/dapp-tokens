@@ -4,7 +4,7 @@ import styled from 'styled-components';
 export const StyledTokens = styled.div`
   //padding-top: ${px2rem(48)};
   //padding-bottom: ${px2rem(48)};
-  padding: ${px2rem(48)} 3.75rem;
+  padding: ${px2rem(54)} 3.75rem;
 
   .avatar {
     object-fit: cover;
@@ -130,7 +130,7 @@ export const UploadFileContainer = styled.div`
   // max-width: ${px2rem(800)};
   margin-left: auto;
   margin-right: auto;
-  padding: ${px2rem(24)} ${px2rem(32)};
+  padding: ${px2rem(16)} ${px2rem(32)} ${px2rem(24)};
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -188,7 +188,7 @@ export const UploadFileContainer = styled.div`
     min-width: ${px2rem(154)};
   }
   .upload_text {
-    font-size: ${px2rem(16)};
+    font-size: ${px2rem(20)};
     letter-spacing: -0.05em;
   }
 
