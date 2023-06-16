@@ -2,7 +2,7 @@ import px2rem from '@/utils/px2rem';
 import styled from 'styled-components';
 
 export const StyledTokens = styled.div`
-  padding-top: ${px2rem(48)};
+  padding-top: ${px2rem(24)};
   padding-bottom: ${px2rem(48)};
 
   .avatar {

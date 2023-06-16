@@ -461,6 +461,13 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   return (
     <StyledTokens>
       <div className="max-content">
+        <Flex color={"rgba(255, 255, 255, 0.7)"} justifyContent={"center"} alignItems={"center"} gap={2} mb={4}>
+          <img
+            height={20}
+            src={`${CDN_URL}/icons/trustless-logo-frame.png`}
+            alt="logo"
+          />
+        </Flex>
         <h3 className="upload_title">New Bitcoin Decentralized Exchange</h3>
       </div>
       <UploadFileContainer className="max-content">
