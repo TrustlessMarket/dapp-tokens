@@ -468,7 +468,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             alt="logo"
           />
         </Flex>
-        <h3 className="upload_title">New Bitcoin Decentralized Exchange</h3>
+        <h3 className="upload_title">New Bitcoin DEX</h3>
       </div>
       <UploadFileContainer className="max-content">
         <div className="upload_left">
