@@ -84,7 +84,7 @@ import ModalConfirmApprove from '@/components/ModalConfirmApprove';
 import tokenIcons from '@/constants/tokenIcons';
 
 const LIMIT_PAGE = 500;
-const FEE = 2;
+export const FEE = 0.3;
 export const MakeFormSwap = forwardRef((props, ref) => {
   const { onSubmit, submitting } = props;
   const [loading, setLoading] = useState(false);
