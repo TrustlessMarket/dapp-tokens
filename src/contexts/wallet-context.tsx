@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { PropsWithChildren, useEffect, useMemo } from 'react';
-import { useWeb3React } from '@web3-react/core';
+import { getConnection } from '@/connection';
+import { generateNonceMessage, verifyNonceMessage } from '@/services/auth';
 import { useAppDispatch } from '@/state/hooks';
 import {
   resetUser,
@@ -8,26 +9,30 @@ import {
   updateSelectedWallet,
   updateTaprootWallet,
 } from '@/state/user/reducer';
-import { getConnection } from '@/connection';
-import { useSelector } from 'react-redux';
 import { getUserSelector } from '@/state/user/selector';
 import bitcoinStorage from '@/utils/bitcoin-storage';
-import { generateNonceMessage, verifyNonceMessage } from '@/services/auth';
+import { useWeb3React } from '@web3-react/core';
+import React, { PropsWithChildren, useEffect, useMemo } from 'react';
+import { useSelector } from 'react-redux';
 // import { getAccessToken, setAccessToken } from '@/utils/auth-storage';
-import { getAccessToken, setAccessToken } from '@/utils/auth-storage';
-import { clearAuthStorage } from '@/utils/auth-storage';
+import { SupportedChainId } from '@/constants/chains';
+import { isSupportedChain, switchChain } from '@/utils';
+import {
+  clearAuthStorage,
+  getAccessToken,
+  setAccessToken,
+  setWalletChainId,
+} from '@/utils/auth-storage';
 import Web3 from 'web3';
 import { provider } from 'web3-core';
-import { isSupportedChain, switchChain } from '@/utils';
-import { SupportedChainId } from '@/constants/chains';
 // import { getCurrentProfile } from '@/services/profile';
-import useAsyncEffect from 'use-async-effect';
-import { useRouter } from 'next/router';
 import { ROUTE_PATH } from '@/constants/route-path';
-import * as TC_SDK from 'trustless-computer-sdk';
-import { TEMP_ADDRESS_WALLET_EVM } from '@/constants/storage-key';
+import { PREV_CHAIN_ID, TEMP_ADDRESS_WALLET_EVM } from '@/constants/storage-key';
 import { getCurrentProfile } from '@/services/profile';
 import { isProduction } from '@/utils/commons';
+import { useRouter } from 'next/router';
+import * as TC_SDK from 'trustless-computer-sdk';
+import useAsyncEffect from 'use-async-effect';
 
 export interface IWalletContext {
   onDisconnect: () => Promise<void>;
@@ -130,6 +135,7 @@ export const WalletProvider: React.FC<PropsWithChildren> = ({
         console.log('signature', signature);
         console.log('evmWalletAddress', evmWalletAddress);
         setAccessToken(accessToken, refreshToken);
+        setWalletChainId(chainId);
         dispatch(updateEVMWallet(evmWalletAddress));
         dispatch(updateSelectedWallet({ wallet: connection.type }));
         localStorage.setItem(TEMP_ADDRESS_WALLET_EVM, evmWalletAddress);
@@ -174,7 +180,8 @@ export const WalletProvider: React.FC<PropsWithChildren> = ({
           console.log(err);
         }
 
-        if (chainId !== SupportedChainId.TRUSTLESS_COMPUTER) {
+        const prevChainId: any = localStorage.getItem(PREV_CHAIN_ID);
+        if (!isSupportedChain(prevChainId)) {
           await switchChain(SupportedChainId.TRUSTLESS_COMPUTER);
         }
 

@@ -1,6 +1,7 @@
 import { SupportedChainId, TRUSTLESS_COMPUTER_CHAIN_INFO } from '@/constants/chains';
 import { IResourceChain } from '@/interfaces/chain';
 import Web3 from 'web3';
+import { setWalletChainId } from './auth-storage';
 
 const API_PATH = 'https://chainid.network/chains.json';
 
@@ -16,7 +17,9 @@ const getChainList = async (): Promise<Array<IResourceChain>> => {
   }
 };
 
-export function isSupportedChain(chainId: number | null | undefined): chainId is SupportedChainId {
+export function isSupportedChain(
+  chainId: number | null | undefined,
+): chainId is SupportedChainId {
   return !!chainId && !!SupportedChainId[chainId];
 }
 
@@ -29,6 +32,7 @@ export const switchChain = async (chainId: SupportedChainId) => {
         method: 'wallet_switchEthereumChain',
         params: [{ chainId: Web3.utils.toHex(chainId) }],
       });
+      setWalletChainId(chainId);
     } catch (err: unknown) {
       if (Object(err).code !== 4902) throw err;
 
@@ -48,7 +52,9 @@ export const switchChain = async (chainId: SupportedChainId) => {
         },
         rpcUrls: info.rpc,
         blockExplorerUrls: [
-          info.explorers && info.explorers.length > 0 && info.explorers[0].url ? info.explorers[0].url : info.infoURL,
+          info.explorers && info.explorers.length > 0 && info.explorers[0].url
+            ? info.explorers[0].url
+            : info.infoURL,
         ],
       };
 

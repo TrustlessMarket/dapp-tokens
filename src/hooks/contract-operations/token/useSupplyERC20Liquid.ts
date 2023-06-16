@@ -1,7 +1,7 @@
 import ERC20ABIJson from '@/abis/erc20.json';
 import { TransactionEventType } from '@/enums/transaction';
 import { ContractOperationHook, DAppType } from '@/interfaces/contract-operation';
-import { getContract, getDefaultProvider, isConnectedTrustChain } from '@/utils';
+import { getContract, getDefaultProvider, isSupportedChain } from '@/utils';
 import { useWeb3React } from '@web3-react/core';
 import { useCallback } from 'react';
 
@@ -18,8 +18,8 @@ const useSupplyERC20Liquid: ContractOperationHook<
   ISupplyERC20LiquidParams,
   ISupplyERC20LiquidResponse
 > = () => {
-  const { account } = useWeb3React();
-  const isTrustChain = isConnectedTrustChain();
+  const { account, chainId } = useWeb3React();
+  const isTrustChain = isSupportedChain(chainId);
 
   const provider = getDefaultProvider();
 

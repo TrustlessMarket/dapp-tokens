@@ -3,7 +3,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import ModalConfirmApprove from '@/components/ModalConfirmApprove';
 import SocialToken from '@/components/Social';
-import {transactionType} from '@/components/Swap/alertInfoProcessing/types';
+import { transactionType } from '@/components/Swap/alertInfoProcessing/types';
 import FiledButton from '@/components/Swap/button/filedButton';
 import FieldAmount from '@/components/Swap/form/fieldAmount';
 import InputWrapper from '@/components/Swap/form/inputWrapper';
@@ -18,8 +18,8 @@ import {
   TRUSTLESS_GASSTATION,
   WETH_ADDRESS,
 } from '@/constants/common';
-import {toastError} from '@/constants/error';
-import {AssetsContext} from '@/contexts/assets-context';
+import { toastError } from '@/constants/error';
+import { AssetsContext } from '@/contexts/assets-context';
 import useClaimLaunchPad from '@/hooks/contract-operations/launchpad/useClaim';
 import useDepositPool from '@/hooks/contract-operations/launchpad/useDeposit';
 import useEndLaunchPad from '@/hooks/contract-operations/launchpad/useEnd';
@@ -28,50 +28,69 @@ import useApproveERC20Token from '@/hooks/contract-operations/token/useApproveER
 import useBalanceERC20Token from '@/hooks/contract-operations/token/useBalanceERC20Token';
 import useIsApproveERC20Token from '@/hooks/contract-operations/token/useIsApproveERC20Token';
 import useContractOperation from '@/hooks/contract-operations/useContractOperation';
-import {ILaunchpad} from '@/interfaces/launchpad';
-import {IToken} from '@/interfaces/token';
-import {TransactionStatus} from '@/interfaces/walletTransaction';
-import {LAUNCHPAD_STATUS,} from '@/modules/Launchpad/Launchpad.Status';
+import { ILaunchpad } from '@/interfaces/launchpad';
+import { IToken } from '@/interfaces/token';
+import { TransactionStatus } from '@/interfaces/walletTransaction';
+import { LAUNCHPAD_STATUS } from '@/modules/Launchpad/Launchpad.Status';
 import {
   getDepositResultLaunchpad,
   getLaunchpadDepositAddress,
   getUserBoost,
-  getVoteResultLaunchpad
+  getVoteResultLaunchpad,
 } from '@/services/launchpad';
-import {logErrorToServer} from '@/services/swap';
-import {useAppDispatch, useAppSelector} from '@/state/hooks';
-import {closeModal, openModal} from '@/state/modal';
+import { logErrorToServer } from '@/services/swap';
+import { useAppDispatch, useAppSelector } from '@/state/hooks';
+import { closeModal, openModal } from '@/state/modal';
 import {
   requestReload,
   requestReloadRealtime,
   selectPnftExchange,
   updateCurrentTransaction,
 } from '@/state/pnftExchange';
-import {colors} from '@/theme/colors';
+import { colors } from '@/theme/colors';
 import {
   abbreviateNumber,
   compareString,
   formatCurrency,
   formatLongAddress,
   getTokenIconUrl,
-  isConnectedTrustChain
+  isConnectedTrustChain,
 } from '@/utils';
-import {composeValidators, required} from '@/utils/formValidate';
+import { composeValidators, required } from '@/utils/formValidate';
 import px2rem from '@/utils/px2rem';
-import {showError} from '@/utils/toast';
-import {Box, Center, Flex, forwardRef, Progress, Stat, StatLabel, StatNumber, Text, Tooltip,} from '@chakra-ui/react';
-import {useWindowSize} from '@trustless-computer/dapp-core';
-import {useWeb3React} from '@web3-react/core';
+import { showError } from '@/utils/toast';
+import {
+  Box,
+  Center,
+  Flex,
+  forwardRef,
+  Progress,
+  Stat,
+  StatLabel,
+  StatNumber,
+  Text,
+  Tooltip,
+} from '@chakra-ui/react';
+import { useWindowSize } from '@trustless-computer/dapp-core';
+import { useWeb3React } from '@web3-react/core';
 import BigNumber from 'bignumber.js';
 import cx from 'classnames';
 import debounce from 'lodash/debounce';
 import moment from 'moment';
 import Link from 'next/link';
-import React, {useCallback, useContext, useEffect, useImperativeHandle, useMemo, useRef, useState,} from 'react';
-import {Field, Form, useForm, useFormState} from 'react-final-form';
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useImperativeHandle,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
+import { Field, Form, useForm, useFormState } from 'react-final-form';
 import toast from 'react-hot-toast';
-import {BiBell} from 'react-icons/bi';
-import {useDispatch, useSelector} from 'react-redux';
+import { BiBell } from 'react-icons/bi';
+import { useDispatch, useSelector } from 'react-redux';
 import Web3 from 'web3';
 import styles from './styles.module.scss';
 import useIsAbleEnd from '@/hooks/contract-operations/launchpad/useIsAbleEnd';
@@ -81,12 +100,12 @@ import useIsAbleCancel from '@/hooks/contract-operations/launchpad/useIsAbleCanc
 import useCancelLaunchPad from '@/hooks/contract-operations/launchpad/useCancel';
 import useVoteReleaseLaunchpad from '@/hooks/contract-operations/launchpad/useVoteRelease';
 import tokenIcons from '@/constants/tokenIcons';
-import VoteForm from "@/modules/ProposalDetail/voteForm";
-import {CDN_URL, TM_ADDRESS} from "@/configs";
-import DepositEth from "@/modules/LaunchPadDetail/depositEth";
-import ContributeForm from "@/modules/LaunchPadDetail/contributeForm";
-import {getIsAuthenticatedSelector} from "@/state/user/selector";
-import {IoWarningOutline} from 'react-icons/io5';
+import VoteForm from '@/modules/ProposalDetail/voteForm';
+import { CDN_URL, TM_ADDRESS } from '@/configs';
+import DepositEth from '@/modules/LaunchPadDetail/depositEth';
+import ContributeForm from '@/modules/LaunchPadDetail/contributeForm';
+import { getIsAuthenticatedSelector } from '@/state/user/selector';
+import { IoWarningOutline } from 'react-icons/io5';
 
 const CONTRIBUTION_METHODS = [
   {
@@ -101,10 +120,10 @@ const CONTRIBUTION_METHODS = [
     desc: 'Transfer your funds from an Ethereum wallet or directly from an exchange.',
     img: `${CDN_URL}/pages/trustlessmarket/launchpad/ic-eth.png`,
   },
-]
+];
 
 const ContributionMethods = (props: any) => {
-  const {onSelect} = props;
+  const { onSelect } = props;
   const [selectId, setSelectedId] = useState('tc');
   const { account } = useWeb3React();
 
@@ -114,44 +133,53 @@ const ContributionMethods = (props: any) => {
 
   return (
     <Flex gap={3}>
-      {
-        CONTRIBUTION_METHODS.map(method => {
-          return (
-            <Flex
-              key={method.id}
-              flex={1}
-              gap={3}
-              onClick={() => {
-                setSelectedId(method.id);
-              }}
-              cursor={"pointer"}
-              borderRadius={"8px"}
-              bgColor={"#000000"}
-              border={`1px solid ${selectId === method.id ? '#3385FF' : '#353945'}`}
-              alignItems={"center"}
-              paddingX={px2rem(20)}
-              paddingY={px2rem(16)}
-            >
-              <img
-                width={40}
-                height={40}
-                alt={"network"}
-                src={method.img}
-              />
-              <Flex direction={"column"} flex={1} justifyContent={"flex-start"}>
-                <Text color={"#FFFFFF"} fontSize={px2rem(20)} fontWeight={500}>{method.title}</Text>
-                <Text color={"#FFFFFF"} fontSize={px2rem(14)} fontWeight={400} opacity={0.7} mt={1}>{method.desc ? method.desc : account ? formatLongAddress(account) : '' }</Text>
-              </Flex>
-              <img
-                width={20}
-                height={20}
-                alt={"select"}
-                src={`${CDN_URL}/pages/trustlessmarket/launchpad/${selectId === method.id ? 'ic-method-selected.png' : 'ic-method.png'}`}
-              />
+      {CONTRIBUTION_METHODS.map((method) => {
+        return (
+          <Flex
+            key={method.id}
+            flex={1}
+            gap={3}
+            onClick={() => {
+              setSelectedId(method.id);
+            }}
+            cursor={'pointer'}
+            borderRadius={'8px'}
+            bgColor={'#000000'}
+            border={`1px solid ${selectId === method.id ? '#3385FF' : '#353945'}`}
+            alignItems={'center'}
+            paddingX={px2rem(20)}
+            paddingY={px2rem(16)}
+          >
+            <img width={40} height={40} alt={'network'} src={method.img} />
+            <Flex direction={'column'} flex={1} justifyContent={'flex-start'}>
+              <Text color={'#FFFFFF'} fontSize={px2rem(20)} fontWeight={500}>
+                {method.title}
+              </Text>
+              <Text
+                color={'#FFFFFF'}
+                fontSize={px2rem(14)}
+                fontWeight={400}
+                opacity={0.7}
+                mt={1}
+              >
+                {method.desc
+                  ? method.desc
+                  : account
+                  ? formatLongAddress(account)
+                  : ''}
+              </Text>
             </Flex>
-          )
-        })
-      }
+            <img
+              width={20}
+              height={20}
+              alt={'select'}
+              src={`${CDN_URL}/pages/trustlessmarket/launchpad/${
+                selectId === method.id ? 'ic-method-selected.png' : 'ic-method.png'
+              }`}
+            />
+          </Flex>
+        );
+      })}
     </Flex>
   );
 };
@@ -171,7 +199,8 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const [loading, setLoading] = useState(false);
   const [liquidityToken, setLiquidityToken] = useState<any>();
   const [launchpadToken, setLaunchpadToken] = useState<any>();
-  const [amountLiquidityTokenApproved, setAmountLiquidityTokenApproved] = useState('0');
+  const [amountLiquidityTokenApproved, setAmountLiquidityTokenApproved] =
+    useState('0');
   const { call: isApproved } = useIsApproveERC20Token();
   const { call: tokenBalance } = useBalanceERC20Token();
   const { call: approveToken } = useApproveERC20Token();
@@ -439,7 +468,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
 
   const onSelectContributeMethod = (method: any) => {
     change('contributeMethod', method);
-  }
+  };
 
   const renderActionButtons = () => {
     return (
@@ -449,26 +478,31 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           isClaimLaunchpad ||
           isCancelLaunchpad ||
           isVoteRelease ||
-          isVoting
-        ) && (
+          isVoting) && (
           <>
-            {
-              isAuthenticated && !trustChain && values?.contributeMethod !== 'eth' && (
+            {isAuthenticated &&
+              !trustChain &&
+              values?.contributeMethod !== 'eth' && (
                 <Flex
-                  bg={"#FFFFFF"}
-                  borderRadius={"8px"}
+                  bg={'#FFFFFF'}
+                  borderRadius={'8px'}
                   gap={2}
-                  alignItems={"center"}
-                  justifyContent={"center"}
+                  alignItems={'center'}
+                  justifyContent={'center'}
                   p={2}
-                  width={"80%"}
-                  marginX={"auto"}
+                  width={'80%'}
+                  marginX={'auto'}
                 >
-                  <IoWarningOutline color="#FF7E21" fontSize={"20px"}/>
-                  <Text color={"#000000"}>You must switch to <Text as={"span"} color="#FF7E21" fontWeight={700}>Trustless Computer Network</Text> to do action.</Text>
+                  <IoWarningOutline color="#FF7E21" fontSize={'20px'} />
+                  <Text color={'#000000'}>
+                    You must switch to{' '}
+                    <Text as={'span'} color="#FF7E21" fontWeight={700}>
+                      Trustless Computer Network
+                    </Text>{' '}
+                    to do action.
+                  </Text>
                 </Flex>
-              )
-            }
+              )}
             <WrapperConnected
               type={isRequireApprove ? 'button' : 'submit'}
               className={styles.submitButton}
@@ -503,27 +537,27 @@ export const MakeFormSwap = forwardRef((props, ref) => {
                     backgroundColor: isEndLaunchpad
                       ? colors.redPrimary
                       : isClaimLaunchpad
-                        ? colors.greenPrimary
-                        : isCancelLaunchpad
-                          ? colors.redPrimary
-                          : isVoteRelease
-                            ? colors.bluePrimary
-                            : isVoting
-                              ? colors.bluePrimary
-                              : colors.bluePrimary,
+                      ? colors.greenPrimary
+                      : isCancelLaunchpad
+                      ? colors.redPrimary
+                      : isVoteRelease
+                      ? colors.bluePrimary
+                      : isVoting
+                      ? colors.bluePrimary
+                      : colors.bluePrimary,
                   }}
                 >
                   {isEndLaunchpad
                     ? 'END THIS PROJECT'
                     : isClaimLaunchpad
-                      ? 'CLAIM THIS PROJECT'
-                      : isCancelLaunchpad
-                        ? 'CANCEL THIS PROJECT'
-                        : isVoteRelease
-                          ? 'RELEASE VOTE'
-                          : isVoting
-                            ? 'SUPPORT THIS PROJECT'
-                            : 'CONTRIBUTE TO THIS PROJECT'}
+                    ? 'CLAIM THIS PROJECT'
+                    : isCancelLaunchpad
+                    ? 'CANCEL THIS PROJECT'
+                    : isVoteRelease
+                    ? 'RELEASE VOTE'
+                    : isVoting
+                    ? 'SUPPORT THIS PROJECT'
+                    : 'CONTRIBUTE TO THIS PROJECT'}
                 </FiledButton>
               )}
             </WrapperConnected>
@@ -541,17 +575,21 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           </Text>
         )}
       </>
-    )
-  }
+    );
+  };
 
-  if([LAUNCHPAD_STATUS.Voting, LAUNCHPAD_STATUS.NotPassed].includes(poolDetail?.state)) {
-    return ([LAUNCHPAD_STATUS.Voting].includes(poolDetail?.state) || isEndLaunchpad || isVoteRelease) ? (
-      <form onSubmit={onSubmit} style={{ height: '100%'}}>
-        <Box mb={12}>
-          {renderActionButtons()}
-        </Box>
+  if (
+    [LAUNCHPAD_STATUS.Voting, LAUNCHPAD_STATUS.NotPassed].includes(poolDetail?.state)
+  ) {
+    return [LAUNCHPAD_STATUS.Voting].includes(poolDetail?.state) ||
+      isEndLaunchpad ||
+      isVoteRelease ? (
+      <form onSubmit={onSubmit} style={{ height: '100%' }}>
+        <Box mb={12}>{renderActionButtons()}</Box>
       </form>
-    ) : <></>;
+    ) : (
+      <></>
+    );
   }
 
   return (
@@ -659,97 +697,98 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             </Tooltip>
           </StatNumber>
         </Stat>
-        <Stat className={styles.infoColumn} flex={1} textAlign={"right"}>
+        <Stat className={styles.infoColumn} flex={1} textAlign={'right'}>
           <StatLabel>Contributors</StatLabel>
-          <StatNumber>
-            {formatCurrency(poolDetail?.contributors || 0, 0)}
-          </StatNumber>
+          <StatNumber>{formatCurrency(poolDetail?.contributors || 0, 0)}</StatNumber>
         </Stat>
       </Flex>
       {isFunding && (
         <>
-          {
-            compareString(liquidityToken?.address, WETH_ADDRESS) ? (
-              <Flex mt={4}>
-                <Stat className={styles.infoColumn} flex={1}>
-                  <StatLabel>
-                    Contribution method
-                  </StatLabel>
-                  <StatNumber mt={2}>
-                    <ContributionMethods onSelect={onSelectContributeMethod}/>
-                  </StatNumber>
-                </Stat>
-              </Flex>
-            ) : (
-              <InputWrapper
-                className={cx(styles.inputAmountWrap, styles.inputBaseAmountWrap)}
-                theme="light"
-                label={
-                  <Text fontSize={px2rem(14)} color={'#FFFFFF'}>
-                    Amount
-                  </Text>
-                }
-              >
-                <Flex gap={4} direction={'column'}>
-                  <Field
-                    name="liquidityAmount"
-                    children={FieldAmount}
-                    validate={composeValidators(required, validateBaseAmount)}
-                    fieldChanged={onChangeValueBaseAmount}
-                    disabled={submitting}
-                    // placeholder={"Enter number of tokens"}
-                    decimals={liquidityToken?.decimal || 18}
-                    className={styles.inputAmount}
-                    prependComp={
-                      liquidityToken && (
-                        <Flex gap={1} alignItems={'center'} color={'#FFFFFF'} paddingX={2}>
-                          <img
-                            src={tokenIcons[liquidityToken?.symbol?.toLowerCase()]}
-                            alt={liquidityToken?.thumbnail || 'default-icon'}
-                            className={'avatar'}
+          {compareString(liquidityToken?.address, WETH_ADDRESS) ? (
+            <Flex mt={4}>
+              <Stat className={styles.infoColumn} flex={1}>
+                <StatLabel>Contribution method</StatLabel>
+                <StatNumber mt={2}>
+                  <ContributionMethods onSelect={onSelectContributeMethod} />
+                </StatNumber>
+              </Stat>
+            </Flex>
+          ) : (
+            <InputWrapper
+              className={cx(styles.inputAmountWrap, styles.inputBaseAmountWrap)}
+              theme="light"
+              label={
+                <Text fontSize={px2rem(14)} color={'#FFFFFF'}>
+                  Amount
+                </Text>
+              }
+            >
+              <Flex gap={4} direction={'column'}>
+                <Field
+                  name="liquidityAmount"
+                  children={FieldAmount}
+                  validate={composeValidators(required, validateBaseAmount)}
+                  fieldChanged={onChangeValueBaseAmount}
+                  disabled={submitting}
+                  // placeholder={"Enter number of tokens"}
+                  decimals={liquidityToken?.decimal || 18}
+                  className={styles.inputAmount}
+                  prependComp={
+                    liquidityToken && (
+                      <Flex
+                        gap={1}
+                        alignItems={'center'}
+                        color={'#FFFFFF'}
+                        paddingX={2}
+                      >
+                        <img
+                          src={tokenIcons[liquidityToken?.symbol?.toLowerCase()]}
+                          alt={liquidityToken?.thumbnail || 'default-icon'}
+                          className={'avatar'}
+                        />
+                        <Text fontSize={'sm'}>{liquidityToken?.symbol}</Text>
+                      </Flex>
+                    )
+                  }
+                  appendComp={
+                    liquidityToken && (
+                      <Flex gap={2} fontSize={px2rem(14)} color={'#FFFFFF'}>
+                        <Flex
+                          gap={1}
+                          alignItems={'center'}
+                          color={'#B6B6B6'}
+                          fontSize={px2rem(16)}
+                          fontWeight={'400'}
+                        >
+                          Balance:
+                          <TokenBalance
+                            token={liquidityToken}
+                            onBalanceChange={(_amount) =>
+                              setLiquidityBalance(_amount)
+                            }
                           />
-                          <Text fontSize={'sm'}>{liquidityToken?.symbol}</Text>
+                          {liquidityToken?.symbol}
                         </Flex>
-                      )
-                    }
-                    appendComp={
-                      liquidityToken && (
-                        <Flex gap={2} fontSize={px2rem(14)} color={'#FFFFFF'}>
-                          <Flex
-                            gap={1}
-                            alignItems={'center'}
-                            color={'#B6B6B6'}
-                            fontSize={px2rem(16)}
-                            fontWeight={'400'}
-                          >
-                            Balance:
-                            <TokenBalance
-                              token={liquidityToken}
-                              onBalanceChange={(_amount) => setLiquidityBalance(_amount)}
-                            />
-                            {liquidityToken?.symbol}
-                          </Flex>
-                          <Text
-                            cursor={'pointer'}
-                            color={'#3385FF'}
-                            onClick={handleChangeMaxBaseAmount}
-                            bgColor={'#2E2E2E'}
-                            borderRadius={'4px'}
-                            padding={'1px 12px'}
-                            fontSize={px2rem(16)}
-                            fontWeight={'600'}
-                          >
-                            Max
-                          </Text>
-                        </Flex>
-                      )
-                    }
-                    borderColor={'#353945'}
-                  />
-                </Flex>
-              </InputWrapper>
-            )
-          }
+                        <Text
+                          cursor={'pointer'}
+                          color={'#3385FF'}
+                          onClick={handleChangeMaxBaseAmount}
+                          bgColor={'#2E2E2E'}
+                          borderRadius={'4px'}
+                          padding={'1px 12px'}
+                          fontSize={px2rem(16)}
+                          fontWeight={'600'}
+                        >
+                          Max
+                        </Text>
+                      </Flex>
+                    )
+                  }
+                  borderColor={'#353945'}
+                />
+              </Flex>
+            </InputWrapper>
+          )}
         </>
       )}
       {values?.liquidityAmount && (
@@ -769,8 +808,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           />
         </Box>
       )}
-      {
-        trustChain &&
+      {trustChain &&
         isAuthenticated &&
         isFunding &&
         isLoadedAssets &&
@@ -799,8 +837,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             </Text>
           </Flex>
         )}
-      {
-        trustChain &&
+      {trustChain &&
         isAuthenticated &&
         isFunding &&
         liquidityToken &&
@@ -818,8 +855,9 @@ export const MakeFormSwap = forwardRef((props, ref) => {
               <BiBell color="#FF7E21" />
             </Center>
             <Text fontSize="sm" color="#FF7E21" textAlign={'left'}>
-              You have an insufficient {liquidityToken?.symbol} balance. Consider swapping your{' '}
-              {liquidityToken?.symbol?.replace('W', '')} to Trustless Network{' '}
+              You have an insufficient {liquidityToken?.symbol} balance. Consider
+              swapping your {liquidityToken?.symbol?.replace('W', '')} to Trustless
+              Network{' '}
               <Link
                 href={`${TRUSTLESS_BRIDGE}${liquidityToken?.symbol
                   ?.replace('W', '')
@@ -833,9 +871,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             </Text>
           </Flex>
         )}
-        <Box mt={6}>
-          {renderActionButtons()}
-        </Box>
+      <Box mt={6}>{renderActionButtons()}</Box>
       <Flex direction={'column'} mt={4}>
         {Object.values(poolDetail?.launchpadToken?.social).join('')?.length > 0 && (
           <Text
@@ -1008,25 +1044,27 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
           pool_address: poolDetail?.launchpad,
         }),
         getDepositResultLaunchpad({
-          pool_address: poolDetail?.launchpad
+          pool_address: poolDetail?.launchpad,
         }),
       ]);
 
       setCanEnd(
         ableEnd &&
-        (
-          isLaunchpadCreator ||
-          voteResults?.voters?.some((voter: any) => compareString(voter?.voter, account)) ||
-          depositResults?.some((depositer: any) => compareString(depositer?.userAddress, account))
-        )
+          (isLaunchpadCreator ||
+            voteResults?.voters?.some((voter: any) =>
+              compareString(voter?.voter, account),
+            ) ||
+            depositResults?.some((depositer: any) =>
+              compareString(depositer?.userAddress, account),
+            )),
       );
       setCanClose(ableClose);
       setCanClaim(ableRedeem);
       setCanVoteRelease(ableVoteRelease);
       setCanCancel(
         ableCancel &&
-        isLaunchpadCreator &&
-        [LAUNCHPAD_STATUS.Pending].includes(poolDetail?.state),
+          isLaunchpadCreator &&
+          [LAUNCHPAD_STATUS.Pending].includes(poolDetail?.state),
       );
       setBoostInfo(userBoost);
       setDepositAddressInfo(depositAddress);
@@ -1149,11 +1187,11 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
         ),
       }),
     );
-  }
+  };
 
   const showContributeFromEthWallet = () => {
     const id = 'modalDepositEthFromEthWallet';
-    const close = () => dispatch(closeModal({id}));
+    const close = () => dispatch(closeModal({ id }));
     dispatch(
       openModal({
         id,
@@ -1166,15 +1204,20 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
           zIndex: 9999999,
         },
         render: () => {
-          return <DepositEth onClose={close} address={depositAddressInfo?.depositAddress}/>;
+          return (
+            <DepositEth
+              onClose={close}
+              address={depositAddressInfo?.depositAddress}
+            />
+          );
         },
       }),
     );
-  }
+  };
 
   const showContributeFromTCWallet = () => {
     const id = 'modalDepositEthFromTCWallet';
-    const close = () => dispatch(closeModal({id}));
+    const close = () => dispatch(closeModal({ id }));
     dispatch(
       openModal({
         id,
@@ -1187,21 +1230,32 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
           zIndex: 9999999,
         },
         render: () => {
-          return <ContributeForm poolDetail={poolDetail} boostInfo={boostInfo} onClose={close}/>;
+          return (
+            <ContributeForm
+              poolDetail={poolDetail}
+              boostInfo={boostInfo}
+              onClose={close}
+            />
+          );
         },
       }),
     );
-  }
+  };
 
   const handleSubmit = async (values: any) => {
     console.log('handleSubmit', values);
 
     const liquidityToken = poolDetail?.liquidityToken;
-    if([LAUNCHPAD_STATUS.Voting].includes(poolDetail?.state)) {
+    if ([LAUNCHPAD_STATUS.Voting].includes(poolDetail?.state)) {
       confirmVoting(values);
-    } else if([LAUNCHPAD_STATUS.Launching].includes(poolDetail?.state) && compareString(liquidityToken?.address, WETH_ADDRESS)) {
+    } else if (
+      [LAUNCHPAD_STATUS.Launching].includes(poolDetail?.state) &&
+      compareString(liquidityToken?.address, WETH_ADDRESS)
+    ) {
       const { contributeMethod } = values;
-      if(contributeMethod === 'eth') {
+      console.log('contributeMethod', contributeMethod);
+
+      if (contributeMethod === 'eth') {
         showContributeFromEthWallet();
       } else {
         showContributeFromTCWallet();
@@ -1213,7 +1267,7 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
 
   const confirmDeposit = (values: any) => {
     const id = 'modalDepositConfirm';
-    const close = () => dispatch(closeModal({id}));
+    const close = () => dispatch(closeModal({ id }));
     dispatch(
       openModal({
         id,
@@ -1272,7 +1326,7 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
           launchpadAddress: poolDetail?.launchpad,
           boostRatio: '0',
           signature: '',
-          onBehalf: account
+          onBehalf: account,
         };
 
         if (boostInfo) {

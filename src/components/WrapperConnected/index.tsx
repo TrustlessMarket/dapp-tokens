@@ -1,12 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import {WalletContext} from '@/contexts/wallet-context';
-import {showError} from '@/utils/toast';
-import React, {useContext} from 'react';
-import {StyledWrapperConnected} from './WrapperConnected.styled';
-import {ButtonProps} from '../Button';
-import {isConnectedTrustChain} from "@/utils";
-import {useSelector} from "react-redux";
-import {getIsAuthenticatedSelector} from "@/state/user/selector";
+import { WalletContext } from '@/contexts/wallet-context';
+import { getIsAuthenticatedSelector } from '@/state/user/selector';
+import { isSupportedChain } from '@/utils';
+import { showError } from '@/utils/toast';
+import { useWeb3React } from '@web3-react/core';
+import React, { useContext } from 'react';
+import { useSelector } from 'react-redux';
+import { ButtonProps } from '../Button';
+import { StyledWrapperConnected } from './WrapperConnected.styled';
 
 interface WrapperConnectedProps extends ButtonProps {
   children?: React.ReactElement;
@@ -20,10 +21,11 @@ const WrapperConnected: React.FC<WrapperConnectedProps> = ({
   onClick,
   className,
   type = 'button',
-  forceSwitchChain= true
+  forceSwitchChain = true,
 }) => {
+  const { chainId } = useWeb3React();
   const { onDisconnect, onConnect, requestBtcAddress } = useContext(WalletContext);
-  const trustChain = isConnectedTrustChain();
+  const trustChain = isSupportedChain(chainId);
   const isAuthenticated = useSelector(getIsAuthenticatedSelector);
 
   const handleConnectWallet = async () => {
@@ -51,7 +53,12 @@ const WrapperConnected: React.FC<WrapperConnectedProps> = ({
 
   if (!isAuthenticated || (!trustChain && forceSwitchChain)) {
     return (
-      <StyledWrapperConnected {...children?.props} type={(isAuthenticated || trustChain) ? type : 'button'} onClick={handleClick} className={className}>
+      <StyledWrapperConnected
+        {...children?.props}
+        type={isAuthenticated || trustChain ? type : 'button'}
+        onClick={handleClick}
+        className={className}
+      >
         {!isAuthenticated ? children?.props?.children : 'Switch network now'}
       </StyledWrapperConnected>
     );
