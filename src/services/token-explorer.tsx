@@ -9,7 +9,7 @@ const API_PATH = '/token-explorer';
 export const getTokens = async (params: IPagingParams): Promise<IToken[]> => {
   const qs = '?' + queryString.stringify(params);
 
-  return swrFetcher(`${API_URL}${API_PATH}/tokens${qs}`, {
+  return swrFetcher(`${API_EXCHANGE_URL}${API_PATH}/tokens${qs}`, {
     method: 'GET',
     error: 'Fail to get tokens data',
   });
