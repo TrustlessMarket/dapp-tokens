@@ -33,7 +33,6 @@ import { isProduction } from '@/utils/commons';
 import { useRouter } from 'next/router';
 import * as TC_SDK from 'trustless-computer-sdk';
 import useAsyncEffect from 'use-async-effect';
-import queryString from "query-string";
 
 export interface IWalletContext {
   onDisconnect: () => Promise<void>;
@@ -159,7 +158,7 @@ export const WalletProvider: React.FC<PropsWithChildren> = ({
   const requestBtcAddress = async (): Promise<void> => {
     await TC_SDK.actionRequest({
       method: TC_SDK.RequestMethod.account,
-      redirectURL: window.location.href,
+      redirectURL: window.location.origin + window.location.pathname,
       target: '_self',
       isMainnet: isProduction(),
     });
@@ -212,11 +211,6 @@ export const WalletProvider: React.FC<PropsWithChildren> = ({
   }, [disconnect]);
 
   useEffect(() => {
-    const count = (router?.asPath.match(/\?/g) || []).length;
-    if(count >= 2) {
-      router.replace(router?.asPath?.replace('/?', '&'));
-      return;
-    }
     const { tcAddress, tpAddress } = router.query as {
       tcAddress: string;
       tpAddress: string;
@@ -224,14 +218,9 @@ export const WalletProvider: React.FC<PropsWithChildren> = ({
     if (tpAddress) {
       dispatch(updateTaprootWallet(tpAddress));
       bitcoinStorage.setUserTaprootAddress(tcAddress, tpAddress);
-      delete router.query["tcAddress"];
-      delete router.query["tpAddress"];
-      delete router.query["target"];
-      const qs = '?' + queryString.stringify(router.query);
-
-      router.push(`${router.pathname}${qs}`);
+      router.push(ROUTE_PATH.HOME);
     }
-  }, [router?.asPath]);
+  }, [router]);
 
   const contextValues = useMemo((): IWalletContext => {
     return {
