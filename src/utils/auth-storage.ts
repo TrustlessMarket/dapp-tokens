@@ -1,4 +1,5 @@
-import { ACCESS_TOKEN, REFRESH_TOKEN } from '@/constants/storage-key';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { ACCESS_TOKEN, PREV_CHAIN_ID, REFRESH_TOKEN } from '@/constants/storage-key';
 import localStorage from '@/utils/localstorage';
 // import { User } from '@interfaces/user';
 // import { isBrowser } from '@utils/common';
@@ -41,3 +42,7 @@ export const setAccessToken = (accessToken: string, refreshToken: string): void 
 //     localStorage.set(LocalStorageKey.USER_DISPLAYNAME, user.displayName);
 //   }
 // };
+
+export const setWalletChainId = (chainId: any): void => {
+  window.localStorage.setItem(PREV_CHAIN_ID, chainId);
+};

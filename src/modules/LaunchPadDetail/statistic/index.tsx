@@ -10,7 +10,7 @@ import { openModal } from '@/state/modal';
 import { useWindowSize } from '@trustless-computer/dapp-core';
 import AllowlistTable from '@/modules/LaunchPadDetail/statistic/AllowlistTable';
 
-const Statistic = ({ poolDetail }: any) => {
+const Statistic = ({ poolDetail, userBoost }: any) => {
   const isAuthenticated = useSelector(getIsAuthenticatedSelector);
   const dispatch = useDispatch();
   const { mobileScreen } = useWindowSize();
@@ -31,7 +31,7 @@ const Statistic = ({ poolDetail }: any) => {
         },
         render: () => (
           <Flex>
-            <AllowlistTable poolDetail={poolDetail} />
+            <AllowlistTable poolDetail={poolDetail} userBoost={userBoost} />
           </Flex>
         ),
       }),
@@ -50,6 +50,7 @@ const Statistic = ({ poolDetail }: any) => {
           poolDetail={poolDetail}
           isFull={false}
           handleViewMore={handleShowDepositList}
+          userBoost={userBoost}
         />
       </Card>
     </Box>

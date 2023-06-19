@@ -34,7 +34,7 @@ export const getSwapTokens = async (
 ): Promise<IToken[]> => {
   const qs = '?' + queryString.stringify(params);
 
-  return swrFetcher(`${API_URL}${API_PATH}/token/list${qs}`, {
+  return swrFetcher(`${API_EXCHANGE_URL}${API_PATH}/token/list${qs}`, {
     method: 'GET',
     error: 'Fail to get tokens data',
   });

@@ -1,14 +1,22 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import Empty from '@/components/Empty';
-import {AutoSizer, List} from '@/components/ReactVirtualized';
+import { AutoSizer, List } from '@/components/ReactVirtualized';
 import SvgInset from '@/components/SvgInset';
-import {CDN_URL} from '@/configs';
+import { CDN_URL } from '@/configs';
 import Search from '@/modules/LaunchPadDetail/statistic/Search';
-import {getDepositResultLaunchpad, getUserDepositInfoLaunchpad,} from '@/services/launchpad';
-import {useAppDispatch, useAppSelector} from '@/state/hooks';
-import {selectPnftExchange} from '@/state/pnftExchange';
-import {abbreviateNumber, compareString, formatCurrency, shortenAddress,} from '@/utils';
+import {
+  getDepositResultLaunchpad,
+  getUserDepositInfoLaunchpad,
+} from '@/services/launchpad';
+import { useAppDispatch, useAppSelector } from '@/state/hooks';
+import { selectPnftExchange } from '@/state/pnftExchange';
+import {
+  abbreviateNumber,
+  compareString,
+  formatCurrency,
+  shortenAddress,
+} from '@/utils';
 import px2rem from '@/utils/px2rem';
 import {
   Box,
@@ -21,18 +29,23 @@ import {
   Spinner,
   Text,
 } from '@chakra-ui/react';
-import {useWindowSize} from '@trustless-computer/dapp-core';
-import {useWeb3React} from '@web3-react/core';
+import { useWindowSize } from '@trustless-computer/dapp-core';
+import { useWeb3React } from '@web3-react/core';
 import cx from 'classnames';
 import Image from 'next/image';
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
-import Jazzicon, {jsNumberForAddress} from 'react-jazzicon';
+import Jazzicon, { jsNumberForAddress } from 'react-jazzicon';
 import styles from './styles.module.scss';
-import {closeModal, openModal} from "@/state/modal";
-import ContributeHistory from "@/modules/LaunchPadDetail/contributeHistory";
+import { closeModal, openModal } from '@/state/modal';
+import ContributeHistory from '@/modules/LaunchPadDetail/contributeHistory';
 
-const AllowlistTable = ({ poolDetail, isFull = true, handleViewMore }: any) => {
+const AllowlistTable = ({
+  poolDetail,
+  isFull = true,
+  handleViewMore,
+  userBoost,
+}: any) => {
   const needReload = useAppSelector(selectPnftExchange).needReload;
   const [depositList, setDepositList] = useState<any[]>([]);
   const [rawDepositList, setRawDepositList] = useState<any[]>([]);
@@ -67,15 +80,22 @@ const AllowlistTable = ({ poolDetail, isFull = true, handleViewMore }: any) => {
       setRawDepositList(list);
       const you = list.find((item: any) => item?.isCurrentUser);
 
-      if(!you && userDeposit?.userAddress) {
-        setRawDepositList([...list, { ...userDeposit, index: list?.length + 1, isCurrentUser: true }]);
+      if (!you && userDeposit?.userAddress) {
+        setRawDepositList([
+          ...list,
+          {
+            ...userDeposit,
+            index: list?.length + 1,
+            isCurrentUser: true,
+          },
+        ]);
       }
 
       if (isFull) {
         setDepositList(list);
       } else {
         if (you) {
-          setDepositList([you]);
+          setDepositList([{ ...you }]);
         } else {
           if (userDeposit?.userAddress) {
             setDepositList([{ ...userDeposit, index: 1, isCurrentUser: true }]);
@@ -100,8 +120,21 @@ const AllowlistTable = ({ poolDetail, isFull = true, handleViewMore }: any) => {
     return 110;
   };
 
-  const RowRenderer = ({ index, key, style, data, onShowContributeHistory }: any) => {
+  const RowRenderer = ({
+    index,
+    key,
+    style,
+    data,
+    onShowContributeHistory,
+  }: any) => {
     const item = data[index];
+
+    let _boost = 0;
+
+    if (userBoost?.user?.address) {
+      _boost = userBoost?.boost;
+    }
+
     return (
       <Box
         key={key}
@@ -110,10 +143,19 @@ const AllowlistTable = ({ poolDetail, isFull = true, handleViewMore }: any) => {
           [`${styles.dataItem__currentUser}`]: item.isCurrentUser,
           [`${styles.dataItem__searchHighlight}`]: index === scrollToIndex,
         })}
-        cursor={onShowContributeHistory && item.isCurrentUser ? 'pointer' : 'default'}
-        onClick={() => onShowContributeHistory && item.isCurrentUser && onShowContributeHistory()}
+        cursor={
+          onShowContributeHistory && item.isCurrentUser ? 'pointer' : 'default'
+        }
+        onClick={() =>
+          onShowContributeHistory && item.isCurrentUser && onShowContributeHistory()
+        }
       >
-        <div className={cx(styles.dataItemInner, item.isCurrentUser && styles.currentUser)}>
+        <div
+          className={cx(
+            styles.dataItemInner,
+            item.isCurrentUser && styles.currentUser,
+          )}
+        >
           <div className={styles.dataId}>{item?.index}</div>
           <div className={styles.dataUserInfo}>
             {item.avatar ? (
@@ -135,7 +177,9 @@ const AllowlistTable = ({ poolDetail, isFull = true, handleViewMore }: any) => {
               as="span"
               className={cx(
                 styles.userWallet,
-                item.isCurrentUser ? styles.userWallet__black : styles.userWallet__white,
+                item.isCurrentUser
+                  ? styles.userWallet__black
+                  : styles.userWallet__white,
               )}
               title={item.userAddress}
               maxWidth={
@@ -153,7 +197,9 @@ const AllowlistTable = ({ poolDetail, isFull = true, handleViewMore }: any) => {
             <span
               className={cx(
                 styles.dataValue,
-                item.isCurrentUser ? styles.dataValue__black : styles.dataValue__white,
+                item.isCurrentUser
+                  ? styles.dataValue__black
+                  : styles.dataValue__white,
               )}
             >
               ${formatCurrency(item.amountUsd, 2)}
@@ -168,7 +214,7 @@ const AllowlistTable = ({ poolDetail, isFull = true, handleViewMore }: any) => {
               <div className={styles.dataToken}>
                 <span className={styles.dataLabel}>
                   Allocation
-                  {item.isCurrentUser && item.boost >= 0 && (
+                  {item.isCurrentUser && _boost >= 0 && (
                     <Box
                       display={'inline-flex'}
                       p={`${px2rem(2)} ${px2rem(6)}`}
@@ -190,7 +236,7 @@ const AllowlistTable = ({ poolDetail, isFull = true, handleViewMore }: any) => {
                         fontWeight={700}
                         lineHeight={1.5}
                       >
-                        {formatCurrency(item.boost, 2)}%
+                        {formatCurrency(_boost, 2)}%
                       </Text>
                     </Box>
                   )}
@@ -202,7 +248,9 @@ const AllowlistTable = ({ poolDetail, isFull = true, handleViewMore }: any) => {
                   <span
                     className={cx(
                       styles.percentage,
-                      item.isCurrentUser ? styles.dataValue__black : styles.dataValue__white,
+                      item.isCurrentUser
+                        ? styles.dataValue__black
+                        : styles.dataValue__white,
                     )}
                   >
                     {`(${item.percentHolding.toFixed(2)}%)`}
@@ -230,7 +278,7 @@ const AllowlistTable = ({ poolDetail, isFull = true, handleViewMore }: any) => {
                       whiteSpace={'nowrap'}
                       color={'#4185EC'}
                     >
-                      {formatCurrency(item.boost, 2)}%
+                      {formatCurrency(_boost, 2)}%
                     </Text>{' '}
                     boost.
                   </Text>
@@ -287,7 +335,7 @@ const AllowlistTable = ({ poolDetail, isFull = true, handleViewMore }: any) => {
 
   const handleShowContributeHistory = () => {
     const id = 'modalDepositEthFromEthWallet';
-    const close = () => dispatch(closeModal({id}));
+    const close = () => dispatch(closeModal({ id }));
     dispatch(
       openModal({
         id,
@@ -304,18 +352,14 @@ const AllowlistTable = ({ poolDetail, isFull = true, handleViewMore }: any) => {
         },
       }),
     );
-  }
+  };
 
   return (
     <div className={cx(styles.allowListTable)}>
       <div className={styles.allowListTableWrapper}>
         {isLoading ? (
-          <Flex justifyContent={"center"} alignItems={"center"}>
-            <Spinner
-              speed="0.65s"
-              emptyColor="gray.200"
-              color="blue.500"
-            />
+          <Flex justifyContent={'center'} alignItems={'center'}>
+            <Spinner speed="0.65s" emptyColor="gray.200" color="blue.500" />
           </Flex>
         ) : (
           <>
@@ -332,7 +376,12 @@ const AllowlistTable = ({ poolDetail, isFull = true, handleViewMore }: any) => {
                 {depositList.length === 0 ? (
                   <Empty isTable={false} />
                 ) : (
-                  <RowRenderer index={0} key={'you'} data={depositList} onShowContributeHistory={handleShowContributeHistory}/>
+                  <RowRenderer
+                    index={0}
+                    key={'you'}
+                    data={depositList}
+                    onShowContributeHistory={handleShowContributeHistory}
+                  />
                 )}
               </>
             )}
