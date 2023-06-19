@@ -31,7 +31,7 @@ const Statistic = ({ poolDetail, userBoost }: any) => {
         },
         render: () => (
           <Flex>
-            <AllowlistTable poolDetail={poolDetail} />
+            <AllowlistTable poolDetail={poolDetail} userBoost={userBoost} />
           </Flex>
         ),
       }),
