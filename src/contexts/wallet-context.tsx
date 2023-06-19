@@ -27,7 +27,11 @@ import Web3 from 'web3';
 import { provider } from 'web3-core';
 // import { getCurrentProfile } from '@/services/profile';
 import { ROUTE_PATH } from '@/constants/route-path';
-import { PREV_CHAIN_ID, TEMP_ADDRESS_WALLET_EVM } from '@/constants/storage-key';
+import {
+  PREV_CHAIN_ID,
+  PREV_URL,
+  TEMP_ADDRESS_WALLET_EVM,
+} from '@/constants/storage-key';
 import { getCurrentProfile } from '@/services/profile';
 import { isProduction } from '@/utils/commons';
 import { useRouter } from 'next/router';
@@ -132,8 +136,6 @@ export const WalletProvider: React.FC<PropsWithChildren> = ({
           address: evmWalletAddress,
           signature: signature,
         });
-        console.log('signature', signature);
-        console.log('evmWalletAddress', evmWalletAddress);
         setAccessToken(accessToken, refreshToken);
         setWalletChainId(chainId);
         dispatch(updateEVMWallet(evmWalletAddress));
@@ -156,6 +158,8 @@ export const WalletProvider: React.FC<PropsWithChildren> = ({
   }, [user, dispatch]);
 
   const requestBtcAddress = async (): Promise<void> => {
+    window.localStorage.setItem(PREV_URL, window.location.href);
+
     await TC_SDK.actionRequest({
       method: TC_SDK.RequestMethod.account,
       redirectURL: window.location.origin + window.location.pathname,
@@ -200,9 +204,12 @@ export const WalletProvider: React.FC<PropsWithChildren> = ({
 
   useEffect(() => {
     const handleAccountsChanged = async () => {
-      console.log('accountsChanged');
       await disconnect();
-      router.push(`${ROUTE_PATH.CONNECT_WALLET}?next=${ROUTE_PATH.HOME}`);
+      router.push(
+        `${ROUTE_PATH.CONNECT_WALLET}?next=${encodeURIComponent(
+          window.location.origin + window.location.pathname,
+        )}`,
+      );
     };
 
     if (window.ethereum) {
@@ -218,7 +225,12 @@ export const WalletProvider: React.FC<PropsWithChildren> = ({
     if (tpAddress) {
       dispatch(updateTaprootWallet(tpAddress));
       bitcoinStorage.setUserTaprootAddress(tcAddress, tpAddress);
-      router.push(ROUTE_PATH.HOME);
+      let nextRouter: any = ROUTE_PATH.HOME;
+      const prevUrl = window.localStorage.getItem(PREV_URL);
+      if (prevUrl) {
+        nextRouter = prevUrl;
+      }
+      router.push(nextRouter);
     }
   }, [router]);
 

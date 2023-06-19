@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useContext, useEffect, useState } from 'react';
 import { Wrapper, ConnectWalletButton } from './ConnectWallet.styled';
 import { WalletContext } from '@/contexts/wallet-context';
@@ -33,9 +34,12 @@ const ConnectWallet: React.FC = (): React.ReactElement => {
   };
 
   useEffect(() => {
-    if (isAuthenticated) {
-      router.push(ROUTE_PATH.HOME);
+    let nextRouter: any = ROUTE_PATH.HOME;
+    if (router.query?.next) {
+      const parseURL = new URL(router.query?.next as any);
+      nextRouter = parseURL.origin + parseURL.pathname;
     }
+    router.push(nextRouter);
   }, [isAuthenticated, router, user]);
 
   return (
