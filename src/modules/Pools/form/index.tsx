@@ -95,6 +95,7 @@ import styles from './styles.module.scss';
 import { closeModal, openModal } from '@/state/modal';
 import ModalConfirmApprove from '@/components/ModalConfirmApprove';
 import { BiBell } from 'react-icons/bi';
+import HorizontalItem from '@/components/Swap/horizontalItem';
 
 const LIMIT_PAGE = 50;
 
@@ -942,6 +943,18 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           APR: <b>{formatCurrency(apr, 2)}%</b>
         </Text>
       )}
+
+      <HorizontalItem
+        label={
+          <Flex
+            fontSize={'sm'}
+            fontWeight={'medium'}
+            color={'rgba(255, 255, 255, 0.7)'}
+          >
+            Reward: +0.5TM
+          </Flex>
+        }
+      />
 
       {baseToken && quoteToken && (
         <Box className={styles.pricePoolContainer}>
