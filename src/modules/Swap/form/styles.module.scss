@@ -59,7 +59,7 @@
 }
 
 .inputAmount {
-  color: #FFFFFF !important;
+  color: #ffffff !important;
   font-size: 16px !important;
   height: 100% !important;
 
@@ -89,5 +89,15 @@
     .chakra-modal__body {
       //padding: 0;
     }
+  }
+}
+
+.bestAmount {
+  width: 100%;
+  &__label {
+    text-align: left;
+    color: white !important;
+    font-size: rem(12);
+    font-weight: 400;
   }
 }

@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { DEFAULT_GAS_PRICE, TOKEN_ICON_DEFAULT } from '@/constants/common';
 import tokenIcons from '@/constants/tokenIcons';
+import { TOKEN_WRAPPER_TO_TOKEN } from '@/constants/tokens';
 import { IToken } from '@/interfaces/token';
 import { getAddress } from '@ethersproject/address';
 import BigNumber from 'bignumber.js';
@@ -92,12 +93,23 @@ export const calcLaunchpadInitialPrice = ({
   return price;
 };
 
-export const getTokenIconUrl = (token: IToken) => {
+export const getTokenIconUrl = (token: IToken | null) => {
   let url = TOKEN_ICON_DEFAULT;
-  if (token?.thumbnail) {
-    url = token?.thumbnail;
-  } else if (tokenIcons?.[token?.symbol?.toLowerCase()]) {
-    url = tokenIcons?.[token?.symbol?.toLowerCase()];
+  if (token) {
+    if (token?.thumbnail) {
+      url = token?.thumbnail;
+    } else if (tokenIcons?.[token?.symbol?.toLowerCase()]) {
+      url = tokenIcons?.[token?.symbol?.toLowerCase()];
+    }
   }
+
   return url;
+};
+
+export const convertWrappedToToken = (symbol: string) => {
+  if (TOKEN_WRAPPER_TO_TOKEN?.[symbol?.toLowerCase()]) {
+    return (TOKEN_WRAPPER_TO_TOKEN?.[symbol?.toLowerCase()]).toUpperCase();
+  }
+
+  return symbol;
 };

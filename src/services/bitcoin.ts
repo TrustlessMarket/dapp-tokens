@@ -1,16 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { apiClient } from '@/services';
+import { TC_NETWORK_RPC } from '@/configs';
 import {
-  BINANCE_PAIR,
   FeeRateName,
   ICollectedUTXOResp,
   IFeeRate,
   IPendingUTXO,
   ITokenPriceResp,
 } from '@/interfaces/api/bitcoin';
+import { apiClient } from '@/services';
 import BigNumber from 'bignumber.js';
 import * as TC_SDK from 'trustless-computer-sdk';
-import { TC_NETWORK_RPC } from '@/configs';
 
 const BINANCE_API_URL = 'https://api.binance.com/api/v3';
 const WALLETS_API_PATH = '/wallets';
@@ -89,9 +88,7 @@ export const getFeeRate = async (): Promise<IFeeRate> => {
   }
 };
 
-export const getTokenRate = async (
-  pair: BINANCE_PAIR = 'ETHBTC',
-): Promise<number> => {
+export const getTokenRate = async (pair: any = 'ETHBTC'): Promise<number> => {
   try {
     const res = await fetch(`${BINANCE_API_URL}/ticker/price?symbol=${pair}`);
     const data: ITokenPriceResp = await res.json();

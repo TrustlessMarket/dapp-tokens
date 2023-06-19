@@ -1,82 +1,97 @@
 /* eslint-disable react/no-children-prop */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import {transactionType} from '@/components/Swap/alertInfoProcessing/types';
+import ModalConfirmApprove from '@/components/ModalConfirmApprove';
+import { transactionType } from '@/components/Swap/alertInfoProcessing/types';
 import FiledButton from '@/components/Swap/button/filedButton';
 import FilterButton from '@/components/Swap/filterToken';
 import FieldAmount from '@/components/Swap/form/fieldAmount';
 import InputWrapper from '@/components/Swap/form/inputWrapper';
 import HorizontalItem from '@/components/Swap/horizontalItem';
+import InfoTooltip from '@/components/Swap/infoTooltip';
+import SlippageSettingButton from '@/components/Swap/slippageSetting/button';
 import TokenBalance from '@/components/Swap/tokenBalance';
 import WrapperConnected from '@/components/WrapperConnected';
-import {CDN_URL, UNIV2_ROUTER_ADDRESS} from '@/configs';
+import { CDN_URL, UNIV2_ROUTER_ADDRESS } from '@/configs';
 import {
   BRIDGE_SUPPORT_TOKEN,
   GM_ADDRESS,
-  TOKEN_ICON_DEFAULT,
   TRUSTLESS_BRIDGE,
   TRUSTLESS_GASSTATION,
   USDC_ADDRESS,
   WBTC_ADDRESS,
   WETH_ADDRESS,
 } from '@/constants/common';
-import {toastError} from '@/constants/error';
-import {AssetsContext} from '@/contexts/assets-context';
+import { toastError } from '@/constants/error';
+import { ROUTE_PATH } from '@/constants/route-path';
+import { AssetsContext } from '@/contexts/assets-context';
 import useGetReserves from '@/hooks/contract-operations/swap/useReserves';
-import useSwapERC20Token, {ISwapERC20TokenParams,} from '@/hooks/contract-operations/swap/useSwapERC20Token';
+import useSwapERC20Token, {
+  ISwapERC20TokenParams,
+} from '@/hooks/contract-operations/swap/useSwapERC20Token';
 import useApproveERC20Token from '@/hooks/contract-operations/token/useApproveERC20Token';
 import useBalanceERC20Token from '@/hooks/contract-operations/token/useBalanceERC20Token';
 import useIsApproveERC20Token from '@/hooks/contract-operations/token/useIsApproveERC20Token';
 import useContractOperation from '@/hooks/contract-operations/useContractOperation';
-import {IToken} from '@/interfaces/token';
-import {TransactionStatus} from '@/interfaces/walletTransaction';
-import {getSwapRoutes, getSwapTokens, logErrorToServer} from '@/services/swap';
-import {useAppDispatch, useAppSelector} from '@/state/hooks';
+import { IToken } from '@/interfaces/token';
+import { TransactionStatus } from '@/interfaces/walletTransaction';
+import { getSwapRoutes, getSwapTokens, logErrorToServer } from '@/services/swap';
+import { useAppDispatch, useAppSelector } from '@/state/hooks';
+import { closeModal, openModal } from '@/state/modal';
 import {
   requestReload,
   requestReloadRealtime,
   selectPnftExchange,
   updateCurrentTransaction,
 } from '@/state/pnftExchange';
-import {getIsAuthenticatedSelector, getUserSelector} from '@/state/user/selector';
-import {camelCaseKeys, compareString, formatCurrency, sortAddressPair,} from '@/utils';
-import {isDevelop} from '@/utils/commons';
-import {composeValidators, required} from '@/utils/formValidate';
+import { getIsAuthenticatedSelector, getUserSelector } from '@/state/user/selector';
+import {
+  camelCaseKeys,
+  compareString,
+  formatCurrency,
+  getTokenIconUrl,
+  sortAddressPair,
+} from '@/utils';
+import { isDevelop } from '@/utils/commons';
+import { composeValidators, required } from '@/utils/formValidate';
 import px2rem from '@/utils/px2rem';
-import {showError} from '@/utils/toast';
-import {Box, Center, Flex, forwardRef, Text} from '@chakra-ui/react';
-import {useWeb3React} from '@web3-react/core';
+import { showError } from '@/utils/toast';
+import { Box, Center, Flex, Text, forwardRef } from '@chakra-ui/react';
+import { useWindowSize } from '@trustless-computer/dapp-core';
+import { useWeb3React } from '@web3-react/core';
 import BigNumber from 'bignumber.js';
 import cx from 'classnames';
 import debounce from 'lodash/debounce';
 import Link from 'next/link';
-import {useRouter} from 'next/router';
-import React, {useCallback, useContext, useEffect, useImperativeHandle, useMemo, useRef, useState,} from 'react';
-import {Field, Form, useForm, useFormState} from 'react-final-form';
+import { useRouter } from 'next/router';
+import {
+  useCallback,
+  useContext,
+  useEffect,
+  useImperativeHandle,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
+import { Field, Form, useForm, useFormState } from 'react-final-form';
 import toast from 'react-hot-toast';
-import {RiArrowUpDownLine} from 'react-icons/ri';
-import {useDispatch, useSelector} from 'react-redux';
+import { BiBell } from 'react-icons/bi';
+import { BsListCheck } from 'react-icons/bs';
+import { RiArrowUpDownLine } from 'react-icons/ri';
+import { useDispatch, useSelector } from 'react-redux';
 import Web3 from 'web3';
 import styles from './styles.module.scss';
-import {BsListCheck} from 'react-icons/bs';
-import {BiBell} from 'react-icons/bi';
-import {ROUTE_PATH} from '@/constants/route-path';
-import SlippageSettingButton from '@/components/Swap/slippageSetting/button';
-import {closeModal, openModal} from '@/state/modal';
-import {useWindowSize} from '@trustless-computer/dapp-core';
-import InfoTooltip from '@/components/Swap/infoTooltip';
-import ModalConfirmApprove from '@/components/ModalConfirmApprove';
-import tokenIcons from '@/constants/tokenIcons';
+import SuggestBestAmount from './suggestBestAmount';
 
 const LIMIT_PAGE = 500;
+
 export const MakeFormSwap = forwardRef((props, ref) => {
   const { onSubmit, submitting } = props;
   const [loading, setLoading] = useState(false);
-  const [baseToken, setBaseToken] = useState<any>();
-  const [quoteToken, setQuoteToken] = useState<any>();
+  const [baseToken, setBaseToken] = useState<IToken | null>(null);
+  const [quoteToken, setQuoteToken] = useState<IToken | null>(null);
   const [amountBaseTokenApproved, setAmountBaseTokenApproved] = useState('0');
   const [amountQuoteTokenApproved, setAmountQuoteTokenApproved] = useState('0');
-  const [tokensList, setTokensList] = useState<IToken[]>([]);
   const [baseTokensList, setBaseTokensList] = useState<IToken[]>([]);
   const [quoteTokensList, setQuoteTokensList] = useState<IToken[]>([]);
   const { call: isApproved } = useIsApproveERC20Token();
@@ -309,7 +324,6 @@ export const MakeFormSwap = forwardRef((props, ref) => {
 
       const list = res ? camelCaseKeys(res) : [];
 
-      setTokensList(list);
       setBaseTokensList(list);
       setQuoteTokensList(list);
 
@@ -329,12 +343,14 @@ export const MakeFormSwap = forwardRef((props, ref) => {
 
   const fetchFromTokens = async (from_token?: string) => {
     try {
-      const res = await getSwapTokens({
-        limit: LIMIT_PAGE,
-        page: 1,
-        is_test: isDevelop() ? '1' : '',
-        from_token: from_token,
-      });
+      const [res] = await Promise.all([
+        getSwapTokens({
+          limit: LIMIT_PAGE,
+          page: 1,
+          is_test: isDevelop() ? '1' : '',
+          from_token: from_token,
+        }),
+      ]);
       return res;
     } catch (err: unknown) {
       console.log('Failed to fetch tokens owned');
@@ -422,7 +438,11 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     }
   };
 
-  const requestApproveToken = async (token: IToken) => {
+  const requestApproveToken = async (token: IToken | null) => {
+    if (!token) {
+      return;
+    }
+
     try {
       dispatch(
         updateCurrentTransaction({
@@ -981,11 +1001,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             <img
               // width={25}
               // height={25}
-              src={
-                baseToken?.thumbnail ||
-                tokenIcons?.[baseToken?.symbol?.toLowerCase()] ||
-                TOKEN_ICON_DEFAULT
-              }
+              src={getTokenIconUrl(baseToken)}
               alt={baseToken?.thumbnail || 'default-icon'}
               className={'avatar'}
             />
@@ -1027,11 +1043,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             <img
               // width={25}
               // height={25}
-              src={
-                quoteToken?.thumbnail ||
-                tokenIcons?.[quoteToken?.symbol?.toLowerCase()] ||
-                TOKEN_ICON_DEFAULT
-              }
+              src={getTokenIconUrl(quoteToken)}
               alt={quoteToken?.thumbnail || 'default-icon'}
               className={'avatar'}
             />
@@ -1119,6 +1131,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             borderColor={'#353945'}
           />
         </Flex>
+        <SuggestBestAmount baseToken={baseToken} quoteToken={quoteToken} />
       </InputWrapper>
       <Flex justifyContent={'center'} mt={4}>
         <Center
@@ -1221,7 +1234,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             label={
               <Text fontSize={'sm'} fontWeight={'medium'} color={'#FFFFFF'}>
                 1 {quoteToken?.symbol} =&nbsp;
-                {formatCurrency(exchangeRate.toString(), baseToken?.decimal || 18)}
+                {formatCurrency(exchangeRate.toString())}
                 &nbsp;{baseToken?.symbol}
               </Text>
             }
