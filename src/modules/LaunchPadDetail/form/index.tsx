@@ -195,6 +195,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     isEndLaunchpad,
     isClaimLaunchpad,
     isVoteRelease,
+    boostInfo,
   } = props;
   const [loading, setLoading] = useState(false);
   const [liquidityToken, setLiquidityToken] = useState<any>();
@@ -306,9 +307,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   };
 
   const getLiquidityTokenBalance = async (token: any) => {
-    const [_baseBalance] = await Promise.all([
-      getTokenBalance(token),
-    ]);
+    const [_baseBalance] = await Promise.all([getTokenBalance(token)]);
     setLiquidityBalance(_baseBalance);
   };
 
@@ -1075,6 +1074,7 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
           [LAUNCHPAD_STATUS.Pending].includes(poolDetail?.state),
       );
       setBoostInfo(userBoost);
+
       setDepositAddressInfo(depositAddress);
     } catch (error) {
       console.log('Launchpad detail form fetchData', error);
@@ -1381,6 +1381,7 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
             isEndLaunchpad={canEnd}
             isClaimLaunchpad={canClaim}
             isVoteRelease={canVoteRelease}
+            boostInfo={boostInfo}
           />
         )}
       </Form>

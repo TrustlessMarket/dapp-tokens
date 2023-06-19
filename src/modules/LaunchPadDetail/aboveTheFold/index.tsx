@@ -1,10 +1,21 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import CountDownTimer from '@/components/Countdown';
+import Card from '@/components/Swap/card';
+import SectionContainer from '@/components/Swap/sectionContainer';
+import { TOKEN_ICON_DEFAULT } from '@/constants/common';
+import { IToken } from '@/interfaces/token';
+import styles from '@/modules/LaunchPadDetail/aboveTheFold/styles.module.scss';
+import BuyForm from '@/modules/LaunchPadDetail/form';
+import Intro from '@/modules/LaunchPadDetail/intro';
+import Statistic from '@/modules/LaunchPadDetail/statistic';
+import Usp from '@/modules/LaunchPadDetail/usp';
 import LaunchpadStatus, {
   LAUNCHPAD_STATUS,
   useLaunchPadStatus,
 } from '@/modules/Launchpad/Launchpad.Status';
-import styles from '@/modules/LaunchPadDetail/aboveTheFold/styles.module.scss';
-import { ILaunchpad } from '@/interfaces/launchpad';
+import VerifiedBadgeLaunchpad from '@/modules/Launchpad/verifiedBadgeLaunchpad';
+import { formatCurrency } from '@/utils';
+import px2rem from '@/utils/px2rem';
 import {
   Box,
   Flex,
@@ -15,23 +26,10 @@ import {
   StatNumber,
   Text,
 } from '@chakra-ui/react';
-import Intro from '@/modules/LaunchPadDetail/intro';
-import Card from '@/components/Swap/card';
-import BuyForm from '@/modules/LaunchPadDetail/form';
-import Usp from '@/modules/LaunchPadDetail/usp';
-import Statistic from '@/modules/LaunchPadDetail/statistic';
-import React from 'react';
-import { TOKEN_ICON_DEFAULT } from '@/constants/common';
-import px2rem from '@/utils/px2rem';
-import { formatCurrency } from '@/utils';
-import { IToken } from '@/interfaces/token';
-import SectionContainer from '@/components/Swap/sectionContainer';
-import CountDownTimer from '@/components/Countdown';
 import moment from 'moment/moment';
 import { FaFireAlt } from 'react-icons/fa';
-import VerifiedBadgeLaunchpad from '@/modules/Launchpad/verifiedBadgeLaunchpad';
 
-const AboveTheFold = ({ poolDetail }: ILaunchpad | any) => {
+const AboveTheFold = ({ poolDetail, userBoost }: any) => {
   const launchpadToken: IToken = poolDetail?.launchpadToken;
   const [status] = useLaunchPadStatus({ row: poolDetail });
 
@@ -69,46 +67,53 @@ const AboveTheFold = ({ poolDetail }: ILaunchpad | any) => {
         <Flex>
           <Stat>
             <StatLabel fontSize={px2rem(24)}>
-              {
-                [LAUNCHPAD_STATUS.Pending].includes(poolDetail?.state) ? 'Voting will start in'
-                  : [
-                    LAUNCHPAD_STATUS.Launching,
-                  ].includes(poolDetail?.state) ? 'Ends in'
-                    : [
+              {[LAUNCHPAD_STATUS.Pending].includes(poolDetail?.state)
+                ? 'Voting will start in'
+                : [LAUNCHPAD_STATUS.Launching].includes(poolDetail?.state)
+                ? 'Ends in'
+                : [
                     LAUNCHPAD_STATUS.Successful,
                     LAUNCHPAD_STATUS.Failed,
                     LAUNCHPAD_STATUS.End,
-                  ].includes(poolDetail?.state) ? 'Ended at'
-                      : ''
-              }
+                  ].includes(poolDetail?.state)
+                ? 'Ended at'
+                : ''}
             </StatLabel>
             <StatNumber>
               <Text>
-                {
-                  [LAUNCHPAD_STATUS.Pending].includes(poolDetail?.state) ? (
-                  <Flex mt={2} alignItems={'center'} gap={2} className={styles.boxTime}>
+                {[LAUNCHPAD_STATUS.Pending].includes(poolDetail?.state) ? (
+                  <Flex
+                    mt={2}
+                    alignItems={'center'}
+                    gap={2}
+                    className={styles.boxTime}
+                  >
                     <FaFireAlt />
                     <Text>
                       <CountDownTimer end_time={poolDetail.voteStart} />
                     </Text>
                   </Flex>
-                  ) : [
-                    LAUNCHPAD_STATUS.Launching,
-                  ].includes(poolDetail?.state) ? (
-                    <Flex mt={2} alignItems={'center'} gap={2} className={styles.boxTime}>
-                      <FaFireAlt />
-                      <Text>
-                        <CountDownTimer end_time={poolDetail.launchEnd} />
-                      </Text>
-                    </Flex>
-                  ) : [
+                ) : [LAUNCHPAD_STATUS.Launching].includes(poolDetail?.state) ? (
+                  <Flex
+                    mt={2}
+                    alignItems={'center'}
+                    gap={2}
+                    className={styles.boxTime}
+                  >
+                    <FaFireAlt />
+                    <Text>
+                      <CountDownTimer end_time={poolDetail.launchEnd} />
+                    </Text>
+                  </Flex>
+                ) : [
                     LAUNCHPAD_STATUS.Successful,
                     LAUNCHPAD_STATUS.Failed,
                     LAUNCHPAD_STATUS.End,
                   ].includes(poolDetail?.state) ? (
-                    moment(poolDetail.launchEnd).format('LLL')
-                  ) : <></>
-                }
+                  moment(poolDetail.launchEnd).format('LLL')
+                ) : (
+                  <></>
+                )}
               </Text>
             </StatNumber>
           </Stat>
@@ -153,7 +158,7 @@ const AboveTheFold = ({ poolDetail }: ILaunchpad | any) => {
               mt={8}
               borderRadius={'12px'}
             >
-              <Statistic poolDetail={poolDetail} />
+              <Statistic poolDetail={poolDetail} userBoost={userBoost} />
             </Card>
           </GridItem>
         </Grid>

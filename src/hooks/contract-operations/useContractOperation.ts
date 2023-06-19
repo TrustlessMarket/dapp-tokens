@@ -53,7 +53,11 @@ const useContractOperation = <P, R>(
       // It delegates error to caller
 
       if (!isAuthenticated || !user?.walletAddress) {
-        router.push(`${ROUTE_PATH.CONNECT_WALLET}?next=${window.location.href}`);
+        router.push(
+          `${ROUTE_PATH.CONNECT_WALLET}?next=${encodeURIComponent(
+            window.location.href,
+          )}`,
+        );
         throw Error('Please connect wallet to continue.');
       }
 
@@ -79,7 +83,7 @@ const useContractOperation = <P, R>(
       TC_SDK.signTransaction({
         method: `${transactionType} ${dAppType}`,
         hash: Object(tx).hash,
-        dappURL: window.location.origin,
+        dappURL: window.location.origin + window.location.pathname,
         isRedirect: true,
         target: '_blank',
         isMainnet: isProduction(),
