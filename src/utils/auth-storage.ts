@@ -44,5 +44,5 @@ export const setAccessToken = (accessToken: string, refreshToken: string): void 
 // };
 
 export const setWalletChainId = (chainId: any): void => {
-  localStorage.set(PREV_CHAIN_ID, chainId);
+  window.localStorage.setItem(PREV_CHAIN_ID, chainId);
 };
