@@ -1380,8 +1380,7 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
         onSubmit={handleSubmit}
         initialValues={{
           contributeMethod:
-            CHAIN_ID_TO_NETWORK[localStorage.getItem(PREV_CHAIN_ID) as any] ||
-            undefined,
+            CHAIN_ID_TO_NETWORK[localStorage.getItem(PREV_CHAIN_ID) as any] || 'tc',
         }}
       >
         {({ handleSubmit }) => (
