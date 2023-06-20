@@ -57,11 +57,15 @@ const WalletHeader = () => {
       await onConnect();
       await requestBtcAddress();
     } catch (err) {
-      showError({
-        message: (err as Error).message,
-      });
-      console.log(err);
-      onDisconnect();
+      const message = (err as Error).message;
+      if (
+        !message.toLowerCase()?.includes('User rejected the request'.toLowerCase())
+      ) {
+        showError({
+          message,
+        });
+        onDisconnect();
+      }
     } finally {
       setIsConnecting(false);
     }
@@ -137,30 +141,35 @@ const WalletHeader = () => {
           ></IconSVG>
         </div>
       </div>
-      <div className="divider"></div>
-      <div className="wallet-btc">
-        <div className="wallet-item">
-          <IconSVG
-            src={`${CDN_URL}/icons/ic-btc.svg`}
-            maxWidth="24"
-            maxHeight="24"
-          />
-          <Text size={'regular'} className="address" fontWeight="regular">
-            {formatLongAddress(user?.walletAddressBtcTaproot || '')}
-          </Text>
-        </div>
-        <div
-          className="icCopy"
-          onClick={() => onClickCopy(user?.walletAddressBtcTaproot || '')}
-        >
-          <IconSVG
-            src={`${CDN_URL}/icons/ic-copy.svg`}
-            color="black"
-            maxWidth="16"
-            type="stroke"
-          ></IconSVG>
-        </div>
-      </div>
+      {user?.walletAddressBtcTaproot && (
+        <>
+          <div className="divider"></div>
+          <div className="wallet-btc">
+            <div className="wallet-item">
+              <IconSVG
+                src={`${CDN_URL}/icons/ic-btc.svg`}
+                maxWidth="24"
+                maxHeight="24"
+              />
+              <Text size={'regular'} className="address" fontWeight="regular">
+                {formatLongAddress(user?.walletAddressBtcTaproot || '')}
+              </Text>
+            </div>
+            <div
+              className="icCopy"
+              onClick={() => onClickCopy(user?.walletAddressBtcTaproot || '')}
+            >
+              <IconSVG
+                src={`${CDN_URL}/icons/ic-copy.svg`}
+                color="black"
+                maxWidth="16"
+                type="stroke"
+              ></IconSVG>
+            </div>
+          </div>
+        </>
+      )}
+
       <div className="divider"></div>
       <div className="cta">
         <div className="wallet-link" onClick={() => window.open(WALLET_URL)}>
