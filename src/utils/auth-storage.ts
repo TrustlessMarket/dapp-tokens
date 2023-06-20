@@ -23,6 +23,7 @@ export const clearAccessTokenStorage = (): void => {
 export const clearAuthStorage = (): void => {
   localStorage.remove(ACCESS_TOKEN);
   localStorage.remove(REFRESH_TOKEN);
+  localStorage.remove(PREV_CHAIN_ID);
   // walletBTCStorage.removeWallet();
 };
 
