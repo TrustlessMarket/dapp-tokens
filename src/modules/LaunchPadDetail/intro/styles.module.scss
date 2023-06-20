@@ -50,6 +50,7 @@
 
   :global .youtube-video {
     height: 100%;
+    z-index: 2;
     iframe {
       min-height: 100%;
       border-radius: 16px;
@@ -81,7 +82,7 @@
     bottom: 0;
     right: 0;
     background-repeat: no-repeat;
-    background-size: cover;
+    background-size: contain;
     background-position: center center;
     filter: blur(250px);
     z-index: 1;
