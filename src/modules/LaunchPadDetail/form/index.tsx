@@ -612,11 +612,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
                 <Flex gap={1} alignItems={'center'}>
                   {formatCurrency(poolDetail?.totalValue || 0)}{' '}
                   <img
-                    src={
-                      liquidityToken?.thumbnail ||
-                      tokenIcons?.[liquidityToken?.symbol?.toLowerCase()] ||
-                      TOKEN_ICON_DEFAULT
-                    }
+                    src={getTokenIconUrl(liquidityToken)}
                     alt={liquidityToken?.thumbnail || 'default-icon'}
                     className={'liquidity-token-avatar'}
                   />

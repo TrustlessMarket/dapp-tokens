@@ -4,6 +4,9 @@
   border-radius: 12px;
   position: relative;
   overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   :global .home-video {
     height: 100%;
     position: relative;
@@ -47,6 +50,7 @@
 
   :global .youtube-video {
     height: 100%;
+    z-index: 2;
     iframe {
       min-height: 100%;
       border-radius: 16px;
@@ -60,12 +64,13 @@
     // width: 100%;
     object-fit: contain;
     // height: 100%;
-    position: absolute;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    right: 0;
-    margin: 0 auto;
+    // position: absolute;
+    // top: 0;
+    // left: 0;
+    // bottom: 0;
+    // right: 0;
+    // margin: 0 auto;
+    z-index: 2;
   }
 
   .bgBlur {
@@ -77,8 +82,9 @@
     bottom: 0;
     right: 0;
     background-repeat: no-repeat;
-    background-size: cover;
+    background-size: contain;
     background-position: center center;
-    filter: blur(500px);
+    filter: blur(250px);
+    z-index: 1;
   }
 }

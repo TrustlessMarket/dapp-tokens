@@ -121,11 +121,11 @@ const AllowlistTable = ({
   };
 
   const RowRenderer = ({
-    index,
-    key,
-    style,
-    data,
-    onShowContributeHistory,
+   index,
+   key,
+   style,
+   data,
+   onShowContributeHistory,
   }: any) => {
     const item = data[index];
 
@@ -208,6 +208,24 @@ const AllowlistTable = ({
                 ({formatCurrency(item.amount)} {poolDetail?.liquidityToken?.symbol})
               </span>
             </span>
+            {
+              Number(item.amountPending) > 0 && (
+                <span
+                  className={cx(
+                    styles.dataValue,
+                    styles.pendingValue,
+                    styles.dataValue__orange,
+                  )}
+                >
+                  Pending: {" "}
+                  ${formatCurrency(item.amountPendingUsd, 2)}
+                  {/*<span className={s.dataContribute_divider}></span>*/}
+                  <span className={styles.percentage}>
+                ({formatCurrency(item.amountPending)} {poolDetail?.liquidityToken?.symbol})
+              </span>
+            </span>
+              )
+            }
           </div>
           <Popover trigger="hover" isLazy>
             <PopoverTrigger>

@@ -283,7 +283,7 @@ const LaunchpadContainer = () => {
           ) : (
             <Box>
               <Flex color={color} alignItems={'center'} gap={1}>
-                {`${row.totalValue} / ${row.goalBalance} `}
+                {`${formatCurrency(row.totalValue)} / ${row.goalBalance} `}
                 <Flex className={'liquidity-token'} alignItems={'center'} gap={1}>
                   <img src={getTokenIconUrl(row.liquidityToken)} />
                   {row.liquidityToken.symbol}
