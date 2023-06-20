@@ -205,12 +205,14 @@ export const WalletProvider: React.FC<PropsWithChildren> = ({
     const handleAccountsChanged = async (addresses: any[]) => {
       if (addresses && Array.isArray(addresses)) {
         await disconnect();
-        // const evmWalletAddress = addresses[0];
-        // dispatch(updateEVMWallet(evmWalletAddress));
-        const nextRouter: any = window.location.origin + window.location.pathname;
-        router.push(
-          `${ROUTE_PATH.CONNECT_WALLET}?next=${encodeURIComponent(nextRouter)}`,
-        );
+        const evmWalletAddress = addresses[0];
+        dispatch(updateEVMWallet(evmWalletAddress));
+        dispatch(updateSelectedWallet({ wallet: ConnectionType.METAMASK }));
+        localStorage.setItem(TEMP_ADDRESS_WALLET_EVM, evmWalletAddress);
+        // const nextRouter: any = window.location.origin + window.location.pathname;
+        // router.push(
+        //   `${ROUTE_PATH.CONNECT_WALLET}?next=${encodeURIComponent(nextRouter)}`,
+        // );
       }
     };
     if (window.ethereum) {
