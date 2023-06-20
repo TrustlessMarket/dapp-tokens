@@ -24,11 +24,15 @@ const ConnectWallet: React.FC = (): React.ReactElement => {
       await onConnect();
       await requestBtcAddress();
     } catch (err) {
-      showError({
-        message: (err as Error).message,
-      });
-      console.log(err);
-      onDisconnect();
+      const message = (err as Error).message;
+      if (
+        !message.toLowerCase()?.includes('User rejected the request'.toLowerCase())
+      ) {
+        showError({
+          message,
+        });
+        onDisconnect();
+      }
     } finally {
       setIsConnecting(false);
     }

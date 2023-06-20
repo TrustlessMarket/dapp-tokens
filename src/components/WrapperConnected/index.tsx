@@ -13,7 +13,7 @@ interface WrapperConnectedProps extends ButtonProps {
   children?: React.ReactElement;
   onClick?: () => void;
   className?: string;
-  forceSwitchChain?: boolean;
+  forceSwitchChain?: any;
 }
 
 const WrapperConnected: React.FC<WrapperConnectedProps> = ({
@@ -21,7 +21,7 @@ const WrapperConnected: React.FC<WrapperConnectedProps> = ({
   onClick,
   className,
   type = 'button',
-  forceSwitchChain = true,
+  forceSwitchChain = false,
 }) => {
   const { chainId } = useWeb3React();
   const { onDisconnect, onConnect, requestBtcAddress } = useContext(WalletContext);
@@ -33,10 +33,15 @@ const WrapperConnected: React.FC<WrapperConnectedProps> = ({
       await onConnect();
       await requestBtcAddress();
     } catch (err) {
-      showError({
-        message: (err as Error).message,
-      });
-      onDisconnect();
+      const message = (err as Error).message;
+      if (
+        !message.toLowerCase()?.includes('User rejected the request'.toLowerCase())
+      ) {
+        showError({
+          message,
+        });
+        onDisconnect();
+      }
     }
   };
 
@@ -44,14 +49,14 @@ const WrapperConnected: React.FC<WrapperConnectedProps> = ({
     e.stopPropagation();
     e.preventDefault();
 
-    if (!isAuthenticated || !trustChain) {
+    if (!isAuthenticated || !trustChain || forceSwitchChain) {
       handleConnectWallet();
     } else {
       onClick?.();
     }
   };
 
-  if (!isAuthenticated || (!trustChain && forceSwitchChain)) {
+  if (!isAuthenticated || !trustChain || forceSwitchChain) {
     return (
       <StyledWrapperConnected
         {...children?.props}
