@@ -391,7 +391,7 @@ const AllowlistTable = ({
           <Text
             color={'#1588FF'}
             fontWeight={'500'}
-            fontSize={px2rem(20)}
+            fontSize={[px2rem(14), px2rem(20)]}
             onClick={handleViewMore}
             textAlign={'center'}
             cursor={'pointer'}

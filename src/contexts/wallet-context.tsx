@@ -128,7 +128,7 @@ export const WalletProvider: React.FC<PropsWithChildren> = ({
     await onConnect(addresses);
 
     return null;
-  }, [dispatch, connector, provider, currentChainId]);
+  }, [dispatch, connector, provider, currentChainId, chainId]);
 
   useEffect(() => {
     if (user?.walletAddress && !user.walletAddressBtcTaproot) {
@@ -139,6 +139,12 @@ export const WalletProvider: React.FC<PropsWithChildren> = ({
       dispatch(updateTaprootWallet(taprootAddress));
     }
   }, [user, dispatch]);
+
+  useEffect(() => {
+    if (isSupportedChain(chainId)) {
+      dispatch(updateCurrentChainId(chainId));
+    }
+  }, [chainId]);
 
   const onConnect = async (addresses: any[]) => {
     if (addresses && Array.isArray(addresses)) {

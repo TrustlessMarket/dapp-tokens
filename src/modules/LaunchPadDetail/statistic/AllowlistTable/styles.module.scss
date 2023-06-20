@@ -100,7 +100,7 @@
     height: 432px;
 
     @include max-tablet {
-      height: 400px;
+      min-height: calc(100vh - 300px);
     }
   }
 
@@ -154,9 +154,14 @@
     justify-content: flex-end;
     gap: rem(12);
 
+    // @media screen and (max-width: 768px) {
+    //   gap: rem(6);
+    // }
+
     @include w-max(425px) {
       column-gap: 0;
-      row-gap: rem(12);
+      gap: rem(6);
+      padding: rem(8) rem(12);
 
       &.currentUser {
         .dataShare {
@@ -198,6 +203,11 @@
 
       .dataContribute {
         text-align: right;
+      }
+      .dataId,
+      .userWallet,
+      .dataValue {
+        font-size: rem(14) !important;
       }
     }
   }

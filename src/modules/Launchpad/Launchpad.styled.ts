@@ -32,7 +32,8 @@ export const StyledIdoContainer = styled(BodyContainer)`
   }
 
   .button-create-box {
-    padding: 0 16px;
+    background-color: white;
+    color: black;
   }
 
   .chakra-table {
