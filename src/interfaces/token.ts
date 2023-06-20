@@ -37,7 +37,7 @@ export interface IToken {
   };
   index?: number;
   balance?: string;
-  decimal?: number | string;
+  decimal?: any;
   network?: string;
   baseTokenSymbol?: string;
   status?: string;
