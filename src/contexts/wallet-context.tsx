@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-hooks/exhaustive-deps */
-import { getConnection } from '@/connection';
+import { ConnectionType, getConnection } from '@/connection';
 import { generateNonceMessage, verifyNonceMessage } from '@/services/auth';
 import { useAppDispatch } from '@/state/hooks';
 import {
@@ -94,8 +94,6 @@ export const WalletProvider: React.FC<PropsWithChildren> = ({
   );
 
   const disconnect = React.useCallback(async () => {
-    console.log('disconnecting...');
-    console.log('user', user);
     if (user?.walletAddress) {
       bitcoinStorage.removeUserTaprootAddress(user?.walletAddress);
     }
@@ -116,10 +114,26 @@ export const WalletProvider: React.FC<PropsWithChildren> = ({
     if (!isSupportedChain(chainId)) {
       await switchChain(SupportedChainId.TRUSTLESS_COMPUTER);
     }
-    const addresses = await connector.provider?.request({
+    const addresses: any = await connector.provider?.request({
       method: 'eth_accounts',
     });
 
+    await onConnect(addresses);
+
+    return null;
+  }, [dispatch, connector, provider]);
+
+  useEffect(() => {
+    if (user?.walletAddress && !user.walletAddressBtcTaproot) {
+      const taprootAddress = bitcoinStorage.getUserTaprootAddress(
+        user?.walletAddress,
+      );
+      if (!taprootAddress) return;
+      dispatch(updateTaprootWallet(taprootAddress));
+    }
+  }, [user, dispatch]);
+
+  const onConnect = async (addresses: any[]) => {
     if (addresses && Array.isArray(addresses)) {
       const evmWalletAddress = addresses[0];
       const data = await generateNonceMessage({
@@ -136,30 +150,18 @@ export const WalletProvider: React.FC<PropsWithChildren> = ({
           address: evmWalletAddress,
           signature: signature,
         });
+        window.localStorage.setItem(PREV_URL, window.location.href);
         setAccessToken(accessToken, refreshToken);
         setWalletChainId(chainId);
         dispatch(updateEVMWallet(evmWalletAddress));
-        dispatch(updateSelectedWallet({ wallet: connection.type }));
+        dispatch(updateSelectedWallet({ wallet: ConnectionType.METAMASK }));
         localStorage.setItem(TEMP_ADDRESS_WALLET_EVM, evmWalletAddress);
         return evmWalletAddress;
       }
     }
-    return null;
-  }, [dispatch, connector, provider]);
-
-  useEffect(() => {
-    if (user?.walletAddress && !user.walletAddressBtcTaproot) {
-      const taprootAddress = bitcoinStorage.getUserTaprootAddress(
-        user?.walletAddress,
-      );
-      if (!taprootAddress) return;
-      dispatch(updateTaprootWallet(taprootAddress));
-    }
-  }, [user, dispatch]);
+  };
 
   const requestBtcAddress = async (): Promise<void> => {
-    window.localStorage.setItem(PREV_URL, window.location.href);
-
     await TC_SDK.actionRequest({
       method: TC_SDK.RequestMethod.account,
       redirectURL: window.location.origin + window.location.pathname,
@@ -189,9 +191,6 @@ export const WalletProvider: React.FC<PropsWithChildren> = ({
           await switchChain(SupportedChainId.TRUSTLESS_COMPUTER);
         }
 
-        //temp for test evm
-        // const walletAddress = localStorage.getItem(TEMP_ADDRESS_WALLET_EVM);
-
         const { walletAddress } = await getCurrentProfile();
         dispatch(updateEVMWallet(walletAddress));
         dispatch(updateSelectedWallet({ wallet: 'METAMASK' }));
@@ -203,15 +202,17 @@ export const WalletProvider: React.FC<PropsWithChildren> = ({
   }, [dispatch, connector]);
 
   useEffect(() => {
-    const handleAccountsChanged = async () => {
-      await disconnect();
-      router.push(
-        `${ROUTE_PATH.CONNECT_WALLET}?next=${encodeURIComponent(
-          window.location.origin + window.location.pathname,
-        )}`,
-      );
+    const handleAccountsChanged = async (addresses: any[]) => {
+      if (addresses && Array.isArray(addresses)) {
+        await disconnect();
+        // const evmWalletAddress = addresses[0];
+        // dispatch(updateEVMWallet(evmWalletAddress));
+        const nextRouter: any = window.location.origin + window.location.pathname;
+        router.push(
+          `${ROUTE_PATH.CONNECT_WALLET}?next=${encodeURIComponent(nextRouter)}`,
+        );
+      }
     };
-
     if (window.ethereum) {
       Object(window.ethereum).on('accountsChanged', handleAccountsChanged);
     }
