@@ -333,6 +333,13 @@
     &__white {
       color: #ffffff;
     }
+    &__orange {
+      color: #FF7E21;
+    }
+
+    &.pendingValue {
+      font-size: rem(12);
+    }
   }
 
   .actionWrapper {
