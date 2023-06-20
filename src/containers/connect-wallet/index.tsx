@@ -1,14 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useContext, useEffect, useState } from 'react';
-import { Wrapper, ConnectWalletButton } from './ConnectWallet.styled';
-import { WalletContext } from '@/contexts/wallet-context';
-import { useSelector } from 'react-redux';
-import { getIsAuthenticatedSelector, getUserSelector } from '@/state/user/selector';
 import { CDN_URL } from '@/configs';
-import { Container } from '@/layouts';
 import { ROUTE_PATH } from '@/constants/route-path';
-import { useRouter } from 'next/router';
+import { PREV_URL } from '@/constants/storage-key';
+import { WalletContext } from '@/contexts/wallet-context';
+import { Container } from '@/layouts';
+import { getIsAuthenticatedSelector, getUserSelector } from '@/state/user/selector';
 import { showError } from '@/utils/toast';
+import { useRouter } from 'next/router';
+import React, { useContext, useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+import { ConnectWalletButton, Wrapper } from './ConnectWallet.styled';
 
 const ConnectWallet: React.FC = (): React.ReactElement => {
   const { onConnect, requestBtcAddress, onDisconnect } = useContext(WalletContext);
@@ -34,12 +35,14 @@ const ConnectWallet: React.FC = (): React.ReactElement => {
   };
 
   useEffect(() => {
-    let nextRouter: any = ROUTE_PATH.HOME;
-    if (router.query?.next) {
-      const parseURL = new URL(router.query?.next as any);
-      nextRouter = parseURL.origin + parseURL.pathname;
+    if (isAuthenticated) {
+      let nextRouter: any = ROUTE_PATH.HOME;
+      const prevUrl = window.localStorage.getItem(PREV_URL);
+      if (prevUrl) {
+        nextRouter = prevUrl;
+      }
+      router.push(nextRouter);
     }
-    router.push(nextRouter);
   }, [isAuthenticated, router, user]);
 
   return (
