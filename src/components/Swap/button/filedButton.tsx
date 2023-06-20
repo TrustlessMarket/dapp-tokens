@@ -40,17 +40,19 @@ const FiledButton: React.FC<FiledButtonProps> = (props) => {
         className={styles.container}
         {...containerConfig}
       >
-        {(!isLoading || !Boolean(processInfo)) && (
-          <Button
-            className={cx(styles[`${btnSize}`], className)}
-            isLoading={isLoading}
-            w={'100%'}
-            loadingText={loadingText || 'Processing'}
-            {...otherProps}
-          >
-            {children}
-          </Button>
-        )}
+        <Button
+          className={cx(styles[`${btnSize}`], className)}
+          isLoading={isLoading && !Boolean(processInfo)}
+          isDisabled={isLoading}
+          w={'100%'}
+          loadingText={loadingText || 'Processing'}
+          {...otherProps}
+        >
+          {children}
+        </Button>
+        {/* {(!isLoading || !Boolean(processInfo)) && (
+          
+        )} */}
 
         {/* {!isLoading && !Boolean(processInfo) && (
           <Button

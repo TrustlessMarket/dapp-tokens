@@ -2,6 +2,12 @@
   background: #0f0f0f;
   padding-top: 48px;
   padding-bottom: 48px;
+  @media screen and (max-width: 768px) {
+    & > div {
+      padding-left: 15px;
+      padding-right: 15px;
+    }
+  }
   &.loadingContainer {
     height: 100%;
     align-items: center;
@@ -10,33 +16,40 @@
   }
 }
 
-.tabContainer {
-  :global {
-    .chakra-tabs__tablist {
-      border-bottom-color: #353945;
+.tabWrapper {
+  @media screen and (max-width: 768px) {
+    & > div {
+      padding: 0px;
     }
-    .chakra-tabs__tab {
-      color: rgba(255, 255, 255, 0.4);
-      font-weight: 400;
-      font-size: rem(14);
-      padding: rem(20);
-      &[aria-selected='true'],
-      &:focus-visible,
-      &:active {
-        color: #FFFFFF;
-        box-shadow: none;
-        background: none;
+  }
+  .tabContainer {
+    :global {
+      .chakra-tabs__tablist {
+        border-bottom-color: #353945;
+      }
+      .chakra-tabs__tab {
+        color: rgba(255, 255, 255, 0.4);
+        font-weight: 400;
+        font-size: rem(14);
+        padding: rem(20);
+        &[aria-selected='true'],
+        &:focus-visible,
+        &:active {
+          color: #ffffff;
+          box-shadow: none;
+          background: none;
+        }
+      }
+
+      .chakra-tabs__tab-panel {
+        padding: 0;
       }
     }
 
-    .chakra-tabs__tab-panel {
-      padding: 0;
-    }
-  }
-
-  :global {
-    .home-image {
-      max-height: unset;
+    :global {
+      .home-image {
+        max-height: unset;
+      }
     }
   }
 }

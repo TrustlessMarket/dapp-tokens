@@ -36,7 +36,7 @@ const ProposalInfo = ({ poolDetail }: ILaunchpad | any) => {
 
   return (
     <Box color={'#FFFFFF'}>
-      <SimpleGrid columns={3} spacingY={8} spacingX={8}>
+      <SimpleGrid columns={[1, 3]} spacingY={8} spacingX={8}>
         <Stat className={styles.infoColumn}>
           <StatLabel>
             <InfoTooltip
