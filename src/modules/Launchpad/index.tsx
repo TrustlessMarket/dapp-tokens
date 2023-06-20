@@ -6,33 +6,42 @@ import SocialToken from '@/components/Social';
 import FiledButton from '@/components/Swap/button/filedButton';
 import Faq from '@/components/Swap/faq';
 import InfoTooltip from '@/components/Swap/infoTooltip';
-import ListTable, {ColumnProp} from '@/components/Swap/listTable';
+import ListTable, { ColumnProp } from '@/components/Swap/listTable';
 import SectionContainer from '@/components/Swap/sectionContainer';
-import {ROUTE_PATH} from '@/constants/route-path';
-import {ILaunchpad} from '@/interfaces/launchpad';
-import {IToken} from '@/interfaces/token';
+import { ROUTE_PATH } from '@/constants/route-path';
+import { ILaunchpad } from '@/interfaces/launchpad';
+import { IToken } from '@/interfaces/token';
 import VerifiedBadgeLaunchpad from '@/modules/Launchpad/verifiedBadgeLaunchpad';
-import {getListLaunchpad} from '@/services/launchpad';
-import {useAppSelector} from '@/state/hooks';
-import {selectPnftExchange} from '@/state/pnftExchange';
-import {colors} from '@/theme/colors';
-import {abbreviateNumber, compareString, formatCurrency, getTokenIconUrl,} from '@/utils';
-import {Box, Flex, Progress, Text, Tooltip} from '@chakra-ui/react';
-import {useWeb3React} from '@web3-react/core';
+import { getListLaunchpad } from '@/services/launchpad';
+import { useAppSelector } from '@/state/hooks';
+import { selectPnftExchange } from '@/state/pnftExchange';
+import { colors } from '@/theme/colors';
+import {
+  abbreviateNumber,
+  compareString,
+  formatCurrency,
+  getTokenIconUrl,
+} from '@/utils';
+import { Box, Flex, Progress, Text, Tooltip } from '@chakra-ui/react';
+import { useWeb3React } from '@web3-react/core';
 import BigNumber from 'bignumber.js';
 import moment from 'moment';
-import {useRouter} from 'next/router';
-import React, {useContext, useEffect, useMemo, useState} from 'react';
-import {BsPencil, BsPencilFill} from 'react-icons/bs';
-import {FaFireAlt} from 'react-icons/fa';
-import {useDispatch, useSelector} from 'react-redux';
-import {FAQStyled} from '../LaunchpadManage/LaunchpadManage.styled';
-import LaunchpadStatus, {LAUNCHPAD_STATUS, LaunchpadLabelStatus, useLaunchPadStatus,} from './Launchpad.Status';
-import {StyledIdoContainer} from './Launchpad.styled';
-import {getIsAuthenticatedSelector} from "@/state/user/selector";
-import {showError} from "@/utils/toast";
-import {WalletContext} from "@/contexts/wallet-context";
-import ModalCreateToken from "@/modules/Tokens/ModalCreateToken";
+import { useRouter } from 'next/router';
+import React, { useContext, useEffect, useMemo, useState } from 'react';
+import { BsPencil, BsPencilFill } from 'react-icons/bs';
+import { FaFireAlt } from 'react-icons/fa';
+import { useDispatch, useSelector } from 'react-redux';
+import { FAQStyled } from '../LaunchpadManage/LaunchpadManage.styled';
+import LaunchpadStatus, {
+  LAUNCHPAD_STATUS,
+  LaunchpadLabelStatus,
+  useLaunchPadStatus,
+} from './Launchpad.Status';
+import { StyledIdoContainer } from './Launchpad.styled';
+import { getIsAuthenticatedSelector } from '@/state/user/selector';
+import { showError } from '@/utils/toast';
+import { WalletContext } from '@/contexts/wallet-context';
+import ModalCreateToken from '@/modules/Tokens/ModalCreateToken';
 import Button from '@/components/Button';
 
 const LaunchpadContainer = () => {
@@ -271,14 +280,16 @@ const LaunchpadContainer = () => {
             LaunchpadLabelStatus.voting.value,
           ].includes(status.value) ? (
             <Box>
-              <Text
-                color={color}
-              >{`${row.goalBalance} ${row.liquidityToken.symbol}`}</Text>
+              <Text color={color}>{`${formatCurrency(row.goalBalance)} ${
+                row.liquidityToken.symbol
+              }`}</Text>
             </Box>
           ) : (
             <Box>
               <Flex color={color} alignItems={'center'} gap={1}>
-                {`${row.totalValue} / ${row.goalBalance} `}
+                {`${formatCurrency(row.totalValue)} / ${formatCurrency(
+                  row.goalBalance,
+                )} `}
                 <Flex className={'liquidity-token'} alignItems={'center'} gap={1}>
                   <img src={getTokenIconUrl(row.liquidityToken)} />
                   {row.liquidityToken.symbol}
@@ -394,10 +405,9 @@ const LaunchpadContainer = () => {
             );
           }
           if (
-            [
-              LAUNCHPAD_STATUS.Successful,
-              LAUNCHPAD_STATUS.Failed,
-            ].includes(row?.state)
+            [LAUNCHPAD_STATUS.Successful, LAUNCHPAD_STATUS.Failed].includes(
+              row?.state,
+            )
           ) {
             return (
               <Box>
@@ -428,27 +438,25 @@ const LaunchpadContainer = () => {
           return (
             <Flex alignItems={'center'} gap={2}>
               <LaunchpadStatus row={row} />
-              {
-                compareString(row.creatorAddress, account) &&
+              {compareString(row.creatorAddress, account) &&
                 [
                   LAUNCHPAD_STATUS.Draft,
                   LAUNCHPAD_STATUS.Pending,
                   LAUNCHPAD_STATUS.Voting,
-                  LAUNCHPAD_STATUS.PrepareLaunching
+                  LAUNCHPAD_STATUS.PrepareLaunching,
                 ].includes(row?.state) && (
                   <Box
                     cursor={'pointer'}
                     onClick={(e) => {
                       e.stopPropagation();
                       e.preventDefault();
-                      router.push(`${ROUTE_PATH.LAUNCHPAD_MANAGE}?id=${row.id}`)
+                      router.push(`${ROUTE_PATH.LAUNCHPAD_MANAGE}?id=${row.id}`);
                     }}
                     paddingX={2}
                   >
                     <BsPencil />
                   </Box>
-                )
-              }
+                )}
             </Flex>
           );
         },
@@ -498,11 +506,15 @@ const LaunchpadContainer = () => {
       await onConnect();
       await requestBtcAddress();
     } catch (err) {
-      showError({
-        message: (err as Error).message,
-      });
-      console.log(err);
-      onDisconnect();
+      const message = (err as Error).message;
+      if (
+        !message.toLowerCase()?.includes('User rejected the request'.toLowerCase())
+      ) {
+        showError({
+          message,
+        });
+        onDisconnect();
+      }
     }
   };
 
@@ -531,19 +543,19 @@ const LaunchpadContainer = () => {
           <Text>Submit Your Launchpad</Text>
         </FiledButton>
         <Button
-            className="button-create-box"
-            background={'white'}
-            onClick={handleCreateToken}
+          className="button-create-box"
+          background={'white'}
+          onClick={handleCreateToken}
+        >
+          <Text
+            size="medium"
+            color={'black'}
+            className="button-text"
+            fontWeight="medium"
           >
-            <Text
-              size="medium"
-              color={'black'}
-              className="button-text"
-              fontWeight="medium"
-            >
-              Create SMART BRC-20
-            </Text>
-          </Button>
+            Create SMART BRC-20
+          </Text>
+        </Button>
       </Flex>
 
       <Box className="content">
@@ -552,8 +564,6 @@ const LaunchpadContainer = () => {
           columns={columns}
           initialLoading={loading}
           onItemClick={(e: ILaunchpad) => {
-            console.log(e);
-
             if (!e.id) {
               return null;
             }

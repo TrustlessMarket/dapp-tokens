@@ -45,6 +45,7 @@ import {
   requestReload,
   requestReloadRealtime,
   selectPnftExchange,
+  updateCurrentChainId,
   updateCurrentTransaction,
 } from '@/state/pnftExchange';
 import { colors } from '@/theme/colors';
@@ -106,6 +107,8 @@ import DepositEth from '@/modules/LaunchPadDetail/depositEth';
 import ContributeForm from '@/modules/LaunchPadDetail/contributeForm';
 import { getIsAuthenticatedSelector } from '@/state/user/selector';
 import { IoWarningOutline } from 'react-icons/io5';
+import { CHAIN_ID_TO_NETWORK, NETWORK_TO_CHAIN_ID } from '@/constants/chains';
+import { PREV_CHAIN_ID } from '@/constants/storage-key';
 
 const CONTRIBUTION_METHODS = [
   {
@@ -124,7 +127,8 @@ const CONTRIBUTION_METHODS = [
 
 const ContributionMethods = (props: any) => {
   const { onSelect } = props;
-  const [selectId, setSelectedId] = useState('tc');
+  const { values } = useFormState();
+  const [selectId, setSelectedId] = useState(values?.contributeMethod);
   const { account } = useWeb3React();
 
   useEffect(() => {
@@ -209,7 +213,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const { juiceBalance, isLoadedAssets } = useContext(AssetsContext);
   const dispatch = useDispatch();
 
-  const { account, isActive } = useWeb3React();
+  const { account, isActive, chainId } = useWeb3React();
   const needReload = useAppSelector(selectPnftExchange).needReload;
   const isLaunchpadCreator = compareString(poolDetail?.creatorAddress, account);
   const trustChain = isConnectedTrustChain();
@@ -474,6 +478,10 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   };
 
   const onSelectContributeMethod = (method: any) => {
+    if (NETWORK_TO_CHAIN_ID?.[method]) {
+      dispatch(updateCurrentChainId(NETWORK_TO_CHAIN_ID?.[method]));
+    }
+
     change('contributeMethod', method);
   };
 
@@ -513,7 +521,14 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             <WrapperConnected
               type={isRequireApprove ? 'button' : 'submit'}
               className={styles.submitButton}
-              forceSwitchChain={values?.contributeMethod !== 'eth'}
+              forceSwitchChain={
+                chainId &&
+                values?.contributeMethod !== 'eth' &&
+                !compareString(
+                  NETWORK_TO_CHAIN_ID?.[values?.contributeMethod],
+                  chainId,
+                )
+              }
             >
               {isRequireApprove ? (
                 <FiledButton
@@ -1247,8 +1262,6 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
   };
 
   const handleSubmit = async (values: any) => {
-    console.log('handleSubmit', values);
-
     const liquidityToken = poolDetail?.liquidityToken;
     if ([LAUNCHPAD_STATUS.Voting].includes(poolDetail?.state)) {
       confirmVoting(values);
@@ -1257,7 +1270,6 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
       compareString(liquidityToken?.address, WETH_ADDRESS)
     ) {
       const { contributeMethod } = values;
-      console.log('contributeMethod', contributeMethod);
 
       if (contributeMethod === 'eth') {
         showContributeFromEthWallet();
@@ -1364,7 +1376,14 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
 
   return (
     <Box className={styles.container}>
-      <Form onSubmit={handleSubmit} initialValues={{}}>
+      <Form
+        onSubmit={handleSubmit}
+        initialValues={{
+          contributeMethod:
+            CHAIN_ID_TO_NETWORK[localStorage.getItem(PREV_CHAIN_ID) as any] ||
+            undefined,
+        }}
+      >
         {({ handleSubmit }) => (
           <MakeFormSwap
             ref={refForm}

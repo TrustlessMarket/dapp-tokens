@@ -8,7 +8,7 @@ import AboveTheFoldVoting from '@/modules/ProposalDetail/aboveTheFold';
 import IdoDescription from '@/modules/LaunchPadDetail/description';
 import { getDetailLaunchpad, getUserBoost } from '@/services/launchpad';
 import { useAppSelector } from '@/state/hooks';
-import { selectPnftExchange } from '@/state/pnftExchange';
+import { selectPnftExchange, updateCurrentChainId } from '@/state/pnftExchange';
 import { colors } from '@/theme/colors';
 import {
   Box,
@@ -33,6 +33,8 @@ import {
 import Intro from '@/modules/LaunchPadDetail/intro';
 import SectionContainer from '@/components/Swap/sectionContainer';
 import { useWeb3React } from '@web3-react/core';
+import { useDispatch } from 'react-redux';
+import { SupportedChainId } from '@/constants/chains';
 
 const IdoDetailContainer = () => {
   const router = useRouter();
@@ -44,6 +46,8 @@ const IdoDetailContainer = () => {
   const [loading, setLoading] = useState(true);
 
   const [userBoost, setUserBoost] = useState(undefined);
+
+  const dispatch = useDispatch();
 
   const getPoolInfo = async () => {
     try {
@@ -90,6 +94,12 @@ const IdoDetailContainer = () => {
       _getUserBoost();
     }
   }, [account, isActive, needReload, poolDetail?.launchpad]);
+
+  useEffect(() => {
+    return () => {
+      dispatch(updateCurrentChainId(SupportedChainId.TRUSTLESS_COMPUTER));
+    };
+  }, []);
 
   if (loading) {
     return (

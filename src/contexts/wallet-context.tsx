@@ -16,12 +16,11 @@ import React, { PropsWithChildren, useEffect, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 // import { getAccessToken, setAccessToken } from '@/utils/auth-storage';
 import { SupportedChainId } from '@/constants/chains';
-import { isSupportedChain, switchChain } from '@/utils';
+import { compareString, isSupportedChain, switchChain } from '@/utils';
 import {
   clearAuthStorage,
   getAccessToken,
   setAccessToken,
-  setWalletChainId,
 } from '@/utils/auth-storage';
 import Web3 from 'web3';
 import { provider } from 'web3-core';
@@ -33,6 +32,7 @@ import {
   TEMP_ADDRESS_WALLET_EVM,
 } from '@/constants/storage-key';
 import { getCurrentProfile } from '@/services/profile';
+import { selectPnftExchange, updateCurrentChainId } from '@/state/pnftExchange';
 import { isProduction } from '@/utils/commons';
 import { useRouter } from 'next/router';
 import * as TC_SDK from 'trustless-computer-sdk';
@@ -60,7 +60,13 @@ export const WalletProvider: React.FC<PropsWithChildren> = ({
   const { connector, provider, chainId } = useWeb3React();
   const dispatch = useAppDispatch();
   const user = useSelector(getUserSelector);
+  const currentChainId = useSelector(selectPnftExchange).currentChainId;
   const router = useRouter();
+
+  const isChain = currentChainId || SupportedChainId.TRUSTLESS_COMPUTER;
+  const isChainTC =
+    !currentChainId ||
+    compareString(currentChainId, SupportedChainId.TRUSTLESS_COMPUTER);
 
   const getSignature = React.useCallback(
     async (message: string): Promise<string> => {
@@ -111,8 +117,9 @@ export const WalletProvider: React.FC<PropsWithChildren> = ({
       throw new Error('Get connection error.');
     }
     await connection.connector.activate();
-    if (!isSupportedChain(chainId)) {
-      await switchChain(SupportedChainId.TRUSTLESS_COMPUTER);
+
+    if (!isSupportedChain(isChain) || !compareString(chainId, isChain)) {
+      await switchChain(isChain);
     }
     const addresses: any = await connector.provider?.request({
       method: 'eth_accounts',
@@ -121,7 +128,7 @@ export const WalletProvider: React.FC<PropsWithChildren> = ({
     await onConnect(addresses);
 
     return null;
-  }, [dispatch, connector, provider]);
+  }, [dispatch, connector, provider, currentChainId]);
 
   useEffect(() => {
     if (user?.walletAddress && !user.walletAddressBtcTaproot) {
@@ -139,20 +146,23 @@ export const WalletProvider: React.FC<PropsWithChildren> = ({
       const data = await generateNonceMessage({
         address: evmWalletAddress,
       });
+
       if (data) {
-        const web3Provider = new Web3(window.ethereum as provider);
-        const signature = await web3Provider.eth.personal.sign(
-          Web3.utils.fromUtf8(data),
-          evmWalletAddress,
-          '',
-        );
-        const { token: accessToken, refreshToken } = await verifyNonceMessage({
-          address: evmWalletAddress,
-          signature: signature,
-        });
-        window.localStorage.setItem(PREV_URL, window.location.href);
-        setAccessToken(accessToken, refreshToken);
-        setWalletChainId(chainId);
+        if (isChainTC) {
+          const web3Provider = new Web3(window.ethereum as provider);
+          const signature = await web3Provider.eth.personal.sign(
+            Web3.utils.fromUtf8(data),
+            evmWalletAddress,
+            '',
+          );
+          const { token: accessToken, refreshToken } = await verifyNonceMessage({
+            address: evmWalletAddress,
+            signature: signature,
+          });
+          setAccessToken(accessToken, refreshToken);
+        }
+        localStorage.setItem(PREV_URL, window.location.href);
+        localStorage.setItem(PREV_CHAIN_ID, isChain);
         dispatch(updateEVMWallet(evmWalletAddress));
         dispatch(updateSelectedWallet({ wallet: ConnectionType.METAMASK }));
         localStorage.setItem(TEMP_ADDRESS_WALLET_EVM, evmWalletAddress);
@@ -162,18 +172,22 @@ export const WalletProvider: React.FC<PropsWithChildren> = ({
   };
 
   const requestBtcAddress = async (): Promise<void> => {
-    await TC_SDK.actionRequest({
-      method: TC_SDK.RequestMethod.account,
-      redirectURL: window.location.origin + window.location.pathname,
-      target: '_self',
-      isMainnet: isProduction(),
-    });
+    if (isChainTC) {
+      await TC_SDK.actionRequest({
+        method: TC_SDK.RequestMethod.account,
+        redirectURL: window.location.origin + window.location.pathname,
+        target: '_self',
+        isMainnet: isProduction(),
+      });
+    }
   };
 
   useAsyncEffect(async () => {
     const accessToken = getAccessToken();
 
-    if (connector && accessToken) {
+    const prevChainId: any = localStorage.getItem(PREV_CHAIN_ID);
+
+    if (connector) {
       try {
         const connection = getConnection(connector);
         if (!connection) {
@@ -186,14 +200,25 @@ export const WalletProvider: React.FC<PropsWithChildren> = ({
           console.log(err);
         }
 
-        const prevChainId: any = localStorage.getItem(PREV_CHAIN_ID);
-        if (!isSupportedChain(prevChainId)) {
-          await switchChain(SupportedChainId.TRUSTLESS_COMPUTER);
-        }
+        // if (!isSupportedChain(prevChainId)) {
+        //   await switchChain(isChain);
+        // }
 
-        const { walletAddress } = await getCurrentProfile();
-        dispatch(updateEVMWallet(walletAddress));
-        dispatch(updateSelectedWallet({ wallet: 'METAMASK' }));
+        if (accessToken) {
+          const { walletAddress } = await getCurrentProfile();
+          dispatch(updateEVMWallet(walletAddress));
+          dispatch(updateSelectedWallet({ wallet: 'METAMASK' }));
+        } else if (prevChainId) {
+          const addresses: any = await connector.provider?.request({
+            method: 'eth_accounts',
+          });
+          const evmWalletAddress = addresses[0];
+
+          dispatch(updateCurrentChainId(prevChainId));
+          dispatch(updateEVMWallet(evmWalletAddress));
+          dispatch(updateSelectedWallet({ wallet: ConnectionType.METAMASK }));
+          localStorage.setItem(TEMP_ADDRESS_WALLET_EVM, evmWalletAddress);
+        }
       } catch (err: unknown) {
         clearAuthStorage();
         console.log(err);
@@ -204,7 +229,7 @@ export const WalletProvider: React.FC<PropsWithChildren> = ({
   useEffect(() => {
     const handleAccountsChanged = async (addresses: any[]) => {
       if (addresses && Array.isArray(addresses)) {
-        await disconnect();
+        // await disconnect();
         const evmWalletAddress = addresses[0];
         dispatch(updateEVMWallet(evmWalletAddress));
         dispatch(updateSelectedWallet({ wallet: ConnectionType.METAMASK }));
