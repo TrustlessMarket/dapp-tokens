@@ -24,7 +24,7 @@ import {
   Stat,
   StatLabel,
   StatNumber,
-  Text,
+  Text, Tooltip,
 } from '@chakra-ui/react';
 import moment from 'moment/moment';
 import { FaFireAlt } from 'react-icons/fa';
@@ -80,8 +80,10 @@ const AboveTheFold = ({ poolDetail, userBoost }: any) => {
                 : ''}
             </StatLabel>
             <StatNumber>
-              <Text>
-                {[LAUNCHPAD_STATUS.Pending].includes(poolDetail?.state) ? (
+              {[LAUNCHPAD_STATUS.Pending].includes(poolDetail?.state) ? (
+                <Tooltip
+                  label={`${moment(poolDetail.voteStart).format('LLL')}`}
+                >
                   <Flex
                     mt={2}
                     alignItems={'center'}
@@ -93,7 +95,11 @@ const AboveTheFold = ({ poolDetail, userBoost }: any) => {
                       <CountDownTimer end_time={poolDetail.voteStart} />
                     </Text>
                   </Flex>
-                ) : [LAUNCHPAD_STATUS.Launching].includes(poolDetail?.state) ? (
+                </Tooltip>
+              ) : [LAUNCHPAD_STATUS.Launching].includes(poolDetail?.state) ? (
+                <Tooltip
+                  label={`${moment(poolDetail.launchEnd).subtract("1", "h").format('LLL')}`}
+                >
                   <Flex
                     mt={2}
                     alignItems={'center'}
@@ -102,19 +108,19 @@ const AboveTheFold = ({ poolDetail, userBoost }: any) => {
                   >
                     <FaFireAlt />
                     <Text>
-                      <CountDownTimer end_time={poolDetail.launchEnd} />
+                      <CountDownTimer end_time={moment(poolDetail.launchEnd).subtract("1", "h").toString()} />
                     </Text>
                   </Flex>
-                ) : [
-                    LAUNCHPAD_STATUS.Successful,
-                    LAUNCHPAD_STATUS.Failed,
-                    LAUNCHPAD_STATUS.End,
-                  ].includes(poolDetail?.state) ? (
-                  moment(poolDetail.launchEnd).format('LLL')
-                ) : (
-                  <></>
-                )}
-              </Text>
+                </Tooltip>
+              ) : [
+                LAUNCHPAD_STATUS.Successful,
+                LAUNCHPAD_STATUS.Failed,
+                LAUNCHPAD_STATUS.End,
+              ].includes(poolDetail?.state) ? (
+                moment(poolDetail.launchEnd).format('LLL')
+              ) : (
+                <></>
+              )}
             </StatNumber>
           </Stat>
         </Flex>
