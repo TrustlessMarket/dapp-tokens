@@ -1394,7 +1394,7 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
           contributeMethod:
             CHAIN_ID_TO_NETWORK[
               chainId || (localStorage.getItem(PREV_CHAIN_ID) as any)
-            ] || 'tc',
+            ] || (mobileScreen ? 'eth' : 'tc'),
         }}
       >
         {({ handleSubmit }) => (

@@ -108,10 +108,11 @@ export const StyledTokens = styled.div`
 
           &:first-of-type {
             padding-left: ${px2rem(24)};
+            margin-top: 10px;
           }
 
           @media screen and (max-width: 758px) {
-            padding: ${px2rem(8)} ${px2rem(8)}!important;
+            padding: ${px2rem(16)} ${px2rem(8)}!important;
             font-weight: 400;
             &:nth-child(2) {
               padding-left: 40px !important;
