@@ -552,7 +552,7 @@ const LaunchpadContainer = () => {
         <FiledButton
           className="button-create-box"
           btnSize="h"
-          onClick={onShowCreateIDO}
+          onClick={handleCreateToken}
         >
           <Text>Create SMART BRC-20</Text>
         </FiledButton>
