@@ -1,14 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/ban-types */
 import cx from 'classnames';
-import React, { useEffect } from 'react';
-
-import darkLoading from '@/assets/json/light.json';
+import React, {useEffect} from 'react';
 
 import styles from './styles.module.scss';
-import { useAppDispatch, useAppSelector } from '@/state/hooks';
-import { hideLoadingOverlay, selectLoadingOverlay } from '@/state/loadingOverlay';
-import LottiePlayer from '@/components/Swap/lottiePlayer';
+import {useAppDispatch, useAppSelector} from '@/state/hooks';
+import {hideLoadingOverlay, selectLoadingOverlay} from '@/state/loadingOverlay';
+import {Spinner} from "@chakra-ui/react";
 
 interface MyLoadingOverlayProps {
   active?: boolean;
@@ -40,16 +38,8 @@ const MyLoadingOverlay = (props: MyLoadingOverlayProps) => {
 export const ComponentLoading = ({ show }: { show: any }) => {
   return (
     <div className={cx(styles.loadingOverlay, show && styles.show)}>
-      {/* <LoadingOverlay
-    active={active}
-    spinner={spinner || defaulSpinner()}
-    text={message}
-  >
-    {children}
-  </LoadingOverlay> */}
       <div className={styles.inner}>
-        <LottiePlayer className={styles.bg} autoplay loop src={darkLoading} />
-        {/* <img alt="" src={Mascot} /> */}
+        <Spinner speed="0.65s" emptyColor="gray.200" color="blue.500" />
       </div>
     </div>
   );
