@@ -1,6 +1,6 @@
 .wrapper {
   width: 100%;
-  background: #0F0F0F;
+  background: #0f0f0f;
   padding-top: 48px;
   padding-bottom: 48px;
 
@@ -8,8 +8,8 @@
     width: 215px;
     height: 48px;
     border-radius: 8px;
-    background: #3385FF;
-    color: #FFFFFF;
+    background: #3385ff;
+    color: #ffffff;
     font-size: 16px;
   }
 
@@ -17,16 +17,27 @@
     width: 215px;
     height: 48px;
     border-radius: 8px;
-    background: #FFFFFF;
+    background: #ffffff;
     color: #000000;
     font-size: 16px;
   }
 
   :global {
+    .upload_title {
+      margin-bottom: rem(24);
+      margin-left: auto;
+      margin-right: auto;
+      width: fit-content;
+      z-index: 1;
+      position: relative;
+      color: white;
+      font-size: rem(32);
+    }
+
     .chakra-table {
       overflow: hidden;
       thead {
-        background-color: #1E1E22;
+        background-color: #1e1e22;
         th {
           div {
             text-transform: uppercase;
@@ -37,7 +48,7 @@
       tbody {
         tr {
           &:hover {
-            background-color: #1E1E22;
+            background-color: #1e1e22;
           }
         }
         td {

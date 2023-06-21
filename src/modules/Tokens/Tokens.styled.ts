@@ -2,15 +2,38 @@ import px2rem from '@/utils/px2rem';
 import styled from 'styled-components';
 
 export const StyledTokens = styled.div`
-  //padding-top: ${px2rem(48)};
-  //padding-bottom: ${px2rem(48)};
   padding: ${px2rem(54)} 3.75rem;
+
+  .power-by {
+    margin: 0 auto;
+    gap: ${px2rem(12)};
+    align-items: center;
+    justify-content: center;
+    padding: ${px2rem(8)} ${px2rem(16)};
+    background-color: #1e1e22;
+    border-radius: 100px;
+    max-width: max-content;
+    margin-bottom: ${px2rem(16)};
+    p {
+      color: #cecece;
+      font-size: ${px2rem(16)};
+      font-weight: 400;
+    }
+    b {
+      color: #ffffff;
+      font-weight: 400;
+    }
+  }
 
   .avatar {
     object-fit: cover;
     width: ${px2rem(40)};
     height: ${px2rem(40)};
     border-radius: 50%;
+    @media screen and (max-width: 768px) {
+      width: ${px2rem(32)};
+      height: ${px2rem(32)};
+    }
   }
 
   .chakra-table__container {
@@ -18,6 +41,9 @@ export const StyledTokens = styled.div`
     border: 1px solid rgba(255, 255, 255, 0.1);
   }
   .chakra-table {
+    @media screen and (max-width: 758px) {
+      table-layout: fixed;
+    }
     th:first-of-type {
       max-width: ${px2rem(50)};
       white-space: nowrap;
@@ -27,23 +53,49 @@ export const StyledTokens = styled.div`
     th:nth-child(4),
     td:nth-child(4),
     th:nth-child(5),
-    td:nth-child(5) {
+    td:nth-child(6) {
       //text-align: right;
     }
 
     td {
       padding-top: ${px2rem(22)};
       padding-bottom: ${px2rem(22)};
+      @media screen and (max-width: 758px) {
+        padding-top: ${px2rem(16)};
+        padding-bottom: ${px2rem(16)};
+      }
     }
 
     thead {
       tr {
         th {
-          background: #1E1E22;
+          background: #1e1e22;
           text-transform: uppercase;
           border-bottom-color: rgba(255, 255, 255, 0.1);
           padding-top: ${px2rem(12)};
           padding-bottom: ${px2rem(12)};
+          @media screen and (max-width: 758px) {
+            padding: ${px2rem(14.5)} ${px2rem(8)}!important;
+            text-transform: capitalize !important;
+            font-weight: 400;
+            &:first-child {
+              & > div {
+                justify-content: flex-start;
+              }
+            }
+            &:last-child {
+              & > div {
+                justify-content: flex-end;
+              }
+            }
+            &:nth-child(2) {
+              padding-left: 40px !important;
+              & > div {
+                text-align: center;
+                /* justify-content: center; */
+              }
+            }
+          }
         }
       }
     }
@@ -53,14 +105,22 @@ export const StyledTokens = styled.div`
         td {
           vertical-align: middle;
           border-bottom-color: transparent;
-          
+
           &:first-of-type {
             padding-left: ${px2rem(24)};
+          }
+
+          @media screen and (max-width: 758px) {
+            padding: ${px2rem(8)} ${px2rem(8)}!important;
+            font-weight: 400;
+            &:nth-child(2) {
+              padding-left: 40px !important;
+            }
           }
         }
 
         &:hover {
-          background-color: #1E1E22;
+          background-color: #1e1e22;
         }
       }
     }
@@ -73,22 +133,24 @@ export const StyledTokens = styled.div`
   }
 
   .upload_title {
-    margin-left: auto;
-    margin-right: auto;
     width: fit-content;
     z-index: 1;
-    position: relative;
     color: white;
     font-size: ${px2rem(48)};
     line-height: ${px2rem(58)};
-    margin-bottom: 0;
-    letter-spacing: -0.05em;
+    margin: 0 auto;
+    letter-spacing: -0.5%;
+    font-weight: 500;
+    @media screen and (max-width: 758px) {
+      font-size: ${px2rem(30)};
+      line-height: ${px2rem(40)};
+    }
   }
 
   .tokens-list {
     overflow: hidden !important;
   }
-  
+
   .chakra-input__left-element {
     height: 44px;
     width: 44px;
@@ -121,10 +183,6 @@ export const StyledTokens = styled.div`
 
   @media screen and (max-width: 768px) {
     padding: ${px2rem(16)} ${px2rem(16)};
-
-    .upload_title {
-      margin-bottom: ${px2rem(16)};
-    }
   }
 `;
 
