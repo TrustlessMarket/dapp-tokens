@@ -97,7 +97,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const configs = useAppSelector(selectPnftExchange).configs;
   const swapFee = configs?.swapFee || 0.3;
 
-  const { account } = useWeb3React();
+  const { account} = useWeb3React();
   const needReload = useAppSelector(selectPnftExchange).needReload;
   const [exchangeRate, setExchangeRate] = useState('0');
 

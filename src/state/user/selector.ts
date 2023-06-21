@@ -8,8 +8,6 @@ export const getUserSelector = (state: RootState): UserState | null => state.use
 export const getIsAuthenticatedSelector = (state: RootState): boolean => {
   const currentChainId = store.getState().pnftExchange.currentChainId;
 
-  console.log('currentChainId', currentChainId);
-
   if (
     Boolean(state.user.walletAddress) &&
     Boolean(state.user.walletAddressBtcTaproot)

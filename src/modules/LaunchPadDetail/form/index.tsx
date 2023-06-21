@@ -529,14 +529,15 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             <WrapperConnected
               type={isRequireApprove ? 'button' : 'submit'}
               className={styles.submitButton}
-              forceSwitchChain={
-                chainId &&
-                values?.contributeMethod !== 'eth' &&
-                !compareString(
-                  NETWORK_TO_CHAIN_ID?.[values?.contributeMethod],
-                  chainId,
-                )
-              }
+              forceSwitchChain={values?.contributeMethod !== 'eth'}
+              // forceSwitchChain={
+              //   chainId &&
+              //   values?.contributeMethod !== 'eth' &&
+              //   !compareString(
+              //     NETWORK_TO_CHAIN_ID?.[values?.contributeMethod],
+              //     chainId,
+              //   )
+              // }
             >
               {isRequireApprove ? (
                 <FiledButton
