@@ -143,7 +143,7 @@ const TokenDetail = () => {
         />
       </StyledTokenChartContainer>
       <StyledHistoryContentContainer className={'tab-container'} area={'history'}>
-        <Tabs isManual>
+        <Tabs isLazy>
           <TabList>
             <Tab>Trade History</Tab>
             <Tab isDisabled={!Boolean(account && isActive)}>

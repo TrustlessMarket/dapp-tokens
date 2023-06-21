@@ -92,7 +92,7 @@ export const calcLaunchpadInitialPrice = ({
   return price;
 };
 
-export const getTokenIconUrl = (token: IToken) => {
+export const getTokenIconUrl = (token: IToken | any) => {
   let url = TOKEN_ICON_DEFAULT;
   if (token?.thumbnail) {
     url = token?.thumbnail;

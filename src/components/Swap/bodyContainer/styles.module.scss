@@ -6,6 +6,10 @@
     // max-width: 1366px;
     margin: auto;
     height: 100%;
+    @media screen and (max-width: 768px) {
+      padding-left: 15px;
+      padding-right: 15px;
+    }
     :global {
       .max-content {
         max-width: 1366px;
