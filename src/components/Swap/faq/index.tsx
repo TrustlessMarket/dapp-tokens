@@ -22,17 +22,22 @@ const Item = ({ data }: { data: any }) => {
   return (
     <Accordion allowToggle onChange={(i) => setOpen(i === 0)}>
       <AccordionItem border="none" w={['100%', '100%']}>
-        <AccordionButton px={0} pt={6} pb={open ? 4 : 6}>
-          <Flex w="100%" alignItems="center" justifyContent={'space-between'}>
+        <AccordionButton px={0} pt={[3, 6]} pb={open ? 4 : 6}>
+          <Flex
+            w="100%"
+            alignItems="center"
+            justifyContent={'space-between'}
+            gap={2}
+          >
             <Text
-              fontSize={px2rem(20)}
+              fontSize={[px2rem(14), px2rem(20)]}
               fontWeight="medium"
               textAlign={'left'}
               className={cx('faq-question')}
             >
               {data?.q}
             </Text>
-            <IconPlusToMinus open={open} size="16px" color="#FFFFFF" />
+            <IconPlusToMinus open={open} size={px2rem(16)} color="#FFFFFF" />
           </Flex>
         </AccordionButton>
         <AccordionPanel px={0} pb={6} style={{ paddingTop: '0' }}>
@@ -59,11 +64,11 @@ const Section = ({ title, data }: { title?: any; data: any }) => {
   return (
     <Flex direction="column" w={'100%'}>
       {title && (
-        <Text fontSize="lg" fontWeight="medium" textAlign={'left'} mb={4}>
+        <Text fontSize={['md', 'lg']} fontWeight="medium" textAlign={'left'} mb={4}>
           {title}
         </Text>
       )}
-      <Flex gap={2} direction="column" py={6} px={12}>
+      <Flex gap={2} direction="column" py={[4, 6]} px={[4, 12]}>
         {renderData.map((e: any, i: number) => (
           <Item key={i} data={e} />
         ))}

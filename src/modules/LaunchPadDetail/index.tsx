@@ -135,8 +135,8 @@ const IdoDetailContainer = () => {
       ) : (
         <AboveTheFoldLaunchpad poolDetail={poolDetail} userBoost={userBoost} />
       )}
-      <SectionContainer>
-        <Tabs className={cx(styles.tabContainer)} mt={16}>
+      <SectionContainer className={styles.tabWrapper}>
+        <Tabs className={cx(styles.tabContainer)} mt={[8, 16]}>
           <TabList mb={8} mt={8}>
             <Tab>STORY</Tab>
             <Tab>FAQS</Tab>

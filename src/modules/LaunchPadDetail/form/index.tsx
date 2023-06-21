@@ -56,6 +56,7 @@ import {
   formatLongAddress,
   getTokenIconUrl,
   isConnectedTrustChain,
+  isSupportedChain,
 } from '@/utils';
 import { composeValidators, required } from '@/utils/formValidate';
 import px2rem from '@/utils/px2rem';
@@ -128,15 +129,11 @@ const CONTRIBUTION_METHODS = [
 const ContributionMethods = (props: any) => {
   const { onSelect } = props;
   const { values } = useFormState();
-  const [selectId, setSelectedId] = useState(values?.contributeMethod);
+  const selectId = values?.contributeMethod;
   const { account } = useWeb3React();
 
-  useEffect(() => {
-    onSelect && onSelect(selectId);
-  }, [selectId]);
-
   return (
-    <Flex gap={3}>
+    <Flex gap={3} flexDirection={['column', 'row']}>
       {CONTRIBUTION_METHODS.map((method) => {
         return (
           <Flex
@@ -144,7 +141,7 @@ const ContributionMethods = (props: any) => {
             flex={1}
             gap={3}
             onClick={() => {
-              setSelectedId(method.id);
+              onSelect && onSelect(method.id);
             }}
             cursor={'pointer'}
             borderRadius={'8px'}
@@ -284,6 +281,17 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       throw error;
     }
   };
+
+  useEffect(() => {
+    if (isSupportedChain(chainId)) {
+      change(
+        'contributeMethod',
+        CHAIN_ID_TO_NETWORK[
+          chainId || (localStorage.getItem(PREV_CHAIN_ID) as any)
+        ] || 'tc',
+      );
+    }
+  }, [chainId]);
 
   useEffect(() => {
     if (poolDetail?.id) {
@@ -505,7 +513,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
                   alignItems={'center'}
                   justifyContent={'center'}
                   p={2}
-                  width={'80%'}
+                  width={['100%', '80%']}
                   marginX={'auto'}
                 >
                   <IoWarningOutline color="#FF7E21" fontSize={'20px'} />
@@ -616,7 +624,11 @@ export const MakeFormSwap = forwardRef((props, ref) => {
 
   return (
     <form onSubmit={onSubmit} style={{ height: '100%' }}>
-      <Flex justifyContent={'space-between'}>
+      <Flex
+        justifyContent={['flex-start', 'space-between']}
+        flexDirection={['column', 'row']}
+        gap={[4, 0]}
+      >
         <Stat className={styles.infoColumn}>
           <StatLabel>Funded</StatLabel>
           <StatNumber>
@@ -641,7 +653,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         </Stat>
         <Stat className={styles.infoColumn} textAlign={'left'}>
           <StatLabel>
-            <Flex gap={1} justifyContent={'flex-end'}>
+            <Flex gap={1} justifyContent={['flex-start', 'flex-end']}>
               <InfoTooltip
                 showIcon={true}
                 label={`The minimum amount ${
@@ -662,7 +674,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             </Flex>
           </StatLabel>
           <StatNumber>
-            <Flex gap={1} justifyContent={'flex-end'}>
+            <Flex gap={1} justifyContent={['flex-start', 'flex-end']}>
               <Flex gap={1} alignItems={'center'}>
                 {formatCurrency(poolDetail?.goalBalance || 0)}
                 <img
@@ -962,7 +974,7 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
   const [submitting, setSubmitting] = useState(false);
   const dispatch = useAppDispatch();
   const isAuthenticated = useSelector(getIsAuthenticatedSelector);
-  const { account } = useWeb3React();
+  const { account, chainId } = useWeb3React();
   const { run: depositLaunchpad } = useContractOperation({
     operation: useDepositPool,
   });
@@ -1380,7 +1392,9 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
         onSubmit={handleSubmit}
         initialValues={{
           contributeMethod:
-            CHAIN_ID_TO_NETWORK[localStorage.getItem(PREV_CHAIN_ID) as any] || 'tc',
+            CHAIN_ID_TO_NETWORK[
+              chainId || (localStorage.getItem(PREV_CHAIN_ID) as any)
+            ] || 'tc',
         }}
       >
         {({ handleSubmit }) => (

@@ -1,5 +1,5 @@
 .wrapper {
-  color: #FFFFFF;
+  color: #ffffff;
 
   :global {
     .launchpad-token-avatar {
@@ -7,6 +7,11 @@
       height: 40px;
       object-fit: cover;
       border-radius: 50%;
+    }
+    @media screen and (max-width: 768px) {
+      .inner {
+        padding: 0;
+      }
     }
   }
 

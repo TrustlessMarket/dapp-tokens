@@ -1,7 +1,7 @@
-import React from "react";
-import cx from "classnames";
+import React from 'react';
+import cx from 'classnames';
 
-import styles from "./styles.module.scss";
+import styles from './styles.module.scss';
 
 interface SectionContainerProps {
   children: React.ReactNode;
@@ -13,7 +13,7 @@ const SectionContainer = (props: SectionContainerProps) => {
 
   return (
     <div className={cx(styles.sectionContainer, className)}>
-      <div className={styles.inner}>{children}</div>
+      <div className={cx(styles.inner, 'inner')}>{children}</div>
     </div>
   );
 };
