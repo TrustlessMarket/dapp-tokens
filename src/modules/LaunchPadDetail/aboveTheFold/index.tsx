@@ -128,7 +128,7 @@ const AboveTheFold = ({ poolDetail, userBoost }: any) => {
                 LAUNCHPAD_STATUS.Failed,
                 LAUNCHPAD_STATUS.End,
               ].includes(poolDetail?.state) ? (
-                moment(poolDetail.launchEnd).format('LLL')
+                moment(poolDetail.launchEnd).subtract("1", "h").format('LLL')
               ) : (
                 <></>
               )}
