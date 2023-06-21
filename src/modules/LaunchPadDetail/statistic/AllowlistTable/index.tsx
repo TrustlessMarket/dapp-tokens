@@ -217,7 +217,7 @@ const AllowlistTable = ({
                     styles.dataValue__orange,
                   )}
                 >
-                  Processing: {" "}
+                  Processing {" "}
                   ${formatCurrency(item.amountPendingUsd, 2)}
                   {/*<span className={s.dataContribute_divider}></span>*/}
                   <span className={styles.percentage}>
@@ -409,7 +409,7 @@ const AllowlistTable = ({
           <Text
             color={'#1588FF'}
             fontWeight={'500'}
-            fontSize={px2rem(20)}
+            fontSize={[px2rem(14), px2rem(20)]}
             onClick={handleViewMore}
             textAlign={'center'}
             cursor={'pointer'}

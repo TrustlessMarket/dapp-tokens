@@ -8,7 +8,6 @@ const IdoFaqs = ({ poolDetail }: any) => {
   const data = useMemo(() => {
     if (poolDetail?.qandA) {
       const res = JSON.parse(poolDetail?.qandA);
-      console.log('res', res);
 
       return res?.map((r: any) => ({
         q: r?.value,

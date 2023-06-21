@@ -1,9 +1,9 @@
 .wrapper {
   width: 100%;
-  background: #3385FF;
+  background: #3385ff;
   transition: all 0.3s ease;
   font-weight: 500;
-  font-size: 16px;
+  font-size: rem(16);
 
   .banner {
     background: rgba(255, 255, 255, 0.2);
@@ -12,7 +12,7 @@
   }
 
   .checkItOut {
-    color: #FFFFFF;
+    color: #ffffff;
     display: inline;
     &:hover {
       text-decoration: none;
@@ -20,7 +20,7 @@
   }
 
   &.active {
-    background: #1E1E22;
+    background: #1e1e22;
 
     .banner {
       background: rgba(255, 126, 33, 0.2);
@@ -29,12 +29,20 @@
     }
 
     .checkItOut {
-      color: #FF7E21;
+      color: #ff7e21;
       display: inline;
 
       &:hover {
         text-decoration: none;
       }
+    }
+  }
+
+  @media screen and (max-width: 768px) {
+    text-align: center;
+    padding: rem(2) rem(8);
+    &.active {
+      background: transparent;
     }
   }
 }

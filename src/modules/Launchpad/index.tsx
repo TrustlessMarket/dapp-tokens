@@ -553,17 +553,31 @@ const LaunchpadContainer = () => {
       <Text as={'h1'} className="title">
         Launchpad
       </Text>
-      <Text className="desc">
+      <Text px={[6]} className="desc">
         Welcome to DeFi crowdfunding on Bitcoin. A place where you can support
         innovative projects and ideas all while leveraging the power of blockchain.
         Join us as we revolutionize the future of crowdfunding!
       </Text>
 
-      <Flex mb={8} mt={8} justifyContent={'center'} gap={8}>
+      <Flex
+        px={[6]}
+        mb={8}
+        mt={8}
+        justifyContent={'center'}
+        gap={4}
+        flexDirection={['column', 'row']}
+      >
         <FiledButton btnSize="h" onClick={onShowCreateIDO}>
           <Text>Submit Your Launchpad</Text>
         </FiledButton>
-        <Button
+        <FiledButton
+          className="button-create-box"
+          btnSize="h"
+          onClick={onShowCreateIDO}
+        >
+          <Text>Create SMART BRC-20</Text>
+        </FiledButton>
+        {/* <Button
           className="button-create-box"
           background={'white'}
           onClick={handleCreateToken}
@@ -576,7 +590,7 @@ const LaunchpadContainer = () => {
           >
             Create SMART BRC-20
           </Text>
-        </Button>
+        </Button> */}
       </Flex>
 
       <Box className="content">

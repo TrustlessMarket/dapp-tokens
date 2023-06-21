@@ -73,7 +73,8 @@ const Intro = ({ poolDetail }: any) => {
           )}
         </>
       ) : (
-        <img src={poolDetail?.image} alt="thumbnail" className={'home-image'}></img>
+        <></>
+        // <img src={poolDetail?.image} alt="thumbnail" className={'home-image'}></img>
       )}
     </Box>
   );

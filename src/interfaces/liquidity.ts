@@ -1,4 +1,4 @@
-import {IToken} from "@/interfaces/token";
+import { IToken } from '@/interfaces/token';
 
 export interface ILiquidity {
   id: string;
@@ -14,4 +14,5 @@ export interface ILiquidity {
   usdVolume?: string;
   totalVolume?: string;
   usdTotalVolume?: string;
+  pair?: string;
 }

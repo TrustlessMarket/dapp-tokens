@@ -7,6 +7,10 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  @media screen and (max-width: 768px) {
+    min-height: calc(100vw - 30px);
+    min-width: calc(100vw - 30px);
+  }
   :global .home-video {
     height: 100%;
     position: relative;
@@ -60,7 +64,7 @@
   :global .home-image {
     // border-radius: 16px;
     // box-shadow: 0px 0px 24px rgba(0, 0, 0, 0.04);
-    max-height: 55vh;
+    // max-height: 55vh;
     // width: 100%;
     object-fit: contain;
     // height: 100%;
@@ -82,9 +86,14 @@
     bottom: 0;
     right: 0;
     background-repeat: no-repeat;
-    background-size: contain;
+    background-size: cover;
     background-position: center center;
-    filter: blur(250px);
     z-index: 1;
+
+    @media screen and (max-width: 768px) {
+      height: 360px;
+    }
+
+    // filter: blur(250px);
   }
 }
