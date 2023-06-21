@@ -3,31 +3,31 @@
   "name": "Generative XYZ",
   "icons": [
     {
-      "src": "/images/favicon-16.png",
+      "src": "https://cdn.newbitcoindex.com/icons/logo-tc-market.svg",
       "sizes": "16x16",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/images/favicon-32.png",
+      "src": "https://cdn.newbitcoindex.com/icons/logo-tc-market.svg",
       "sizes": "32x32",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/images/favicon-64.png",
+      "src": "https://cdn.newbitcoindex.com/icons/logo-tc-market.svg",
       "sizes": "64x64",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/images/favicon-144.png",
+      "src": "https://cdn.newbitcoindex.com/icons/logo-tc-market.svg",
       "sizes": "144x144",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/images/favicon-192.png",
+      "src": "https://cdn.newbitcoindex.com/icons/logo-tc-market.svg",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "maskable"
