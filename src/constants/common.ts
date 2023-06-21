@@ -1,5 +1,5 @@
 import { isDevelop } from '@/utils/commons';
-import {TM_ADDRESS} from "@/configs";
+import { TM_ADDRESS } from '@/configs';
 
 export const PAGE_LOADED = 'PAGE_LOADED';
 export const PAGE_LOADING = 'PAGE_LOADING';
@@ -18,7 +18,8 @@ export const USDT_ADDRESS = '0x3504e7aE408e89f30497DFB6a0B2F5b2e650764E';
 export const GM_ADDRESS = isDevelop()
   ? '0x9Aaf0539d2261bB0788Ed22CEE50C8a0219E99e4'
   : '0x2fe8d5A64afFc1d703aECa8a566f5e9FaeE0C003';
-// export const OXBT_ADDRESS = '0x4A50C02CA92B363E337e79F1977865BBCF0b4630';
+export const OXBT_ADDRESS = '0x4A50C02CA92B363E337e79F1977865BBCF0b4630';
+export const MXRC_ADDRESS = '0x0deD162F7ad87A29c43923103141f4Dc86a01AA1';
 
 export const DEV_ADDRESS = '0xdd2863416081D0C10E57AaB4B3C5197183be4B34';
 

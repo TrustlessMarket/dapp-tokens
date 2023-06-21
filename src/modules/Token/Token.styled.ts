@@ -324,6 +324,10 @@ export const StyledHistoryContentContainer = styled(GridItem)`
         padding: 20px;
         text-transform: uppercase;
         font-weight: 400;
+        @media screen and (max-width: 768px) {
+          padding: 10px;
+          font-size: ${px2rem(12)};
+        }
       }
     }
     .chakra-tabs__tab {
@@ -385,4 +389,40 @@ export const StyledHistoryContentContainer = styled(GridItem)`
   }
 `;
 
-export const StyledTokenTrading = styled(Box)``;
+export const StyledTokenTrading = styled(Box)`
+  @media screen and (max-width: 768px) {
+    .chakra-table {
+      table-layout: fixed;
+      th {
+        padding: ${px2rem(6)}!important;
+        & > div {
+          text-transform: capitalize;
+        }
+        &:first-child {
+          & > div {
+            justify-content: flex-start;
+          }
+        }
+        &:last-child {
+          & > div {
+            justify-content: flex-end;
+          }
+        }
+        &:nth-child(2) {
+          & > div {
+            justify-content: flex-end;
+            /* justify-content: center; */
+          }
+        }
+      }
+      tr {
+        td {
+          padding: ${px2rem(10)} ${px2rem(6)}!important;
+          p {
+            font-size: ${px2rem(13)};
+          }
+        }
+      }
+    }
+  }
+`;

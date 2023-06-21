@@ -2,58 +2,45 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-empty-function */
 import Button from '@/components/Button';
-import {IToken} from '@/interfaces/token';
-import {getTokenRp} from '@/services/swap';
-import {formatCurrency} from '@/utils';
-import {debounce} from 'lodash';
-import React, {useEffect, useMemo, useRef, useState} from 'react';
+import { IToken } from '@/interfaces/token';
+import { getTokenRp } from '@/services/swap';
+import { abbreviateNumber, formatCurrency, getTokenIconUrl } from '@/utils';
+import { debounce } from 'lodash';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import {StyledTokens, UploadFileContainer} from './Tokens.styled';
-import {ROUTE_PATH} from '@/constants/route-path';
-import {Box, Flex, forwardRef, Icon, Spinner, Text} from '@chakra-ui/react';
+import { StyledTokens, UploadFileContainer } from './Tokens.styled';
+import { ROUTE_PATH } from '@/constants/route-path';
+import { Box, Flex, forwardRef, Icon, Spinner, Text } from '@chakra-ui/react';
 import BigNumber from 'bignumber.js';
 import Link from 'next/link';
-import {useRouter} from 'next/router';
+import { useRouter } from 'next/router';
 import BodyContainer from '@/components/Swap/bodyContainer';
 import FieldText from '@/components/Swap/form/fieldText';
-import ListTable, {ColumnProp} from '@/components/Swap/listTable';
-import {CDN_URL} from '@/configs';
-import {GM_ADDRESS, WBTC_ADDRESS, WETH_ADDRESS} from '@/constants/common';
+import ListTable, { ColumnProp } from '@/components/Swap/listTable';
+import { CDN_URL } from '@/configs';
+import { GM_ADDRESS, WBTC_ADDRESS, WETH_ADDRESS } from '@/constants/common';
 import useDebounce from '@/hooks/useDebounce';
 import px2rem from '@/utils/px2rem';
-import {Field, Form, useFormState} from 'react-final-form';
-import {AiOutlineCaretDown, AiOutlineCaretUp} from 'react-icons/ai';
-import {VscArrowSwap} from 'react-icons/vsc';
+import { Field, Form, useFormState } from 'react-final-form';
+import { AiOutlineCaretDown, AiOutlineCaretUp } from 'react-icons/ai';
+import { VscArrowSwap } from 'react-icons/vsc';
 import styles from './styles.module.scss';
 import TokenChartLast7Day from './Token.ChartLast7Day';
-import VerifiedBadgeToken from "./verifiedBadgeToken";
-import {FiSearch} from 'react-icons/fi';
+import VerifiedBadgeToken from './verifiedBadgeToken';
+import { FiSearch } from 'react-icons/fi';
+import { useWindowSize } from '@trustless-computer/dapp-core';
 
 const LIMIT_PAGE = 100;
 
 export const MakeFormSwap = forwardRef((props, ref) => {
   const router = useRouter();
-  // const [showModal, setShowModal] = useState(false);
   const [isFetching, setIsFetching] = useState(false);
 
-  // const isAuthenticated = useSelector(getIsAuthenticatedSelector);
-  // const { onDisconnect, onConnect, requestBtcAddress } = useContext(WalletContext);
   const [tokensList, setTokensList] = useState<IToken[]>([]);
   const [sort, setSort] = useState({ sort: '' });
   const { values } = useFormState();
 
-  // const handleConnectWallet = async () => {
-  //   try {
-  //     await onConnect();
-  //     await requestBtcAddress();
-  //   } catch (err) {
-  //     showError({
-  //       message: (err as Error).message,
-  //     });
-  //     console.log(err);
-  //     onDisconnect();
-  //   }
-  // };
+  const { mobileScreen } = useWindowSize();
 
   const fetchTokens = async (page = 1, isFetchMore = false) => {
     try {
@@ -90,53 +77,158 @@ export const MakeFormSwap = forwardRef((props, ref) => {
 
   const debounceLoadMore = debounce(onLoadMoreTokens, 300);
 
-  // const handleCreateToken = () => {
-  //   if (!isAuthenticated) {
-  //     handleConnectWallet();
-  //     // router.push(ROUTE_PATH.CONNECT_WALLET);
-  //   } else {
-  //     setShowModal(true);
-  //   }
-  // };
-
   const debounced = useDebounce(values?.search_text);
 
   useEffect(() => {
     fetchTokens();
   }, [JSON.stringify(sort), debounced]);
 
-  const columns: ColumnProp[] = useMemo(
-    () => [
-      /*{
-        id: 'index',
-        label: '#',
-        labelConfig: {
-          fontSize: '12px',
-          fontWeight: '500',
-          color: '#B1B5C3',
+  const columns: ColumnProp[] = useMemo(() => {
+    if (mobileScreen) {
+      return [
+        {
+          id: 'name',
+          label: 'Name',
+          labelConfig: {
+            fontSize: '12px',
+            fontWeight: '500',
+            color: '#FFFFFF',
+          },
+          render(row: any) {
+            return (
+              <Flex gap={[2, 4]} alignItems={'center'}>
+                <img
+                  src={getTokenIconUrl(row)}
+                  alt={row?.thumbnail || 'default-icon'}
+                  className={'avatar'}
+                />
+                <Flex direction={'column'}>
+                  <Flex gap={1} alignItems={'center'} fontSize={px2rem(14)}>
+                    <Text
+                      lineHeight={'18px'}
+                      fontWeight={'500'}
+                      fontSize={px2rem(14)}
+                      color={'#FFFFFF'}
+                    >
+                      {row?.symbol}
+                    </Text>
+                    <VerifiedBadgeToken token={row} />
+                  </Flex>
+                  <Text
+                    lineHeight={'14px'}
+                    fontSize={px2rem(12)}
+                    color={'rgba(255, 255, 255, 0.7)'}
+                  >
+                    {row?.name}
+                  </Text>
+                </Flex>
+              </Flex>
+            );
+          },
         },
-        config: {
-          // borderBottom: 'none',
+        {
+          id: 'usd_price',
+          label: 'Price/24h%',
+          labelConfig: {
+            fontSize: '12px',
+            fontWeight: '500',
+            color: '#FFFFFF',
+          },
+          config: {
+            // borderBottom: 'none',
+          },
+          onSort: () => {
+            const sortField = 'usd_price';
+            setSort((_sort) => ({
+              ..._sort,
+              sort:
+                !_sort?.sort?.includes(sortField) || _sort?.sort === sortField
+                  ? `-${sortField}`
+                  : sortField,
+            }));
+          },
+          sort: sort?.sort,
+          render(row: any) {
+            const tokenPrice = row?.usdPrice
+              ? new BigNumber(row?.usdPrice).toFixed()
+              : 'n/a';
+            return (
+              <>
+                <Text
+                  textAlign={'left'}
+                  color={'#FFFFFF'}
+                  fontSize={px2rem(14)}
+                  lineHeight={'18px'}
+                >
+                  ${formatCurrency(tokenPrice, 10)}
+                </Text>
+                <Flex
+                  alignItems={'center'}
+                  color={
+                    Number(row?.percent) > 0
+                      ? '#16c784'
+                      : Number(row?.percent) < 0
+                      ? '#ea3943'
+                      : '#FFFFFF'
+                  }
+                  fontSize={px2rem(13)}
+                  lineHeight={'16px'}
+                  fontWeight={'500'}
+                >
+                  {Number(row?.percent) > 0 && '+'}
+                  {formatCurrency(row?.percent, 2)}%
+                </Flex>
+              </>
+            );
+          },
         },
-        onSort: () => {
-          const sortField = 'index';
-          setSort((_sort) => ({
-            ..._sort,
-            sort:
-              !_sort?.sort?.includes(sortField) || _sort?.sort === sortField
-                ? `-${sortField}`
-                : sortField,
-          }));
+        {
+          id: 'market_cap',
+          label: 'Vol/Cap',
+          labelConfig: {
+            fontSize: '12px',
+            fontWeight: '500',
+            color: '#FFFFFF',
+          },
+          config: {
+            // borderBottom: 'none',
+          },
+          onSort: () => {
+            const sortField = 'market_cap';
+            setSort((_sort) => ({
+              ..._sort,
+              sort:
+                !_sort?.sort?.includes(sortField) || _sort?.sort === sortField
+                  ? `-${sortField}`
+                  : sortField,
+            }));
+          },
+          sort: sort?.sort,
+          render(row: any) {
+            const tokenVolume = row?.usdTotalVolume
+              ? new BigNumber(row?.usdTotalVolume).toFixed()
+              : 'n/a';
+            return (
+              <>
+                <Text textAlign={'right'} color={'#FFFFFF'} fontSize={px2rem(14)}>
+                  ${formatCurrency(tokenVolume, 2)}
+                </Text>
+                <Text
+                  textAlign={'right'}
+                  lineHeight={'14px'}
+                  fontSize={px2rem(12)}
+                  color={'rgba(255, 255, 255, 0.7)'}
+                >
+                  ${abbreviateNumber(row?.usdMarketCap)}
+                </Text>
+              </>
+            );
+          },
         },
-        sort: sort?.sort,
-        render(row: any) {
-          return (
-            <Text color={'#FFFFFF'} fontSize={px2rem(16)}>
-              {row?.index}
-            </Text>
-          );
-        },
-      },*/
+      ];
+    }
+
+    return [
       {
         id: 'name',
         label: 'Name',
@@ -178,7 +270,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
                     {row?.name}
                   </Box>
                   <Box color={'rgba(255, 255, 255, 0.7)'}>{row?.symbol}</Box>
-                  <VerifiedBadgeToken token={row}/>
+                  <VerifiedBadgeToken token={row} />
                 </Flex>
                 <Box fontSize={px2rem(12)} color={'rgba(255, 255, 255, 0.7)'}>
                   {row?.network || 'TC'}
@@ -263,43 +355,6 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           );
         },
       },
-      // {
-      //   id: 'percent_7day',
-      //   label: '7d %',
-      //   labelConfig: {
-      //     fontSize: '12px',
-      //     fontWeight: '500',
-      //     color: '#FFFFFF',
-      //   },
-      //   config: {
-      //     // borderBottom: 'none',
-      //   },
-      //   onSort: () => {
-      //     const sortField = 'percent_7day';
-      //     setSort((_sort) => ({
-      //       ..._sort,
-      //       sort: !_sort?.sort?.includes(sortField) || _sort?.sort === sortField ? `-${sortField}` : sortField,
-      //     }));
-      //   },
-      //   sort: sort?.sort,
-      //   render(row: any) {
-      //     return (
-      //       <Flex
-      //         alignItems={'center'}
-      //         color={Number(row?.percent7Day) > 0 ? '#16c784' : Number(row?.percent7Day) < 0 ? '#ea3943' : '#FFFFFF'}
-      //         fontSize={px2rem(16)}
-      //       >
-      //         {Number(row?.percent7Day) > 0 && (
-      //           <AiOutlineCaretUp color={'#16c784'} />
-      //         )}
-      //         {Number(row?.percent7Day) < 0 && (
-      //           <AiOutlineCaretDown color={'#ea3943'} />
-      //         )}
-      //         {formatCurrency(row?.percent7Day, 2)}%
-      //       </Flex>
-      //     );
-      //   },
-      // },
       {
         id: 'market_cap',
         label: 'Market Cap',
@@ -449,9 +504,8 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           );
         },
       },
-    ],
-    [sort.sort],
-  );
+    ];
+  }, [sort.sort, mobileScreen]);
 
   const handleItemClick = (token: any) => {
     router.push(`${ROUTE_PATH.TOKEN}?address=${token?.address}`);
@@ -461,36 +515,39 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     <StyledTokens>
       <div className="max-content">
         <Flex
-          justifyContent={"center"}
-          alignItems={"center"}
-          gap={2}
-          mb={4}
-          w={"fit-content"}
-          marginX={"auto"}
-          bg={"#1E1E22"}
-          borderRadius={"100px"}
-          paddingX={4}
-          paddingY={2}
-          fontSize={px2rem(16)}
-          fontWeight={400}
+          // justifyContent={'center'}
+          // alignItems={'center'}
+          // gap={2}
+          // mb={4}
+          // w={'fit-content'}
+          // marginX={'auto'}
+          // bg={'#1E1E22'}
+          // borderRadius={'100px'}
+          // paddingX={4}
+          // paddingY={2}
+          // fontSize={px2rem(16)}
+          // fontWeight={400}
+          className="power-by"
         >
-          <Text color={"#CECECE"}>Powered by</Text>
+          <Text>Powered by</Text>
           <img
             height={20}
             src={`${CDN_URL}/icons/trussless-computer-logo.svg`}
             alt="logo"
           />
-          <Text color={"#FFFFFF"}>Trustless Computer</Text>
+          <Text as={'b'}>Trustless Computer</Text>
         </Flex>
         <h3 className="upload_title">New Bitcoin DEX</h3>
       </div>
       <UploadFileContainer className="max-content">
         <div className="upload_left">
-          {/* <img src={IcBitcoinCloud} alt="upload file icon" /> */}
           <div className="upload_content">
-            {/* <h3 className="upload_title">BRC-20 on Bitcoin</h3> */}
             <Text className="upload_text" color={'rgba(255, 255, 255, 0.7)'}>
-              Swap, earn, and build on <Text as={"span"} color={"#FFFFFF"}>the first decentralized crypto trading protocol on Bitcoin</Text>.
+              Swap, earn, and build on{' '}
+              <Text as={'span'} color={'#FFFFFF'}>
+                the first decentralized crypto trading protocol on Bitcoin
+              </Text>
+              .
             </Text>
           </div>
         </div>
@@ -509,9 +566,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
               </Text>
             </Button>
           </Link>
-          <Link
-            href={ROUTE_PATH.POOLS}
-          >
+          <Link href={ROUTE_PATH.POOLS}>
             <Button
               className="button-create-box"
               background={'white'}
@@ -541,7 +596,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           borderColor={'#353945'}
           // fieldChanged={onChange}
           prependComp={
-            <FiSearch color={"rgba(255, 255, 255, 0.6)"} fontSize={"20px"}/>
+            <FiSearch color={'rgba(255, 255, 255, 0.6)'} fontSize={'20px'} />
           }
         />
       </Flex>
@@ -551,12 +606,8 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         hasMore={true}
         loader={
           isFetching && (
-            <Flex justifyContent={"center"} alignItems={"center"}>
-              <Spinner
-                speed="0.65s"
-                emptyColor="gray.200"
-                color="blue.500"
-              />
+            <Flex justifyContent={'center'} alignItems={'center'}>
+              <Spinner speed="0.65s" emptyColor="gray.200" color="blue.500" />
             </Flex>
           )
         }

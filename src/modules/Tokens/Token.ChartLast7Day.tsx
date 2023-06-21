@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import {IToken} from '@/interfaces/token';
-import {Box} from '@chakra-ui/react';
+import { IToken } from '@/interfaces/token';
+import { Box } from '@chakra-ui/react';
 import BigNumber from 'bignumber.js';
-import {createChart} from 'lightweight-charts';
-import {useEffect, useMemo, useRef} from 'react';
+import { createChart } from 'lightweight-charts';
+import { useEffect, useMemo, useRef } from 'react';
 
 const ChartThumb = ({ chartData }: { chartData: any[] }) => {
   const chartContainerRef = useRef<any>();
@@ -95,7 +95,7 @@ const ChartThumb = ({ chartData }: { chartData: any[] }) => {
 
 const TokenChartLast7Day = ({ token }: { token: IToken }) => {
   const data = useMemo(() => {
-    if(token?.chart) {
+    if (token?.chart) {
       let color = '#45B26B';
 
       color = token?.percent7Day < 0 ? '#EF466F' : '#45B26B';

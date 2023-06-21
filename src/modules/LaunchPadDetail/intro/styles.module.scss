@@ -8,7 +8,8 @@
   align-items: center;
   justify-content: center;
   @media screen and (max-width: 768px) {
-    height: auto;
+    min-height: calc(100vw - 30px);
+    min-width: calc(100vw - 30px);
   }
   :global .home-video {
     height: 100%;
@@ -88,6 +89,10 @@
     background-size: cover;
     background-position: center center;
     z-index: 1;
+
+    @media screen and (max-width: 768px) {
+      height: 360px;
+    }
 
     // filter: blur(250px);
   }

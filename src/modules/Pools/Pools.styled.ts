@@ -15,39 +15,6 @@ export const StyledTokens = styled.div`
     color: white;
   }
 
-  .chakra-table {
-    border-collapse: separate;
-    border-spacing: 0px 4px;
-    th:first-of-type {
-      max-width: ${px2rem(50)};
-      white-space: nowrap;
-    }
-
-    th:nth-child(4),
-    td:nth-child(4),
-    th:nth-child(5),
-    td:nth-child(5) {
-      text-align: right;
-    }
-
-    td {
-      padding-top: ${px2rem(26)};
-      padding-bottom: ${px2rem(26)};
-    }
-
-    thead {
-      tr {
-        th {
-          background: #1E1E22;
-          text-transform: uppercase;
-          //border-bottom-color: #EDF2F7;
-          padding-top: ${px2rem(12)};
-          padding-bottom: ${px2rem(12)};
-        }
-      }
-    }
-  }
-
   .loading {
     display: flex;
     align-items: center;
@@ -55,7 +22,7 @@ export const StyledTokens = styled.div`
   }
 
   .upload_title {
-    margin-bottom: ${px2rem(48)};
+    /* margin-bottom: ${px2rem(48)}; */
     margin-left: auto;
     margin-right: auto;
     width: fit-content;
@@ -63,11 +30,73 @@ export const StyledTokens = styled.div`
     position: relative;
     color: white;
     font-size: ${px2rem(48)};
-    line-height: 48 / 44;
   }
-  
+
   .tokens-list {
     overflow: hidden !important;
+    .chakra-table {
+      border-collapse: separate;
+      border-spacing: 0px 4px;
+      th:first-of-type {
+        max-width: ${px2rem(50)};
+        white-space: nowrap;
+      }
+
+      th:nth-child(4),
+      td:nth-child(4),
+      th:nth-child(5),
+      td:nth-child(5) {
+        text-align: right;
+      }
+
+      td {
+        padding-top: ${px2rem(26)};
+        padding-bottom: ${px2rem(26)};
+      }
+
+      thead {
+        tr {
+          th {
+            background: #1e1e22;
+            text-transform: uppercase;
+            //border-bottom-color: #EDF2F7;
+            padding-top: ${px2rem(12)};
+            padding-bottom: ${px2rem(12)};
+            @media screen and (max-width: 758px) {
+              padding: ${px2rem(14.5)} ${px2rem(8)}!important;
+              text-transform: capitalize !important;
+              font-weight: 400;
+              &:first-child {
+                & > div {
+                  justify-content: flex-start;
+                }
+              }
+              &:last-child {
+                & > div {
+                  justify-content: flex-end;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    @media screen and (max-width: 768px) {
+      .chakra-table {
+        table-layout: fixed;
+        .wrap-icons {
+          position: relative;
+          min-width: 37.5px;
+          img {
+            &:last-child {
+              position: absolute;
+              top: 0;
+              right: 0;
+            }
+          }
+        }
+      }
+    }
   }
 
   .avatar {
@@ -76,15 +105,16 @@ export const StyledTokens = styled.div`
     height: ${px2rem(25)};
     border-radius: 50%;
   }
-  
+
   .avatar2 {
     object-fit: cover;
     width: ${px2rem(15)};
     height: ${px2rem(15)};
     border-radius: 50%;
   }
-  
-  
+
+  .btn-wrap {
+  }
 `;
 
 export const UploadFileContainer = styled.div`
@@ -94,7 +124,7 @@ export const UploadFileContainer = styled.div`
   margin-left: auto;
   margin-right: auto;
   padding: ${px2rem(24)} ${px2rem(24)};
-  background-color: #1E1E22;
+  background-color: #1e1e22;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -142,7 +172,7 @@ export const UploadFileContainer = styled.div`
 `;
 
 export const StyledLiquidNote = styled(Box)`
-  background-color: #1E1E22;
+  background-color: #1e1e22;
   z-index: 1;
   padding: ${px2rem(24)};
   border: 1px solid rgba(255, 255, 255, 0.1);
@@ -151,12 +181,22 @@ export const StyledLiquidNote = styled(Box)`
   margin-bottom: ${px2rem(40)};
   .title {
     font-size: ${px2rem(20)};
-    color: #00AA6C;
+    color: #00aa6c;
     font-weight: 500;
     margin-bottom: 5px;
   }
   .desc {
-    color: #FFFFFF;
+    color: #ffffff;
     font-size: ${px2rem(16)};
+  }
+
+  @media screen and (max-width: 768px) {
+    .title {
+      font-size: ${px2rem(16)};
+    }
+    .desc {
+      font-size: ${px2rem(14)};
+      line-height: 18px;
+    }
   }
 `;
