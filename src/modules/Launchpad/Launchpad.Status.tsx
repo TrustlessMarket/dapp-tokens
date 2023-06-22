@@ -106,7 +106,7 @@ export const LaunchpadLabelStatus: LabelStatusMap = {
   preparetoendfunding: {
     key: LAUNCHPAD_STATUS.PrepareToEndFunding,
     value: 'preparetoendfunding',
-    label: 'Preparing to End Funding',
+    label: 'Closed',
   },
   end: {
     key: LAUNCHPAD_STATUS.End,
