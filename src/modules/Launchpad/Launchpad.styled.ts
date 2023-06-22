@@ -186,6 +186,7 @@ export const StyledIdoStatus = styled(Badge)`
       background: #95a4fc;
     }
   }
+  &.preparetoendfunding,
   &.preparelaunching,
   &.launching {
     color: rgba(51, 133, 255, 1);

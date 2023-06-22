@@ -15,6 +15,7 @@ export enum LAUNCHPAD_STATUS {
   Failed,
   Cancelled,
   PrepareLaunching,
+  PrepareToEndFunding = 8,
 
   //FE define
   End,
@@ -102,6 +103,11 @@ export const LaunchpadLabelStatus: LabelStatusMap = {
     value: 'preparelaunching',
     label: 'Preparing to Fund',
   },
+  preparetoendfunding: {
+    key: LAUNCHPAD_STATUS.PrepareToEndFunding,
+    value: 'preparetoendfunding',
+    label: 'Preparing to End Funding',
+  },
   end: {
     key: LAUNCHPAD_STATUS.End,
     value: 'end',
@@ -140,6 +146,8 @@ export const useLaunchPadStatus = ({ row }: { row?: ILaunchpad | undefined }) =>
     status = LaunchpadLabelStatus.cancelled;
   } else if (state === LAUNCHPAD_STATUS.PrepareLaunching) {
     status = LaunchpadLabelStatus.preparelaunching;
+  } else if (state === LAUNCHPAD_STATUS.PrepareToEndFunding) {
+    status = LaunchpadLabelStatus.preparetoendfunding;
   }
 
   return [status];

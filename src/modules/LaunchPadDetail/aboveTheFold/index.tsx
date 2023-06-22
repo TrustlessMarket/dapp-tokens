@@ -85,6 +85,7 @@ const AboveTheFold = ({ poolDetail, userBoost }: any) => {
                 : [
                     LAUNCHPAD_STATUS.Successful,
                     LAUNCHPAD_STATUS.Failed,
+                    LAUNCHPAD_STATUS.PrepareToEndFunding,
                     LAUNCHPAD_STATUS.End,
                   ].includes(poolDetail?.state)
                 ? 'Ended at'
@@ -126,6 +127,7 @@ const AboveTheFold = ({ poolDetail, userBoost }: any) => {
               ) : [
                 LAUNCHPAD_STATUS.Successful,
                 LAUNCHPAD_STATUS.Failed,
+                LAUNCHPAD_STATUS.PrepareToEndFunding,
                 LAUNCHPAD_STATUS.End,
               ].includes(poolDetail?.state) ? (
                 moment(poolDetail.launchEnd).subtract("1", "h").format('LLL')

@@ -1276,6 +1276,14 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
 
   const handleSubmit = async (values: any) => {
     const liquidityToken = poolDetail?.liquidityToken;
+
+    if([LAUNCHPAD_STATUS.Launching].includes(poolDetail?.state)
+      && moment(poolDetail.launchEnd).subtract("1", "h").isSameOrBefore(moment())
+    ) {
+      toast.error('You can not contribute anymore!');
+      return;
+    }
+
     if ([LAUNCHPAD_STATUS.Voting].includes(poolDetail?.state)) {
       confirmVoting(values);
     } else if (
