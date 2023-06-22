@@ -1,53 +1,60 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import HorizontalItem from '@/components/Swap/horizontalItem';
 import BodyContainer from '@/components/Swap/bodyContainer';
 import FiledButton from '@/components/Swap/button/filedButton';
+import InfoTooltip from '@/components/Swap/infoTooltip';
 import ListTable from '@/components/Swap/listTable';
-import {ROUTE_PATH} from '@/constants/route-path';
-import {LIQUID_PAIRS} from '@/constants/storage-key';
-import useGetReserves from '@/hooks/contract-operations/swap/useReserves';
-import useSupplyERC20Liquid from '@/hooks/contract-operations/token/useSupplyERC20Liquid';
-import {IToken} from '@/interfaces/token';
-import {camelCaseKeys, compareString, formatCurrency} from '@/utils';
-import {formatAmountBigNumber} from '@/utils/format';
+import {
+  CDN_URL,
+  DEFAULT_FROM_ADDRESS,
+  DEFAULT_TO_ADDRESS,
+  TRUSTLESS_MARKET_URL,
+} from '@/configs';
+import { USDC_ADDRESS, WBTC_ADDRESS, WETH_ADDRESS } from '@/constants/common';
+import { ROUTE_PATH } from '@/constants/route-path';
+import { LIQUID_PAIRS } from '@/constants/storage-key';
+import { ILiquidity } from '@/interfaces/liquidity';
+import { IToken } from '@/interfaces/token';
+import { getListLiquidity } from '@/services/swap';
+import { useAppSelector } from '@/state/hooks';
+import { selectPnftExchange } from '@/state/pnftExchange';
+import {
+  abbreviateNumber,
+  camelCaseKeys,
+  compareString,
+  formatCurrency,
+  getTokenIconUrl,
+} from '@/utils';
+import { formatAmountBigNumber } from '@/utils/format';
 import px2rem from '@/utils/px2rem';
 import {
-  Accordion,
-  AccordionButton,
-  AccordionIcon,
-  AccordionItem,
-  AccordionPanel,
   Box,
   Center,
   Flex,
   Heading,
   Icon,
   IconButton,
+  Spinner,
+  Tag,
   Text,
 } from '@chakra-ui/react';
+import { useWindowSize } from '@trustless-computer/dapp-core';
 import BigNumber from 'bignumber.js';
-import {useRouter} from 'next/router';
-import React, {useEffect, useMemo, useState} from 'react';
-import {FiPlus} from 'react-icons/fi';
-import {BsDownload, BsTwitter} from 'react-icons/bs';
-import {IoArrowBackOutline} from 'react-icons/io5';
-import {StyledLiquidNote, StyledTokens, UploadFileContainer} from './Pools.styled';
+import { debounce } from 'lodash';
+import { useRouter } from 'next/router';
+import { useEffect, useMemo, useState } from 'react';
+import { AiOutlineMinusCircle, AiOutlinePlusCircle } from 'react-icons/ai';
+import { BsDownload, BsTwitter } from 'react-icons/bs';
+import { FiPlus } from 'react-icons/fi';
+import { IoArrowBackOutline } from 'react-icons/io5';
+import { TbDiscount2 } from 'react-icons/tb';
+import InfiniteScroll from 'react-infinite-scroll-component';
+import { StyledLiquidNote, StyledTokens, UploadFileContainer } from './Pools.styled';
 import CreateMarket from './form';
 import ImportPool from './form/importPool';
 import styles from './styles.module.scss';
-import SectionContainer from '@/components/Swap/sectionContainer';
-import Spinner from 'react-bootstrap/Spinner';
-import InfiniteScroll from 'react-infinite-scroll-component';
-import {debounce} from 'lodash';
-import {getListLiquidity} from '@/services/swap';
-import {ILiquidity} from '@/interfaces/liquidity';
-import {AiOutlineMinusCircle, AiOutlinePlusCircle} from 'react-icons/ai';
-import {CDN_URL, DEFAULT_FROM_ADDRESS, DEFAULT_TO_ADDRESS, TRUSTLESS_MARKET_URL,} from '@/configs';
-import {USDC_ADDRESS, WBTC_ADDRESS, WETH_ADDRESS} from '@/constants/common';
-import {useWindowSize} from '@trustless-computer/dapp-core';
-import InfoTooltip from '@/components/Swap/infoTooltip';
-import {TbDiscount2} from "react-icons/tb";
+import { colors } from '@/theme/colors';
+import web3 from 'web3';
 
 export enum ScreenType {
   default = 'default',
@@ -62,107 +69,13 @@ const LIMIT_PAGE = 30;
 export const DEFAULT_FROM_TOKEN_ADDRESS = DEFAULT_FROM_ADDRESS;
 export const DEFAULT_TO_TOKEN_ADDRESS = DEFAULT_TO_ADDRESS;
 
-const ItemLiquid = ({ pool }: { pool: IToken }) => {
-  const { call: getSupply } = useSupplyERC20Liquid();
-  const { call: getReserves } = useGetReserves();
-  const [result, setResult] = useState<any>({});
-  const router = useRouter();
-
-  useEffect(() => {
-    fetchData();
-  }, []);
-
-  const fetchData = async () => {
-    try {
-      const response = await Promise.all([
-        getSupply({
-          liquidAddress: pool.address,
-        }),
-        getReserves({
-          address: pool.address,
-        }),
-      ]);
-      setResult({ ...response[0], ...response[1] });
-    } catch (error) {}
-  };
-
-  return (
-    <Accordion allowMultiple allowToggle>
-      <AccordionItem>
-        <h2>
-          <AccordionButton>
-            <Box as="span" flex="1" textAlign="left">
-              {pool.name}
-            </Box>
-            <AccordionIcon />
-          </AccordionButton>
-        </h2>
-        <AccordionPanel>
-          <HorizontalItem
-            label="Your pool total tokens:"
-            value={pool?.ownerSupply?.toString()}
-          />
-          <HorizontalItem
-            label={`Pooled ${pool.name.split('-')[0]}:`}
-            value={formatCurrency(
-              formatAmountBigNumber(pool?.fromBalance, pool.decimal),
-            ).toString()}
-          />
-          <HorizontalItem
-            label={`Pooled ${pool.name.split('-')[1]}:`}
-            value={formatCurrency(
-              formatAmountBigNumber(pool?.toBalance, pool.decimal),
-            ).toString()}
-          />
-          <HorizontalItem
-            label="Your pool share:"
-            value={`${formatCurrency(
-              new BigNumber(pool?.ownerSupply || 0)
-                .dividedBy(pool?.totalSupply || 1)
-                .multipliedBy(100)
-                .toString(),
-              2,
-            ).toString()}%`}
-          />
-          <Flex gap={4} mt={4} justifyContent={'center'}>
-            <FiledButton
-              style={{
-                backgroundColor: 'gray',
-              }}
-              btnSize="l"
-              onClick={() =>
-                router.replace(
-                  `${ROUTE_PATH.POOLS}?type=${ScreenType.add_liquid}&f=${pool.fromAddress}&t=${pool.toAddress}`,
-                )
-              }
-            >
-              Add
-            </FiledButton>
-            <FiledButton
-              btnSize="l"
-              style={{
-                backgroundColor: 'red',
-              }}
-              onClick={() =>
-                router.replace(
-                  `${ROUTE_PATH.POOLS}?type=${ScreenType.remove}&f=${pool.fromAddress}&t=${pool.toAddress}`,
-                )
-              }
-            >
-              Remove
-            </FiledButton>
-          </Flex>
-        </AccordionPanel>
-      </AccordionItem>
-    </Accordion>
-  );
-};
-
 const LiquidityContainer = () => {
   const [myLiquidities, setMyLiquidities] = useState([]);
   const [liquidityList, setLiquidityList] = useState<ILiquidity[]>([]);
   const [isFetching, setIsFetching] = useState(false);
   const { mobileScreen } = useWindowSize();
+  const configs = useAppSelector(selectPnftExchange).configs;
+  const liquidityFee = configs?.liquidityFee || 0.15;
 
   const router = useRouter();
   const routerQuery = router.query;
@@ -326,72 +239,63 @@ const LiquidityContainer = () => {
               gap={4}
               alignItems={'center'}
               justifyContent={'space-between'}
-              // maxW={['auto', '70%']}
               marginX={'auto'}
               direction={['column', 'row']}
               mb={4}
             >
-              <Heading as={'h6'}>Pools</Heading>
-              <Flex gap={4}>
-                {/* <FiledButton
-                  style={{ borderColor: 'white', color: 'white' }}
-                  _hover={{
-                    backgroundColor: 'orange',
-                  }}
-                  variant={'outline'}
-                  // onClick={() => handleChooseAction(true)}
-                  fontSize={`${px2rem(16)} !important`}
-                  onClick={() =>
-                    router.replace(`${ROUTE_PATH.POOLS}?type=${ScreenType.add}`)
-                  }
-                >
-                  Create a Pool
-                </FiledButton> */}
+              <Heading className="upload_title" as={'h3'} style={{ margin: 0 }}>
+                Pools
+              </Heading>
+              <Flex gap={4} className="btn-wrap">
                 <FiledButton
-                  border={"1px solid rgba(255, 255, 255, 0.1)"}
-                  bgColor={"#0F0F0F !important"}
-                  borderRadius={"100px !important"}
-                  fontSize={`${px2rem(20)} !important`}
-                  h={"52px !important"}
+                  border={'1px solid rgba(255, 255, 255, 0.1)'}
+                  bgColor={'#0F0F0F !important'}
+                  borderRadius={'100px !important'}
+                  fontSize={[`${px2rem(16)} !important`, `${px2rem(20)} !important`]}
+                  btnSize="h"
                   onClick={() =>
                     router.replace(`${ROUTE_PATH.POOLS}?type=${ScreenType.add_pool}`)
                   }
                 >
-                  <Flex gap={2} alignItems={"center"}>
+                  <Flex gap={2} alignItems={'center'}>
                     <Center
                       w={'28px'}
                       h={'28px'}
-                      minW={"28px"}
-                      minH={"28px"}
+                      minW={'28px'}
+                      minH={'28px'}
                       borderRadius={'50%'}
-                      bgColor={"rgba(255, 255, 255, 0.1)"}
+                      bgColor={'rgba(255, 255, 255, 0.1)'}
                     >
-                      <BsDownload fontWeight={'bold'} fontSize={'14px'}/>
+                      <BsDownload fontWeight={'bold'} fontSize={'14px'} />
                     </Center>
                     Import Pool
                   </Flex>
                 </FiledButton>
                 <FiledButton
-                  bgColor={"#3385FF !important"}
-                  borderRadius={"100px !important"}
-                  fontSize={`${px2rem(20)} !important`}
-                  h={"52px !important"}
+                  bgColor={'#3385FF !important'}
+                  borderRadius={'100px !important'}
+                  fontSize={[`${px2rem(16)} !important`, `${px2rem(20)} !important`]}
+                  btnSize="h"
                   onClick={() =>
                     router.replace(
                       `${ROUTE_PATH.POOLS}?type=${ScreenType.add_liquid}&f=${DEFAULT_FROM_TOKEN_ADDRESS}&t=${DEFAULT_TO_TOKEN_ADDRESS}`,
                     )
                   }
                 >
-                  <Flex gap={2} alignItems={"center"}>
+                  <Flex gap={2} alignItems={'center'}>
                     <Center
                       w={'28px'}
                       h={'28px'}
-                      minW={"28px"}
-                      minH={"28px"}
+                      minW={'28px'}
+                      minH={'28px'}
                       borderRadius={'50%'}
-                      bgColor={"#FFFFFF"}
+                      bgColor={'#FFFFFF'}
                     >
-                      <FiPlus fontWeight={'bold'} fontSize={'18px'} color={"#3385FF"}/>
+                      <FiPlus
+                        fontWeight={'bold'}
+                        fontSize={'18px'}
+                        color={'#3385FF'}
+                      />
                     </Center>
                     Add liquidity
                   </Flex>
@@ -404,28 +308,15 @@ const LiquidityContainer = () => {
               hasMore={true}
               loader={
                 isFetching && (
-                  <div className="loading">
-                    <Spinner animation="border" variant="primary" />
-                  </div>
+                  <Flex justifyContent={'center'} alignItems={'center'}>
+                    <Spinner speed="0.65s" emptyColor="gray.200" color="blue.500" />
+                  </Flex>
                 )
               }
               next={debounceLoadMore}
             >
               <ListTable data={liquidityList} columns={columns} showEmpty={false} />
             </InfiniteScroll>
-
-            {/*<UploadFileContainer>
-              <div className="upload_left">
-                <Box className={styles.wrapper}>
-                  <ListTable
-                    data={data}
-                    columns={columns}
-                    noHeader
-                    emptyLabel="Your active liquidity positions will appear here."
-                  />
-                </Box>
-              </div>
-            </UploadFileContainer>*/}
           </>
         );
     }
@@ -455,17 +346,6 @@ const LiquidityContainer = () => {
     const shareUrl = `${TRUSTLESS_MARKET_URL}${ROUTE_PATH.POOLS}?type=${ScreenType.add_liquid}&f=${row?.token0Obj?.address}&t=${row?.token1Obj?.address}`;
     const tokens = [];
 
-    // const isBaseToken0 = BASE_ADDRESS.some(address => compareString(address, row?.token0Obj?.address));
-    // const isBaseToken1 = BASE_ADDRESS.some(address => compareString(address, row?.token1Obj?.address));
-    //
-    // if(!isBaseToken0) {
-    //   tokens.push(row?.token0Obj?.symbol);
-    // }
-    //
-    // if(!isBaseToken1) {
-    //   tokens.push(row?.token1Obj?.symbol);
-    // }
-
     tokens.push(row?.token0Obj?.symbol);
     tokens.push(row?.token1Obj?.symbol);
 
@@ -474,10 +354,7 @@ const LiquidityContainer = () => {
     )} token. Now you can easily trade ${tokens.join(
       ', ',
     )} on New Bitcoin DEX with ease and convenience.`;
-    const hashtags = `NewBitcoinDEX,LiquidityProvider,TradeNow,${tokens.join(
-      ',',
-    )}`;
-    console.log('shareUrl', shareUrl);
+    const hashtags = `NewBitcoinDEX,LiquidityProvider,TradeNow,${tokens.join(',')}`;
     window.open(
       `https://twitter.com/intent/tweet?url=${shareUrl}&text=${encodeURIComponent(
         content,
@@ -487,6 +364,255 @@ const LiquidityContainer = () => {
   };
 
   const columns = useMemo(() => {
+    if (mobileScreen) {
+      return [
+        {
+          id: 'pair',
+          label: 'Pair',
+          labelConfig: {
+            fontSize: '12px',
+            fontWeight: '500',
+            color: '#B1B5C3',
+            borderTopLeftRadius: '8px',
+            borderBottomLeftRadius: '8px',
+          },
+          config: {
+            color: '#FFFFFF',
+            borderBottom: 'none',
+            backgroundColor: '#1E1E22',
+            borderTopLeftRadius: '8px',
+            borderBottomLeftRadius: '8px',
+          },
+          render(row: ILiquidity) {
+            const [token0Obj, token1Obj] = sortTokens(
+              row?.token0Obj,
+              row?.token1Obj,
+            );
+
+            const myLiquidity: any = myLiquidities?.find((v: any) =>
+              compareString(v.address, row?.pair),
+            );
+
+            let share = 0;
+            if (myLiquidity) {
+              share = new BigNumber(myLiquidity?.ownerSupply || 0)
+                .dividedBy(myLiquidity?.totalSupply || 1)
+                .toNumber();
+            }
+
+            return (
+              <>
+                <Flex fontSize={px2rem(14)} alignItems={'center'} gap={2}>
+                  <Flex className="wrap-icons" alignItems={'center'}>
+                    <img
+                      src={getTokenIconUrl(token0Obj)}
+                      alt={token0Obj?.thumbnail || 'default-icon'}
+                      className={'avatar'}
+                    />
+                    <img
+                      src={getTokenIconUrl(token1Obj)}
+                      alt={token1Obj?.thumbnail || 'default-icon'}
+                      className={'avatar'}
+                    />
+                  </Flex>
+                  <Box>
+                    <Text fontWeight={'500'}>
+                      {token0Obj?.symbol} - {token1Obj?.symbol}
+                    </Text>
+                    <Text
+                      fontSize={px2rem(12)}
+                      color={colors.white}
+                      opacity={0.8}
+                      lineHeight={'16px'}
+                    >
+                      Vol: ${formatCurrency(row?.usdTotalVolume || 0, 2)}
+                    </Text>
+                    {Number(row?.apr) > 0 && (
+                      <Tag mt={1} fontSize={px2rem(12)}>
+                        APR:
+                        <b style={{ marginLeft: 2 }}>
+                          {formatCurrency(row?.apr, 2)}%
+                        </b>
+                      </Tag>
+                    )}
+                  </Box>
+                </Flex>
+                <Flex gap={2} mt={4}>
+                  <InfoTooltip label={'Add Liquidity'}>
+                    <Center
+                      cursor={'pointer'}
+                      fontSize={'24px'}
+                      _hover={{
+                        color: '#0072ff',
+                      }}
+                    >
+                      <AiOutlinePlusCircle
+                        onClick={() =>
+                          router.replace(
+                            `${ROUTE_PATH.POOLS}?type=${ScreenType.add_liquid}&f=${row?.token0Obj?.address}&t=${row?.token1Obj?.address}`,
+                          )
+                        }
+                      />
+                    </Center>
+                  </InfoTooltip>
+                  {Number(share) > 0 && (
+                    <InfoTooltip label={'Remove Liquidity'}>
+                      <Center
+                        cursor={'pointer'}
+                        fontSize={'24px'}
+                        _hover={{
+                          color: '#FF0000',
+                        }}
+                      >
+                        <AiOutlineMinusCircle
+                          onClick={() =>
+                            router.replace(
+                              `${ROUTE_PATH.POOLS}?type=${ScreenType.remove}&f=${row?.token0Obj?.address}&t=${row?.token1Obj?.address}`,
+                            )
+                          }
+                        />
+                      </Center>
+                    </InfoTooltip>
+                  )}
+                  <InfoTooltip label={'Share Twitter'}>
+                    <Center
+                      cursor={'pointer'}
+                      fontSize={'24px'}
+                      _hover={{
+                        color: '#33CCFF',
+                      }}
+                    >
+                      <BsTwitter onClick={() => shareTwitter(row)} />
+                    </Center>
+                  </InfoTooltip>
+                </Flex>
+              </>
+            );
+          },
+        },
+        {
+          id: 'volume',
+          label: '',
+          labelConfig: {
+            fontSize: '12px',
+            fontWeight: '500',
+            color: '#B1B5C3',
+          },
+          config: {
+            color: '#FFFFFF',
+            borderBottom: 'none',
+            backgroundColor: '#1E1E22',
+          },
+          render(row: ILiquidity) {
+            const [token0Obj, token1Obj] = sortTokens(
+              row?.token0Obj,
+              row?.token1Obj,
+            );
+            const [reserve0, reserve1] = compareString(
+              token0Obj?.address,
+              row?.token0Obj?.address,
+            )
+              ? [row?.reserve0, row?.reserve1]
+              : [row?.reserve1, row?.reserve0];
+
+            const myLiquidity: any = myLiquidities.find((v: any) =>
+              compareString(v.address, row?.pair),
+            );
+
+            let share = 0;
+            let balances = [0, 0];
+            if (myLiquidity) {
+              share = new BigNumber(myLiquidity?.ownerSupply || 0)
+                .dividedBy(myLiquidity?.totalSupply || 1)
+                .toNumber();
+
+              const fromBalance = new BigNumber(share)
+                .multipliedBy(myLiquidity?.fromBalance || 0)
+                .toNumber();
+              const toBalance = new BigNumber(share)
+                .multipliedBy(myLiquidity?.toBalance || 0)
+                .toNumber();
+
+              balances = compareString(myLiquidity?.fromAddress, token0Obj?.address)
+                ? [fromBalance, toBalance]
+                : [toBalance, fromBalance];
+            }
+
+            return (
+              <>
+                {Number(share) > 0 && (
+                  <Flex
+                    alignItems={'flex-end'}
+                    direction={'column'}
+                    fontSize={px2rem(14)}
+                  >
+                    <Text opacity={0.8} fontSize={px2rem(12)}>
+                      Your liquidity:
+                    </Text>
+                    <Flex gap={1} alignItems={'center'}>
+                      <Text>
+                        {formatCurrency(
+                          formatAmountBigNumber(balances[0], myLiquidity?.decimal),
+                        ).toString()}
+                      </Text>
+                      <img
+                        src={getTokenIconUrl(token0Obj)}
+                        alt={token0Obj?.thumbnail || 'default-icon'}
+                        className={'avatar2'}
+                        title={token0Obj?.symbol}
+                      />
+                    </Flex>
+                    <Flex gap={1} alignItems={'center'}>
+                      <Text>
+                        {formatCurrency(
+                          formatAmountBigNumber(balances[1], myLiquidity?.decimal),
+                        ).toString()}
+                      </Text>
+                      <img
+                        src={getTokenIconUrl(token1Obj)}
+                        alt={token1Obj?.thumbnail || 'default-icon'}
+                        className={'avatar2'}
+                        title={token1Obj?.symbol}
+                      />
+                    </Flex>
+                  </Flex>
+                )}
+
+                <Flex
+                  direction={'column'}
+                  alignItems={'flex-end'}
+                  justifyContent={'flex-end'}
+                  fontSize={px2rem(14)}
+                >
+                  <Text opacity={0.8} fontSize={px2rem(12)}>
+                    Total liquidity:
+                  </Text>
+                  <Flex gap={1} alignItems={'center'}>
+                    <Text>{abbreviateNumber(reserve0).toString()}</Text>
+                    <img
+                      src={getTokenIconUrl(token0Obj)}
+                      alt={token0Obj?.thumbnail || 'default-icon'}
+                      className={'avatar2'}
+                      title={token0Obj?.symbol}
+                    />
+                  </Flex>
+                  <Flex gap={1} alignItems={'center'}>
+                    <Text>{abbreviateNumber(reserve1).toString()}</Text>
+                    <img
+                      src={getTokenIconUrl(token1Obj)}
+                      alt={token1Obj?.thumbnail || 'default-icon'}
+                      className={'avatar2'}
+                      title={token1Obj?.symbol}
+                    />
+                  </Flex>
+                </Flex>
+              </>
+            );
+          },
+        },
+      ];
+    }
+
     return [
       {
         id: 'pair',
@@ -512,10 +638,7 @@ const LiquidityContainer = () => {
             <Flex fontSize={px2rem(14)} alignItems={'center'} gap={2}>
               <Flex gap={1} alignItems={'center'}>
                 <img
-                  src={
-                    token0Obj?.thumbnail ||
-                    `${CDN_URL}/upload/1683530065704444020-1683530065-default-coin.svg`
-                  }
+                  src={getTokenIconUrl(token0Obj)}
                   alt={token0Obj?.thumbnail || 'default-icon'}
                   className={'avatar'}
                 />
@@ -523,10 +646,7 @@ const LiquidityContainer = () => {
               </Flex>
               <Flex gap={1} alignItems={'center'}>
                 <img
-                  src={
-                    token1Obj?.thumbnail ||
-                    `${CDN_URL}/upload/1683530065704444020-1683530065-default-coin.svg`
-                  }
+                  src={getTokenIconUrl(token1Obj)}
                   alt={token1Obj?.thumbnail || 'default-icon'}
                   className={'avatar'}
                 />
@@ -595,10 +715,7 @@ const LiquidityContainer = () => {
                       ).toString()}
                     </Text>
                     <img
-                      src={
-                        token0Obj?.thumbnail ||
-                        `${CDN_URL}/upload/1683530065704444020-1683530065-default-coin.svg`
-                      }
+                      src={getTokenIconUrl(token0Obj)}
                       alt={token0Obj?.thumbnail || 'default-icon'}
                       className={'avatar2'}
                       title={token0Obj?.symbol}
@@ -611,10 +728,7 @@ const LiquidityContainer = () => {
                       ).toString()}
                     </Text>
                     <img
-                      src={
-                        token1Obj?.thumbnail ||
-                        `${CDN_URL}/upload/1683530065704444020-1683530065-default-coin.svg`
-                      }
+                      src={getTokenIconUrl(token1Obj)}
                       alt={token1Obj?.thumbnail || 'default-icon'}
                       className={'avatar2'}
                       title={token1Obj?.symbol}
@@ -655,10 +769,7 @@ const LiquidityContainer = () => {
               <Flex gap={1} alignItems={'center'}>
                 <Text>{formatCurrency(reserve0).toString()}</Text>
                 <img
-                  src={
-                    token0Obj?.thumbnail ||
-                    `${CDN_URL}/upload/1683530065704444020-1683530065-default-coin.svg`
-                  }
+                  src={getTokenIconUrl(token0Obj)}
                   alt={token0Obj?.thumbnail || 'default-icon'}
                   className={'avatar2'}
                   title={token0Obj?.symbol}
@@ -667,10 +778,7 @@ const LiquidityContainer = () => {
               <Flex gap={1} alignItems={'center'}>
                 <Text>{formatCurrency(reserve1).toString()}</Text>
                 <img
-                  src={
-                    token1Obj?.thumbnail ||
-                    `${CDN_URL}/upload/1683530065704444020-1683530065-default-coin.svg`
-                  }
+                  src={getTokenIconUrl(token1Obj)}
                   alt={token1Obj?.thumbnail || 'default-icon'}
                   className={'avatar2'}
                   title={token1Obj?.symbol}
@@ -788,7 +896,7 @@ const LiquidityContainer = () => {
                   />
                 </Center>
               </InfoTooltip>
-              {Number(share) >= 0 && (
+              {Number(share) > 0 && (
                 <InfoTooltip label={'Remove Liquidity'}>
                   <Center
                     cursor={'pointer'}
@@ -822,23 +930,8 @@ const LiquidityContainer = () => {
           );
         },
       },
-      /*{
-        id: 'rank',
-        label: '',
-        // labelConfig: {
-        //   fontSize: '14px',
-        //   fontWeight: '500',
-        //   color: '#B1B5C3',
-        // },
-        config: {
-          borderBottomWidth: '0',
-        },
-        render(row: IToken) {
-          return <ItemLiquid pool={row} />;
-        },
-      },*/
     ];
-  }, [JSON.stringify(liquidityList), JSON.stringify(myLiquidities)]);
+  }, [mobileScreen, JSON.stringify(liquidityList), JSON.stringify(myLiquidities)]);
 
   useEffect(() => {
     fetchMyLiquidities();
@@ -858,34 +951,32 @@ const LiquidityContainer = () => {
 
   return (
     <BodyContainer className={styles.containerWrapper}>
-      <SectionContainer>
-        <StyledTokens>
-          <StyledLiquidNote>
-            <Flex gap={4} alignItems={"flex-start"}>
-              <Center
-                w={'32px'}
-                h={'32px'}
-                minW={"32px"}
-                minH={"32px"}
-                borderRadius={'50%'}
-                bgColor={"rgba(0, 170, 108, 0.2)"}
-                cursor={'pointer'}
-              >
-                <TbDiscount2 color="#00AA6C" fontSize={"20px"}/>
-              </Center>
-              <Flex direction={"column"}>
-                <Text className="title">Liquidity provider rewards</Text>
-                <Text className="desc">
-                  Liquidity providers earn a 1% fee on all trades proportional to their
-                  share of the pool. Fees are added to the pool, accrue in real time and
-                  can be claimed by withdrawing your liquidity.
-                </Text>
-              </Flex>
+      <StyledTokens>
+        <StyledLiquidNote>
+          <Flex gap={4} alignItems={'flex-start'}>
+            <Center
+              w={'32px'}
+              h={'32px'}
+              minW={'32px'}
+              minH={'32px'}
+              borderRadius={'50%'}
+              bgColor={'rgba(0, 170, 108, 0.2)'}
+              cursor={'pointer'}
+            >
+              <TbDiscount2 color="#00AA6C" fontSize={'20px'} />
+            </Center>
+            <Flex direction={'column'}>
+              <Text className="title">Liquidity provider rewards</Text>
+              <Text className="desc">
+                Liquidity providers earn a {liquidityFee}% fee on all trades
+                proportional to their share of the pool. Fees are added to the pool,
+                accrue in real time and can be claimed by withdrawing your liquidity.
+              </Text>
             </Flex>
-          </StyledLiquidNote>
-          {renderScreen()}
-        </StyledTokens>
-      </SectionContainer>
+          </Flex>
+        </StyledLiquidNote>
+        {renderScreen()}
+      </StyledTokens>
     </BodyContainer>
   );
 };

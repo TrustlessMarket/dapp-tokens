@@ -4,6 +4,7 @@ import { RootState } from '.';
 import localStorage from '@/utils/localstorage';
 import { SLIPPAGE_VALUE } from '@/constants/storage-key';
 import { WalletTransactionData } from '@/interfaces/walletTransaction';
+import { SupportedChainId } from '@/constants/chains';
 
 interface NftyLendState {
   needReload: number;
@@ -13,6 +14,7 @@ interface NftyLendState {
   currentTransaction: WalletTransactionData | undefined;
   showBanner: boolean;
   configs: any;
+  currentChainId: any;
 }
 
 const initialState: NftyLendState = {
@@ -22,7 +24,8 @@ const initialState: NftyLendState = {
   loadingRealtime: false,
   currentTransaction: undefined,
   showBanner: true,
-  configs: {}
+  configs: {},
+  currentChainId: SupportedChainId.TRUSTLESS_COMPUTER,
 };
 
 const slice = createSlice({
@@ -51,6 +54,9 @@ const slice = createSlice({
     updateConfigs: (state, action) => {
       state.configs = action.payload;
     },
+    updateCurrentChainId: (state, action) => {
+      state.currentChainId = action.payload;
+    },
   },
 });
 
@@ -61,7 +67,8 @@ export const {
   updateLoadingRealtime,
   updateCurrentTransaction,
   updateShowBanner,
-  updateConfigs
+  updateConfigs,
+  updateCurrentChainId,
 } = slice.actions;
 
 export const selectPnftExchange = (state: RootState) => state.pnftExchange;

@@ -54,7 +54,7 @@ const ScreenLayoutProvider: React.FC<any> = ({ children }) => {
       : 0;
   }, [_isMobile, showBanner]);
 
-  const showBannerPromotion = router?.pathname?.includes(ROUTE_PATH.POOLS);
+  const showBannerPromotion = false && router?.pathname?.includes(ROUTE_PATH.POOLS);
   const showGetStarted = !router?.pathname?.includes(ROUTE_PATH.LAUNCHPAD) && !showBannerPromotion;
   const showLaunchpadGetStarted = router?.pathname?.includes(ROUTE_PATH.LAUNCHPAD) && !showBannerPromotion;
 

@@ -12,11 +12,11 @@ import WrapperConnected from '@/components/WrapperConnected';
 import { CDN_URL, UNIV2_ROUTER_ADDRESS } from '@/configs';
 import {
   BRIDGE_SUPPORT_TOKEN,
-  DEV_ADDRESS,
   GM_ADDRESS,
   TOKEN_ICON_DEFAULT,
   TRUSTLESS_BRIDGE,
   TRUSTLESS_GASSTATION,
+  USDC_ADDRESS,
   WBTC_ADDRESS,
   WETH_ADDRESS,
 } from '@/constants/common';
@@ -51,7 +51,7 @@ import { isDevelop } from '@/utils/commons';
 import { composeValidators, required } from '@/utils/formValidate';
 import px2rem from '@/utils/px2rem';
 import { showError } from '@/utils/toast';
-import { Box, Center, Flex, forwardRef, Text, Tooltip } from '@chakra-ui/react';
+import { Box, Center, Flex, forwardRef, Text } from '@chakra-ui/react';
 import { useWeb3React } from '@web3-react/core';
 import BigNumber from 'bignumber.js';
 import cx from 'classnames';
@@ -84,7 +84,6 @@ import ModalConfirmApprove from '@/components/ModalConfirmApprove';
 import tokenIcons from '@/constants/tokenIcons';
 
 const LIMIT_PAGE = 500;
-const FEE = 2;
 export const MakeFormSwap = forwardRef((props, ref) => {
   const { onSubmit, submitting } = props;
   const [loading, setLoading] = useState(false);
@@ -110,8 +109,10 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const [isChangeQuoteToken, setIsChangeQuoteToken] = useState(false);
   const router = useRouter();
   const [swapRoutes, setSwapRoutes] = useState<any[]>([]);
+  const configs = useAppSelector(selectPnftExchange).configs;
+  const swapFee = configs?.swapFee || 0.3;
 
-  const { account } = useWeb3React();
+  const { account} = useWeb3React();
   const needReload = useAppSelector(selectPnftExchange).needReload;
   const [exchangeRate, setExchangeRate] = useState('0');
 
@@ -242,7 +243,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     reserveOut: BigNumber,
   ): BigNumber => {
     try {
-      const amountInWithFee = amountIn.multipliedBy(1000 - FEE * 10);
+      const amountInWithFee = amountIn.multipliedBy(1000 - swapFee * 10);
       const numerator = amountInWithFee.multipliedBy(reserveOut);
       const denominator = reserveIn.multipliedBy(1000).plus(amountInWithFee);
       const amountOut = numerator.div(denominator).decimalPlaces(18);
@@ -267,7 +268,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     reserveOut: BigNumber,
   ): BigNumber => {
     try {
-      const amountInWithFee = amountIn.multipliedBy(1000 + FEE * 10);
+      const amountInWithFee = amountIn.multipliedBy(1000 + swapFee * 10);
       const numerator = amountInWithFee.multipliedBy(reserveOut);
       const denominator = reserveIn.multipliedBy(1000).plus(amountInWithFee);
       const amountOut = numerator.div(denominator).decimalPlaces(18);
@@ -501,7 +502,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           }
           if (!token) {
             token = _fromTokens.find((t: { address: unknown }) =>
-              compareString(t.address, DEV_ADDRESS),
+              compareString(t.address, USDC_ADDRESS),
             );
           }
           if (token) {
@@ -1134,7 +1135,8 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           />
         </Flex>
       </InputWrapper>
-      <Flex justifyContent={'center'} mt={4}>
+      <Box mt={4} />
+      <Flex justifyContent={'center'}>
         <Center
           onClick={onChangeTransferType}
           w={'40px'}
@@ -1147,6 +1149,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           <RiArrowUpDownLine color="#FFFFFF" fontSize={'20px'} />
         </Center>
       </Flex>
+      <Box mt={4} />
       <InputWrapper
         className={cx(styles.inputAmountWrap, styles.inputQuoteAmountWrap)}
         theme="light"
@@ -1213,7 +1216,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
               fontWeight={'medium'}
               color={'rgba(255, 255, 255, 0.7)'}
             >
-              Fee: {FEE * (swapRoutes?.length || 1)}%
+              Fee: {swapFee * (swapRoutes?.length || 1)}%
             </Text>
           }
         />

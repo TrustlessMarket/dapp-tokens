@@ -6,29 +6,46 @@ import SocialToken from '@/components/Social';
 import FiledButton from '@/components/Swap/button/filedButton';
 import Faq from '@/components/Swap/faq';
 import InfoTooltip from '@/components/Swap/infoTooltip';
-import ListTable, {ColumnProp} from '@/components/Swap/listTable';
+import ListTable, { ColumnProp } from '@/components/Swap/listTable';
 import SectionContainer from '@/components/Swap/sectionContainer';
-import {ROUTE_PATH} from '@/constants/route-path';
-import {ILaunchpad} from '@/interfaces/launchpad';
-import {IToken} from '@/interfaces/token';
+import { ROUTE_PATH } from '@/constants/route-path';
+import { ILaunchpad } from '@/interfaces/launchpad';
+import { IToken } from '@/interfaces/token';
 import VerifiedBadgeLaunchpad from '@/modules/Launchpad/verifiedBadgeLaunchpad';
-import {getListLaunchpad} from '@/services/launchpad';
-import {useAppSelector} from '@/state/hooks';
-import {selectPnftExchange} from '@/state/pnftExchange';
-import {colors} from '@/theme/colors';
-import {abbreviateNumber, compareString, formatCurrency, getTokenIconUrl,} from '@/utils';
-import {Box, Flex, Progress, Text, Tooltip} from '@chakra-ui/react';
-import {useWeb3React} from '@web3-react/core';
+import { getListLaunchpad } from '@/services/launchpad';
+import { useAppSelector } from '@/state/hooks';
+import {selectPnftExchange, updateCurrentTransaction} from '@/state/pnftExchange';
+import { colors } from '@/theme/colors';
+import {
+  abbreviateNumber,
+  compareString,
+  formatCurrency,
+  getTokenIconUrl,
+} from '@/utils';
+import { Box, Flex, Progress, Text, Tooltip } from '@chakra-ui/react';
+import { useWeb3React } from '@web3-react/core';
 import BigNumber from 'bignumber.js';
 import moment from 'moment';
-import {useRouter} from 'next/router';
-import {useEffect, useMemo, useState} from 'react';
-import {BsPencil, BsPencilFill} from 'react-icons/bs';
-import {FaFireAlt} from 'react-icons/fa';
-import {useDispatch} from 'react-redux';
-import {FAQStyled} from '../LaunchpadManage/LaunchpadManage.styled';
-import LaunchpadStatus, {LAUNCHPAD_STATUS, LaunchpadLabelStatus, useLaunchPadStatus,} from './Launchpad.Status';
-import {StyledIdoContainer} from './Launchpad.styled';
+import { useRouter } from 'next/router';
+import React, { useContext, useEffect, useMemo, useState } from 'react';
+import { BsPencil, BsPencilFill } from 'react-icons/bs';
+import { FaFireAlt } from 'react-icons/fa';
+import { useDispatch, useSelector } from 'react-redux';
+import { FAQStyled } from '../LaunchpadManage/LaunchpadManage.styled';
+import LaunchpadStatus, {
+  LAUNCHPAD_STATUS,
+  LaunchpadLabelStatus,
+  useLaunchPadStatus,
+} from './Launchpad.Status';
+import { StyledIdoContainer } from './Launchpad.styled';
+import { getIsAuthenticatedSelector } from '@/state/user/selector';
+import { showError } from '@/utils/toast';
+import { WalletContext } from '@/contexts/wallet-context';
+import ModalCreateToken from '@/modules/Tokens/ModalCreateToken';
+import Button from '@/components/Button';
+import {closeModal, openModal} from "@/state/modal";
+import {useWindowSize} from "@trustless-computer/dapp-core";
+import CreateTokenForm from "@/modules/Tokens/CreateToken/form";
 
 const LaunchpadContainer = () => {
   const [data, setData] = useState<any[]>();
@@ -37,6 +54,10 @@ const LaunchpadContainer = () => {
   const dispatch = useDispatch();
   const needReload = useAppSelector(selectPnftExchange).needReload;
   const router = useRouter();
+  const isAuthenticated = useSelector(getIsAuthenticatedSelector);
+  const { onDisconnect, onConnect, requestBtcAddress } = useContext(WalletContext);
+  const [showModal, setShowModal] = useState(false);
+  const { mobileScreen } = useWindowSize();
 
   useEffect(() => {
     getData();
@@ -263,14 +284,16 @@ const LaunchpadContainer = () => {
             LaunchpadLabelStatus.voting.value,
           ].includes(status.value) ? (
             <Box>
-              <Text
-                color={color}
-              >{`${row.goalBalance} ${row.liquidityToken.symbol}`}</Text>
+              <Text color={color}>{`${formatCurrency(row.goalBalance)} ${
+                row.liquidityToken.symbol
+              }`}</Text>
             </Box>
           ) : (
             <Box>
               <Flex color={color} alignItems={'center'} gap={1}>
-                {`${row.totalValue} / ${row.goalBalance} `}
+                {`${formatCurrency(row.totalValue)} / ${formatCurrency(
+                  row.goalBalance,
+                )} `}
                 <Flex className={'liquidity-token'} alignItems={'center'} gap={1}>
                   <img src={getTokenIconUrl(row.liquidityToken)} />
                   {row.liquidityToken.symbol}
@@ -386,10 +409,9 @@ const LaunchpadContainer = () => {
             );
           }
           if (
-            [
-              LAUNCHPAD_STATUS.Successful,
-              LAUNCHPAD_STATUS.Failed,
-            ].includes(row?.state)
+            [LAUNCHPAD_STATUS.Successful, LAUNCHPAD_STATUS.Failed].includes(
+              row?.state,
+            )
           ) {
             return (
               <Box>
@@ -420,27 +442,25 @@ const LaunchpadContainer = () => {
           return (
             <Flex alignItems={'center'} gap={2}>
               <LaunchpadStatus row={row} />
-              {
-                compareString(row.creatorAddress, account) &&
+              {compareString(row.creatorAddress, account) &&
                 [
                   LAUNCHPAD_STATUS.Draft,
                   LAUNCHPAD_STATUS.Pending,
                   LAUNCHPAD_STATUS.Voting,
-                  LAUNCHPAD_STATUS.PrepareLaunching
+                  LAUNCHPAD_STATUS.PrepareLaunching,
                 ].includes(row?.state) && (
                   <Box
                     cursor={'pointer'}
                     onClick={(e) => {
                       e.stopPropagation();
                       e.preventDefault();
-                      router.push(`${ROUTE_PATH.LAUNCHPAD_MANAGE}?id=${row.id}`)
+                      router.push(`${ROUTE_PATH.LAUNCHPAD_MANAGE}?id=${row.id}`);
                     }}
                     paddingX={2}
                   >
                     <BsPencil />
                   </Box>
-                )
-              }
+                )}
             </Flex>
           );
         },
@@ -485,21 +505,93 @@ const LaunchpadContainer = () => {
     // );
   };
 
+  const handleConnectWallet = async () => {
+    try {
+      await onConnect();
+      await requestBtcAddress();
+    } catch (err) {
+      const message = (err as Error).message;
+      if (
+        !message.toLowerCase()?.includes('User rejected the request'.toLowerCase())
+      ) {
+        showError({
+          message,
+        });
+        onDisconnect();
+      }
+    }
+  };
+
+  const handleCreateToken = () => {
+    if (!isAuthenticated) {
+      handleConnectWallet();
+      // router.push(ROUTE_PATH.CONNECT_WALLET);
+    } else {
+      const id = 'modalCreateToken';
+      const close = () => dispatch(closeModal({id}));
+      dispatch(updateCurrentTransaction(null));
+      dispatch(
+        openModal({
+          id,
+          theme: 'dark',
+          title: 'Create Smart BRC-20',
+          // className: styles.modalContent,
+          modalProps: {
+            centered: true,
+            size: mobileScreen ? 'full' : 'xl',
+            zIndex: 9999999,
+          },
+          render: () => (
+            <CreateTokenForm onClose={close}/>
+          ),
+        }),
+      );
+    }
+  };
+
   return (
     <StyledIdoContainer>
       <Text as={'h1'} className="title">
         Launchpad
       </Text>
-      <Text className="desc">
+      <Text px={[6]} className="desc">
         Welcome to DeFi crowdfunding on Bitcoin. A place where you can support
         innovative projects and ideas all while leveraging the power of blockchain.
         Join us as we revolutionize the future of crowdfunding!
       </Text>
 
-      <Flex mb={8} mt={8} justifyContent={'center'}>
+      <Flex
+        px={[6]}
+        mb={8}
+        mt={8}
+        justifyContent={'center'}
+        gap={4}
+        flexDirection={['column', 'row']}
+      >
         <FiledButton btnSize="h" onClick={onShowCreateIDO}>
           <Text>Submit Your Launchpad</Text>
         </FiledButton>
+        <FiledButton
+          className="button-create-box"
+          btnSize="h"
+          onClick={handleCreateToken}
+        >
+          <Text>Create SMART BRC-20</Text>
+        </FiledButton>
+        {/* <Button
+          className="button-create-box"
+          background={'white'}
+          onClick={handleCreateToken}
+        >
+          <Text
+            size="medium"
+            color={'black'}
+            className="button-text"
+            fontWeight="medium"
+          >
+            Create SMART BRC-20
+          </Text>
+        </Button> */}
       </Flex>
 
       <Box className="content">
@@ -508,8 +600,6 @@ const LaunchpadContainer = () => {
           columns={columns}
           initialLoading={loading}
           onItemClick={(e: ILaunchpad) => {
-            console.log(e);
-
             if (!e.id) {
               return null;
             }
@@ -544,6 +634,7 @@ const LaunchpadContainer = () => {
           />
         </FAQStyled>
       </SectionContainer>
+      <ModalCreateToken show={showModal} handleClose={() => setShowModal(false)} />
     </StyledIdoContainer>
   );
 };

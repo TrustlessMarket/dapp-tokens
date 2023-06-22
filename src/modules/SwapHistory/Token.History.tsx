@@ -149,7 +149,7 @@ const TokenHistory = () => {
           borderBottom: 'none',
         },
         render(row: any) {
-          return <Text color={"#FFFFFF"}>{row?.createdAt ? moment(row.createdAt).format('lll') : '-'}</Text>;
+          return <Text color={"#FFFFFF"}>{row?.timestamp ? moment(row.timestamp).format('lll') : '-'}</Text>;
         },
       },
       {
@@ -196,7 +196,13 @@ const TokenHistory = () => {
   );
 
   return (
-    <ListTable data={[...listPending, ...list]} columns={columns} />
+    <ListTable
+      data={[...listPending, ...list]}
+      columns={columns}
+      showEmpty={true}
+      hideIcon={true}
+      theme={'dark'}
+    />
   );
 };
 

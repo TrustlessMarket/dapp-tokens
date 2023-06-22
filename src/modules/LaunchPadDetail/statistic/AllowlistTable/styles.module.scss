@@ -1,16 +1,7 @@
 .allowListTable {
   width: 100%;
   .allowListTableWrapper {
-    //background: #1E1E22;
-    //border-radius: 16px;
     width: 100%;
-    //padding: 24px 32px;
-    //font-family: var(--chakra-fonts-heading);
-    //margin-bottom: rem(32);
-
-    //@include max-tablet {
-    //  padding: rem(24) rem(16);
-    //}
   }
 
   .campaignEndText {
@@ -109,7 +100,7 @@
     height: 432px;
 
     @include max-tablet {
-      height: 400px;
+      min-height: calc(100vh - 300px);
     }
   }
 
@@ -163,9 +154,14 @@
     justify-content: flex-end;
     gap: rem(12);
 
+    // @media screen and (max-width: 768px) {
+    //   gap: rem(6);
+    // }
+
     @include w-max(425px) {
       column-gap: 0;
-      row-gap: rem(12);
+      gap: rem(6);
+      padding: rem(8) rem(12);
 
       &.currentUser {
         .dataShare {
@@ -207,6 +203,11 @@
 
       .dataContribute {
         text-align: right;
+      }
+      .dataId,
+      .userWallet,
+      .dataValue {
+        font-size: rem(14) !important;
       }
     }
   }
@@ -342,6 +343,13 @@
     &__white {
       color: #ffffff;
     }
+    &__orange {
+      color: #FF7E21;
+    }
+
+    &.pendingValue {
+      font-size: rem(12);
+    }
   }
 
   .actionWrapper {
@@ -421,5 +429,29 @@
 
   .disableScroll {
     overflow: hidden !important;
+  }
+}
+
+.modalContent {
+  max-width: 800px !important;
+  min-width: 800px !important;
+  :global {
+    .chakra-modal__header {
+      padding-bottom: 0;
+    }
+    .modal-header-wrap {
+      margin-bottom: 0;
+    }
+    .chakra-modal__body {
+      //padding: 0;
+    }
+  }
+
+  &.hideCloseButton {
+    :global {
+      .modal-close-btn {
+        display: none;
+      }
+    }
   }
 }

@@ -72,7 +72,6 @@ const TokenDetail = () => {
           chart_type: 'minute',
         }),
       ]);
-      console.log('resChart', resToken.length);
       if (resToken.length === 0) {
         throw 'Token not found';
       }
@@ -144,7 +143,7 @@ const TokenDetail = () => {
         />
       </StyledTokenChartContainer>
       <StyledHistoryContentContainer className={'tab-container'} area={'history'}>
-        <Tabs isManual>
+        <Tabs isLazy>
           <TabList>
             <Tab>Trade History</Tab>
             <Tab isDisabled={!Boolean(account && isActive)}>

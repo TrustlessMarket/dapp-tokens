@@ -28,7 +28,7 @@ const nextConfig = removeImports()({
       },
       {
         protocol: 'https',
-        hostname: '**.trustless.market',
+        hostname: '**.newbitcoindex.com',
       },
       {
         protocol: "https",
@@ -42,6 +42,9 @@ const nextConfig = removeImports()({
     @import "@/styles/_mixins.scss";
     @import "@/styles/_variables.scss";
   `,
+  },
+  compiler: {
+    removeConsole: process.env.NODE_ENV === "production"
   },
 });
 

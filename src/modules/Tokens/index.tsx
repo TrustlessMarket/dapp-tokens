@@ -4,18 +4,14 @@
 import Button from '@/components/Button';
 import {IToken} from '@/interfaces/token';
 import {getTokenRp} from '@/services/swap';
-import {getIsAuthenticatedSelector} from '@/state/user/selector';
-import {formatCurrency} from '@/utils';
+import {abbreviateNumber, formatCurrency, getTokenIconUrl} from '@/utils';
 import {debounce} from 'lodash';
-import React, {useContext, useEffect, useMemo, useRef, useState} from 'react';
-import Spinner from 'react-bootstrap/Spinner';
+import React, {useEffect, useMemo, useRef, useState} from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import {useDispatch, useSelector} from 'react-redux';
+import {useDispatch} from 'react-redux';
 import {StyledTokens, UploadFileContainer} from './Tokens.styled';
 import {ROUTE_PATH} from '@/constants/route-path';
-import {WalletContext} from '@/contexts/wallet-context';
-import {showError} from '@/utils/toast';
-import {Box, Flex, forwardRef, Icon, Text} from '@chakra-ui/react';
+import {Box, Flex, forwardRef, Icon, Spinner, Text} from '@chakra-ui/react';
 import BigNumber from 'bignumber.js';
 import Link from 'next/link';
 import {useRouter} from 'next/router';
@@ -31,11 +27,9 @@ import {AiOutlineCaretDown, AiOutlineCaretUp} from 'react-icons/ai';
 import {VscArrowSwap} from 'react-icons/vsc';
 import styles from './styles.module.scss';
 import TokenChartLast7Day from './Token.ChartLast7Day';
-import VerifiedBadgeToken from "./verifiedBadgeToken";
-import {closeModal, openModal} from "@/state/modal";
-import {useWindowSize} from "@trustless-computer/dapp-core";
-import CreateTokenForm from './CreateToken/form';
-import {updateCurrentTransaction} from "@/state/pnftExchange";
+import VerifiedBadgeToken from './verifiedBadgeToken';
+import {FiSearch} from 'react-icons/fi';
+import {useWindowSize} from '@trustless-computer/dapp-core';
 
 const LIMIT_PAGE = 100;
 
@@ -43,26 +37,13 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const router = useRouter();
   const [isFetching, setIsFetching] = useState(false);
 
-  const isAuthenticated = useSelector(getIsAuthenticatedSelector);
-  const { onDisconnect, onConnect, requestBtcAddress } = useContext(WalletContext);
   const [tokensList, setTokensList] = useState<IToken[]>([]);
   const [sort, setSort] = useState({ sort: '' });
   const { values } = useFormState();
   const dispatch = useDispatch();
   const { mobileScreen } = useWindowSize();
 
-  const handleConnectWallet = async () => {
-    try {
-      await onConnect();
-      await requestBtcAddress();
-    } catch (err) {
-      showError({
-        message: (err as Error).message,
-      });
-      console.log(err);
-      onDisconnect();
-    }
-  };
+  const { mobileScreen } = useWindowSize();
 
   const fetchTokens = async (page = 1, isFetchMore = false) => {
     try {
@@ -99,78 +80,165 @@ export const MakeFormSwap = forwardRef((props, ref) => {
 
   const debounceLoadMore = debounce(onLoadMoreTokens, 300);
 
-  const handleCreateToken = () => {
-    if (!isAuthenticated) {
-      handleConnectWallet();
-      // router.push(ROUTE_PATH.CONNECT_WALLET);
-    } else {
-      const id = 'modalCreateToken';
-      const close = () => dispatch(closeModal({id}));
-      dispatch(updateCurrentTransaction(null));
-      dispatch(
-        openModal({
-          id,
-          theme: 'dark',
-          title: 'Create Smart BRC-20',
-          className: styles.modalContent,
-          modalProps: {
-            centered: true,
-            size: mobileScreen ? 'full' : 'xl',
-            zIndex: 9999999,
-          },
-          render: () => (
-            <CreateTokenForm onClose={close}/>
-          ),
-        }),
-      );
-    }
-  };
-
   const debounced = useDebounce(values?.search_text);
 
   useEffect(() => {
     fetchTokens();
   }, [JSON.stringify(sort), debounced]);
 
-  const columns: ColumnProp[] = useMemo(
-    () => [
-      {
-        id: 'index',
-        label: '#',
-        labelConfig: {
-          fontSize: '12px',
-          fontWeight: '500',
-          color: '#B1B5C3',
+  const columns: ColumnProp[] = useMemo(() => {
+    if (mobileScreen) {
+      return [
+        {
+          id: 'name',
+          label: 'Name',
+          labelConfig: {
+            fontSize: '12px',
+            fontWeight: '500',
+            color: '#FFFFFF',
+          },
+          render(row: any) {
+            return (
+              <Flex gap={[2, 4]} alignItems={'center'}>
+                <img
+                  src={getTokenIconUrl(row)}
+                  alt={row?.thumbnail || 'default-icon'}
+                  className={'avatar'}
+                />
+                <Flex direction={'column'}>
+                  <Flex gap={1} alignItems={'center'} fontSize={px2rem(14)}>
+                    <Text
+                      lineHeight={'18px'}
+                      fontWeight={'500'}
+                      fontSize={px2rem(14)}
+                      color={'#FFFFFF'}
+                    >
+                      {row?.symbol}
+                    </Text>
+                    <VerifiedBadgeToken token={row} />
+                  </Flex>
+                  <Text
+                    lineHeight={'14px'}
+                    fontSize={px2rem(12)}
+                    color={'rgba(255, 255, 255, 0.7)'}
+                  >
+                    {row?.name}
+                  </Text>
+                </Flex>
+              </Flex>
+            );
+          },
         },
-        config: {
-          // borderBottom: 'none',
+        {
+          id: 'usd_price',
+          label: 'Price/24h%',
+          labelConfig: {
+            fontSize: '12px',
+            fontWeight: '500',
+            color: '#FFFFFF',
+          },
+          config: {
+            // borderBottom: 'none',
+          },
+          onSort: () => {
+            const sortField = 'usd_price';
+            setSort((_sort) => ({
+              ..._sort,
+              sort:
+                !_sort?.sort?.includes(sortField) || _sort?.sort === sortField
+                  ? `-${sortField}`
+                  : sortField,
+            }));
+          },
+          sort: sort?.sort,
+          render(row: any) {
+            const tokenPrice = row?.usdPrice
+              ? new BigNumber(row?.usdPrice).toFixed()
+              : 'n/a';
+            return (
+              <>
+                <Text
+                  textAlign={'left'}
+                  color={'#FFFFFF'}
+                  fontSize={px2rem(14)}
+                  lineHeight={'18px'}
+                >
+                  ${formatCurrency(tokenPrice, 10)}
+                </Text>
+                <Flex
+                  alignItems={'center'}
+                  color={
+                    Number(row?.percent) > 0
+                      ? '#16c784'
+                      : Number(row?.percent) < 0
+                      ? '#ea3943'
+                      : '#FFFFFF'
+                  }
+                  fontSize={px2rem(13)}
+                  lineHeight={'16px'}
+                  fontWeight={'500'}
+                >
+                  {Number(row?.percent) > 0 && '+'}
+                  {formatCurrency(row?.percent, 2)}%
+                </Flex>
+              </>
+            );
+          },
         },
-        onSort: () => {
-          const sortField = 'index';
-          setSort((_sort) => ({
-            ..._sort,
-            sort:
-              !_sort?.sort?.includes(sortField) || _sort?.sort === sortField
-                ? `-${sortField}`
-                : sortField,
-          }));
+        {
+          id: 'market_cap',
+          label: 'Vol/Cap',
+          labelConfig: {
+            fontSize: '12px',
+            fontWeight: '500',
+            color: '#FFFFFF',
+          },
+          config: {
+            // borderBottom: 'none',
+          },
+          onSort: () => {
+            const sortField = 'market_cap';
+            setSort((_sort) => ({
+              ..._sort,
+              sort:
+                !_sort?.sort?.includes(sortField) || _sort?.sort === sortField
+                  ? `-${sortField}`
+                  : sortField,
+            }));
+          },
+          sort: sort?.sort,
+          render(row: any) {
+            const tokenVolume = row?.usdTotalVolume
+              ? new BigNumber(row?.usdTotalVolume).toFixed()
+              : 'n/a';
+            return (
+              <>
+                <Text textAlign={'right'} color={'#FFFFFF'} fontSize={px2rem(14)}>
+                  ${formatCurrency(tokenVolume, 2)}
+                </Text>
+                <Text
+                  textAlign={'right'}
+                  lineHeight={'14px'}
+                  fontSize={px2rem(12)}
+                  color={'rgba(255, 255, 255, 0.7)'}
+                >
+                  ${abbreviateNumber(row?.usdMarketCap)}
+                </Text>
+              </>
+            );
+          },
         },
-        sort: sort?.sort,
-        render(row: any) {
-          return (
-            <Text color={'#FFFFFF'} fontSize={px2rem(16)}>
-              {row?.index}
-            </Text>
-          );
-        },
-      },
+      ];
+    }
+
+    return [
       {
         id: 'name',
         label: 'Name',
         labelConfig: {
           fontSize: '12px',
           fontWeight: '500',
-          color: '#B1B5C3',
+          color: '#FFFFFF',
         },
         config: {
           // borderBottom: 'none',
@@ -188,7 +256,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         sort: sort?.sort,
         render(row: any) {
           return (
-            <Flex gap={2} minW={px2rem(200)} alignItems={'center'}>
+            <Flex gap={4} minW={px2rem(200)} alignItems={'center'}>
               <img
                 // width={25}
                 // height={25}
@@ -199,13 +267,13 @@ export const MakeFormSwap = forwardRef((props, ref) => {
                 alt={row?.thumbnail || 'default-icon'}
                 className={'avatar'}
               />
-              <Flex direction={'column'}>
+              <Flex direction={'column'} gap={1}>
                 <Flex gap={1} alignItems={'center'} fontSize={px2rem(16)}>
                   <Box fontWeight={'500'} color={'#FFFFFF'}>
                     {row?.name}
                   </Box>
                   <Box color={'rgba(255, 255, 255, 0.7)'}>{row?.symbol}</Box>
-                  <VerifiedBadgeToken token={row}/>
+                  <VerifiedBadgeToken token={row} />
                 </Flex>
                 <Box fontSize={px2rem(12)} color={'rgba(255, 255, 255, 0.7)'}>
                   {row?.network || 'TC'}
@@ -221,7 +289,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         labelConfig: {
           fontSize: '12px',
           fontWeight: '500',
-          color: '#B1B5C3',
+          color: '#FFFFFF',
         },
         config: {
           // borderBottom: 'none',
@@ -254,7 +322,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         labelConfig: {
           fontSize: '12px',
           fontWeight: '500',
-          color: '#B1B5C3',
+          color: '#FFFFFF',
         },
         config: {
           // borderBottom: 'none',
@@ -290,50 +358,13 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           );
         },
       },
-      // {
-      //   id: 'percent_7day',
-      //   label: '7d %',
-      //   labelConfig: {
-      //     fontSize: '12px',
-      //     fontWeight: '500',
-      //     color: '#B1B5C3',
-      //   },
-      //   config: {
-      //     // borderBottom: 'none',
-      //   },
-      //   onSort: () => {
-      //     const sortField = 'percent_7day';
-      //     setSort((_sort) => ({
-      //       ..._sort,
-      //       sort: !_sort?.sort?.includes(sortField) || _sort?.sort === sortField ? `-${sortField}` : sortField,
-      //     }));
-      //   },
-      //   sort: sort?.sort,
-      //   render(row: any) {
-      //     return (
-      //       <Flex
-      //         alignItems={'center'}
-      //         color={Number(row?.percent7Day) > 0 ? '#16c784' : Number(row?.percent7Day) < 0 ? '#ea3943' : '#FFFFFF'}
-      //         fontSize={px2rem(16)}
-      //       >
-      //         {Number(row?.percent7Day) > 0 && (
-      //           <AiOutlineCaretUp color={'#16c784'} />
-      //         )}
-      //         {Number(row?.percent7Day) < 0 && (
-      //           <AiOutlineCaretDown color={'#ea3943'} />
-      //         )}
-      //         {formatCurrency(row?.percent7Day, 2)}%
-      //       </Flex>
-      //     );
-      //   },
-      // },
       {
         id: 'market_cap',
         label: 'Market Cap',
         labelConfig: {
           fontSize: '12px',
           fontWeight: '500',
-          color: '#B1B5C3',
+          color: '#FFFFFF',
         },
         config: {
           // borderBottom: 'none',
@@ -363,7 +394,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         labelConfig: {
           fontSize: '12px',
           fontWeight: '500',
-          color: '#B1B5C3',
+          color: '#FFFFFF',
         },
         config: {
           // borderBottom: 'none',
@@ -393,7 +424,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         labelConfig: {
           fontSize: '12px',
           fontWeight: '500',
-          color: '#B1B5C3',
+          color: '#FFFFFF',
         },
         config: {
           // borderBottom: 'none',
@@ -423,7 +454,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         labelConfig: {
           fontSize: '12px',
           fontWeight: '500',
-          color: '#B1B5C3',
+          color: '#FFFFFF',
         },
         config: {
           // borderBottom: 'none',
@@ -438,7 +469,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         labelConfig: {
           fontSize: '12px',
           fontWeight: '500',
-          color: '#B1B5C3',
+          color: '#FFFFFF',
         },
         config: {
           // borderBottom: 'none',
@@ -460,9 +491,9 @@ export const MakeFormSwap = forwardRef((props, ref) => {
                 title="Swap now"
                 color={'#FFFFFF'}
                 bg={'#1E1E22'}
-                borderRadius={'4px'}
-                paddingX={2}
-                paddingY={1}
+                borderRadius={'100px'}
+                paddingX={4}
+                paddingY={2}
                 _hover={{
                   color: '#1E1E22',
                   bg: '#FFFFFF',
@@ -470,15 +501,14 @@ export const MakeFormSwap = forwardRef((props, ref) => {
                 fontWeight={'medium'}
               >
                 <Icon as={VscArrowSwap} fontWeight={'medium'} fontSize={'18px'} />
-                SWAP NOW
+                Swap now
               </Flex>
             </Flex>
           );
         },
       },
-    ],
-    [sort.sort],
-  );
+    ];
+  }, [sort.sort, mobileScreen]);
 
   const handleItemClick = (token: any) => {
     router.push(`${ROUTE_PATH.TOKEN}?address=${token?.address}`);
@@ -487,40 +517,44 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   return (
     <StyledTokens>
       <div className="max-content">
-        <h3 className="upload_title">Smart BRC-20</h3>
+        <Flex
+          // justifyContent={'center'}
+          // alignItems={'center'}
+          // gap={2}
+          // mb={4}
+          // w={'fit-content'}
+          // marginX={'auto'}
+          // bg={'#1E1E22'}
+          // borderRadius={'100px'}
+          // paddingX={4}
+          // paddingY={2}
+          // fontSize={px2rem(16)}
+          // fontWeight={400}
+          className="power-by"
+        >
+          <Text>Powered by</Text>
+          <img
+            height={20}
+            src={`${CDN_URL}/icons/trussless-computer-logo.svg`}
+            alt="logo"
+          />
+          <Text as={'b'}>Trustless Computer</Text>
+        </Flex>
+        <h3 className="upload_title">New Bitcoin DEX</h3>
       </div>
       <UploadFileContainer className="max-content">
         <div className="upload_left">
-          {/* <img src={IcBitcoinCloud} alt="upload file icon" /> */}
           <div className="upload_content">
-            {/* <h3 className="upload_title">BRC-20 on Bitcoin</h3> */}
             <Text className="upload_text" color={'rgba(255, 255, 255, 0.7)'}>
-              Smart BRC-20s are{' '}
-              <span style={{ color: '#FFFFFF' }}>
-                the first smart contracts deployed on Bitcoin
-              </span>
-              . They run exactly as programmed without any possibility of fraud,
-              third-party interference, or censorship. Issue your Smart BRC-20 on
-              Bitcoin for virtually anything: a cryptocurrency, a share in a company,
-              voting rights in a DAO, and more.
+              Swap, earn, and build on{' '}
+              <Text as={'span'} color={'#FFFFFF'}>
+                the first decentralized crypto trading protocol on Bitcoin
+              </Text>
+              .
             </Text>
           </div>
         </div>
         <div className="upload_right">
-          <Button
-            className="button-create-box"
-            background={'white'}
-            onClick={handleCreateToken}
-          >
-            <Text
-              size="medium"
-              color={'black'}
-              className="button-text"
-              fontWeight="medium"
-            >
-              Issue Smart BRC-20
-            </Text>
-          </Button>
           <Link
             href={`${ROUTE_PATH.SWAP}?from_token=${WETH_ADDRESS}&to_token=${GM_ADDRESS}`}
           >
@@ -531,13 +565,29 @@ export const MakeFormSwap = forwardRef((props, ref) => {
                 className="brc20-text"
                 fontWeight="medium"
               >
-                Swap Smart BRC-20
+                Trade now
+              </Text>
+            </Button>
+          </Link>
+          <Link href={ROUTE_PATH.POOLS}>
+            <Button
+              className="button-create-box"
+              background={'white'}
+              // onClick={handleCreateToken}
+            >
+              <Text
+                size="medium"
+                color={'black'}
+                className="button-text"
+                fontWeight="medium"
+              >
+                Provide liquidity
               </Text>
             </Button>
           </Link>
         </div>
       </UploadFileContainer>
-      <Flex mb={4} justifyContent={'flex-end'} mr={[0, 15]}>
+      <Flex mb={4} justifyContent={'flex-start'} mr={[0, 15]}>
         <Field
           component={FieldText}
           name="search_text"
@@ -548,6 +598,9 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           className={'search_text'}
           borderColor={'#353945'}
           // fieldChanged={onChange}
+          prependComp={
+            <FiSearch color={'rgba(255, 255, 255, 0.6)'} fontSize={'20px'} />
+          }
         />
       </Flex>
       <InfiniteScroll
@@ -556,9 +609,9 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         hasMore={true}
         loader={
           isFetching && (
-            <div className="loading">
-              <Spinner animation="border" variant="primary" />
-            </div>
+            <Flex justifyContent={'center'} alignItems={'center'}>
+              <Spinner speed="0.65s" emptyColor="gray.200" color="blue.500" />
+            </Flex>
           )
         }
         next={debounceLoadMore}

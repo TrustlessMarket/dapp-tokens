@@ -10,12 +10,16 @@ import copy from 'copy-to-clipboard';
 // import { useRouter } from 'next/router';
 import SelectedNetwork from '@/components/Swap/selectNetwork';
 import Text from '@/components/Text';
-import { SupportedChainId } from '@/constants/chains';
 import { TRUSTLESS_BRIDGE } from '@/constants/common';
 import { ROUTE_PATH } from '@/constants/route-path';
 import { WalletContext } from '@/contexts/wallet-context';
 import useBalanceERC20Token from '@/hooks/contract-operations/token/useBalanceERC20Token';
-import { compareString, formatCurrency, formatLongAddress } from '@/utils';
+import {
+  compareString,
+  formatCurrency,
+  formatLongAddress,
+  isSupportedChain,
+} from '@/utils';
 import { showError } from '@/utils/toast';
 import { useWindowSize } from '@trustless-computer/dapp-core';
 import { useRouter } from 'next/router';
@@ -28,6 +32,7 @@ import web3 from 'web3';
 import { isScreenDarkMode } from '..';
 import { ConnectWalletButton, WalletBalance } from '../Header.styled';
 import { WalletPopover } from './Wallet.styled';
+import { SupportedChainId } from '@/constants/chains';
 
 const WalletHeader = () => {
   const router = useRouter();
@@ -54,11 +59,15 @@ const WalletHeader = () => {
       await onConnect();
       await requestBtcAddress();
     } catch (err) {
-      showError({
-        message: (err as Error).message,
-      });
-      console.log(err);
-      onDisconnect();
+      const message = (err as Error).message;
+      if (
+        !message.toLowerCase()?.includes('User rejected the request'.toLowerCase())
+      ) {
+        showError({
+          message,
+        });
+        onDisconnect();
+      }
     } finally {
       setIsConnecting(false);
     }
@@ -134,30 +143,35 @@ const WalletHeader = () => {
           ></IconSVG>
         </div>
       </div>
-      <div className="divider"></div>
-      <div className="wallet-btc">
-        <div className="wallet-item">
-          <IconSVG
-            src={`${CDN_URL}/icons/ic-btc.svg`}
-            maxWidth="24"
-            maxHeight="24"
-          />
-          <Text size={'regular'} className="address" fontWeight="regular">
-            {formatLongAddress(user?.walletAddressBtcTaproot || '')}
-          </Text>
-        </div>
-        <div
-          className="icCopy"
-          onClick={() => onClickCopy(user?.walletAddressBtcTaproot || '')}
-        >
-          <IconSVG
-            src={`${CDN_URL}/icons/ic-copy.svg`}
-            color="black"
-            maxWidth="16"
-            type="stroke"
-          ></IconSVG>
-        </div>
-      </div>
+      {user?.walletAddressBtcTaproot && (
+        <>
+          <div className="divider"></div>
+          <div className="wallet-btc">
+            <div className="wallet-item">
+              <IconSVG
+                src={`${CDN_URL}/icons/ic-btc.svg`}
+                maxWidth="24"
+                maxHeight="24"
+              />
+              <Text size={'regular'} className="address" fontWeight="regular">
+                {formatLongAddress(user?.walletAddressBtcTaproot || '')}
+              </Text>
+            </div>
+            <div
+              className="icCopy"
+              onClick={() => onClickCopy(user?.walletAddressBtcTaproot || '')}
+            >
+              <IconSVG
+                src={`${CDN_URL}/icons/ic-copy.svg`}
+                color="black"
+                maxWidth="16"
+                type="stroke"
+              ></IconSVG>
+            </div>
+          </div>
+        </>
+      )}
+
       <div className="divider"></div>
       <div className="cta">
         <div className="wallet-link" onClick={() => window.open(WALLET_URL)}>
@@ -207,7 +221,7 @@ const WalletHeader = () => {
     <>
       {account && isAuthenticated ? (
         <>
-          {!compareString(chainId, SupportedChainId.TRUSTLESS_COMPUTER) ? (
+          {!isSupportedChain(chainId) ? (
             <SelectedNetwork />
           ) : (
             <OverlayTrigger
@@ -228,7 +242,12 @@ const WalletHeader = () => {
                   <div className="balance">
                     <p>{formatCurrency(formatBTCPrice(btcBalance))} BTC</p>
                     <span className="divider"></span>
-                    <p>{formatCurrency(web3.utils.fromWei(juiceBalance), 5)} TC</p>
+                    <p>
+                      {formatCurrency(web3.utils.fromWei(juiceBalance), 5)}{' '}
+                      {compareString(chainId, SupportedChainId.TRUSTLESS_COMPUTER)
+                        ? 'TC'
+                        : 'ETH'}
+                    </p>
                   </div>
                   <div className="avatar">
                     <Jazzicon diameter={32} seed={jsNumberForAddress(account)} />

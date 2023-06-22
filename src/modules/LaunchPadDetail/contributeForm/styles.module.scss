@@ -1,0 +1,106 @@
+.container {
+  height: 100%;
+  width: 100%;
+}
+
+.inputAmountWrap {
+  margin-bottom: 8px;
+
+  :global .chakra-input__left-element {
+    margin: 0;
+    width: unset;
+    border-right: 1px solid #ECECED;
+    height: 60px;
+  }
+
+  :global .chakra-input__right-element {
+    padding-right: 16px;
+    margin: 0;
+    height: 60px !important;
+  }
+
+  :global .chakra-form__error-message {
+    font-size: 12px;
+  }
+
+  //:global .chakra-input__group {
+  //  background: #000000;
+  //}
+
+  :global {
+    .avatar {
+      object-fit: cover;
+      width: rem(25);
+      height: rem(25);
+      border-radius: 50%;
+    }
+  }
+}
+
+.inputQuoteAmountWrap {
+  margin-top: 0px;
+  :global .field-note {
+    display: none;
+  }
+
+  //:global .chakra-input__group {
+  //  border-bottom-left-radius: 0;
+  //  border-bottom-right-radius: 0;
+  //}
+}
+
+.inputBaseAmountWrap {
+  margin-top: 16px;
+
+  :global .field-note {
+    display: none;
+  }
+
+  //:global .chakra-input__group {
+  //  border-top-left-radius: 0;
+  //  border-top-right-radius: 0;
+  //}
+}
+
+.inputAmount {
+  color: #000000 !important;
+  font-size: 16px !important;
+  height: 100% !important;
+
+  &:disabled {
+    cursor: not-allowed;
+  }
+
+  @media screen and (max-width: 768px) {
+    font-size: 18px !important;
+  }
+}
+
+.submitButton {
+  width: 100%;
+  //margin-top: 16px;
+
+  button {
+    font-size: 16px !important;
+  }
+}
+
+.modalContent {
+  max-width: 600px !important;
+  :global {
+    .modal-header-wrap {
+      margin-bottom: 0;
+    }
+    .chakra-modal__body {
+      //padding: 0;
+    }
+  }
+
+  &.hideCloseButton {
+    :global {
+      .modal-close-btn {
+        display: none;
+      }
+    }
+  }
+}

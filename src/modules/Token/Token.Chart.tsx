@@ -72,7 +72,7 @@ const TokenChart: React.FC<TokenChartProps> = ({ chartData, dataSymbol }) => {
           },
         },
         watermark: {
-          text: 'trustless.market',
+          text: 'newbitcoindex.com',
           fontSize: 50,
           color: colors.white50,
           visible: true,
@@ -91,7 +91,7 @@ const TokenChart: React.FC<TokenChartProps> = ({ chartData, dataSymbol }) => {
         lastValueVisible: true,
         priceLineVisible: true,
         lastPriceAnimation: LastPriceAnimationMode.Continuous,
-        lineType: LineType.Curved,
+        lineType: LineType.Simple,
         topColor: 'rgba(41, 98, 255, 0.28)',
       });
 

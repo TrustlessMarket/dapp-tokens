@@ -1,10 +1,21 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import CountDownTimer from '@/components/Countdown';
+import Card from '@/components/Swap/card';
+import SectionContainer from '@/components/Swap/sectionContainer';
+import { TOKEN_ICON_DEFAULT } from '@/constants/common';
+import { IToken } from '@/interfaces/token';
+import styles from '@/modules/LaunchPadDetail/aboveTheFold/styles.module.scss';
+import BuyForm from '@/modules/LaunchPadDetail/form';
+import Intro from '@/modules/LaunchPadDetail/intro';
+import Statistic from '@/modules/LaunchPadDetail/statistic';
+import Usp from '@/modules/LaunchPadDetail/usp';
 import LaunchpadStatus, {
   LAUNCHPAD_STATUS,
   useLaunchPadStatus,
 } from '@/modules/Launchpad/Launchpad.Status';
-import styles from '@/modules/LaunchPadDetail/aboveTheFold/styles.module.scss';
-import { ILaunchpad } from '@/interfaces/launchpad';
+import VerifiedBadgeLaunchpad from '@/modules/Launchpad/verifiedBadgeLaunchpad';
+import { formatCurrency } from '@/utils';
+import px2rem from '@/utils/px2rem';
 import {
   Box,
   Flex,
@@ -13,37 +24,31 @@ import {
   Stat,
   StatLabel,
   StatNumber,
-  Text,
+  Text, Tooltip,
 } from '@chakra-ui/react';
-import Intro from '@/modules/LaunchPadDetail/intro';
-import Card from '@/components/Swap/card';
-import BuyForm from '@/modules/LaunchPadDetail/form';
-import Usp from '@/modules/LaunchPadDetail/usp';
-import Statistic from '@/modules/LaunchPadDetail/statistic';
-import React from 'react';
-import { TOKEN_ICON_DEFAULT } from '@/constants/common';
-import px2rem from '@/utils/px2rem';
-import { formatCurrency } from '@/utils';
-import { IToken } from '@/interfaces/token';
-import SectionContainer from '@/components/Swap/sectionContainer';
-import CountDownTimer from '@/components/Countdown';
 import moment from 'moment/moment';
 import { FaFireAlt } from 'react-icons/fa';
-import VerifiedBadgeLaunchpad from '@/modules/Launchpad/verifiedBadgeLaunchpad';
 
-const AboveTheFold = ({ poolDetail }: ILaunchpad | any) => {
+const AboveTheFold = ({ poolDetail, userBoost }: any) => {
   const launchpadToken: IToken = poolDetail?.launchpadToken;
   const [status] = useLaunchPadStatus({ row: poolDetail });
 
   return (
     <Box className={styles.wrapper}>
       <Flex
-        pb={7}
-        mb={12}
+        pb={[3.5, 7]}
+        mb={[7, 12]}
         borderBottom={'1px solid rgba(255, 255, 255, 0.1)'}
-        justifyContent={'space-between'}
+        justifyContent={['center', 'space-between']}
+        flexDirection={['column', 'row']}
+        gap={8}
       >
-        <Flex gap={4} color={'#FFFFFF'} alignItems={'center'}>
+        <Flex
+          gap={4}
+          color={'#FFFFFF'}
+          alignItems={'center'}
+          justifyContent={['center', 'flex-start']}
+        >
           <Flex alignItems={'flex-start'} h={'100%'}>
             <img
               src={launchpadToken.thumbnail || TOKEN_ICON_DEFAULT}
@@ -66,60 +71,82 @@ const AboveTheFold = ({ poolDetail }: ILaunchpad | any) => {
             </Flex>
           </Box>
         </Flex>
-        <Flex>
+        <Flex
+          alignItems={'center'}
+          justifyContent={'center'}
+          flexDirection={'column'}
+        >
           <Stat>
-            <StatLabel fontSize={px2rem(24)}>
-              {
-                [LAUNCHPAD_STATUS.Pending].includes(poolDetail?.state) ? 'Voting will start in'
-                  : [
-                    LAUNCHPAD_STATUS.Launching,
-                  ].includes(poolDetail?.state) ? 'Ends in'
-                    : [
+            <StatLabel textAlign={['center', 'left']} fontSize={px2rem(24)}>
+              {[LAUNCHPAD_STATUS.Pending].includes(poolDetail?.state)
+                ? 'Voting will start in'
+                : [LAUNCHPAD_STATUS.Launching].includes(poolDetail?.state)
+                ? 'Ends in'
+                : [
                     LAUNCHPAD_STATUS.Successful,
                     LAUNCHPAD_STATUS.Failed,
                     LAUNCHPAD_STATUS.End,
-                  ].includes(poolDetail?.state) ? 'Ended at'
-                      : ''
-              }
+                  ].includes(poolDetail?.state)
+                ? 'Ended at'
+                : ''}
             </StatLabel>
             <StatNumber>
-              <Text>
-                {
-                  [LAUNCHPAD_STATUS.Pending].includes(poolDetail?.state) ? (
-                  <Flex mt={2} alignItems={'center'} gap={2} className={styles.boxTime}>
+              {[LAUNCHPAD_STATUS.Pending].includes(poolDetail?.state) ? (
+                <Tooltip
+                  label={`${moment(poolDetail.voteStart).format('LLL')}`}
+                >
+                  <Flex
+                    mt={2}
+                    alignItems={'center'}
+                    gap={2}
+                    className={styles.boxTime}
+                  >
                     <FaFireAlt />
                     <Text>
                       <CountDownTimer end_time={poolDetail.voteStart} />
                     </Text>
                   </Flex>
-                  ) : [
-                    LAUNCHPAD_STATUS.Launching,
-                  ].includes(poolDetail?.state) ? (
-                    <Flex mt={2} alignItems={'center'} gap={2} className={styles.boxTime}>
-                      <FaFireAlt />
-                      <Text>
-                        <CountDownTimer end_time={poolDetail.launchEnd} />
-                      </Text>
-                    </Flex>
-                  ) : [
-                    LAUNCHPAD_STATUS.Successful,
-                    LAUNCHPAD_STATUS.Failed,
-                    LAUNCHPAD_STATUS.End,
-                  ].includes(poolDetail?.state) ? (
-                    moment(poolDetail.launchEnd).format('LLL')
-                  ) : <></>
-                }
-              </Text>
+                </Tooltip>
+              ) : [LAUNCHPAD_STATUS.Launching].includes(poolDetail?.state) ? (
+                <Tooltip
+                  label={`${moment(poolDetail.launchEnd).subtract("1", "h").format('LLL')}`}
+                >
+                  <Flex
+                    mt={2}
+                    alignItems={'center'}
+                    gap={2}
+                    className={styles.boxTime}
+                  >
+                    <FaFireAlt />
+                    <Text>
+                      <CountDownTimer end_time={moment(poolDetail.launchEnd).subtract("1", "h").toString()} />
+                    </Text>
+                  </Flex>
+                </Tooltip>
+              ) : [
+                LAUNCHPAD_STATUS.Successful,
+                LAUNCHPAD_STATUS.Failed,
+                LAUNCHPAD_STATUS.End,
+              ].includes(poolDetail?.state) ? (
+                moment(poolDetail.launchEnd).subtract("1", "h").format('LLL')
+              ) : (
+                <></>
+              )}
             </StatNumber>
           </Stat>
         </Flex>
       </Flex>
-      <Grid templateColumns={['1.25fr 1fr']} gap={[8]}>
-        <GridItem>
+      <Grid className="top-grid">
+        <GridItem area={'intro'}>
           <Intro poolDetail={poolDetail} />
         </GridItem>
-        <GridItem>
-          <Card bgColor={'#1B1E26'} paddingX={6} paddingY={6} minH={'50vh'}>
+        <GridItem area={'form'}>
+          <Card
+            bgColor={'#1B1E26'}
+            paddingX={[3, 6]}
+            paddingY={[3, 6]}
+            minH={'50vh'}
+          >
             <BuyForm poolDetail={poolDetail} />
           </Card>
         </GridItem>
@@ -139,21 +166,21 @@ const AboveTheFold = ({ poolDetail }: ILaunchpad | any) => {
           </SectionContainer>
         </Grid>
       ) : (
-        <Grid templateColumns={['1.25fr 1fr']} gap={[8]} mt={6}>
-          <GridItem>
-            <Box mt={8}>
+        <Grid className="bottom-grid" mt={6}>
+          <GridItem area={'usp'}>
+            <Box mt={[0, 8]}>
               <Usp />
             </Box>
           </GridItem>
-          <GridItem>
+          <GridItem area={'statics'}>
             <Card
               bgColor={'#1B1E26'}
-              paddingX={6}
-              paddingY={6}
-              mt={8}
+              paddingX={[2, 6]}
+              paddingY={[2, 6]}
+              mt={[0, 8]}
               borderRadius={'12px'}
             >
-              <Statistic poolDetail={poolDetail} />
+              <Statistic poolDetail={poolDetail} userBoost={userBoost} />
             </Card>
           </GridItem>
         </Grid>

@@ -4,17 +4,16 @@ import { SupportedChainId } from '@/constants/chains';
 import { ROUTE_PATH } from '@/constants/route-path';
 import { AssetsContext } from '@/contexts/assets-context';
 import { ContractOperationHook } from '@/interfaces/contract-operation';
+import { logErrorToServer } from '@/services/swap';
 import { getIsAuthenticatedSelector, getUserSelector } from '@/state/user/selector';
-import { capitalizeFirstLetter, switchChain } from '@/utils';
+import { capitalizeFirstLetter, isSupportedChain, switchChain } from '@/utils';
+import { isProduction } from '@/utils/commons';
 import { useWeb3React } from '@web3-react/core';
 import { useRouter } from 'next/router';
 import { useContext } from 'react';
 import { useSelector } from 'react-redux';
 import * as TC_SDK from 'trustless-computer-sdk';
 import useBitcoin from '../useBitcoin';
-import { ERROR_CODE } from '@/constants/error';
-import { isProduction } from '@/utils/commons';
-import { logErrorToServer } from '@/services/swap';
 
 interface IParams<P, R> {
   operation: ContractOperationHook<P, R>;
@@ -43,7 +42,7 @@ const useContractOperation = <P, R>(
   const router = useRouter();
 
   const checkAndSwitchChainIfNecessary = async (): Promise<void> => {
-    if (walletChainId !== chainId) {
+    if (!isSupportedChain(walletChainId)) {
       await switchChain(chainId);
     }
   };
@@ -54,7 +53,11 @@ const useContractOperation = <P, R>(
       // It delegates error to caller
 
       if (!isAuthenticated || !user?.walletAddress) {
-        router.push(`${ROUTE_PATH.CONNECT_WALLET}?next=${window.location.href}`);
+        router.push(
+          `${ROUTE_PATH.CONNECT_WALLET}?next=${encodeURIComponent(
+            window.location.href,
+          )}`,
+        );
         throw Error('Please connect wallet to continue.');
       }
 
@@ -80,8 +83,8 @@ const useContractOperation = <P, R>(
       TC_SDK.signTransaction({
         method: `${transactionType} ${dAppType}`,
         hash: Object(tx).hash,
-        dappURL: window.location.origin,
-        isRedirect: false,
+        dappURL: window.location.origin + window.location.pathname,
+        isRedirect: true,
         target: '_blank',
         isMainnet: isProduction(),
       });

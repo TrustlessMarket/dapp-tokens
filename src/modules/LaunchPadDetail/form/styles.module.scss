@@ -103,6 +103,9 @@
 .modalContent {
   max-width: 600px !important;
   :global {
+    .chakra-modal__header {
+      padding-bottom: 0;
+    }
     .modal-header-wrap {
       margin-bottom: 0;
     }
@@ -110,6 +113,18 @@
       //padding: 0;
     }
   }
+
+  &.hideCloseButton {
+    :global {
+      .modal-close-btn {
+        display: none;
+      }
+    }
+  }
+}
+
+.modalDeposit {
+  min-width: 600px !important;
 }
 
 .progressBar {

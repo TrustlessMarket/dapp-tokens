@@ -65,7 +65,9 @@ const TMTransferHistory = () => {
         </Flex>
         <Box marginX={"auto"} mt={6}>
           <Text fontSize={"20px"} color={"#FFFFFF"} ml={1}>Your balance: {formatCurrency(balanceTM, 5)} TM</Text>
-          <TokenHistory />
+          <Box mt={2}>
+            <TokenHistory />
+          </Box>
         </Box>
       </SectionContainer>
     </BodyContainer>

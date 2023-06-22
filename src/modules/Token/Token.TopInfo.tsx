@@ -1,6 +1,6 @@
 import SocialToken from '@/components/Social';
 import FiledButton from '@/components/Swap/button/filedButton';
-import { WBTC_ADDRESS, WETH_ADDRESS } from '@/constants/common';
+import {USDT_ADDRESS, WBTC_ADDRESS, WETH_ADDRESS} from '@/constants/common';
 import { ROUTE_PATH } from '@/constants/route-path';
 import { IToken } from '@/interfaces/token';
 import { colors } from '@/theme/colors';
@@ -175,8 +175,9 @@ const TokenTopInfo = ({ data }: { data: IToken }) => {
             const from_token = compareString(data?.symbol, 'GM')
               ? WETH_ADDRESS
               : WBTC_ADDRESS;
+            const to_token = compareString(from_token, data?.address) ? USDT_ADDRESS : data?.address;
             router.push(
-              `${ROUTE_PATH.SWAP}?from_token=${from_token}&to_token=${data?.address}`,
+              `${ROUTE_PATH.SWAP}?from_token=${from_token}&to_token=${to_token}`,
             );
           }}
         >

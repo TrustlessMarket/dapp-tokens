@@ -1,14 +1,20 @@
-import {WalletContext} from '@/contexts/wallet-context';
-import {showError} from '@/utils/toast';
-import React, {useContext} from 'react';
-import {StyledWrapperConnected} from './WrapperConnected.styled';
-import {ButtonProps} from '../Button';
-import {useWeb3React} from "@web3-react/core";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { WalletContext } from '@/contexts/wallet-context';
+import { getIsAuthenticatedSelector } from '@/state/user/selector';
+import {compareString, isSupportedChain} from '@/utils';
+import { showError } from '@/utils/toast';
+import { useWeb3React } from '@web3-react/core';
+import React, { useContext } from 'react';
+import { useSelector } from 'react-redux';
+import { ButtonProps } from '../Button';
+import { StyledWrapperConnected } from './WrapperConnected.styled';
+import {SupportedChainId} from "@/constants/chains";
 
 interface WrapperConnectedProps extends ButtonProps {
   children?: React.ReactElement;
   onClick?: () => void;
   className?: string;
+  forceSwitchChain?: any;
 }
 
 const WrapperConnected: React.FC<WrapperConnectedProps> = ({
@@ -16,39 +22,59 @@ const WrapperConnected: React.FC<WrapperConnectedProps> = ({
   onClick,
   className,
   type = 'button',
+  forceSwitchChain = false,
 }) => {
-  const { isActive } = useWeb3React();
+  const { chainId } = useWeb3React();
   const { onDisconnect, onConnect, requestBtcAddress } = useContext(WalletContext);
+  const trustChain = isSupportedChain(chainId);
+  const isAuthenticated = useSelector(getIsAuthenticatedSelector);
+  const isTCChain = chainId && compareString(
+      SupportedChainId.TRUSTLESS_COMPUTER,
+      chainId,
+    );
 
   const handleConnectWallet = async () => {
     try {
       await onConnect();
       await requestBtcAddress();
     } catch (err) {
-      showError({
-        message: (err as Error).message,
-      });
-      onDisconnect();
+      const message = (err as Error).message;
+      if (
+        !message.toLowerCase()?.includes('User rejected the request'.toLowerCase())
+      ) {
+        showError({
+          message,
+        });
+        onDisconnect();
+      }
     }
   };
 
-  const handleClick = () => {
-    if (!isActive) {
+  const handleClick = (e: any) => {
+    e.stopPropagation();
+    e.preventDefault();
+
+    if (!isAuthenticated || !trustChain || (!isTCChain && forceSwitchChain)) {
       handleConnectWallet();
     } else {
       onClick?.();
     }
   };
 
-  if (isActive) {
-    return <>{children}</>;
+  if (!isAuthenticated || !trustChain || (!isTCChain && forceSwitchChain)) {
+    return (
+      <StyledWrapperConnected
+        {...children?.props}
+        type={isAuthenticated || trustChain ? type : 'button'}
+        onClick={handleClick}
+        className={className}
+      >
+        {!isAuthenticated ? children?.props?.children : 'Switch network now'}
+      </StyledWrapperConnected>
+    );
   }
 
-  return (
-    <StyledWrapperConnected {...children?.props} type={isActive ? type : 'button'} onClick={handleClick} className={className}>
-      {children?.props?.children}
-    </StyledWrapperConnected>
-  );
+  return <>{children}</>;
 };
 
 export default WrapperConnected;

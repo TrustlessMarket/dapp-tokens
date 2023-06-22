@@ -1,15 +1,19 @@
 .wrapper {
   width: 100%;
-  background: #0F0F0F;
-  padding-top: 48px;
-  padding-bottom: 48px;
+  background: #0f0f0f;
+  //padding-top: 48px;
+  //padding-bottom: 48px;
+
+  > div {
+    padding: rem(54) 3.75rem;
+  }
 
   .swapButton {
     width: 215px;
     height: 48px;
     border-radius: 8px;
-    background: #3385FF;
-    color: #FFFFFF;
+    background: #3385ff;
+    color: #ffffff;
     font-size: 16px;
   }
 
@@ -17,12 +21,112 @@
     width: 215px;
     height: 48px;
     border-radius: 8px;
-    background: #FFFFFF;
+    background: #ffffff;
     color: #000000;
     font-size: 16px;
   }
 
-  .tokensList {
-    overflow: hidden !important;
+  :global {
+    .upload_title {
+      width: fit-content;
+      z-index: 1;
+      color: white;
+      font-size: rem(48);
+      line-height: rem(58);
+      margin: 0 auto;
+      letter-spacing: -0.5%;
+      font-weight: 500;
+      @media screen and (max-width: 758px) {
+        font-size: rem(30);
+        line-height: rem(40);
+      }
+    }
+
+    .chakra-table__container {
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .chakra-table {
+      overflow: hidden;
+      @media screen and (max-width: 758px) {
+        table-layout: fixed;
+      }
+
+      td {
+        padding-top: rem(22);
+        padding-bottom: rem(22);
+        @media screen and (max-width: 758px) {
+          padding-top: rem(16);
+          padding-bottom: rem(16);
+        }
+      }
+
+      thead {
+        tr {
+          th {
+            background: #1e1e22;
+            text-transform: uppercase;
+            border-bottom-color: rgba(255, 255, 255, 0.1);
+            border-bottom-width: 1px;
+            border-bottom-style: solid;
+            padding-top: rem(12);
+            padding-bottom: rem(12);
+
+            &:first-of-type {
+              padding-left: rem(24);
+            }
+
+            @media screen and (max-width: 758px) {
+              padding: rem(14.5) rem(8) !important;
+              text-transform: capitalize !important;
+              font-weight: 400;
+              &:first-child {
+                & > div {
+                  justify-content: flex-start;
+                }
+              }
+              &:last-child {
+                & > div {
+                  justify-content: flex-end;
+                }
+              }
+              &:nth-child(2) {
+                padding-left: 40px !important;
+                & > div {
+                  text-align: center;
+                  /* justify-content: center; */
+                }
+              }
+            }
+          }
+        }
+
+      }
+      tbody {
+        tr {
+          td {
+            vertical-align: middle;
+            border-bottom-color: transparent;
+
+            &:first-of-type {
+              padding-left: rem(24);
+            }
+
+            @media screen and (max-width: 758px) {
+              padding: rem(16) rem(8) !important;
+              font-weight: 400;
+              &:nth-child(2) {
+                padding-left: 40px !important;
+              }
+            }
+          }
+
+          &:hover {
+            background-color: #1e1e22;
+          }
+        }
+      }
+    }
   }
 }

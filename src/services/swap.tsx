@@ -1,4 +1,4 @@
-import {API_EXCHANGE_URL, API_URL} from '@/configs';
+import { API_EXCHANGE_URL, API_URL } from '@/configs';
 import { IPagingParams } from '@/interfaces/api/query';
 import { IToken } from '@/interfaces/token';
 import { swrFetcher } from '@/utils/swr';
@@ -34,7 +34,7 @@ export const getSwapTokens = async (
 ): Promise<IToken[]> => {
   const qs = '?' + queryString.stringify(params);
 
-  return swrFetcher(`${API_URL}${API_PATH}/token/list${qs}`, {
+  return swrFetcher(`${API_EXCHANGE_URL}${API_PATH}/token/list${qs}`, {
     method: 'GET',
     error: 'Fail to get tokens data',
   });
@@ -74,7 +74,7 @@ export const getChartToken = async (
   } & IPagingParams,
 ) => {
   const qs = '?' + queryString.stringify(params);
-  return swrFetcher(`${API_URL}${API_PATH}/token/price${qs}`, {
+  return swrFetcher(`${API_EXCHANGE_URL}${API_PATH}/token/price${qs}`, {
     method: 'GET',
     error: 'Fail to scan tx',
   });
@@ -87,7 +87,7 @@ export const getTradeHistory = async (
   } & IPagingParams,
 ) => {
   const qs = '?' + queryString.stringify(params);
-  return swrFetcher(`${API_URL}${API_PATH}/pair/trade-histories${qs}`, {
+  return swrFetcher(`${API_EXCHANGE_URL}${API_PATH}/pair/trade-histories${qs}`, {
     method: 'GET',
     error: 'Fail to scan tx',
   });
@@ -123,7 +123,7 @@ export const getUserTradeHistory = async (
   } & IPagingParams,
 ) => {
   const qs = '?' + queryString.stringify(params);
-  return swrFetcher(`${API_URL}${API_PATH}/user/trade-histories${qs}`, {
+  return swrFetcher(`${API_EXCHANGE_URL}${API_PATH}/user/trade-histories${qs}`, {
     method: 'GET',
     error: 'Fail to get user trade history',
   });
@@ -141,7 +141,7 @@ export const getListLiquidity = async (
   params: IPagingParams,
 ): Promise<ILiquidity[]> => {
   const qs = '?' + queryString.stringify(params);
-  return swrFetcher(`${API_URL}${API_PATH}/pair/apr/list${qs}`, {
+  return swrFetcher(`${API_EXCHANGE_URL}${API_PATH}/pair/apr/list${qs}`, {
     method: 'GET',
     error: 'Fail to get list liquidity',
   });

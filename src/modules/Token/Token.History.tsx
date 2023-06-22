@@ -4,7 +4,7 @@ import { TC_EXPLORER } from '@/configs';
 import { IToken } from '@/interfaces/token';
 import { getTradeHistory } from '@/services/swap';
 import { colors } from '@/theme/colors';
-import { compareString, formatCurrency } from '@/utils';
+import { abbreviateNumber, compareString, formatCurrency } from '@/utils';
 import { Flex, Text } from '@chakra-ui/react';
 import { useWeb3React } from '@web3-react/core';
 import moment from 'moment';
@@ -12,6 +12,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { RxArrowTopRight } from 'react-icons/rx';
 import { DEFAULT_FROM_TOKEN_ADDRESS } from '../Pools';
 import { StyledTokenTrading } from './Token.styled';
+import { px2rem, useWindowSize } from '@trustless-computer/dapp-core';
 
 export const BASE_TOKEN_ETH_PAIR = '0x74B033e56434845E02c9bc4F0caC75438033b00D';
 
@@ -19,6 +20,8 @@ const TokenHistory = ({ data, isOwner }: { data: IToken; isOwner?: boolean }) =>
   const [list, setList] = useState<any[]>([]);
   const { account, isActive } = useWeb3React();
   const [loading, setLoading] = useState(true);
+
+  const { mobileScreen } = useWindowSize();
 
   useEffect(() => {
     getList();
@@ -90,8 +93,109 @@ const TokenHistory = ({ data, isOwner }: { data: IToken; isOwner?: boolean }) =>
     return 0;
   };
 
-  const columns: ColumnProp[] = useMemo(
-    () => [
+  const columns: ColumnProp[] = useMemo(() => {
+    if (mobileScreen) {
+      return [
+        {
+          id: 'price',
+          label: 'Price',
+          labelConfig: {
+            fontSize: '12px',
+            fontWeight: '500',
+            color: '#B1B5C3',
+          },
+          config: {
+            borderBottom: 'none',
+          },
+          render(row: any) {
+            let color = colors.greenPrimary;
+
+            if (checkIsSell(row)) {
+              color = colors.redSecondary;
+            }
+            return (
+              <>
+                <Text fontSize={px2rem(14)} color={color}>
+                  {formatCurrency(row.price)}
+                </Text>
+                <Text
+                  style={{
+                    fontSize: px2rem(10),
+                    color: colors.white500,
+                    lineHeight: '12px',
+                  }}
+                >
+                  {row.pair.token1Obj.symbol}
+                </Text>
+              </>
+            );
+          },
+        },
+        {
+          id: 'amount',
+          label: 'Amount',
+          labelConfig: {
+            fontSize: '12px',
+            fontWeight: '500',
+            color: '#B1B5C3',
+          },
+          config: {
+            borderBottom: 'none',
+          },
+          render(row: any) {
+            const amount = getAmount(row);
+            return (
+              <>
+                <Text textAlign={'right'}>{abbreviateNumber(amount)}</Text>
+                <Text
+                  style={{
+                    fontSize: px2rem(10),
+                    color: colors.white500,
+                    lineHeight: '12px',
+                  }}
+                  textAlign={'right'}
+                >
+                  {row.pair.token0Obj.symbol}
+                </Text>
+              </>
+            );
+          },
+        },
+        {
+          id: 'date',
+          label: 'Date',
+          labelConfig: {
+            fontSize: '12px',
+            fontWeight: '500',
+            color: '#B1B5C3',
+          },
+          config: {
+            borderBottom: 'none',
+          },
+          render(row: any) {
+            return (
+              <>
+                <Text textAlign={'right'}>
+                  {moment(row.timestamp).format('HH:mm A')}
+                </Text>
+                <Text
+                  style={{
+                    fontSize: px2rem(10),
+                    color: colors.white500,
+                    lineHeight: '12px',
+                  }}
+                  textAlign={'right'}
+                >
+                  {moment(row.timestamp).format('l')}
+                </Text>
+              </>
+            );
+          },
+        },
+      ];
+    }
+
+    return [
       {
         id: 'type',
         label: 'Type',
@@ -166,7 +270,7 @@ const TokenHistory = ({ data, isOwner }: { data: IToken; isOwner?: boolean }) =>
           borderBottom: 'none',
         },
         render(row: any) {
-          return <Text>{moment(row.createdAt).format('lll')}</Text>;
+          return <Text>{moment(row.timestamp).format('lll')}</Text>;
         },
       },
       {
@@ -195,9 +299,8 @@ const TokenHistory = ({ data, isOwner }: { data: IToken; isOwner?: boolean }) =>
           );
         },
       },
-    ],
-    [],
-  );
+    ];
+  }, [mobileScreen]);
 
   return (
     <StyledTokenTrading>

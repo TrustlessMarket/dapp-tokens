@@ -1,17 +1,18 @@
 import UniswapV2Router from '@/abis/UniswapV2Router.json';
 import { transactionType } from '@/components/Swap/alertInfoProcessing/types';
-import { APP_ENV, UNIV2_ROUTER_ADDRESS } from '@/configs';
+import { APP_ENV, WALLET_URL, UNIV2_ROUTER_ADDRESS } from '@/configs';
 import { MaxUint256 } from '@/constants/url';
-import { AssetsContext } from '@/contexts/assets-context';
 import { TransactionEventType } from '@/enums/transaction';
+import useCheckTxsBitcoin from '@/hooks/useCheckTxsBitcoin';
 import { ContractOperationHook, DAppType } from '@/interfaces/contract-operation';
 import { TransactionStatus } from '@/interfaces/walletTransaction';
 import { logErrorToServer, scanTrx } from '@/services/swap';
 import store from '@/state';
 import { updateCurrentTransaction } from '@/state/pnftExchange';
+import { colors } from '@/theme/colors';
 import { compareString, getContract, getDefaultGasPrice } from '@/utils';
 import { useWeb3React } from '@web3-react/core';
-import { useCallback, useContext } from 'react';
+import { useCallback } from 'react';
 import Web3 from 'web3';
 
 export interface IAddLiquidityParams {
@@ -28,7 +29,7 @@ export interface IAddLiquidityParams {
 
 const useAddLiquidity: ContractOperationHook<IAddLiquidityParams, boolean> = () => {
   const { account, provider } = useWeb3React();
-  const { btcBalance, feeRate } = useContext(AssetsContext);
+  const { call: checkTxsBitcoin } = useCheckTxsBitcoin();
 
   const call = useCallback(
     async (params: IAddLiquidityParams): Promise<boolean> => {
@@ -50,54 +51,6 @@ const useAddLiquidity: ContractOperationHook<IAddLiquidityParams, boolean> = () 
           account,
         );
 
-        // const [amountApproveA, amountApproveB] = await Promise.all([
-        //   isApproveERC20Token({
-        //     address: UNIV2_ROUTER_ADDRESS,
-        //     erc20TokenAddress: tokenA,
-        //   }),
-        //   isApproveERC20Token({
-        //     address: UNIV2_ROUTER_ADDRESS,
-        //     erc20TokenAddress: tokenB,
-        //   }),
-        // ]);
-
-        // console.log('amountApproveA', amountApproveA);
-        // console.log('amountApproveB', amountApproveB);
-
-        // let isPendingTx = false;
-
-        // const unInscribedTxIDs = await getUnInscribedTransactionDetailByAddress(
-        //   account,
-        // );
-
-        // for await (const unInscribedTxID of unInscribedTxIDs) {
-        //   const _getTxDetail = await getTCTxByHash(unInscribedTxID.Hash);
-        //   const _inputStart = _getTxDetail.input.slice(0, 10);
-
-        //   if (compareString(funcLiquidHex, _inputStart)) {
-        //     isPendingTx = true;
-        //   }
-        // }
-
-        // if (isPendingTx) {
-        //   throw Error(ERROR_CODE.PENDING);
-        // }
-
-        // if (compareString(APP_ENV, 'production')) {
-        //   const estimatedFee = TC_SDK.estimateInscribeFee({
-        //     tcTxSizeByte: TRANSFER_TX_SIZE,
-        //     feeRatePerByte: feeRate.fastestFee,
-        //   });
-        //   const balanceInBN = new BigNumber(btcBalance);
-        //   if (balanceInBN.isLessThan(estimatedFee.totalFee)) {
-        //     throw Error(
-        //       `Your balance is insufficient. Please top up at least ${formatBTCPrice(
-        //         estimatedFee.totalFee.toString(),
-        //       )} BTC to pay network fee.`,
-        //     );
-        //   }
-        // }
-
         const transaction = await contract
           .connect(provider.getSigner())
           .addLiquidity(
@@ -115,15 +68,6 @@ const useAddLiquidity: ContractOperationHook<IAddLiquidityParams, boolean> = () 
             },
           );
 
-        // TC_SDK.signTransaction({
-        //   method: `${DAppType.ERC20} - ${TransactionEventType.CREATE}`,
-        //   hash: transaction.hash,
-        //   dappURL: window.location.origin,
-        //   isRedirect: true,
-        //   target: '_blank',
-        //   isMainnet: isProduction(),
-        // });
-
         logErrorToServer({
           type: 'logs',
           address: account,
@@ -137,12 +81,25 @@ const useAddLiquidity: ContractOperationHook<IAddLiquidityParams, boolean> = () 
             id: transactionType.createPoolApprove,
             hash: transaction.hash,
             infoTexts: {
-              pending: `Transaction confirmed. Please wait for it to be processed on the Bitcoin. Note that it may take up to 10 minutes for a block confirmation on the Bitcoin blockchain.`,
+              pending: `Please go to the trustless wallet and click on <a style="color: ${colors.bluePrimary}" href="${WALLET_URL}" target="_blank" >"Process Transaction"</a> for Bitcoin to complete this process.`,
             },
           }),
         );
 
-        // await transaction.wait();
+        checkTxsBitcoin({
+          txHash: transaction.hash,
+          fnAction: () =>
+            store.dispatch(
+              updateCurrentTransaction({
+                status: TransactionStatus.pending,
+                id: transactionType.createPoolApprove,
+                hash: transaction.hash,
+                infoTexts: {
+                  pending: `Transaction confirmed. Please wait for it to be processed on the Bitcoin. Note that it may take up to 10 minutes for a block confirmation on the Bitcoin blockchain.`,
+                },
+              }),
+            ),
+        });
 
         if (compareString(APP_ENV, 'production')) {
           await scanTrx({
@@ -155,7 +112,7 @@ const useAddLiquidity: ContractOperationHook<IAddLiquidityParams, boolean> = () 
 
       return false;
     },
-    [account, provider, btcBalance, feeRate],
+    [account, provider],
   );
 
   return {
