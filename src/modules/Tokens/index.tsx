@@ -40,9 +40,6 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const [tokensList, setTokensList] = useState<IToken[]>([]);
   const [sort, setSort] = useState({ sort: '' });
   const { values } = useFormState();
-  const dispatch = useDispatch();
-  const { mobileScreen } = useWindowSize();
-
   const { mobileScreen } = useWindowSize();
 
   const fetchTokens = async (page = 1, isFetchMore = false) => {

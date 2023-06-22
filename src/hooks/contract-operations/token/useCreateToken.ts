@@ -8,6 +8,9 @@ import store from "@/state";
 import {updateCurrentTransaction} from "@/state/pnftExchange";
 import {TransactionStatus} from "@/interfaces/walletTransaction";
 import {transactionType} from "@/components/Swap/alertInfoProcessing/types";
+import {colors} from "@/theme/colors";
+import {WALLET_URL} from "@/configs";
+import useCheckTxsBitcoin from "@/hooks/useCheckTxsBitcoin";
 
 export interface ICreateTokenParams {
   name: string;
@@ -20,6 +23,7 @@ const useCreateToken: ContractOperationHook<
   DeployContractResponse | null
 > = () => {
   const { account, provider } = useWeb3React();
+  const { call: checkTxsBitcoin } = useCheckTxsBitcoin();
 
   const call = useCallback(
     async (params: ICreateTokenParams): Promise<DeployContractResponse | null> => {
@@ -39,10 +43,25 @@ const useCreateToken: ContractOperationHook<
             id: transactionType.createToken,
             hash: contract.deployTransaction.hash,
             infoTexts: {
-              pending: `Transaction confirmed. Please wait for it to be processed on the Bitcoin. Note that it may take up to 10 minutes for a block confirmation on the Bitcoin blockchain.`,
+              pending: `Please go to the trustless wallet and click on <a style="color: ${colors.bluePrimary}" href="${WALLET_URL}" target="_blank" >"Process Transaction"</a> for Bitcoin to complete this process.`,
             },
           }),
         );
+
+        checkTxsBitcoin({
+          txHash: contract.deployTransaction.hash,
+          fnAction: () =>
+            store.dispatch(
+              updateCurrentTransaction({
+                id: transactionType.createToken,
+                status: TransactionStatus.pending,
+                hash: contract.deployTransaction.hash,
+                infoTexts: {
+                  pending: `Transaction confirmed. Please wait for it to be processed on the Bitcoin. Note that it may take up to 10 minutes for a block confirmation on the Bitcoin blockchain.`,
+                },
+              }),
+            ),
+        });
 
         console.log('contract', contract);
 
