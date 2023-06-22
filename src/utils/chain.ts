@@ -1,4 +1,8 @@
-import { SupportedChainId, TRUSTLESS_COMPUTER_CHAIN_INFO } from '@/constants/chains';
+import {
+  L2_CHAIN_INFO,
+  SupportedChainId,
+  TRUSTLESS_COMPUTER_CHAIN_INFO,
+} from '@/constants/chains';
 import { IResourceChain } from '@/interfaces/chain';
 import Web3 from 'web3';
 import { setWalletChainId } from './auth-storage';
@@ -9,7 +13,11 @@ const getChainList = async (): Promise<Array<IResourceChain>> => {
   try {
     const res = await fetch(API_PATH);
     const data = await res.json();
-    return [...data, TRUSTLESS_COMPUTER_CHAIN_INFO] as Array<IResourceChain>;
+    return [
+      ...data,
+      TRUSTLESS_COMPUTER_CHAIN_INFO,
+      L2_CHAIN_INFO,
+    ] as Array<IResourceChain>;
   } catch (err: unknown) {
     console.log('Failed to get chain list');
     console.log(err);

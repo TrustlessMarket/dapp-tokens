@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-hooks/exhaustive-deps */
 import { ConnectionType, getConnection } from '@/connection';
@@ -12,7 +13,7 @@ import {
 import { getUserSelector } from '@/state/user/selector';
 import bitcoinStorage from '@/utils/bitcoin-storage';
 import { useWeb3React } from '@web3-react/core';
-import React, { PropsWithChildren, useEffect, useMemo } from 'react';
+import React, { PropsWithChildren, useCallback, useEffect, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 // import { getAccessToken, setAccessToken } from '@/utils/auth-storage';
 import { SupportedChainId } from '@/constants/chains';
@@ -42,6 +43,7 @@ export interface IWalletContext {
   onDisconnect: () => Promise<void>;
   onConnect: () => Promise<string | null>;
   requestBtcAddress: () => Promise<void>;
+  getDefaultChain: () => any;
   getSignature: (_message: string) => Promise<string>;
 }
 
@@ -49,6 +51,7 @@ const initialValue: IWalletContext = {
   onDisconnect: () => new Promise<void>((r) => r()),
   onConnect: () => new Promise<null>((r) => r(null)),
   requestBtcAddress: () => new Promise<void>((r) => r()),
+  getDefaultChain: () => {},
   getSignature: (_message: string) => new Promise<string>((r) => r('')),
 };
 
@@ -63,7 +66,11 @@ export const WalletProvider: React.FC<PropsWithChildren> = ({
   const currentChainId = useSelector(selectPnftExchange).currentChainId;
   const router = useRouter();
 
-  const isChain = currentChainId || SupportedChainId.TRUSTLESS_COMPUTER;
+  const getDefaultChain = useCallback(() => {
+    return SupportedChainId.L2;
+  }, [router]);
+
+  const isChain = currentChainId || getDefaultChain();
   const isChainTC =
     !currentChainId ||
     compareString(currentChainId, SupportedChainId.TRUSTLESS_COMPUTER);
@@ -76,7 +83,7 @@ export const WalletProvider: React.FC<PropsWithChildren> = ({
       }
       await connection.connector.activate();
       if (!isSupportedChain(chainId)) {
-        await switchChain(SupportedChainId.TRUSTLESS_COMPUTER);
+        await switchChain(getDefaultChain());
       }
       const addresses = await connector.provider?.request({
         method: 'eth_accounts',
@@ -112,20 +119,27 @@ export const WalletProvider: React.FC<PropsWithChildren> = ({
   }, [connector, dispatch, user]);
 
   const connect = React.useCallback(async () => {
-    const connection = getConnection(connector);
-    if (!connection) {
-      throw new Error('Get connection error.');
-    }
-    await connection.connector.activate();
+    try {
+      const connection = getConnection(connector);
+      if (!connection) {
+        throw new Error('Get connection error.');
+      }
+      await connection.connector.activate();
 
-    if (!isSupportedChain(isChain) || !compareString(chainId, isChain)) {
-      await switchChain(isChain);
-    }
-    const addresses: any = await connector.provider?.request({
-      method: 'eth_accounts',
-    });
+      if (!isSupportedChain(isChain) || !compareString(chainId, isChain)) {
+        await switchChain(isChain);
+      }
+      const addresses: any = await connector.provider?.request({
+        method: 'eth_accounts',
+        params: [{ chainId: Web3.utils.toHex(isChain) }],
+      });
 
-    await onConnect(addresses);
+      await onConnect(addresses);
+    } catch (error) {
+      console.log('error', error);
+
+      throw error;
+    }
 
     return null;
   }, [dispatch, connector, provider, currentChainId, chainId]);
@@ -149,12 +163,12 @@ export const WalletProvider: React.FC<PropsWithChildren> = ({
   const onConnect = async (addresses: any[]) => {
     if (addresses && Array.isArray(addresses)) {
       const evmWalletAddress = addresses[0];
-      const data = await generateNonceMessage({
-        address: evmWalletAddress,
-      });
 
-      if (data) {
-        if (isChainTC) {
+      if (isChainTC) {
+        const data = await generateNonceMessage({
+          address: evmWalletAddress,
+        });
+        if (data) {
           const web3Provider = new Web3(window.ethereum as provider);
           const signature = await web3Provider.eth.personal.sign(
             Web3.utils.fromUtf8(data),
@@ -167,13 +181,14 @@ export const WalletProvider: React.FC<PropsWithChildren> = ({
           });
           setAccessToken(accessToken, refreshToken);
         }
-        localStorage.setItem(PREV_URL, window.location.href);
-        localStorage.setItem(PREV_CHAIN_ID, isChain);
-        dispatch(updateEVMWallet(evmWalletAddress));
-        dispatch(updateSelectedWallet({ wallet: ConnectionType.METAMASK }));
-        localStorage.setItem(TEMP_ADDRESS_WALLET_EVM, evmWalletAddress);
-        return evmWalletAddress;
       }
+      localStorage.setItem(PREV_URL, window.location.href);
+      localStorage.setItem(PREV_CHAIN_ID, isChain);
+      dispatch(updateEVMWallet(evmWalletAddress));
+      dispatch(updateSelectedWallet({ wallet: ConnectionType.METAMASK }));
+      localStorage.setItem(TEMP_ADDRESS_WALLET_EVM, evmWalletAddress);
+
+      return evmWalletAddress;
     }
   };
 
@@ -191,7 +206,7 @@ export const WalletProvider: React.FC<PropsWithChildren> = ({
   useAsyncEffect(async () => {
     const accessToken = getAccessToken();
 
-    const prevChainId: any = localStorage.getItem(PREV_CHAIN_ID);
+    const prevChainId: any = getDefaultChain();
 
     if (connector) {
       try {
@@ -217,6 +232,7 @@ export const WalletProvider: React.FC<PropsWithChildren> = ({
         } else if (prevChainId) {
           const addresses: any = await connector.provider?.request({
             method: 'eth_accounts',
+            params: [{ chainId: Web3.utils.toHex(prevChainId) }],
           });
           const evmWalletAddress = addresses[0];
 
@@ -274,6 +290,7 @@ export const WalletProvider: React.FC<PropsWithChildren> = ({
       onConnect: connect,
       requestBtcAddress,
       getSignature,
+      getDefaultChain,
     };
   }, [disconnect, connect, requestBtcAddress]);
 

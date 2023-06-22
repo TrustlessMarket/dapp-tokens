@@ -25,4 +25,5 @@ export const ROUTE_PATH = {
   LAUNCHPAD_PROPOSAL: '/launchpad/proposal',
   LAUNCHPAD_GET_STARTED: '/launchpad/get-started',
   PROPOSAL: 'proposal',
+  POOLS_V2_ADD: '/pools/v2/add',
 };
