@@ -1280,7 +1280,7 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
     if([LAUNCHPAD_STATUS.Launching].includes(poolDetail?.state)
       && moment(poolDetail.launchEnd).subtract("1", "h").isSameOrBefore(moment())
     ) {
-      toast.error('You can not contribute anymore!');
+      toast.error('Sorry! The time to contribute has ended.');
       return;
     }
 
