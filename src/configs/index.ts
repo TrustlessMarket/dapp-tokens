@@ -36,4 +36,11 @@ export const DEFAULT_FROM_ADDRESS = process.env.NEXT_PUBLIC_DEFAULT_FROM_ADDRESS
 export const DEFAULT_TO_ADDRESS = process.env.NEXT_PUBLIC_DEFAULT_ADDRESS!;
 
 export const MEMPOOL_URL = 'https://mempool.space';
+
+// L2
+
+export const L2_NETWORK_RPC: string = process.env.NEXT_PUBLIC_L2_RPC!;
+export const L2_EXPLORER: string = process.env.NEXT_PUBLIC_L2_EXPLORER!;
+export const L2_CHAIN_ID: string = process.env.NEXT_PUBLIC_L2_CHAIN_ID!;
+
 /* eslint-enable @typescript-eslint/no-non-null-assertion */
