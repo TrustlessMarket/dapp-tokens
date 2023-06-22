@@ -392,7 +392,7 @@ const LaunchpadContainer = () => {
                 <Flex mt={1} alignItems={'center'} gap={2}>
                   <FaFireAlt />
                   <Text>
-                    <CountDownTimer end_time={row.launchEnd} />
+                    <CountDownTimer end_time={moment(row.launchEnd).subtract("1", "h").toString()} />
                   </Text>
                 </Flex>
                 <Text className="note">Ends at</Text>
