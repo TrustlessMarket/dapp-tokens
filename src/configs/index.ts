@@ -25,7 +25,10 @@ export const UNIV2_ROUTER_ADDRESS: string = process.env.NEXT_PUBLIC_UNIV2_ROUTER
 export const TM_ADDRESS: string = process.env.NEXT_PUBLIC_TM_ADDRESS!;
 export const LAUNCHPAD_FACTORY_ADDRESS: string =
   process.env.NEXT_PUBLIC_LAUNCHPAD_FACTORY!;
-export const GOVERNOR_ADDRESS: string = process.env.NEXT_PUBLIC_GOVERNOR!;
+
+// V3
+export const UNIV3_FACTORY_ADDRESS: string = process.env.NEXT_PUBLIC_UNIV3_FACTORY!;
+export const UNIV3_ROUTER_ADDRESS: string = process.env.NEXT_PUBLIC_UNIV3_ROUTER!;
 
 export const TC_WEB_URL: string = process.env.NEXT_PUBLIC_TC_WEB_URL!;
 export const TRANSFER_TX_SIZE = 1000!;
