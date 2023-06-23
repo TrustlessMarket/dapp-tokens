@@ -16,8 +16,8 @@ import { useWeb3React } from '@web3-react/core';
 import React, { PropsWithChildren, useCallback, useEffect, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 // import { getAccessToken, setAccessToken } from '@/utils/auth-storage';
-import { SupportedChainId } from '@/constants/chains';
-import { compareString, isSupportedChain, switchChain } from '@/utils';
+import { SupportedChainId, TRUSTLESS_COMPUTER_CHAIN_INFO } from '@/constants/chains';
+import { compareString, getChainList, isSupportedChain, switchChain } from '@/utils';
 import {
   clearAuthStorage,
   getAccessToken,
@@ -28,6 +28,7 @@ import { provider } from 'web3-core';
 // import { getCurrentProfile } from '@/services/profile';
 import { ROUTE_PATH } from '@/constants/route-path';
 import {
+  CHAIN_INFO,
   PREV_CHAIN_ID,
   PREV_URL,
   TEMP_ADDRESS_WALLET_EVM,
@@ -38,12 +39,14 @@ import { isProduction } from '@/utils/commons';
 import { useRouter } from 'next/router';
 import * as TC_SDK from 'trustless-computer-sdk';
 import useAsyncEffect from 'use-async-effect';
+import { IResourceChain } from '@/interfaces/chain';
 
 export interface IWalletContext {
   onDisconnect: () => Promise<void>;
   onConnect: () => Promise<string | null>;
   requestBtcAddress: () => Promise<void>;
   getDefaultChain: () => any;
+  getConnectedChainInfo: () => any;
   getSignature: (_message: string) => Promise<string>;
 }
 
@@ -52,6 +55,7 @@ const initialValue: IWalletContext = {
   onConnect: () => new Promise<null>((r) => r(null)),
   requestBtcAddress: () => new Promise<void>((r) => r()),
   getDefaultChain: () => {},
+  getConnectedChainInfo: () => {},
   getSignature: (_message: string) => new Promise<string>((r) => r('')),
 };
 
@@ -69,6 +73,15 @@ export const WalletProvider: React.FC<PropsWithChildren> = ({
   const getDefaultChain = useCallback(() => {
     return SupportedChainId.L2;
   }, [router]);
+
+  const getConnectedChainInfo = useCallback(() => {
+    const chainInfo = localStorage.getItem(CHAIN_INFO);
+    if (chainInfo) {
+      const parseChainInfo = JSON.parse(chainInfo);
+      return parseChainInfo;
+    }
+    return TRUSTLESS_COMPUTER_CHAIN_INFO;
+  }, [router, user, chainId]);
 
   const isChain = currentChainId || getDefaultChain();
   const isChainTC =
@@ -182,6 +195,15 @@ export const WalletProvider: React.FC<PropsWithChildren> = ({
           setAccessToken(accessToken, refreshToken);
         }
       }
+
+      const chainList = await getChainList();
+      const info = chainList.find((c: IResourceChain) => c.chainId === isChain);
+      if (!info) {
+        throw new Error(`Chain ${chainId} not supported`);
+      }
+
+      localStorage.setItem(CHAIN_INFO, JSON.stringify(info));
+
       localStorage.setItem(PREV_URL, window.location.href);
       localStorage.setItem(PREV_CHAIN_ID, isChain);
       dispatch(updateEVMWallet(evmWalletAddress));
@@ -207,6 +229,7 @@ export const WalletProvider: React.FC<PropsWithChildren> = ({
     const accessToken = getAccessToken();
 
     const prevChainId: any = getDefaultChain();
+    const hasLogged: any = localStorage.getItem(PREV_CHAIN_ID);
 
     if (connector) {
       try {
@@ -229,7 +252,7 @@ export const WalletProvider: React.FC<PropsWithChildren> = ({
           const { walletAddress } = await getCurrentProfile();
           dispatch(updateEVMWallet(walletAddress));
           dispatch(updateSelectedWallet({ wallet: 'METAMASK' }));
-        } else if (prevChainId) {
+        } else if (prevChainId && hasLogged) {
           const addresses: any = await connector.provider?.request({
             method: 'eth_accounts',
             params: [{ chainId: Web3.utils.toHex(prevChainId) }],
@@ -291,6 +314,7 @@ export const WalletProvider: React.FC<PropsWithChildren> = ({
       requestBtcAddress,
       getSignature,
       getDefaultChain,
+      getConnectedChainInfo,
     };
   }, [disconnect, connect, requestBtcAddress]);
 

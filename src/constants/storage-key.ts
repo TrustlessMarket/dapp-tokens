@@ -16,3 +16,5 @@ export const LAUNCHPAD_FORM_STEP = 'launchpad_form_step';
 export const PREV_CHAIN_ID = 'pre_chain_id';
 
 export const PREV_URL = 'pre_url';
+
+export const CHAIN_INFO = 'chain_info';

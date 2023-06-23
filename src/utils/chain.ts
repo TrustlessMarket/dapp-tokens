@@ -6,10 +6,11 @@ import {
 import { IResourceChain } from '@/interfaces/chain';
 import Web3 from 'web3';
 import { setWalletChainId } from './auth-storage';
+import { CHAIN_INFO } from '@/constants/storage-key';
 
 const API_PATH = 'https://chainid.network/chains.json';
 
-const getChainList = async (): Promise<Array<IResourceChain>> => {
+export const getChainList = async (): Promise<Array<IResourceChain>> => {
   try {
     const res = await fetch(API_PATH);
     const data = await res.json();
@@ -21,7 +22,7 @@ const getChainList = async (): Promise<Array<IResourceChain>> => {
   } catch (err: unknown) {
     console.log('Failed to get chain list');
     console.log(err);
-    return [TRUSTLESS_COMPUTER_CHAIN_INFO];
+    return [TRUSTLESS_COMPUTER_CHAIN_INFO, L2_CHAIN_INFO];
   }
 };
 
@@ -49,6 +50,8 @@ export const switchChain = async (chainId: SupportedChainId) => {
       if (!info) {
         throw new Error(`Chain ${chainId} not supported`);
       }
+
+      localStorage.setItem(CHAIN_INFO, JSON.stringify(info));
 
       const params = {
         chainId: Web3.utils.toHex(info.chainId),
