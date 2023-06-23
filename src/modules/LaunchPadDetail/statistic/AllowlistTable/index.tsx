@@ -100,7 +100,7 @@ const AllowlistTable = ({
           if (userDeposit?.userAddress) {
             setDepositList([{ ...userDeposit, index: 1, isCurrentUser: true }]);
           } else if (list?.length > 0) {
-            setDepositList([list[0]]);
+            setDepositList(list.slice(0, 3));
           }
         }
       }
@@ -385,21 +385,29 @@ const AllowlistTable = ({
               <>
                 <Search onSearch={onSearchAddress} />
                 <div className={cx(styles.dataListWrapper)}>
-                  {depositList.length === 0 && <Empty isTable={false} />}
-                  {depositList.length > 0 && <DataTable />}
+                  {depositList?.length === 0 && <Empty isTable={false} />}
+                  {depositList?.length > 0 && <DataTable />}
                 </div>
               </>
             ) : (
               <>
-                {depositList.length === 0 ? (
+                {depositList?.length === 0 ? (
                   <Empty isTable={false} />
                 ) : (
-                  <RowRenderer
-                    index={0}
-                    key={'you'}
-                    data={depositList}
-                    onShowContributeHistory={handleShowContributeHistory}
-                  />
+                  <>
+                    {
+                      depositList?.map((item, index) => {
+                        return (
+                          <RowRenderer
+                            index={index}
+                            key={index}
+                            data={depositList}
+                            onShowContributeHistory={handleShowContributeHistory}
+                          />
+                        )
+                      })
+                    }
+                  </>
                 )}
               </>
             )}

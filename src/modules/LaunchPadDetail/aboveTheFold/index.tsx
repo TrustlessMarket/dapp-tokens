@@ -199,7 +199,16 @@ const AboveTheFold = ({ poolDetail, userBoost }: any) => {
       </Flex>
       <Grid className="top-grid">
         <GridItem area={'intro'}>
-          <Intro poolDetail={poolDetail} />
+          <Intro poolDetail={poolDetail} className={styles.introWrapper}/>
+          {
+            ![LAUNCHPAD_STATUS.Draft, LAUNCHPAD_STATUS.Pending].includes(status?.key) && (
+              <Box
+                mt={6}
+              >
+                <Usp />
+              </Box>
+            )
+          }
         </GridItem>
         <GridItem area={'form'}>
           <Card
@@ -210,42 +219,30 @@ const AboveTheFold = ({ poolDetail, userBoost }: any) => {
           >
             <BuyForm poolDetail={poolDetail} />
           </Card>
+          <Card
+            bgColor={'#1B1E26'}
+            paddingX={[2, 6]}
+            paddingY={[2, 6]}
+            mt={[0, 6]}
+            borderRadius={'12px'}
+          >
+            <Statistic poolDetail={poolDetail} userBoost={userBoost} />
+          </Card>
         </GridItem>
       </Grid>
-      {[LAUNCHPAD_STATUS.Draft, LAUNCHPAD_STATUS.Pending].includes(status?.key) ? (
-        <Grid
-          templateColumns={['1fr']}
-          gap={[8]}
-          mt={6}
-          bgColor={'#1E1E22'}
-          py={8}
-          ml={-px2rem(25)}
-          mr={-px2rem(25)}
-        >
-          <SectionContainer>
-            <Usp />
-          </SectionContainer>
-        </Grid>
-      ) : (
-        <Grid className="bottom-grid" mt={6}>
-          <GridItem area={'usp'}>
-            <Box mt={[0, 8]}>
+      {
+        [LAUNCHPAD_STATUS.Draft, LAUNCHPAD_STATUS.Pending].includes(status?.key) && (
+          <Box
+            mt={6}
+            bgColor={'#1E1E22'}
+            py={8}
+          >
+            <SectionContainer>
               <Usp />
-            </Box>
-          </GridItem>
-          <GridItem area={'statics'}>
-            <Card
-              bgColor={'#1B1E26'}
-              paddingX={[2, 6]}
-              paddingY={[2, 6]}
-              mt={[0, 8]}
-              borderRadius={'12px'}
-            >
-              <Statistic poolDetail={poolDetail} userBoost={userBoost} />
-            </Card>
-          </GridItem>
-        </Grid>
-      )}
+            </SectionContainer>
+          </Box>
+        )
+      }
     </Box>
   );
 };
