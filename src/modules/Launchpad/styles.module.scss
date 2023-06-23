@@ -1,17 +1,3 @@
-.wrapper {
-  width: 100%;
-  background: #0f0f0f;
-  & > div {
-    padding: 0px;
-  }
-
-  :global {
-    .loading {
-      margin-top: 30px;
-    }
-  }
-}
-
 .modalContent {
   min-width: 800px !important;
   max-width: 800px !important;

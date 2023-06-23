@@ -89,6 +89,10 @@ const useContractOperation = <P, R>(
         isMainnet: isProduction(),
       });
 
+      if (tx?.deployTransaction?.wait) {
+        await tx.deployTransaction.wait();
+      }
+
       if (tx.wait) {
         await tx.wait();
       }

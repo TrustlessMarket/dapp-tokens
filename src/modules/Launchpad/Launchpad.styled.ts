@@ -214,4 +214,12 @@ export const StyledIdoStatus = styled(Badge)`
       background: rgba(255, 71, 71, 1);
     }
   }
+  &.preparetoendfunding {
+    color: #000000;
+    background-color: rgba(255,255,255,0.7);
+    
+    &::before {
+      background: #000000;
+    }
+  }
 `;

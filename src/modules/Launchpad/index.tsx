@@ -6,54 +6,49 @@ import SocialToken from '@/components/Social';
 import FiledButton from '@/components/Swap/button/filedButton';
 import Faq from '@/components/Swap/faq';
 import InfoTooltip from '@/components/Swap/infoTooltip';
-import ListTable, { ColumnProp } from '@/components/Swap/listTable';
+import ListTable, {ColumnProp} from '@/components/Swap/listTable';
 import SectionContainer from '@/components/Swap/sectionContainer';
-import { ROUTE_PATH } from '@/constants/route-path';
-import { ILaunchpad } from '@/interfaces/launchpad';
-import { IToken } from '@/interfaces/token';
+import {ROUTE_PATH} from '@/constants/route-path';
+import {ILaunchpad} from '@/interfaces/launchpad';
+import {IToken} from '@/interfaces/token';
 import VerifiedBadgeLaunchpad from '@/modules/Launchpad/verifiedBadgeLaunchpad';
-import { getListLaunchpad } from '@/services/launchpad';
-import { useAppSelector } from '@/state/hooks';
-import { selectPnftExchange } from '@/state/pnftExchange';
-import { colors } from '@/theme/colors';
-import {
-  abbreviateNumber,
-  compareString,
-  formatCurrency,
-  getTokenIconUrl,
-} from '@/utils';
-import { Box, Flex, Progress, Text, Tooltip } from '@chakra-ui/react';
-import { useWeb3React } from '@web3-react/core';
+import {getListLaunchpad} from '@/services/launchpad';
+import {useAppSelector} from '@/state/hooks';
+import {selectPnftExchange, updateCurrentTransaction} from '@/state/pnftExchange';
+import {colors} from '@/theme/colors';
+import {abbreviateNumber, compareString, formatCurrency, getTokenIconUrl,} from '@/utils';
+import {Box, Flex, Progress, Text, Tooltip} from '@chakra-ui/react';
+import {useWeb3React} from '@web3-react/core';
 import BigNumber from 'bignumber.js';
 import moment from 'moment';
-import { useRouter } from 'next/router';
-import React, { useContext, useEffect, useMemo, useState } from 'react';
-import { BsPencil, BsPencilFill } from 'react-icons/bs';
-import { FaFireAlt } from 'react-icons/fa';
-import { useDispatch, useSelector } from 'react-redux';
-import { FAQStyled } from '../LaunchpadManage/LaunchpadManage.styled';
-import LaunchpadStatus, {
-  LAUNCHPAD_STATUS,
-  LaunchpadLabelStatus,
-  useLaunchPadStatus,
-} from './Launchpad.Status';
-import { StyledIdoContainer } from './Launchpad.styled';
-import { getIsAuthenticatedSelector } from '@/state/user/selector';
-import { showError } from '@/utils/toast';
-import { WalletContext } from '@/contexts/wallet-context';
+import {useRouter} from 'next/router';
+import React, {useContext, useEffect, useMemo, useState} from 'react';
+import {BsPencil, BsPencilFill} from 'react-icons/bs';
+import {FaFireAlt} from 'react-icons/fa';
+import {useDispatch, useSelector} from 'react-redux';
+import {FAQStyled} from '../LaunchpadManage/LaunchpadManage.styled';
+import LaunchpadStatus, {LAUNCHPAD_STATUS, LaunchpadLabelStatus, useLaunchPadStatus,} from './Launchpad.Status';
+import {StyledIdoContainer} from './Launchpad.styled';
+import {getIsAuthenticatedSelector} from '@/state/user/selector';
+import {showError} from '@/utils/toast';
+import {WalletContext} from '@/contexts/wallet-context';
 import ModalCreateToken from '@/modules/Tokens/ModalCreateToken';
-import Button from '@/components/Button';
+import {closeModal, openModal} from "@/state/modal";
+import {useWindowSize} from "@trustless-computer/dapp-core";
+import CreateTokenForm from "@/modules/Tokens/CreateToken/form";
+import styles from './styles.module.scss';
 
 const LaunchpadContainer = () => {
   const [data, setData] = useState<any[]>();
   const [loading, setLoading] = useState(true);
   const { account } = useWeb3React();
-  // const dispatch = useDispatch();
+  const dispatch = useDispatch();
   const needReload = useAppSelector(selectPnftExchange).needReload;
   const router = useRouter();
   const isAuthenticated = useSelector(getIsAuthenticatedSelector);
   const { onDisconnect, onConnect, requestBtcAddress } = useContext(WalletContext);
   const [showModal, setShowModal] = useState(false);
+  const { mobileScreen } = useWindowSize();
 
   useEffect(() => {
     getData();
@@ -397,7 +392,7 @@ const LaunchpadContainer = () => {
                 <Flex mt={1} alignItems={'center'} gap={2}>
                   <FaFireAlt />
                   <Text>
-                    <CountDownTimer end_time={row.launchEnd} />
+                    <CountDownTimer end_time={moment(row.launchEnd).subtract("1", "h").toString()} />
                   </Text>
                 </Flex>
                 <Text className="note">Ends at</Text>
@@ -523,7 +518,25 @@ const LaunchpadContainer = () => {
       handleConnectWallet();
       // router.push(ROUTE_PATH.CONNECT_WALLET);
     } else {
-      setShowModal(true);
+      const id = 'modalCreateToken';
+      const close = () => dispatch(closeModal({id}));
+      dispatch(updateCurrentTransaction(null));
+      dispatch(
+        openModal({
+          id,
+          theme: 'dark',
+          title: 'Create Smart BRC-20',
+          className: styles.modalContent,
+          modalProps: {
+            centered: true,
+            size: mobileScreen ? 'full' : 'xl',
+            zIndex: 9999999,
+          },
+          render: () => (
+            <CreateTokenForm onClose={close}/>
+          ),
+        }),
+      );
     }
   };
 

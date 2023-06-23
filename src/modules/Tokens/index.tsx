@@ -2,33 +2,34 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-empty-function */
 import Button from '@/components/Button';
-import { IToken } from '@/interfaces/token';
-import { getTokenRp } from '@/services/swap';
-import { abbreviateNumber, formatCurrency, getTokenIconUrl } from '@/utils';
-import { debounce } from 'lodash';
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import {IToken} from '@/interfaces/token';
+import {getTokenRp} from '@/services/swap';
+import {abbreviateNumber, formatCurrency, getTokenIconUrl} from '@/utils';
+import {debounce} from 'lodash';
+import React, {useEffect, useMemo, useRef, useState} from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import { StyledTokens, UploadFileContainer } from './Tokens.styled';
-import { ROUTE_PATH } from '@/constants/route-path';
-import { Box, Flex, forwardRef, Icon, Spinner, Text } from '@chakra-ui/react';
+import {useDispatch} from 'react-redux';
+import {StyledTokens, UploadFileContainer} from './Tokens.styled';
+import {ROUTE_PATH} from '@/constants/route-path';
+import {Box, Flex, forwardRef, Icon, Spinner, Text} from '@chakra-ui/react';
 import BigNumber from 'bignumber.js';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
+import {useRouter} from 'next/router';
 import BodyContainer from '@/components/Swap/bodyContainer';
 import FieldText from '@/components/Swap/form/fieldText';
-import ListTable, { ColumnProp } from '@/components/Swap/listTable';
-import { CDN_URL } from '@/configs';
-import { GM_ADDRESS, WBTC_ADDRESS, WETH_ADDRESS } from '@/constants/common';
+import ListTable, {ColumnProp} from '@/components/Swap/listTable';
+import {CDN_URL} from '@/configs';
+import {GM_ADDRESS, WBTC_ADDRESS, WETH_ADDRESS} from '@/constants/common';
 import useDebounce from '@/hooks/useDebounce';
 import px2rem from '@/utils/px2rem';
-import { Field, Form, useFormState } from 'react-final-form';
-import { AiOutlineCaretDown, AiOutlineCaretUp } from 'react-icons/ai';
-import { VscArrowSwap } from 'react-icons/vsc';
+import {Field, Form, useFormState} from 'react-final-form';
+import {AiOutlineCaretDown, AiOutlineCaretUp} from 'react-icons/ai';
+import {VscArrowSwap} from 'react-icons/vsc';
 import styles from './styles.module.scss';
 import TokenChartLast7Day from './Token.ChartLast7Day';
 import VerifiedBadgeToken from './verifiedBadgeToken';
-import { FiSearch } from 'react-icons/fi';
-import { useWindowSize } from '@trustless-computer/dapp-core';
+import {FiSearch} from 'react-icons/fi';
+import {useWindowSize} from '@trustless-computer/dapp-core';
 
 const LIMIT_PAGE = 100;
 
@@ -39,7 +40,6 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const [tokensList, setTokensList] = useState<IToken[]>([]);
   const [sort, setSort] = useState({ sort: '' });
   const { values } = useFormState();
-
   const { mobileScreen } = useWindowSize();
 
   const fetchTokens = async (page = 1, isFetchMore = false) => {
@@ -620,7 +620,6 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           showEmpty={false}
         />
       </InfiniteScroll>
-      {/*<ModalCreateToken show={showModal} handleClose={() => setShowModal(false)} />*/}
     </StyledTokens>
   );
 });

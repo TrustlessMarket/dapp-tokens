@@ -1,7 +1,8 @@
-import { API_EXCHANGE_URL, API_URL } from '@/configs';
-import { IPagingParams } from '@/interfaces/api/query';
-import { IToken } from '@/interfaces/token';
-import { swrFetcher } from '@/utils/swr';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import {API_EXCHANGE_URL, API_URL} from '@/configs';
+import {IPagingParams} from '@/interfaces/api/query';
+import {IToken} from '@/interfaces/token';
+import {swrFetcher} from '@/utils/swr';
 import queryString from 'query-string';
 
 const API_PATH = '/token-explorer';
@@ -28,7 +29,7 @@ export const getTokensByWallet = async (
 };
 
 export const getTokenDetail = async (address: string): Promise<IToken> => {
-  return swrFetcher(`${API_URL}${API_PATH}/token/${address}`, {
+  return swrFetcher(`${API_EXCHANGE_URL}${API_PATH}/token/${address}`, {
     method: 'GET',
     error: 'Fail to get token detail',
   });
@@ -47,6 +48,9 @@ export interface IUpdateTokenPayload {
   };
   symbol?: string;
   thumbnail?: string;
+  contract_address?: string;
+  tx_hash?: string;
+  total_supply?: string;
 }
 
 export interface IUpdateTokenResponse {
@@ -76,5 +80,19 @@ export const updateTwitterTokenInfo = (
     method: 'PUT',
     data: payload,
     error: 'Failed to update token info',
+  });
+};
+
+export interface ICreateTokenParams {
+  network: string;
+  address?: string;
+}
+
+export const createTokenInfo = (params: ICreateTokenParams, payload: IUpdateTokenPayload): Promise<IUpdateTokenResponse> => {
+  const qs = '?' + queryString.stringify(params);
+  return swrFetcher(`${API_EXCHANGE_URL}${API_PATH}/token${qs}`, {
+    method: 'POST',
+    data: payload,
+    error: 'Failed to create token info',
   });
 };

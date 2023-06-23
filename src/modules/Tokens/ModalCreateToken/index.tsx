@@ -109,7 +109,7 @@ const ModalCreateToken: React.FC<Props> = (props: Props) => {
         name,
         symbol,
         maxSupply: Number(supply),
-        selectFee,
+        // selectFee,
       });
       toast.success('Transaction has been created. Please wait for few minutes.');
       handleClose();

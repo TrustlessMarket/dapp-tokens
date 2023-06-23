@@ -6,7 +6,7 @@ import React, { useMemo, useRef, useState } from 'react';
 import ReactPlayer from 'react-player';
 import styles from './styles.module.scss';
 
-const Intro = ({ poolDetail }: any) => {
+const Intro = ({ poolDetail, className }: any) => {
   const refVideo = useRef<any>();
 
   const [isPlay, setIsPlay] = useState(false);
@@ -28,7 +28,7 @@ const Intro = ({ poolDetail }: any) => {
   };
 
   return (
-    <Box className={styles.wrapper}>
+    <Box className={cx(styles.wrapper, className)}>
       {poolDetail?.image && (
         <div
           className={styles.bgBlur}
