@@ -903,69 +903,6 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           </Flex>
         )}
       <Box mt={6}>{renderActionButtons()}</Box>
-      <Flex direction={'column'} mt={4}>
-        {Object.values(poolDetail?.launchpadToken?.social).join('')?.length > 0 && (
-          <Text
-            fontSize={px2rem(16)}
-            fontWeight={400}
-            color={'#B6B6B6'}
-            mb={'8px !important'}
-            mt={2}
-          >
-            Link
-          </Text>
-        )}
-        <SocialToken socials={poolDetail?.launchpadToken?.social} />
-      </Flex>
-      {[LAUNCHPAD_STATUS.Pending].includes(poolDetail?.state) ? (
-        <Text
-          mt={6}
-          fontSize={px2rem(16)}
-          fontWeight={'400'}
-          color={'#FFFFFF'}
-          bgColor={'rgba(255, 255, 255, 0.05)'}
-          borderRadius={'8px'}
-          px={4}
-          py={3}
-        >
-          This project requires community votes to initiate crowdfunding. Please
-          prepare your TM token to participate in the voting process.
-        </Text>
-      ) : [LAUNCHPAD_STATUS.Voting].includes(poolDetail?.state) ? (
-        <Text
-          mt={6}
-          fontSize={px2rem(16)}
-          fontWeight={'400'}
-          color={'#FFFFFF'}
-          bgColor={'rgba(255, 255, 255, 0.05)'}
-          borderRadius={'8px'}
-          px={4}
-          py={3}
-        >
-          If you enjoy this project, please show your support by voting for it.
-        </Text>
-      ) : [LAUNCHPAD_STATUS.Launching].includes(poolDetail?.state) ? (
-        <Text
-          mt={6}
-          fontSize={px2rem(16)}
-          fontWeight={'400'}
-          color={'#FFFFFF'}
-          bgColor={'rgba(255, 255, 255, 0.05)'}
-          borderRadius={'8px'}
-          px={4}
-          py={3}
-        >
-          All or nothing. This project will only be funded if it reaches its goal by{' '}
-          <Text as={'span'} color={'#FF7E21'}>
-            {moment
-              .utc(poolDetail?.launchEnd)
-              .format('ddd, MMMM Do YYYY HH:mm:ss Z')}
-          </Text>
-          .
-        </Text>
-      ) : (
-        <></>
-      )}
     </form>
   );
 });

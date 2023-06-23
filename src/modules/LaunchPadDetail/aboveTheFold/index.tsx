@@ -28,6 +28,8 @@ import {
 } from '@chakra-ui/react';
 import moment from 'moment/moment';
 import { FaFireAlt } from 'react-icons/fa';
+import SocialToken from "@/components/Social";
+import React from "react";
 
 const AboveTheFold = ({ poolDetail, userBoost }: any) => {
   const launchpadToken: IToken = poolDetail?.launchpadToken;
@@ -42,6 +44,7 @@ const AboveTheFold = ({ poolDetail, userBoost }: any) => {
         justifyContent={['center', 'space-between']}
         flexDirection={['column', 'row']}
         gap={8}
+        alignItems={'center'}
       >
         <Flex
           gap={4}
@@ -55,7 +58,7 @@ const AboveTheFold = ({ poolDetail, userBoost }: any) => {
               className={'launchpad-token-avatar'}
             />
           </Flex>
-          <Box>
+          <Flex gap={2} direction={"column"}>
             <Flex gap={1} fontSize={px2rem(24)} fontWeight={'500'}>
               {launchpadToken.name}{' '}
               <span style={{ color: 'rgba(255,255,255,0.7)' }}>
@@ -63,14 +66,70 @@ const AboveTheFold = ({ poolDetail, userBoost }: any) => {
               </span>
               <VerifiedBadgeLaunchpad launchpad={poolDetail} />
             </Flex>
-            <Flex alignItems={'center'} mt={2} gap={2}>
+            <Flex alignItems={'center'} gap={2}>
               <Text className={styles.boxProposalId}>
                 Launchpad #{formatCurrency(poolDetail.id, 0)}
               </Text>
               <LaunchpadStatus row={poolDetail} />
             </Flex>
-          </Box>
+            <SocialToken socials={poolDetail?.launchpadToken?.social} />
+          </Flex>
         </Flex>
+        {[LAUNCHPAD_STATUS.Pending].includes(poolDetail?.state) ? (
+          <Text
+            fontSize={px2rem(16)}
+            fontWeight={'400'}
+            color={'#FFFFFF'}
+            bgColor={'rgba(255, 255, 255, 0.05)'}
+            borderRadius={'8px'}
+            px={6}
+            py={2}
+            maxW={px2rem(450)}
+            textAlign={"center"}
+            h={"fit-content"}
+          >
+            This project requires community votes to initiate crowdfunding. Please
+            prepare your TM token to participate in the voting process.
+          </Text>
+        ) : [LAUNCHPAD_STATUS.Voting].includes(poolDetail?.state) ? (
+          <Text
+            fontSize={px2rem(16)}
+            fontWeight={'400'}
+            color={'#FFFFFF'}
+            bgColor={'rgba(255, 255, 255, 0.05)'}
+            borderRadius={'8px'}
+            px={6}
+            py={2}
+            maxW={px2rem(450)}
+            textAlign={"center"}
+            h={"fit-content"}
+          >
+            If you enjoy this project, please show your support by voting for it.
+          </Text>
+        ) : [LAUNCHPAD_STATUS.Launching].includes(poolDetail?.state) ? (
+          <Text
+            fontSize={px2rem(16)}
+            fontWeight={'400'}
+            color={'#FFFFFF'}
+            bgColor={'rgba(255, 255, 255, 0.05)'}
+            borderRadius={'8px'}
+            px={6}
+            py={2}
+            maxW={px2rem(450)}
+            textAlign={"center"}
+            h={"fit-content"}
+          >
+            All or nothing. This project will only be funded if it reaches its goal by{' '}
+            <Text as={'span'} color={'#FF7E21'}>
+              {moment
+                .utc(poolDetail?.launchEnd)
+                .format('ddd, MMMM Do YYYY HH:mm:ss Z')}
+            </Text>
+            .
+          </Text>
+        ) : (
+          <></>
+        )}
         <Flex
           alignItems={'center'}
           justifyContent={'center'}
