@@ -5,16 +5,21 @@ import {getUserTradeHistory} from '@/services/swap';
 import {camelCaseKeys, formatCurrency, formatLongAddress} from '@/utils';
 import {Flex, Text} from '@chakra-ui/react';
 import moment from 'moment';
-import {useEffect, useMemo, useState} from 'react';
+import {useContext, useEffect, useMemo, useState} from 'react';
 import {useWeb3React} from "@web3-react/core";
 import usePendingSwapTransactions from "@/hooks/contract-operations/swap/usePendingSwapTransactions";
+import {IResourceChain} from "@/interfaces/chain";
+import {WalletContext} from "@/contexts/wallet-context";
 
 const TokenHistory = () => {
   const [list, setList] = useState<any[]>([]);
   const [listPending, setListPending] = useState<any[]>([]);
   const { account } = useWeb3React();
-  // const account = '0x07e51AEc82C7163e3237cfbf8C0E6A07413FA18E';
+  const { getConnectedChainInfo } = useContext(WalletContext);
+  const chainInfo: IResourceChain = getConnectedChainInfo();
   const { call: getPendingSwapTransactions } = usePendingSwapTransactions();
+
+  console.log('chainInfo', chainInfo);
 
   useEffect(() => {
     if(account) {
@@ -29,6 +34,7 @@ const TokenHistory = () => {
         address: account as string,
         page: 1,
         limit: 30,
+        network: chainInfo.chain.toLowerCase()
       });
       setList(response || []);
     } catch (error) {}
