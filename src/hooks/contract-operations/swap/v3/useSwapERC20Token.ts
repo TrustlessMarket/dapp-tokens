@@ -1,4 +1,4 @@
-import UniswapV3RouterJson from '@/abis/SwapRouter.json';
+import SwapRouterJson from '@/abis/SwapRouter.json';
 import {transactionType} from '@/components/Swap/alertInfoProcessing/types';
 import {UNIV3_ROUTER_ADDRESS, WALLET_URL} from '@/configs';
 import {MaxUint256} from '@/constants/url';
@@ -9,10 +9,12 @@ import {logErrorToServer, scanTrx} from '@/services/swap';
 import store from '@/state';
 import {updateCurrentTransaction} from '@/state/pnftExchange';
 import {colors} from '@/theme/colors';
-import {getContract, getDefaultGasPrice} from '@/utils';
+import {getContract} from '@/utils';
 import {useWeb3React} from '@web3-react/core';
 import {useCallback} from 'react';
 import Web3 from 'web3';
+import {encodePath} from "@/utils/path";
+import {FeeAmount} from "@/utils/constants";
 
 export interface ISwapERC20TokenParams {
   addresses: string[];
@@ -33,7 +35,7 @@ const useSwapERC20Token: ContractOperationHook<
       if (account && provider) {
         const contract = getContract(
           UNIV3_ROUTER_ADDRESS,
-          UniswapV3RouterJson,
+          SwapRouterJson,
           provider,
           account,
         );
@@ -57,19 +59,19 @@ const useSwapERC20Token: ContractOperationHook<
         //   throw Error(ERROR_CODE.PENDING);
         // }
 
-        const gasLimit = 50000 + addresses.length * 100000;
+        // const gasLimit = 50000 + addresses.length * 100000;
 
         const transaction = await contract
           .connect(provider.getSigner())
           .exactInput(
-            addresses,
+            encodePath(addresses, Array(addresses.length).fill(FeeAmount.MEDIUM)),
             address,
             MaxUint256,
             Web3.utils.toWei(amount, 'ether'),
             Web3.utils.toWei(amountOutMin, 'ether'),
             {
-              gasLimit,
-              gasPrice: getDefaultGasPrice(),
+              // gasLimit,
+              gasPrice: await provider.getGasPrice(),
             },
           );
 
@@ -77,7 +79,7 @@ const useSwapERC20Token: ContractOperationHook<
           type: 'logs',
           address: account,
           error: JSON.stringify(transaction),
-          message: `gasLimit: '${gasLimit}'`,
+          // message: `gasLimit: '${gasLimit}'`,
         });
 
         store.dispatch(
