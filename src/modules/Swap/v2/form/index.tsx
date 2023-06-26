@@ -1272,9 +1272,7 @@ const TradingForm = () => {
   const [submitting, setSubmitting] = useState(false);
   const dispatch = useAppDispatch();
   const { account } = useWeb3React();
-  const { run: swapToken } = useContractOperation<ISwapERC20TokenParams, boolean>({
-    operation: useSwapERC20Token,
-  });
+  const { call: swapToken } = useSwapERC20Token();
   const slippage = useAppSelector(selectPnftExchange).slippage;
   const { mobileScreen } = useWindowSize();
   const { call: getEstimateSwap } = useEstimateSwapERC20Token();
