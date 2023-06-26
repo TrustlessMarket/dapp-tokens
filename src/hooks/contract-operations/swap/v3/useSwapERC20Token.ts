@@ -93,7 +93,7 @@ const useSwapERC20Token: ContractOperationHook<
             id: transactionType.createPoolApprove,
             hash: transaction.hash,
             infoTexts: {
-              pending: `Please go to the trustless wallet and click on <a style="color: ${colors.bluePrimary}" href="${WALLET_URL}" target="_blank" >"Process Transaction"</a> for Bitcoin to complete this process.`,
+              pending: `Transaction confirmed. Please wait for it to be processed.`,
             },
           }),
         );

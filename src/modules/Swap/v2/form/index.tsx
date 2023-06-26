@@ -22,7 +22,7 @@ import {
 import {toastError} from '@/constants/error';
 import {AssetsContext} from '@/contexts/assets-context';
 import useGetReserves from '@/hooks/contract-operations/swap/useReserves';
-import useSwapERC20Token from '@/hooks/contract-operations/swap/v3/useSwapERC20Token';
+import useSwapERC20Token, {ISwapERC20TokenParams} from '@/hooks/contract-operations/swap/v3/useSwapERC20Token';
 import useApproveERC20Token from '@/hooks/contract-operations/token/useApproveERC20Token';
 import useBalanceERC20Token from '@/hooks/contract-operations/token/useBalanceERC20Token';
 import useIsApproveERC20Token from '@/hooks/contract-operations/token/useIsApproveERC20Token';
@@ -69,6 +69,7 @@ import {L2_CHAIN_INFO} from "@/constants/chains";
 import useEstimateSwapERC20Token, {
   IEstimateSwapERC20Token
 } from "@/hooks/contract-operations/swap/v3/useEstimateSwapERC20Token";
+import useContractOperation from "@/hooks/contract-operations/useContractOperation";
 
 const LIMIT_PAGE = 500;
 export const MakeFormSwap = forwardRef((props, ref) => {
@@ -145,11 +146,6 @@ export const MakeFormSwap = forwardRef((props, ref) => {
 
   const onBaseAmountChange = useCallback(
     debounce((p) => handleBaseAmountChange(p), 1000),
-    [],
-  );
-
-  const onQuoteAmountChange = useCallback(
-    debounce((p) => handleQuoteAmountChange(p), 1000),
     [],
   );
 
@@ -583,145 +579,9 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     }
   };
 
-  const onChangeValueQuoteAmount = (amount: any) => {
-    onQuoteAmountChange({
-      amount,
-      reserveInfos,
-      tokenIn: baseToken,
-      tokenOut: quoteToken,
-      swapRoutes: swapRoutes,
-    });
-  };
-
-  const handleQuoteAmountChange = ({
-    amount,
-    reserveInfos,
-    tokenIn,
-    tokenOut,
-    swapRoutes,
-  }: {
-    amount: any;
-    reserveInfos: any;
-    tokenIn: any;
-    tokenOut: any;
-    swapRoutes: any;
-  }) => {
-    try {
-      if (
-        !amount ||
-        isNaN(Number(amount)) ||
-        !tokenIn?.address ||
-        !tokenOut?.address
-      )
-        return;
-
-      if (
-        !compareString(tokenIn?.address, WBTC_ADDRESS) &&
-        !compareString(tokenOut?.address, WBTC_ADDRESS) &&
-        swapRoutes?.length > 1
-      ) {
-        const listPair = [
-          { baseToken: tokenOut, quoteToken: { address: WBTC_ADDRESS } },
-          { baseToken: { address: WBTC_ADDRESS }, quoteToken: tokenIn },
-        ];
-        const reserveInfosRevert = [...reserveInfos].reverse();
-
-        let _amount = amount;
-        for (let index = 0; index < listPair?.length; index++) {
-          const { baseToken, quoteToken } = listPair[index];
-          const [token0, token1] = sortAddressPair(baseToken, quoteToken);
-
-          const { _reserveIn, _reserveOut } = compareString(
-            token0?.address,
-            baseToken?.address,
-          )
-            ? {
-                _reserveIn: reserveInfosRevert[index]?._reserve0,
-                _reserveOut: reserveInfosRevert[index]?._reserve1,
-              }
-            : {
-                _reserveIn: reserveInfosRevert[index]?._reserve1,
-                _reserveOut: reserveInfosRevert[index]?._reserve0,
-              };
-
-          const amountIn = new BigNumber(_amount);
-          const reserveIn = new BigNumber(
-            Web3.utils.fromWei(Web3.utils.toBN(_reserveIn || 0), 'ether').toString(),
-          );
-          const reserveOut = new BigNumber(
-            Web3.utils
-              .fromWei(Web3.utils.toBN(_reserveOut || 0), 'ether')
-              .toString(),
-          );
-          if (amountIn.lte(0) || reserveIn.lte(0) || reserveOut.lte(0)) {
-            return;
-          }
-
-          _amount = getBaseAmountOut(amountIn, reserveIn, reserveOut);
-        }
-
-        const rate = new BigNumber(_amount)
-          .div(amount)
-          .decimalPlaces(tokenIn?.decimal || 18);
-
-        setExchangeRate(rate.toString());
-        change('baseAmount', _amount.toFixed());
-      } else {
-        const [token0, token1] = sortAddressPair(tokenIn, tokenOut);
-
-        const { _reserveIn, _reserveOut } = compareString(
-          token0?.address,
-          tokenOut?.address,
-        )
-          ? {
-              _reserveIn: reserveInfos[0]?._reserve0,
-              _reserveOut: reserveInfos[0]?._reserve1,
-            }
-          : {
-              _reserveIn: reserveInfos[0]?._reserve1,
-              _reserveOut: reserveInfos[0]?._reserve0,
-            };
-
-        const amountIn = new BigNumber(amount);
-        const reserveIn = new BigNumber(
-          Web3.utils.fromWei(Web3.utils.toBN(_reserveIn || 0), 'ether').toString(),
-        );
-        const reserveOut = new BigNumber(
-          Web3.utils.fromWei(Web3.utils.toBN(_reserveOut || 0), 'ether').toString(),
-        );
-        if (amountIn.lte(0) || reserveIn.lte(0) || reserveOut.lte(0)) {
-          return;
-        }
-
-        const baseAmount = getBaseAmountOut(amountIn, reserveIn, reserveOut);
-
-        const rate = new BigNumber(baseAmount)
-          .div(amount)
-          .decimalPlaces(tokenIn?.decimal || 18);
-        setExchangeRate(rate.toString());
-
-        // console.log('handleQuoteAmountChange', baseAmount.toFixed());
-        change('baseAmount', baseAmount.toFixed());
-      }
-    } catch (err: any) {
-      logErrorToServer({
-        type: 'error',
-        address: account,
-        error: JSON.stringify(err),
-        message: err?.message,
-        place_happen: 'handleQuoteAmountChange',
-      });
-    }
-  };
-
   const handleChangeMaxBaseAmount = () => {
     change('baseAmount', baseBalance);
     onChangeValueBaseAmount(baseBalance);
-  };
-
-  const handleChangeMaxQuoteAmount = () => {
-    change('quoteAmount', quoteBalance);
-    onChangeValueQuoteAmount(quoteBalance);
   };
 
   const onShowModalApprove = () => {
@@ -961,16 +821,6 @@ export const MakeFormSwap = forwardRef((props, ref) => {
                 />
                 {quoteToken?.symbol}
               </Flex>
-              <Text
-                cursor={'pointer'}
-                color={'#3385FF'}
-                onClick={handleChangeMaxQuoteAmount}
-                bgColor={'rgba(51, 133, 255, 0.2)'}
-                borderRadius={'4px'}
-                padding={'1px 12px'}
-              >
-                MAX
-              </Text>
             </Flex>
           )
         }
@@ -981,7 +831,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             // placeholder={`0 ${revertCoin[1].symbol}`}
             children={FieldAmount}
             validate={composeValidators(required, validateQuoteAmount)}
-            fieldChanged={onChangeValueQuoteAmount}
+            // fieldChanged={onChangeValueQuoteAmount}
             disabled={true}
             // placeholder={"Enter number of tokens"}
             decimals={quoteToken?.decimal || 18}
@@ -1139,7 +989,9 @@ const TradingForm = () => {
   const [submitting, setSubmitting] = useState(false);
   const dispatch = useAppDispatch();
   const { account } = useWeb3React();
-  const { call: swapToken } = useSwapERC20Token();
+  const { run: swapToken } = useContractOperation<ISwapERC20TokenParams, boolean>({
+    operation: useSwapERC20Token,
+  });
   const slippage = useAppSelector(selectPnftExchange).slippage;
   const { mobileScreen } = useWindowSize();
   const { call: getEstimateSwap } = useEstimateSwapERC20Token();
