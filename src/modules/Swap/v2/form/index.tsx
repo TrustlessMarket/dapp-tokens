@@ -9,7 +9,7 @@ import InputWrapper from '@/components/Swap/form/inputWrapper';
 import HorizontalItem from '@/components/Swap/horizontalItem';
 import TokenBalance from '@/components/Swap/tokenBalance';
 import WrapperConnected from '@/components/WrapperConnected';
-import {CDN_URL, UNIV2_ROUTER_ADDRESS} from '@/configs';
+import {CDN_URL, UNIV3_ROUTER_ADDRESS} from '@/configs';
 import {
   BRIDGE_SUPPORT_TOKEN,
   GM_ADDRESS,
@@ -18,12 +18,11 @@ import {
   TRUSTLESS_GASSTATION,
   USDC_ADDRESS,
   WBTC_ADDRESS,
-  WETH_ADDRESS,
 } from '@/constants/common';
 import {toastError} from '@/constants/error';
 import {AssetsContext} from '@/contexts/assets-context';
 import useGetReserves from '@/hooks/contract-operations/swap/useReserves';
-import useSwapERC20Token, {ISwapERC20TokenParams,} from '@/hooks/contract-operations/swap/useSwapERC20Token';
+import useSwapERC20Token, {ISwapERC20TokenParams,} from '@/hooks/contract-operations/swap/v3/useSwapERC20Token';
 import useApproveERC20Token from '@/hooks/contract-operations/token/useApproveERC20Token';
 import useBalanceERC20Token from '@/hooks/contract-operations/token/useBalanceERC20Token';
 import useIsApproveERC20Token from '@/hooks/contract-operations/token/useIsApproveERC20Token';
@@ -38,7 +37,7 @@ import {
   selectPnftExchange,
   updateCurrentTransaction,
 } from '@/state/pnftExchange';
-import {getIsAuthenticatedSelector, getUserSelector} from '@/state/user/selector';
+import {getIsAuthenticatedSelector} from '@/state/user/selector';
 import {camelCaseKeys, compareString, formatCurrency, sortAddressPair,} from '@/utils';
 import {isDevelop} from '@/utils/commons';
 import {composeValidators, required} from '@/utils/formValidate';
@@ -67,8 +66,6 @@ import {useWindowSize} from '@trustless-computer/dapp-core';
 import InfoTooltip from '@/components/Swap/infoTooltip';
 import ModalConfirmApprove from '@/components/ModalConfirmApprove';
 import tokenIcons from '@/constants/tokenIcons';
-import {IResourceChain} from "@/interfaces/chain";
-import {WalletContext} from "@/contexts/wallet-context";
 import {L2_CHAIN_INFO} from "@/constants/chains";
 import useEstimateSwapERC20Token, {
   IEstimateSwapERC20Token
@@ -413,7 +410,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     try {
       const response = await isApproved({
         erc20TokenAddress: token.address,
-        address: UNIV2_ROUTER_ADDRESS,
+        address: UNIV3_ROUTER_ADDRESS,
       });
       return response;
     } catch (error) {
@@ -444,7 +441,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       );
       const response: any = await approveToken({
         erc20TokenAddress: token.address,
-        address: UNIV2_ROUTER_ADDRESS,
+        address: UNIV3_ROUTER_ADDRESS,
       });
       dispatch(
         updateCurrentTransaction({
@@ -562,7 +559,6 @@ export const MakeFormSwap = forwardRef((props, ref) => {
 
         onBaseAmountChange({
           amount: values?.quoteAmount,
-          reserveInfos: reserveInfos,
           tokenIn: quoteToken,
           tokenOut: baseToken,
           swapRoutes: routes,
@@ -624,64 +620,63 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     });
   };
 
-  const calculateQuoteAmountMultiRoute = ({
-    amount,
-    reserveInfos,
-    tokenIn,
-    tokenOut,
-    swapRoutes,
-    listPair,
-  }: {
-    amount: any;
-    reserveInfos: any;
-    tokenIn: any;
-    tokenOut: any;
-    swapRoutes: any;
-    listPair: any[];
-  }) => {
-    let _amount = amount;
-    for (let index = 0; index < listPair?.length; index++) {
-      const { baseToken, quoteToken } = listPair[index];
-      const [token0, token1] = sortAddressPair(baseToken, quoteToken);
-
-      const { _reserveIn, _reserveOut } = compareString(
-        token0?.address,
-        baseToken?.address,
-      )
-        ? {
-            _reserveIn: reserveInfos[index]?._reserve0,
-            _reserveOut: reserveInfos[index]?._reserve1,
-          }
-        : {
-            _reserveIn: reserveInfos[index]?._reserve1,
-            _reserveOut: reserveInfos[index]?._reserve0,
-          };
-
-      const amountIn = new BigNumber(_amount);
-      const reserveIn = new BigNumber(
-        Web3.utils.fromWei(Web3.utils.toBN(_reserveIn || 0), 'ether').toString(),
-      );
-      const reserveOut = new BigNumber(
-        Web3.utils.fromWei(Web3.utils.toBN(_reserveOut || 0), 'ether').toString(),
-      );
-      if (amountIn.lte(0) || reserveIn.lte(0) || reserveOut.lte(0)) {
-        return;
-      }
-
-      _amount = getQuoteAmountOut(amountIn, reserveIn, reserveOut);
-    }
-
-    const rate = new BigNumber(amount)
-      .div(_amount)
-      .decimalPlaces(tokenIn?.decimal || 18);
-
-    setExchangeRate(rate.toString());
-    change('quoteAmount', _amount.toFixed());
-  };
+  // const calculateQuoteAmountMultiRoute = ({
+  //   amount,
+  //   reserveInfos,
+  //   tokenIn,
+  //   tokenOut,
+  //   swapRoutes,
+  //   listPair,
+  // }: {
+  //   amount: any;
+  //   reserveInfos: any;
+  //   tokenIn: any;
+  //   tokenOut: any;
+  //   swapRoutes: any;
+  //   listPair: any[];
+  // }) => {
+  //   let _amount = amount;
+  //   for (let index = 0; index < listPair?.length; index++) {
+  //     const { baseToken, quoteToken } = listPair[index];
+  //     const [token0, token1] = sortAddressPair(baseToken, quoteToken);
+  //
+  //     const { _reserveIn, _reserveOut } = compareString(
+  //       token0?.address,
+  //       baseToken?.address,
+  //     )
+  //       ? {
+  //           _reserveIn: reserveInfos[index]?._reserve0,
+  //           _reserveOut: reserveInfos[index]?._reserve1,
+  //         }
+  //       : {
+  //           _reserveIn: reserveInfos[index]?._reserve1,
+  //           _reserveOut: reserveInfos[index]?._reserve0,
+  //         };
+  //
+  //     const amountIn = new BigNumber(_amount);
+  //     const reserveIn = new BigNumber(
+  //       Web3.utils.fromWei(Web3.utils.toBN(_reserveIn || 0), 'ether').toString(),
+  //     );
+  //     const reserveOut = new BigNumber(
+  //       Web3.utils.fromWei(Web3.utils.toBN(_reserveOut || 0), 'ether').toString(),
+  //     );
+  //     if (amountIn.lte(0) || reserveIn.lte(0) || reserveOut.lte(0)) {
+  //       return;
+  //     }
+  //
+  //     _amount = getQuoteAmountOut(amountIn, reserveIn, reserveOut);
+  //   }
+  //
+  //   const rate = new BigNumber(amount)
+  //     .div(_amount)
+  //     .decimalPlaces(tokenIn?.decimal || 18);
+  //
+  //   setExchangeRate(rate.toString());
+  //   change('quoteAmount', _amount.toFixed());
+  // };
 
   const handleBaseAmountChange = async ({
     amount,
-    reserveInfos,
     tokenIn,
     tokenOut,
     swapRoutes,
@@ -701,10 +696,10 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       )
         return;
 
-      const addressess = swapRoutes?.pathTokens?.map((token: IToken) => token.address);
+      const addresses = swapRoutes?.pathTokens?.map((token: IToken) => token.address);
 
       const params: IEstimateSwapERC20Token = {
-        addresses: addressess,
+        addresses: addresses,
         amount: amount
       };
       const estimateAmountOut = await getEstimateSwap(params);
@@ -1285,9 +1280,9 @@ const TradingForm = () => {
   const { run: swapToken } = useContractOperation<ISwapERC20TokenParams, boolean>({
     operation: useSwapERC20Token,
   });
-  const user = useSelector(getUserSelector);
   const slippage = useAppSelector(selectPnftExchange).slippage;
   const { mobileScreen } = useWindowSize();
+  const { call: getEstimateSwap } = useEstimateSwapERC20Token();
 
   useEffect(() => {
     return () => {
@@ -1405,28 +1400,23 @@ const TradingForm = () => {
         }),
       );
 
-      const amountOutMin = new BigNumber(quoteAmount)
+      const addresses = swapRoutes?.pathTokens?.map((token: IToken) => token.address);
+
+      const params: IEstimateSwapERC20Token = {
+        addresses: addresses,
+        amount: baseAmount
+      };
+      const estimateAmountOut = await getEstimateSwap(params);
+
+      const amountOutMin = new BigNumber(estimateAmountOut)
         .multipliedBy(100 - slippage)
         .dividedBy(100)
         .decimalPlaces(quoteToken?.decimal || 18)
         .toString();
 
-      const addresses =
-        !compareString(baseToken?.address, WBTC_ADDRESS) &&
-        !compareString(quoteToken?.address, WBTC_ADDRESS) &&
-        swapRoutes?.length > 1
-          ? [baseToken.address, WBTC_ADDRESS, quoteToken.address]
-          : ((compareString(baseToken?.address, WBTC_ADDRESS) &&
-              compareString(quoteToken?.address, GM_ADDRESS)) ||
-              (compareString(baseToken?.address, GM_ADDRESS) &&
-                compareString(quoteToken?.address, WBTC_ADDRESS))) &&
-            swapRoutes?.length > 1
-          ? [baseToken.address, WETH_ADDRESS, quoteToken.address]
-          : [baseToken.address, quoteToken.address];
-
       const data = {
         addresses: addresses,
-        address: user?.walletAddress,
+        address: account,
         amount: baseAmount,
         amountOutMin: amountOutMin,
       };
