@@ -127,11 +127,6 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const { values } = useFormState();
   const { change, restart } = useForm();
   const btnDisabled = loading || !baseToken || !quoteToken;
-  // const isRequireApprove =
-  //   isAuthenticated &&
-  //   new BigNumber(amountBaseTokenApproved || 0).lt(
-  //     Web3.utils.toWei(`${values?.baseAmount || 0}`, 'ether'),
-  //   );
 
   const isRequireApprove = useMemo(() => {
     let result = false;

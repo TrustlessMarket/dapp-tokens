@@ -60,15 +60,20 @@ const useSwapERC20Token: ContractOperationHook<
         // }
 
         // const gasLimit = 50000 + addresses.length * 100000;
+        const fees = Array(addresses.length - 1).fill(FeeAmount.MEDIUM);
+
+        const data = {
+          path: encodePath(addresses, fees),
+          recipient: address,
+          deadline: MaxUint256,
+          amountIn: Web3.utils.toWei(amount, 'ether'),
+          amountOutMinimum: Web3.utils.toWei(amountOutMin, 'ether'),
+        }
 
         const transaction = await contract
           .connect(provider.getSigner())
           .exactInput(
-            encodePath(addresses, Array(addresses.length).fill(FeeAmount.MEDIUM)),
-            address,
-            MaxUint256,
-            Web3.utils.toWei(amount, 'ether'),
-            Web3.utils.toWei(amountOutMin, 'ether'),
+            data,
             {
               // gasLimit,
               gasPrice: await provider.getGasPrice(),
