@@ -1,20 +1,24 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import BodyContainer from '@/components/Swap/bodyContainer';
-import React from 'react';
-import s from './styles.module.scss';
-import { Box, Flex, Heading, Icon, IconButton } from '@chakra-ui/react';
-import { BiChevronLeft } from 'react-icons/bi';
-import { Form } from 'react-final-form';
-import FormAddPoolsV2Container from './form';
-import { useRouter } from 'next/router';
 import { ROUTE_PATH } from '@/constants/route-path';
 import { IPoolV2AddPair } from '@/pages/pools/v2/add/[...id]';
+import { Box, Flex, Heading, Icon, IconButton } from '@chakra-ui/react';
+import { useRouter } from 'next/router';
+import React from 'react';
+import { Form } from 'react-final-form';
+import { BiChevronLeft } from 'react-icons/bi';
+import FormAddPoolsV2Container from './form';
+import s from './styles.module.scss';
 
 type IPoolsV2AddPage = IPoolV2AddPair;
 
 const PoolsV2AddPage: React.FC<IPoolsV2AddPage> = ({ ids }) => {
   const router = useRouter();
 
-  const onSubmit = async () => {
+  const onSubmit = async (values: any) => {
+    console.log('values', values);
+
     try {
     } catch (error) {
     } finally {

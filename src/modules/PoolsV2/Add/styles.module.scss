@@ -81,7 +81,7 @@
         border: none;
         align-items: center;
         .customAddItemToken {
-          background-color: #353945;
+          background-color: #262931;
           padding: rem(6) rem(8);
           border-radius: 16px;
           gap: rem(4);
@@ -102,10 +102,24 @@
           background: transparent !important;
         }
       }
+      .field-note {
+        margin-top: 0 !important;
+        padding-left: 8px !important;
+        padding-right: 16px !important;
+        padding-bottom: 8px !important;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
     }
     &__amountWrap {
       background: var(--bs-gray-dark);
       border-radius: 16px;
+      &__balance {
+        color: white !important;
+        opacity: 0.9;
+        font-size: rem(12);
+      }
     }
     &__inputAmount {
       &:disabled {
@@ -115,6 +129,15 @@
       @media screen and (max-width: 768px) {
         font-size: 18px !important;
       }
+    }
+    &__feeTier {
+      color: white;
+    }
+  }
+
+  &__right {
+    &__btnInActive {
+      background-color: var(--bs-gray-dark) !important;
     }
   }
 }

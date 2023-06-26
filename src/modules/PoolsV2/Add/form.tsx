@@ -1,27 +1,28 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable react/no-children-prop */
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import FiledButton from '@/components/Swap/button/filedButton';
 import FilterButton from '@/components/Swap/filterToken';
+import FieldAmount from '@/components/Swap/form/fieldAmount';
 import InputWrapper from '@/components/Swap/form/inputWrapper';
-import { IToken } from '@/interfaces/token';
-import { Box, Flex } from '@chakra-ui/react';
-import React, { useContext, useEffect, useState } from 'react';
-import { Field, useForm, useFormState } from 'react-final-form';
-import s from './styles.module.scss';
-import { IPoolV2AddPair } from '@/pages/pools/v2/add/[...id]';
-import { getTokens } from '@/services/token-explorer';
+import WrapperConnected from '@/components/WrapperConnected';
+import { ROUTE_PATH } from '@/constants/route-path';
 import { WalletContext } from '@/contexts/wallet-context';
 import { IResourceChain } from '@/interfaces/chain';
+import { IToken } from '@/interfaces/token';
+import { IPoolV2AddPair } from '@/pages/pools/v2/add/[...id]';
+import { getTokens } from '@/services/token-explorer';
 import { compareString } from '@/utils';
+import { composeValidators, requiredAmount } from '@/utils/formValidate';
+import { Box, Flex } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
-import { ROUTE_PATH } from '@/constants/route-path';
+import React, { useContext, useEffect, useState } from 'react';
+import { Field, useForm, useFormState } from 'react-final-form';
+import { checkBalanceIsApprove, getUniFee, validateBaseAmount } from '../utils';
 import AddItemToken from './Add.ItemToken';
-import FieldAmount from '@/components/Swap/form/fieldAmount';
-import FiledButton from '@/components/Swap/button/filedButton';
-import { UNIV3_ROUTER_ADDRESS } from '@/configs';
-import useIsApproveERC20Token from '@/hooks/contract-operations/token/useIsApproveERC20Token';
-import useBalanceERC20Token from '@/hooks/contract-operations/token/useBalanceERC20Token';
-import web3 from 'web3';
+import AddPriceRange from './Add.PriceRange';
+import AddTokenBalance from './Add.TokenBalance';
+import s from './styles.module.scss';
 
 interface IFormAddPoolsV2Container extends IPoolV2AddPair {
   handleSubmit: (_: any) => void;
@@ -37,22 +38,34 @@ const FormAddPoolsV2Container: React.FC<IFormAddPoolsV2Container> = ({
   const { getConnectedChainInfo } = useContext(WalletContext);
   const connectInfo: IResourceChain = getConnectedChainInfo();
 
-  const { call: isApproved } = useIsApproveERC20Token();
-  const { call: tokenBalance } = useBalanceERC20Token();
-
   const router = useRouter();
 
   const [loading, setLoading] = useState(true);
   const [tokensList, setTokenList] = useState<IToken[]>([]);
-  const [isApproveAmountBaseToken, setIsApproveAmountBaseToken] =
-    useState<string>('0');
-  const [isApproveAmountQuoteToken, setIsApproveAmountQuoteToken] =
-    useState<string>('0');
 
   const { values } = useFormState();
   const { initialize, change } = useForm();
-  const baseToken = values?.baseToken;
-  const quoteToken = values?.quoteToken;
+  const baseToken: IToken = values?.baseToken;
+  const quoteToken: IToken = values?.quoteToken;
+  const baseAmount: any = values?.baseAmount;
+  const quoteAmount: IToken = values?.quoteAmount;
+  const baseTokenBalance: string = values?.baseTokenBalance || '0';
+  const quoteTokenBalance: string = values?.quoteTokenBalance || '0';
+  const baseTokenAmountApprove: string = values?.baseTokenAmountApprove || '0';
+  const quoteTokenAmountApprove: string = values?.quoteTokenAmountApprove || '0';
+  const fee: number = values?.fee || 0;
+
+  const isBaseTokenApprove = checkBalanceIsApprove(
+    baseTokenAmountApprove,
+    baseAmount,
+  );
+
+  const isQuoteTokenApprove = checkBalanceIsApprove(
+    quoteTokenAmountApprove,
+    quoteAmount,
+  );
+
+  const isTokenApproved = isBaseTokenApprove && isQuoteTokenApprove;
 
   useEffect(() => {
     fetchData();
@@ -60,7 +73,7 @@ const FormAddPoolsV2Container: React.FC<IFormAddPoolsV2Container> = ({
 
   useEffect(() => {
     initialData();
-  }, [ids, tokensList]);
+  }, [JSON.stringify(ids), tokensList]);
 
   const fetchData = async () => {
     try {
@@ -80,24 +93,19 @@ const FormAddPoolsV2Container: React.FC<IFormAddPoolsV2Container> = ({
   };
 
   const initialData = () => {
-    const _initialForm: any = {};
+    change('fee', getUniFee());
     const findBaseToken = tokensList.find((v) =>
       compareString(v.address, paramBaseTokenAddress),
     );
     if (findBaseToken) {
-      _initialForm.baseToken = findBaseToken;
+      change('baseToken', findBaseToken);
     }
     const findQuoteToken = tokensList.find((v) =>
       compareString(v.address, paramQuoteTokenAddress),
     );
     if (findBaseToken) {
-      _initialForm.baseToken = findBaseToken;
-      fetchDataForToken(findBaseToken);
+      change('quoteToken', findQuoteToken);
     }
-    if (findBaseToken) {
-      _initialForm.quoteToken = findQuoteToken;
-    }
-    initialize(_initialForm);
   };
 
   const onSelectBaseToken = (_token: IToken) => {
@@ -107,7 +115,6 @@ const FormAddPoolsV2Container: React.FC<IFormAddPoolsV2Container> = ({
       _router += `/${paramQuoteTokenAddress}`;
     }
     router.push(_router);
-    fetchDataForToken(_token);
   };
 
   const onSelectQuoteToken = (_token: IToken) => {
@@ -120,45 +127,6 @@ const FormAddPoolsV2Container: React.FC<IFormAddPoolsV2Container> = ({
     _router += `/${_token.address}`;
 
     router.push(_router);
-  };
-
-  const fetchDataForToken = async (_token: IToken) => {
-    try {
-      const [_isApprove, _tokenBalance] = await Promise.all([
-        checkTokenApprove(_token),
-        getTokenBalance(_token),
-      ]);
-      setIsApproveAmountBaseToken(web3.utils.fromWei(_isApprove));
-      console.log('_tokenBalance', _tokenBalance);
-
-      change('baseTokenBalance', _tokenBalance);
-    } catch (error) {
-      console.log('error', error);
-    } finally {
-    }
-  };
-
-  const checkTokenApprove = async (token: IToken | any) => {
-    try {
-      const response = await isApproved({
-        erc20TokenAddress: token.address,
-        address: UNIV3_ROUTER_ADDRESS,
-      });
-      return response;
-    } catch (error) {
-      throw error;
-    }
-  };
-
-  const getTokenBalance = async (token: IToken | any) => {
-    try {
-      const response = await tokenBalance({
-        erc20TokenAddress: token.address,
-      });
-      return response;
-    } catch (error) {
-      throw error;
-    }
   };
 
   return (
@@ -199,7 +167,7 @@ const FormAddPoolsV2Container: React.FC<IFormAddPoolsV2Container> = ({
               <Field
                 name="baseAmount"
                 children={FieldAmount}
-                //   validate={composeValidators(requiredAmount, validateBaseAmount)}
+                validate={composeValidators(requiredAmount, validateBaseAmount)}
                 //   fieldChanged={onChangeValueBaseAmount}
                 //   disabled={submitting || isDisabled}
                 // placeholder={"Enter number of tokens"}
@@ -213,9 +181,12 @@ const FormAddPoolsV2Container: React.FC<IFormAddPoolsV2Container> = ({
                   )
                 }
                 note={
-                  <>
-                    <Flex>Balance: </Flex>
-                  </>
+                  baseToken && (
+                    <>
+                      <Box />
+                      <AddTokenBalance token={baseToken} name="baseToken" />
+                    </>
+                  )
                 }
               />
             </Box>
@@ -233,15 +204,47 @@ const FormAddPoolsV2Container: React.FC<IFormAddPoolsV2Container> = ({
                 appendComp={
                   quoteToken && <AddItemToken token={quoteToken} hideName={true} />
                 }
-                note={<Flex>Balance: </Flex>}
+                note={
+                  quoteToken && (
+                    <>
+                      <Box />
+                      <AddTokenBalance token={quoteToken} name="quoteToken" />
+                    </>
+                  )
+                }
               />
             </Box>
           </InputWrapper>
+          <Box mt={6} />
+          <InputWrapper label={`Fee Tier: ${fee / 10000}%`}>{''}</InputWrapper>
         </Box>
         <Box className={s.formContainer__right}>
-          <FiledButton type="submit" btnSize="h">
-            Preview
-          </FiledButton>
+          <AddPriceRange />
+          <Box mt={10} />
+          <WrapperConnected>
+            <>
+              {!isTokenApproved && (
+                <>
+                  <FiledButton type="submit" btnSize="h">
+                    Approve{' '}
+                    {!isBaseTokenApprove ? baseToken?.symbol : quoteToken?.symbol}
+                  </FiledButton>
+                  <Box mb={2} />
+                </>
+              )}
+
+              <FiledButton
+                isDisabled={!isTokenApproved}
+                className={
+                  !isTokenApproved ? s.formContainer__right__btnInActive : ''
+                }
+                type="submit"
+                btnSize="h"
+              >
+                Preview
+              </FiledButton>
+            </>
+          </WrapperConnected>
         </Box>
       </Flex>
     </form>
