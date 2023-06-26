@@ -312,7 +312,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         limit: LIMIT_PAGE,
         page: page,
         is_test: isDevelop() ? '1' : '',
-        network: L2_CHAIN_INFO.chain
+        network: L2_CHAIN_INFO.chain.toLowerCase()
       });
 
       const list = res ? camelCaseKeys(res) : [];
@@ -342,7 +342,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         page: 1,
         is_test: isDevelop() ? '1' : '',
         from_token: from_token,
-        network: L2_CHAIN_INFO.chain
+        network: L2_CHAIN_INFO.chain.toLowerCase()
       });
       return res;
     } catch (err: unknown) {
@@ -393,7 +393,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       const params: ISwapRouteParams = {
         from_token: from_token,
         to_token: to_token,
-        network: L2_CHAIN_INFO.chain
+        network: L2_CHAIN_INFO.chain.toLowerCase()
       };
       const response = await getSwapRoutesV1(params);
 

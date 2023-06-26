@@ -102,7 +102,7 @@ export interface ISwapRouteParams {
 
 export const getSwapRoutes = async (params: ISwapRouteParams) => {
   const qs = '?' + queryString.stringify(params);
-  return swrFetcher(`${API_URL}${API_PATH}/token/route${qs}`, {
+  return swrFetcher(`${API_EXCHANGE_URL}${API_PATH}/token/route${qs}`, {
     method: 'GET',
     error: 'Fail to get route',
   });
@@ -110,7 +110,7 @@ export const getSwapRoutes = async (params: ISwapRouteParams) => {
 
 export const getSwapRoutesV1 = async (params: ISwapRouteParams) => {
   const qs = '?' + queryString.stringify(params);
-  return swrFetcher(`${API_URL}${API_PATH}/token/route/v1${qs}`, {
+  return swrFetcher(`${API_EXCHANGE_URL}${API_PATH}/token/route/v1${qs}`, {
     method: 'GET',
     error: 'Fail to get route',
   });
