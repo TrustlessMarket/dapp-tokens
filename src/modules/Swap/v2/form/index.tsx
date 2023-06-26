@@ -22,11 +22,10 @@ import {
 import {toastError} from '@/constants/error';
 import {AssetsContext} from '@/contexts/assets-context';
 import useGetReserves from '@/hooks/contract-operations/swap/useReserves';
-import useSwapERC20Token, {ISwapERC20TokenParams,} from '@/hooks/contract-operations/swap/v3/useSwapERC20Token';
+import useSwapERC20Token from '@/hooks/contract-operations/swap/v3/useSwapERC20Token';
 import useApproveERC20Token from '@/hooks/contract-operations/token/useApproveERC20Token';
 import useBalanceERC20Token from '@/hooks/contract-operations/token/useBalanceERC20Token';
 import useIsApproveERC20Token from '@/hooks/contract-operations/token/useIsApproveERC20Token';
-import useContractOperation from '@/hooks/contract-operations/useContractOperation';
 import {IToken} from '@/interfaces/token';
 import {TransactionStatus} from '@/interfaces/walletTransaction';
 import {getSwapRoutesV1, getSwapTokens, ISwapRouteParams, logErrorToServer} from '@/services/swap';
@@ -88,24 +87,17 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const { call: getReserves } = useGetReserves();
   const [baseBalance, setBaseBalance] = useState<any>('0');
   const [quoteBalance, setQuoteBalance] = useState<any>('0');
-  const [reserveInfos, setReserveInfos] = useState<any[]>([]);
   const { juiceBalance, isLoadedAssets } = useContext(AssetsContext);
   const isAuthenticated = useSelector(getIsAuthenticatedSelector);
   const dispatch = useDispatch();
   const [isSwitching, setIsSwitching] = useState(false);
-  const [isChangeBaseToken, setIsChangeBaseToken] = useState(false);
-  const [isChangeQuoteToken, setIsChangeQuoteToken] = useState(false);
   const router = useRouter();
   const [swapRoutes, setSwapRoutes] = useState<any[]>([]);
   const configs = useAppSelector(selectPnftExchange).configs;
   const swapFee = configs?.swapFee || 0.3;
 
   const { account} = useWeb3React();
-  const needReload = useAppSelector(selectPnftExchange).needReload;
   const [exchangeRate, setExchangeRate] = useState('0');
-  // const { getConnectedChainInfo } =
-  //   useContext(WalletContext);
-  // const chainInfo: IResourceChain = getConnectedChainInfo();
   const { call: getEstimateSwap } = useEstimateSwapERC20Token();
 
   // console.log('chainInfo', chainInfo);
@@ -219,37 +211,6 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     }
   }, [baseToken?.address, quoteToken?.address]);
 
-  useEffect(() => {
-    if (baseToken && quoteToken && swapRoutes?.length > 0) {
-      getReserveInfos();
-    }
-  }, [JSON.stringify(swapRoutes), needReload]);
-
-  const getQuoteAmountOut = (
-    amountIn: BigNumber,
-    reserveIn: BigNumber,
-    reserveOut: BigNumber,
-  ): BigNumber => {
-    try {
-      const amountInWithFee = amountIn.multipliedBy(1000 - swapFee * 10);
-      const numerator = amountInWithFee.multipliedBy(reserveOut);
-      const denominator = reserveIn.multipliedBy(1000).plus(amountInWithFee);
-      const amountOut = numerator.div(denominator).decimalPlaces(18);
-
-      return amountOut;
-    } catch (err: any) {
-      logErrorToServer({
-        type: 'error',
-        address: account,
-        error: JSON.stringify(err),
-        message: err?.message,
-        place_happen: 'getQuoteAmountOut',
-      });
-
-      return new BigNumber(0);
-    }
-  };
-
   const getBaseAmountOut = (
     amountIn: BigNumber,
     reserveIn: BigNumber,
@@ -347,43 +308,6 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     }
   };
 
-  const getReserveInfos = async () => {
-    try {
-      const reserves = [];
-      for (let index = 0; index < swapRoutes.length; index++) {
-        const swapRoute = swapRoutes[index];
-        const response = await getReserves({
-          address: swapRoute?.pair,
-        });
-        reserves.push(response);
-      }
-
-      setReserveInfos(reserves);
-
-      if (isChangeBaseToken) {
-        setIsChangeBaseToken(false);
-        onBaseAmountChange({
-          amount: values?.baseAmount,
-          reserveInfos: reserves,
-          tokenIn: baseToken,
-          tokenOut: quoteToken,
-          swapRoutes: swapRoutes,
-        });
-      } else if (isChangeQuoteToken) {
-        setIsChangeQuoteToken(false);
-        onBaseAmountChange({
-          amount: values?.baseAmount,
-          reserveInfos: reserves,
-          tokenIn: baseToken,
-          tokenOut: quoteToken,
-          swapRoutes: swapRoutes,
-        });
-      }
-    } catch (error) {
-      console.log('error', error);
-    }
-  };
-
   const getSwapRoutesInfo = async (from_token: string, to_token: string) => {
     try {
       const params: ISwapRouteParams = {
@@ -459,7 +383,6 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     if (compareString(baseToken?.address, token?.address)) {
       return;
     }
-    setIsChangeBaseToken(true);
     setBaseToken(token);
     change('baseToken', token);
     router.replace(
@@ -508,7 +431,6 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     if (compareString(quoteToken?.address, token?.address)) {
       return;
     }
-    setIsChangeQuoteToken(true);
 
     setQuoteToken(token);
     change('quoteToken', token);
@@ -614,61 +536,6 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       swapRoutes: swapRoutes,
     });
   };
-
-  // const calculateQuoteAmountMultiRoute = ({
-  //   amount,
-  //   reserveInfos,
-  //   tokenIn,
-  //   tokenOut,
-  //   swapRoutes,
-  //   listPair,
-  // }: {
-  //   amount: any;
-  //   reserveInfos: any;
-  //   tokenIn: any;
-  //   tokenOut: any;
-  //   swapRoutes: any;
-  //   listPair: any[];
-  // }) => {
-  //   let _amount = amount;
-  //   for (let index = 0; index < listPair?.length; index++) {
-  //     const { baseToken, quoteToken } = listPair[index];
-  //     const [token0, token1] = sortAddressPair(baseToken, quoteToken);
-  //
-  //     const { _reserveIn, _reserveOut } = compareString(
-  //       token0?.address,
-  //       baseToken?.address,
-  //     )
-  //       ? {
-  //           _reserveIn: reserveInfos[index]?._reserve0,
-  //           _reserveOut: reserveInfos[index]?._reserve1,
-  //         }
-  //       : {
-  //           _reserveIn: reserveInfos[index]?._reserve1,
-  //           _reserveOut: reserveInfos[index]?._reserve0,
-  //         };
-  //
-  //     const amountIn = new BigNumber(_amount);
-  //     const reserveIn = new BigNumber(
-  //       Web3.utils.fromWei(Web3.utils.toBN(_reserveIn || 0), 'ether').toString(),
-  //     );
-  //     const reserveOut = new BigNumber(
-  //       Web3.utils.fromWei(Web3.utils.toBN(_reserveOut || 0), 'ether').toString(),
-  //     );
-  //     if (amountIn.lte(0) || reserveIn.lte(0) || reserveOut.lte(0)) {
-  //       return;
-  //     }
-  //
-  //     _amount = getQuoteAmountOut(amountIn, reserveIn, reserveOut);
-  //   }
-  //
-  //   const rate = new BigNumber(amount)
-  //     .div(_amount)
-  //     .decimalPlaces(tokenIn?.decimal || 18);
-  //
-  //   setExchangeRate(rate.toString());
-  //   change('quoteAmount', _amount.toFixed());
-  // };
 
   const handleBaseAmountChange = async ({
     amount,
