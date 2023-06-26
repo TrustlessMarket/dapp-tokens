@@ -23,7 +23,7 @@ import {toastError} from '@/constants/error';
 import {AssetsContext} from '@/contexts/assets-context';
 import useGetReserves from '@/hooks/contract-operations/swap/useReserves';
 import useSwapERC20Token, {ISwapERC20TokenParams} from '@/hooks/contract-operations/swap/v3/useSwapERC20Token';
-import useApproveERC20Token from '@/hooks/contract-operations/token/useApproveERC20Token';
+import useApproveERC20Token, {IApproveERC20TokenParams} from '@/hooks/contract-operations/token/useApproveERC20Token';
 import useBalanceERC20Token from '@/hooks/contract-operations/token/useBalanceERC20Token';
 import useIsApproveERC20Token from '@/hooks/contract-operations/token/useIsApproveERC20Token';
 import {IToken} from '@/interfaces/token';
@@ -84,7 +84,9 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const [quoteTokensList, setQuoteTokensList] = useState<IToken[]>([]);
   const { call: isApproved } = useIsApproveERC20Token();
   const { call: tokenBalance } = useBalanceERC20Token();
-  const { call: approveToken } = useApproveERC20Token();
+  const { run: approveToken } = useContractOperation<IApproveERC20TokenParams, boolean>({
+    operation: useApproveERC20Token,
+  });
   const { call: getReserves } = useGetReserves();
   const [baseBalance, setBaseBalance] = useState<any>('0');
   const [quoteBalance, setQuoteBalance] = useState<any>('0');
