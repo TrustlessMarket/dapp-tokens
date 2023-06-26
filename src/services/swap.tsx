@@ -27,6 +27,7 @@ export const getTokenRp = async (
 export interface IListTokenParams {
   is_test?: string;
   from_token?: string;
+  network?: string
 }
 
 export const getSwapTokens = async (

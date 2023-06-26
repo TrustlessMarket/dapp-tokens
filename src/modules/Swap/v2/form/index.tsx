@@ -82,6 +82,9 @@ import { useWindowSize } from '@trustless-computer/dapp-core';
 import InfoTooltip from '@/components/Swap/infoTooltip';
 import ModalConfirmApprove from '@/components/ModalConfirmApprove';
 import tokenIcons from '@/constants/tokenIcons';
+import {IResourceChain} from "@/interfaces/chain";
+import {WalletContext} from "@/contexts/wallet-context";
+import {L2_CHAIN_INFO} from "@/constants/chains";
 
 const LIMIT_PAGE = 500;
 export const MakeFormSwap = forwardRef((props, ref) => {
@@ -115,7 +118,11 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const { account} = useWeb3React();
   const needReload = useAppSelector(selectPnftExchange).needReload;
   const [exchangeRate, setExchangeRate] = useState('0');
+  const { getConnectedChainInfo } =
+    useContext(WalletContext);
+  const chainInfo: IResourceChain = getConnectedChainInfo();
 
+  console.log('chainInfo', chainInfo);
   // console.log('isSwitching', isSwitching);
   // console.log('amountBaseTokenApproved', amountBaseTokenApproved);
   // console.log('formatEthPrice', formatEthPrice(amountBaseTokenApproved));
@@ -129,7 +136,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   // console.log('quoteTokensList', quoteTokensList);
   // console.log('reserveInfos', reserveInfos);
   // console.log('swapRoutes', swapRoutes);
-  // console.log('======');
+  console.log('======');
 
   const { values } = useFormState();
   const { change, restart } = useForm();
@@ -320,6 +327,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         limit: LIMIT_PAGE,
         page: page,
         is_test: isDevelop() ? '1' : '',
+        network: L2_CHAIN_INFO.chain
       });
 
       const list = res ? camelCaseKeys(res) : [];
@@ -349,6 +357,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         page: 1,
         is_test: isDevelop() ? '1' : '',
         from_token: from_token,
+        network: L2_CHAIN_INFO.chain
       });
       return res;
     } catch (err: unknown) {
@@ -474,7 +483,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     setBaseToken(token);
     change('baseToken', token);
     router.replace(
-      `${ROUTE_PATH.SWAP}?from_token=${token.address}&to_token=${
+      `${ROUTE_PATH.SWAP_V2}?from_token=${token.address}&to_token=${
         router?.query?.to_token || ''
       }`,
     );
@@ -524,7 +533,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     setQuoteToken(token);
     change('quoteToken', token);
     router.replace(
-      `${ROUTE_PATH.SWAP}?from_token=${router?.query?.from_token || ''}&to_token=${
+      `${ROUTE_PATH.SWAP_V2}?from_token=${router?.query?.from_token || ''}&to_token=${
         token.address
       }`,
     );
@@ -547,7 +556,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     setAmountBaseTokenApproved(amountQuoteTokenApproved);
     setAmountQuoteTokenApproved(amountBaseTokenApproved);
     router.replace(
-      `${ROUTE_PATH.SWAP}?from_token=${router?.query?.to_token || ''}&to_token=${
+      `${ROUTE_PATH.SWAP_V2}?from_token=${router?.query?.to_token || ''}&to_token=${
         router?.query?.from_token || ''
       }`,
     );
