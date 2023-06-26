@@ -46,7 +46,7 @@ export function decodePath(path: string): [string[], number[]] {
   let tokens: string[] = []
   let fees: number[] = []
   let i = 0
-  let finalToken: string = ''
+  let finalToken= ''
   while (data.length >= DATA_SIZE) {
     const [[tokenA, tokenB], fee] = decodeOne(data)
     finalToken = tokenB
