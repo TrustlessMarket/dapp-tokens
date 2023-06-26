@@ -1,7 +1,7 @@
 /* eslint-disable react/no-children-prop */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { transactionType } from '@/components/Swap/alertInfoProcessing/types';
+import {transactionType} from '@/components/Swap/alertInfoProcessing/types';
 import FiledButton from '@/components/Swap/button/filedButton';
 import FilterButton from '@/components/Swap/filterToken';
 import FieldAmount from '@/components/Swap/form/fieldAmount';
@@ -9,7 +9,7 @@ import InputWrapper from '@/components/Swap/form/inputWrapper';
 import HorizontalItem from '@/components/Swap/horizontalItem';
 import TokenBalance from '@/components/Swap/tokenBalance';
 import WrapperConnected from '@/components/WrapperConnected';
-import { CDN_URL, UNIV2_ROUTER_ADDRESS } from '@/configs';
+import {CDN_URL, UNIV2_ROUTER_ADDRESS} from '@/configs';
 import {
   BRIDGE_SUPPORT_TOKEN,
   GM_ADDRESS,
@@ -20,68 +20,56 @@ import {
   WBTC_ADDRESS,
   WETH_ADDRESS,
 } from '@/constants/common';
-import { toastError } from '@/constants/error';
-import { AssetsContext } from '@/contexts/assets-context';
+import {toastError} from '@/constants/error';
+import {AssetsContext} from '@/contexts/assets-context';
 import useGetReserves from '@/hooks/contract-operations/swap/useReserves';
-import useSwapERC20Token, {
-  ISwapERC20TokenParams,
-} from '@/hooks/contract-operations/swap/useSwapERC20Token';
+import useSwapERC20Token, {ISwapERC20TokenParams,} from '@/hooks/contract-operations/swap/useSwapERC20Token';
 import useApproveERC20Token from '@/hooks/contract-operations/token/useApproveERC20Token';
 import useBalanceERC20Token from '@/hooks/contract-operations/token/useBalanceERC20Token';
 import useIsApproveERC20Token from '@/hooks/contract-operations/token/useIsApproveERC20Token';
 import useContractOperation from '@/hooks/contract-operations/useContractOperation';
-import { IToken } from '@/interfaces/token';
-import { TransactionStatus } from '@/interfaces/walletTransaction';
-import { getSwapRoutes, getSwapTokens, logErrorToServer } from '@/services/swap';
-import { useAppDispatch, useAppSelector } from '@/state/hooks';
+import {IToken} from '@/interfaces/token';
+import {TransactionStatus} from '@/interfaces/walletTransaction';
+import {getSwapRoutesV1, getSwapTokens, ISwapRouteParams, logErrorToServer} from '@/services/swap';
+import {useAppDispatch, useAppSelector} from '@/state/hooks';
 import {
   requestReload,
   requestReloadRealtime,
   selectPnftExchange,
   updateCurrentTransaction,
 } from '@/state/pnftExchange';
-import { getIsAuthenticatedSelector, getUserSelector } from '@/state/user/selector';
-import {
-  camelCaseKeys,
-  compareString,
-  formatCurrency,
-  sortAddressPair,
-} from '@/utils';
-import { isDevelop } from '@/utils/commons';
-import { composeValidators, required } from '@/utils/formValidate';
+import {getIsAuthenticatedSelector, getUserSelector} from '@/state/user/selector';
+import {camelCaseKeys, compareString, formatCurrency, sortAddressPair,} from '@/utils';
+import {isDevelop} from '@/utils/commons';
+import {composeValidators, required} from '@/utils/formValidate';
 import px2rem from '@/utils/px2rem';
-import { showError } from '@/utils/toast';
-import { Box, Center, Flex, forwardRef, Text } from '@chakra-ui/react';
-import { useWeb3React } from '@web3-react/core';
+import {showError} from '@/utils/toast';
+import {Box, Center, Flex, forwardRef, Text} from '@chakra-ui/react';
+import {useWeb3React} from '@web3-react/core';
 import BigNumber from 'bignumber.js';
 import cx from 'classnames';
 import debounce from 'lodash/debounce';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
-import React, {
-  useCallback,
-  useContext,
-  useEffect,
-  useImperativeHandle,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
-import { Field, Form, useForm, useFormState } from 'react-final-form';
+import {useRouter} from 'next/router';
+import React, {useCallback, useContext, useEffect, useImperativeHandle, useMemo, useRef, useState,} from 'react';
+import {Field, Form, useForm, useFormState} from 'react-final-form';
 import toast from 'react-hot-toast';
-import { RiArrowUpDownLine } from 'react-icons/ri';
-import { useDispatch, useSelector } from 'react-redux';
+import {RiArrowUpDownLine} from 'react-icons/ri';
+import {useDispatch, useSelector} from 'react-redux';
 import Web3 from 'web3';
 import styles from './styles.module.scss';
-import { BsListCheck } from 'react-icons/bs';
-import { BiBell } from 'react-icons/bi';
-import { ROUTE_PATH } from '@/constants/route-path';
+import {BsListCheck} from 'react-icons/bs';
+import {BiBell} from 'react-icons/bi';
+import {ROUTE_PATH} from '@/constants/route-path';
 import SlippageSettingButton from '@/components/Swap/slippageSetting/button';
-import { closeModal, openModal } from '@/state/modal';
-import { useWindowSize } from '@trustless-computer/dapp-core';
+import {closeModal, openModal} from '@/state/modal';
+import {useWindowSize} from '@trustless-computer/dapp-core';
 import InfoTooltip from '@/components/Swap/infoTooltip';
 import ModalConfirmApprove from '@/components/ModalConfirmApprove';
 import tokenIcons from '@/constants/tokenIcons';
+import {IResourceChain} from "@/interfaces/chain";
+import {WalletContext} from "@/contexts/wallet-context";
+import {L2_CHAIN_INFO} from "@/constants/chains";
 
 const LIMIT_PAGE = 500;
 export const MakeFormSwap = forwardRef((props, ref) => {
@@ -115,7 +103,11 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const { account} = useWeb3React();
   const needReload = useAppSelector(selectPnftExchange).needReload;
   const [exchangeRate, setExchangeRate] = useState('0');
+  const { getConnectedChainInfo } =
+    useContext(WalletContext);
+  const chainInfo: IResourceChain = getConnectedChainInfo();
 
+  console.log('chainInfo', chainInfo);
   // console.log('isSwitching', isSwitching);
   // console.log('amountBaseTokenApproved', amountBaseTokenApproved);
   // console.log('formatEthPrice', formatEthPrice(amountBaseTokenApproved));
@@ -129,7 +121,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   // console.log('quoteTokensList', quoteTokensList);
   // console.log('reserveInfos', reserveInfos);
   // console.log('swapRoutes', swapRoutes);
-  // console.log('======');
+  console.log('======');
 
   const { values } = useFormState();
   const { change, restart } = useForm();
@@ -320,6 +312,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         limit: LIMIT_PAGE,
         page: page,
         is_test: isDevelop() ? '1' : '',
+        network: L2_CHAIN_INFO.chain.toLowerCase()
       });
 
       const list = res ? camelCaseKeys(res) : [];
@@ -349,6 +342,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         page: 1,
         is_test: isDevelop() ? '1' : '',
         from_token: from_token,
+        network: L2_CHAIN_INFO.chain.toLowerCase()
       });
       return res;
     } catch (err: unknown) {
@@ -396,13 +390,12 @@ export const MakeFormSwap = forwardRef((props, ref) => {
 
   const getSwapRoutesInfo = async (from_token: string, to_token: string) => {
     try {
-      const params = {
-        // from_token: '0xF545f1D9AAA0c648B545948E6C972688f3064148',
-        // to_token: '0xe8B88A8188cD7025AaE3719c0F845915E1f3B5c0',
+      const params: ISwapRouteParams = {
         from_token: from_token,
         to_token: to_token,
+        network: L2_CHAIN_INFO.chain.toLowerCase()
       };
-      const response = await getSwapRoutes(params);
+      const response = await getSwapRoutesV1(params);
 
       setSwapRoutes(response);
       change('swapRoutes', response);
@@ -474,7 +467,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     setBaseToken(token);
     change('baseToken', token);
     router.replace(
-      `${ROUTE_PATH.SWAP}?from_token=${token.address}&to_token=${
+      `${ROUTE_PATH.SWAP_V2}?from_token=${token.address}&to_token=${
         router?.query?.to_token || ''
       }`,
     );
@@ -524,7 +517,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     setQuoteToken(token);
     change('quoteToken', token);
     router.replace(
-      `${ROUTE_PATH.SWAP}?from_token=${router?.query?.from_token || ''}&to_token=${
+      `${ROUTE_PATH.SWAP_V2}?from_token=${router?.query?.from_token || ''}&to_token=${
         token.address
       }`,
     );
@@ -547,7 +540,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     setAmountBaseTokenApproved(amountQuoteTokenApproved);
     setAmountQuoteTokenApproved(amountBaseTokenApproved);
     router.replace(
-      `${ROUTE_PATH.SWAP}?from_token=${router?.query?.to_token || ''}&to_token=${
+      `${ROUTE_PATH.SWAP_V2}?from_token=${router?.query?.to_token || ''}&to_token=${
         router?.query?.from_token || ''
       }`,
     );
