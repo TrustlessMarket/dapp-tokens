@@ -8,6 +8,8 @@ import useIsApproveERC20Token from '@/hooks/contract-operations/token/useIsAppro
 import useBalanceERC20Token from '@/hooks/contract-operations/token/useBalanceERC20Token';
 import { UNIV3_ROUTER_ADDRESS } from '@/configs';
 import web3 from 'web3';
+import { useAppSelector } from '@/state/hooks';
+import { selectPnftExchange } from '@/state/pnftExchange';
 
 interface IAddTokenBalance {
   token: IToken;
@@ -17,6 +19,8 @@ interface IAddTokenBalance {
 const AddTokenBalance: React.FC<IAddTokenBalance> = ({ token, name }) => {
   const { values } = useFormState();
   const { change } = useForm();
+
+  const needReload = useAppSelector(selectPnftExchange).needReload;
 
   const { call: isApproved } = useIsApproveERC20Token();
   const { call: tokenBalance } = useBalanceERC20Token();
@@ -28,7 +32,7 @@ const AddTokenBalance: React.FC<IAddTokenBalance> = ({ token, name }) => {
 
   useEffect(() => {
     fetchDataForQuoteToken(token);
-  }, [JSON.stringify(token)]);
+  }, [JSON.stringify(token), needReload]);
 
   const fetchDataForQuoteToken = async (_token: IToken) => {
     change(balanceName, '0');

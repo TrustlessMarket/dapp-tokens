@@ -1,6 +1,10 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { TRUSTLESS_COMPUTER_CHAIN_INFO } from '@/constants/chains';
 import { DEFAULT_GAS_PRICE, TOKEN_ICON_DEFAULT } from '@/constants/common';
+import { CHAIN_INFO } from '@/constants/storage-key';
 import tokenIcons from '@/constants/tokenIcons';
+import { IResourceChain } from '@/interfaces/chain';
 import { IToken } from '@/interfaces/token';
 import { getAddress } from '@ethersproject/address';
 import BigNumber from 'bignumber.js';
@@ -100,4 +104,22 @@ export const getTokenIconUrl = (token: IToken | any) => {
     url = tokenIcons?.[token?.symbol?.toLowerCase()];
   }
   return url;
+};
+
+export const getExplorer = (
+  address: string,
+  type: 'address' | 'tx' = 'tx',
+  chain?: string,
+) => {
+  const connectedChain: IResourceChain = getLocalStorageChainInfo();
+  return `${chain || connectedChain.explorers[0].url}/${type}/${address}`;
+};
+
+export const getLocalStorageChainInfo = () => {
+  const chainInfo = localStorage.getItem(CHAIN_INFO);
+  if (chainInfo) {
+    const parseChainInfo = JSON.parse(chainInfo);
+    return parseChainInfo;
+  }
+  return TRUSTLESS_COMPUTER_CHAIN_INFO;
 };

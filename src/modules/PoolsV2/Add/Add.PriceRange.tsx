@@ -8,7 +8,7 @@ import { useForm, useFormState } from 'react-final-form';
 import { IToken } from '@/interfaces/token';
 import useGetPool from '@/hooks/contract-operations/pools/v3/usePoolInfo';
 import { isPool } from '../utils';
-import { Box } from '@chakra-ui/react';
+import { Box, Text } from '@chakra-ui/react';
 import Empty from '@/components/Empty';
 
 interface IAddPriceRange {}
@@ -40,16 +40,34 @@ const AddPriceRange: React.FC<IAddPriceRange> = () => {
       if (isPool(response)) {
         change('poolAddress', response);
       }
-      console.log('response', response);
     } catch (error) {}
   };
 
   const renderContent = () => {
-    return (
-      <>
-        <Empty infoText="Your position will appear here." />
-      </>
-    );
+    if (!Boolean(baseToken) || !Boolean(quoteToken)) {
+      return (
+        <>
+          <Empty infoText="Your position will appear here." />
+        </>
+      );
+    }
+
+    if (!poolAddress) {
+      return (
+        <>
+          <Box className={s.formContainer__right__noteWrap}>
+            <Text>
+              This pool must be initialized before you can add liquidity. To
+              initialize, select a starting price for the pool. Then, enter your
+              liquidity price range and deposit amount. Gas fees will be higher than
+              usual due to the initialization transaction.
+            </Text>
+          </Box>
+        </>
+      );
+    }
+
+    return <></>;
   };
 
   return (

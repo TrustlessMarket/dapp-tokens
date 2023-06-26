@@ -16,8 +16,14 @@ import { useWeb3React } from '@web3-react/core';
 import React, { PropsWithChildren, useCallback, useEffect, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 // import { getAccessToken, setAccessToken } from '@/utils/auth-storage';
-import { SupportedChainId, TRUSTLESS_COMPUTER_CHAIN_INFO } from '@/constants/chains';
-import { compareString, getChainList, isSupportedChain, switchChain } from '@/utils';
+import { SupportedChainId } from '@/constants/chains';
+import {
+  compareString,
+  getChainList,
+  getLocalStorageChainInfo,
+  isSupportedChain,
+  switchChain,
+} from '@/utils';
 import {
   clearAuthStorage,
   getAccessToken,
@@ -33,13 +39,13 @@ import {
   PREV_URL,
   TEMP_ADDRESS_WALLET_EVM,
 } from '@/constants/storage-key';
+import { IResourceChain } from '@/interfaces/chain';
 import { getCurrentProfile } from '@/services/profile';
 import { selectPnftExchange, updateCurrentChainId } from '@/state/pnftExchange';
 import { isProduction } from '@/utils/commons';
 import { useRouter } from 'next/router';
 import * as TC_SDK from 'trustless-computer-sdk';
 import useAsyncEffect from 'use-async-effect';
-import { IResourceChain } from '@/interfaces/chain';
 
 export interface IWalletContext {
   onDisconnect: () => Promise<void>;
@@ -75,12 +81,7 @@ export const WalletProvider: React.FC<PropsWithChildren> = ({
   }, [router]);
 
   const getConnectedChainInfo = useCallback(() => {
-    const chainInfo = localStorage.getItem(CHAIN_INFO);
-    if (chainInfo) {
-      const parseChainInfo = JSON.parse(chainInfo);
-      return parseChainInfo;
-    }
-    return TRUSTLESS_COMPUTER_CHAIN_INFO;
+    return getLocalStorageChainInfo();
   }, [router, user, chainId]);
 
   const isChain = currentChainId || getDefaultChain();

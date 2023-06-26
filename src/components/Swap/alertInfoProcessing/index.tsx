@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // import { WALLET_URL } from '@/configs';
-import { TC_EXPLORER } from '@/configs';
 import {
   TransactionStatus,
   WalletTransactionData,
@@ -12,7 +11,7 @@ import {
   updateCurrentTransaction,
 } from '@/state/pnftExchange';
 import { colors } from '@/theme/colors';
-import { compareString, shortCryptoAddress } from '@/utils';
+import { compareString, getExplorer, shortCryptoAddress } from '@/utils';
 import {
   Alert,
   AlertDescription,
@@ -109,7 +108,7 @@ const AlertInfoProcess: React.FC<AlertInfoProcessProps> = ({
             {currentTransaction?.status === TransactionStatus.success ? (
               <a
                 target="_blank"
-                href={`${TC_EXPLORER}/tx/${currentTransaction.hash}`}
+                href={getExplorer(currentTransaction.hash, 'tx')}
                 style={{ color: colors.bluePrimary }}
               >
                 {shortCryptoAddress(currentTransaction.hash, 30)}

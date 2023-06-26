@@ -29,8 +29,19 @@ export const checkBalanceIsApprove = (required: any = 0, amount: any = 0) => {
 
 export const validateBaseAmount = (_amount: any, values: any) => {
   const baseTokenBalance: string = values?.baseTokenBalance || '0';
-  if (new BigNumber(formatCurrency(_amount)).gt(formatCurrency(baseTokenBalance))) {
+
+  if (new BigNumber(_amount).gt(baseTokenBalance)) {
     return `Max amount is ${formatCurrency(baseTokenBalance)}`;
+  }
+
+  return undefined;
+};
+
+export const validateQuoteAmount = (_amount: any, values: any) => {
+  const quoteTokenBalance: string = values?.quoteTokenBalance || '0';
+
+  if (new BigNumber(_amount).gt(quoteTokenBalance)) {
+    return `Max amount is ${formatCurrency(quoteTokenBalance)}`;
   }
 
   return undefined;

@@ -5,7 +5,8 @@
   & > div {
     margin-top: rem(50);
     margin-bottom: rem(50);
-    min-width: 1024px;
+    min-width: 768px;
+    max-width: 1024px;
   }
   &__header {
     align-items: center;
@@ -113,12 +114,22 @@
       }
     }
     &__amountWrap {
-      background: var(--bs-gray-dark);
-      border-radius: 16px;
-      &__balance {
-        color: white !important;
-        opacity: 0.9;
-        font-size: rem(12);
+      :global {
+        .chakra-form-control {
+          background-color: var(--bs-gray-dark);
+          border-radius: 16px;
+
+          &.isError {
+            border: 1px solid var(--chakra-colors-brand-danger-400);
+            margin-bottom: 3px;
+          }
+
+          &__balance {
+            color: white !important;
+            opacity: 0.9;
+            font-size: rem(12);
+          }
+        }
       }
     }
     &__inputAmount {
@@ -138,6 +149,16 @@
   &__right {
     &__btnInActive {
       background-color: var(--bs-gray-dark) !important;
+    }
+    &__noteWrap {
+      background-color: var(--bs-gray-dark) !important;
+      border-radius: 8px;
+      padding: rem(8) rem(10);
+      p {
+        color: var(--chakra-colors-orange-200);
+        font-size: rem(14);
+        line-height: 20px;
+      }
     }
   }
 }

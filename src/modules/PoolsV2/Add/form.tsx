@@ -18,11 +18,17 @@ import { Box, Flex } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import React, { useContext, useEffect, useState } from 'react';
 import { Field, useForm, useFormState } from 'react-final-form';
-import { checkBalanceIsApprove, getUniFee, validateBaseAmount } from '../utils';
+import {
+  checkBalanceIsApprove,
+  getUniFee,
+  validateBaseAmount,
+  validateQuoteAmount,
+} from '../utils';
 import AddItemToken from './Add.ItemToken';
 import AddPriceRange from './Add.PriceRange';
 import AddTokenBalance from './Add.TokenBalance';
 import s from './styles.module.scss';
+import AddApproveToken from './Add.ApproveToken';
 
 interface IFormAddPoolsV2Container extends IPoolV2AddPair {
   handleSubmit: (_: any) => void;
@@ -195,7 +201,7 @@ const FormAddPoolsV2Container: React.FC<IFormAddPoolsV2Container> = ({
               <Field
                 name="quoteAmount"
                 children={FieldAmount}
-                //   validate={composeValidators(requiredAmount, validateBaseAmount)}
+                validate={composeValidators(requiredAmount, validateQuoteAmount)}
                 //   fieldChanged={onChangeValueBaseAmount}
                 //   disabled={submitting || isDisabled}
                 // placeholder={"Enter number of tokens"}
@@ -224,13 +230,9 @@ const FormAddPoolsV2Container: React.FC<IFormAddPoolsV2Container> = ({
           <WrapperConnected>
             <>
               {!isTokenApproved && (
-                <>
-                  <FiledButton type="submit" btnSize="h">
-                    Approve{' '}
-                    {!isBaseTokenApprove ? baseToken?.symbol : quoteToken?.symbol}
-                  </FiledButton>
-                  <Box mb={2} />
-                </>
+                <AddApproveToken
+                  token={isBaseTokenApprove ? quoteToken : baseToken}
+                />
               )}
 
               <FiledButton
