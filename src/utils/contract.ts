@@ -9,6 +9,7 @@ import type { JsonRpcProvider, JsonRpcSigner } from '@ethersproject/providers';
 import { useWeb3React } from '@web3-react/core';
 import { ethers } from 'ethers';
 import { compareString } from './string';
+import { isSupportedChain } from './chain';
 
 function getProviderOrSigner(
   provider: JsonRpcProvider,
@@ -37,10 +38,10 @@ export function getContract(
 }
 
 export const getDefaultProvider = () => {
-  const { provider: defaultProvider } = useWeb3React();
+  const { provider: defaultProvider, chainId } = useWeb3React();
 
   let provider: any = defaultProvider;
-  if ((!provider && window.ethereum) || !isConnectedTrustChain()) {
+  if ((!provider && window.ethereum) || !isSupportedChain(chainId)) {
     provider = new ethers.providers.JsonRpcProvider(TC_NETWORK_RPC);
   }
 

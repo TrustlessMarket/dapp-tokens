@@ -1,29 +1,29 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import FiledButton from '@/components/Swap/button/filedButton';
 import FieldText from '@/components/Swap/form/fieldText';
-import ListTable, {ColumnProp} from '@/components/Swap/listTable';
+import ListTable, { ColumnProp } from '@/components/Swap/listTable';
 import TokenBalance from '@/components/Swap/tokenBalance';
-import {COMMON_TOKEN_CONTRACT} from '@/constants/common';
+import { COMMON_TOKEN_CONTRACT } from '@/constants/common';
 import useDebounce from '@/hooks/useDebounce';
-import {closeModal, openModal} from '@/state/modal';
-import {Box, Center, Flex, Icon, Text} from '@chakra-ui/react';
-import {useWindowSize} from '@trustless-computer/dapp-core';
+import { closeModal, openModal } from '@/state/modal';
+import { Box, Center, Flex, Icon, Text } from '@chakra-ui/react';
+import { useWindowSize } from '@trustless-computer/dapp-core';
 import cx from 'classnames';
-import {clone} from 'lodash';
-import React, {useEffect, useMemo, useState} from 'react';
-import {Field, Form, useFormState} from 'react-final-form';
-import {useDispatch} from 'react-redux';
-import {AiOutlineCaretDown} from 'react-icons/ai';
+import { clone } from 'lodash';
+import React, { useEffect, useMemo, useState } from 'react';
+import { Field, Form, useFormState } from 'react-final-form';
+import { useDispatch } from 'react-redux';
+import { AiOutlineCaretDown } from 'react-icons/ai';
 import styles from './styles.module.scss';
-import {compareString} from "@/utils";
-import {RxMagnifyingGlass} from "react-icons/rx";
+import { compareString } from '@/utils';
+import { RxMagnifyingGlass } from 'react-icons/rx';
 import VerifiedBadge, {
   getTextColorStatus,
-  VERIFIED_STATUS
-} from "@/components/Swap/filterToken/verifiedBadge";
-import {IToken} from "@/interfaces/token";
-import {ImWarning} from "react-icons/im";
-import {HiBadgeCheck} from "react-icons/hi";
+  VERIFIED_STATUS,
+} from '@/components/Swap/filterToken/verifiedBadge';
+import { IToken } from '@/interfaces/token';
+import { ImWarning } from 'react-icons/im';
+import { HiBadgeCheck } from 'react-icons/hi';
 
 interface FilterButtonProps {
   data: any[] | undefined;
@@ -32,7 +32,9 @@ interface FilterButtonProps {
   parentClose?: () => void;
   value: any;
   disabled?: boolean;
+  className?: any;
   onExtraSearch?: (_: any) => any;
+  renderSelectItem?: (_: any) => any;
 }
 
 interface FilterModalProps extends FilterButtonProps {
@@ -57,8 +59,8 @@ const FilterModal: React.FC<FilterModalProps> = ({
     for (let i = 0; i < COMMON_TOKEN_CONTRACT.length; i++) {
       const address = COMMON_TOKEN_CONTRACT[i];
 
-      const token = data?.find(e => compareString(e?.address, address));
-      if(token) {
+      const token = data?.find((e) => compareString(e?.address, address));
+      if (token) {
         res.push(token);
       }
     }
@@ -70,7 +72,12 @@ const FilterModal: React.FC<FilterModalProps> = ({
       {
         id: 'market',
         label: (
-          <Flex w={"100%"} gap={4} alignItems={'flex-start'} justifyContent={'space-between'}>
+          <Flex
+            w={'100%'}
+            gap={4}
+            alignItems={'flex-start'}
+            justifyContent={'space-between'}
+          >
             <Text>TOKEN</Text>
             <Text>BALANCE</Text>
           </Flex>
@@ -99,7 +106,7 @@ const FilterModal: React.FC<FilterModalProps> = ({
                   >
                     {row?.symbol}
                   </Text>
-                  <VerifiedBadge token={row.extra_item}/>
+                  <VerifiedBadge token={row.extra_item} />
                 </Flex>
                 <Text
                   fontSize={'xs'}
@@ -210,7 +217,7 @@ const FilterModal: React.FC<FilterModalProps> = ({
           // fieldChanged={onChange}
           prependComp={
             <Box mt={2}>
-              <RxMagnifyingGlass fontSize={"32px"} color={"#B6B6B6"}/>
+              <RxMagnifyingGlass fontSize={'32px'} color={'#B6B6B6'} />
             </Box>
           }
           borderColor={'#ECECED'}
@@ -265,6 +272,8 @@ const FilterButton: React.FC<FilterButtonProps> = ({
   value,
   disabled,
   onExtraSearch,
+  renderSelectItem,
+  className,
 }) => {
   const dispatch = useDispatch();
   const { mobileScreen } = useWindowSize();
@@ -289,11 +298,11 @@ const FilterButton: React.FC<FilterButtonProps> = ({
   };
 
   const handleShowWarningToken = (token?: IToken) => {
-    if(!token?.status || token?.status === VERIFIED_STATUS.PREMIUM) {
+    if (!token?.status || token?.status === VERIFIED_STATUS.PREMIUM) {
       return;
     }
     const id = 'modalWarningToken';
-    const close = () => dispatch(closeModal({id}));
+    const close = () => dispatch(closeModal({ id }));
     dispatch(
       openModal({
         id,
@@ -307,31 +316,44 @@ const FilterButton: React.FC<FilterButtonProps> = ({
         },
         render: () => (
           <Flex direction={'column'} gap={2}>
-            <Flex gap={2} justifyContent={"center"} color={getTextColorStatus(token.status)} alignItems={"center"}>
-              <Text fontSize={"40px"} fontWeight={"medium"}>
+            <Flex
+              gap={2}
+              justifyContent={'center'}
+              color={getTextColorStatus(token.status)}
+              alignItems={'center'}
+            >
+              <Text fontSize={'40px'} fontWeight={'medium'}>
                 {token?.status === VERIFIED_STATUS.WARNING ? 'Warning' : 'Caution'}
               </Text>
-              <Center
-                w={'40px'}
-                h={'40px'}
-                minW={"40px"}
-                minH={"40px"}
-              >
-                <Icon as={ImWarning} fontSize={"30px"}/>
+              <Center w={'40px'} h={'40px'} minW={'40px'} minH={'40px'}>
+                <Icon as={ImWarning} fontSize={'30px'} />
               </Center>
             </Flex>
-            <Flex direction={"column"} color={getTextColorStatus(token.status)} maxW={"500px"} mt={4}>
-              {
-                token?.status === VERIFIED_STATUS.WARNING && (
-                  <>
-                    <Text>The name of this token is misleading and its trading volume is extremely low, which may increase the potential risk of trading this token.</Text>
-                    <Text>Please keep these warnings in mind before proceeding with any trades involving this token.</Text>
-                  </>
-                )
-              }
-              {
-                token?.status === VERIFIED_STATUS.CAUTION && <Text>This token has a low trading volume, which may increase your risk if you decide to trade it.</Text>
-              }
+            <Flex
+              direction={'column'}
+              color={getTextColorStatus(token.status)}
+              maxW={'500px'}
+              mt={4}
+            >
+              {token?.status === VERIFIED_STATUS.WARNING && (
+                <>
+                  <Text>
+                    The name of this token is misleading and its trading volume is
+                    extremely low, which may increase the potential risk of trading
+                    this token.
+                  </Text>
+                  <Text>
+                    Please keep these warnings in mind before proceeding with any
+                    trades involving this token.
+                  </Text>
+                </>
+              )}
+              {token?.status === VERIFIED_STATUS.CAUTION && (
+                <Text>
+                  This token has a low trading volume, which may increase your risk
+                  if you decide to trade it.
+                </Text>
+              )}
             </Flex>
             <FiledButton
               loadingText="Processing"
@@ -345,7 +367,7 @@ const FilterButton: React.FC<FilterButtonProps> = ({
         ),
       }),
     );
-  }
+  };
 
   const handleOpenModal = () => {
     // parentClose?.();
@@ -420,7 +442,7 @@ const FilterButton: React.FC<FilterButtonProps> = ({
     <FiledButton
       isDisabled={disabled}
       onClick={handleOpenModal}
-      className={cx(styles.filterButton, 'filterButton')}
+      className={cx(styles.filterButton, className, 'filterButton')}
       containerConfig={{
         className: 'filterContainer',
       }}
@@ -433,23 +455,33 @@ const FilterButton: React.FC<FilterButtonProps> = ({
         color={'#FFFFFF'}
       >
         {selectedToken ? (
-          <Flex direction={'column'} alignItems={'flex-start'}>
-            <Flex gap={1} alignItems={"center"}>
-              <Text fontWeight={'500'} fontSize={'md'}>
-                {selectedToken?.symbol}
-              </Text>
-              {
-                selectedToken?.status && (
-                  <Icon as={selectedToken?.status === VERIFIED_STATUS.PREMIUM ? HiBadgeCheck : ImWarning} fontSize={"14px"} color={getTextColorStatus(selectedToken?.status)}/>
-                )
-              }
+          renderSelectItem ? (
+            renderSelectItem(selectedToken)
+          ) : (
+            <Flex direction={'column'} alignItems={'flex-start'}>
+              <Flex gap={1} alignItems={'center'}>
+                <Text fontWeight={'500'} fontSize={'md'}>
+                  {selectedToken?.symbol}
+                </Text>
+                {selectedToken?.status && (
+                  <Icon
+                    as={
+                      selectedToken?.status === VERIFIED_STATUS.PREMIUM
+                        ? HiBadgeCheck
+                        : ImWarning
+                    }
+                    fontSize={'14px'}
+                    color={getTextColorStatus(selectedToken?.status)}
+                  />
+                )}
+              </Flex>
+              <Text fontSize={'xs'}>{selectedToken?.network}</Text>
             </Flex>
-            <Text fontSize={'xs'}>{selectedToken?.network}</Text>
-          </Flex>
+          )
         ) : (
           <Text className="select-placeholder">Select a token</Text>
         )}
-        <AiOutlineCaretDown fontSize={"16px"}/>
+        <AiOutlineCaretDown fontSize={'16px'} />
       </Flex>
     </FiledButton>
   );

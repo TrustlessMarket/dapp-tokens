@@ -147,7 +147,7 @@ const FieldAmount = (props: FieldAmountProps) => {
           {error}
         </FormErrorMessage>
       )}
-      <div className="field-note">{note}</div>
+      {note && <div className="field-note">{note}</div>}
     </FormControl>
   );
 };

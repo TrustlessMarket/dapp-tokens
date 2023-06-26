@@ -3,8 +3,24 @@ import React from 'react';
 import s from './styles.module.scss';
 import { Box, Flex, Heading, Icon, IconButton } from '@chakra-ui/react';
 import { BiChevronLeft } from 'react-icons/bi';
+import { Form } from 'react-final-form';
+import FormAddPoolsV2Container from './form';
+import { useRouter } from 'next/router';
+import { ROUTE_PATH } from '@/constants/route-path';
+import { IPoolV2AddPair } from '@/pages/pools/v2/add/[...id]';
 
-const PoolsV2AddPage = () => {
+type IPoolsV2AddPage = IPoolV2AddPair;
+
+const PoolsV2AddPage: React.FC<IPoolsV2AddPage> = ({ ids }) => {
+  const router = useRouter();
+
+  const onSubmit = async () => {
+    try {
+    } catch (error) {
+    } finally {
+    }
+  };
+
   return (
     <BodyContainer className={s.container}>
       <Box className={s.container__body}>
@@ -26,13 +42,18 @@ const PoolsV2AddPage = () => {
                 fontSize={'25px'}
               />
             }
-            // onClick={() =>
-            //   router.replace(`${ROUTE_PATH.POOLS}?type=${ScreenType.default}`)
-            // }
+            onClick={() => router.replace(`${ROUTE_PATH.POOLS_V2}`)}
             aria-label={''}
           />
           <Heading as={'h4'}>Add Liquidity</Heading>
         </Flex>
+        <Box className={s.container__content_body}>
+          <Form onSubmit={onSubmit}>
+            {({ handleSubmit }) => (
+              <FormAddPoolsV2Container handleSubmit={handleSubmit} ids={ids} />
+            )}
+          </Form>
+        </Box>
       </Box>
     </BodyContainer>
   );

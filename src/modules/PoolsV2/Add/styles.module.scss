@@ -5,7 +5,7 @@
   & > div {
     margin-top: rem(50);
     margin-bottom: rem(50);
-    min-width: 768px;
+    min-width: 1024px;
   }
   &__header {
     align-items: center;
@@ -33,5 +33,112 @@
       font-size: rem(20);
       font-weight: 500;
     }
+  }
+
+  &__content_body {
+    padding-top: rem(15);
+    padding-bottom: rem(15);
+  }
+}
+
+.formContainer {
+  gap: rem(20);
+  &__left,
+  &__right {
+    flex: 1;
+  }
+
+  label {
+    color: white;
+    font-size: rem(14);
+  }
+
+  &__left {
+    :global {
+      .filterContainer {
+        flex: 1;
+      }
+      .filterButton {
+        &.active {
+          background-color: var(--bs-gray-dark) !important;
+        }
+        background-color: var(--bs-indigo) !important;
+      }
+      .chakra-input__left-element {
+        margin: 0;
+        width: unset;
+        border-right: 1px solid #353945;
+      }
+      .chakra-input__right-element {
+        padding-right: 16px;
+        margin: 0;
+      }
+      .chakra-form__error-message {
+        font-size: 12px;
+      }
+      .chakra-input__group {
+        background: transparent;
+        border: none;
+        align-items: center;
+        .customAddItemToken {
+          background-color: #353945;
+          padding: rem(6) rem(8);
+          border-radius: 16px;
+          gap: rem(4);
+          .chakra-avatar {
+            width: rem(20) !important;
+            height: rem(20) !important;
+          }
+          p {
+            font-size: rem(12);
+            font-weight: 500;
+          }
+        }
+
+        input {
+          color: #ffffff !important;
+          font-size: 16px !important;
+          height: 100% !important;
+          background: transparent !important;
+        }
+      }
+    }
+    &__amountWrap {
+      background: var(--bs-gray-dark);
+      border-radius: 16px;
+    }
+    &__inputAmount {
+      &:disabled {
+        cursor: not-allowed;
+      }
+
+      @media screen and (max-width: 768px) {
+        font-size: 18px !important;
+      }
+    }
+  }
+}
+
+.addItemTokenContainer {
+  gap: rem(10);
+  padding-right: rem(15);
+  align-items: center;
+  &__avatar {
+    width: rem(32) !important;
+    height: rem(32) !important;
+    display: block !important;
+    img {
+      width: 100%;
+      height: 100%;
+    }
+  }
+  &__symbol {
+    font-size: rem(14);
+    text-align: left;
+  }
+  &__name {
+    font-size: rem(12);
+    text-align: left;
+    opacity: 0.7;
   }
 }
