@@ -97,7 +97,6 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const router = useRouter();
   const [swapRoutes, setSwapRoutes] = useState<any[]>([]);
   const configs = useAppSelector(selectPnftExchange).configs;
-  const swapFee = configs?.swapFee || 0.3;
 
   const { account} = useWeb3React();
   const [exchangeRate, setExchangeRate] = useState('0');
@@ -122,6 +121,14 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const { values } = useFormState();
   const { change, restart } = useForm();
   const btnDisabled = loading || !baseToken || !quoteToken;
+
+  const swapFee = useMemo(() => {
+    if(values?.bestRoute) {
+      return new BigNumber(values?.bestRoute?.pathPairs?.reduce((result, pair) => result + Number(pair.fee), 0)).div(10000).toString();
+    }
+
+    return "0.3";
+  }, [JSON.stringify(values?.bestRoute)])
 
   const isRequireApprove = useMemo(() => {
     let result = false;
@@ -208,31 +215,6 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       getSwapRoutesInfo(baseToken?.address, quoteToken?.address);
     }
   }, [baseToken?.address, quoteToken?.address]);
-
-  const getBaseAmountOut = (
-    amountIn: BigNumber,
-    reserveIn: BigNumber,
-    reserveOut: BigNumber,
-  ): BigNumber => {
-    try {
-      const amountInWithFee = amountIn.multipliedBy(1000 + swapFee * 10);
-      const numerator = amountInWithFee.multipliedBy(reserveOut);
-      const denominator = reserveIn.multipliedBy(1000).plus(amountInWithFee);
-      const amountOut = numerator.div(denominator).decimalPlaces(18);
-
-      return amountOut;
-    } catch (err: any) {
-      logErrorToServer({
-        type: 'error',
-        address: account,
-        error: JSON.stringify(err),
-        message: err?.message,
-        place_happen: 'getBaseAmountOut',
-      });
-
-      return new BigNumber(0);
-    }
-  };
 
   useEffect(() => {
     change('baseBalance', baseBalance);
@@ -879,7 +861,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
               fontWeight={'medium'}
               color={'rgba(255, 255, 255, 0.7)'}
             >
-              Fee: {swapFee * (swapRoutes?.length || 1)}%
+              Fee: {swapFee}%
             </Text>
           }
         />
