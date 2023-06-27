@@ -5,15 +5,12 @@ import React, { memo } from 'react';
 
 import styles from './styles.module.scss';
 import AlertInfoProcess from '../alertInfoProcessing';
+import { IAlertInfoProcess } from '../alertInfoProcessing/interface';
 
 export interface FiledButtonProps extends ButtonProps {
   btnSize?: 'h' | 'm' | 'l';
   containerConfig?: any;
-  processInfo?: {
-    id: string;
-    size?: 'l' | 'sm';
-    theme?: 'light' | 'dark';
-  };
+  processInfo?: IAlertInfoProcess;
 }
 
 const FiledButton: React.FC<FiledButtonProps> = (props) => {

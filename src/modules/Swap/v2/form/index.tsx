@@ -1,75 +1,93 @@
 /* eslint-disable react/no-children-prop */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import {transactionType} from '@/components/Swap/alertInfoProcessing/types';
+import ModalConfirmApprove from '@/components/ModalConfirmApprove';
+import { TransactionStatus } from '@/components/Swap/alertInfoProcessing/interface';
+import { transactionType } from '@/components/Swap/alertInfoProcessing/types';
 import FiledButton from '@/components/Swap/button/filedButton';
 import FilterButton from '@/components/Swap/filterToken';
 import FieldAmount from '@/components/Swap/form/fieldAmount';
 import InputWrapper from '@/components/Swap/form/inputWrapper';
 import HorizontalItem from '@/components/Swap/horizontalItem';
+import InfoTooltip from '@/components/Swap/infoTooltip';
+import SlippageSettingButton from '@/components/Swap/slippageSetting/button';
 import TokenBalance from '@/components/Swap/tokenBalance';
 import WrapperConnected from '@/components/WrapperConnected';
-import {CDN_URL, UNIV3_ROUTER_ADDRESS} from '@/configs';
+import { CDN_URL, UNIV3_ROUTER_ADDRESS } from '@/configs';
+import { L2_CHAIN_INFO } from '@/constants/chains';
 import {
   BRIDGE_SUPPORT_TOKEN,
-  GM_ADDRESS,
-  TOKEN_ICON_DEFAULT,
   TRUSTLESS_BRIDGE,
   TRUSTLESS_GASSTATION,
   USDC_ADDRESS,
-  WBTC_ADDRESS,
 } from '@/constants/common';
-import {toastError} from '@/constants/error';
-import {AssetsContext} from '@/contexts/assets-context';
+import { toastError } from '@/constants/error';
+import { ROUTE_PATH } from '@/constants/route-path';
+import { AssetsContext } from '@/contexts/assets-context';
 import useGetReserves from '@/hooks/contract-operations/swap/useReserves';
-import useSwapERC20Token, {ISwapERC20TokenParams} from '@/hooks/contract-operations/swap/v3/useSwapERC20Token';
-import useApproveERC20Token, {IApproveERC20TokenParams} from '@/hooks/contract-operations/token/useApproveERC20Token';
+import useEstimateSwapERC20Token, {
+  IEstimateSwapERC20Token,
+} from '@/hooks/contract-operations/swap/v3/useEstimateSwapERC20Token';
+import useSwapERC20Token, {
+  ISwapERC20TokenParams,
+} from '@/hooks/contract-operations/swap/v3/useSwapERC20Token';
+import useApproveERC20Token, {
+  IApproveERC20TokenParams,
+} from '@/hooks/contract-operations/token/useApproveERC20Token';
 import useBalanceERC20Token from '@/hooks/contract-operations/token/useBalanceERC20Token';
 import useIsApproveERC20Token from '@/hooks/contract-operations/token/useIsApproveERC20Token';
-import {IToken} from '@/interfaces/token';
-import {TransactionStatus} from '@/interfaces/walletTransaction';
-import {getSwapRoutesV2, getSwapTokensV1, ISwapRouteParams, logErrorToServer} from '@/services/swap';
-import {useAppDispatch, useAppSelector} from '@/state/hooks';
+import useContractOperation from '@/hooks/contract-operations/useContractOperation';
+import { IToken } from '@/interfaces/token';
+import {
+  ISwapRouteParams,
+  getSwapRoutesV2,
+  getSwapTokensV1,
+  logErrorToServer,
+} from '@/services/swap';
+import { useAppDispatch, useAppSelector } from '@/state/hooks';
+import { closeModal, openModal } from '@/state/modal';
 import {
   requestReload,
   requestReloadRealtime,
   selectPnftExchange,
   updateCurrentTransaction,
 } from '@/state/pnftExchange';
-import {getIsAuthenticatedSelector} from '@/state/user/selector';
-import {camelCaseKeys, compareString, formatCurrency, getTokenIconUrl,} from '@/utils';
-import {isDevelop} from '@/utils/commons';
-import {composeValidators, required} from '@/utils/formValidate';
+import { getIsAuthenticatedSelector } from '@/state/user/selector';
+import {
+  camelCaseKeys,
+  compareString,
+  formatCurrency,
+  getTokenIconUrl,
+} from '@/utils';
+import { isDevelop } from '@/utils/commons';
+import { composeValidators, required } from '@/utils/formValidate';
 import px2rem from '@/utils/px2rem';
-import {showError} from '@/utils/toast';
-import {Box, Center, Flex, forwardRef, Text} from '@chakra-ui/react';
-import {useWeb3React} from '@web3-react/core';
+import { showError } from '@/utils/toast';
+import { Box, Center, Flex, Text, forwardRef } from '@chakra-ui/react';
+import { useWindowSize } from '@trustless-computer/dapp-core';
+import { useWeb3React } from '@web3-react/core';
 import BigNumber from 'bignumber.js';
 import cx from 'classnames';
 import debounce from 'lodash/debounce';
 import Link from 'next/link';
-import {useRouter} from 'next/router';
-import React, {useCallback, useContext, useEffect, useImperativeHandle, useMemo, useRef, useState,} from 'react';
-import {Field, Form, useForm, useFormState} from 'react-final-form';
+import { useRouter } from 'next/router';
+import {
+  useCallback,
+  useContext,
+  useEffect,
+  useImperativeHandle,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
+import { Field, Form, useForm, useFormState } from 'react-final-form';
 import toast from 'react-hot-toast';
-import {RiArrowUpDownLine} from 'react-icons/ri';
-import {useDispatch, useSelector} from 'react-redux';
+import { BiBell } from 'react-icons/bi';
+import { BsListCheck } from 'react-icons/bs';
+import { RiArrowUpDownLine } from 'react-icons/ri';
+import { useDispatch, useSelector } from 'react-redux';
 import Web3 from 'web3';
 import styles from './styles.module.scss';
-import {BsListCheck} from 'react-icons/bs';
-import {BiBell} from 'react-icons/bi';
-import {ROUTE_PATH} from '@/constants/route-path';
-import SlippageSettingButton from '@/components/Swap/slippageSetting/button';
-import {closeModal, openModal} from '@/state/modal';
-import {useWindowSize} from '@trustless-computer/dapp-core';
-import InfoTooltip from '@/components/Swap/infoTooltip';
-import ModalConfirmApprove from '@/components/ModalConfirmApprove';
-import tokenIcons from '@/constants/tokenIcons';
-import {L2_CHAIN_INFO} from "@/constants/chains";
-import useEstimateSwapERC20Token, {
-  IEstimateSwapERC20Token
-} from "@/hooks/contract-operations/swap/v3/useEstimateSwapERC20Token";
-import useContractOperation from "@/hooks/contract-operations/useContractOperation";
 
 const LIMIT_PAGE = 500;
 export const MakeFormSwap = forwardRef((props, ref) => {
@@ -84,7 +102,10 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const [quoteTokensList, setQuoteTokensList] = useState<IToken[]>([]);
   const { call: isApproved } = useIsApproveERC20Token();
   const { call: tokenBalance } = useBalanceERC20Token();
-  const { run: approveToken } = useContractOperation<IApproveERC20TokenParams, boolean>({
+  const { run: approveToken } = useContractOperation<
+    IApproveERC20TokenParams,
+    boolean
+  >({
     operation: useApproveERC20Token,
   });
   const { call: getReserves } = useGetReserves();
@@ -98,7 +119,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const [swapRoutes, setSwapRoutes] = useState<any[]>([]);
   const configs = useAppSelector(selectPnftExchange).configs;
 
-  const { account} = useWeb3React();
+  const { account } = useWeb3React();
   const [exchangeRate, setExchangeRate] = useState('0');
   const { call: getEstimateSwap } = useEstimateSwapERC20Token();
 
@@ -125,12 +146,19 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   console.log('values', values);
 
   const swapFee = useMemo(() => {
-    if(values?.bestRoute) {
-      return new BigNumber(values?.bestRoute?.pathPairs?.reduce((result: any, pair: any) => result + Number(pair.fee), 0)).div(10000).toString();
+    if (values?.bestRoute) {
+      return new BigNumber(
+        values?.bestRoute?.pathPairs?.reduce(
+          (result: any, pair: any) => result + Number(pair.fee),
+          0,
+        ),
+      )
+        .div(10000)
+        .toString();
     }
 
-    return "0.3";
-  }, [JSON.stringify(values?.bestRoute)])
+    return '0.3';
+  }, [JSON.stringify(values?.bestRoute)]);
 
   const isRequireApprove = useMemo(() => {
     let result = false;
@@ -251,7 +279,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         limit: LIMIT_PAGE,
         page: page,
         is_test: isDevelop() ? '1' : '',
-        network: L2_CHAIN_INFO.chain.toLowerCase()
+        network: L2_CHAIN_INFO.chain.toLowerCase(),
       });
 
       const list = res ? camelCaseKeys(res) : [];
@@ -281,7 +309,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         page: 1,
         is_test: isDevelop() ? '1' : '',
         from_token: from_token,
-        network: L2_CHAIN_INFO.chain.toLowerCase()
+        network: L2_CHAIN_INFO.chain.toLowerCase(),
       });
       return res;
     } catch (err: unknown) {
@@ -295,7 +323,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       const params: ISwapRouteParams = {
         from_token: from_token,
         to_token: to_token,
-        network: L2_CHAIN_INFO.chain.toLowerCase()
+        network: L2_CHAIN_INFO.chain.toLowerCase(),
       };
       const response = await getSwapRoutesV2(params);
 
@@ -417,9 +445,9 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     setQuoteToken(token);
     change('quoteToken', token);
     router.replace(
-      `${ROUTE_PATH.SWAP_V2}?from_token=${router?.query?.from_token || ''}&to_token=${
-        token.address
-      }`,
+      `${ROUTE_PATH.SWAP_V2}?from_token=${
+        router?.query?.from_token || ''
+      }&to_token=${token.address}`,
     );
   };
 
@@ -571,7 +599,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       const params: IEstimateSwapERC20Token = {
         addresses: addresses,
         amount: amount,
-        fees: fees
+        fees: fees,
       };
       return getEstimateSwap(params);
     });
@@ -586,7 +614,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     change('bestRoute', bestRoute);
 
     return result;
-  }
+  };
 
   const onShowModalApprove = () => {
     const id = 'modal';
@@ -648,31 +676,27 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           <Text className={'router-text'}>Auto Router</Text>
         </Flex>
         <Flex justifyContent={'space-between'} w={'100%'} color={'#FFFFFF'} gap={2}>
-          {
-            values?.bestRoute?.pathTokens?.map((token: IToken, index: number) => {
-              return (
-                <>
-                  {
-                    index > 0 && (
-                      <Flex gap={2} flex={1} alignItems={'center'}>
-                        <Box className={'dot-line'}></Box>
-                      </Flex>
-                    )
-                  }
-                  <Flex gap={2} alignItems={'center'}>
-                    <img
-                      // width={25}
-                      // height={25}
-                      src={getTokenIconUrl(token)}
-                      alt={token?.thumbnail || 'default-icon'}
-                      className={'avatar'}
-                    />
-                    {!token?.thumbnail && <Text>{token?.symbol}</Text>}
+          {values?.bestRoute?.pathTokens?.map((token: IToken, index: number) => {
+            return (
+              <>
+                {index > 0 && (
+                  <Flex gap={2} flex={1} alignItems={'center'}>
+                    <Box className={'dot-line'}></Box>
                   </Flex>
-                </>
-              )
-            })
-          }
+                )}
+                <Flex gap={2} alignItems={'center'}>
+                  <img
+                    // width={25}
+                    // height={25}
+                    src={getTokenIconUrl(token)}
+                    alt={token?.thumbnail || 'default-icon'}
+                    className={'avatar'}
+                  />
+                  {!token?.thumbnail && <Text>{token?.symbol}</Text>}
+                </Flex>
+              </>
+            );
+          })}
         </Flex>
       </Flex>
     );
@@ -1070,7 +1094,8 @@ const TradingForm = () => {
   };
 
   const handleSwap = async (values: any) => {
-    const { baseToken, quoteToken, baseAmount, quoteAmount, swapRoutes, bestRoute } = values;
+    const { baseToken, quoteToken, baseAmount, quoteAmount, swapRoutes, bestRoute } =
+      values;
 
     try {
       setSubmitting(true);

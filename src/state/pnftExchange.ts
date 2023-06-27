@@ -3,7 +3,7 @@ import { createSlice } from '@reduxjs/toolkit';
 import { RootState } from '.';
 import localStorage from '@/utils/localstorage';
 import { SLIPPAGE_VALUE } from '@/constants/storage-key';
-import { WalletTransactionData } from '@/interfaces/walletTransaction';
+import { WalletTransactionData } from '@/components/Swap/alertInfoProcessing/interface';
 import { SupportedChainId } from '@/constants/chains';
 
 interface NftyLendState {
@@ -11,7 +11,7 @@ interface NftyLendState {
   reloadRealtime: number;
   slippage: number;
   loadingRealtime: boolean;
-  currentTransaction: WalletTransactionData | undefined;
+  currentTransaction: WalletTransactionData | undefined | null;
   showBanner: boolean;
   configs: any;
   currentChainId: any;
@@ -45,7 +45,12 @@ const slice = createSlice({
     updateLoadingRealtime: (state, action) => {
       state.loadingRealtime = action.payload;
     },
-    updateCurrentTransaction: (state, action) => {
+    updateCurrentTransaction: (
+      state,
+      action: {
+        payload: WalletTransactionData | null | undefined;
+      },
+    ) => {
       state.currentTransaction = action.payload;
     },
     updateShowBanner: (state, action) => {

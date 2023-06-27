@@ -8,17 +8,20 @@ import { IToken } from '@/interfaces/token';
 import { getContract, getDefaultProvider, sortAddressPair } from '@/utils';
 import { useCallback } from 'react';
 
-export interface IGetPairParams {
+export interface IGetPoolAddressParams {
   tokenA: IToken;
   tokenB: IToken;
   fee: any;
 }
 
-const useGetPool: ContractOperationHook<IGetPairParams, string> = () => {
+const useGetPoolAddress: ContractOperationHook<
+  IGetPoolAddressParams,
+  string
+> = () => {
   const provider = getDefaultProvider();
 
   const call = useCallback(
-    async (params: IGetPairParams): Promise<string> => {
+    async (params: IGetPoolAddressParams): Promise<string> => {
       const { tokenA, tokenB, fee } = params;
       if (provider) {
         const contract = getContract(
@@ -47,4 +50,4 @@ const useGetPool: ContractOperationHook<IGetPairParams, string> = () => {
   };
 };
 
-export default useGetPool;
+export default useGetPoolAddress;
