@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import ListTable, {ColumnProp} from '@/components/Swap/listTable';
-import {MEMPOOL_URL, TC_EXPLORER, WALLET_URL} from '@/configs';
+import {MEMPOOL_URL, WALLET_URL} from '@/configs';
 import {getUserTradeHistory} from '@/services/swap';
 import {camelCaseKeys, formatCurrency, formatLongAddress} from '@/utils';
 import {Flex, Text} from '@chakra-ui/react';
