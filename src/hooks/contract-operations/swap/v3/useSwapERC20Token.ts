@@ -1,22 +1,22 @@
 import SwapRouterJson from '@/abis/SwapRouter.json';
-import { transactionType } from '@/components/Swap/alertInfoProcessing/types';
-import { UNIV3_ROUTER_ADDRESS } from '@/configs';
-import { MaxUint256 } from '@/constants/url';
-import { TransactionEventType } from '@/enums/transaction';
-import { ContractOperationHook, DAppType } from '@/interfaces/contract-operation';
-import { TransactionStatus } from '@/interfaces/walletTransaction';
-import { logErrorToServer, scanTrx } from '@/services/swap';
+import {transactionType} from '@/components/Swap/alertInfoProcessing/types';
+import {UNIV3_ROUTER_ADDRESS} from '@/configs';
+import {MaxUint256} from '@/constants/url';
+import {TransactionEventType} from '@/enums/transaction';
+import {ContractOperationHook, DAppType} from '@/interfaces/contract-operation';
+import {TransactionStatus} from '@/interfaces/walletTransaction';
+import {logErrorToServer, scanTrx} from '@/services/swap';
 import store from '@/state';
-import { updateCurrentTransaction } from '@/state/pnftExchange';
-import { getContract } from '@/utils';
-import { FeeAmount } from '@/utils/constants';
-import { encodePath } from '@/utils/path';
-import { useWeb3React } from '@web3-react/core';
-import { useCallback } from 'react';
+import {updateCurrentTransaction} from '@/state/pnftExchange';
+import {getContract} from '@/utils';
+import {encodePath} from '@/utils/path';
+import {useWeb3React} from '@web3-react/core';
+import {useCallback} from 'react';
 import Web3 from 'web3';
 
 export interface ISwapERC20TokenParams {
   addresses: string[];
+  fees: number[];
   address?: string | undefined;
   amount: string;
   amountOutMin: string;
@@ -30,7 +30,7 @@ const useSwapERC20Token: ContractOperationHook<
 
   const call = useCallback(
     async (params: ISwapERC20TokenParams): Promise<boolean> => {
-      const { addresses, address, amount, amountOutMin } = params;
+      const { addresses, fees, address, amount, amountOutMin } = params;
       if (account && provider) {
         const contract = getContract(
           UNIV3_ROUTER_ADDRESS,
@@ -59,8 +59,6 @@ const useSwapERC20Token: ContractOperationHook<
         // }
 
         // const gasLimit = 50000 + addresses.length * 100000;
-        const fees = Array(addresses.length - 1).fill(FeeAmount.MEDIUM);
-
         const data = {
           path: encodePath(addresses, fees),
           recipient: address,

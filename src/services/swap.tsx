@@ -41,6 +41,17 @@ export const getSwapTokens = async (
   });
 };
 
+export const getSwapTokensV1 = async (
+  params: IPagingParams & IListTokenParams,
+): Promise<IToken[]> => {
+  const qs = '?' + queryString.stringify(params);
+
+  return swrFetcher(`${API_EXCHANGE_URL}${API_PATH}/token/list/v1${qs}`, {
+    method: 'GET',
+    error: 'Fail to get tokens data',
+  });
+};
+
 export const scanTrx = async (params: { tx_hash: string }) => {
   const qs = '?' + queryString.stringify(params);
   return swrFetcher(`${API_URL}${API_PATH}/scan${qs}`, {
@@ -111,6 +122,14 @@ export const getSwapRoutes = async (params: ISwapRouteParams) => {
 export const getSwapRoutesV1 = async (params: ISwapRouteParams) => {
   const qs = '?' + queryString.stringify(params);
   return swrFetcher(`${API_EXCHANGE_URL}${API_PATH}/token/route/v1${qs}`, {
+    method: 'GET',
+    error: 'Fail to get route',
+  });
+};
+
+export const getSwapRoutesV2 = async (params: ISwapRouteParams) => {
+  const qs = '?' + queryString.stringify(params);
+  return swrFetcher(`${API_EXCHANGE_URL}${API_PATH}/token/route/v2${qs}`, {
     method: 'GET',
     error: 'Fail to get route',
   });

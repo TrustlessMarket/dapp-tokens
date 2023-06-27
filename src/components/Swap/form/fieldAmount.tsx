@@ -31,6 +31,7 @@ interface FieldAmountProps {
   note?: React.ReactNode;
   rightLabel?: React.ReactNode;
   fieldChanged?: (_: any) => void;
+  blurFieldChanged?: (_: any) => void;
   hideError?: boolean;
   borderColor?: string;
   numberOptions?: CleaveOptions;
@@ -50,6 +51,7 @@ const FieldAmount = (props: FieldAmountProps) => {
     note,
     rightLabel,
     fieldChanged,
+    blurFieldChanged,
     // disabledInput, errorPlacement, zIndex, anchorAppend,
     hideError = false,
     borderColor = 'background.default',
@@ -119,6 +121,7 @@ const FieldAmount = (props: FieldAmountProps) => {
               onBlur={(e) => {
                 onBlur();
                 e?.target?.blur();
+                blurFieldChanged?.(e.target.value);
               }}
               options={{
                 numeral: true,
@@ -147,7 +150,15 @@ const FieldAmount = (props: FieldAmountProps) => {
       </FormControl>
 
       {!hideError && isError && (
-        <Text fontSize="xs" color="brand.danger.400">
+        <Text
+          style={{
+            fontSize: '12px',
+            color: 'var(--chakra-colors-brand-danger-400)',
+            textAlign: 'left',
+            fontWeight: '400',
+          }}
+          className="error-text"
+        >
           {error}
         </Text>
       )}

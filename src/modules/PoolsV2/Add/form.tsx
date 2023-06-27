@@ -13,22 +13,26 @@ import { IToken } from '@/interfaces/token';
 import { IPoolV2AddPair } from '@/pages/pools/v2/add/[...id]';
 import { getTokens } from '@/services/token-explorer';
 import { compareString } from '@/utils';
+import { FeeAmount } from '@/utils/constants';
 import { composeValidators, requiredAmount } from '@/utils/formValidate';
 import { Box, Flex } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { Field, useForm, useFormState } from 'react-final-form';
 import {
   checkBalanceIsApprove,
-  getUniFee,
   validateBaseAmount,
   validateQuoteAmount,
 } from '../utils';
+import AddApproveToken from './Add.ApproveToken';
+import AddFeeTier from './Add.FeeTier';
 import AddItemToken from './Add.ItemToken';
 import AddPriceRange from './Add.PriceRange';
 import AddTokenBalance from './Add.TokenBalance';
 import s from './styles.module.scss';
-import AddApproveToken from './Add.ApproveToken';
+import BigNumber from 'bignumber.js';
+import Empty from '@/components/Empty';
+import { CDN_URL } from '@/configs';
 
 interface IFormAddPoolsV2Container extends IPoolV2AddPair {
   handleSubmit: (_: any) => void;
@@ -60,6 +64,9 @@ const FormAddPoolsV2Container: React.FC<IFormAddPoolsV2Container> = ({
   const baseTokenAmountApprove: string = values?.baseTokenAmountApprove || '0';
   const quoteTokenAmountApprove: string = values?.quoteTokenAmountApprove || '0';
   const fee: number = values?.fee || 0;
+  const estimateAmount: number = values?.estimateAmount || 0;
+  const maxPrice: number = values?.maxPrice || 0;
+  const minPrice: number = values?.minPrice || 0;
 
   const isBaseTokenApprove = checkBalanceIsApprove(
     baseTokenAmountApprove,
@@ -72,6 +79,10 @@ const FormAddPoolsV2Container: React.FC<IFormAddPoolsV2Container> = ({
   );
 
   const isTokenApproved = isBaseTokenApprove && isQuoteTokenApprove;
+
+  const isDisabledBaseAmount = new BigNumber(maxPrice).lt(estimateAmount);
+
+  const isDisabledQuoteAmount = new BigNumber(minPrice).gt(estimateAmount);
 
   useEffect(() => {
     fetchData();
@@ -99,7 +110,7 @@ const FormAddPoolsV2Container: React.FC<IFormAddPoolsV2Container> = ({
   };
 
   const initialData = () => {
-    change('fee', getUniFee());
+    change('fee', FeeAmount.MEDIUM);
     const findBaseToken = tokensList.find((v) =>
       compareString(v.address, paramBaseTokenAddress),
     );
@@ -168,61 +179,78 @@ const FormAddPoolsV2Container: React.FC<IFormAddPoolsV2Container> = ({
             </Flex>
           </InputWrapper>
           <Box mt={8} />
+          <AddFeeTier />
+          <Box mt={8} />
           <InputWrapper label="Deposit Amounts">
             <Box className={s.formContainer__left__amountWrap}>
-              <Field
-                name="baseAmount"
-                children={FieldAmount}
-                validate={composeValidators(requiredAmount, validateBaseAmount)}
-                //   fieldChanged={onChangeValueBaseAmount}
-                //   disabled={submitting || isDisabled}
-                // placeholder={"Enter number of tokens"}
-                decimals={baseToken?.decimal || 18}
-                className={s.formContainer__left__inputAmount}
-                appendComp={
-                  baseToken && (
-                    <>
-                      <AddItemToken token={baseToken} hideName={true} />
-                    </>
-                  )
-                }
-                note={
-                  baseToken && (
-                    <>
-                      <Box />
-                      <AddTokenBalance token={baseToken} name="baseToken" />
-                    </>
-                  )
-                }
-              />
+              {isDisabledBaseAmount ? (
+                <Box className={s.formContainer__left__amountWrap__locked}>
+                  <Empty
+                    src={`${CDN_URL}/icons/ic-locked-2.svg`}
+                    size={24}
+                    infoText="The market price is outside your specified price range. Single-asset deposit only."
+                  />
+                </Box>
+              ) : (
+                <Field
+                  name="baseAmount"
+                  children={FieldAmount}
+                  validate={composeValidators(requiredAmount, validateBaseAmount)}
+                  disabled={isDisabledBaseAmount}
+                  decimals={baseToken?.decimal || 18}
+                  className={s.formContainer__left__inputAmount}
+                  appendComp={
+                    baseToken && (
+                      <>
+                        <AddItemToken token={baseToken} hideName={true} />
+                      </>
+                    )
+                  }
+                  note={
+                    baseToken && (
+                      <>
+                        <Box />
+                        <AddTokenBalance token={baseToken} name="baseToken" />
+                      </>
+                    )
+                  }
+                />
+              )}
             </Box>
             <Box mt={2} />
             <Box className={s.formContainer__left__amountWrap}>
-              <Field
-                name="quoteAmount"
-                children={FieldAmount}
-                validate={composeValidators(requiredAmount, validateQuoteAmount)}
-                //   fieldChanged={onChangeValueBaseAmount}
-                //   disabled={submitting || isDisabled}
-                // placeholder={"Enter number of tokens"}
-                decimals={quoteToken?.decimal || 18}
-                className={s.formContainer__left__inputAmount}
-                appendComp={
-                  quoteToken && <AddItemToken token={quoteToken} hideName={true} />
-                }
-                note={
-                  quoteToken && (
-                    <>
-                      <Box />
-                      <AddTokenBalance token={quoteToken} name="quoteToken" />
-                    </>
-                  )
-                }
-              />
+              {isDisabledQuoteAmount ? (
+                <Box className={s.formContainer__left__amountWrap__locked}>
+                  <Empty
+                    size={24}
+                    src={`${CDN_URL}/icons/ic-locked-2.svg`}
+                    infoText="The market price is outside your specified price range. Single-asset deposit only."
+                  />
+                </Box>
+              ) : (
+                <Field
+                  name="quoteAmount"
+                  children={FieldAmount}
+                  validate={composeValidators(requiredAmount, validateQuoteAmount)}
+                  disabled={isDisabledQuoteAmount}
+                  // placeholder={"Enter number of tokens"}
+                  decimals={quoteToken?.decimal || 18}
+                  className={s.formContainer__left__inputAmount}
+                  appendComp={
+                    quoteToken && <AddItemToken token={quoteToken} hideName={true} />
+                  }
+                  note={
+                    quoteToken && (
+                      <>
+                        <Box />
+                        <AddTokenBalance token={quoteToken} name="quoteToken" />
+                      </>
+                    )
+                  }
+                />
+              )}
             </Box>
           </InputWrapper>
-          <Box mt={6} />
-          <InputWrapper label={`Fee Tier: ${fee / 10000}%`}>{''}</InputWrapper>
         </Box>
         <Flex className={s.formContainer__right}>
           <AddPriceRange loading={loading} />

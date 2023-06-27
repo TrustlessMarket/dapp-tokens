@@ -129,6 +129,26 @@
           }
         }
       }
+      &__locked {
+        background-color: var(--bs-gray-dark);
+        border-radius: 16px;
+        height: 80px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        :global {
+          .content {
+            font-size: rem(11) !important;
+            line-height: rem(16);
+            text-align: center;
+            max-width: 70%;
+            margin-bottom: 0 !important;
+            margin-top: 5px !important;
+            font-weight: 400 !important;
+          }
+        }
+      }
     }
     &__inputAmount {
       &:disabled {
@@ -141,6 +161,32 @@
     }
     &__feeTier {
       color: white;
+    }
+    &__feeTierContainer {
+      &__item {
+        flex: 1;
+        border: 1px solid var(--bs-gray-dark);
+        border-radius: 8px;
+        padding: 10px 10px;
+        cursor: pointer;
+        &__title {
+          color: white !important;
+          font-weight: bold;
+          font-size: rem(16) !important;
+        }
+        &__desc {
+          font-size: rem(11);
+          color: var(--chakra-colors-gray-400) !important;
+          line-height: 12px;
+          margin-top: 5px;
+        }
+        &:hover {
+          border-color: var(--chakra-colors-gray-300);
+        }
+      }
+      &__itemActive {
+        border-color: var(--chakra-colors-gray-300);
+      }
     }
   }
 
@@ -185,9 +231,33 @@
 
     &__rangeContainer {
       &__item {
-        border: 1px solid var(--chakra-colors-gray-500);
-        border-radius: 12px;
-        padding: 10px;
+        :global {
+          .chakra-form-control {
+            border: 1px solid var(--chakra-colors-gray-500);
+            border-radius: 12px;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            &.isError {
+              border: 1px solid var(--chakra-colors-brand-danger-400);
+              margin-bottom: 3px;
+              .error-text {
+                color: var(--chakra-colors-brand-danger-400);
+              }
+            }
+            .chakra-form__label {
+              text-align: center;
+              font-size: rem(11);
+              color: var(--chakra-colors-gray-500);
+              margin: 0;
+            }
+            .field-note {
+              color: var(--chakra-colors-gray-500);
+              font-weight: 500;
+            }
+          }
+        }
         p {
           text-align: center;
           font-size: rem(11);
