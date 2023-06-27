@@ -30,4 +30,20 @@
     align-items: center;
     min-height: 250px;
   }
+
+  :global {
+    .avatar {
+      object-fit: cover;
+      width: rem(25);
+      height: rem(25);
+      border-radius: 50%;
+    }
+
+    .avatar2 {
+      object-fit: cover;
+      width: rem(15);
+      height: rem(15);
+      border-radius: 50%;
+    }
+  }
 }
