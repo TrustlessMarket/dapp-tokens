@@ -122,6 +122,8 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const { change, restart } = useForm();
   const btnDisabled = loading || !baseToken || !quoteToken;
 
+  console.log('values', values);
+
   const swapFee = useMemo(() => {
     if(values?.bestRoute) {
       return new BigNumber(values?.bestRoute?.pathPairs?.reduce((result: any, pair: any) => result + Number(pair.fee), 0)).div(10000).toString();
@@ -524,7 +526,6 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     swapRoutes,
   }: {
     amount: any;
-    reserveInfos: any;
     tokenIn: any;
     tokenOut: any;
     swapRoutes: any;
@@ -538,7 +539,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       )
         return;
 
-      const estimateAmountOut = await calculateBestRoute(amount);
+      const estimateAmountOut = await calculateBestRoute(amount, swapRoutes);
 
       const rate = new BigNumber(amount)
         .div(estimateAmountOut)
@@ -562,8 +563,8 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     onChangeValueBaseAmount(baseBalance);
   };
 
-  const calculateBestRoute = async (amount: any) => {
-    const promises = swapRoutes.map(route => {
+  const calculateBestRoute = async (amount: any, swapRoutes: any) => {
+    const promises = swapRoutes.map((route: any) => {
       const addresses = route?.pathTokens?.map((token: IToken) => token.address);
       const fees = route?.pathPairs?.map((pair: any) => Number(pair.fee));
 
