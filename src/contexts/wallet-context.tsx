@@ -176,12 +176,15 @@ export const WalletProvider: React.FC<PropsWithChildren> = ({
 
   const onSwitchChain = async (chainId: any) => {
     try {
+      console.log('chainId', chainId);
+
       dispatch(updateCurrentChainId(chainId));
       const chainList = await getChainList();
-      const info = chainList.find((c: IResourceChain) => c.chainId === isChain);
+      const info = chainList.find((c: IResourceChain) => c.chainId === chainId);
       if (!info) {
         throw new Error(`Chain ${chainId} not supported`);
       }
+      localStorage.setItem(CHAIN_INFO, JSON.stringify(info));
     } catch (error) {
       throw error;
     }
