@@ -1,15 +1,15 @@
-import { IToken } from '@/interfaces/token';
-import { Text } from '@chakra-ui/react';
-import React, { useEffect } from 'react';
-import s from './styles.module.scss';
-import { formatCurrency } from '@/utils';
-import { useForm, useFormState } from 'react-final-form';
-import useIsApproveERC20Token from '@/hooks/contract-operations/token/useIsApproveERC20Token';
+import { UNIV3_NONFUNGBILE_POSITION_MANAGER_ADDRESS } from '@/configs';
 import useBalanceERC20Token from '@/hooks/contract-operations/token/useBalanceERC20Token';
-import { UNIV3_ROUTER_ADDRESS } from '@/configs';
-import web3 from 'web3';
+import useIsApproveERC20Token from '@/hooks/contract-operations/token/useIsApproveERC20Token';
+import { IToken } from '@/interfaces/token';
 import { useAppSelector } from '@/state/hooks';
 import { selectPnftExchange } from '@/state/pnftExchange';
+import { formatCurrency } from '@/utils';
+import { Text } from '@chakra-ui/react';
+import React, { useEffect } from 'react';
+import { useForm, useFormState } from 'react-final-form';
+import web3 from 'web3';
+import s from './styles.module.scss';
 
 interface IAddTokenBalance {
   token: IToken;
@@ -54,7 +54,7 @@ const AddTokenBalance: React.FC<IAddTokenBalance> = ({ token, name }) => {
     try {
       const response = await isApproved({
         erc20TokenAddress: token.address,
-        address: UNIV3_ROUTER_ADDRESS,
+        address: UNIV3_NONFUNGBILE_POSITION_MANAGER_ADDRESS,
       });
       return response;
     } catch (error) {

@@ -137,7 +137,6 @@ export const IGNORABLE_DUST = 500;
 export const MIN_SQRT_RATIO = '4295128740';
 /// @dev The maximum value that can be returned from #getSqrtRatioAtTick. Equivalent to getSqrtRatioAtTick(MAX_TICK)
 export const MAX_SQRT_RATIO = '1461446703485210103287273052203988822378723970341';
-export const MaxUint128 = BigNumber.from(2).pow(128).sub(1);
 
 export const MaxUint256 = BigNumber.from(
   '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff',
@@ -146,4 +145,5 @@ export const Q128 = BigNumber.from(2).pow(128);
 export const Q96 = BigNumber.from(2).pow(96);
 export const Q32 = BigNumber.from(2).pow(32);
 export const MAX_TICK = BigNumber.from(887272);
-export const getDeadline = () => moment().add(30, 'seconds').unix();
+export const getDeadline = () =>
+  BigNumber.from(moment().add(30, 'seconds').unix().toString());

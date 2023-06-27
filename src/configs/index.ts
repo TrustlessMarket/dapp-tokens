@@ -29,6 +29,8 @@ export const LAUNCHPAD_FACTORY_ADDRESS: string =
 // V3
 export const UNIV3_FACTORY_ADDRESS: string = process.env.NEXT_PUBLIC_UNIV3_FACTORY!;
 export const UNIV3_ROUTER_ADDRESS: string = process.env.NEXT_PUBLIC_UNIV3_ROUTER!;
+export const UNIV3_NONFUNGBILE_POSITION_MANAGER_ADDRESS: string =
+  process.env.NEXT_PUBLIC_UNIV3_NONFUNGBILE_POSITION_MANAGER!;
 export const UNIV3_QUOTERV2_ADDRESS: string =
   process.env.NEXT_PUBLIC_UNIV3_QUOTERV2!;
 
