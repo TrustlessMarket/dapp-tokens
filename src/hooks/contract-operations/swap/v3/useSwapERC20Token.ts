@@ -1,7 +1,6 @@
 import SwapRouterJson from '@/abis/SwapRouter.json';
 import {transactionType} from '@/components/Swap/alertInfoProcessing/types';
 import {UNIV3_ROUTER_ADDRESS} from '@/configs';
-import {MaxUint256} from '@/constants/url';
 import {TransactionEventType} from '@/enums/transaction';
 import {ContractOperationHook, DAppType} from '@/interfaces/contract-operation';
 import {TransactionStatus} from '@/interfaces/walletTransaction';
@@ -13,6 +12,7 @@ import {encodePath} from '@/utils/path';
 import {useWeb3React} from '@web3-react/core';
 import {useCallback} from 'react';
 import Web3 from 'web3';
+import {getDeadline} from "@/utils/number";
 
 export interface ISwapERC20TokenParams {
   addresses: string[];
@@ -62,7 +62,7 @@ const useSwapERC20Token: ContractOperationHook<
         const data = {
           path: encodePath(addresses, fees),
           recipient: address,
-          deadline: MaxUint256,
+          deadline: getDeadline(),
           amountIn: Web3.utils.toWei(amount, 'ether'),
           amountOutMinimum: Web3.utils.toWei(amountOutMin, 'ether'),
         };

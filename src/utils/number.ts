@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-inferrable-types */
 import { BigNumber } from 'ethers';
 import bn from 'bignumber.js';
+import moment from 'moment';
 
 export const getMinTick = (tickSpacing: number) =>
   Math.ceil(-887272 / tickSpacing) * tickSpacing;
@@ -145,3 +146,4 @@ export const Q128 = BigNumber.from(2).pow(128);
 export const Q96 = BigNumber.from(2).pow(96);
 export const Q32 = BigNumber.from(2).pow(32);
 export const MAX_TICK = BigNumber.from(887272);
+export const getDeadline = () => moment().add(30, 'seconds').unix();

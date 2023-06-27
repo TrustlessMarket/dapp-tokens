@@ -176,8 +176,6 @@ export const WalletProvider: React.FC<PropsWithChildren> = ({
 
   const onSwitchChain = async (chainId: any) => {
     try {
-      console.log('chainId', chainId);
-
       dispatch(updateCurrentChainId(chainId));
       const chainList = await getChainList();
       const info = chainList.find((c: IResourceChain) => c.chainId === chainId);
