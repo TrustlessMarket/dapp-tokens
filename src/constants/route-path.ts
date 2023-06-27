@@ -11,6 +11,7 @@ export const ROUTE_PATH = {
   POOLS: '/pools',
   ADD_POOL: '/add-pool',
   SWAP: '/swap',
+  SWAP_V2: '/swap/v2',
   MARKETS: '/markets',
   GET_STARTED: '/get-started',
   TOKEN: '/token',
@@ -25,4 +26,6 @@ export const ROUTE_PATH = {
   LAUNCHPAD_PROPOSAL: '/launchpad/proposal',
   LAUNCHPAD_GET_STARTED: '/launchpad/get-started',
   PROPOSAL: 'proposal',
+  POOLS_V2: '/pools/v2',
+  POOLS_V2_ADD: '/pools/v2/add',
 };

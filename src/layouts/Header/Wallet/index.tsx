@@ -12,12 +12,8 @@ import { TRUSTLESS_BRIDGE } from '@/constants/common';
 import { ROUTE_PATH } from '@/constants/route-path';
 import { WalletContext } from '@/contexts/wallet-context';
 import useBalanceERC20Token from '@/hooks/contract-operations/token/useBalanceERC20Token';
-import {
-  compareString,
-  formatCurrency,
-  formatLongAddress,
-  isSupportedChain,
-} from '@/utils';
+import { IResourceChain } from '@/interfaces/chain';
+import { formatCurrency, formatLongAddress, isSupportedChain } from '@/utils';
 import { showError } from '@/utils/toast';
 import { useWindowSize } from '@trustless-computer/dapp-core';
 import { useRouter } from 'next/router';
@@ -30,13 +26,13 @@ import web3 from 'web3';
 import { isScreenDarkMode } from '..';
 import { ConnectWalletButton, WalletBalance } from '../Header.styled';
 import { WalletPopover } from './Wallet.styled';
-import { SupportedChainId } from '@/constants/chains';
 
 const WalletHeader = () => {
   const router = useRouter();
   const { account, chainId, isActive } = useWeb3React();
   const user = useSelector(getUserSelector);
-  const { onDisconnect, onConnect, requestBtcAddress } = useContext(WalletContext);
+  const { onDisconnect, onConnect, requestBtcAddress, getConnectedChainInfo } =
+    useContext(WalletContext);
   const { mobileScreen } = useWindowSize();
 
   const isAuthenticated = useSelector(getIsAuthenticatedSelector);
@@ -44,6 +40,8 @@ const WalletHeader = () => {
 
   const { call: getBalanceErc20 } = useBalanceERC20Token();
   const [balanceTM, setBalanceTM] = useState('0');
+
+  const chainInfo: IResourceChain = getConnectedChainInfo();
 
   const isTokenPage = useMemo(() => {
     return isScreenDarkMode();
@@ -250,9 +248,7 @@ const WalletHeader = () => {
                     <span className="divider"></span>
                     <p>
                       {formatCurrency(web3.utils.fromWei(juiceBalance), 5)}{' '}
-                      {compareString(chainId, SupportedChainId.TRUSTLESS_COMPUTER)
-                        ? 'TC'
-                        : 'ETH'}
+                      {chainInfo.nativeCurrency.symbol}
                     </p>
                   </div>
                   <div className="avatar">

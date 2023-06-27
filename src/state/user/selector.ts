@@ -1,7 +1,6 @@
-import { UserState } from '@/state/user/reducer';
 import store, { RootState } from '@/state';
-import { compareString } from '@/utils';
-import { SupportedChainId } from '@/constants/chains';
+import { UserState } from '@/state/user/reducer';
+import { isSupportedChain } from '@/utils';
 
 export const getUserSelector = (state: RootState): UserState | null => state.user;
 
@@ -15,10 +14,7 @@ export const getIsAuthenticatedSelector = (state: RootState): boolean => {
     return true;
   }
 
-  if (
-    Boolean(state.user.walletAddress) &&
-    compareString(currentChainId, SupportedChainId.ETH)
-  ) {
+  if (Boolean(state.user.walletAddress) && isSupportedChain(currentChainId)) {
     return true;
   }
 

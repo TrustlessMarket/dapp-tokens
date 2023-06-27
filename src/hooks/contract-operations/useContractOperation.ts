@@ -6,7 +6,12 @@ import { AssetsContext } from '@/contexts/assets-context';
 import { ContractOperationHook } from '@/interfaces/contract-operation';
 import { logErrorToServer } from '@/services/swap';
 import { getIsAuthenticatedSelector, getUserSelector } from '@/state/user/selector';
-import { capitalizeFirstLetter, isSupportedChain, switchChain } from '@/utils';
+import {
+  capitalizeFirstLetter,
+  compareString,
+  isSupportedChain,
+  switchChain,
+} from '@/utils';
 import { isProduction } from '@/utils/commons';
 import { useWeb3React } from '@web3-react/core';
 import { useRouter } from 'next/router';
@@ -14,6 +19,8 @@ import { useContext } from 'react';
 import { useSelector } from 'react-redux';
 import * as TC_SDK from 'trustless-computer-sdk';
 import useBitcoin from '../useBitcoin';
+import { WalletContext } from '@/contexts/wallet-context';
+import { IResourceChain } from '@/interfaces/chain';
 
 interface IParams<P, R> {
   operation: ContractOperationHook<P, R>;
@@ -34,12 +41,11 @@ const useContractOperation = <P, R>(
     inscribeable = true,
   } = args;
   const { call, dAppType, transactionType } = operation();
-  const { feeRate } = useContext(AssetsContext);
   const { chainId: walletChainId } = useWeb3React();
   const isAuthenticated = useSelector(getIsAuthenticatedSelector);
   const user = useSelector(getUserSelector);
-  const { getUnInscribedTransactionByAddress } = useBitcoin();
   const router = useRouter();
+  const { getConnectedChainInfo } = useContext(WalletContext);
 
   const checkAndSwitchChainIfNecessary = async (): Promise<void> => {
     if (!isSupportedChain(walletChainId)) {
@@ -64,6 +70,8 @@ const useContractOperation = <P, R>(
       // Check & switch network if necessary
       await checkAndSwitchChainIfNecessary();
 
+      const connectedChainInfo: IResourceChain = getConnectedChainInfo();
+
       if (!inscribeable) {
         // Make TC transaction
         console.time('____metamaskCreateTxTime');
@@ -80,14 +88,21 @@ const useContractOperation = <P, R>(
         ...params,
       });
 
-      TC_SDK.signTransaction({
-        method: `${transactionType} ${dAppType}`,
-        hash: Object(tx).hash,
-        dappURL: window.location.origin + window.location.pathname,
-        isRedirect: true,
-        target: '_blank',
-        isMainnet: isProduction(),
-      });
+      if (
+        compareString(
+          connectedChainInfo.chainId,
+          SupportedChainId.TRUSTLESS_COMPUTER,
+        )
+      ) {
+        TC_SDK.signTransaction({
+          method: `${transactionType} ${dAppType}`,
+          hash: Object(tx).hash,
+          dappURL: window.location.origin + window.location.pathname,
+          isRedirect: true,
+          target: '_blank',
+          isMainnet: isProduction(),
+        });
+      }
 
       if (tx?.deployTransaction?.wait) {
         await tx.deployTransaction.wait();

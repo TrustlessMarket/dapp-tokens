@@ -1,5 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { ACCESS_TOKEN, PREV_CHAIN_ID, REFRESH_TOKEN } from '@/constants/storage-key';
+import {
+  ACCESS_TOKEN,
+  CHAIN_INFO,
+  PREV_CHAIN_ID,
+  REFRESH_TOKEN,
+} from '@/constants/storage-key';
 import localStorage from '@/utils/localstorage';
 // import { User } from '@interfaces/user';
 // import { isBrowser } from '@utils/common';
@@ -24,6 +29,7 @@ export const clearAuthStorage = (): void => {
   localStorage.remove(ACCESS_TOKEN);
   localStorage.remove(REFRESH_TOKEN);
   localStorage.remove(PREV_CHAIN_ID);
+  localStorage.remove(CHAIN_INFO);
   // walletBTCStorage.removeWallet();
 };
 

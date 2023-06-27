@@ -27,6 +27,7 @@ export const getTokenRp = async (
 export interface IListTokenParams {
   is_test?: string;
   from_token?: string;
+  network?: string
 }
 
 export const getSwapTokens = async (
@@ -93,12 +94,23 @@ export const getTradeHistory = async (
   });
 };
 
-export const getSwapRoutes = async (params: {
+export interface ISwapRouteParams {
   from_token: string;
   to_token: string;
-}) => {
+  network?: string
+}
+
+export const getSwapRoutes = async (params: ISwapRouteParams) => {
   const qs = '?' + queryString.stringify(params);
-  return swrFetcher(`${API_URL}${API_PATH}/token/route${qs}`, {
+  return swrFetcher(`${API_EXCHANGE_URL}${API_PATH}/token/route${qs}`, {
+    method: 'GET',
+    error: 'Fail to get route',
+  });
+};
+
+export const getSwapRoutesV1 = async (params: ISwapRouteParams) => {
+  const qs = '?' + queryString.stringify(params);
+  return swrFetcher(`${API_EXCHANGE_URL}${API_PATH}/token/route/v1${qs}`, {
     method: 'GET',
     error: 'Fail to get route',
   });

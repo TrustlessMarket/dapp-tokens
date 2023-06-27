@@ -77,31 +77,38 @@ const AllowlistTable = ({
         index: index + 1,
         isCurrentUser: compareString(item?.userAddress, account),
       }));
-      setRawDepositList(list);
-      const you = list.find((item: any) => item?.isCurrentUser);
+
+      let drawList = list;
+      setRawDepositList(drawList);
+      let you = list.find((item: any) => item?.isCurrentUser);
 
       if (!you && userDeposit?.userAddress) {
-        setRawDepositList([
-          ...list,
-          {
-            ...userDeposit,
-            index: list?.length + 1,
-            isCurrentUser: true,
-          },
-        ]);
+        you = {
+          ...userDeposit,
+          index: list?.length + 1,
+          isCurrentUser: true,
+        };
+        drawList = [
+          ...list, you
+        ];
+        setRawDepositList(drawList);
       }
 
       if (isFull) {
-        setDepositList(list);
+        setDepositList(drawList);
       } else {
         if (you) {
-          setDepositList([{ ...you }]);
-        } else {
-          if (userDeposit?.userAddress) {
-            setDepositList([{ ...userDeposit, index: 1, isCurrentUser: true }]);
-          } else if (list?.length > 0) {
-            setDepositList([list[0]]);
+          const index = drawList.findIndex((item: any) => {
+            return compareString(item.userAddress, you.userAddress);
+          });
+
+          if(index > 2) {
+            setDepositList([you, ...drawList.slice(0, 2)]);
+          } else {
+            setDepositList(drawList.slice(0, 3));
           }
+        } else {
+          setDepositList(drawList.slice(0, 3));
         }
       }
     } catch (err: unknown) {
@@ -385,27 +392,35 @@ const AllowlistTable = ({
               <>
                 <Search onSearch={onSearchAddress} />
                 <div className={cx(styles.dataListWrapper)}>
-                  {depositList.length === 0 && <Empty isTable={false} />}
-                  {depositList.length > 0 && <DataTable />}
+                  {depositList?.length === 0 && <Empty isTable={false} />}
+                  {depositList?.length > 0 && <DataTable />}
                 </div>
               </>
             ) : (
               <>
-                {depositList.length === 0 ? (
+                {depositList?.length === 0 ? (
                   <Empty isTable={false} />
                 ) : (
-                  <RowRenderer
-                    index={0}
-                    key={'you'}
-                    data={depositList}
-                    onShowContributeHistory={handleShowContributeHistory}
-                  />
+                  <>
+                    {
+                      depositList?.map((item, index) => {
+                        return (
+                          <RowRenderer
+                            index={index}
+                            key={index}
+                            data={depositList}
+                            onShowContributeHistory={handleShowContributeHistory}
+                          />
+                        )
+                      })
+                    }
+                  </>
                 )}
               </>
             )}
           </>
         )}
-        {rawDepositList.length > 1 && !isFull && (
+        {rawDepositList.length > 3 && !isFull && (
           <Text
             color={'#1588FF'}
             fontWeight={'500'}

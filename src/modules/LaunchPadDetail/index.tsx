@@ -1,15 +1,23 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import BodyContainer from '@/components/Swap/bodyContainer';
 import FiledButton from '@/components/Swap/button/filedButton';
+import SectionContainer from '@/components/Swap/sectionContainer';
 import { ROUTE_PATH } from '@/constants/route-path';
+import { WalletContext } from '@/contexts/wallet-context';
 import { ILaunchpad } from '@/interfaces/launchpad';
 import AboveTheFoldLaunchpad from '@/modules/LaunchPadDetail/aboveTheFold';
-import AboveTheFoldVoting from '@/modules/ProposalDetail/aboveTheFold';
 import IdoDescription from '@/modules/LaunchPadDetail/description';
+import Intro from '@/modules/LaunchPadDetail/intro';
+import {
+  LAUNCHPAD_STATUS,
+  useLaunchPadStatus,
+} from '@/modules/Launchpad/Launchpad.Status';
+import AboveTheFoldVoting from '@/modules/ProposalDetail/aboveTheFold';
 import { getDetailLaunchpad, getUserBoost } from '@/services/launchpad';
 import { useAppSelector } from '@/state/hooks';
 import { selectPnftExchange, updateCurrentChainId } from '@/state/pnftExchange';
 import { colors } from '@/theme/colors';
+import px2rem from '@/utils/px2rem';
 import {
   Box,
   Spinner,
@@ -20,21 +28,13 @@ import {
   Tabs,
   Text,
 } from '@chakra-ui/react';
+import { useWeb3React } from '@web3-react/core';
 import cx from 'classnames';
 import { useRouter } from 'next/router';
-import React, { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import IdoFaqs from './faqs';
 import styles from './styles.module.scss';
-import px2rem from '@/utils/px2rem';
-import {
-  LAUNCHPAD_STATUS,
-  useLaunchPadStatus,
-} from '@/modules/Launchpad/Launchpad.Status';
-import Intro from '@/modules/LaunchPadDetail/intro';
-import SectionContainer from '@/components/Swap/sectionContainer';
-import { useWeb3React } from '@web3-react/core';
-import { useDispatch } from 'react-redux';
-import { SupportedChainId } from '@/constants/chains';
 
 const IdoDetailContainer = () => {
   const router = useRouter();
@@ -42,6 +42,7 @@ const IdoDetailContainer = () => {
   const needReload = useAppSelector(selectPnftExchange).needReload;
   const [status] = useLaunchPadStatus({ row: poolDetail });
   const { account, isActive } = useWeb3React();
+  const { getDefaultChain } = useContext(WalletContext);
 
   const [loading, setLoading] = useState(true);
 
@@ -97,7 +98,7 @@ const IdoDetailContainer = () => {
 
   useEffect(() => {
     return () => {
-      dispatch(updateCurrentChainId(SupportedChainId.TRUSTLESS_COMPUTER));
+      dispatch(updateCurrentChainId(getDefaultChain()));
     };
   }, []);
 

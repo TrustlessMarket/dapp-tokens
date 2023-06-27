@@ -25,7 +25,7 @@ const initialState: NftyLendState = {
   currentTransaction: undefined,
   showBanner: true,
   configs: {},
-  currentChainId: SupportedChainId.TRUSTLESS_COMPUTER,
+  currentChainId: SupportedChainId.L2,
 };
 
 const slice = createSlice({

@@ -52,7 +52,6 @@ export const getMessageError = (e: any, option: any) => {
 };
 
 export function toastError(toast: any, e: any, option?: any) {
-  console.log('toastError', e);
   const { title, url, linkText } = getMessageError(e, option);
 
   if (title) {

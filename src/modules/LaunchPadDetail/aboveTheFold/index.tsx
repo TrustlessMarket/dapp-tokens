@@ -28,6 +28,8 @@ import {
 } from '@chakra-ui/react';
 import moment from 'moment/moment';
 import { FaFireAlt } from 'react-icons/fa';
+import SocialToken from "@/components/Social";
+import React from "react";
 
 const AboveTheFold = ({ poolDetail, userBoost }: any) => {
   const launchpadToken: IToken = poolDetail?.launchpadToken;
@@ -42,6 +44,7 @@ const AboveTheFold = ({ poolDetail, userBoost }: any) => {
         justifyContent={['center', 'space-between']}
         flexDirection={['column', 'row']}
         gap={8}
+        alignItems={'center'}
       >
         <Flex
           gap={4}
@@ -55,7 +58,7 @@ const AboveTheFold = ({ poolDetail, userBoost }: any) => {
               className={'launchpad-token-avatar'}
             />
           </Flex>
-          <Box>
+          <Flex gap={2} direction={"column"}>
             <Flex gap={1} fontSize={px2rem(24)} fontWeight={'500'}>
               {launchpadToken.name}{' '}
               <span style={{ color: 'rgba(255,255,255,0.7)' }}>
@@ -63,14 +66,70 @@ const AboveTheFold = ({ poolDetail, userBoost }: any) => {
               </span>
               <VerifiedBadgeLaunchpad launchpad={poolDetail} />
             </Flex>
-            <Flex alignItems={'center'} mt={2} gap={2}>
+            <Flex alignItems={'center'} gap={2}>
               <Text className={styles.boxProposalId}>
                 Launchpad #{formatCurrency(poolDetail.id, 0)}
               </Text>
               <LaunchpadStatus row={poolDetail} />
             </Flex>
-          </Box>
+            <SocialToken socials={poolDetail?.launchpadToken?.social} />
+          </Flex>
         </Flex>
+        {[LAUNCHPAD_STATUS.Pending].includes(poolDetail?.state) ? (
+          <Text
+            fontSize={px2rem(16)}
+            fontWeight={'400'}
+            color={'#FFFFFF'}
+            bgColor={'rgba(255, 255, 255, 0.05)'}
+            borderRadius={'8px'}
+            px={6}
+            py={2}
+            maxW={px2rem(450)}
+            textAlign={"center"}
+            h={"fit-content"}
+          >
+            This project requires community votes to initiate crowdfunding. Please
+            prepare your TM token to participate in the voting process.
+          </Text>
+        ) : [LAUNCHPAD_STATUS.Voting].includes(poolDetail?.state) ? (
+          <Text
+            fontSize={px2rem(16)}
+            fontWeight={'400'}
+            color={'#FFFFFF'}
+            bgColor={'rgba(255, 255, 255, 0.05)'}
+            borderRadius={'8px'}
+            px={6}
+            py={2}
+            maxW={px2rem(450)}
+            textAlign={"center"}
+            h={"fit-content"}
+          >
+            If you enjoy this project, please show your support by voting for it.
+          </Text>
+        ) : [LAUNCHPAD_STATUS.Launching].includes(poolDetail?.state) ? (
+          <Text
+            fontSize={px2rem(16)}
+            fontWeight={'400'}
+            color={'#FFFFFF'}
+            bgColor={'rgba(255, 255, 255, 0.05)'}
+            borderRadius={'8px'}
+            px={6}
+            py={2}
+            maxW={px2rem(450)}
+            textAlign={"center"}
+            h={"fit-content"}
+          >
+            All or nothing. This project will only be funded if it reaches its goal by{' '}
+            <Text as={'span'} color={'#FF7E21'}>
+              {moment
+                .utc(poolDetail?.launchEnd)
+                .format('ddd, MMMM Do YYYY HH:mm:ss Z')}
+            </Text>
+            .
+          </Text>
+        ) : (
+          <></>
+        )}
         <Flex
           alignItems={'center'}
           justifyContent={'center'}
@@ -85,6 +144,7 @@ const AboveTheFold = ({ poolDetail, userBoost }: any) => {
                 : [
                     LAUNCHPAD_STATUS.Successful,
                     LAUNCHPAD_STATUS.Failed,
+                    LAUNCHPAD_STATUS.PrepareToEndFunding,
                     LAUNCHPAD_STATUS.End,
                   ].includes(poolDetail?.state)
                 ? 'Ended at'
@@ -126,6 +186,7 @@ const AboveTheFold = ({ poolDetail, userBoost }: any) => {
               ) : [
                 LAUNCHPAD_STATUS.Successful,
                 LAUNCHPAD_STATUS.Failed,
+                LAUNCHPAD_STATUS.PrepareToEndFunding,
                 LAUNCHPAD_STATUS.End,
               ].includes(poolDetail?.state) ? (
                 moment(poolDetail.launchEnd).subtract("1", "h").format('LLL')
@@ -138,7 +199,16 @@ const AboveTheFold = ({ poolDetail, userBoost }: any) => {
       </Flex>
       <Grid className="top-grid">
         <GridItem area={'intro'}>
-          <Intro poolDetail={poolDetail} />
+          <Intro poolDetail={poolDetail} className={styles.introWrapper}/>
+          {
+            ![LAUNCHPAD_STATUS.Draft, LAUNCHPAD_STATUS.Pending].includes(status?.key) && (
+              <Box
+                mt={6}
+              >
+                <Usp />
+              </Box>
+            )
+          }
         </GridItem>
         <GridItem area={'form'}>
           <Card
@@ -149,42 +219,30 @@ const AboveTheFold = ({ poolDetail, userBoost }: any) => {
           >
             <BuyForm poolDetail={poolDetail} />
           </Card>
+          <Card
+            bgColor={'#1B1E26'}
+            paddingX={[2, 6]}
+            paddingY={[2, 6]}
+            mt={[0, 6]}
+            borderRadius={'12px'}
+          >
+            <Statistic poolDetail={poolDetail} userBoost={userBoost} />
+          </Card>
         </GridItem>
       </Grid>
-      {[LAUNCHPAD_STATUS.Draft, LAUNCHPAD_STATUS.Pending].includes(status?.key) ? (
-        <Grid
-          templateColumns={['1fr']}
-          gap={[8]}
-          mt={6}
-          bgColor={'#1E1E22'}
-          py={8}
-          ml={-px2rem(25)}
-          mr={-px2rem(25)}
-        >
-          <SectionContainer>
-            <Usp />
-          </SectionContainer>
-        </Grid>
-      ) : (
-        <Grid className="bottom-grid" mt={6}>
-          <GridItem area={'usp'}>
-            <Box mt={[0, 8]}>
+      {
+        [LAUNCHPAD_STATUS.Draft, LAUNCHPAD_STATUS.Pending].includes(status?.key) && (
+          <Box
+            mt={6}
+            bgColor={'#1E1E22'}
+            py={8}
+          >
+            <SectionContainer>
               <Usp />
-            </Box>
-          </GridItem>
-          <GridItem area={'statics'}>
-            <Card
-              bgColor={'#1B1E26'}
-              paddingX={[2, 6]}
-              paddingY={[2, 6]}
-              mt={[0, 8]}
-              borderRadius={'12px'}
-            >
-              <Statistic poolDetail={poolDetail} userBoost={userBoost} />
-            </Card>
-          </GridItem>
-        </Grid>
-      )}
+            </SectionContainer>
+          </Box>
+        )
+      }
     </Box>
   );
 };

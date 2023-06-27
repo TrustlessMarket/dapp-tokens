@@ -8,7 +8,7 @@ import {
   compareString,
   getContract,
   getDefaultProvider,
-  isConnectedTrustChain,
+  isSupportedChain,
 } from '@/utils';
 import { useWeb3React } from '@web3-react/core';
 import BigNumber from 'bignumber.js';
@@ -24,9 +24,9 @@ const useBalanceERC20Token: ContractOperationHook<
   IBalanceERC20TokenParams,
   string
 > = () => {
-  const { account } = useWeb3React();
+  const { account, chainId } = useWeb3React();
   const provider = getDefaultProvider();
-  const isConnected = isConnectedTrustChain();
+  const isConnected = isSupportedChain(chainId);
   const {
     getPendingInscribeTxsDetail,
     getUnInscribedTransactionDetailByAddress,
