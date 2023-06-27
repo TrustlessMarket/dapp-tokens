@@ -947,16 +947,16 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
   const isFunding = [LAUNCHPAD_STATUS.Launching].includes(poolDetail?.state);
   const isVoting = [LAUNCHPAD_STATUS.Voting].includes(poolDetail?.state);
 
-  // console.log('poolDetail', poolDetail);
-  // console.log('canEnd', canEnd);
-  // console.log('canClaim', canClaim);
-  // console.log('canClose', canClose);
-  // console.log('canVoteRelease', canVoteRelease);
-  // console.log('canCancel', canCancel);
-  // console.log('boostInfo', boostInfo);
-  // console.log('depositAddressInfo', depositAddressInfo);
-  // console.log('isLaunchpadCreator', isLaunchpadCreator);
-  // console.log('=====');
+  console.log('poolDetail', poolDetail);
+  console.log('canEnd', canEnd);
+  console.log('canClaim', canClaim);
+  console.log('canClose', canClose);
+  console.log('canVoteRelease', canVoteRelease);
+  console.log('canCancel', canCancel);
+  console.log('boostInfo', boostInfo);
+  console.log('depositAddressInfo', depositAddressInfo);
+  console.log('isLaunchpadCreator', isLaunchpadCreator);
+  console.log('=====');
 
   const votingToken = {
     address: TM_ADDRESS,
