@@ -124,7 +124,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
 
   const swapFee = useMemo(() => {
     if(values?.bestRoute) {
-      return new BigNumber(values?.bestRoute?.pathPairs?.reduce((result, pair) => result + Number(pair.fee), 0)).div(10000).toString();
+      return new BigNumber(values?.bestRoute?.pathPairs?.reduce((result: any, pair: any) => result + Number(pair.fee), 0)).div(10000).toString();
     }
 
     return "0.3";
