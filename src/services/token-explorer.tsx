@@ -72,6 +72,17 @@ export const updateTokenInfo = (
   });
 };
 
+export const updateTwitterTokenInfo = (
+  address: string,
+  payload: IUpdateTokenPayload,
+): Promise<IUpdateTokenResponse> => {
+  return swrFetcher(`${API_EXCHANGE_URL}${API_PATH}/token/${address}/twitter`, {
+    method: 'PUT',
+    data: payload,
+    error: 'Failed to update token info',
+  });
+};
+
 export interface ICreateTokenParams {
   network: string;
   address?: string;
@@ -83,16 +94,5 @@ export const createTokenInfo = (params: ICreateTokenParams, payload: IUpdateToke
     method: 'POST',
     data: payload,
     error: 'Failed to create token info',
-  });
-};
-
-export const updateTwitterTokenInfo = (
-  address: string,
-  payload: IUpdateTokenPayload,
-): Promise<IUpdateTokenResponse> => {
-  return swrFetcher(`${API_EXCHANGE_URL}${API_PATH}/token/${address}/twitter`, {
-    method: 'PUT',
-    data: payload,
-    error: 'Failed to update token info',
   });
 };
