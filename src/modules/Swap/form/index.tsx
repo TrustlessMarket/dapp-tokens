@@ -1350,7 +1350,6 @@ const TradingForm = () => {
   const { run: swapToken } = useContractOperation<ISwapERC20TokenParams, boolean>({
     operation: useSwapERC20Token,
   });
-  const user = useSelector(getUserSelector);
   const slippage = useAppSelector(selectPnftExchange).slippage;
   const { mobileScreen } = useWindowSize();
 
@@ -1491,7 +1490,7 @@ const TradingForm = () => {
 
       const data = {
         addresses: addresses,
-        address: user?.walletAddress,
+        address: account,
         amount: baseAmount,
         amountOutMin: amountOutMin,
       };
