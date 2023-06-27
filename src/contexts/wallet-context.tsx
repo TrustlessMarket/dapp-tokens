@@ -170,9 +170,22 @@ export const WalletProvider: React.FC<PropsWithChildren> = ({
 
   useEffect(() => {
     if (isSupportedChain(chainId)) {
-      dispatch(updateCurrentChainId(chainId));
+      onSwitchChain(chainId);
     }
   }, [chainId]);
+
+  const onSwitchChain = async (chainId: any) => {
+    try {
+      dispatch(updateCurrentChainId(chainId));
+      const chainList = await getChainList();
+      const info = chainList.find((c: IResourceChain) => c.chainId === isChain);
+      if (!info) {
+        throw new Error(`Chain ${chainId} not supported`);
+      }
+    } catch (error) {
+      throw error;
+    }
+  };
 
   const onConnect = async (addresses: any[]) => {
     if (addresses && Array.isArray(addresses)) {
@@ -280,10 +293,6 @@ export const WalletProvider: React.FC<PropsWithChildren> = ({
         dispatch(updateEVMWallet(evmWalletAddress));
         dispatch(updateSelectedWallet({ wallet: ConnectionType.METAMASK }));
         localStorage.setItem(TEMP_ADDRESS_WALLET_EVM, evmWalletAddress);
-        // const nextRouter: any = window.location.origin + window.location.pathname;
-        // router.push(
-        //   `${ROUTE_PATH.CONNECT_WALLET}?next=${encodeURIComponent(nextRouter)}`,
-        // );
       }
     };
     if (window.ethereum) {
