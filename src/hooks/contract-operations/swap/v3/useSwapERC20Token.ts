@@ -1,20 +1,19 @@
 import SwapRouterJson from '@/abis/SwapRouter.json';
-import {transactionType} from '@/components/Swap/alertInfoProcessing/types';
-import {UNIV3_ROUTER_ADDRESS, WALLET_URL} from '@/configs';
-import {MaxUint256} from '@/constants/url';
-import {TransactionEventType} from '@/enums/transaction';
-import {ContractOperationHook, DAppType} from '@/interfaces/contract-operation';
-import {TransactionStatus} from '@/interfaces/walletTransaction';
-import {logErrorToServer, scanTrx} from '@/services/swap';
+import { transactionType } from '@/components/Swap/alertInfoProcessing/types';
+import { UNIV3_ROUTER_ADDRESS } from '@/configs';
+import { MaxUint256 } from '@/constants/url';
+import { TransactionEventType } from '@/enums/transaction';
+import { ContractOperationHook, DAppType } from '@/interfaces/contract-operation';
+import { TransactionStatus } from '@/interfaces/walletTransaction';
+import { logErrorToServer, scanTrx } from '@/services/swap';
 import store from '@/state';
-import {updateCurrentTransaction} from '@/state/pnftExchange';
-import {colors} from '@/theme/colors';
-import {getContract} from '@/utils';
-import {useWeb3React} from '@web3-react/core';
-import {useCallback} from 'react';
+import { updateCurrentTransaction } from '@/state/pnftExchange';
+import { getContract } from '@/utils';
+import { FeeAmount } from '@/utils/constants';
+import { encodePath } from '@/utils/path';
+import { useWeb3React } from '@web3-react/core';
+import { useCallback } from 'react';
 import Web3 from 'web3';
-import {encodePath} from "@/utils/path";
-import {FeeAmount} from "@/utils/constants";
 
 export interface ISwapERC20TokenParams {
   addresses: string[];
@@ -68,17 +67,14 @@ const useSwapERC20Token: ContractOperationHook<
           deadline: MaxUint256,
           amountIn: Web3.utils.toWei(amount, 'ether'),
           amountOutMinimum: Web3.utils.toWei(amountOutMin, 'ether'),
-        }
+        };
 
         const transaction = await contract
           .connect(provider.getSigner())
-          .exactInput(
-            data,
-            {
-              // gasLimit,
-              gasPrice: await provider.getGasPrice(),
-            },
-          );
+          .exactInput(data, {
+            // gasLimit,
+            gasPrice: await provider.getGasPrice(),
+          });
 
         logErrorToServer({
           type: 'logs',

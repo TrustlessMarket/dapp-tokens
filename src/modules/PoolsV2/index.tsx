@@ -10,6 +10,7 @@ import cs from 'classnames';
 import Empty from '@/components/Empty';
 import { useRouter } from 'next/router';
 import { ROUTE_PATH } from '@/constants/route-path';
+import { L2_ETH_ADDRESS } from '@/configs';
 
 const PoolsV2Page = () => {
   const [liquids, setLiquids] = useState<any[]>([]);
@@ -40,7 +41,9 @@ const PoolsV2Page = () => {
         <Heading as={'h3'}>Pools</Heading>
         <Flex>
           <FiledButton
-            onClick={() => router.push(ROUTE_PATH.POOLS_V2_ADD)}
+            onClick={() =>
+              router.push(`${ROUTE_PATH.POOLS_V2_ADD}/${L2_ETH_ADDRESS}`)
+            }
             btnSize="l"
           >
             + New Position

@@ -5,8 +5,7 @@
   & > div {
     margin-top: rem(50);
     margin-bottom: rem(50);
-    min-width: 768px;
-    max-width: 1024px;
+    width: 1024px;
   }
   &__header {
     align-items: center;
@@ -43,7 +42,6 @@
 }
 
 .formContainer {
-  gap: rem(20);
   &__left,
   &__right {
     flex: 1;
@@ -147,6 +145,8 @@
   }
 
   &__right {
+    flex-direction: column;
+    justify-content: space-between;
     &__btnInActive {
       background-color: var(--bs-gray-dark) !important;
     }
@@ -158,6 +158,67 @@
         color: var(--chakra-colors-orange-200);
         font-size: rem(14);
         line-height: 20px;
+      }
+    }
+    :global {
+      .chakra-input__group {
+        background-color: transparent;
+        border-color: var(--chakra-colors-gray-500);
+        input {
+          color: white !important;
+          background: transparent !important;
+        }
+      }
+    }
+    &__estimateAmount {
+      background-color: var(--bs-gray-dark);
+      border-radius: 8px;
+      padding: rem(10) rem(12);
+      div {
+        &:first-child,
+        &:last-child {
+          color: white;
+          font-size: rem(12);
+        }
+      }
+    }
+
+    &__rangeContainer {
+      &__item {
+        border: 1px solid var(--chakra-colors-gray-500);
+        border-radius: 12px;
+        padding: 10px;
+        p {
+          text-align: center;
+          font-size: rem(11);
+          color: var(--chakra-colors-gray-500);
+          &:last-child {
+            font-weight: 500;
+            font-size: rem(12);
+          }
+        }
+      }
+      :global {
+        .chakra-input__group {
+          align-items: center;
+          border: none;
+          gap: 5px;
+          .chakra-input__left-element,
+          .chakra-input__right-element {
+            margin: 0;
+            width: 32px !important;
+            height: 32px !important;
+            border-radius: 8px;
+            background-color: var(--bs-gray-dark);
+            cursor: pointer;
+            &:hover {
+              opacity: 0.7;
+            }
+          }
+          input {
+            text-align: center;
+          }
+        }
       }
     }
   }

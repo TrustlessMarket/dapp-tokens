@@ -29,7 +29,8 @@ export const LAUNCHPAD_FACTORY_ADDRESS: string =
 // V3
 export const UNIV3_FACTORY_ADDRESS: string = process.env.NEXT_PUBLIC_UNIV3_FACTORY!;
 export const UNIV3_ROUTER_ADDRESS: string = process.env.NEXT_PUBLIC_UNIV3_ROUTER!;
-export const UNIV3_QUOTERV2_ADDRESS: string = process.env.NEXT_PUBLIC_UNIV3_QUOTERV2!;
+export const UNIV3_QUOTERV2_ADDRESS: string =
+  process.env.NEXT_PUBLIC_UNIV3_QUOTERV2!;
 
 export const TC_WEB_URL: string = process.env.NEXT_PUBLIC_TC_WEB_URL!;
 export const TRANSFER_TX_SIZE = 1000!;
@@ -46,5 +47,6 @@ export const MEMPOOL_URL = 'https://mempool.space';
 export const L2_NETWORK_RPC: string = process.env.NEXT_PUBLIC_L2_RPC!;
 export const L2_EXPLORER: string = process.env.NEXT_PUBLIC_L2_EXPLORER!;
 export const L2_CHAIN_ID: string = process.env.NEXT_PUBLIC_L2_CHAIN_ID!;
+export const L2_ETH_ADDRESS: string = process.env.NEXT_PUBLIC_L2_ETH!;
 
 /* eslint-enable @typescript-eslint/no-non-null-assertion */

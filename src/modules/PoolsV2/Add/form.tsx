@@ -137,7 +137,7 @@ const FormAddPoolsV2Container: React.FC<IFormAddPoolsV2Container> = ({
 
   return (
     <form onSubmit={handleSubmit}>
-      <Flex className={s.formContainer}>
+      <Flex gap={12} className={s.formContainer}>
         <Box className={s.formContainer__left}>
           <InputWrapper label="Select Pair">
             <Flex gap={2}>
@@ -224,8 +224,8 @@ const FormAddPoolsV2Container: React.FC<IFormAddPoolsV2Container> = ({
           <Box mt={6} />
           <InputWrapper label={`Fee Tier: ${fee / 10000}%`}>{''}</InputWrapper>
         </Box>
-        <Box className={s.formContainer__right}>
-          <AddPriceRange />
+        <Flex className={s.formContainer__right}>
+          <AddPriceRange loading={loading} />
           <Box mt={10} />
           <WrapperConnected>
             <>
@@ -247,7 +247,7 @@ const FormAddPoolsV2Container: React.FC<IFormAddPoolsV2Container> = ({
               </FiledButton>
             </>
           </WrapperConnected>
-        </Box>
+        </Flex>
       </Flex>
     </form>
   );
