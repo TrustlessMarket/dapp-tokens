@@ -116,7 +116,7 @@ const useAddLiquidityV3: ContractOperationHook<IAddLiquidityV3, boolean> = () =>
             id: transactionType.createPool,
             status: TransactionStatus.pending,
             infoTexts: {
-              pending: 'Adding pool..',
+              pending: 'Transaction submitting...',
             },
           }),
         );
