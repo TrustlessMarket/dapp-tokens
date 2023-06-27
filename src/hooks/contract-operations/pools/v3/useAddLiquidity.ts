@@ -7,9 +7,11 @@ import { TransactionEventType } from '@/enums/transaction';
 import { ContractOperationHook, DAppType } from '@/interfaces/contract-operation';
 import { IToken } from '@/interfaces/token';
 import { compareString, getContract, sortAddressPair } from '@/utils';
+import { getDeadline } from '@/utils/number';
 import { encodePriceSqrt } from '@/utils/utilities';
 import { useWeb3React } from '@web3-react/core';
 import { useCallback } from 'react';
+import web3 from 'web3';
 
 export interface IGetPairParams {
   tokenA: IToken;
@@ -19,6 +21,8 @@ export interface IGetPairParams {
   lowerTick: any;
   upperTick: any;
   fee: any;
+  amount0Min: any;
+  amount1Min: any;
 }
 
 const useAddLiquidity: ContractOperationHook<IGetPairParams, string> = () => {
@@ -34,6 +38,8 @@ const useAddLiquidity: ContractOperationHook<IGetPairParams, string> = () => {
         amountBDesired,
         lowerTick,
         upperTick,
+        amount0Min,
+        amount1Min,
       } = params;
       if (provider) {
         const contract = getContract(
@@ -54,13 +60,34 @@ const useAddLiquidity: ContractOperationHook<IGetPairParams, string> = () => {
 
         const transaction = await contract
           .connect(provider.getSigner(0))
-          .createAndInitializePoolIfNecessary(
-            token0.address,
-            token1.address,
-            fee,
-            encodePriceSqrt('2000', 1),
-          );
-
+          .multicall([
+            contract
+              .connect(provider.getSigner(0))
+              .createAndInitializePoolIfNecessary(
+                token0.address,
+                token1.address,
+                fee,
+                encodePriceSqrt(
+                  web3.utils.toWei(amountADesired) as any,
+                  web3.utils.toWei(amountBDesired) as any,
+                ),
+              ),
+            contract
+              .connect(provider.getSigner(0))
+              .createAndInitializePoolIfNecessary(
+                token0.address,
+                token1.address,
+                fee,
+                lowerTick,
+                upperTick,
+                web3.utils.toWei(amountADesired),
+                web3.utils.toWei(amountBDesired),
+                web3.utils.toWei(amount0Min),
+                web3.utils.toWei(amount1Min),
+                account,
+                getDeadline(),
+              ),
+          ]);
         return transaction;
       }
 
