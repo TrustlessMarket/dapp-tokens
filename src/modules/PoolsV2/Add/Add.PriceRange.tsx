@@ -8,16 +8,17 @@ import InputWrapper from '@/components/Swap/form/inputWrapper';
 import { Field, useForm, useFormState } from 'react-final-form';
 import { IToken } from '@/interfaces/token';
 import useGetPool from '@/hooks/contract-operations/pools/v3/usePoolInfo';
-import { isPool } from '../utils';
+import { isPool, validateMaxRangeAmount, validateMinRangeAmount } from '../utils';
 import { Box, Flex, Spinner, Text } from '@chakra-ui/react';
 import Empty from '@/components/Empty';
 import FieldAmount from '@/components/Swap/form/fieldAmount';
 import HorizontalItem from '@/components/Swap/horizontalItem';
-import { requiredAmount } from '@/utils/formValidate';
+import { composeValidators, required, requiredAmount } from '@/utils/formValidate';
 import { formatCurrency } from '@/utils';
 import { AiOutlineMinus, AiOutlinePlus } from 'react-icons/ai';
-import { priceToTick } from '@/utils/number';
+import { priceToTick, tickToPrice } from '@/utils/number';
 import { FeeAmount, TICK_SPACINGS } from '@/utils/constants';
+import BigNumber from 'bignumber.js';
 
 interface IAddPriceRange {
   loading?: boolean;
@@ -35,6 +36,8 @@ const AddPriceRange: React.FC<IAddPriceRange> = ({ loading }) => {
   const fee: FeeAmount = values?.fee;
   const estimateAmount: any = values?.estimateAmount;
   const tickLower: any = values?.tickLower || '0';
+  const tickUpper: any = values?.tickUpper || '0';
+  const minPrice: any = values?.minPrice || '0';
 
   useEffect(() => {
     if (Boolean(baseToken) && Boolean(quoteToken)) {
@@ -53,6 +56,37 @@ const AddPriceRange: React.FC<IAddPriceRange> = ({ loading }) => {
         change('poolAddress', response);
       }
     } catch (error) {}
+  };
+
+  const onChangePriceTick = (type: 'add' | 'minus', name: 'min' | 'max') => {
+    let _tick = name === 'min' ? tickLower : tickUpper;
+
+    if (type === 'add') {
+      _tick = new BigNumber(_tick).plus(TICK_SPACINGS[fee]).toNumber();
+    } else {
+      _tick = new BigNumber(_tick).minus(TICK_SPACINGS[fee]).toNumber();
+    }
+
+    if (name === 'min') {
+      change('tickLower', _tick);
+      change('minPrice', tickToPrice(_tick));
+    } else {
+      change('tickUpper', _tick);
+      change('maxPrice', tickToPrice(_tick));
+    }
+  };
+
+  const onFieldChanged = (_value: any, name: 'min' | 'max') => {
+    const _tick = priceToTick(_value, TICK_SPACINGS[fee]);
+    const _price = tickToPrice(_tick);
+
+    if (name === 'min') {
+      change('tickLower', _tick);
+      change('minPrice', _price);
+    } else {
+      change('tickUpper', _tick);
+      change('maxPrice', _price);
+    }
   };
 
   const renderContent = () => {
@@ -101,19 +135,17 @@ const AddPriceRange: React.FC<IAddPriceRange> = ({ loading }) => {
           <InputWrapper label={`Set Price Range`}>
             <Flex mt={4} gap={2} className={s.formContainer__right__rangeContainer}>
               <Box className={s.formContainer__right__rangeContainer__item}>
-                <Text>Min Price</Text>
                 <Field
-                  name="tickLower"
+                  label="Min Price"
+                  name="minPrice"
                   children={FieldAmount}
+                  validate={composeValidators(required, validateMinRangeAmount)}
+                  blurFieldChanged={(e: any) => onFieldChanged(e, 'min')}
+                  decimals={18}
                   prependComp={
                     <Box
                       className={s.formContainer__right__rangeContainer__rangeButton}
-                      onClick={() =>
-                        change(
-                          'tickLower',
-                          priceToTick(Number(tickLower), TICK_SPACINGS[fee]),
-                        )
-                      }
+                      onClick={() => onChangePriceTick('minus', 'min')}
                     >
                       <AiOutlineMinus />
                     </Box>
@@ -121,23 +153,25 @@ const AddPriceRange: React.FC<IAddPriceRange> = ({ loading }) => {
                   appendComp={
                     <Box
                       className={s.formContainer__right__rangeContainer__rangeButton}
+                      onClick={() => onChangePriceTick('add', 'min')}
                     >
                       <AiOutlinePlus />
                     </Box>
                   }
+                  note={`${quoteToken.symbol} per ${baseToken.symbol}`}
                 />
-                <Text>
-                  {quoteToken.symbol} per {baseToken.symbol}
-                </Text>
               </Box>
               <Box className={s.formContainer__right__rangeContainer__item}>
-                <Text>Max Price</Text>
                 <Field
-                  name="tickUpper"
+                  label="Max Price"
+                  name="maxPrice"
                   children={FieldAmount}
+                  validate={composeValidators(required, validateMaxRangeAmount)}
+                  blurFieldChanged={(e: any) => onFieldChanged(e, 'max')}
                   prependComp={
                     <Box
                       className={s.formContainer__right__rangeContainer__rangeButton}
+                      onClick={() => onChangePriceTick('minus', 'max')}
                     >
                       <AiOutlineMinus />
                     </Box>
@@ -145,14 +179,13 @@ const AddPriceRange: React.FC<IAddPriceRange> = ({ loading }) => {
                   appendComp={
                     <Box
                       className={s.formContainer__right__rangeContainer__rangeButton}
+                      onClick={() => onChangePriceTick('add', 'max')}
                     >
                       <AiOutlinePlus />
                     </Box>
                   }
+                  note={`${quoteToken.symbol} per ${baseToken.symbol}`}
                 />
-                <Text>
-                  {quoteToken.symbol} per {baseToken.symbol}
-                </Text>
               </Box>
             </Flex>
           </InputWrapper>

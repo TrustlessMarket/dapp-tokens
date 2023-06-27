@@ -1,16 +1,9 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { NULL_ADDRESS } from '@/constants/url';
 import { compareString, formatCurrency } from '@/utils';
+import { FeeAmount } from '@/utils/constants';
 import BigNumber from 'bignumber.js';
-
-export const getUniTickSpacing = () => {
-  return 60;
-};
-
-export const getUniFee = () => {
-  // fee 0.3%
-  return 3000;
-};
 
 export const isPool = (address: string): boolean => {
   if (address && !compareString(address, NULL_ADDRESS)) {
@@ -42,6 +35,51 @@ export const validateQuoteAmount = (_amount: any, values: any) => {
 
   if (new BigNumber(_amount).gt(quoteTokenBalance)) {
     return `Max amount is ${formatCurrency(quoteTokenBalance)}`;
+  }
+
+  return undefined;
+};
+
+export const feeTiers = [
+  {
+    value: FeeAmount.LOWER,
+    title: FeeAmount.LOWER / 10000,
+    desc: 'Best for very stable pairs.',
+  },
+  {
+    value: FeeAmount.LOW,
+    title: FeeAmount.LOW / 10000,
+    desc: 'Best for most pairs.',
+  },
+  {
+    value: FeeAmount.MEDIUM,
+    title: FeeAmount.MEDIUM / 10000,
+    desc: 'Best for stable pairs.',
+  },
+  {
+    value: FeeAmount.HIGH,
+    title: FeeAmount.HIGH / 10000,
+    desc: 'Best for exotic pairs.',
+  },
+];
+
+export const validateMinRangeAmount = (_amount: any, values: any) => {
+  const minPrice = values?.minPrice;
+  const maxPrice = values?.maxPrice;
+
+  if (new BigNumber(minPrice).gte(maxPrice)) {
+    return `Min price less than ${formatCurrency(maxPrice)}`;
+  }
+
+  return undefined;
+};
+
+export const validateMaxRangeAmount = (_amount: any, values: any) => {
+  const minPrice = values?.minPrice;
+  const maxPrice = values?.maxPrice;
+
+  if (new BigNumber(maxPrice).lt(minPrice)) {
+    return `Max price greater than ${formatCurrency(minPrice)}`;
   }
 
   return undefined;

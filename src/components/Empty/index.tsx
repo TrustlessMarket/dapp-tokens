@@ -6,15 +6,16 @@ export type TEmpty = {
   infoText?: string | React.ReactNode;
   isTable?: boolean;
   size?: any;
+  src?: any;
 };
 
-const Empty = ({ infoText = '', isTable = false, size = 95 }: TEmpty) => {
+const Empty = ({ infoText = '', isTable = false, size = 95, src }: TEmpty) => {
   return (
     <StyledEmpty className={'notFound'} isTable={isTable}>
       <img
         width={size}
         height={size}
-        src={`${CDN_URL}/icons/empty-white.svg`}
+        src={src || `${CDN_URL}/icons/empty-white.svg`}
         alt="Not found item"
         className={'notFound__image'}
       />
