@@ -565,7 +565,9 @@ export const MakeFormSwap = forwardRef((props, ref) => {
                     id: transactionType.depositLaunchpad,
                   }}
                   style={{
-                    backgroundColor: isEndLaunchpad
+                    backgroundColor: isClaimLaunchpad
+                      ? colors.greenPrimary
+                      : isEndLaunchpad
                       ? colors.redPrimary
                       : isClaimLaunchpad
                       ? colors.greenPrimary
@@ -578,10 +580,10 @@ export const MakeFormSwap = forwardRef((props, ref) => {
                       : colors.bluePrimary,
                   }}
                 >
-                  {isEndLaunchpad
-                    ? 'END THIS PROJECT'
-                    : isClaimLaunchpad
+                  {isClaimLaunchpad
                     ? 'CLAIM THIS PROJECT'
+                    : isEndLaunchpad
+                    ? 'END THIS PROJECT'
                     : isCancelLaunchpad
                     ? 'CANCEL THIS PROJECT'
                     : isVoteRelease
