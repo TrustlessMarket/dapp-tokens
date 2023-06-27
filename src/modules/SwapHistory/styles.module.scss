@@ -6,6 +6,11 @@
 
   > div {
     padding: rem(54) 3.75rem;
+
+    @media screen and (max-width: 758px) {
+      padding-left: 15px;
+      padding-right: 15px;
+    }
   }
 
   .swapButton {
