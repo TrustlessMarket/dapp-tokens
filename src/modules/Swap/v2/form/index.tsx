@@ -115,8 +115,8 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   // console.log('quoteReserve', quoteReserve);
   // console.log('quoteTokensList', quoteTokensList);
   // console.log('reserveInfos', reserveInfos);
-  console.log('swapRoutes', swapRoutes);
-  console.log('======');
+  // console.log('swapRoutes', swapRoutes);
+  // console.log('======');
 
   const { values } = useFormState();
   const { change, restart } = useForm();
