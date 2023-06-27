@@ -164,7 +164,7 @@ const TokenHistory = () => {
                         (
                           <a
                             title="explorer"
-                            href={`${TC_EXPLORER}/tx/${row.txHash}`}
+                            href={`${chainInfo?.explorers[0]?.url}/tx/${row.txHash}`}
                             target="_blank"
                             style={{textDecoration: 'underline'}}
                           >
@@ -293,7 +293,7 @@ const TokenHistory = () => {
                   (
                     <a
                       title="explorer"
-                      href={`${TC_EXPLORER}/tx/${row.txHash}`}
+                      href={`${chainInfo?.explorers[0]?.url}/tx/${row.txHash}`}
                       target="_blank"
                       style={{textDecoration: 'underline'}}
                     >
