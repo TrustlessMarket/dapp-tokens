@@ -115,12 +115,14 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   // console.log('quoteReserve', quoteReserve);
   // console.log('quoteTokensList', quoteTokensList);
   // console.log('reserveInfos', reserveInfos);
-  // console.log('swapRoutes', swapRoutes);
-  // console.log('======');
+  console.log('swapRoutes', swapRoutes);
+  console.log('======');
 
   const { values } = useFormState();
   const { change, restart } = useForm();
   const btnDisabled = loading || !baseToken || !quoteToken;
+
+  console.log('values', values);
 
   const swapFee = useMemo(() => {
     if(values?.bestRoute) {
@@ -578,6 +580,11 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     const res = await Promise.all(promises);
 
     const result = Math.max(...res);
+
+    console.log('promises', promises);
+    console.log('res', res);
+    console.log('result', result);
+    console.log('=====')
 
     const indexBestRoute = res.indexOf(result);
     const bestRoute = swapRoutes[indexBestRoute];
