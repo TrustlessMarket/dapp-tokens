@@ -526,7 +526,6 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     swapRoutes,
   }: {
     amount: any;
-    reserveInfos: any;
     tokenIn: any;
     tokenOut: any;
     swapRoutes: any;
@@ -540,7 +539,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       )
         return;
 
-      const estimateAmountOut = await calculateBestRoute(amount);
+      const estimateAmountOut = await calculateBestRoute(amount, swapRoutes);
 
       const rate = new BigNumber(amount)
         .div(estimateAmountOut)
@@ -564,8 +563,8 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     onChangeValueBaseAmount(baseBalance);
   };
 
-  const calculateBestRoute = async (amount: any) => {
-    const promises = swapRoutes.map(route => {
+  const calculateBestRoute = async (amount: any, swapRoutes: any) => {
+    const promises = swapRoutes.map((route: any) => {
       const addresses = route?.pathTokens?.map((token: IToken) => token.address);
       const fees = route?.pathPairs?.map((pair: any) => Number(pair.fee));
 
@@ -580,11 +579,6 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     const res = await Promise.all(promises);
 
     const result = Math.max(...res);
-
-    console.log('promises', promises);
-    console.log('res', res);
-    console.log('result', result);
-    console.log('=====')
 
     const indexBestRoute = res.indexOf(result);
     const bestRoute = swapRoutes[indexBestRoute];
