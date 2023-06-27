@@ -8,7 +8,7 @@ import { TRUSTLESS_GASSTATION } from '@/constants/common';
 import { toastError } from '@/constants/error';
 import { AssetsContext } from '@/contexts/assets-context';
 import useContractOperation from '@/hooks/contract-operations/useContractOperation';
-import { TransactionStatus } from '@/interfaces/walletTransaction';
+import { TransactionStatus } from '@/components/Swap/alertInfoProcessing/interface';
 import { logErrorToServer } from '@/services/swap';
 import { useAppDispatch, useAppSelector } from '@/state/hooks';
 import {

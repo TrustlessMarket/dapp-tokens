@@ -2,12 +2,12 @@
 import ModalConfirmApprove from '@/components/ModalConfirmApprove';
 import { transactionType } from '@/components/Swap/alertInfoProcessing/types';
 import FiledButton from '@/components/Swap/button/filedButton';
-import { UNIV3_ROUTER_ADDRESS } from '@/configs';
+import { UNIV3_NONFUNGBILE_POSITION_MANAGER_ADDRESS } from '@/configs';
 import { toastError } from '@/constants/error';
 import useApproveERC20Token from '@/hooks/contract-operations/token/useApproveERC20Token';
 import useContractOperation from '@/hooks/contract-operations/useContractOperation';
 import { IToken } from '@/interfaces/token';
-import { TransactionStatus } from '@/interfaces/walletTransaction';
+import { TransactionStatus } from '@/components/Swap/alertInfoProcessing/interface';
 import { logErrorToServer } from '@/services/swap';
 import { closeModal, openModal } from '@/state/modal';
 import { requestReload, updateCurrentTransaction } from '@/state/pnftExchange';
@@ -74,7 +74,7 @@ const AddApproveToken: React.FC<IAddApproveToken> = ({ token }) => {
 
   const requestApproveToken = async (
     token: IToken,
-    approveContract: string = UNIV3_ROUTER_ADDRESS,
+    approveContract: string = UNIV3_NONFUNGBILE_POSITION_MANAGER_ADDRESS,
   ) => {
     try {
       dispatch(

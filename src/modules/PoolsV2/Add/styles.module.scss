@@ -216,7 +216,7 @@
         }
       }
     }
-    &__estimateAmount {
+    &__currentPrice {
       background-color: var(--bs-gray-dark);
       border-radius: 8px;
       padding: rem(10) rem(12);
@@ -267,6 +267,11 @@
             font-size: rem(12);
           }
         }
+      }
+      &__currentPrice {
+        color: var(--chakra-colors-gray-100);
+        font-size: rem(14);
+        font-weight: 500;
       }
       :global {
         .chakra-input__group {

@@ -4,7 +4,7 @@ import { MaxUint256 } from '@/constants/url';
 import { AssetsContext } from '@/contexts/assets-context';
 import { TransactionEventType } from '@/enums/transaction';
 import { ContractOperationHook, DAppType } from '@/interfaces/contract-operation';
-import { TransactionStatus } from '@/interfaces/walletTransaction';
+import { TransactionStatus } from '@/components/Swap/alertInfoProcessing/interface';
 import { logErrorToServer } from '@/services/swap';
 import store from '@/state';
 import { updateCurrentTransaction } from '@/state/pnftExchange';

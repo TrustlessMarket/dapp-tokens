@@ -8,7 +8,7 @@ import { TransactionEventType } from '@/enums/transaction';
 import useBitcoin from '@/hooks/useBitcoin';
 import useCheckTxsBitcoin from '@/hooks/useCheckTxsBitcoin';
 import { ContractOperationHook, DAppType } from '@/interfaces/contract-operation';
-import { TransactionStatus } from '@/interfaces/walletTransaction';
+import { TransactionStatus } from '@/components/Swap/alertInfoProcessing/interface';
 import { logErrorToServer, scanTrx } from '@/services/swap';
 import store from '@/state';
 import { updateCurrentTransaction } from '@/state/pnftExchange';

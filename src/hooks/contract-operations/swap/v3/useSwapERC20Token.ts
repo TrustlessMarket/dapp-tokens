@@ -1,17 +1,17 @@
 import SwapRouterJson from '@/abis/SwapRouter.json';
-import {transactionType} from '@/components/Swap/alertInfoProcessing/types';
-import {UNIV3_ROUTER_ADDRESS} from '@/configs';
-import {MaxUint256} from '@/constants/url';
-import {TransactionEventType} from '@/enums/transaction';
-import {ContractOperationHook, DAppType} from '@/interfaces/contract-operation';
-import {TransactionStatus} from '@/interfaces/walletTransaction';
-import {logErrorToServer, scanTrx} from '@/services/swap';
+import { transactionType } from '@/components/Swap/alertInfoProcessing/types';
+import { UNIV3_ROUTER_ADDRESS } from '@/configs';
+import { MaxUint256 } from '@/constants/url';
+import { TransactionEventType } from '@/enums/transaction';
+import { ContractOperationHook, DAppType } from '@/interfaces/contract-operation';
+import { TransactionStatus } from '@/components/Swap/alertInfoProcessing/interface';
+import { logErrorToServer, scanTrx } from '@/services/swap';
 import store from '@/state';
-import {updateCurrentTransaction} from '@/state/pnftExchange';
-import {getContract} from '@/utils';
-import {encodePath} from '@/utils/path';
-import {useWeb3React} from '@web3-react/core';
-import {useCallback} from 'react';
+import { updateCurrentTransaction } from '@/state/pnftExchange';
+import { getContract } from '@/utils';
+import { encodePath } from '@/utils/path';
+import { useWeb3React } from '@web3-react/core';
+import { useCallback } from 'react';
 import Web3 from 'web3';
 
 export interface ISwapERC20TokenParams {

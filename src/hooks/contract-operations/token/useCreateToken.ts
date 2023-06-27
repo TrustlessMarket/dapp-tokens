@@ -1,16 +1,20 @@
 import ERC20ABIJson from '@/abis/erc20.json';
-import {TransactionEventType} from '@/enums/transaction';
-import {ContractOperationHook, DAppType, DeployContractResponse,} from '@/interfaces/contract-operation';
-import {useWeb3React} from '@web3-react/core';
-import {ContractFactory} from 'ethers';
-import {useCallback} from 'react';
-import store from "@/state";
-import {updateCurrentTransaction} from "@/state/pnftExchange";
-import {TransactionStatus} from "@/interfaces/walletTransaction";
-import {transactionType} from "@/components/Swap/alertInfoProcessing/types";
-import {colors} from "@/theme/colors";
-import {WALLET_URL} from "@/configs";
-import useCheckTxsBitcoin from "@/hooks/useCheckTxsBitcoin";
+import { TransactionEventType } from '@/enums/transaction';
+import {
+  ContractOperationHook,
+  DAppType,
+  DeployContractResponse,
+} from '@/interfaces/contract-operation';
+import { useWeb3React } from '@web3-react/core';
+import { ContractFactory } from 'ethers';
+import { useCallback } from 'react';
+import store from '@/state';
+import { updateCurrentTransaction } from '@/state/pnftExchange';
+import { TransactionStatus } from '@/components/Swap/alertInfoProcessing/interface';
+import { transactionType } from '@/components/Swap/alertInfoProcessing/types';
+import { colors } from '@/theme/colors';
+import { WALLET_URL } from '@/configs';
+import useCheckTxsBitcoin from '@/hooks/useCheckTxsBitcoin';
 
 export interface ICreateTokenParams {
   name: string;

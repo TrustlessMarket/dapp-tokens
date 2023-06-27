@@ -35,7 +35,7 @@ import useIsApproveERC20Token from '@/hooks/contract-operations/token/useIsAppro
 import useSupplyERC20Liquid from '@/hooks/contract-operations/token/useSupplyERC20Liquid';
 import useContractOperation from '@/hooks/contract-operations/useContractOperation';
 import { IToken } from '@/interfaces/token';
-import { TransactionStatus } from '@/interfaces/walletTransaction';
+import { TransactionStatus } from '@/components/Swap/alertInfoProcessing/interface';
 import { getPairAPR } from '@/services/pool';
 import { logErrorToServer } from '@/services/swap';
 import { getTokens } from '@/services/token-explorer';

@@ -30,7 +30,7 @@ import useIsApproveERC20Token from '@/hooks/contract-operations/token/useIsAppro
 import useContractOperation from '@/hooks/contract-operations/useContractOperation';
 import { ILaunchpad } from '@/interfaces/launchpad';
 import { IToken } from '@/interfaces/token';
-import { TransactionStatus } from '@/interfaces/walletTransaction';
+import { TransactionStatus } from '@/components/Swap/alertInfoProcessing/interface';
 import { LAUNCHPAD_STATUS } from '@/modules/Launchpad/Launchpad.Status';
 import {
   getDepositResultLaunchpad,
@@ -1214,8 +1214,9 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
   const handleSubmit = async (values: any) => {
     const liquidityToken = poolDetail?.liquidityToken;
 
-    if([LAUNCHPAD_STATUS.Launching].includes(poolDetail?.state)
-      && moment(poolDetail.launchEnd).subtract("1", "h").isSameOrBefore(moment())
+    if (
+      [LAUNCHPAD_STATUS.Launching].includes(poolDetail?.state) &&
+      moment(poolDetail.launchEnd).subtract('1', 'h').isSameOrBefore(moment())
     ) {
       toast.error('Sorry! The time to contribute has ended.');
       return;
