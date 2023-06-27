@@ -28,7 +28,7 @@ import useBalanceERC20Token from '@/hooks/contract-operations/token/useBalanceER
 import useIsApproveERC20Token from '@/hooks/contract-operations/token/useIsApproveERC20Token';
 import {IToken} from '@/interfaces/token';
 import {TransactionStatus} from '@/interfaces/walletTransaction';
-import {getSwapRoutesV1, getSwapTokens, ISwapRouteParams, logErrorToServer} from '@/services/swap';
+import {getSwapRoutesV2, getSwapTokensV1, ISwapRouteParams, logErrorToServer} from '@/services/swap';
 import {useAppDispatch, useAppSelector} from '@/state/hooks';
 import {
   requestReload,
@@ -37,7 +37,7 @@ import {
   updateCurrentTransaction,
 } from '@/state/pnftExchange';
 import {getIsAuthenticatedSelector} from '@/state/user/selector';
-import {camelCaseKeys, compareString, formatCurrency, sortAddressPair,} from '@/utils';
+import {camelCaseKeys, compareString, formatCurrency,} from '@/utils';
 import {isDevelop} from '@/utils/commons';
 import {composeValidators, required} from '@/utils/formValidate';
 import px2rem from '@/utils/px2rem';
@@ -263,7 +263,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const fetchTokens = async (page = 1, isFetchMore = false) => {
     try {
       setLoading(true);
-      const res = await getSwapTokens({
+      const res = await getSwapTokensV1({
         limit: LIMIT_PAGE,
         page: page,
         is_test: isDevelop() ? '1' : '',
@@ -292,7 +292,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
 
   const fetchFromTokens = async (from_token?: string) => {
     try {
-      const res = await getSwapTokens({
+      const res = await getSwapTokensV1({
         limit: LIMIT_PAGE,
         page: 1,
         is_test: isDevelop() ? '1' : '',
@@ -313,7 +313,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         to_token: to_token,
         network: L2_CHAIN_INFO.chain.toLowerCase()
       };
-      const response = await getSwapRoutesV1(params);
+      const response = await getSwapRoutesV2(params);
 
       setSwapRoutes(response);
       change('swapRoutes', response);
@@ -556,13 +556,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       )
         return;
 
-      const addresses = swapRoutes?.pathTokens?.map((token: IToken) => token.address);
-
-      const params: IEstimateSwapERC20Token = {
-        addresses: addresses,
-        amount: amount
-      };
-      const estimateAmountOut = await getEstimateSwap(params);
+      const estimateAmountOut = await calculateBestRoute(amount);
 
       const rate = new BigNumber(amount)
         .div(estimateAmountOut)
@@ -585,6 +579,31 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     change('baseAmount', baseBalance);
     onChangeValueBaseAmount(baseBalance);
   };
+
+  const calculateBestRoute = async (amount: any) => {
+    const promises = swapRoutes.map(route => {
+      const addresses = route?.pathTokens?.map((token: IToken) => token.address);
+      const fees = route?.pathPairs?.map((pair: any) => Number(pair.fee));
+
+      const params: IEstimateSwapERC20Token = {
+        addresses: addresses,
+        amount: amount,
+        fees: fees
+      };
+      return getEstimateSwap(params);
+    });
+
+    const res = await Promise.all(promises);
+
+    const result = Math.max(...res);
+
+    const indexBestRoute = res.indexOf(result);
+    const bestRoute = swapRoutes[indexBestRoute];
+
+    change('bestRoute', bestRoute);
+
+    return result;
+  }
 
   const onShowModalApprove = () => {
     const id = 'modal';
@@ -1103,7 +1122,7 @@ const TradingForm = () => {
   };
 
   const handleSwap = async (values: any) => {
-    const { baseToken, quoteToken, baseAmount, quoteAmount, swapRoutes } = values;
+    const { baseToken, quoteToken, baseAmount, quoteAmount, swapRoutes, bestRoute } = values;
 
     try {
       setSubmitting(true);
@@ -1114,15 +1133,10 @@ const TradingForm = () => {
         }),
       );
 
-      const addresses = swapRoutes?.pathTokens?.map((token: IToken) => token.address);
+      const addresses = bestRoute?.pathTokens?.map((token: IToken) => token.address);
+      const fees = bestRoute?.pathPairs?.map((pair: any) => Number(pair.fee));
 
-      const params: IEstimateSwapERC20Token = {
-        addresses: addresses,
-        amount: baseAmount
-      };
-      const estimateAmountOut = await getEstimateSwap(params);
-
-      const amountOutMin = new BigNumber(estimateAmountOut)
+      const amountOutMin = new BigNumber(quoteAmount)
         .multipliedBy(100 - slippage)
         .dividedBy(100)
         .decimalPlaces(quoteToken?.decimal || 18)
@@ -1130,6 +1144,7 @@ const TradingForm = () => {
 
       const data = {
         addresses: addresses,
+        fees: fees,
         address: account,
         amount: baseAmount,
         amountOutMin: amountOutMin,

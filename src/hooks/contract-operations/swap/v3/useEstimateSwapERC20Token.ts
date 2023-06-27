@@ -7,31 +7,29 @@ import Web3 from 'web3';
 import {TransactionEventType} from '@/enums/transaction';
 import QuoterV2Json from "@/abis/QuoterV2.json";
 import {encodePath} from "@/utils/path";
-import {FeeAmount} from "@/utils/constants";
 import web3 from "web3";
 
 export interface IEstimateSwapERC20Token {
   addresses: string[];
+  fees: number[];
   amount: string;
 }
 
 const useEstimateSwapERC20Token: ContractOperationHook<
   IEstimateSwapERC20Token,
-  string
+  number
 > = () => {
   const { provider } = useWeb3React();
 
   const call = useCallback(
-    async (params: IEstimateSwapERC20Token): Promise<string> => {
-      const { addresses, amount } = params;
+    async (params: IEstimateSwapERC20Token): Promise<number> => {
+      const { addresses, fees, amount } = params;
       if (provider) {
         const contract = getContract(
           UNIV3_QUOTERV2_ADDRESS,
           QuoterV2Json,
           provider,
         );
-
-        const fees = Array(addresses.length - 1).fill(FeeAmount.MEDIUM);
 
         const transaction = await contract
           .connect(provider)
@@ -41,10 +39,10 @@ const useEstimateSwapERC20Token: ContractOperationHook<
             Web3.utils.toWei(amount, 'ether')
           );
 
-        return web3.utils.fromWei(transaction.amountOut.toString());
+        return Number(web3.utils.fromWei(transaction.amountOut.toString()));
       }
 
-      return "0";
+      return 0;
     },
     [provider],
   );
