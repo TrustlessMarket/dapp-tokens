@@ -677,8 +677,10 @@ const LiquidityContainer = () => {
           for (let index = 0; index < myLiquidities?.length; index++) {
             const l = myLiquidities[index] as IToken;
             if (
-              compareString(l?.fromAddress, row?.token0Obj?.address) &&
-              compareString(l?.toAddress, row?.token1Obj?.address)
+              (compareString(l?.fromAddress, row?.token0Obj?.address) &&
+              compareString(l?.toAddress, row?.token1Obj?.address)) ||
+              (compareString(l?.fromAddress, row?.token1Obj?.address) &&
+              compareString(l?.toAddress, row?.token0Obj?.address))
             ) {
               myLiquidity = l;
               break;
