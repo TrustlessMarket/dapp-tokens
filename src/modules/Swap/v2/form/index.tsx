@@ -37,7 +37,7 @@ import {
   updateCurrentTransaction,
 } from '@/state/pnftExchange';
 import {getIsAuthenticatedSelector} from '@/state/user/selector';
-import {camelCaseKeys, compareString, formatCurrency,} from '@/utils';
+import {camelCaseKeys, compareString, formatCurrency, getTokenIconUrl,} from '@/utils';
 import {isDevelop} from '@/utils/commons';
 import {composeValidators, required} from '@/utils/formValidate';
 import px2rem from '@/utils/px2rem';
@@ -97,7 +97,6 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const router = useRouter();
   const [swapRoutes, setSwapRoutes] = useState<any[]>([]);
   const configs = useAppSelector(selectPnftExchange).configs;
-  const swapFee = configs?.swapFee || 0.3;
 
   const { account} = useWeb3React();
   const [exchangeRate, setExchangeRate] = useState('0');
@@ -122,6 +121,14 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const { values } = useFormState();
   const { change, restart } = useForm();
   const btnDisabled = loading || !baseToken || !quoteToken;
+
+  const swapFee = useMemo(() => {
+    if(values?.bestRoute) {
+      return new BigNumber(values?.bestRoute?.pathPairs?.reduce((result: any, pair: any) => result + Number(pair.fee), 0)).div(10000).toString();
+    }
+
+    return "0.3";
+  }, [JSON.stringify(values?.bestRoute)])
 
   const isRequireApprove = useMemo(() => {
     let result = false;
@@ -208,31 +215,6 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       getSwapRoutesInfo(baseToken?.address, quoteToken?.address);
     }
   }, [baseToken?.address, quoteToken?.address]);
-
-  const getBaseAmountOut = (
-    amountIn: BigNumber,
-    reserveIn: BigNumber,
-    reserveOut: BigNumber,
-  ): BigNumber => {
-    try {
-      const amountInWithFee = amountIn.multipliedBy(1000 + swapFee * 10);
-      const numerator = amountInWithFee.multipliedBy(reserveOut);
-      const denominator = reserveIn.multipliedBy(1000).plus(amountInWithFee);
-      const amountOut = numerator.div(denominator).decimalPlaces(18);
-
-      return amountOut;
-    } catch (err: any) {
-      logErrorToServer({
-        type: 'error',
-        address: account,
-        error: JSON.stringify(err),
-        message: err?.message,
-        place_happen: 'getBaseAmountOut',
-      });
-
-      return new BigNumber(0);
-    }
-  };
 
   useEffect(() => {
     change('baseBalance', baseBalance);
@@ -665,66 +647,31 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           <Text className={'router-text'}>Auto Router</Text>
         </Flex>
         <Flex justifyContent={'space-between'} w={'100%'} color={'#FFFFFF'} gap={2}>
-          <Flex gap={2} alignItems={'center'}>
-            <img
-              // width={25}
-              // height={25}
-              src={
-                baseToken?.thumbnail ||
-                tokenIcons?.[baseToken?.symbol?.toLowerCase()] ||
-                TOKEN_ICON_DEFAULT
-              }
-              alt={baseToken?.thumbnail || 'default-icon'}
-              className={'avatar'}
-            />
-            {!baseToken?.thumbnail && <Text>{baseToken?.symbol}</Text>}
-          </Flex>
-          <Flex gap={2} flex={1} alignItems={'center'}>
-            <Box className={'dot-line'}></Box>
-          </Flex>
-          {swapRoutes?.length > 1 && (
-            <>
-              {(compareString(baseToken?.address, WBTC_ADDRESS) &&
-                compareString(quoteToken?.address, GM_ADDRESS)) ||
-              (compareString(baseToken?.address, GM_ADDRESS) &&
-                compareString(quoteToken?.address, WBTC_ADDRESS)) ? (
-                <img
-                  // width={25}
-                  // height={25}
-                  src={
-                    'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png'
+          {
+            values?.bestRoute?.pathTokens?.map((token: IToken, index: number) => {
+              return (
+                <>
+                  {
+                    index > 0 && (
+                      <Flex gap={2} flex={1} alignItems={'center'}>
+                        <Box className={'dot-line'}></Box>
+                      </Flex>
+                    )
                   }
-                  alt={'eth-icon'}
-                  className={'avatar'}
-                />
-              ) : (
-                <img
-                  // width={25}
-                  // height={25}
-                  src={'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png'}
-                  alt={'wbtc-icon'}
-                  className={'avatar'}
-                />
-              )}
-              <Flex flex={1} alignItems={'center'}>
-                <Box className={'dot-line'}></Box>
-              </Flex>
-            </>
-          )}
-          <Flex gap={2} alignItems={'center'}>
-            <img
-              // width={25}
-              // height={25}
-              src={
-                quoteToken?.thumbnail ||
-                tokenIcons?.[quoteToken?.symbol?.toLowerCase()] ||
-                TOKEN_ICON_DEFAULT
-              }
-              alt={quoteToken?.thumbnail || 'default-icon'}
-              className={'avatar'}
-            />
-            {!quoteToken?.thumbnail && <Text>{quoteToken?.symbol}</Text>}
-          </Flex>
+                  <Flex gap={2} alignItems={'center'}>
+                    <img
+                      // width={25}
+                      // height={25}
+                      src={getTokenIconUrl(token)}
+                      alt={token?.thumbnail || 'default-icon'}
+                      className={'avatar'}
+                    />
+                    {!token?.thumbnail && <Text>{token?.symbol}</Text>}
+                  </Flex>
+                </>
+              )
+            })
+          }
         </Flex>
       </Flex>
     );
@@ -879,7 +826,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
               fontWeight={'medium'}
               color={'rgba(255, 255, 255, 0.7)'}
             >
-              Fee: {swapFee * (swapRoutes?.length || 1)}%
+              Fee: {swapFee}%
             </Text>
           }
         />
