@@ -12,8 +12,7 @@ import {HEADER_MENUS} from '..';
 import {StyledLink} from '../Header.styled';
 import {Wrapper} from './MenuMobile.styled';
 import {Box, Flex, Text} from '@chakra-ui/react';
-import {GENERATIVE_DISCORD, TRUSTLESS_COMPUTER} from '@/constants/common';
-import {RiArrowRightUpLine} from 'react-icons/ri';
+import {GENERATIVE_DISCORD, NEW_BITCOIN_CITY, TRUSTLESS_GASSTATION} from '@/constants/common';
 
 interface IProp {
   onCloseMenu: () => void;
@@ -54,13 +53,26 @@ const MenuMobile = React.forwardRef(
                   </StyledLink>
                 );
               })}
+              <StyledLink active={false} href={TRUSTLESS_GASSTATION} target={'_blank'}>
+                <Text>GET TC</Text>
+                <img
+                  className="arrow-icon"
+                  src={`${CDN_URL}/trustless-market/icons/arrow_right_up.svg`}
+                />
+              </StyledLink>
+              <StyledLink active={false} href={NEW_BITCOIN_CITY} target={'_blank'}>
+                <Text>NBC</Text>
+                <img
+                  className="arrow-icon"
+                  src={`${CDN_URL}/trustless-market/icons/arrow_right_up.svg`}
+                />
+              </StyledLink>
               <StyledLink active={false} href={GENERATIVE_DISCORD} target={'_blank'}>
                 <Text>DISCORD</Text>
-                <RiArrowRightUpLine fontSize={'20px'} />
-              </StyledLink>
-              <StyledLink active={false} href={TRUSTLESS_COMPUTER} target={'_blank'}>
-                <Text>TRUSTLESS</Text>
-                <RiArrowRightUpLine fontSize={'20px'} />
+                <img
+                  className="arrow-icon"
+                  src={`${CDN_URL}/trustless-market/icons/arrow_right_up.svg`}
+                />
               </StyledLink>
             </Box>
             {/* <Box>
