@@ -92,6 +92,8 @@ export const handleChangeAmount = (
   { _amount, currentTick, tickLower, tickUpper }: any,
 ) => {
   try {
+    console.log('currentTick', currentTick);
+
     const [baseAmount, quoteAmount] = amountDesiredChanged(
       currentTick,
       tickLower,
