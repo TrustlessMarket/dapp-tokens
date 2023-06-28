@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import BodyContainer from '@/components/Swap/bodyContainer';
-import React, {useEffect, useMemo, useState} from 'react';
+import React, {useContext, useEffect, useMemo, useState} from 'react';
 import s from './styles.module.scss';
 import {Box, Center, Flex, Heading, Spinner, Tag, Text} from '@chakra-ui/react';
 import FiledButton from '@/components/Swap/button/filedButton';
@@ -11,11 +11,10 @@ import {useRouter} from 'next/router';
 import {ROUTE_PATH} from '@/constants/route-path';
 import {L2_ETH_ADDRESS, TRUSTLESS_MARKET_URL} from '@/configs';
 import px2rem from "@/utils/px2rem";
-import {BsDownload, BsTwitter} from "react-icons/bs";
-import {FiPlus} from "react-icons/fi";
+import {BsTwitter} from "react-icons/bs";
 import InfiniteScroll from "react-infinite-scroll-component";
 import ListTable from "@/components/Swap/listTable";
-import {DEFAULT_FROM_TOKEN_ADDRESS, DEFAULT_TO_TOKEN_ADDRESS, ScreenType} from "@/modules/Pools";
+import {ScreenType} from "@/modules/Pools";
 import {useWindowSize} from "@trustless-computer/dapp-core";
 import {LIQUID_PAIRS} from "@/constants/storage-key";
 import {abbreviateNumber, camelCaseKeys, compareString, formatCurrency, getTokenIconUrl} from "@/utils";
@@ -28,6 +27,8 @@ import {formatAmountBigNumber} from "@/utils/format";
 import {IToken} from "@/interfaces/token";
 import {USDC_ADDRESS, WBTC_ADDRESS, WETH_ADDRESS} from "@/constants/common";
 import {debounce} from "lodash";
+import {IResourceChain} from "@/interfaces/chain";
+import {WalletContext} from "@/contexts/wallet-context";
 
 const LIMIT_PAGE = 30;
 
@@ -38,6 +39,8 @@ const PoolsV2Page = () => {
   const [isFetching, setIsFetching] = useState(false);
   const { mobileScreen } = useWindowSize();
   const router = useRouter();
+  const { getConnectedChainInfo } = useContext(WalletContext);
+  const chainInfo: IResourceChain = getConnectedChainInfo();
 
   useEffect(() => {
     fetchMyLiquidities();
@@ -58,7 +61,7 @@ const PoolsV2Page = () => {
   const fetchLiquidities = async (page = 1, isFetchMore = false) => {
     try {
       setIsFetching(true);
-      const res = await getListLiquidity({ limit: LIMIT_PAGE, page: page });
+      const res = await getListLiquidity({ limit: LIMIT_PAGE, page: page, network: chainInfo.chain.toLowerCase() });
       if (isFetchMore) {
         setLiquidityList((prev) => [...prev, ...res]);
       } else {
@@ -631,7 +634,7 @@ const PoolsV2Page = () => {
 
           return (
             <Flex gap={4} justifyContent={'center'}>
-              <InfoTooltip label={'Add Liquidity'}>
+              {/*<InfoTooltip label={'Add Liquidity'}>
                 <Center
                   cursor={'pointer'}
                   fontSize={'24px'}
@@ -666,7 +669,7 @@ const PoolsV2Page = () => {
                     />
                   </Center>
                 </InfoTooltip>
-              )}
+              )}*/}
               <InfoTooltip label={'Share Twitter'}>
                 <Center
                   cursor={'pointer'}
@@ -720,7 +723,7 @@ const PoolsV2Page = () => {
           <Heading className="upload_title" as={'h3'} style={{ margin: 0 }}>
             Pools
           </Heading>
-          <Flex gap={4} className="btn-wrap">
+          {/*<Flex gap={4} className="btn-wrap">
             <FiledButton
               border={'1px solid rgba(255, 255, 255, 0.1)'}
               bgColor={'#0F0F0F !important'}
@@ -774,7 +777,7 @@ const PoolsV2Page = () => {
                 Add liquidity
               </Flex>
             </FiledButton>
-          </Flex>
+          </Flex>*/}
         </Flex>
         <InfiniteScroll
           className="tokens-list"
