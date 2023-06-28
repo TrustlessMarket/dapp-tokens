@@ -32,6 +32,7 @@ import {
 } from 'react';
 import { Field, useForm, useFormState } from 'react-final-form';
 import {
+  allowStep,
   checkBalanceIsApprove,
   handleChangeAmount,
   validateBaseAmount,
@@ -55,6 +56,7 @@ const FormAddPoolsV2Container = forwardRef<any, IFormAddPoolsV2Container>(
     const { handleSubmit, ids, submitting } = props;
     const paramBaseTokenAddress = ids?.[0];
     const paramQuoteTokenAddress = ids?.[1];
+    const paramFee = ids?.[2];
 
     const { getConnectedChainInfo } = useContext(WalletContext);
     const connectInfo: IResourceChain = getConnectedChainInfo();
@@ -132,7 +134,10 @@ const FormAddPoolsV2Container = forwardRef<any, IFormAddPoolsV2Container>(
     };
 
     const initialData = () => {
-      change('fee', FeeAmount.MEDIUM);
+      if (paramFee) {
+        change('fee', paramFee);
+      }
+
       const findBaseToken = tokensList.find((v) =>
         compareString(v.address, paramBaseTokenAddress),
       );
@@ -192,6 +197,8 @@ const FormAddPoolsV2Container = forwardRef<any, IFormAddPoolsV2Container>(
       change('baseAmount', value);
     };
 
+    const isHideAmount = allowStep(values) < 3;
+
     return (
       <form onSubmit={handleSubmit}>
         <AddHeader />
@@ -229,7 +236,11 @@ const FormAddPoolsV2Container = forwardRef<any, IFormAddPoolsV2Container>(
               <Box mt={8} />
               <AddFeeTier />
               <Box mt={8} />
-              <InputWrapper label="Deposit Amounts">
+              <InputWrapper
+                className={isHideAmount ? s.blur : ''}
+                label="Deposit Amounts"
+              >
+                {isHideAmount && <Box className={s.blur__fade} />}
                 <Box className={s.formContainer__left__amountWrap}>
                   {isDisabledBaseAmount ? (
                     <Box className={s.formContainer__left__amountWrap__locked}>
@@ -321,7 +332,9 @@ const FormAddPoolsV2Container = forwardRef<any, IFormAddPoolsV2Container>(
                   )}
 
                   <FiledButton
-                    isDisabled={!isTokenApproved || submitting}
+                    isDisabled={
+                      !isTokenApproved || submitting || allowStep(values) === 4
+                    }
                     isLoading={submitting}
                     className={
                       !isTokenApproved ? s.formContainer__right__btnInActive : ''

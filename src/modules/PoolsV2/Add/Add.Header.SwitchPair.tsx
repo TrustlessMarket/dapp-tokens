@@ -9,6 +9,7 @@ import { useRouter } from 'next/router';
 import { useCallback, useEffect } from 'react';
 import { useField, useForm, useFormState } from 'react-final-form';
 import s from './styles.module.scss';
+import { isPool } from '../utils';
 
 const AddHeaderSwitchPair = () => {
   const router = useRouter();
@@ -26,8 +27,6 @@ const AddHeaderSwitchPair = () => {
   const quoteAmount: any = values?.quoteAmount;
   const poolAddress: any = values?.poolAddress;
 
-  console.log('poolAddress', poolAddress);
-
   useEffect(() => {
     if (poolAddress && currentSelectPair && baseToken && quoteToken) {
       checkRevert();
@@ -43,15 +42,17 @@ const AddHeaderSwitchPair = () => {
       isRevert = true;
     }
 
-    const _revertTickLower = isRevert ? -tickUpper : tickLower;
-    const _revertTickUpper = isRevert ? -tickLower : tickUpper;
+    if (isPool(poolAddress)) {
+      const _revertTickLower = isRevert ? -tickUpper : tickLower;
+      const _revertTickUpper = isRevert ? -tickLower : tickUpper;
+      change('currentTick', isRevert ? -currentTick : currentTick);
+      change('tickLower', _revertTickLower);
+      change('minPrice', tickToPrice(_revertTickLower));
+      change('tickUpper', _revertTickUpper);
+      change('maxPrice', tickToPrice(_revertTickUpper));
+    }
 
     change('isRevert', isRevert);
-    change('currentTick', isRevert ? -currentTick : currentTick);
-    change('tickLower', _revertTickLower);
-    change('minPrice', tickToPrice(_revertTickLower));
-    change('tickUpper', _revertTickUpper);
-    change('maxPrice', tickToPrice(_revertTickUpper));
     change('baseAmount', quoteAmount);
     change('quoteAmount', baseAmount);
   }, [currentSelectPair, currentTick]);
