@@ -9,10 +9,11 @@ import {colors} from '@/theme/colors';
 import {ROUTE_PATH} from '@/constants/route-path';
 import {L2_ETH_ADDRESS} from '@/configs';
 import {useRouter} from "next/router";
-import TopPools from "@/modules/PoolsV2/TopPools";
-import MyPositions from "@/modules/PoolsV2/MyPositions";
+import {IPoolV2Detail} from "@/pages/pools/v2/detail/[[...id]]";
 
-const PoolsV2Page = () => {
+type IPoolsV2DetailPage = IPoolV2Detail;
+
+const PoolsV2DetailPage: React.FC<IPoolsV2DetailPage> = ({ids}) => {
   const [loading, setLoading] = useState<boolean>(false);
   const router = useRouter();
   const [showTopPool, setShowTopPool] = useState(false);
@@ -33,12 +34,6 @@ const PoolsV2Page = () => {
     //   );
     // }
 
-    if(!showTopPool) {
-      return <MyPositions />;
-    }
-    if (showTopPool) {
-      return <TopPools />;
-    }
 
     return <></>;
   };
@@ -46,22 +41,24 @@ const PoolsV2Page = () => {
   return (
     <BodyContainer className={s.container}>
       <Flex className={s.container__header}>
-        <Heading as={'h3'}>Pools</Heading>
+        <Heading as={'h3'}>Back to Pools</Heading>
         <Flex gap={2}>
           <FiledButton
             btnSize="l"
-            className={s.topPoolBtn}
-            onClick={() => setShowTopPool(!showTopPool)}
-          >
-            Top Pools
-          </FiledButton>
-          <FiledButton
+            className={s.increaseLiquididyBtn}
             onClick={() =>
               router.push(`${ROUTE_PATH.POOLS_V2_ADD}/${L2_ETH_ADDRESS}`)
             }
+          >
+            Increase Liquidity
+          </FiledButton>
+          <FiledButton
+            onClick={() =>
+              router.push(`${ROUTE_PATH.POOLS_V2_REMOVE}/${L2_ETH_ADDRESS}`)
+            }
             btnSize="l"
           >
-            + New Position
+            Remove Liquidity
           </FiledButton>
         </Flex>
       </Flex>
@@ -76,4 +73,4 @@ const PoolsV2Page = () => {
   );
 };
 
-export default PoolsV2Page;
+export default PoolsV2DetailPage;

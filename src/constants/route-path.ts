@@ -28,4 +28,5 @@ export const ROUTE_PATH = {
   PROPOSAL: 'proposal',
   POOLS_V2: '/pools/v2',
   POOLS_V2_ADD: '/pools/v2/add',
+  POOLS_V2_REMOVE: '/pools/v2/remove',
 };
