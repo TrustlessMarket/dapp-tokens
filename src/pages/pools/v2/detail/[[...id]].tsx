@@ -11,8 +11,6 @@ export interface IPoolV2Detail {
 const PoolV2Detail: React.FC<IPoolV2Detail> = (props) => {
   const ids = props.ids;
 
-  console.log('PoolV2Detail', ids);
-
   return (
     <>
       <Layout>

@@ -8,7 +8,6 @@ import React, {useContext, useEffect, useMemo, useState} from "react";
 import {WalletContext} from "@/contexts/wallet-context";
 import {IResourceChain} from "@/interfaces/chain";
 import {compareString, getTokenIconUrl} from "@/utils";
-import {getListUserPositions} from "@/services/swap";
 import px2rem from "@/utils/px2rem";
 import {debounce} from "lodash";
 import {useWindowSize} from "@trustless-computer/dapp-core";
@@ -23,6 +22,7 @@ import InfoTooltip from "@/components/Swap/infoTooltip";
 import cx from 'classnames';
 import {ROUTE_PATH} from "@/constants/route-path";
 import {useRouter} from "next/router";
+import {getListUserPositions} from "@/services/swap-v3";
 
 const LIMIT_PAGE = 30;
 

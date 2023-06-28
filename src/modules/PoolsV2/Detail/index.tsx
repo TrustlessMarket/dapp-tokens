@@ -1,22 +1,35 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import BodyContainer from '@/components/Swap/bodyContainer';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import s from './styles.module.scss';
 import {Box, Flex, Heading, Spinner} from '@chakra-ui/react';
 import FiledButton from '@/components/Swap/button/filedButton';
 import {colors} from '@/theme/colors';
 import {ROUTE_PATH} from '@/constants/route-path';
-import {L2_ETH_ADDRESS} from '@/configs';
 import {useRouter} from "next/router";
 import {IPoolV2Detail} from "@/pages/pools/v2/detail/[[...id]]";
+import {getPositionDetail} from "@/services/swap-v3";
+import {IPosition} from "@/interfaces/position";
 
 type IPoolsV2DetailPage = IPoolV2Detail;
 
 const PoolsV2DetailPage: React.FC<IPoolsV2DetailPage> = ({ids}) => {
   const [loading, setLoading] = useState<boolean>(false);
   const router = useRouter();
-  const [showTopPool, setShowTopPool] = useState(false);
+  const [positionDetail, setPositionDetail] = useState<IPosition>();
+
+  useEffect(() => {
+    if(ids?.length > 0) {
+      const positionId = ids[0];
+      getUserPositionDetail(positionId);
+    }
+  }, [JSON.stringify(ids)]);
+
+  const getUserPositionDetail = async (id: any) => {
+    const res = await getPositionDetail(id);
+    setPositionDetail(res);
+  }
 
   const renderContent = () => {
     if (loading) {
@@ -47,14 +60,14 @@ const PoolsV2DetailPage: React.FC<IPoolsV2DetailPage> = ({ids}) => {
             btnSize="l"
             className={s.increaseLiquididyBtn}
             onClick={() =>
-              router.push(`${ROUTE_PATH.POOLS_V2_ADD}/${L2_ETH_ADDRESS}`)
+              router.push(`${ROUTE_PATH.POOLS_V2_ADD}/${positionDetail?.id}`)
             }
           >
             Increase Liquidity
           </FiledButton>
           <FiledButton
             onClick={() =>
-              router.push(`${ROUTE_PATH.POOLS_V2_REMOVE}/${L2_ETH_ADDRESS}`)
+              router.push(`${ROUTE_PATH.POOLS_V2_REMOVE}/${positionDetail?.id}`)
             }
             btnSize="l"
           >
