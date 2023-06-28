@@ -23,6 +23,7 @@ import {formatAmountBigNumber} from "@/utils/format";
 import {debounce} from "lodash";
 import {useWindowSize} from "@trustless-computer/dapp-core";
 import {useRouter} from "next/router";
+import styles from './styles.module.scss';
 
 const LIMIT_PAGE = 30;
 
@@ -690,74 +691,7 @@ const TopPools = () => {
   const debounceLoadMore = debounce(onLoadMoreTokens, 300);
 
   return (
-    <>
-      <Flex
-        gap={4}
-        alignItems={'center'}
-        justifyContent={'space-between'}
-        marginX={'auto'}
-        direction={['column', 'row']}
-        mb={4}
-      >
-        <Heading className="upload_title" as={'h3'} style={{ margin: 0 }}>
-          Pools
-        </Heading>
-        {/*<Flex gap={4} className="btn-wrap">
-            <FiledButton
-              border={'1px solid rgba(255, 255, 255, 0.1)'}
-              bgColor={'#0F0F0F !important'}
-              borderRadius={'100px !important'}
-              fontSize={[`${px2rem(16)} !important`, `${px2rem(20)} !important`]}
-              btnSize="h"
-              onClick={() =>
-                router.replace(`${ROUTE_PATH.POOLS}?type=${ScreenType.add_pool}`)
-              }
-            >
-              <Flex gap={2} alignItems={'center'}>
-                <Center
-                  w={'28px'}
-                  h={'28px'}
-                  minW={'28px'}
-                  minH={'28px'}
-                  borderRadius={'50%'}
-                  bgColor={'rgba(255, 255, 255, 0.1)'}
-                >
-                  <BsDownload fontWeight={'bold'} fontSize={'14px'} />
-                </Center>
-                Import Pool
-              </Flex>
-            </FiledButton>
-            <FiledButton
-              bgColor={'#3385FF !important'}
-              borderRadius={'100px !important'}
-              fontSize={[`${px2rem(16)} !important`, `${px2rem(20)} !important`]}
-              btnSize="h"
-              onClick={() =>
-                router.replace(
-                  `${ROUTE_PATH.POOLS}?type=${ScreenType.add_liquid}&f=${DEFAULT_FROM_TOKEN_ADDRESS}&t=${DEFAULT_TO_TOKEN_ADDRESS}`,
-                )
-              }
-            >
-              <Flex gap={2} alignItems={'center'}>
-                <Center
-                  w={'28px'}
-                  h={'28px'}
-                  minW={'28px'}
-                  minH={'28px'}
-                  borderRadius={'50%'}
-                  bgColor={'#FFFFFF'}
-                >
-                  <FiPlus
-                    fontWeight={'bold'}
-                    fontSize={'18px'}
-                    color={'#3385FF'}
-                  />
-                </Center>
-                Add liquidity
-              </Flex>
-            </FiledButton>
-          </Flex>*/}
-      </Flex>
+    <Box className={styles.container}>
       <InfiniteScroll
         className="tokens-list"
         dataLength={liquidityList?.length || 0}
@@ -773,7 +707,7 @@ const TopPools = () => {
       >
         <ListTable data={liquidityList} columns={columns} showEmpty={false} />
       </InfiniteScroll>
-    </>
+    </Box>
   );
 };
 

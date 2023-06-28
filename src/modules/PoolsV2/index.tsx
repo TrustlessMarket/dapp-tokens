@@ -9,15 +9,18 @@ import {colors} from '@/theme/colors';
 import {ROUTE_PATH} from '@/constants/route-path';
 import {L2_ETH_ADDRESS} from '@/configs';
 import {useRouter} from "next/router";
+import TopPools from "@/modules/PoolsV2/TopPools";
 
 const PoolsV2Page = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const router = useRouter();
+  const [showTopPool, setShowTopPool] = useState(false);
 
   const renderContent = () => {
     if (loading) {
       return <Spinner color={colors.white} />;
     }
+
     // if (liquidityList.length === 0) {
     //   return (
     //     <>
@@ -29,6 +32,10 @@ const PoolsV2Page = () => {
     //   );
     // }
 
+    if (showTopPool) {
+      return <TopPools />;
+    }
+
     return <></>;
   };
 
@@ -36,7 +43,14 @@ const PoolsV2Page = () => {
     <BodyContainer className={s.container}>
       <Flex className={s.container__header}>
         <Heading as={'h3'}>Pools</Heading>
-        <Flex>
+        <Flex gap={2}>
+          <FiledButton
+            btnSize="l"
+            className={s.topPoolBtn}
+            onClick={() => setShowTopPool(!showTopPool)}
+          >
+            Top Pools
+          </FiledButton>
           <FiledButton
             onClick={() =>
               router.push(`${ROUTE_PATH.POOLS_V2_ADD}/${L2_ETH_ADDRESS}`)
