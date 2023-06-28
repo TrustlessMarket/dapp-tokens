@@ -73,7 +73,7 @@ const TopPools = () => {
   };
 
   const shareTwitter = (row: ILiquidity) => {
-    const shareUrl = `${TRUSTLESS_MARKET_URL}${ROUTE_PATH.POOLS}?type=${ScreenType.add_liquid}&f=${row?.token0Obj?.address}&t=${row?.token1Obj?.address}`;
+    const shareUrl = `${TRUSTLESS_MARKET_URL}${ROUTE_PATH.POOLS_V2}`;
     const tokens = [];
 
     tokens.push(row?.token0Obj?.symbol);
@@ -114,255 +114,6 @@ const TopPools = () => {
   };
 
   const columns = useMemo(() => {
-    if (mobileScreen) {
-      return [
-        {
-          id: 'pair',
-          label: 'Pair',
-          labelConfig: {
-            fontSize: '12px',
-            fontWeight: '500',
-            color: '#B1B5C3',
-            borderTopLeftRadius: '8px',
-            borderBottomLeftRadius: '8px',
-          },
-          config: {
-            color: '#FFFFFF',
-            borderBottom: 'none',
-            backgroundColor: '#1E1E22',
-            borderTopLeftRadius: '8px',
-            borderBottomLeftRadius: '8px',
-          },
-          render(row: ILiquidity) {
-            const [token0Obj, token1Obj] = sortTokens(
-              row?.token0Obj,
-              row?.token1Obj,
-            );
-
-            const myLiquidity: any = myLiquidities?.find((v: any) =>
-              compareString(v.address, row?.pair),
-            );
-
-            let share = 0;
-            if (myLiquidity) {
-              share = new BigNumber(myLiquidity?.ownerSupply || 0)
-                .dividedBy(myLiquidity?.totalSupply || 1)
-                .toNumber();
-            }
-
-            return (
-              <>
-                <Flex fontSize={px2rem(14)} alignItems={'center'} gap={2}>
-                  <Flex className="wrap-icons" alignItems={'center'}>
-                    <img
-                      src={getTokenIconUrl(token0Obj)}
-                      alt={token0Obj?.thumbnail || 'default-icon'}
-                      className={'avatar'}
-                    />
-                    <img
-                      src={getTokenIconUrl(token1Obj)}
-                      alt={token1Obj?.thumbnail || 'default-icon'}
-                      className={'avatar'}
-                    />
-                  </Flex>
-                  <Box>
-                    <Text fontWeight={'500'}>
-                      {token0Obj?.symbol} - {token1Obj?.symbol}
-                    </Text>
-                    <Text
-                      fontSize={px2rem(12)}
-                      color={colors.white}
-                      opacity={0.8}
-                      lineHeight={'16px'}
-                    >
-                      Vol: ${formatCurrency(row?.usdTotalVolume || 0, 2)}
-                    </Text>
-                    {Number(row?.apr) > 0 && (
-                      <Tag mt={1} fontSize={px2rem(12)}>
-                        APR:
-                        <b style={{ marginLeft: 2 }}>
-                          {formatCurrency(row?.apr, 2)}%
-                        </b>
-                      </Tag>
-                    )}
-                  </Box>
-                </Flex>
-                <Flex gap={2} mt={4}>
-                  <InfoTooltip label={'Add Liquidity'}>
-                    <Center
-                      cursor={'pointer'}
-                      fontSize={'24px'}
-                      _hover={{
-                        color: '#0072ff',
-                      }}
-                    >
-                      <AiOutlinePlusCircle
-                        onClick={() =>
-                          router.replace(
-                            `${ROUTE_PATH.POOLS}?type=${ScreenType.add_liquid}&f=${row?.token0Obj?.address}&t=${row?.token1Obj?.address}`,
-                          )
-                        }
-                      />
-                    </Center>
-                  </InfoTooltip>
-                  {Number(share) > 0 && (
-                    <InfoTooltip label={'Remove Liquidity'}>
-                      <Center
-                        cursor={'pointer'}
-                        fontSize={'24px'}
-                        _hover={{
-                          color: '#FF0000',
-                        }}
-                      >
-                        <AiOutlineMinusCircle
-                          onClick={() =>
-                            router.replace(
-                              `${ROUTE_PATH.POOLS}?type=${ScreenType.remove}&f=${row?.token0Obj?.address}&t=${row?.token1Obj?.address}`,
-                            )
-                          }
-                        />
-                      </Center>
-                    </InfoTooltip>
-                  )}
-                  <InfoTooltip label={'Share Twitter'}>
-                    <Center
-                      cursor={'pointer'}
-                      fontSize={'24px'}
-                      _hover={{
-                        color: '#33CCFF',
-                      }}
-                    >
-                      <BsTwitter onClick={() => shareTwitter(row)} />
-                    </Center>
-                  </InfoTooltip>
-                </Flex>
-              </>
-            );
-          },
-        },
-        {
-          id: 'volume',
-          label: '',
-          labelConfig: {
-            fontSize: '12px',
-            fontWeight: '500',
-            color: '#B1B5C3',
-          },
-          config: {
-            color: '#FFFFFF',
-            borderBottom: 'none',
-            backgroundColor: '#1E1E22',
-          },
-          render(row: ILiquidity) {
-            const [token0Obj, token1Obj] = sortTokens(
-              row?.token0Obj,
-              row?.token1Obj,
-            );
-            const [reserve0, reserve1] = compareString(
-              token0Obj?.address,
-              row?.token0Obj?.address,
-            )
-              ? [row?.reserve0, row?.reserve1]
-              : [row?.reserve1, row?.reserve0];
-
-            const myLiquidity: any = myLiquidities.find((v: any) =>
-              compareString(v.address, row?.pair),
-            );
-
-            let share = 0;
-            let balances = [0, 0];
-            if (myLiquidity) {
-              share = new BigNumber(myLiquidity?.ownerSupply || 0)
-                .dividedBy(myLiquidity?.totalSupply || 1)
-                .toNumber();
-
-              const fromBalance = new BigNumber(share)
-                .multipliedBy(myLiquidity?.fromBalance || 0)
-                .toNumber();
-              const toBalance = new BigNumber(share)
-                .multipliedBy(myLiquidity?.toBalance || 0)
-                .toNumber();
-
-              balances = compareString(myLiquidity?.fromAddress, token0Obj?.address)
-                ? [fromBalance, toBalance]
-                : [toBalance, fromBalance];
-            }
-
-            return (
-              <>
-                {Number(share) > 0 && (
-                  <Flex
-                    alignItems={'flex-end'}
-                    direction={'column'}
-                    fontSize={px2rem(14)}
-                  >
-                    <Text opacity={0.8} fontSize={px2rem(12)}>
-                      Your liquidity:
-                    </Text>
-                    <Flex gap={1} alignItems={'center'}>
-                      <Text>
-                        {formatCurrency(
-                          formatAmountBigNumber(balances[0], myLiquidity?.decimal),
-                        ).toString()}
-                      </Text>
-                      <img
-                        src={getTokenIconUrl(token0Obj)}
-                        alt={token0Obj?.thumbnail || 'default-icon'}
-                        className={'avatar2'}
-                        title={token0Obj?.symbol}
-                      />
-                    </Flex>
-                    <Flex gap={1} alignItems={'center'}>
-                      <Text>
-                        {formatCurrency(
-                          formatAmountBigNumber(balances[1], myLiquidity?.decimal),
-                        ).toString()}
-                      </Text>
-                      <img
-                        src={getTokenIconUrl(token1Obj)}
-                        alt={token1Obj?.thumbnail || 'default-icon'}
-                        className={'avatar2'}
-                        title={token1Obj?.symbol}
-                      />
-                    </Flex>
-                  </Flex>
-                )}
-
-                <Flex
-                  direction={'column'}
-                  alignItems={'flex-end'}
-                  justifyContent={'flex-end'}
-                  fontSize={px2rem(14)}
-                >
-                  <Text opacity={0.8} fontSize={px2rem(12)}>
-                    Total liquidity:
-                  </Text>
-                  <Flex gap={1} alignItems={'center'}>
-                    <Text>{abbreviateNumber(reserve0).toString()}</Text>
-                    <img
-                      src={getTokenIconUrl(token0Obj)}
-                      alt={token0Obj?.thumbnail || 'default-icon'}
-                      className={'avatar2'}
-                      title={token0Obj?.symbol}
-                    />
-                  </Flex>
-                  <Flex gap={1} alignItems={'center'}>
-                    <Text>{abbreviateNumber(reserve1).toString()}</Text>
-                    <img
-                      src={getTokenIconUrl(token1Obj)}
-                      alt={token1Obj?.thumbnail || 'default-icon'}
-                      className={'avatar2'}
-                      title={token1Obj?.symbol}
-                    />
-                  </Flex>
-                </Flex>
-              </>
-            );
-          },
-        },
-      ];
-    }
-
     return [
       {
         id: 'pair',
@@ -407,8 +158,8 @@ const TopPools = () => {
         },
       },
       {
-        id: 'your_liquidity',
-        label: 'Your Liquidity',
+        id: 'tvl',
+        label: 'TVL',
         labelConfig: {
           fontSize: '12px',
           fontWeight: '500',
@@ -420,83 +171,16 @@ const TopPools = () => {
           backgroundColor: '#1E1E22',
         },
         render(row: ILiquidity) {
-          const [token0Obj, token1Obj] = sortTokens(row?.token0Obj, row?.token1Obj);
-
-          let myLiquidity = null;
-
-          for (let index = 0; index < myLiquidities?.length; index++) {
-            const l = myLiquidities[index] as IToken;
-            if (
-              (compareString(l?.fromAddress, row?.token0Obj?.address) &&
-                compareString(l?.toAddress, row?.token1Obj?.address)) ||
-              (compareString(l?.fromAddress, row?.token1Obj?.address) &&
-                compareString(l?.toAddress, row?.token0Obj?.address))
-            ) {
-              myLiquidity = l;
-              break;
-            }
-          }
-
-          let share = 0;
-          let balances = [0, 0];
-          if (myLiquidity) {
-            share = new BigNumber(myLiquidity?.ownerSupply || 0)
-              .dividedBy(myLiquidity?.totalSupply || 1)
-              .toNumber();
-
-            const fromBalance = new BigNumber(share)
-              .multipliedBy(myLiquidity?.fromBalance || 0)
-              .toNumber();
-            const toBalance = new BigNumber(share)
-              .multipliedBy(myLiquidity?.toBalance || 0)
-              .toNumber();
-
-            balances = compareString(myLiquidity?.fromAddress, token0Obj?.address)
-              ? [fromBalance, toBalance]
-              : [toBalance, fromBalance];
-          }
-
           return (
-            <Flex direction={'column'} fontSize={px2rem(14)}>
-              {Number(share) > 0 ? (
-                <>
-                  <Flex gap={1} alignItems={'center'}>
-                    <Text>
-                      {formatCurrency(
-                        formatAmountBigNumber(balances[0], myLiquidity?.decimal),
-                      ).toString()}
-                    </Text>
-                    <img
-                      src={getTokenIconUrl(token0Obj)}
-                      alt={token0Obj?.thumbnail || 'default-icon'}
-                      className={'avatar2'}
-                      title={token0Obj?.symbol}
-                    />
-                  </Flex>
-                  <Flex gap={1} alignItems={'center'}>
-                    <Text>
-                      {formatCurrency(
-                        formatAmountBigNumber(balances[1], myLiquidity?.decimal),
-                      ).toString()}
-                    </Text>
-                    <img
-                      src={getTokenIconUrl(token1Obj)}
-                      alt={token1Obj?.thumbnail || 'default-icon'}
-                      className={'avatar2'}
-                      title={token1Obj?.symbol}
-                    />
-                  </Flex>
-                </>
-              ) : (
-                <Text>--</Text>
-              )}
-            </Flex>
+            <Text fontSize={px2rem(14)} textAlign={'left'}>
+              ${formatCurrency(row?.liquidityUsd || 0, 2)}
+            </Text>
           );
         },
       },
       {
-        id: 'total_liquidity',
-        label: 'Total Liquidity',
+        id: 'volume24h',
+        label: 'Volume 24h',
         labelConfig: {
           fontSize: '12px',
           fontWeight: '500',
@@ -508,35 +192,10 @@ const TopPools = () => {
           backgroundColor: '#1E1E22',
         },
         render(row: ILiquidity) {
-          const [token0Obj, token1Obj] = sortTokens(row?.token0Obj, row?.token1Obj);
-          const [reserve0, reserve1] = compareString(
-            token0Obj?.address,
-            row?.token0Obj?.address,
-          )
-            ? [row?.reserve0, row?.reserve1]
-            : [row?.reserve1, row?.reserve0];
-
           return (
-            <Flex direction={'column'} fontSize={px2rem(14)}>
-              <Flex gap={1} alignItems={'center'}>
-                <Text>{formatCurrency(reserve0).toString()}</Text>
-                <img
-                  src={getTokenIconUrl(token0Obj)}
-                  alt={token0Obj?.thumbnail || 'default-icon'}
-                  className={'avatar2'}
-                  title={token0Obj?.symbol}
-                />
-              </Flex>
-              <Flex gap={1} alignItems={'center'}>
-                <Text>{formatCurrency(reserve1).toString()}</Text>
-                <img
-                  src={getTokenIconUrl(token1Obj)}
-                  alt={token1Obj?.thumbnail || 'default-icon'}
-                  className={'avatar2'}
-                  title={token1Obj?.symbol}
-                />
-              </Flex>
-            </Flex>
+            <Text fontSize={px2rem(14)} textAlign={'left'}>
+              ${formatCurrency(row?.usdVolume || 0, 2)}
+            </Text>
           );
         },
       },
@@ -557,27 +216,6 @@ const TopPools = () => {
           return (
             <Text fontSize={px2rem(14)} textAlign={'left'}>
               ${formatCurrency(row?.usdTotalVolume || 0, 2)}
-            </Text>
-          );
-        },
-      },
-      {
-        id: 'apy',
-        label: 'APY',
-        labelConfig: {
-          fontSize: '12px',
-          fontWeight: '500',
-          color: '#B1B5C3',
-        },
-        config: {
-          color: '#FFFFFF',
-          borderBottom: 'none',
-          backgroundColor: '#1E1E22',
-        },
-        render(row: ILiquidity) {
-          return (
-            <Text fontSize={px2rem(14)} textAlign={'left'}>
-              {formatCurrency(row?.apr, 2)}%
             </Text>
           );
         },
@@ -631,42 +269,6 @@ const TopPools = () => {
 
           return (
             <Flex gap={4} justifyContent={'center'}>
-              {/*<InfoTooltip label={'Add Liquidity'}>
-                <Center
-                  cursor={'pointer'}
-                  fontSize={'24px'}
-                  _hover={{
-                    color: '#0072ff',
-                  }}
-                >
-                  <AiOutlinePlusCircle
-                    onClick={() =>
-                      router.replace(
-                        `${ROUTE_PATH.POOLS}?type=${ScreenType.add_liquid}&f=${row?.token0Obj?.address}&t=${row?.token1Obj?.address}`,
-                      )
-                    }
-                  />
-                </Center>
-              </InfoTooltip>
-              {Number(share) > 0 && (
-                <InfoTooltip label={'Remove Liquidity'}>
-                  <Center
-                    cursor={'pointer'}
-                    fontSize={'24px'}
-                    _hover={{
-                      color: '#FF0000',
-                    }}
-                  >
-                    <AiOutlineMinusCircle
-                      onClick={() =>
-                        router.replace(
-                          `${ROUTE_PATH.POOLS}?type=${ScreenType.remove}&f=${row?.token0Obj?.address}&t=${row?.token1Obj?.address}`,
-                        )
-                      }
-                    />
-                  </Center>
-                </InfoTooltip>
-              )}*/}
               <InfoTooltip label={'Share Twitter'}>
                 <Center
                   cursor={'pointer'}

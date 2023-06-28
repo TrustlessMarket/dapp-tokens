@@ -15,4 +15,5 @@ export interface ILiquidity {
   totalVolume?: string;
   usdTotalVolume?: string;
   pair?: string;
+  liquidityUsd?: string;
 }
