@@ -18,7 +18,12 @@ import BigNumber from 'bignumber.js';
 import React, { useEffect, useState } from 'react';
 import { Field, useForm, useFormState } from 'react-final-form';
 import { AiOutlineMinus, AiOutlinePlus } from 'react-icons/ai';
-import { isPool, validateMaxRangeAmount, validateMinRangeAmount } from '../utils';
+import {
+  allowStep,
+  isPool,
+  validateMaxRangeAmount,
+  validateMinRangeAmount,
+} from '../utils';
 import s from './styles.module.scss';
 
 interface IAddPriceRange {
@@ -292,7 +297,14 @@ const AddPriceRange: React.FC<IAddPriceRange> = ({ loading }) => {
     );
   };
 
-  return renderContent();
+  const isHide = allowStep(values) < 2;
+
+  return (
+    <Box className={isHide ? s.blur : ''}>
+      {isHide && <Box className={s.blur__fade} />}
+      {renderContent()}
+    </Box>
+  );
 };
 
 export default AddPriceRange;
