@@ -21,6 +21,8 @@ import {tickToPrice} from "@/utils/number";
 import BigNumber from "bignumber.js";
 import InfoTooltip from "@/components/Swap/infoTooltip";
 import cx from 'classnames';
+import {ROUTE_PATH} from "@/constants/route-path";
+import {useRouter} from "next/router";
 
 const LIMIT_PAGE = 30;
 
@@ -31,6 +33,7 @@ const TopPools = () => {
   const [isFetching, setIsFetching] = useState(false);
   const { mobileScreen } = useWindowSize();
   const { account } = useWeb3React();
+  const router = useRouter();
 
   useEffect(() => {
     if(account) {
@@ -129,7 +132,6 @@ const TopPools = () => {
           backgroundColor: '#1E1E22',
         },
         render(row: IPosition) {
-          console.log('row', row);
           return (
             <Flex direction={'column'} fontSize={px2rem(14)}>
               {tickToPrice(row?.tickLower || 0)}
@@ -267,7 +269,18 @@ const TopPools = () => {
         }
         next={debounceLoadMore}
       >
-        <ListTable data={positionList} columns={columns} showEmpty={false} />
+        <ListTable
+          data={positionList}
+          columns={columns}
+          showEmpty={false}
+          onItemClick={(e: IPosition) => {
+            console.log('eeee', e);
+            if (!e.pair?.pair) {
+              return null;
+            }
+            return router.push(`${ROUTE_PATH.POOLS_V2}/detail/${e.pair?.pair}`);
+          }}
+        />
       </InfiniteScroll>
     </Box>
   );

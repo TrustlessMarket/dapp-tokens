@@ -17,4 +17,5 @@ export interface ILiquidity {
   pair?: string;
   liquidityUsd?: string;
   tick?: number;
+  fee?: number;
 }
