@@ -34,18 +34,13 @@ const AddPriceRange: React.FC<IAddPriceRange> = ({ loading }) => {
 
   const [pooling, setPooling] = useState(false);
 
-  let baseToken: IToken = values?.baseToken;
-  let quoteToken: IToken = values?.quoteToken;
+  const baseToken: IToken = values?.baseToken;
+  const quoteToken: IToken = values?.quoteToken;
   const poolAddress: any = values?.poolAddress;
   const fee: FeeAmount = values?.fee;
   const currentPrice: any = values?.currentPrice;
   const tickLower: any = values?.tickLower || '0';
   const tickUpper: any = values?.tickUpper || '0';
-  const isRevert: boolean = values?.isRevert;
-
-  [baseToken, quoteToken] = !isRevert
-    ? [values?.baseToken, values?.quoteToken]
-    : [values?.quoteToken, values?.baseToken];
 
   useEffect(() => {
     if (Boolean(baseToken) && Boolean(quoteToken)) {
@@ -64,7 +59,11 @@ const AddPriceRange: React.FC<IAddPriceRange> = ({ loading }) => {
       change('currentPrice', 0);
       change('currentTick', 0);
       if (isPool(response)) {
-        const poolInfo = await getPoolInfo({ poolAddress: response });
+        const poolInfo = await getPoolInfo({
+          poolAddress: response,
+          baseToken,
+          quoteToken,
+        });
         change('currentPrice', poolInfo.currentPrice);
         change('currentTick', poolInfo.currentTick);
       }

@@ -18,12 +18,10 @@ import { IToken } from '@/interfaces/token';
 import { IPoolV2AddPair } from '@/pages/pools/v2/add/[[...id]]';
 import { getTokens } from '@/services/token-explorer';
 import { compareString } from '@/utils';
-import { FeeAmount, MaxUint128 } from '@/utils/constants';
+import { FeeAmount } from '@/utils/constants';
 import { composeValidators, requiredAmount } from '@/utils/formValidate';
-import { amountDesiredChanged } from '@/utils/utilities';
 import { Box, Flex } from '@chakra-ui/react';
 import BigNumber from 'bignumber.js';
-import { ethers } from 'ethers';
 import { useRouter } from 'next/router';
 import {
   forwardRef,

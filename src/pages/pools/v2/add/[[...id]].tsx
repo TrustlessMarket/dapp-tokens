@@ -41,7 +41,7 @@ const PoolV2AddPair: React.FC<IPoolV2AddPair> = (props) => {
 export async function getServerSideProps({ params }: any) {
   return {
     props: {
-      ids: params?.id,
+      ids: params?.id || [],
     } as IPoolV2AddPair,
   };
 }

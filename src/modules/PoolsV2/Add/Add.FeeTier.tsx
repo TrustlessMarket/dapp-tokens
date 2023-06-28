@@ -14,7 +14,7 @@ const AddFeeTier = () => {
   const { change } = useForm();
   const fee: any = values?.fee;
   return (
-    <InputWrapper label={`Fee Tier: ${fee / 10000}%`}>
+    <InputWrapper label={`Fee Tier: ${fee / 10000 / 2}%`}>
       <Flex className={s.formContainer__left__feeTierContainer} gap={1.5}>
         {feeTiers.map((v) => (
           <Box
