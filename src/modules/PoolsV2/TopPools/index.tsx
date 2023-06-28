@@ -1,4 +1,7 @@
-import {Box, Center, Flex, Heading, Spinner, Tag, Text} from "@chakra-ui/react";
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
+import {Box, Center, Flex, Spinner, Tag, Text} from "@chakra-ui/react";
 import InfiniteScroll from "react-infinite-scroll-component";
 import ListTable from "@/components/Swap/listTable";
 import React, {useContext, useEffect, useMemo, useState} from "react";
