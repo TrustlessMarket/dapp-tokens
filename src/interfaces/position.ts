@@ -16,4 +16,6 @@ export interface IPosition {
   totalVolume?: string;
   usdTotalVolume?: string;
   pair?: ILiquidity;
+  tickLower?: number;
+  tickUpper?: number;
 }

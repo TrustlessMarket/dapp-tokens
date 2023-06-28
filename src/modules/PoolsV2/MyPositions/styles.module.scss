@@ -81,4 +81,32 @@
       border-radius: 50%;
     }
   }
+
+  .range {
+    position: relative;
+    &::after {
+      content: '';
+      position: absolute;
+      width: 6px;
+      height: 6px;
+      top: 40%;
+      right: -12px;
+      border-radius: 50%;
+    }
+    &.inRange {
+      color: rgb(118, 209, 145);
+
+      &::after {
+        background: rgb(118, 209, 145);
+      }
+    }
+
+    &.outRange {
+      color: rgba(255,255,255,0.7);
+
+      &::after {
+        background: rgba(255,255,255,0.7);
+      }
+    }
+  }
 }

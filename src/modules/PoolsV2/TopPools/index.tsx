@@ -1,28 +1,20 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import {Box, Center, Flex, Spinner, Tag, Text} from "@chakra-ui/react";
+import {Box, Flex, Spinner, Text} from "@chakra-ui/react";
 import InfiniteScroll from "react-infinite-scroll-component";
 import ListTable from "@/components/Swap/listTable";
 import React, {useContext, useEffect, useMemo, useState} from "react";
 import {WalletContext} from "@/contexts/wallet-context";
 import {IResourceChain} from "@/interfaces/chain";
-import {LIQUID_PAIRS} from "@/constants/storage-key";
-import {abbreviateNumber, camelCaseKeys, compareString, formatCurrency, getTokenIconUrl} from "@/utils";
+import {compareString, formatCurrency, getTokenIconUrl} from "@/utils";
 import {getListLiquidity} from "@/services/swap";
 import {ILiquidity} from "@/interfaces/liquidity";
 import {TRUSTLESS_MARKET_URL} from "@/configs";
 import {ROUTE_PATH} from "@/constants/route-path";
-import {ScreenType} from "@/modules/Pools";
 import {USDC_ADDRESS, WBTC_ADDRESS, WETH_ADDRESS} from "@/constants/common";
 import {IToken} from "@/interfaces/token";
-import BigNumber from "bignumber.js";
 import px2rem from "@/utils/px2rem";
-import {colors} from "@/theme/colors";
-import InfoTooltip from "@/components/Swap/infoTooltip";
-import {AiOutlineMinusCircle, AiOutlinePlusCircle} from "react-icons/ai";
-import {BsTwitter} from "react-icons/bs";
-import {formatAmountBigNumber} from "@/utils/format";
 import {debounce} from "lodash";
 import {useWindowSize} from "@trustless-computer/dapp-core";
 import {useRouter} from "next/router";
@@ -31,7 +23,6 @@ import styles from './styles.module.scss';
 const LIMIT_PAGE = 30;
 
 const TopPools = () => {
-  const [myLiquidities, setMyLiquidities] = useState([]);
   const [liquidityList, setLiquidityList] = useState<any[]>([]);
   const { getConnectedChainInfo } = useContext(WalletContext);
   const chainInfo: IResourceChain = getConnectedChainInfo();
@@ -40,20 +31,8 @@ const TopPools = () => {
   const router = useRouter();
 
   useEffect(() => {
-    fetchMyLiquidities();
     fetchLiquidities();
   }, [JSON.stringify(router.query)]);
-
-  const fetchMyLiquidities = async () => {
-    try {
-      let pairLiquid = localStorage.getItem(LIQUID_PAIRS);
-
-      if (pairLiquid) {
-        pairLiquid = JSON.parse(pairLiquid) || [];
-        setMyLiquidities(camelCaseKeys(pairLiquid));
-      }
-    } catch (error) {}
-  };
 
   const fetchLiquidities = async (page = 1, isFetchMore = false) => {
     try {
@@ -220,72 +199,8 @@ const TopPools = () => {
           );
         },
       },
-      {
-        id: 'actions',
-        label: ' ',
-        labelConfig: {
-          fontSize: '12px',
-          fontWeight: '500',
-          color: '#B1B5C3',
-          borderTopRightRadius: '8px',
-          borderBottomRightRadius: '8px',
-        },
-        config: {
-          color: '#FFFFFF',
-          borderBottom: 'none',
-          backgroundColor: '#1E1E22',
-          borderTopRightRadius: '8px',
-          borderBottomRightRadius: '8px',
-        },
-        render(row: ILiquidity) {
-          let myLiquidity = null;
-
-          for (let index = 0; index < myLiquidities?.length; index++) {
-            const l = myLiquidities[index] as IToken;
-            if (
-              compareString(l.fromAddress, row?.token0Obj?.address) &&
-              compareString(l.toAddress, row?.token1Obj?.address)
-            ) {
-              myLiquidity = l;
-              break;
-            }
-          }
-
-          let share = 0;
-          let fromBalance = 0;
-          let toBalance = 0;
-          if (myLiquidity) {
-            share = new BigNumber(myLiquidity?.ownerSupply || 0)
-              .dividedBy(myLiquidity?.totalSupply || 1)
-              .toNumber();
-
-            fromBalance = new BigNumber(share)
-              .multipliedBy(myLiquidity?.fromBalance || 0)
-              .toNumber();
-            toBalance = new BigNumber(share)
-              .multipliedBy(myLiquidity?.toBalance || 0)
-              .toNumber();
-          }
-
-          return (
-            <Flex gap={4} justifyContent={'center'}>
-              <InfoTooltip label={'Share Twitter'}>
-                <Center
-                  cursor={'pointer'}
-                  fontSize={'24px'}
-                  _hover={{
-                    color: '#33CCFF',
-                  }}
-                >
-                  <BsTwitter onClick={() => shareTwitter(row)} />
-                </Center>
-              </InfoTooltip>
-            </Flex>
-          );
-        },
-      },
     ];
-  }, [mobileScreen, JSON.stringify(liquidityList), JSON.stringify(myLiquidities)]);
+  }, [mobileScreen, JSON.stringify(liquidityList)]);
 
   const onLoadMoreTokens = () => {
     if (isFetching || liquidityList.length % LIMIT_PAGE !== 0) return;
