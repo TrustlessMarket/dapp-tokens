@@ -27,14 +27,7 @@ export interface IToken {
   description?: string;
   fromAddress?: string;
   toAddress?: string;
-  social?: {
-    website?: string;
-    discord?: string;
-    twitter?: string;
-    telegram?: string;
-    medium?: string;
-    instagram?: string;
-  };
+  social?: Social;
   index?: number;
   balance?: string;
   decimal?: number | string;
@@ -43,4 +36,13 @@ export interface IToken {
   status?: string;
   verifyCode?: string;
   chart?: [];
+}
+
+export interface Social {
+  website?: string;
+  discord?: string;
+  twitter?: string;
+  telegram?: string;
+  medium?: string;
+  instagram?: string;
 }
