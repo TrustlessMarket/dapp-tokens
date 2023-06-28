@@ -12,7 +12,7 @@ import s from './styles.module.scss';
 
 const AddHeaderSwitchPair = () => {
   const router = useRouter();
-  const { change, batch } = useForm();
+  const { change } = useForm();
   const { values } = useFormState();
   const tickLower = useField('defaultTickLower').input.value;
   const tickUpper = useField('defaultTickUpper').input.value;
@@ -43,23 +43,17 @@ const AddHeaderSwitchPair = () => {
       isRevert = true;
     }
 
-    console.log('isRevert', isRevert);
-
-    console.log('isRevert', isRevert ? -currentTick : currentTick);
-
     const _revertTickLower = isRevert ? -tickUpper : tickLower;
     const _revertTickUpper = isRevert ? -tickLower : tickUpper;
 
-    batch(() => {
-      change('isRevert', isRevert);
-      change('currentTick', isRevert ? -currentTick : currentTick);
-      change('tickLower', _revertTickLower);
-      change('minPrice', tickToPrice(_revertTickLower));
-      change('tickUpper', _revertTickUpper);
-      change('maxPrice', tickToPrice(_revertTickUpper));
-      change('baseAmount', quoteAmount);
-      change('quoteAmount', baseAmount);
-    });
+    change('isRevert', isRevert);
+    change('currentTick', isRevert ? -currentTick : currentTick);
+    change('tickLower', _revertTickLower);
+    change('minPrice', tickToPrice(_revertTickLower));
+    change('tickUpper', _revertTickUpper);
+    change('maxPrice', tickToPrice(_revertTickUpper));
+    change('baseAmount', quoteAmount);
+    change('quoteAmount', baseAmount);
   }, [currentSelectPair, currentTick]);
 
   const onChangeRouter = (_tkA: IToken, _tkB: IToken) => {
