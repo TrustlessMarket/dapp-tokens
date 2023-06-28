@@ -274,11 +274,10 @@ const TopPools = () => {
           columns={columns}
           showEmpty={false}
           onItemClick={(e: IPosition) => {
-            console.log('eeee', e);
             if (!e.pair?.pair) {
               return null;
             }
-            return router.push(`${ROUTE_PATH.POOLS_V2}/detail/${e.pair?.pair}`);
+            return router.push(`${ROUTE_PATH.POOLS_V2}/detail/${e.id}`);
           }}
         />
       </InfiniteScroll>
