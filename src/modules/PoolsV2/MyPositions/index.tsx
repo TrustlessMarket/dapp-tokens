@@ -7,7 +7,7 @@ import ListTable from "@/components/Swap/listTable";
 import React, {useContext, useEffect, useMemo, useState} from "react";
 import {WalletContext} from "@/contexts/wallet-context";
 import {IResourceChain} from "@/interfaces/chain";
-import {formatCurrency} from "@/utils";
+import {compareString, formatCurrency, getTokenIconUrl} from "@/utils";
 import {getListUserPositions} from "@/services/swap";
 import {ILiquidity} from "@/interfaces/liquidity";
 import px2rem from "@/utils/px2rem";
@@ -15,6 +15,9 @@ import {debounce} from "lodash";
 import {useWindowSize} from "@trustless-computer/dapp-core";
 import styles from './styles.module.scss';
 import {useWeb3React} from "@web3-react/core";
+import {IPosition} from "@/interfaces/position";
+import {USDC_ADDRESS, WBTC_ADDRESS, WETH_ADDRESS} from "@/constants/common";
+import {IToken} from "@/interfaces/token";
 
 const LIMIT_PAGE = 30;
 
@@ -42,6 +45,26 @@ const TopPools = () => {
       console.log('Failed to fetch tokens owned');
     } finally {
       setIsFetching(false);
+    }
+  };
+
+  const BASE_ADDRESS = [WBTC_ADDRESS, WETH_ADDRESS, USDC_ADDRESS];
+
+  const sortTokens = (tokenA: IToken | undefined, tokenB: IToken | undefined) => {
+    if (compareString(USDC_ADDRESS, tokenA?.address)) {
+      return [tokenB, tokenA];
+    } else if (compareString(USDC_ADDRESS, tokenB?.address)) {
+      return [tokenA, tokenB];
+    } else if (
+      BASE_ADDRESS.some((address) => compareString(address, tokenA?.address))
+    ) {
+      return [tokenB, tokenA];
+    } else if (
+      BASE_ADDRESS.some((address) => compareString(address, tokenB?.address))
+    ) {
+      return [tokenA, tokenB];
+    } else {
+      return [tokenA, tokenB];
     }
   };
 
@@ -113,10 +136,27 @@ const TopPools = () => {
           borderTopLeftRadius: '8px',
           borderBottomLeftRadius: '8px',
         },
-        render() {
+        render(row: IPosition) {
+          const [token0Obj, token1Obj] = sortTokens(row?.pair?.token0Obj, row?.pair?.token1Obj);
+
           return (
             <Flex fontSize={px2rem(14)} alignItems={'center'} gap={2}>
-
+              <Flex gap={1} alignItems={'center'}>
+                <img
+                  src={getTokenIconUrl(token0Obj)}
+                  alt={token0Obj?.thumbnail || 'default-icon'}
+                  className={'avatar'}
+                />
+                <Text>{token0Obj?.symbol}</Text>
+              </Flex>
+              <Flex gap={1} alignItems={'center'}>
+                <img
+                  src={getTokenIconUrl(token1Obj)}
+                  alt={token1Obj?.thumbnail || 'default-icon'}
+                  className={'avatar'}
+                />
+                <Text>{token1Obj?.symbol}</Text>
+              </Flex>
             </Flex>
           );
         },

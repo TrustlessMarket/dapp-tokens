@@ -1,4 +1,5 @@
 import { IToken } from '@/interfaces/token';
+import {ILiquidity} from "@/interfaces/liquidity";
 
 export interface IPosition {
   id: string;
@@ -14,5 +15,5 @@ export interface IPosition {
   usdVolume?: string;
   totalVolume?: string;
   usdTotalVolume?: string;
-  pair?: string;
+  pair?: ILiquidity;
 }
