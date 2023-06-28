@@ -43,22 +43,22 @@ export const validateQuoteAmount = (_amount: any, values: any) => {
 export const feeTiers = [
   {
     value: FeeAmount.LOWER,
-    title: FeeAmount.LOWER / 10000,
+    title: FeeAmount.LOWER / 10000 / 2,
     desc: 'Best for very stable pairs.',
   },
   {
     value: FeeAmount.LOW,
-    title: FeeAmount.LOW / 10000,
+    title: FeeAmount.LOW / 10000 / 2,
     desc: 'Best for most pairs.',
   },
   {
     value: FeeAmount.MEDIUM,
-    title: FeeAmount.MEDIUM / 10000,
+    title: FeeAmount.MEDIUM / 10000 / 2,
     desc: 'Best for stable pairs.',
   },
   {
     value: FeeAmount.HIGH,
-    title: FeeAmount.HIGH / 10000,
+    title: FeeAmount.HIGH / 10000 / 2,
     desc: 'Best for exotic pairs.',
   },
 ];

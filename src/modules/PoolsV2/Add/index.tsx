@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import BodyContainer from '@/components/Swap/bodyContainer';
 import { ROUTE_PATH } from '@/constants/route-path';
-import { IPoolV2AddPair } from '@/pages/pools/v2/add/[...id]';
+import { IPoolV2AddPair } from '@/pages/pools/v2/add/[[...id]]';
 import { Box, Flex, Heading, Icon, IconButton } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import React, { useRef, useState } from 'react';
