@@ -1,0 +1,94 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  & > div {
+    padding: rem(50) 3.75rem;
+    min-width: 768px;
+    width: 100%;
+  }
+
+  :global {
+    .tokens-list {
+      overflow: hidden !important;
+      .chakra-table {
+        border-collapse: separate;
+        border-spacing: 0px 4px;
+        th:first-of-type {
+          max-width: rem(50);
+          white-space: nowrap;
+        }
+
+        th:nth-child(4),
+        td:nth-child(4),
+        th:nth-child(5),
+        td:nth-child(5) {
+          text-align: right;
+        }
+
+        td {
+          padding-top: rem(26);
+          padding-bottom: rem(26);
+        }
+
+        thead {
+          tr {
+            th {
+              background: #1e1e22;
+              text-transform: uppercase;
+              //border-bottom-color: #EDF2F7;
+              padding-top: rem(12);
+              padding-bottom: rem(12);
+              @media screen and (max-width: 758px) {
+                padding: rem(14.5) rem(8) !important;
+                text-transform: capitalize !important;
+                font-weight: 400;
+                &:first-child {
+                  & > div {
+                    justify-content: flex-start;
+                  }
+                }
+                &:last-child {
+                  & > div {
+                    justify-content: flex-end;
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+      @media screen and (max-width: 768px) {
+        .chakra-table {
+          table-layout: fixed;
+          .wrap-icons {
+            position: relative;
+            min-width: 37.5px;
+            img {
+              &:last-child {
+                position: absolute;
+                top: 0;
+                right: 0;
+              }
+            }
+          }
+        }
+      }
+    }
+
+    .avatar {
+      object-fit: cover;
+      width: rem(25);
+      height: rem(25);
+      border-radius: 50%;
+    }
+
+    .avatar2 {
+      object-fit: cover;
+      width: rem(15);
+      height: rem(15);
+      border-radius: 50%;
+    }
+  }
+}
