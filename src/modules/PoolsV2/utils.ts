@@ -2,8 +2,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { NULL_ADDRESS } from '@/constants/url';
 import { compareString, formatCurrency } from '@/utils';
-import { FeeAmount } from '@/utils/constants';
+import { FeeAmount, MaxUint128 } from '@/utils/constants';
+import { amountDesiredChanged } from '@/utils/utilities';
 import BigNumber from 'bignumber.js';
+import { ethers } from 'ethers';
 
 export const isPool = (address: string): boolean => {
   if (address && !compareString(address, NULL_ADDRESS)) {
@@ -83,4 +85,26 @@ export const validateMaxRangeAmount = (_amount: any, values: any) => {
   }
 
   return undefined;
+};
+
+export const handleChangeAmount = (
+  type: 'baseAmount' | 'quoteAmount',
+  { _amount, currentTick, tickLower, tickUpper }: any,
+) => {
+  try {
+    const [baseAmount, quoteAmount] = amountDesiredChanged(
+      currentTick,
+      tickLower,
+      tickUpper,
+      type === 'baseAmount' ? ethers.utils.parseEther(_amount) : MaxUint128,
+      type === 'quoteAmount' ? ethers.utils.parseEther(_amount) : MaxUint128,
+    );
+    return ethers.utils.formatEther(
+      type === 'baseAmount' ? quoteAmount : baseAmount,
+    );
+  } catch (error) {
+    console.log('error', error);
+
+    return 0;
+  }
 };
