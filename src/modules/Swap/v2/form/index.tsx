@@ -677,10 +677,12 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         </Flex>
         <Flex justifyContent={'space-between'} w={'100%'} color={'#FFFFFF'} gap={2}>
           {values?.bestRoute?.pathTokens?.map((token: IToken, index: number) => {
+            const pair = values?.bestRoute?.pathPairs[index - 1];
             return (
               <>
                 {index > 0 && (
-                  <Flex gap={2} flex={1} alignItems={'center'}>
+                  <Flex gap={2} flex={1} alignItems={'center'} position={"relative"}>
+                    <Text position={"absolute"} left={"48%"} top={"-5px"}>{new BigNumber(pair.fee).div(10000).toString()}%</Text>
                     <Box className={'dot-line'}></Box>
                   </Flex>
                 )}
