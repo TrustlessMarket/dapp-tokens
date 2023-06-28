@@ -6,6 +6,7 @@ import { FeeAmount, MaxUint128 } from '@/utils/constants';
 import { amountDesiredChanged } from '@/utils/utilities';
 import BigNumber from 'bignumber.js';
 import { ethers } from 'ethers';
+import { isNumber } from 'lodash';
 
 export const isPool = (address: string): boolean => {
   if (address && !compareString(address, NULL_ADDRESS)) {
@@ -109,4 +110,45 @@ export const handleChangeAmount = (
 
     return 0;
   }
+};
+
+export const allowStep = (values: any) => {
+  let step = 0;
+
+  if (
+    Boolean(values?.baseToken) &&
+    Boolean(values?.quoteToken) &&
+    !compareString(values?.baseToken?.address, values?.quoteToken?.address)
+  ) {
+    step = 1;
+  }
+  if (
+    Boolean(values?.baseToken) &&
+    Boolean(values?.quoteToken) &&
+    !compareString(values?.baseToken?.address, values?.quoteToken?.address) &&
+    Boolean(values?.fee)
+  ) {
+    step = 2;
+  }
+  if (
+    Boolean(values?.baseToken) &&
+    Boolean(values?.quoteToken) &&
+    !compareString(values?.baseToken?.address, values?.quoteToken?.address) &&
+    Boolean(values?.fee) &&
+    (isNumber(values?.tickUpper) || isNumber(values?.tickLower))
+  ) {
+    step = 3;
+  }
+  if (
+    Boolean(values?.baseToken) &&
+    Boolean(values?.quoteToken) &&
+    !compareString(values?.baseToken?.address, values?.quoteToken?.address) &&
+    Boolean(values?.fee) &&
+    (isNumber(values?.tickUpper) || isNumber(values?.tickLower)) &&
+    (isNumber(values?.baseAmount) || isNumber(values?.quoteAmount))
+  ) {
+    step = 4;
+  }
+
+  return step;
 };
