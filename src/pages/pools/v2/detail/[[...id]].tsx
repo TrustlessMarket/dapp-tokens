@@ -2,6 +2,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import Layout from '@/layouts';
 import React from 'react';
+import PoolsV2Detail from '@/modules/PoolsV2/Detail';
 
 export interface IPoolV2Detail {
   ids: string[];
@@ -15,7 +16,7 @@ const PoolV2Detail: React.FC<IPoolV2Detail> = (props) => {
   return (
     <>
       <Layout>
-        {/*<PoolsV2AddPage ids={ids} />*/}
+        <PoolsV2Detail ids={ids} />
       </Layout>
     </>
   );
