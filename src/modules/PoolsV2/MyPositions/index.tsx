@@ -27,8 +27,10 @@ const TopPools = () => {
   const { account } = useWeb3React();
 
   useEffect(() => {
-    fetchLiquidities();
-  }, []);
+    if(account) {
+      fetchLiquidities();
+    }
+  }, [account]);
 
   const fetchLiquidities = async () => {
     try {

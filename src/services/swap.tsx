@@ -185,7 +185,7 @@ export const getListUserPositions = async (
   params: any
 ): Promise<IPosition[]> => {
   const qs = '?' + queryString.stringify(params);
-  return swrFetcher(`${API_EXCHANGE_URL}${"swap-v3"}/pool/user-position${qs}`, {
+  return swrFetcher(`${API_EXCHANGE_URL}${"/swap-v3"}/pool/user-position${qs}`, {
     method: 'GET',
     error: 'Fail to get list user positions',
   });
