@@ -1,4 +1,4 @@
-import {Box, Flex} from "@chakra-ui/react";
+import {Box, Flex, Slider, SliderFilledTrack, SliderThumb, SliderTrack} from "@chakra-ui/react";
 import {useForm, useFormState} from "react-final-form";
 import InputWrapper from "@/components/Swap/form/inputWrapper";
 import s from "@/modules/PoolsV2/Remove/styles.module.scss";
@@ -31,6 +31,10 @@ const RemoveAmount = () => {
   const { change } = useForm();
   const percent: any = values?.percent;
 
+  const onChangeSlider = (val) => {
+    change('percent', val)
+  }
+
   return (
     <InputWrapper label={`Amount`} className={s.amountContainer}>
       <Flex gap={8} alignItems={"center"}>
@@ -53,7 +57,13 @@ const RemoveAmount = () => {
           ))}
         </Flex>
       </Flex>
-
+      <Slider defaultValue={0} min={0} max={100} step={1} value={percent} onChange={onChangeSlider}>
+        <SliderTrack bg='#6B7594'>
+          <Box position='relative' right={10} />
+          <SliderFilledTrack bg='#FFFFFF' />
+        </SliderTrack>
+        <SliderThumb boxSize={6} />
+      </Slider>
     </InputWrapper>
   );
 };
