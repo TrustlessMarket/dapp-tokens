@@ -20,17 +20,25 @@ const PoolV2AddPair: React.FC<IPoolV2AddPair> = (props) => {
   );
 };
 
-export async function getStaticPaths() {
-  // Return a list of possible value for id
-  return {
-    paths: [],
-    fallback: false,
-  };
-}
+// export async function getStaticPaths() {
+//   // Return a list of possible value for id
+//   return {
+//     paths: [],
+//     fallback: false,
+//   };
+// }
 
-export async function getStaticProps({ params }: any) {
-  // Fetch necessary data for the blog post using params.id
+// export async function getStaticProps({ params }: any) {
+//   // Fetch necessary data for the blog post using params.id
 
+//   return {
+//     props: {
+//       ids: params?.id,
+//     } as IPoolV2AddPair,
+//   };
+// }
+
+export async function getServerSideProps({ params }: any) {
   return {
     props: {
       ids: params?.id,
