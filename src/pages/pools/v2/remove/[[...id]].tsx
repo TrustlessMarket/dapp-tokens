@@ -2,19 +2,19 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import Layout from '@/layouts';
 import React from 'react';
-import PoolsV2Detail from '@/modules/PoolsV2/Detail';
+import PoolsV2RemovePage from "@/modules/PoolsV2/Remove";
 
 export interface IPoolV2Detail {
   ids: string[];
 }
 
-const PoolV2Detail: React.FC<IPoolV2Detail> = (props) => {
+const PoolV2Remove: React.FC<IPoolV2Detail> = (props) => {
   const ids = props.ids;
 
   return (
     <>
       <Layout>
-        <PoolsV2Detail ids={ids} />
+        <PoolsV2RemovePage ids={ids} />
       </Layout>
     </>
   );
@@ -46,4 +46,4 @@ export async function getServerSideProps({ params }: any) {
   };
 }
 
-export default PoolV2Detail;
+export default PoolV2Remove;

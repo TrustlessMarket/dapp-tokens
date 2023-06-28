@@ -14,7 +14,7 @@ import {IPosition} from "@/interfaces/position";
 
 type IPoolsV2DetailPage = IPoolV2Detail;
 
-const PoolsV2DetailPage: React.FC<IPoolsV2DetailPage> = ({ids}) => {
+const PoolsV2RemovePage: React.FC<IPoolsV2DetailPage> = ({ids}) => {
   const [loading, setLoading] = useState<boolean>(false);
   const router = useRouter();
   const [positionDetail, setPositionDetail] = useState<IPosition>();
@@ -55,25 +55,6 @@ const PoolsV2DetailPage: React.FC<IPoolsV2DetailPage> = ({ids}) => {
     <BodyContainer className={s.container}>
       <Flex className={s.container__header}>
         <Heading as={'h3'}>Back to Pools</Heading>
-        <Flex gap={2}>
-          <FiledButton
-            btnSize="l"
-            className={s.increaseLiquididyBtn}
-            onClick={() =>
-              router.push(`${ROUTE_PATH.POOLS_V2_ADD}/${positionDetail?.id}`)
-            }
-          >
-            Increase Liquidity
-          </FiledButton>
-          <FiledButton
-            onClick={() =>
-              router.push(`${ROUTE_PATH.POOLS_V2_REMOVE}/${positionDetail?.id}`)
-            }
-            btnSize="l"
-          >
-            Remove Liquidity
-          </FiledButton>
-        </Flex>
       </Flex>
       <Box mt={4} />
       {renderContent()}
@@ -86,4 +67,4 @@ const PoolsV2DetailPage: React.FC<IPoolsV2DetailPage> = ({ids}) => {
   );
 };
 
-export default PoolsV2DetailPage;
+export default PoolsV2RemovePage;

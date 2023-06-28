@@ -187,3 +187,29 @@ export const amountDesiredChanged = (
   );
   return [amount0, amount1];
 };
+
+export function getAmountsForLiquidity(
+  sqrtRatioCurrentX96: BigNumber,
+  sqrtRatioAX96: BigNumber,
+  sqrtRatioBX96: BigNumber,
+  liquidity: BigNumber
+): [BigNumber, BigNumber] {
+  if (sqrtRatioAX96.gt(sqrtRatioBX96)) {
+    ;[sqrtRatioAX96, sqrtRatioBX96] = [sqrtRatioBX96, sqrtRatioAX96]
+  }
+  let amountOut0 = BigNumber.from(0)
+  let amountOut1 = BigNumber.from(0)
+  if ((sqrtRatioCurrentX96.lt(sqrtRatioAX96))) {
+    amountOut0 = getAmount0ForLiquidity(sqrtRatioAX96, sqrtRatioBX96, liquidity)
+  } else if ((sqrtRatioCurrentX96.gt(sqrtRatioBX96))) {
+    amountOut1 = getAmount1ForLiquidity(sqrtRatioAX96, sqrtRatioBX96, liquidity)
+  } else {
+    if (sqrtRatioCurrentX96.lt(sqrtRatioBX96)) {
+      amountOut0 = getAmount0ForLiquidity(sqrtRatioCurrentX96, sqrtRatioBX96, liquidity)
+    }
+    if (sqrtRatioAX96.lt(sqrtRatioCurrentX96)) {
+      amountOut1 = getAmount1ForLiquidity(sqrtRatioAX96, sqrtRatioCurrentX96, liquidity)
+    }
+  }
+  return [amountOut0, amountOut1]
+}

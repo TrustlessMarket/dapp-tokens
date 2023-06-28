@@ -1,13 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { API_EXCHANGE_URL, API_URL } from '@/configs';
-import { IPagingParams } from '@/interfaces/api/query';
-import { IToken } from '@/interfaces/token';
-import { swrFetcher } from '@/utils/swr';
+import {API_EXCHANGE_URL, API_URL} from '@/configs';
+import {IPagingParams} from '@/interfaces/api/query';
+import {IToken} from '@/interfaces/token';
+import {swrFetcher} from '@/utils/swr';
 import queryString from 'query-string';
-import { isProduction } from '@/utils/commons';
-import { ILiquidity } from '@/interfaces/liquidity';
-import {IPosition} from "@/interfaces/position";
+import {isProduction} from '@/utils/commons';
+import {ILiquidity} from '@/interfaces/liquidity';
 
 const API_PATH = '/swap';
 
@@ -178,15 +177,5 @@ export const getListLiquidity = async (
   return swrFetcher(`${API_EXCHANGE_URL}${API_PATH}/pair/apr/list${qs}`, {
     method: 'GET',
     error: 'Fail to get list liquidity',
-  });
-};
-
-export const getListUserPositions = async (
-  params: any
-): Promise<IPosition[]> => {
-  const qs = '?' + queryString.stringify(params);
-  return swrFetcher(`${API_EXCHANGE_URL}${"/swap-v3"}/pool/user-position${qs}`, {
-    method: 'GET',
-    error: 'Fail to get list user positions',
   });
 };
