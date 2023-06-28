@@ -33,6 +33,31 @@
       font-size: rem(20);
       font-weight: 500;
     }
+
+    &__right {
+      position: absolute;
+      right: 0;
+      &__switchContainer {
+        border: 1px solid var(--chakra-colors-gray-600);
+        border-radius: 4px;
+        overflow: hidden;
+        > div {
+          padding: 4px 10px;
+          cursor: pointer;
+          p {
+            color: var(--chakra-colors-gray-500);
+            font-size: rem(12);
+          }
+        }
+        &__active {
+          background-color: var(--chakra-colors-gray-50);
+          p {
+            color: #000000 !important;
+            font-weight: 500;
+          }
+        }
+      }
+    }
   }
 
   &__content_body {

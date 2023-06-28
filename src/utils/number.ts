@@ -21,11 +21,9 @@ export function priceToTick(price: number, tickSpacing: number): number {
 }
 
 export function tickToPrice(tick: number): number {
-  console.log(
-    'tick',
-    tick,
-    Number(formatSqrtPriceX96ToPrice(getSqrtRatioAtTick(tick))),
-  );
+  if (!tick) {
+    return 0;
+  }
 
   return Number(formatSqrtPriceX96ToPrice(getSqrtRatioAtTick(tick)));
 }

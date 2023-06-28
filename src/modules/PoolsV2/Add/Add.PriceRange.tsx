@@ -20,8 +20,6 @@ import { Field, useForm, useFormState } from 'react-final-form';
 import { AiOutlineMinus, AiOutlinePlus } from 'react-icons/ai';
 import { isPool, validateMaxRangeAmount, validateMinRangeAmount } from '../utils';
 import s from './styles.module.scss';
-import { useAppSelector } from '@/state/hooks';
-import { selectPnftExchange } from '@/state/pnftExchange';
 
 interface IAddPriceRange {
   loading?: boolean;
@@ -30,26 +28,30 @@ interface IAddPriceRange {
 const AddPriceRange: React.FC<IAddPriceRange> = ({ loading }) => {
   const { call: getPoolAddress } = useGetPoolAddress();
   const { call: getPoolInfo } = useGetPoolInfo();
-  const needReload = useAppSelector(selectPnftExchange).needReload;
 
   const { values } = useFormState();
-  const { change } = useForm();
+  const { change, restart } = useForm();
 
   const [pooling, setPooling] = useState(false);
 
-  const baseToken: IToken = values?.baseToken;
-  const quoteToken: IToken = values?.quoteToken;
+  let baseToken: IToken = values?.baseToken;
+  let quoteToken: IToken = values?.quoteToken;
   const poolAddress: any = values?.poolAddress;
   const fee: FeeAmount = values?.fee;
   const currentPrice: any = values?.currentPrice;
   const tickLower: any = values?.tickLower || '0';
   const tickUpper: any = values?.tickUpper || '0';
+  const isRevert: boolean = values?.isRevert;
+
+  [baseToken, quoteToken] = !isRevert
+    ? [values?.baseToken, values?.quoteToken]
+    : [values?.quoteToken, values?.baseToken];
 
   useEffect(() => {
     if (Boolean(baseToken) && Boolean(quoteToken)) {
       onGetPool(baseToken, quoteToken);
     }
-  }, [baseToken, quoteToken, fee]);
+  }, [values?.baseToken, values?.quoteToken, fee]);
 
   const onGetPool = async (_tokenA: IToken, _tokenB: IToken) => {
     try {
@@ -84,9 +86,11 @@ const AddPriceRange: React.FC<IAddPriceRange> = ({ loading }) => {
 
     if (name === 'min') {
       change('tickLower', _tick);
+      change('defaultTickLower', _tick);
       change('minPrice', tickToPrice(_tick));
     } else {
       change('tickUpper', _tick);
+      change('defaultTickUpper', _tick);
       change('maxPrice', tickToPrice(_tick));
     }
   };
@@ -97,9 +101,11 @@ const AddPriceRange: React.FC<IAddPriceRange> = ({ loading }) => {
 
     if (name === 'min') {
       change('tickLower', _tick);
+      change('defaultTickLower', _tick);
       change('minPrice', _price);
     } else {
       change('tickUpper', _tick);
+      change('defaultTickUpper', _tick);
       change('maxPrice', _price);
     }
   };

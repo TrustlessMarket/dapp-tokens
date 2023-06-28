@@ -15,7 +15,12 @@ import { ROUTE_PATH } from '@/constants/route-path';
 import { WalletContext } from '@/contexts/wallet-context';
 import useBalanceERC20Token from '@/hooks/contract-operations/token/useBalanceERC20Token';
 import { IResourceChain } from '@/interfaces/chain';
-import { formatCurrency, formatLongAddress, isSupportedChain } from '@/utils';
+import {
+  compareString,
+  formatCurrency,
+  formatLongAddress,
+  isSupportedChain,
+} from '@/utils';
 import { showError } from '@/utils/toast';
 import { useWindowSize } from '@trustless-computer/dapp-core';
 import { useRouter } from 'next/router';
@@ -28,6 +33,7 @@ import web3 from 'web3';
 import { isScreenDarkMode } from '..';
 import { ConnectWalletButton, WalletBalance } from '../Header.styled';
 import { WalletPopover } from './Wallet.styled';
+import { TRUSTLESS_COMPUTER_CHAIN_INFO } from '@/constants/chains';
 
 const WalletHeader = () => {
   const router = useRouter();
@@ -238,8 +244,16 @@ const WalletHeader = () => {
               >
                 <WalletBalance className={isTokenPage ? 'isTokenPage' : ''}>
                   <div className="balance">
-                    <p>{formatCurrency(formatBTCPrice(btcBalance))} BTC</p>
-                    <span className="divider"></span>
+                    {compareString(
+                      chainId,
+                      TRUSTLESS_COMPUTER_CHAIN_INFO.chainId,
+                    ) && (
+                      <>
+                        <p>{formatCurrency(formatBTCPrice(btcBalance))} BTC</p>
+                        <span className="divider"></span>
+                      </>
+                    )}
+
                     <p>
                       {formatCurrency(web3.utils.fromWei(juiceBalance), 5)}{' '}
                       {chainInfo.nativeCurrency.symbol}
