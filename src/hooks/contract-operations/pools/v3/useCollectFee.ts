@@ -14,7 +14,7 @@ import { useWeb3React } from '@web3-react/core';
 import { useCallback } from 'react';
 
 export interface ICollectFeeV3 {
-  tokenId: number;
+  tokenId?: number;
 }
 
 const useCollectFeeV3: ContractOperationHook<ICollectFeeV3, boolean> = () => {
@@ -40,7 +40,7 @@ const useCollectFeeV3: ContractOperationHook<ICollectFeeV3, boolean> = () => {
 
         store.dispatch(
           updateCurrentTransaction({
-            id: transactionType.removePoolApprove,
+            id: transactionType.collectFee,
             status: TransactionStatus.pending,
             infoTexts: {
               pending: 'Transaction submitting...',

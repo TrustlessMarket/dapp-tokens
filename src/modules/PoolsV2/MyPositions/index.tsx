@@ -1,28 +1,27 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { Box, Flex, Spinner, Text } from '@chakra-ui/react';
-import InfiniteScroll from 'react-infinite-scroll-component';
 import ListTable from '@/components/Swap/listTable';
-import React, { useContext, useEffect, useMemo, useState } from 'react';
+import { USDC_ADDRESS, WBTC_ADDRESS, WETH_ADDRESS } from '@/constants/common';
+import { ROUTE_PATH } from '@/constants/route-path';
 import { WalletContext } from '@/contexts/wallet-context';
 import { IResourceChain } from '@/interfaces/chain';
-import { compareString, getTokenIconUrl } from '@/utils';
-import px2rem from '@/utils/px2rem';
-import { debounce } from 'lodash';
-import { useWindowSize } from '@trustless-computer/dapp-core';
-import styles from './styles.module.scss';
-import { useWeb3React } from '@web3-react/core';
 import { IPosition } from '@/interfaces/position';
-import { USDC_ADDRESS, WBTC_ADDRESS, WETH_ADDRESS } from '@/constants/common';
 import { IToken } from '@/interfaces/token';
-import { tickToPrice } from '@/utils/number';
-import BigNumber from 'bignumber.js';
-import InfoTooltip from '@/components/Swap/infoTooltip';
-import cx from 'classnames';
-import { ROUTE_PATH } from '@/constants/route-path';
-import { useRouter } from 'next/router';
 import { getListUserPositions } from '@/services/swap-v3';
+import { compareString, getTokenIconUrl } from '@/utils';
+import { tickToPrice } from '@/utils/number';
+import px2rem from '@/utils/px2rem';
+import { Box, Flex, Spinner, Text } from '@chakra-ui/react';
+import { useWindowSize } from '@trustless-computer/dapp-core';
+import { useWeb3React } from '@web3-react/core';
+import BigNumber from 'bignumber.js';
+import { debounce } from 'lodash';
+import { useRouter } from 'next/router';
+import { useContext, useEffect, useMemo, useState } from 'react';
+import InfiniteScroll from 'react-infinite-scroll-component';
+import PoolsV2PositionStatus from '../PoolsV2.PositionStatus';
+import styles from './styles.module.scss';
 
 const LIMIT_PAGE = 30;
 
@@ -201,34 +200,7 @@ const TopPools = () => {
           backgroundColor: '#1E1E22',
         },
         render(row: IPosition) {
-          const minPrice = tickToPrice(row?.tickLower || 0);
-          const maxPrice = tickToPrice(row?.tickUpper || 0);
-          const currentPrice = tickToPrice(row?.pair?.tick || 0);
-          const inRange = minPrice <= currentPrice && currentPrice <= maxPrice;
-          return (
-            <Flex>
-              <InfoTooltip
-                showIcon={false}
-                label={
-                  inRange
-                    ? 'The price of this pool is within your selected range. Your position is currently earning fees.'
-                    : 'The price of this pool is not within your selected range. Your position is not currently earning fees.'
-                }
-              >
-                <Text
-                  fontSize={px2rem(14)}
-                  textAlign={'left'}
-                  className={cx(
-                    styles.range,
-                    inRange ? styles.inRange : styles.outRange,
-                  )}
-                >
-                  {inRange ? 'In Range' : 'Not In Range'}
-                </Text>
-              </InfoTooltip>
-              {/**/}
-            </Flex>
-          );
+          return <PoolsV2PositionStatus positionDetail={row} />;
         },
       },
       {

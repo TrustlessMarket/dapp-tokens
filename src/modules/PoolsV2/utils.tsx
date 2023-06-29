@@ -9,6 +9,9 @@ import { amountDesiredChanged, getAmountsForLiquidity } from '@/utils/utilities'
 import BigNumber from 'bignumber.js';
 import { ethers } from 'ethers';
 import { isNumber } from 'lodash';
+import { BsDot } from 'react-icons/bs';
+import { IoWarning } from 'react-icons/io5';
+import { RxDot, RxDotFilled } from 'react-icons/rx';
 
 export const isPool = (address: string): boolean => {
   if (address && !compareString(address, NULL_ADDRESS)) {
@@ -182,6 +185,8 @@ export const getRangeTick = (positionDetail?: IPosition) => {
       return {
         status: {
           title: 'In Range',
+          color: '#0fd788',
+          iconName: <RxDotFilled color="#0fd788" />,
           desc: 'The price of this pool is within your selected range. Your position is currently earning fees.',
         },
         percents: ['50%', '50%'],
@@ -191,6 +196,8 @@ export const getRangeTick = (positionDetail?: IPosition) => {
       return {
         status: {
           title: 'Out of range',
+          color: 'orange',
+          iconName: <IoWarning color="orange" />,
           desc: 'The price of this pool is outside of your selected range. Your position is not currently earning fees.',
         },
         percents: ['100%', '0%'],
@@ -200,15 +207,19 @@ export const getRangeTick = (positionDetail?: IPosition) => {
       return {
         status: {
           title: 'Out of range',
+          color: 'orange',
+          iconName: <IoWarning color="orange" />,
           desc: 'The price of this pool is outside of your selected range. Your position is not currently earning fees.',
         },
-        percents: ['0%', '10%'],
+        percents: ['0%', '100%'],
       };
     }
   } catch (error) {
     return {
       status: {
         title: 'Out of range',
+        color: 'orange',
+        iconName: <IoWarning color="orange" />,
         desc: 'The price of this pool is outside of your selected range. Your position is not currently earning fees.',
       },
       percents: ['0', '0'],

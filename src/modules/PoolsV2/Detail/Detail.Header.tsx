@@ -9,6 +9,7 @@ import React from 'react';
 import { BiChevronLeft } from 'react-icons/bi';
 import web3 from 'web3';
 import s from './styles.module.scss';
+import PoolsV2PositionStatus from '../PoolsV2.PositionStatus';
 
 interface IDetailHeader {
   positionDetail?: IPosition;
@@ -60,6 +61,7 @@ const DetailHeader: React.FC<IDetailHeader> = ({ positionDetail }) => {
                 : '0'}
               %
             </Box>
+            <PoolsV2PositionStatus positionDetail={positionDetail} />
           </Flex>
           <Flex gap={2}>
             <FiledButton

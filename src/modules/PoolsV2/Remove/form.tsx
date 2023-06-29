@@ -39,10 +39,6 @@ const FormRemovePoolsV2Container = forwardRef<any, IFormRemovePoolsV2Container>(
 
     const isDisabled = values?.percent <= 0;
 
-    console.log('values', values);
-    console.log('positionDetail', positionDetail);
-    console.log('=====');
-
     const { restart, change } = useForm();
 
     useImperativeHandle(ref, () => {
