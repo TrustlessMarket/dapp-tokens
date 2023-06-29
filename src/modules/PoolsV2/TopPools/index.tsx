@@ -19,6 +19,7 @@ import {debounce} from "lodash";
 import {useWindowSize} from "@trustless-computer/dapp-core";
 import {useRouter} from "next/router";
 import styles from './styles.module.scss';
+import BigNumber from "bignumber.js";
 
 const LIMIT_PAGE = 30;
 
@@ -133,6 +134,27 @@ const TopPools = () => {
                 <Text>{token1Obj?.symbol}</Text>
               </Flex>
             </Flex>
+          );
+        },
+      },
+      {
+        id: 'fee',
+        label: 'Fee',
+        labelConfig: {
+          fontSize: '12px',
+          fontWeight: '500',
+          color: '#B1B5C3',
+        },
+        config: {
+          color: '#FFFFFF',
+          borderBottom: 'none',
+          backgroundColor: '#1E1E22',
+        },
+        render(row: ILiquidity) {
+          return (
+            <Text fontSize={px2rem(14)} textAlign={'left'}>
+              {new BigNumber(row?.fee || 0).div(10000).toString()}%
+            </Text>
           );
         },
       },

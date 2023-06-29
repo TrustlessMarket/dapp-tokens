@@ -11,6 +11,7 @@ import {L2_ETH_ADDRESS} from '@/configs';
 import {useRouter} from "next/router";
 import TopPools from "@/modules/PoolsV2/TopPools";
 import MyPositions from "@/modules/PoolsV2/MyPositions";
+import cx from 'classnames';
 
 const PoolsV2Page = () => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -21,17 +22,6 @@ const PoolsV2Page = () => {
     if (loading) {
       return <Spinner color={colors.white} />;
     }
-
-    // if (liquidityList.length === 0) {
-    //   return (
-    //     <>
-    //       <Empty
-    //         size={70}
-    //         infoText="Your active V2 liquidity positions will appear here."
-    //       />
-    //     </>
-    //   );
-    // }
 
     if(!showTopPool) {
       return <MyPositions />;
@@ -50,10 +40,17 @@ const PoolsV2Page = () => {
         <Flex gap={2}>
           <FiledButton
             btnSize="l"
-            className={s.topPoolBtn}
-            onClick={() => setShowTopPool(!showTopPool)}
+            className={cx(s.topPoolBtn, showTopPool ? s.isActive : null)}
+            onClick={() => setShowTopPool(true)}
           >
             Top Pools
+          </FiledButton>
+          <FiledButton
+            btnSize="l"
+            className={cx(s.topPoolBtn, !showTopPool ? s.isActive : null)}
+            onClick={() => setShowTopPool(false)}
+          >
+            Your positions
           </FiledButton>
           <FiledButton
             onClick={() =>
@@ -67,11 +64,6 @@ const PoolsV2Page = () => {
       </Flex>
       <Box mt={4} />
       {renderContent()}
-      {/*<Flex
-        className={cs(s.container__body, liquidityList.length === 0 && s.container__empty)}
-      >
-        {renderContent()}
-      </Flex>*/}
     </BodyContainer>
   );
 };
