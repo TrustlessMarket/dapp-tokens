@@ -1,31 +1,28 @@
 /* eslint-disable @typescript-eslint/no-empty-interface */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { TransactionStatus } from '@/components/Swap/alertInfoProcessing/interface';
-import { transactionType } from '@/components/Swap/alertInfoProcessing/types';
+import {TransactionStatus} from '@/components/Swap/alertInfoProcessing/interface';
+import {transactionType} from '@/components/Swap/alertInfoProcessing/types';
 import BodyContainer from '@/components/Swap/bodyContainer';
-import { toastError } from '@/constants/error';
-import useAddLiquidityV3, {
-  IAddLiquidityV3,
-} from '@/hooks/contract-operations/pools/v3/useAddLiquidityV3';
+import {toastError} from '@/constants/error';
 import useContractOperation from '@/hooks/contract-operations/useContractOperation';
-import { IPosition } from '@/interfaces/position';
-import { logErrorToServer } from '@/services/swap';
-import { getPositionDetail } from '@/services/swap-v3';
-import { useAppSelector } from '@/state/hooks';
-import {
-  requestReload,
-  selectPnftExchange,
-  updateCurrentTransaction,
-} from '@/state/pnftExchange';
-import { showError } from '@/utils/toast';
-import { Box } from '@chakra-ui/react';
-import { useWeb3React } from '@web3-react/core';
-import React, { useEffect, useRef, useState } from 'react';
-import { Form } from 'react-final-form';
-import { useDispatch } from 'react-redux';
+import {IPosition} from '@/interfaces/position';
+import {logErrorToServer} from '@/services/swap';
+import {getPositionDetail} from '@/services/swap-v3';
+import {useAppSelector} from '@/state/hooks';
+import {requestReload, selectPnftExchange, updateCurrentTransaction,} from '@/state/pnftExchange';
+import {showError} from '@/utils/toast';
+import {Box} from '@chakra-ui/react';
+import {useWeb3React} from '@web3-react/core';
+import React, {useEffect, useRef, useState} from 'react';
+import {Form} from 'react-final-form';
+import {useDispatch} from 'react-redux';
 import FormRemovePoolsV2Container from './form';
 import s from './styles.module.scss';
+import useRemoveLiquidityV3, {IRemoveLiquidityV3} from "@/hooks/contract-operations/pools/v3/useRemoveLiquidityV3";
+import {ethers} from 'ethers';
+import {getAmountsForLiquidity} from "@/utils/utilities";
+import {getSqrtRatioAtTick} from "@/utils/number";
 
 interface IPoolsV2DetailPage {
   ids: any;
@@ -37,11 +34,12 @@ const PoolsV2RemovePage: React.FC<IPoolsV2DetailPage> = ({ ids }) => {
   const { account } = useWeb3React();
   const needReload = useAppSelector(selectPnftExchange).needReload;
   const [submitting, setSubmitting] = useState(false);
+  const slippage = useAppSelector(selectPnftExchange).slippage;
 
   const refForm = useRef<any>();
 
-  const { run: addLiquidityV3 } = useContractOperation({
-    operation: useAddLiquidityV3,
+  const { run: removeLiquidityV3 } = useContractOperation({
+    operation: useRemoveLiquidityV3,
   });
 
   useEffect(() => {
@@ -61,34 +59,52 @@ const PoolsV2RemovePage: React.FC<IPoolsV2DetailPage> = ({ ids }) => {
       setSubmitting(true);
       dispatch(
         updateCurrentTransaction({
-          id: transactionType.createPool,
+          id: transactionType.removeLiquidity,
           status: TransactionStatus.info,
         }),
       );
-      const params: IAddLiquidityV3 = {
-        tokenA: values?.baseToken,
-        tokenB: values?.quoteToken,
-        amountADesired: values?.baseAmount || '0',
-        amountBDesired: values?.quoteAmount || '0',
-        lowerTick: values?.tickLower,
-        upperTick: values?.tickUpper,
-        fee: values?.fee,
-        amount0Min: '0',
-        amount1Min: '0',
-        currentPrice: values?.currentPrice,
-        poolAddress: values?.poolAddress,
+
+      const liquidityRemove = ethers.utils.parseEther(positionDetail?.liquidity || "0")
+        .mul(values.percent).div(100);
+
+      const currentSqrtRatioX96 = getSqrtRatioAtTick(positionDetail?.pair?.tick || 0);
+      const lowerSqrtRatioX96 = getSqrtRatioAtTick(positionDetail?.tickLower || 0);
+      const upperSqrtRatioX96 = getSqrtRatioAtTick(positionDetail?.tickUpper || 0);
+
+      const [amountOut0, amountOut1] = getAmountsForLiquidity(
+        currentSqrtRatioX96,
+        lowerSqrtRatioX96,
+        upperSqrtRatioX96,
+        liquidityRemove
+      );
+
+      const amount0Min = ethers.utils.formatEther(
+        amountOut0
+        .mul(1000000 - Math.floor(slippage*10000))
+        .div(1000000)
+      );
+
+      const amount1Min = ethers.utils.formatEther(
+        amountOut1
+        .mul(1000000 - Math.floor(slippage*10000))
+        .div(1000000)
+      );
+
+      const params: IRemoveLiquidityV3 = {
+        tokenId: positionDetail?.tokenId,
+        liquidity: ethers.utils.formatEther(liquidityRemove),
+        amount0Min: amount0Min,
+        amount1Min: amount1Min,
       };
 
-      const response: any = await addLiquidityV3(params);
+      const response: any = await removeLiquidityV3(params);
       dispatch(
         updateCurrentTransaction({
-          id: transactionType.createPool,
+          id: transactionType.removeLiquidity,
           status: TransactionStatus.success,
           hash: response.hash,
           infoTexts: {
-            success: values?.poolAddress
-              ? `Pool has been added successfully.`
-              : `Pool has been created successfully.`,
+            success: `Remove liquidity successfully.`
           },
         }),
       );
@@ -113,7 +129,7 @@ const PoolsV2RemovePage: React.FC<IPoolsV2DetailPage> = ({ ids }) => {
   return (
     <BodyContainer className={s.container}>
       <Box className={s.container__body}>
-        <Form onSubmit={onSubmit}>
+        <Form onSubmit={onSubmit} initialValues={{percent: 0}}>
           {({ handleSubmit }) => (
             <FormRemovePoolsV2Container
               submitting={submitting}

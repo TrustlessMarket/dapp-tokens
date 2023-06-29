@@ -3,10 +3,10 @@ import { IToken } from './token';
 export interface IPosition {
   id?: number;
   userAddress?: string;
-  userID?: number;
-  pairID?: number;
+  userId?: number;
+  pairId?: number;
   pair?: Pair;
-  tokenID?: number;
+  tokenId?: number;
   nonce?: string;
   opperator?: string;
   token0Address?: string;
