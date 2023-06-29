@@ -86,8 +86,10 @@ const DetailClaimFee: React.FC<IDetailPositionBase> = ({ positionDetail }) => {
   }
 
   const confirmCollectFees = () => {
+    dispatch(updateCurrentTransaction(null));
     const id = 'modalCollectFees';
     const close = () => dispatch(closeModal({ id }));
+
     dispatch(
       openModal({
         id,
