@@ -384,14 +384,23 @@ const LiquidityContainer = () => {
             borderBottomLeftRadius: '8px',
           },
           render(row: ILiquidity) {
-            const [token0Obj, token1Obj] = sortTokens(
-              row?.token0Obj,
-              row?.token1Obj,
-            );
+            let myLiquidity = null;
 
-            const myLiquidity: any = myLiquidities?.find((v: any) =>
-              compareString(v.address, row?.pair),
-            );
+            const token0Obj = row?.token0Obj;
+            const token1Obj = row?.token1Obj;
+
+            for (let index = 0; index < myLiquidities?.length; index++) {
+              const l = myLiquidities[index] as IToken;
+              if (
+                (compareString(l?.fromAddress, token0Obj?.address) &&
+                  compareString(l?.toAddress, token1Obj?.address)) ||
+                (compareString(l?.fromAddress, token1Obj?.address) &&
+                  compareString(l?.toAddress, token0Obj?.address))
+              ) {
+                myLiquidity = l;
+                break;
+              }
+            }
 
             let share = 0;
             if (myLiquidity) {
@@ -678,9 +687,9 @@ const LiquidityContainer = () => {
             const l = myLiquidities[index] as IToken;
             if (
               (compareString(l?.fromAddress, row?.token0Obj?.address) &&
-              compareString(l?.toAddress, row?.token1Obj?.address)) ||
+                compareString(l?.toAddress, row?.token1Obj?.address)) ||
               (compareString(l?.fromAddress, row?.token1Obj?.address) &&
-              compareString(l?.toAddress, row?.token0Obj?.address))
+                compareString(l?.toAddress, row?.token0Obj?.address))
             ) {
               myLiquidity = l;
               break;
@@ -855,8 +864,10 @@ const LiquidityContainer = () => {
           for (let index = 0; index < myLiquidities?.length; index++) {
             const l = myLiquidities[index] as IToken;
             if (
-              compareString(l.fromAddress, row?.token0Obj?.address) &&
-              compareString(l.toAddress, row?.token1Obj?.address)
+              (compareString(l?.fromAddress, row?.token0Obj?.address) &&
+                compareString(l?.toAddress, row?.token1Obj?.address)) ||
+              (compareString(l?.fromAddress, row?.token1Obj?.address) &&
+                compareString(l?.toAddress, row?.token0Obj?.address))
             ) {
               myLiquidity = l;
               break;
@@ -864,18 +875,9 @@ const LiquidityContainer = () => {
           }
 
           let share = 0;
-          let fromBalance = 0;
-          let toBalance = 0;
           if (myLiquidity) {
             share = new BigNumber(myLiquidity?.ownerSupply || 0)
               .dividedBy(myLiquidity?.totalSupply || 1)
-              .toNumber();
-
-            fromBalance = new BigNumber(share)
-              .multipliedBy(myLiquidity?.fromBalance || 0)
-              .toNumber();
-            toBalance = new BigNumber(share)
-              .multipliedBy(myLiquidity?.toBalance || 0)
               .toNumber();
           }
 
