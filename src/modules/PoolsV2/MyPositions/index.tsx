@@ -23,6 +23,7 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 import PoolsV2PositionStatus from '../PoolsV2.PositionStatus';
 import styles from './styles.module.scss';
 import {getPooledAmount} from "@/modules/PoolsV2/utils";
+import PositionRemove from "@/modules/PoolsV2/MyPositions/Position.Remove";
 
 const LIMIT_PAGE = 30;
 
@@ -262,8 +263,12 @@ const TopPools = () => {
           borderTopRightRadius: '8px',
           borderBottomRightRadius: '8px',
         },
-        render() {
-          return <Flex gap={4} justifyContent={'center'}></Flex>;
+        render(row: IPosition) {
+          return (
+            <Flex gap={4} justifyContent={'center'}>
+              <PositionRemove positionDetail={row}/>
+            </Flex>
+          );
         },
       },
     ];
