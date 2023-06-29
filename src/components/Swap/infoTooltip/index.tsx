@@ -2,7 +2,7 @@
 import { colors } from '@/theme/colors';
 import { Flex, Icon, PlacementWithLogical, Tooltip } from '@chakra-ui/react';
 import { ReactNode } from 'react';
-import { MdInfoOutline } from 'react-icons/md';
+import { MdHelpOutline } from 'react-icons/md';
 
 interface InfoTooltipProps {
   label: ReactNode;
@@ -12,6 +12,7 @@ interface InfoTooltipProps {
   fontSize?: string;
   iconColor?: string;
   showIcon?: boolean;
+  iconName?: any;
 }
 
 const InfoTooltip = (props: InfoTooltipProps) => {
@@ -23,6 +24,7 @@ const InfoTooltip = (props: InfoTooltipProps) => {
     children,
     showIcon = false,
     iconColor = colors.white,
+    iconName = <MdHelpOutline />,
   } = props;
 
   const renderChild = () => {
@@ -30,14 +32,14 @@ const InfoTooltip = (props: InfoTooltipProps) => {
       return (
         <Flex gap={1} alignItems={'center'}>
           {children}
-          <Icon fontSize={iconSize} as={MdInfoOutline} color={iconColor} />
+          <Icon as={iconName} fontSize={iconSize} color={iconColor} />
         </Flex>
       );
     }
     if (children) {
       return children;
     }
-    return <Icon fontSize={iconSize} as={MdInfoOutline} color={colors.white} />;
+    return <Icon as={iconName} fontSize={iconSize} color={colors.white} />;
   };
 
   return (
