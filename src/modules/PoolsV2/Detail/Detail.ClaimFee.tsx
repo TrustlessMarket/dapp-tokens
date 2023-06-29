@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import FiledButton from '@/components/Swap/button/filedButton';
 import React, {useEffect, useState} from 'react';
 import {IDetailPositionBase} from './interface';
@@ -88,7 +91,7 @@ const DetailClaimFee: React.FC<IDetailPositionBase> = ({ positionDetail }) => {
   const confirmCollectFees = () => {
     dispatch(updateCurrentTransaction(null));
     const id = 'modalCollectFees';
-    const close = () => dispatch(closeModal({ id }));
+    // const close = () => dispatch(closeModal({ id }));
 
     dispatch(
       openModal({
