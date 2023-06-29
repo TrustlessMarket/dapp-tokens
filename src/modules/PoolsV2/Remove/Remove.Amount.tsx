@@ -47,7 +47,7 @@ const RemoveAmount = () => {
     <InputWrapper label={`Amount`} className={s.amountContainer}>
       <Flex gap={8} alignItems={'center'}>
         <Text className={s.amountValue}>{values?.percent || 0}%</Text>
-        <Flex gap={2}>
+        <Flex gap={4}>
           {PERCENTS.map((v) => (
             <Box
               key={v.value}

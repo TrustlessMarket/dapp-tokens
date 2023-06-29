@@ -6,7 +6,7 @@ export interface IPosition {
   userID?: number;
   pairID?: number;
   pair?: Pair;
-  tokenID?: number;
+  tokenId?: number;
   nonce?: string;
   opperator?: string;
   token0Address?: string;

@@ -62,10 +62,22 @@
 
     .amountItemTitle {
       color: #FFFFFF;
+      font-size: rem(16);
     }
     &.isActive {
       border-radius: 8px;
       border-color: #FFFFFF;
+    }
+  }
+}
+
+.resultContainer {
+  :global {
+    .avatar {
+      object-fit: cover;
+      width: rem(20);
+      height: rem(20);
+      border-radius: 50%;
     }
   }
 }
