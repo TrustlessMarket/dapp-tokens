@@ -57,7 +57,7 @@ const RemoveAmount = () => {
               )}
               onClick={() => change('percent', v.value)}
             >
-              <Text className={s.amountItemTitle}>{v.title}%</Text>
+              <Text className={s.amountItemTitle}>{v.title}</Text>
             </Box>
           ))}
         </Flex>
