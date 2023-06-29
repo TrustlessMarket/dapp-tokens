@@ -20,9 +20,8 @@ import {useDispatch} from 'react-redux';
 import FormRemovePoolsV2Container from './form';
 import s from './styles.module.scss';
 import useRemoveLiquidityV3, {IRemoveLiquidityV3} from "@/hooks/contract-operations/pools/v3/useRemoveLiquidityV3";
-import BigNumber from "bignumber.js";
-import {BigNumber as BN, BigNumberish, ethers} from 'ethers';
-import {getAmount0ForLiquidity, getAmount1ForLiquidity} from "@/utils/utilities";
+import {ethers} from 'ethers';
+import {getAmountsForLiquidity} from "@/utils/utilities";
 import {getSqrtRatioAtTick} from "@/utils/number";
 
 interface IPoolsV2DetailPage {
@@ -65,46 +64,35 @@ const PoolsV2RemovePage: React.FC<IPoolsV2DetailPage> = ({ ids }) => {
         }),
       );
 
-      const liquidityRemove = new BigNumber(positionDetail?.liquidity || 0)
-        .multipliedBy(values.percent).div(100).toString();
+      const liquidityRemove = ethers.utils.parseEther(positionDetail?.liquidity || "0")
+        .mul(values.percent).div(100);
 
-      let amountOut0 = BN.from(0);
-      let amountOut1 = BN.from(0);
-
+      const currentSqrtRatioX96 = getSqrtRatioAtTick(positionDetail?.pair?.tick || 0);
       const lowerSqrtRatioX96 = getSqrtRatioAtTick(positionDetail?.tickLower || 0);
       const upperSqrtRatioX96 = getSqrtRatioAtTick(positionDetail?.tickUpper || 0);
 
-      console.log('bbbb', liquidityRemove);
-      const liquidity = ethers.utils.parseEther(liquidityRemove);
-
-
-
-      amountOut0 = getAmount0ForLiquidity(lowerSqrtRatioX96, upperSqrtRatioX96, liquidity);
-      amountOut1 = getAmount1ForLiquidity(lowerSqrtRatioX96, upperSqrtRatioX96, liquidity);
+      const [amountOut0, amountOut1] = getAmountsForLiquidity(
+        currentSqrtRatioX96,
+        lowerSqrtRatioX96,
+        upperSqrtRatioX96,
+        liquidityRemove
+      );
 
       const amount0Min = ethers.utils.formatEther(
         amountOut0
-        .mul(100 - slippage)
-        .div(100)
+        .mul(1000000 - Math.floor(slippage*10000))
+        .div(1000000)
       );
 
       const amount1Min = ethers.utils.formatEther(
         amountOut1
-        .mul(100 - slippage)
-        .div(100)
+        .mul(1000000 - Math.floor(slippage*10000))
+        .div(1000000)
       );
-      console.log('aaaaa');
-      console.log('slippage', slippage);
-      console.log('liquidityRemove', liquidityRemove);
-      console.log('amountOut0', amountOut0);
-      console.log('amount0Min', amount0Min);
-      console.log('amountOut1', amountOut1);
-      console.log('amount1Min', amount1Min);
-      console.log('values', values);
 
       const params: IRemoveLiquidityV3 = {
         tokenId: positionDetail?.tokenId,
-        liquidity: liquidityRemove,
+        liquidity: ethers.utils.formatEther(liquidityRemove),
         amount0Min: amount0Min,
         amount1Min: amount1Min,
       };

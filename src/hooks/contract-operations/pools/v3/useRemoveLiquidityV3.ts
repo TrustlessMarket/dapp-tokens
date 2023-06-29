@@ -41,11 +41,13 @@ const useRemoveLiquidityV3: ContractOperationHook<
 
         const transaction = await contract.connect(provider.getSigner(0)).multicall([
           contract.interface.encodeFunctionData('decreaseLiquidity', [
-            tokenId,
-            liquidity,
-            web3.utils.toWei(amount0Min),
-            web3.utils.toWei(amount1Min),
-            getDeadline(),
+            {
+              tokenId,
+              liquidity: web3.utils.toWei(liquidity),
+              amount0Min: web3.utils.toWei(amount0Min),
+              amount1Min: web3.utils.toWei(amount1Min),
+              deadline: getDeadline(),
+            }
           ]),
           contract.interface.encodeFunctionData('collect', [
             {
