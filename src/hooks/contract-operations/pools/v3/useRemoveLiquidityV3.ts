@@ -16,7 +16,7 @@ import { useCallback } from 'react';
 import web3 from 'web3';
 
 export interface IRemoveLiquidityV3 {
-  tokenId: number;
+  tokenId?: number;
   liquidity: any;
   amount0Min: any;
   amount1Min: any;
@@ -41,11 +41,13 @@ const useRemoveLiquidityV3: ContractOperationHook<
 
         const transaction = await contract.connect(provider.getSigner(0)).multicall([
           contract.interface.encodeFunctionData('decreaseLiquidity', [
-            tokenId,
-            liquidity,
-            web3.utils.toWei(amount0Min),
-            web3.utils.toWei(amount1Min),
-            getDeadline(),
+            {
+              tokenId,
+              liquidity: web3.utils.toWei(liquidity),
+              amount0Min: web3.utils.toWei(amount0Min),
+              amount1Min: web3.utils.toWei(amount1Min),
+              deadline: getDeadline(),
+            }
           ]),
           contract.interface.encodeFunctionData('collect', [
             {
@@ -59,7 +61,7 @@ const useRemoveLiquidityV3: ContractOperationHook<
 
         store.dispatch(
           updateCurrentTransaction({
-            id: transactionType.removePoolApprove,
+            id: transactionType.removeLiquidity,
             status: TransactionStatus.pending,
             infoTexts: {
               pending: 'Transaction submitting...',
