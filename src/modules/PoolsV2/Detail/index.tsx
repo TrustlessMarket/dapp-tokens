@@ -61,6 +61,7 @@ const PoolsV2DetailPage: React.FC<IPoolsV2DetailPage> = () => {
         initialValues={{
           tokenA: positionDetail.pair?.token0Obj,
           tokenB: positionDetail.pair?.token1Obj,
+          currentSelectPair: positionDetail.pair?.token0Obj,
         }}
       >
         {({ handleSubmit }) => (
