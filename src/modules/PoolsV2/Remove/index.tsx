@@ -34,7 +34,7 @@ const PoolsV2RemovePage: React.FC<IPoolsV2DetailPage> = ({ ids }) => {
   const { account } = useWeb3React();
   const needReload = useAppSelector(selectPnftExchange).needReload;
   const [submitting, setSubmitting] = useState(false);
-  const slippage = 50; //useAppSelector(selectPnftExchange).slippage;
+  const slippage = useAppSelector(selectPnftExchange).slippage;
 
   const refForm = useRef<any>();
 
