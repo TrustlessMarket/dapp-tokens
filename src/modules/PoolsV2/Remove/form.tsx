@@ -6,12 +6,9 @@
 import {transactionType} from '@/components/Swap/alertInfoProcessing/types';
 import FiledButton from '@/components/Swap/button/filedButton';
 import WrapperConnected from '@/components/WrapperConnected';
-import {WalletContext} from '@/contexts/wallet-context';
-import {IResourceChain} from '@/interfaces/chain';
 import {IPoolV2AddPair} from '@/pages/pools/v2/add/[[...id]]';
 import {Box, Divider, Flex, Text} from '@chakra-ui/react';
-import {useRouter} from 'next/router';
-import React, {forwardRef, useContext, useEffect, useState,} from 'react';
+import React, {forwardRef, useEffect, useImperativeHandle, useState,} from 'react';
 import {useForm, useFormState} from 'react-final-form';
 import s from './styles.module.scss';
 import RemoveHeader from "@/modules/PoolsV2/Remove/Remove.Header";
@@ -40,12 +37,22 @@ const FormRemovePoolsV2Container = forwardRef<any, IFormRemovePoolsV2Container>(
     const [pooledAmount, setPooledAmount] = useState(["0", "0"]);
     const token0Obj = positionDetail?.pair?.token0Obj;
     const token1Obj = positionDetail?.pair?.token1Obj;
-
-    console.log('positionDetail', positionDetail);
-
-
     const { values } = useFormState();
+
+    const isDisabled = values?.percent <= 0;
+
+    console.log('values', values);
+    console.log('positionDetail', positionDetail);
+    console.log('=====')
+
     const { restart, change } = useForm();
+
+    useImperativeHandle(ref, () => {
+      return {
+        reset: () =>
+          restart(),
+      };
+    });
 
     useEffect(() => {
       if(positionDetail?.tokenId) {
@@ -142,12 +149,12 @@ const FormRemovePoolsV2Container = forwardRef<any, IFormRemovePoolsV2Container>(
 
             <WrapperConnected>
               <FiledButton
-                isDisabled={submitting}
+                isDisabled={submitting || isDisabled}
                 isLoading={submitting}
                 type="submit"
                 btnSize="h"
                 processInfo={{
-                  id: transactionType.createPool,
+                  id: transactionType.removeLiquidity,
                 }}
                 containerConfig={{
                   w: '100%'

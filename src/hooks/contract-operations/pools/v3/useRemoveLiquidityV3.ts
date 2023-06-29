@@ -16,7 +16,7 @@ import { useCallback } from 'react';
 import web3 from 'web3';
 
 export interface IRemoveLiquidityV3 {
-  tokenId: number;
+  tokenId?: number;
   liquidity: any;
   amount0Min: any;
   amount1Min: any;
@@ -59,7 +59,7 @@ const useRemoveLiquidityV3: ContractOperationHook<
 
         store.dispatch(
           updateCurrentTransaction({
-            id: transactionType.removePoolApprove,
+            id: transactionType.removeLiquidity,
             status: TransactionStatus.pending,
             infoTexts: {
               pending: 'Transaction submitting...',
