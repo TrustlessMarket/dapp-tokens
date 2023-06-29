@@ -9,7 +9,7 @@ import { IResourceChain } from '@/interfaces/chain';
 import { IPosition } from '@/interfaces/position';
 import { IToken } from '@/interfaces/token';
 import { getListUserPositions } from '@/services/swap-v3';
-import { compareString, getTokenIconUrl } from '@/utils';
+import {compareString, formatCurrency, getTokenIconUrl} from '@/utils';
 import { tickToPrice } from '@/utils/number';
 import px2rem from '@/utils/px2rem';
 import { Box, Flex, Spinner, Text } from '@chakra-ui/react';
@@ -22,6 +22,7 @@ import { useContext, useEffect, useMemo, useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import PoolsV2PositionStatus from '../PoolsV2.PositionStatus';
 import styles from './styles.module.scss';
+import {getPooledAmount} from "@/modules/PoolsV2/utils";
 
 const LIMIT_PAGE = 30;
 
@@ -183,6 +184,47 @@ const TopPools = () => {
             <Text fontSize={px2rem(14)} textAlign={'left'}>
               {new BigNumber(row?.pair?.fee || 0).div(10000).toString()}%
             </Text>
+          );
+        },
+      },
+      {
+        id: 'fee',
+        label: 'TVL',
+        labelConfig: {
+          fontSize: '12px',
+          fontWeight: '500',
+          color: '#B1B5C3',
+        },
+        config: {
+          color: '#FFFFFF',
+          borderBottom: 'none',
+          backgroundColor: '#1E1E22',
+        },
+        render(row: IPosition) {
+          const pooledAmount = getPooledAmount(row);
+          const token0Obj = row?.pair?.token0Obj;
+          const token1Obj = row?.pair?.token1Obj;
+          return (
+            <Flex direction={'column'} fontSize={px2rem(14)}>
+              <Flex gap={1} alignItems={'center'}>
+                <Text>{formatCurrency(pooledAmount[0]).toString()}</Text>
+                <img
+                  src={getTokenIconUrl(token0Obj)}
+                  alt={token0Obj?.thumbnail || 'default-icon'}
+                  className={'avatar2'}
+                  title={token0Obj?.symbol}
+                />
+              </Flex>
+              <Flex gap={1} alignItems={'center'}>
+                <Text>{formatCurrency(pooledAmount[1]).toString()}</Text>
+                <img
+                  src={getTokenIconUrl(token1Obj)}
+                  alt={token1Obj?.thumbnail || 'default-icon'}
+                  className={'avatar2'}
+                  title={token1Obj?.symbol}
+                />
+              </Flex>
+            </Flex>
           );
         },
       },
