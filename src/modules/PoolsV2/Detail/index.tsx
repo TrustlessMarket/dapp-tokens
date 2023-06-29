@@ -14,6 +14,9 @@ import { Form } from 'react-final-form';
 import DetailBody from './Detail.Body';
 import DetailHeader from './Detail.Header';
 import s from './styles.module.scss';
+import { tickToPrice } from '@/utils/number';
+import { compareString, sortAddressPair } from '@/utils';
+import BigNumber from 'bignumber.js';
 
 interface IPoolsV2DetailPage {
   //
@@ -55,13 +58,35 @@ const PoolsV2DetailPage: React.FC<IPoolsV2DetailPage> = () => {
       return null;
     }
 
+    const isRevert = compareString(
+      sortAddressPair(
+        positionDetail.pair?.token0Obj,
+        positionDetail.pair?.token1Obj,
+      )[0].address,
+      positionDetail.pair?.token0Obj,
+    );
+
     return (
       <Form
         onSubmit={() => {}}
         initialValues={{
           tokenA: positionDetail.pair?.token0Obj,
           tokenB: positionDetail.pair?.token1Obj,
-          currentSelectPair: positionDetail.pair?.token0Obj,
+          currentSelectPair: isRevert
+            ? positionDetail.pair?.token0Obj
+            : positionDetail.pair?.token1Obj,
+          minPrice: tickToPrice(positionDetail?.tickLower),
+          maxPrice: tickToPrice(positionDetail?.tickUpper),
+          currentPrice: isRevert
+            ? new BigNumber(1)
+                .dividedBy(positionDetail?.pair?.price as any)
+                .toFixed()
+            : positionDetail?.pair?.price,
+          defaultTickLower: positionDetail?.tickLower,
+          tickLower: positionDetail?.tickLower,
+          defaultTickUpper: positionDetail?.tickLower,
+          tickUpper: positionDetail?.tickUpper,
+          isRevert: isRevert,
         }}
       >
         {({ handleSubmit }) => (

@@ -1,16 +1,16 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import {NULL_ADDRESS} from '@/constants/url';
-import {IPosition} from '@/interfaces/position';
-import {compareString, formatCurrency} from '@/utils';
-import {FeeAmount, MaxUint128} from '@/utils/constants';
-import {getSqrtRatioAtTick} from '@/utils/number';
-import {amountDesiredChanged, getAmountsForLiquidity} from '@/utils/utilities';
+import { NULL_ADDRESS } from '@/constants/url';
+import { IPosition } from '@/interfaces/position';
+import { compareString, formatCurrency } from '@/utils';
+import { FeeAmount, MaxUint128 } from '@/utils/constants';
+import { getSqrtRatioAtTick } from '@/utils/number';
+import { amountDesiredChanged, getAmountsForLiquidity } from '@/utils/utilities';
 import BigNumber from 'bignumber.js';
-import {ethers} from 'ethers';
-import {isNumber} from 'lodash';
-import {IoWarning} from 'react-icons/io5';
-import {RxCircleBackslash, RxDotFilled} from 'react-icons/rx';
+import { ethers } from 'ethers';
+import { isNumber } from 'lodash';
+import { IoWarning } from 'react-icons/io5';
+import { RxCircleBackslash, RxDotFilled } from 'react-icons/rx';
 
 export const isPool = (address: string): boolean => {
   if (address && !compareString(address, NULL_ADDRESS)) {
@@ -181,6 +181,18 @@ export const getRangeTick = (positionDetail?: IPosition) => {
     const [amount0, amount1] = getPooledAmount(positionDetail);
 
     if (Number(amount0) > 0 && Number(amount1) > 0) {
+      const tickUpper: any = positionDetail?.tickUpper;
+      const tick: any = positionDetail?.pair?.tick;
+
+      const agg = new BigNumber(tickUpper)
+        .dividedBy(tick)
+        .multipliedBy(100)
+        .toNumber();
+
+      const agg2 = 100 - agg;
+
+      const percents = [`${formatCurrency(agg)}%`, `${formatCurrency(agg2)}%`];
+
       return {
         status: {
           title: 'In Range',
@@ -188,7 +200,8 @@ export const getRangeTick = (positionDetail?: IPosition) => {
           iconName: <RxDotFilled color="#0fd788" />,
           desc: 'The price of this pool is within your selected range. Your position is currently earning fees.',
         },
-        percents: ['50%', '50%'],
+        percents,
+        isRange: true,
       };
     }
     if (Number(amount0) > 0) {
@@ -200,6 +213,7 @@ export const getRangeTick = (positionDetail?: IPosition) => {
           desc: 'The price of this pool is outside of your selected range. Your position is not currently earning fees.',
         },
         percents: ['100%', '0%'],
+        isRange: false,
       };
     }
     if (Number(amount1) > 0) {
@@ -211,9 +225,10 @@ export const getRangeTick = (positionDetail?: IPosition) => {
           desc: 'The price of this pool is outside of your selected range. Your position is not currently earning fees.',
         },
         percents: ['0%', '100%'],
+        isRange: false,
       };
     }
-    if(Number(positionDetail?.liquidity) <= 0) {
+    if (Number(positionDetail?.liquidity) <= 0) {
       return {
         status: {
           title: 'Closed',
@@ -222,6 +237,7 @@ export const getRangeTick = (positionDetail?: IPosition) => {
           desc: 'Your position has 0 liquidity, and is not earning fees.',
         },
         percents: ['0%', '100%'],
+        isRange: false,
       };
     }
   } catch (error) {
@@ -233,6 +249,7 @@ export const getRangeTick = (positionDetail?: IPosition) => {
         desc: 'The price of this pool is outside of your selected range. Your position is not currently earning fees.',
       },
       percents: ['0', '0'],
+      isRange: false,
     };
   }
 };

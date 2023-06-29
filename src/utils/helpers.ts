@@ -48,14 +48,17 @@ export const camelCaseKeys = (obj: any): any => {
 };
 
 export const sortAddressPair = (
-  tokenA: IToken,
-  tokenB: IToken,
-): [IToken, IToken] => {
-  const { token0, token1 } =
-    tokenA.address.toLowerCase() < tokenB.address.toLowerCase()
-      ? { token0: tokenA, token1: tokenB }
-      : { token0: tokenB, token1: tokenA };
-  return [token0, token1];
+  tokenA?: IToken | any,
+  tokenB?: IToken | any,
+): [IToken | any, IToken | any] => {
+  if (Boolean(tokenA?.address) && Boolean(tokenB?.address)) {
+    const { token0, token1 } =
+      tokenA.address.toLowerCase() < tokenB.address.toLowerCase()
+        ? { token0: tokenA, token1: tokenB }
+        : { token0: tokenB, token1: tokenA };
+    return [token0, token1];
+  }
+  return [tokenA, tokenB];
 };
 
 export const abbreviateNumber = (value: any) => {

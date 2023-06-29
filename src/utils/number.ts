@@ -20,7 +20,7 @@ export function priceToTick(price: number, tickSpacing: number): number {
   return Math.round(tick / tickSpacing) * tickSpacing;
 }
 
-export function tickToPrice(tick: number): number {
+export function tickToPrice(tick?: number): number {
   if (!tick) {
     return 0;
   }
