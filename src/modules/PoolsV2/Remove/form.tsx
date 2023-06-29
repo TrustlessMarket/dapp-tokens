@@ -22,6 +22,9 @@ import Card from '@/components/Swap/card';
 import HorizontalItem from "@/components/Swap/horizontalItem";
 import {colors} from "@/theme/colors";
 import {getTokenIconUrl} from "@/utils";
+import {getAmountsForLiquidity} from "@/utils/utilities";
+import {getSqrtRatioAtTick} from "@/utils/number";
+import {ethers} from "ethers";
 
 interface IFormRemovePoolsV2Container extends IPoolV2AddPair {
   handleSubmit: (_: any) => void;
@@ -33,15 +36,13 @@ const FormRemovePoolsV2Container = forwardRef<any, IFormRemovePoolsV2Container>(
   (props, ref) => {
     const { handleSubmit, ids, submitting, positionDetail } = props;
     const { call: getEarnedFee } = useGetEarnedFee();
-    const { getConnectedChainInfo } = useContext(WalletContext);
-    const connectInfo: IResourceChain = getConnectedChainInfo();
     const [earnedFees, setEarnedFees] = useState([0, 0]);
+    const [pooledAmount, setPooledAmount] = useState(["0", "0"]);
     const token0Obj = positionDetail?.pair?.token0Obj;
     const token1Obj = positionDetail?.pair?.token1Obj;
 
     console.log('positionDetail', positionDetail);
 
-    const router = useRouter();
 
     const { values } = useFormState();
     const { restart, change } = useForm();
@@ -49,6 +50,7 @@ const FormRemovePoolsV2Container = forwardRef<any, IFormRemovePoolsV2Container>(
     useEffect(() => {
       if(positionDetail?.tokenId) {
         getEarnedFeeInfo();
+        getPooledAmount();
       }
     }, [JSON.stringify(positionDetail)]);
 
@@ -57,8 +59,20 @@ const FormRemovePoolsV2Container = forwardRef<any, IFormRemovePoolsV2Container>(
       setEarnedFees(res);
     }
 
-    console.log('getEarnedFeeInfo', earnedFees);
-    console.log('positionDetail', positionDetail);
+    const getPooledAmount = async () => {
+      const currentSqrtRatioX96 = getSqrtRatioAtTick(positionDetail?.pair?.tick || 0);
+      const lowerSqrtRatioX96 = getSqrtRatioAtTick(positionDetail?.tickLower || 0);
+      const upperSqrtRatioX96 = getSqrtRatioAtTick(positionDetail?.tickUpper || 0);
+
+      const res = getAmountsForLiquidity(
+        currentSqrtRatioX96,
+        lowerSqrtRatioX96,
+        upperSqrtRatioX96,
+        ethers.utils.parseEther(positionDetail?.liquidity || "0")
+      );
+
+      setPooledAmount([ethers.utils.formatEther(res[0]), ethers.utils.formatEther(res[1])]);
+    }
 
     return (
       <form onSubmit={handleSubmit}>
@@ -74,7 +88,7 @@ const FormRemovePoolsV2Container = forwardRef<any, IFormRemovePoolsV2Container>(
                   label={<Text color={"#FFFFFF"} fontSize={"md"} fontWeight={"medium"}>Pooled {token0Obj?.symbol}:</Text>}
                   value={
                     <Flex gap={1} color={"#FFFFFF"} fontSize={"md"} fontWeight={"medium"}>
-                      {earnedFees[0]}
+                      {pooledAmount[0]}
                       <img
                         src={getTokenIconUrl(token0Obj)}
                         alt={token0Obj?.thumbnail || 'default-icon'}
@@ -87,7 +101,7 @@ const FormRemovePoolsV2Container = forwardRef<any, IFormRemovePoolsV2Container>(
                   label={<Text color={"#FFFFFF"} fontSize={"md"} fontWeight={"medium"}>Pooled {positionDetail?.pair?.token1Obj?.symbol}:</Text>}
                   value={
                     <Flex gap={1} color={"#FFFFFF"} fontSize={"md"} fontWeight={"medium"}>
-                      {earnedFees[1]}
+                      {pooledAmount[1]}
                       <img
                         src={getTokenIconUrl(token1Obj)}
                         alt={token1Obj?.thumbnail || 'default-icon'}
