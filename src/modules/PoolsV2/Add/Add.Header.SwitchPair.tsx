@@ -57,9 +57,9 @@ const AddHeaderSwitchPair = () => {
     change('quoteAmount', baseAmount);
   }, [currentSelectPair, currentTick]);
 
-  const onChangeRouter = (_tkA: IToken, _tkB: IToken) => {
+  const onChangeRouter = (_tkA?: IToken, _tkB?: IToken) => {
     return router.replace(
-      `${ROUTE_PATH.POOLS_V2_ADD}/${_tkA.address}/${_tkB.address}`,
+      `${ROUTE_PATH.POOLS_V2_ADD}/${_tkA?.address}/${_tkB?.address}`,
     );
   };
 
@@ -74,29 +74,58 @@ const AddHeaderSwitchPair = () => {
   const [_tokenA, _tokenB] = sortAddressPair(baseToken, quoteToken);
 
   return (
-    <Flex className={s.container__top_body__right__switchContainer}>
-      <Box
-        className={
-          compareString(currentSelectPair.symbol, _tokenA.symbol)
-            ? s.container__top_body__right__switchContainer__active
-            : ''
-        }
-        onClick={() => onChangeRouter(_tokenA, _tokenB)}
-      >
-        <Text>{_tokenA.symbol}</Text>
-      </Box>
-      <Box
-        className={
-          compareString(currentSelectPair.symbol, _tokenB.symbol)
-            ? s.container__top_body__right__switchContainer__active
-            : ''
-        }
-        onClick={() => onChangeRouter(_tokenB, _tokenA)}
-      >
-        <Text>{_tokenB.symbol}</Text>
-      </Box>
-    </Flex>
+    <SwitchSymbol
+      tokenA={_tokenA}
+      tokenB={_tokenB}
+      currentSelectPair={currentSelectPair}
+      onSelectPair={onChangeRouter}
+    />
   );
+};
+
+export const SwitchSymbol = ({
+  tokenA,
+  tokenB,
+  currentSelectPair,
+  onSelectPair,
+}: {
+  tokenA: IToken | undefined;
+  tokenB: IToken | undefined;
+  currentSelectPair: IToken;
+  onSelectPair: (_1?: IToken, _2?: IToken) => void;
+}) => {
+  const selectPair = (_tokenA?: IToken, _tokenB?: IToken) => {
+    onSelectPair?.(_tokenA, _tokenB);
+  };
+
+  if (Boolean(tokenA) && Boolean(tokenB)) {
+    return (
+      <Flex className={s.switchContainer}>
+        <Box
+          className={
+            compareString(currentSelectPair.symbol, tokenA?.symbol)
+              ? s.switchContainer__active
+              : ''
+          }
+          onClick={() => selectPair(tokenA, tokenB)}
+        >
+          <Text>{tokenA?.symbol}</Text>
+        </Box>
+        <Box
+          className={
+            compareString(currentSelectPair.symbol, tokenB?.symbol)
+              ? s.switchContainer__active
+              : ''
+          }
+          onClick={() => selectPair(tokenB, tokenA)}
+        >
+          <Text>{tokenB?.symbol}</Text>
+        </Box>
+      </Flex>
+    );
+  }
+
+  return null;
 };
 
 export default AddHeaderSwitchPair;

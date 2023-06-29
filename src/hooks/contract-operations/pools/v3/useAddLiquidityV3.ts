@@ -16,6 +16,7 @@ import { formatPriceToPriceSqrt } from '@/utils/utilities';
 import { useWeb3React } from '@web3-react/core';
 import { useCallback } from 'react';
 import web3 from 'web3';
+import {scanTrx} from "@/services/swap-v3";
 
 export interface IAddLiquidityV3 {
   tokenA: IToken;
@@ -120,6 +121,10 @@ const useAddLiquidityV3: ContractOperationHook<IAddLiquidityV3, boolean> = () =>
             },
           }),
         );
+
+        await scanTrx({
+          tx_hash: transaction.hash,
+        });
 
         return transaction;
       }
