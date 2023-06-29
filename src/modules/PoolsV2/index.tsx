@@ -22,17 +22,6 @@ const PoolsV2Page = () => {
       return <Spinner color={colors.white} />;
     }
 
-    // if (liquidityList.length === 0) {
-    //   return (
-    //     <>
-    //       <Empty
-    //         size={70}
-    //         infoText="Your active V2 liquidity positions will appear here."
-    //       />
-    //     </>
-    //   );
-    // }
-
     if(!showTopPool) {
       return <MyPositions />;
     }
@@ -51,9 +40,16 @@ const PoolsV2Page = () => {
           <FiledButton
             btnSize="l"
             className={s.topPoolBtn}
-            onClick={() => setShowTopPool(!showTopPool)}
+            onClick={() => setShowTopPool(true)}
           >
             Top Pools
+          </FiledButton>
+          <FiledButton
+            btnSize="l"
+            className={s.topPoolBtn}
+            onClick={() => setShowTopPool(false)}
+          >
+            Your positions
           </FiledButton>
           <FiledButton
             onClick={() =>
@@ -67,11 +63,6 @@ const PoolsV2Page = () => {
       </Flex>
       <Box mt={4} />
       {renderContent()}
-      {/*<Flex
-        className={cs(s.container__body, liquidityList.length === 0 && s.container__empty)}
-      >
-        {renderContent()}
-      </Flex>*/}
     </BodyContainer>
   );
 };
