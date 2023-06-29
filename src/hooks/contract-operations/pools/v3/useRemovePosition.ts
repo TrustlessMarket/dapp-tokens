@@ -14,7 +14,7 @@ import { useCallback } from 'react';
 import {scanTrx} from "@/services/swap-v3";
 
 export interface IRemovePositionV3 {
-  tokenId: number;
+  tokenId?: number;
 }
 
 const useRemovePositionV3: ContractOperationHook<
