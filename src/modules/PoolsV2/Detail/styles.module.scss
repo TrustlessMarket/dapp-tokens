@@ -129,11 +129,39 @@
     }
 
     .chakra-modal__header {
-      color: #FFFFFF;
+      color: #ffffff;
     }
 
     .modal-close-btn {
-      color: #FFFFFF;
+      color: #ffffff;
     }
+  }
+}
+
+.itemRangeContainer {
+  background-color: var(--chakra-colors-gray-600);
+  border-radius: 16px;
+  padding: 10px;
+  flex: 1;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+  gap: 2;
+  p {
+    color: var(--chakra-colors-gray-400);
+    font-size: rem(14);
+  }
+  &__price {
+    color: white !important;
+    font-size: rem(20) !important;
+    font-weight: 500;
+    margin-top: 6px;
+    margin-bottom: 6px !important;
+  }
+  &__note {
+    color: var(--chakra-colors-gray-200) !important;
+    font-size: rem(12) !important;
+    font-weight: 500;
+    margin-top: 6px;
   }
 }
