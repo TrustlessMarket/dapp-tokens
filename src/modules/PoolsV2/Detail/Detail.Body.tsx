@@ -8,6 +8,10 @@ import DetailPair from './Detail.Pair';
 import { getPooledAmount, getRangeTick } from '../utils';
 import DetailClaimFee from './Detail.ClaimFee';
 import useGetEarnedFeeV3 from '@/hooks/contract-operations/pools/v3/useGetEarnedFee';
+import PoolsV2PositionStatus from '../PoolsV2.PositionStatus';
+import { SwitchSymbol } from '../Add/Add.Header.SwitchPair';
+import { useForm, useFormState } from 'react-final-form';
+import { IToken } from '@/interfaces/token';
 
 interface IDetailBody extends IDetailPositionBase {
   handleSubmit: (_: any) => void;
@@ -16,7 +20,12 @@ interface IDetailBody extends IDetailPositionBase {
 const DetailBody: React.FC<IDetailBody> = ({ positionDetail }) => {
   const [fees, setFees] = useState([0, 0]);
 
+  const { change } = useForm();
+  const { values } = useFormState();
+
   const { call: getEarnedFee } = useGetEarnedFeeV3();
+
+  const currentSelectPair: IToken = values?.currentSelectPair;
 
   useEffect(() => {
     getEarnedFeeInfo();
@@ -27,29 +36,58 @@ const DetailBody: React.FC<IDetailBody> = ({ positionDetail }) => {
     setFees(res);
   };
 
+  const onSelectPair = (_tokenA?: IToken, _tokenB?: IToken) => {
+    change('currentSelectPair', _tokenA);
+  };
+
   return (
     <Grid className={s.container__body__gridContainer}>
       <GridItem area={'g-img'}>
         <DetailImage positionDetail={positionDetail} />
       </GridItem>
       <GridItem area={'g-info'}>
-        <Text className={s.container__body__gridContainer__title}>Liquidity</Text>
-        <Box mt={4} />
-        <DetailPair
-          amountValues={getPooledAmount(positionDetail)}
-          tickRange={getRangeTick(positionDetail)}
-        />
-        <Box mt={12} />
-        <Flex alignItems={'center'} justifyContent={'space-between'}>
-          <Text className={s.container__body__gridContainer__title}>
-            Unclaimed fees
-          </Text>
-          <DetailClaimFee positionDetail={positionDetail} />
+        <Flex className={s.container__body__gridContainer__item}>
+          <Box>
+            <Text className={s.container__body__gridContainer__title}>
+              Liquidity
+            </Text>
+            <Box mt={6} />
+            <DetailPair
+              amountValues={getPooledAmount(positionDetail)}
+              tickRange={getRangeTick(positionDetail)}
+            />
+          </Box>
+          <Box>
+            <Flex alignItems={'center'} justifyContent={'space-between'}>
+              <Text className={s.container__body__gridContainer__title}>
+                Unclaimed fees
+              </Text>
+              <DetailClaimFee positionDetail={positionDetail} />
+            </Flex>
+            <Box mt={6} />
+            <DetailPair amountValues={fees} />
+          </Box>
         </Flex>
-        <Box mt={4} />
-        <DetailPair amountValues={fees} />
       </GridItem>
-      <GridItem area={'g-range'}></GridItem>
+      <GridItem
+        className={s.container__body__gridContainer__itemRangePrice}
+        area={'g-range'}
+      >
+        <Flex gap={2} alignItems={'center'} justifyContent={'space-between'}>
+          <Flex gap={2} alignItems={'center'}>
+            <Text className={s.container__body__gridContainer__title}>
+              Range Price
+            </Text>
+            <PoolsV2PositionStatus positionDetail={positionDetail} />
+          </Flex>
+          <SwitchSymbol
+            tokenA={positionDetail?.pair?.token0Obj}
+            tokenB={positionDetail?.pair?.token1Obj}
+            currentSelectPair={currentSelectPair}
+            onSelectPair={onSelectPair}
+          />
+        </Flex>
+      </GridItem>
     </Grid>
   );
 };
