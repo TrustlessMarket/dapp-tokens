@@ -191,7 +191,7 @@ const FormRemovePoolsV2Container = forwardRef<any, IFormRemovePoolsV2Container>(
                   w: '100%',
                 }}
               >
-                Remove
+                {values?.percent <= 0 ? 'Enter a percent' : 'Remove'}
               </FiledButton>
             </WrapperConnected>
           </Flex>
