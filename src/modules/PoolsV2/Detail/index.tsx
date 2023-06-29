@@ -1,16 +1,18 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable @typescript-eslint/no-empty-interface */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import BodyContainer from '@/components/Swap/bodyContainer';
-import FiledButton from '@/components/Swap/button/filedButton';
-import { ROUTE_PATH } from '@/constants/route-path';
 import { IPosition } from '@/interfaces/position';
 import { getPositionDetail } from '@/services/swap-v3';
 import { colors } from '@/theme/colors';
-import { Box, Flex, Heading, Spinner } from '@chakra-ui/react';
+import { Box, Flex, Spinner } from '@chakra-ui/react';
 import cs from 'classnames';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
+import { Form } from 'react-final-form';
+import DetailBody from './Detail.Body';
+import DetailHeader from './Detail.Header';
 import s from './styles.module.scss';
 
 interface IPoolsV2DetailPage {
@@ -49,37 +51,30 @@ const PoolsV2DetailPage: React.FC<IPoolsV2DetailPage> = () => {
       );
     }
 
-    return <></>;
+    if (!positionDetail) {
+      return null;
+    }
+
+    return (
+      <Form
+        onSubmit={() => {}}
+        initialValues={{
+          tokenA: positionDetail.pair?.token0Obj,
+          tokenB: positionDetail.pair?.token1Obj,
+        }}
+      >
+        {({ handleSubmit }) => (
+          <DetailBody handleSubmit={handleSubmit} positionDetail={positionDetail} />
+        )}
+      </Form>
+    );
   };
 
   return (
     <BodyContainer className={s.container}>
-      <Flex className={s.container__header}>
-        <Flex>
-          <Heading as={'h3'}>Back to Pools</Heading>
-        </Flex>
-        <Flex gap={2}>
-          <FiledButton
-            btnSize="l"
-            className={s.increaseLiquidityBtn}
-            onClick={() =>
-              router.push(`${ROUTE_PATH.POOLS_V2_ADD}/${positionDetail?.id}`)
-            }
-          >
-            Increase Liquidity
-          </FiledButton>
-          <FiledButton
-            onClick={() =>
-              router.push(`${ROUTE_PATH.POOLS_V2_REMOVE}/${positionDetail?.id}`)
-            }
-            btnSize="l"
-          >
-            Remove Liquidity
-          </FiledButton>
-        </Flex>
-      </Flex>
+      <DetailHeader positionDetail={positionDetail} />
       <Box mt={4} />
-      <Flex className={cs(s.container__body)}>{renderContent()}</Flex>
+      <Box className={cs(s.container__body)}>{renderContent()}</Box>
     </BodyContainer>
   );
 };
