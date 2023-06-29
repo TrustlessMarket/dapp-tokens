@@ -97,3 +97,21 @@
     background-color: var(--chakra-colors-whiteAlpha-100) !important;
   }
 }
+
+.modalContentClaimFees {
+  background-color: rgb(13, 17, 28) !important;
+
+  :global {
+    .modal-header-wrap {
+      margin-bottom: 0;
+    }
+
+    .chakra-modal__header {
+      color: #FFFFFF;
+    }
+
+    .modal-close-btn {
+      color: #FFFFFF;
+    }
+  }
+}
