@@ -1,28 +1,28 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import {Box, Flex, Spinner, Text} from "@chakra-ui/react";
-import InfiniteScroll from "react-infinite-scroll-component";
-import ListTable from "@/components/Swap/listTable";
-import React, {useContext, useEffect, useMemo, useState} from "react";
-import {WalletContext} from "@/contexts/wallet-context";
-import {IResourceChain} from "@/interfaces/chain";
-import {compareString, getTokenIconUrl} from "@/utils";
-import px2rem from "@/utils/px2rem";
-import {debounce} from "lodash";
-import {useWindowSize} from "@trustless-computer/dapp-core";
+import { Box, Flex, Spinner, Text } from '@chakra-ui/react';
+import InfiniteScroll from 'react-infinite-scroll-component';
+import ListTable from '@/components/Swap/listTable';
+import React, { useContext, useEffect, useMemo, useState } from 'react';
+import { WalletContext } from '@/contexts/wallet-context';
+import { IResourceChain } from '@/interfaces/chain';
+import { compareString, getTokenIconUrl } from '@/utils';
+import px2rem from '@/utils/px2rem';
+import { debounce } from 'lodash';
+import { useWindowSize } from '@trustless-computer/dapp-core';
 import styles from './styles.module.scss';
-import {useWeb3React} from "@web3-react/core";
-import {IPosition} from "@/interfaces/position";
-import {USDC_ADDRESS, WBTC_ADDRESS, WETH_ADDRESS} from "@/constants/common";
-import {IToken} from "@/interfaces/token";
-import {tickToPrice} from "@/utils/number";
-import BigNumber from "bignumber.js";
-import InfoTooltip from "@/components/Swap/infoTooltip";
+import { useWeb3React } from '@web3-react/core';
+import { IPosition } from '@/interfaces/position';
+import { USDC_ADDRESS, WBTC_ADDRESS, WETH_ADDRESS } from '@/constants/common';
+import { IToken } from '@/interfaces/token';
+import { tickToPrice } from '@/utils/number';
+import BigNumber from 'bignumber.js';
+import InfoTooltip from '@/components/Swap/infoTooltip';
 import cx from 'classnames';
-import {ROUTE_PATH} from "@/constants/route-path";
-import {useRouter} from "next/router";
-import {getListUserPositions} from "@/services/swap-v3";
+import { ROUTE_PATH } from '@/constants/route-path';
+import { useRouter } from 'next/router';
+import { getListUserPositions } from '@/services/swap-v3';
 
 const LIMIT_PAGE = 30;
 
@@ -36,7 +36,7 @@ const TopPools = () => {
   const router = useRouter();
 
   useEffect(() => {
-    if(account) {
+    if (account) {
       fetchLiquidities();
     }
   }, [account]);
@@ -44,7 +44,10 @@ const TopPools = () => {
   const fetchLiquidities = async () => {
     try {
       setIsFetching(true);
-      const res = await getListUserPositions({ user_address: account, network: chainInfo.chain.toLowerCase() });
+      const res = await getListUserPositions({
+        user_address: account,
+        network: chainInfo.chain.toLowerCase(),
+      });
       setPositionList(res);
     } catch (err: unknown) {
       console.log(err);
@@ -94,7 +97,10 @@ const TopPools = () => {
           borderBottomLeftRadius: '8px',
         },
         render(row: IPosition) {
-          const [token0Obj, token1Obj] = sortTokens(row?.pair?.token0Obj, row?.pair?.token1Obj);
+          const [token0Obj, token1Obj] = sortTokens(
+            row?.pair?.token0Obj,
+            row?.pair?.token1Obj,
+          );
 
           return (
             <Flex fontSize={px2rem(14)} alignItems={'center'} gap={2}>
@@ -209,14 +215,19 @@ const TopPools = () => {
                     : 'The price of this pool is not within your selected range. Your position is not currently earning fees.'
                 }
               >
-                <Text fontSize={px2rem(14)} textAlign={'left'} className={cx(styles.range, inRange ? styles.inRange : styles.outRange)}>
+                <Text
+                  fontSize={px2rem(14)}
+                  textAlign={'left'}
+                  className={cx(
+                    styles.range,
+                    inRange ? styles.inRange : styles.outRange,
+                  )}
+                >
                   {inRange ? 'In Range' : 'Not In Range'}
                 </Text>
               </InfoTooltip>
               {/**/}
-
             </Flex>
-
           );
         },
       },
@@ -238,10 +249,7 @@ const TopPools = () => {
           borderBottomRightRadius: '8px',
         },
         render() {
-          return (
-            <Flex gap={4} justifyContent={'center'}>
-            </Flex>
-          );
+          return <Flex gap={4} justifyContent={'center'}></Flex>;
         },
       },
     ];
@@ -277,7 +285,7 @@ const TopPools = () => {
             if (!e.pair?.pair) {
               return null;
             }
-            return router.push(`${ROUTE_PATH.POOLS_V2}/detail/${e.id}`);
+            return router.push(`${ROUTE_PATH.POOLS_V2}/${e.id}`);
           }}
         />
       </InfiniteScroll>
