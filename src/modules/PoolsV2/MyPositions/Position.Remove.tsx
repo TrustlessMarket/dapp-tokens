@@ -19,7 +19,7 @@ const PositionRemove: React.FC<IDetailPositionBase> = ({ positionDetail }) => {
   const { account } = useWeb3React();
   const [submitting, setSubmitting] = useState(false);
 
-  const handleCollectFee = async (e) => {
+  const handleCollectFee = async (e: any) => {
     e.stopPropagation();
     e.preventDefault();
     try {
