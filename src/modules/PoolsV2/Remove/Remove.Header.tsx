@@ -1,36 +1,33 @@
+import {IPosition} from '@/interfaces/position';
+import {getTokenIconUrl} from '@/utils';
+import {Box, Flex, Text} from '@chakra-ui/react';
 import React from 'react';
 import s from './styles.module.scss';
-import {Flex, Heading, Icon, IconButton} from '@chakra-ui/react';
-import {BiChevronLeft} from 'react-icons/bi';
-import {useRouter} from 'next/router';
+import PoolsV2PositionStatus from '../PoolsV2.PositionStatus';
 
-const RemoveHeader = () => {
-  const router = useRouter();
+interface IDetailHeader {
+  positionDetail?: IPosition;
+}
+
+const RemoveHeader: React.FC<IDetailHeader> = ({ positionDetail }) => {
   return (
-    <Flex className={s.container__top_body}>
-      <IconButton
-        position={'absolute'}
-        left={0}
-        borderWidth={0}
-        colorScheme="whiteAlpha"
-        variant="outline"
-        _hover={{
-          backgroundColor: 'transparent',
-        }}
-        icon={
-          <Icon
-            as={BiChevronLeft}
-            color={'rgba(255, 255, 255, 0.5)'}
-            fontSize={'30px'}
-          />
-        }
-        onClick={() => router.back()}
-        aria-label={''}
-      />
-      <Heading as={'h4'}>Remove Liquidity</Heading>
-      <Flex className={s.container__top_body__right}>
-      </Flex>
-    </Flex>
+    <Box className={s.container__header}>
+      {positionDetail && (
+        <Flex alignItems={'center'} gap={4} justifyContent={'space-between'}>
+          <Flex gap={2} className={s.container__header__topInfo} flex={1}>
+            <Flex className={s.container__header__topInfo__groupIcon}>
+              <img src={getTokenIconUrl(positionDetail.pair?.token0Obj)} />
+              <img src={getTokenIconUrl(positionDetail.pair?.token1Obj)} />
+            </Flex>
+            <Text className={s.container__header__topInfo__name}>
+              {positionDetail.pair?.token0Obj?.symbol} /{' '}
+              {positionDetail.pair?.token1Obj?.symbol}
+            </Text>
+          </Flex>
+          <PoolsV2PositionStatus positionDetail={positionDetail} />
+        </Flex>
+      )}
+    </Box>
   );
 };
 
