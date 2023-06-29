@@ -1,9 +1,11 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { NULL_ADDRESS } from '@/constants/url';
+import { IPosition } from '@/interfaces/position';
 import { compareString, formatCurrency } from '@/utils';
 import { FeeAmount, MaxUint128 } from '@/utils/constants';
-import { amountDesiredChanged } from '@/utils/utilities';
+import { getSqrtRatioAtTick } from '@/utils/number';
+import { amountDesiredChanged, getAmountsForLiquidity } from '@/utils/utilities';
 import BigNumber from 'bignumber.js';
 import { ethers } from 'ethers';
 import { isNumber } from 'lodash';
@@ -151,4 +153,65 @@ export const allowStep = (values: any) => {
   }
 
   return step;
+};
+
+export const getPooledAmount = (positionDetail?: IPosition) => {
+  try {
+    const currentSqrtRatioX96 = getSqrtRatioAtTick(positionDetail?.pair?.tick || 0);
+    const lowerSqrtRatioX96 = getSqrtRatioAtTick(positionDetail?.tickLower || 0);
+    const upperSqrtRatioX96 = getSqrtRatioAtTick(positionDetail?.tickUpper || 0);
+
+    const res = getAmountsForLiquidity(
+      currentSqrtRatioX96,
+      lowerSqrtRatioX96,
+      upperSqrtRatioX96,
+      ethers.utils.parseEther(positionDetail?.liquidity || '0'),
+    );
+
+    return [ethers.utils.formatEther(res[0]), ethers.utils.formatEther(res[1])];
+  } catch (error) {
+    return ['0', '0'];
+  }
+};
+
+export const getRangeTick = (positionDetail?: IPosition) => {
+  try {
+    const [amount0, amount1] = getPooledAmount(positionDetail);
+
+    if (Number(amount0) > 0 && Number(amount1) > 0) {
+      return {
+        status: {
+          title: 'In Range',
+          desc: 'The price of this pool is within your selected range. Your position is currently earning fees.',
+        },
+        percents: ['50%', '50%'],
+      };
+    }
+    if (Number(amount0) > 0) {
+      return {
+        status: {
+          title: 'Out of range',
+          desc: 'The price of this pool is outside of your selected range. Your position is not currently earning fees.',
+        },
+        percents: ['100%', '0%'],
+      };
+    }
+    if (Number(amount1) > 0) {
+      return {
+        status: {
+          title: 'Out of range',
+          desc: 'The price of this pool is outside of your selected range. Your position is not currently earning fees.',
+        },
+        percents: ['0%', '10%'],
+      };
+    }
+  } catch (error) {
+    return {
+      status: {
+        title: 'Out of range',
+        desc: 'The price of this pool is outside of your selected range. Your position is not currently earning fees.',
+      },
+      percents: ['0', '0'],
+    };
+  }
 };
