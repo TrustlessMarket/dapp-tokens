@@ -70,7 +70,7 @@ const FormRemovePoolsV2Container = forwardRef<any, IFormRemovePoolsV2Container>(
         <Box mt={4}/>
         <RemoveHeader positionDetail={positionDetail}/>
         <Box className={s.container__content_body}>
-          <Flex direction={'column'} gap={12} className={s.formContainer}>
+          <Flex direction={'column'} gap={8} className={s.formContainer}>
             <Card
               bgColor={'rgb(19, 26, 42)'}
               p={6}
