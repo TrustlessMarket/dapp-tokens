@@ -24,7 +24,7 @@ const InfoTooltip = (props: InfoTooltipProps) => {
     children,
     showIcon = false,
     iconColor = colors.white,
-    iconName = <MdHelpOutline />,
+    iconName = MdHelpOutline,
   } = props;
 
   const renderChild = () => {
