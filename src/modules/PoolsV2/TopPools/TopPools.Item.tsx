@@ -165,7 +165,14 @@ const TopPoolsItem: React.FC<ITopPoolsItem> = ({poolDetail,columns}) => {
 
   return (
     <>
-      <Tr onClick={() => hasPositions && setShowPositions(!showPosition)} cursor={hasPositions ? "pointer" : "auto"}>
+      <Tr
+        onClick={() => hasPositions && setShowPositions(!showPosition)}
+        cursor={hasPositions ? "pointer" : "auto"}
+        bg={showPosition ? "#1e1e22" : "none"}
+        _hover={{
+          bg: '#1e1e22'
+        }}
+      >
         <Td borderColor={"rgba(255,255,255,0.1)"}>
           <Flex fontSize={px2rem(14)} alignItems={'center'} gap={2}>
             <TopPoolsPair poolDetail={poolDetail}/>
