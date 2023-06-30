@@ -18,4 +18,5 @@ export interface ILiquidity {
   liquidityUsd?: string;
   tick?: number;
   fee?: number;
+  positions: []
 }

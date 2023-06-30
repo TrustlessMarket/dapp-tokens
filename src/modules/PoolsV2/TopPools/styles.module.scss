@@ -2,12 +2,18 @@
   :global {
     .tokens-list {
       overflow: hidden !important;
+
+      .chakra-table__container {
+        border-radius: 12px;
+        border: 1px solid rgba(255,255,255,0.1);
+      }
       .chakra-table {
         border-collapse: separate;
-        border-spacing: 0px 4px;
+        //border-spacing: 0px 4px;
         th:first-of-type {
           max-width: rem(50);
           white-space: nowrap;
+          padding-left: rem(24);
         }
 
         th:nth-child(4),
@@ -44,6 +50,17 @@
                     justify-content: flex-end;
                   }
                 }
+              }
+            }
+          }
+        }
+
+        tbody {
+          tr {
+            td {
+              &:first-of-type {
+                padding-left: rem(24);
+                margin-top: 10px;
               }
             }
           }

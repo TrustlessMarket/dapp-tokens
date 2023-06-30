@@ -20,6 +20,7 @@ import {useWindowSize} from "@trustless-computer/dapp-core";
 import styles from './styles.module.scss';
 import {useWeb3React} from "@web3-react/core";
 import TopPoolsPair from "@/modules/PoolsV2/TopPools/TopPools.Pair";
+import TopPoolsItem from "@/modules/PoolsV2/TopPools/TopPools.Item";
 
 const LIMIT_PAGE = 30;
 
@@ -206,6 +207,26 @@ const TopPools = () => {
           );
         },
       },
+      {
+        id: 'action',
+        label: ' ',
+        labelConfig: {
+          fontSize: '12px',
+          fontWeight: '500',
+          color: '#B1B5C3',
+        },
+        config: {
+          color: '#FFFFFF',
+          borderBottom: 'none',
+          backgroundColor: '#1E1E22',
+        },
+        render(row: ILiquidity) {
+          return (
+            <Text fontSize={px2rem(14)} textAlign={'left'}>
+            </Text>
+          );
+        },
+      },
     ];
   }, [mobileScreen, JSON.stringify(liquidityList)]);
 
@@ -232,7 +253,16 @@ const TopPools = () => {
         }
         next={debounceLoadMore}
       >
-        <ListTable data={liquidityList} columns={columns} showEmpty={false} />
+        <ListTable
+          data={liquidityList}
+          columns={columns}
+          showEmpty={false}
+          ItemListComponent={(row, extraData, columns, i) => {
+            return (
+              <TopPoolsItem poolDetail={row} columns={columns}/>
+            );
+         }}
+        />
       </InfiniteScroll>
     </Box>
   );

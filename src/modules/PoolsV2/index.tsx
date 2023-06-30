@@ -16,19 +16,13 @@ import cx from 'classnames';
 const PoolsV2Page = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const router = useRouter();
-  const [showTopPool, setShowTopPool] = useState(false);
 
   const renderContent = () => {
     if (loading) {
       return <Spinner color={colors.white} />;
     }
 
-    if(!showTopPool) {
-      return <MyPositions />;
-    }
-    if (showTopPool) {
-      return <TopPools />;
-    }
+    return <TopPools />;
 
     return <></>;
   };
@@ -38,20 +32,6 @@ const PoolsV2Page = () => {
       <Flex className={s.container__header}>
         <Heading as={'h3'}>Pools</Heading>
         <Flex gap={2}>
-          <FiledButton
-            btnSize="l"
-            className={cx(s.topPoolBtn, showTopPool ? s.isActive : null)}
-            onClick={() => setShowTopPool(true)}
-          >
-            Top Pools
-          </FiledButton>
-          <FiledButton
-            btnSize="l"
-            className={cx(s.topPoolBtn, !showTopPool ? s.isActive : null)}
-            onClick={() => setShowTopPool(false)}
-          >
-            Your positions
-          </FiledButton>
           <FiledButton
             onClick={() =>
               router.push(`${ROUTE_PATH.POOLS_V2_ADD}/${L2_ETH_ADDRESS}`)
