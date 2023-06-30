@@ -7,19 +7,18 @@ import ListTable from "@/components/Swap/listTable";
 import React, {useContext, useEffect, useMemo, useState} from "react";
 import {WalletContext} from "@/contexts/wallet-context";
 import {IResourceChain} from "@/interfaces/chain";
-import {compareString, formatCurrency, getTokenIconUrl} from "@/utils";
+import {formatCurrency} from "@/utils";
 import {getListLiquidity} from "@/services/swap";
 import {ILiquidity} from "@/interfaces/liquidity";
 import {TRUSTLESS_MARKET_URL} from "@/configs";
 import {ROUTE_PATH} from "@/constants/route-path";
-import {USDC_ADDRESS, WBTC_ADDRESS, WETH_ADDRESS} from "@/constants/common";
-import {IToken} from "@/interfaces/token";
 import px2rem from "@/utils/px2rem";
 import {debounce} from "lodash";
 import {useWindowSize} from "@trustless-computer/dapp-core";
-import {useRouter} from "next/router";
 import styles from './styles.module.scss';
-import BigNumber from "bignumber.js";
+import {useWeb3React} from "@web3-react/core";
+import TopPoolsPair from "@/modules/PoolsV2/TopPools/TopPools.Pair";
+import TopPoolsItem from "@/modules/PoolsV2/TopPools/TopPools.Item";
 
 const LIMIT_PAGE = 30;
 
@@ -29,16 +28,16 @@ const TopPools = () => {
   const chainInfo: IResourceChain = getConnectedChainInfo();
   const [isFetching, setIsFetching] = useState(false);
   const { mobileScreen } = useWindowSize();
-  const router = useRouter();
+  const { account } = useWeb3React();
 
   useEffect(() => {
     fetchLiquidities();
-  }, [JSON.stringify(router.query)]);
+  }, [chainInfo?.chain, account]);
 
   const fetchLiquidities = async (page = 1, isFetchMore = false) => {
     try {
       setIsFetching(true);
-      const res = await getListLiquidity({ limit: LIMIT_PAGE, page: page, network: chainInfo.chain.toLowerCase() });
+      const res = await getListLiquidity({ limit: LIMIT_PAGE, page: page, network: chainInfo?.chain?.toLowerCase(), address: account });
       if (isFetchMore) {
         setLiquidityList((prev) => [...prev, ...res]);
       } else {
@@ -73,26 +72,6 @@ const TopPools = () => {
     );
   };
 
-  const BASE_ADDRESS = [WBTC_ADDRESS, WETH_ADDRESS, USDC_ADDRESS];
-
-  const sortTokens = (tokenA: IToken | undefined, tokenB: IToken | undefined) => {
-    if (compareString(USDC_ADDRESS, tokenA?.address)) {
-      return [tokenB, tokenA];
-    } else if (compareString(USDC_ADDRESS, tokenB?.address)) {
-      return [tokenA, tokenB];
-    } else if (
-      BASE_ADDRESS.some((address) => compareString(address, tokenA?.address))
-    ) {
-      return [tokenB, tokenA];
-    } else if (
-      BASE_ADDRESS.some((address) => compareString(address, tokenB?.address))
-    ) {
-      return [tokenA, tokenB];
-    } else {
-      return [tokenA, tokenB];
-    }
-  };
-
   const columns = useMemo(() => {
     return [
       {
@@ -113,51 +92,34 @@ const TopPools = () => {
           borderBottomLeftRadius: '8px',
         },
         render(row: ILiquidity) {
-          const [token0Obj, token1Obj] = sortTokens(row?.token0Obj, row?.token1Obj);
-
           return (
             <Flex fontSize={px2rem(14)} alignItems={'center'} gap={2}>
-              <Flex gap={1} alignItems={'center'}>
-                <img
-                  src={getTokenIconUrl(token0Obj)}
-                  alt={token0Obj?.thumbnail || 'default-icon'}
-                  className={'avatar'}
-                />
-                <Text>{token0Obj?.symbol}</Text>
-              </Flex>
-              <Flex gap={1} alignItems={'center'}>
-                <img
-                  src={getTokenIconUrl(token1Obj)}
-                  alt={token1Obj?.thumbnail || 'default-icon'}
-                  className={'avatar'}
-                />
-                <Text>{token1Obj?.symbol}</Text>
-              </Flex>
+              <TopPoolsPair poolDetail={row}/>
             </Flex>
           );
         },
       },
-      {
-        id: 'fee',
-        label: 'Fee',
-        labelConfig: {
-          fontSize: '12px',
-          fontWeight: '500',
-          color: '#B1B5C3',
-        },
-        config: {
-          color: '#FFFFFF',
-          borderBottom: 'none',
-          backgroundColor: '#1E1E22',
-        },
-        render(row: ILiquidity) {
-          return (
-            <Text fontSize={px2rem(14)} textAlign={'left'}>
-              {new BigNumber(row?.fee || 0).div(10000).toString()}%
-            </Text>
-          );
-        },
-      },
+      // {
+      //   id: 'fee',
+      //   label: 'Fee',
+      //   labelConfig: {
+      //     fontSize: '12px',
+      //     fontWeight: '500',
+      //     color: '#B1B5C3',
+      //   },
+      //   config: {
+      //     color: '#FFFFFF',
+      //     borderBottom: 'none',
+      //     backgroundColor: '#1E1E22',
+      //   },
+      //   render(row: ILiquidity) {
+      //     return (
+      //       <Text fontSize={px2rem(14)} textAlign={'left'}>
+      //         {new BigNumber(row?.fee || 0).div(10000).toString()}%
+      //       </Text>
+      //     );
+      //   },
+      // },
       {
         id: 'tvl',
         label: 'TVL',
@@ -221,6 +183,26 @@ const TopPools = () => {
           );
         },
       },
+      {
+        id: 'action',
+        label: ' ',
+        labelConfig: {
+          fontSize: '12px',
+          fontWeight: '500',
+          color: '#B1B5C3',
+        },
+        config: {
+          color: '#FFFFFF',
+          borderBottom: 'none',
+          backgroundColor: '#1E1E22',
+        },
+        render(row: ILiquidity) {
+          return (
+            <Text fontSize={px2rem(14)} textAlign={'left'}>
+            </Text>
+          );
+        },
+      },
     ];
   }, [mobileScreen, JSON.stringify(liquidityList)]);
 
@@ -247,7 +229,16 @@ const TopPools = () => {
         }
         next={debounceLoadMore}
       >
-        <ListTable data={liquidityList} columns={columns} showEmpty={false} />
+        <ListTable
+          data={liquidityList}
+          columns={columns}
+          showEmpty={false}
+          ItemListComponent={(row, extraData, columns, i) => {
+            return (
+              <TopPoolsItem poolDetail={row} columns={columns}/>
+            );
+         }}
+        />
       </InfiniteScroll>
     </Box>
   );
