@@ -47,7 +47,7 @@ const TopPools = () => {
       setIsFetching(true);
       const res = await getListUserPositions({
         user_address: account,
-        network: chainInfo.chain.toLowerCase(),
+        network: chainInfo?.chain?.toLowerCase(),
       });
       setPositionList(res);
     } catch (err: unknown) {

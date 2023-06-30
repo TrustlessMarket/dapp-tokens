@@ -8,7 +8,6 @@ import {abbreviateNumber, formatCurrency, getTokenIconUrl} from '@/utils';
 import {debounce} from 'lodash';
 import React, {useContext, useEffect, useMemo, useRef, useState} from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import {StyledTokens, UploadFileContainer} from './Tokens.styled';
 import {ROUTE_PATH} from '@/constants/route-path';
 import {Box, Flex, forwardRef, Icon, Spinner, Text} from '@chakra-ui/react';
 import BigNumber from 'bignumber.js';
@@ -17,20 +16,21 @@ import {useRouter} from 'next/router';
 import BodyContainer from '@/components/Swap/bodyContainer';
 import FieldText from '@/components/Swap/form/fieldText';
 import ListTable, {ColumnProp} from '@/components/Swap/listTable';
-import {CDN_URL} from '@/configs';
-import {GM_ADDRESS, WBTC_ADDRESS, WETH_ADDRESS} from '@/constants/common';
+import {CDN_URL, L2_ETH_ADDRESS, L2_WBTC_ADDRESS} from '@/configs';
+import {GM_ADDRESS} from '@/constants/common';
 import useDebounce from '@/hooks/useDebounce';
 import px2rem from '@/utils/px2rem';
 import {Field, Form, useFormState} from 'react-final-form';
 import {AiOutlineCaretDown, AiOutlineCaretUp} from 'react-icons/ai';
 import {VscArrowSwap} from 'react-icons/vsc';
-import styles from './styles.module.scss';
-import TokenChartLast7Day from './Token.ChartLast7Day';
-import VerifiedBadgeToken from './verifiedBadgeToken';
+import styles from '../styles.module.scss';
 import {FiSearch} from 'react-icons/fi';
 import {useWindowSize} from '@trustless-computer/dapp-core';
 import {WalletContext} from "@/contexts/wallet-context";
 import {IResourceChain} from "@/interfaces/chain";
+import {StyledTokens, UploadFileContainer} from "@/modules/Tokens/Tokens.styled";
+import VerifiedBadgeToken from "@/modules/Tokens/verifiedBadgeToken";
+import TokenChartLast7Day from "@/modules/Tokens/Token.ChartLast7Day";
 
 const LIMIT_PAGE = 100;
 
@@ -44,6 +44,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const { mobileScreen } = useWindowSize();
   const { getConnectedChainInfo } = useContext(WalletContext);
   const chainInfo: IResourceChain = getConnectedChainInfo();
+  console.log('chainInfo', chainInfo);
 
   const fetchTokens = async (page = 1, isFetchMore = false) => {
     try {
@@ -85,7 +86,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
 
   useEffect(() => {
     fetchTokens();
-  }, [JSON.stringify(sort), debounced, chainInfo?.chain]);
+  }, [JSON.stringify(sort), debounced, chainInfo?.chainId]);
 
   const columns: ColumnProp[] = useMemo(() => {
     if (mobileScreen) {
@@ -486,7 +487,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
                   e.stopPropagation();
                   e.preventDefault();
                   router.push(
-                    `${ROUTE_PATH.SWAP}?from_token=${WBTC_ADDRESS}&to_token=${row?.address}`,
+                    `${ROUTE_PATH.SWAP_V2}?from_token=${L2_WBTC_ADDRESS}&to_token=${row?.address}`,
                   );
                 }}
                 title="Swap now"
@@ -557,7 +558,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         </div>
         <div className="upload_right">
           <Link
-            href={`${ROUTE_PATH.SWAP}?from_token=${WETH_ADDRESS}&to_token=${GM_ADDRESS}`}
+            href={`${ROUTE_PATH.SWAP_V2}?from_token=${L2_ETH_ADDRESS}&to_token=${GM_ADDRESS}`}
           >
             <Button className="comming-soon-btn" background={'#3385FF'}>
               <Text
@@ -570,7 +571,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
               </Text>
             </Button>
           </Link>
-          <Link href={ROUTE_PATH.POOLS}>
+          <Link href={ROUTE_PATH.POOLS_V2}>
             <Button
               className="button-create-box"
               background={'white'}

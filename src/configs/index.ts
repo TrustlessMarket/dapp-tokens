@@ -49,6 +49,7 @@ export const MEMPOOL_URL = 'https://mempool.space';
 export const L2_NETWORK_RPC: string = process.env.NEXT_PUBLIC_L2_RPC!;
 export const L2_EXPLORER: string = process.env.NEXT_PUBLIC_L2_EXPLORER!;
 export const L2_CHAIN_ID: string = process.env.NEXT_PUBLIC_L2_CHAIN_ID!;
+export const L2_WBTC_ADDRESS: string = process.env.NEXT_PUBLIC_L2_WBTC!;
 export const L2_ETH_ADDRESS: string = process.env.NEXT_PUBLIC_L2_ETH!;
 
 /* eslint-enable @typescript-eslint/no-non-null-assertion */
