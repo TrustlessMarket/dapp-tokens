@@ -171,7 +171,9 @@ export const getTCTxDetailByHash = async (params: { tx_hash: string }) => {
 };
 
 export const getListLiquidity = async (
-  params: IPagingParams,
+  params: {
+    address?: string;
+  } & IPagingParams
 ): Promise<ILiquidity[]> => {
   const qs = '?' + queryString.stringify(params);
   return swrFetcher(`${API_EXCHANGE_URL}${API_PATH}/pair/apr/list${qs}`, {

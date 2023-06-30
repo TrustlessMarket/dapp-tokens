@@ -7,7 +7,7 @@ import ListTable from "@/components/Swap/listTable";
 import React, {useContext, useEffect, useMemo, useState} from "react";
 import {WalletContext} from "@/contexts/wallet-context";
 import {IResourceChain} from "@/interfaces/chain";
-import {compareString, formatCurrency, getTokenIconUrl} from "@/utils";
+import {compareString, formatCurrency} from "@/utils";
 import {getListLiquidity} from "@/services/swap";
 import {ILiquidity} from "@/interfaces/liquidity";
 import {TRUSTLESS_MARKET_URL} from "@/configs";
@@ -17,9 +17,9 @@ import {IToken} from "@/interfaces/token";
 import px2rem from "@/utils/px2rem";
 import {debounce} from "lodash";
 import {useWindowSize} from "@trustless-computer/dapp-core";
-import {useRouter} from "next/router";
 import styles from './styles.module.scss';
-import BigNumber from "bignumber.js";
+import {useWeb3React} from "@web3-react/core";
+import TopPoolsPair from "@/modules/PoolsV2/TopPools/TopPools.Pair";
 
 const LIMIT_PAGE = 30;
 
@@ -29,16 +29,16 @@ const TopPools = () => {
   const chainInfo: IResourceChain = getConnectedChainInfo();
   const [isFetching, setIsFetching] = useState(false);
   const { mobileScreen } = useWindowSize();
-  const router = useRouter();
+  const { account } = useWeb3React();
 
   useEffect(() => {
     fetchLiquidities();
-  }, [JSON.stringify(router.query)]);
+  }, [chainInfo?.chain, account]);
 
   const fetchLiquidities = async (page = 1, isFetchMore = false) => {
     try {
       setIsFetching(true);
-      const res = await getListLiquidity({ limit: LIMIT_PAGE, page: page, network: chainInfo.chain.toLowerCase() });
+      const res = await getListLiquidity({ limit: LIMIT_PAGE, page: page, network: chainInfo?.chain?.toLowerCase(), address: account });
       if (isFetchMore) {
         setLiquidityList((prev) => [...prev, ...res]);
       } else {
@@ -117,47 +117,32 @@ const TopPools = () => {
 
           return (
             <Flex fontSize={px2rem(14)} alignItems={'center'} gap={2}>
-              <Flex gap={1} alignItems={'center'}>
-                <img
-                  src={getTokenIconUrl(token0Obj)}
-                  alt={token0Obj?.thumbnail || 'default-icon'}
-                  className={'avatar'}
-                />
-                <Text>{token0Obj?.symbol}</Text>
-              </Flex>
-              <Flex gap={1} alignItems={'center'}>
-                <img
-                  src={getTokenIconUrl(token1Obj)}
-                  alt={token1Obj?.thumbnail || 'default-icon'}
-                  className={'avatar'}
-                />
-                <Text>{token1Obj?.symbol}</Text>
-              </Flex>
+              <TopPoolsPair poolDetail={row}/>
             </Flex>
           );
         },
       },
-      {
-        id: 'fee',
-        label: 'Fee',
-        labelConfig: {
-          fontSize: '12px',
-          fontWeight: '500',
-          color: '#B1B5C3',
-        },
-        config: {
-          color: '#FFFFFF',
-          borderBottom: 'none',
-          backgroundColor: '#1E1E22',
-        },
-        render(row: ILiquidity) {
-          return (
-            <Text fontSize={px2rem(14)} textAlign={'left'}>
-              {new BigNumber(row?.fee || 0).div(10000).toString()}%
-            </Text>
-          );
-        },
-      },
+      // {
+      //   id: 'fee',
+      //   label: 'Fee',
+      //   labelConfig: {
+      //     fontSize: '12px',
+      //     fontWeight: '500',
+      //     color: '#B1B5C3',
+      //   },
+      //   config: {
+      //     color: '#FFFFFF',
+      //     borderBottom: 'none',
+      //     backgroundColor: '#1E1E22',
+      //   },
+      //   render(row: ILiquidity) {
+      //     return (
+      //       <Text fontSize={px2rem(14)} textAlign={'left'}>
+      //         {new BigNumber(row?.fee || 0).div(10000).toString()}%
+      //       </Text>
+      //     );
+      //   },
+      // },
       {
         id: 'tvl',
         label: 'TVL',
