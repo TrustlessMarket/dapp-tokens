@@ -8,11 +8,13 @@ import { abbreviateNumber, compareString, formatCurrency } from '@/utils';
 import { Flex, Text } from '@chakra-ui/react';
 import { useWeb3React } from '@web3-react/core';
 import moment from 'moment';
-import { useEffect, useMemo, useState } from 'react';
+import {useContext, useEffect, useMemo, useState} from 'react';
 import { RxArrowTopRight } from 'react-icons/rx';
 import { DEFAULT_FROM_TOKEN_ADDRESS } from '../Pools';
 import { StyledTokenTrading } from './Token.styled';
 import { px2rem, useWindowSize } from '@trustless-computer/dapp-core';
+import {WalletContext} from "@/contexts/wallet-context";
+import {IResourceChain} from "@/interfaces/chain";
 
 export const BASE_TOKEN_ETH_PAIR = '0x74B033e56434845E02c9bc4F0caC75438033b00D';
 
@@ -22,6 +24,9 @@ const TokenHistory = ({ data, isOwner }: { data: IToken; isOwner?: boolean }) =>
   const [loading, setLoading] = useState(true);
 
   const { mobileScreen } = useWindowSize();
+
+  const { getConnectedChainInfo } = useContext(WalletContext);
+  const chainInfo: IResourceChain = getConnectedChainInfo();
 
   useEffect(() => {
     getList();
@@ -34,6 +39,7 @@ const TokenHistory = ({ data, isOwner }: { data: IToken; isOwner?: boolean }) =>
         page: 1,
         limit: 100,
         user_address: isOwner ? account : '',
+        network: chainInfo?.chain?.toLowerCase()
       });
       setList(response);
     } catch (error) {

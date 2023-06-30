@@ -21,9 +21,11 @@ import {
 } from '@chakra-ui/react';
 import moment from 'moment';
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
+import {useContext, useEffect, useState} from 'react';
 import web3 from 'web3';
 import { DEFAULT_FROM_TOKEN_ADDRESS, ScreenType } from '../Pools';
+import {WalletContext} from "@/contexts/wallet-context";
+import {IResourceChain} from "@/interfaces/chain";
 
 const TokenPoolDetail = ({ paired }: { paired: any }) => {
   const router = useRouter();
@@ -145,6 +147,9 @@ const TokenListPaired = ({ data }: { data: IToken }) => {
 
   const router = useRouter();
 
+  const { getConnectedChainInfo } = useContext(WalletContext);
+  const chainInfo: IResourceChain = getConnectedChainInfo();
+
   useEffect(() => {
     getData();
   }, [data?.address]);
@@ -155,7 +160,10 @@ const TokenListPaired = ({ data }: { data: IToken }) => {
     }
 
     try {
-      const response: any = await getListPaired({ from_token: data.address });
+      const response: any = await getListPaired({
+        from_token: data.address,
+        network: chainInfo?.chain?.toLowerCase()
+      });
 
       setList(response || []);
     } catch (error) {

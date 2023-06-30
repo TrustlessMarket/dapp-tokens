@@ -63,9 +63,11 @@ export interface IUpdateTokenResponse {
 
 export const updateTokenInfo = (
   address: string,
+  params: any,
   payload: IUpdateTokenPayload,
 ): Promise<IUpdateTokenResponse> => {
-  return swrFetcher(`${API_EXCHANGE_URL}${API_PATH}/token/${address}`, {
+  const qs = '?' + queryString.stringify(params);
+  return swrFetcher(`${API_EXCHANGE_URL}${API_PATH}/token/${address}${qs}`, {
     method: 'PUT',
     data: payload,
     error: 'Failed to update token info',
