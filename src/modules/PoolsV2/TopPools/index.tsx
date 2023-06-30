@@ -7,13 +7,11 @@ import ListTable from "@/components/Swap/listTable";
 import React, {useContext, useEffect, useMemo, useState} from "react";
 import {WalletContext} from "@/contexts/wallet-context";
 import {IResourceChain} from "@/interfaces/chain";
-import {compareString, formatCurrency} from "@/utils";
+import {formatCurrency} from "@/utils";
 import {getListLiquidity} from "@/services/swap";
 import {ILiquidity} from "@/interfaces/liquidity";
 import {TRUSTLESS_MARKET_URL} from "@/configs";
 import {ROUTE_PATH} from "@/constants/route-path";
-import {USDC_ADDRESS, WBTC_ADDRESS, WETH_ADDRESS} from "@/constants/common";
-import {IToken} from "@/interfaces/token";
 import px2rem from "@/utils/px2rem";
 import {debounce} from "lodash";
 import {useWindowSize} from "@trustless-computer/dapp-core";
@@ -74,26 +72,6 @@ const TopPools = () => {
     );
   };
 
-  const BASE_ADDRESS = [WBTC_ADDRESS, WETH_ADDRESS, USDC_ADDRESS];
-
-  const sortTokens = (tokenA: IToken | undefined, tokenB: IToken | undefined) => {
-    if (compareString(USDC_ADDRESS, tokenA?.address)) {
-      return [tokenB, tokenA];
-    } else if (compareString(USDC_ADDRESS, tokenB?.address)) {
-      return [tokenA, tokenB];
-    } else if (
-      BASE_ADDRESS.some((address) => compareString(address, tokenA?.address))
-    ) {
-      return [tokenB, tokenA];
-    } else if (
-      BASE_ADDRESS.some((address) => compareString(address, tokenB?.address))
-    ) {
-      return [tokenA, tokenB];
-    } else {
-      return [tokenA, tokenB];
-    }
-  };
-
   const columns = useMemo(() => {
     return [
       {
@@ -114,8 +92,6 @@ const TopPools = () => {
           borderBottomLeftRadius: '8px',
         },
         render(row: ILiquidity) {
-          const [token0Obj, token1Obj] = sortTokens(row?.token0Obj, row?.token1Obj);
-
           return (
             <Flex fontSize={px2rem(14)} alignItems={'center'} gap={2}>
               <TopPoolsPair poolDetail={row}/>
