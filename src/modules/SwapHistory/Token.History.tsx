@@ -36,7 +36,7 @@ const TokenHistory = () => {
         address: account as string,
         page: 1,
         limit: 30,
-        network: chainInfo.chain.toLowerCase()
+        network: chainInfo?.chain?.toLowerCase()
       });
       setList(response || []);
     } catch (error) {}
