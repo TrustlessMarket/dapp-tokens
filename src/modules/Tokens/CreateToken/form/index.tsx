@@ -4,39 +4,34 @@
 import FiledButton from '@/components/Swap/button/filedButton';
 import InputWrapper from '@/components/Swap/form/inputWrapper';
 import WrapperConnected from '@/components/WrapperConnected';
-import { toastError } from '@/constants/error';
-import { IToken } from '@/interfaces/token';
-import { logErrorToServer } from '@/services/swap';
-import { useAppDispatch } from '@/state/hooks';
-import {
-  requestReload,
-  requestReloadRealtime,
-  updateCurrentTransaction,
-} from '@/state/pnftExchange';
+import {toastError} from '@/constants/error';
+import {IToken} from '@/interfaces/token';
+import {logErrorToServer} from '@/services/swap';
+import {useAppDispatch} from '@/state/hooks';
+import {requestReload, requestReloadRealtime, updateCurrentTransaction,} from '@/state/pnftExchange';
 import px2rem from '@/utils/px2rem';
-import { showError } from '@/utils/toast';
-import { Box, Flex, forwardRef, SimpleGrid, Text } from '@chakra-ui/react';
-import { useWeb3React } from '@web3-react/core';
+import {showError} from '@/utils/toast';
+import {Box, Flex, forwardRef, SimpleGrid, Text} from '@chakra-ui/react';
+import {useWeb3React} from '@web3-react/core';
 import cx from 'classnames';
-import { useRouter } from 'next/router';
-import React, { useImperativeHandle, useRef, useState } from 'react';
-import { Field, Form, useForm, useFormState } from 'react-final-form';
+import React, {useContext, useImperativeHandle, useRef, useState} from 'react';
+import {Field, Form, useForm, useFormState} from 'react-final-form';
 import toast from 'react-hot-toast';
 import styles from './styles.module.scss';
-import { createTokenInfo, IUpdateTokenPayload } from '@/services/token-explorer';
+import {createTokenInfo, IUpdateTokenPayload} from '@/services/token-explorer';
 import FieldText from '@/components/Swap/form/fieldText';
 import FileDropzoneUpload from '@/components/Swap/form/fileDropzoneUpload';
-import { uploadFile } from '@/services/file';
-import { composeValidators, required } from '@/utils/formValidate';
+import {uploadFile} from '@/services/file';
+import {composeValidators, required} from '@/utils/formValidate';
 import FieldAmount from '@/components/Swap/form/fieldAmount';
 import useContractOperation from '@/hooks/contract-operations/useContractOperation';
-import useCreateToken, {
-  ICreateTokenParams,
-} from '@/hooks/contract-operations/token/useCreateToken';
-import { DeployContractResponse } from '@/interfaces/contract-operation';
-import { TransactionStatus } from '@/components/Swap/alertInfoProcessing/interface';
-import { transactionType } from '@/components/Swap/alertInfoProcessing/types';
-import { BiUpload } from 'react-icons/bi';
+import useCreateToken, {ICreateTokenParams,} from '@/hooks/contract-operations/token/useCreateToken';
+import {DeployContractResponse} from '@/interfaces/contract-operation';
+import {TransactionStatus} from '@/components/Swap/alertInfoProcessing/interface';
+import {transactionType} from '@/components/Swap/alertInfoProcessing/types';
+import {BiUpload} from 'react-icons/bi';
+import {WalletContext} from "@/contexts/wallet-context";
+import {IResourceChain} from "@/interfaces/chain";
 
 export const MAX_FILE_SIZE = 1024 * 1024; // 375 MB
 
@@ -269,13 +264,14 @@ const CreateTokenForm = (props: any) => {
   const [submitting, setSubmitting] = useState(false);
   const dispatch = useAppDispatch();
   const { account } = useWeb3React();
-  const router = useRouter();
   const { run: createToken } = useContractOperation<
     ICreateTokenParams,
     DeployContractResponse | null
   >({
     operation: useCreateToken,
   });
+  const { getConnectedChainInfo } = useContext(WalletContext);
+  const chainInfo: IResourceChain = getConnectedChainInfo();
 
   const handleSubmit = async (values: any) => {
     try {
@@ -315,7 +311,7 @@ const CreateTokenForm = (props: any) => {
       };
 
       const params = {
-        network: 'tc',
+        network: chainInfo?.chain?.toLowerCase(),
         address: account,
       };
 
