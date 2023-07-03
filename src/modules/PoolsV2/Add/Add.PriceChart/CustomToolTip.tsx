@@ -22,7 +22,7 @@ interface CustomToolTipProps {
   currentPrice: number | undefined
 }
 
-export function CustomToolTip({ chartProps, poolData, currentPrice }: CustomToolTipProps) {
+export function CustomToolTip({ chartProps, poolData }: CustomToolTipProps) {
   const price0 = chartProps?.payload?.[0]?.payload.price0
   const price1 = chartProps?.payload?.[0]?.payload.price1
   const tvlToken0 = chartProps?.payload?.[0]?.payload.tvlToken0

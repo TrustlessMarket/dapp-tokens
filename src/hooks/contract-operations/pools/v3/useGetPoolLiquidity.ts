@@ -10,6 +10,7 @@ import {BigNumber} from "ethers";
 
 export interface IGetPoolLiquidityParams {
   poolAddress: string;
+  numSurroundingTicks?: number;
 }
 
 const useGetPoolLiquidity: ContractOperationHook<IGetPoolLiquidityParams, any> = () => {
@@ -17,7 +18,7 @@ const useGetPoolLiquidity: ContractOperationHook<IGetPoolLiquidityParams, any> =
 
   const call = useCallback(
     async (params: IGetPoolLiquidityParams): Promise<any> => {
-      const { poolAddress } = params;
+      const { poolAddress, numSurroundingTicks = 300 } = params;
       if (provider && poolAddress) {
         const contract = getContract(poolAddress, UniswapV3PoolJson, provider);
 
@@ -31,7 +32,7 @@ const useGetPoolLiquidity: ContractOperationHook<IGetPoolLiquidityParams, any> =
           fee,
           slot0.tick,
           liquidity,
-          100,
+          numSurroundingTicks,
         )
 
         return ticksProcessed;

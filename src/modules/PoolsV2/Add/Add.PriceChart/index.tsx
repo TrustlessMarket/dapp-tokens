@@ -75,7 +75,7 @@ interface ZoomStateProps {
   refAreaRight: string | number
 }
 
-const INITIAL_TICKS_TO_FETCH = 30
+const INITIAL_TICKS_TO_FETCH = 200
 const ZOOM_INTERVAL = 20
 
 const initialState = {
@@ -122,7 +122,7 @@ const AddPriceChart: React.FC<IAddPriceChart> = ({address, poolDetail}) => {
 
   useEffect(() => {
     async function fetch() {
-      const res = await getPoolLiquidity({poolAddress: address});
+      const res = await getPoolLiquidity({poolAddress: address, numSurroundingTicks: INITIAL_TICKS_TO_FETCH});
       if (res) {
         setTicksProcessed(res);
       }
