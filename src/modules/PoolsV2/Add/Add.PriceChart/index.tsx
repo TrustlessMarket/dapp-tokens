@@ -75,7 +75,7 @@ interface ZoomStateProps {
   refAreaRight: string | number
 }
 
-const INITIAL_TICKS_TO_FETCH = 200
+const INITIAL_TICKS_TO_FETCH = 300
 const ZOOM_INTERVAL = 20
 
 const initialState = {
@@ -269,7 +269,7 @@ const AddPriceChart: React.FC<IAddPriceChart> = ({address, poolDetail}) => {
         <ResponsiveContainer width="100%" height="100%">
           <BarChart
             width={500}
-            height={300}
+            height={200}
             data={zoomedData}
             margin={{
               top: 5,
