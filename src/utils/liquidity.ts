@@ -1,10 +1,15 @@
+/* eslint-disable react-hooks/rules-of-hooks */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable prefer-const */
+
 import axios from 'axios';
-import { BigNumber } from 'ethers';
-import { getMaxTick, getMinTick, getSqrtRatioAtTick, tickToPrice } from './number';
-import { TICK_SPACINGS } from './constants';
-import { FeeAmount } from './constants';
-import { getAmountsForLiquidity } from './utilities';
-const DEFAULT_SURROUNDING_TICKS = 300
+import {BigNumber} from 'ethers';
+import {getMaxTick, getMinTick, getSqrtRatioAtTick, tickToPrice} from './number';
+import {FeeAmount, TICK_SPACINGS} from './constants';
+import {getAmountsForLiquidity} from './utilities';
+
+const DEFAULT_SURROUNDING_TICKS = 30
 
 interface TickPool {
     tick: string
@@ -53,7 +58,7 @@ export const fetchInitializedTicks = async (
 ): Promise<Tick[]> => {
     let surroundingTicks: Tick[] = []
     let surroundingTicksResult: Tick[] = []
-    let response = await axios.get('https://dev.fprotocol.io/api/swap-v3/pool/surrounding-ticks', {
+    const response = await axios.get('https://dev.fprotocol.io/api/swap-v3/pool/surrounding-ticks', {
         params: {
             pool_address: poolAddress,
             lower_tick: tickIdxLowerBound,

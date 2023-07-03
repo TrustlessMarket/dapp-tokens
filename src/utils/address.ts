@@ -1,4 +1,4 @@
-import { isAddress } from '@ethersproject/address';
+import {isAddress} from '@ethersproject/address';
 
 export const formatAddress = (address?: string, length = 10): string => {
   if (!address) return '';
