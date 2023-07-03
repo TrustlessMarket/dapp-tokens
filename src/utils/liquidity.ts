@@ -9,7 +9,7 @@ import {getMaxTick, getMinTick, getSqrtRatioAtTick, tickToPrice} from './number'
 import {FeeAmount, TICK_SPACINGS} from './constants';
 import {getAmountsForLiquidity} from './utilities';
 
-const DEFAULT_SURROUNDING_TICKS = 30
+const DEFAULT_SURROUNDING_TICKS = 300
 
 interface TickPool {
     tick: string

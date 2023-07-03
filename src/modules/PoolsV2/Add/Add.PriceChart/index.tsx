@@ -5,7 +5,7 @@
 
 import React, {useCallback, useEffect, useMemo, useState} from "react";
 import useGetPoolLiquidity from "@/hooks/contract-operations/pools/v3/useGetPoolLiquidity";
-import {Bar, BarChart, Cell, ResponsiveContainer, XAxis} from 'recharts';
+import { BarChart, Bar, LabelList, XAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts'
 import styled from "styled-components";
 import {Flex, Spinner, useTheme} from "@chakra-ui/react";
 import {FeeAmount, TICK_SPACINGS} from '@uniswap/v3-sdk'
@@ -14,6 +14,8 @@ import {TickProcessed} from "@/utils/liquidity";
 import {isAddress} from "@/utils";
 import {formatEther} from "ethers/lib/utils";
 import {getCurrentTickIdx} from "@/utils/number";
+import {CurrentPriceLabel} from "@/modules/PoolsV2/Add/Add.PriceChart/CurrentPriceLabel";
+import CustomToolTip from "@/modules/PoolsV2/Add/Add.PriceChart/CustomToolTip";
 
 const Wrapper = styled.div`
   position: relative;
@@ -33,9 +35,9 @@ const ControlsWrapper = styled.div`
 `
 
 const ActionButton = styled.div<{ disabled?: boolean }>`
-  width: 32x;
+  width: 32px;
   border-radius: 50%;
-  background-color: black;
+  background-color: #000000;
   padding: 4px 8px;
   display: flex;
   justify-content: center;
@@ -43,7 +45,7 @@ const ActionButton = styled.div<{ disabled?: boolean }>`
   font-weight: 500;
   align-items: center;
   opacity: ${({ disabled }) => (disabled ? 0.4 : 0.9)};
-  background-color: ${({ theme, disabled }) => (disabled ? theme.bg3 : theme.bg2)};
+  background-color: ${({ theme, disabled }) => (disabled ? '#40444F' : '#2C2F36')};
   user-select: none;
 
   :hover {
@@ -91,7 +93,6 @@ interface IAddPriceChart {
 const AddPriceChart: React.FC<IAddPriceChart> = ({address, poolDetail}) => {
   const { call: getPoolLiquidity } = useGetPoolLiquidity();
   const [ticksProcessed, setTicksProcessed] = useState([]);
-  const theme = useTheme();
 
   // poolData
   const poolData = poolDetail;
@@ -279,11 +280,11 @@ const AddPriceChart: React.FC<IAddPriceChart> = ({address, poolDetail}) => {
               bottom: 60,
             }}
           >
-            {/*<Tooltip
+            <Tooltip
               content={(props) => (
-                <CustomToolTip chartProps={props} poolData={poolData} currentPrice={poolData.token0Price} />
+                <CustomToolTip chartProps={props} poolData={poolData} currentPrice={poolData.currentPrice} />
               )}
-            />*/}
+            />
             <XAxis reversed={true} tick={false} />
             <Bar
               dataKey="activeLiquidity"
@@ -295,13 +296,13 @@ const AddPriceChart: React.FC<IAddPriceChart> = ({address, poolDetail}) => {
               }}
             >
               {zoomedData?.map((entry, index) => {
-                return <Cell key={`cell-${index}`} fill={entry.isCurrent ? theme.pink1 : theme.blue1} />
+                return <Cell key={`cell-${index}`} fill={entry.isCurrent ? '#ff007a' : '#2172E5'} />
               })}
-              {/*<LabelList
+              <LabelList
                 dataKey="activeLiquidity"
                 position="inside"
                 content={(props) => <CurrentPriceLabel chartProps={props} poolData={poolData} data={zoomedData} />}
-              />*/}
+              />
             </Bar>
           </BarChart>
         </ResponsiveContainer>

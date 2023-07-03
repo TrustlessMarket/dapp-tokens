@@ -2,6 +2,7 @@
 import { BigNumber } from 'ethers';
 import bn from 'bignumber.js';
 import moment from 'moment';
+import numbro from "numbro";
 
 export const getMinTick = (tickSpacing: number) =>
   Math.ceil(-887272 / tickSpacing) * tickSpacing;
@@ -152,4 +153,21 @@ export const getCurrentTickIdx = (tick: number, tickSpacing: number) => {
   } else {
     return tick % tickSpacing == 0 ? tick : Math.floor(tick / tickSpacing) * tickSpacing
   }
+}
+
+// using a currency library here in case we want to add more in future
+export const formatAmount = (num: number | undefined, digits = 2) => {
+  if (num === 0) return '0'
+  if (!num) return '-'
+  if (num < 0.001) {
+    return '<0.001'
+  }
+  return numbro(num).format({
+    average: true,
+    mantissa: num > 1000 ? 2 : digits,
+    abbreviations: {
+      million: 'M',
+      billion: 'B',
+    },
+  })
 }

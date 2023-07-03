@@ -31,7 +31,7 @@ const useGetPoolLiquidity: ContractOperationHook<IGetPoolLiquidityParams, any> =
           fee,
           slot0.tick,
           liquidity,
-          30,
+          100,
         )
 
         return ticksProcessed;
