@@ -3,22 +3,17 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import FiledButton from '@/components/Swap/button/filedButton';
 import WrapperConnected from '@/components/WrapperConnected';
-import { toastError } from '@/constants/error';
 import VoteForm from '@/modules/ProposalDetail/voteForm';
-import { logErrorToServer } from '@/services/swap';
-import { useAppDispatch } from '@/state/hooks';
-import { closeModal, openModal } from '@/state/modal';
-import { updateCurrentTransaction } from '@/state/pnftExchange';
-import { showError } from '@/utils/toast';
-import { Box, Flex, forwardRef, Text } from '@chakra-ui/react';
-import { useWindowSize } from '@trustless-computer/dapp-core';
-import { useWeb3React } from '@web3-react/core';
-import { useImperativeHandle, useRef, useState } from 'react';
-import { Form, useForm } from 'react-final-form';
+import {useAppDispatch} from '@/state/hooks';
+import {closeModal, openModal} from '@/state/modal';
+import {Box, Flex, forwardRef, Text} from '@chakra-ui/react';
+import {useWindowSize} from '@trustless-computer/dapp-core';
+import {useWeb3React} from '@web3-react/core';
+import {useImperativeHandle, useRef, useState} from 'react';
+import {Form, useForm} from 'react-final-form';
 import styles from './styles.module.scss';
-import { ILaunchpad } from '@/interfaces/launchpad';
-import { TM_ADDRESS } from '@/configs';
-import { LAUNCHPAD_STATUS } from '@/modules/Launchpad/Launchpad.Status';
+import {ILaunchpad} from '@/interfaces/launchpad';
+import {TM_ADDRESS} from '@/configs';
 import px2rem from '@/utils/px2rem';
 
 export const MakeFormSwap = forwardRef((props, ref) => {

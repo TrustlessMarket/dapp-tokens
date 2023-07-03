@@ -26,6 +26,7 @@ import {
   validateMinRangeAmount,
 } from '../utils';
 import s from './styles.module.scss';
+import AddPriceChart from "@/modules/PoolsV2/Add/Add.PriceChart";
 
 interface IAddPriceRange {
   loading?: boolean;
@@ -266,6 +267,7 @@ const AddPriceRange: React.FC<IAddPriceRange> = ({ loading }) => {
               {quoteToken.symbol} per {baseToken.symbol}
             </Text>
           </Flex>
+          <AddPriceChart />
           <Flex mt={4} gap={2} className={s.formContainer__right__rangeContainer}>
             <Box className={s.formContainer__right__rangeContainer__item}>
               <Field
