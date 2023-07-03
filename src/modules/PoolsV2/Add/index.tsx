@@ -20,6 +20,9 @@ import { Form } from 'react-final-form';
 import { useDispatch } from 'react-redux';
 import FormAddPoolsV2Container from './form';
 import s from './styles.module.scss';
+import { closeModal, openModal } from '@/state/modal';
+import AddConfirm from './Add.Confirm';
+import { onShowAddLiquidityConfirm } from '../utils';
 
 type IPoolsV2AddPage = IPoolV2AddPair;
 
@@ -93,7 +96,7 @@ const PoolsV2AddPage: React.FC<IPoolsV2AddPage> = ({ ids }) => {
   return (
     <BodyContainer className={s.container}>
       <Box className={s.container__body}>
-        <Form onSubmit={onSubmit}>
+        <Form onSubmit={(e) => onShowAddLiquidityConfirm(e, onSubmit)}>
           {({ handleSubmit }) => (
             <FormAddPoolsV2Container
               submitting={submitting}

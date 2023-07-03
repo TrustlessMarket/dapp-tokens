@@ -20,6 +20,7 @@ import { Field, useForm, useFormState } from 'react-final-form';
 import { AiOutlineMinus, AiOutlinePlus } from 'react-icons/ai';
 import {
   allowStep,
+  handleChangeAmount,
   isPool,
   validateMaxRangeAmount,
   validateMinRangeAmount,
@@ -44,8 +45,35 @@ const AddPriceRange: React.FC<IAddPriceRange> = ({ loading }) => {
   const poolAddress: any = values?.poolAddress;
   const fee: FeeAmount = values?.fee;
   const currentPrice: any = values?.currentPrice;
+  const currentTick: number = values?.currentTick || 0;
   const tickLower: any = values?.tickLower || '0';
   const tickUpper: any = values?.tickUpper || '0';
+  const baseAmount: any = values?.baseAmount || undefined;
+  const quoteAmount: any = values?.baseAmount || undefined;
+
+  useEffect(() => {
+    if (tickLower && tickUpper && currentTick && baseAmount && quoteAmount) {
+      const _quoteAmount = handleChangeAmount('baseAmount', {
+        currentTick,
+        tickLower,
+        tickUpper,
+        _amount: baseAmount,
+      });
+
+      const _baseAmount = handleChangeAmount('quoteAmount', {
+        currentTick,
+        tickLower,
+        tickUpper,
+        _amount: quoteAmount,
+      });
+
+      restart({
+        ...values,
+        quoteAmount: _quoteAmount,
+        baseAmount: _baseAmount,
+      });
+    }
+  }, [tickLower, tickUpper, currentTick]);
 
   useEffect(() => {
     if (Boolean(baseToken) && Boolean(quoteToken)) {
@@ -74,6 +102,7 @@ const AddPriceRange: React.FC<IAddPriceRange> = ({ loading }) => {
       }
       change('poolAddress', response);
     } catch (error) {
+      console.log('errorerror', error);
     } finally {
       setPooling(false);
     }

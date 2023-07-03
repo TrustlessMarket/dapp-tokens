@@ -23,7 +23,7 @@ const useGetPoolAddress: ContractOperationHook<
   const call = useCallback(
     async (params: IGetPoolAddressParams): Promise<string> => {
       const { tokenA, tokenB, fee } = params;
-      if (provider) {
+      if (provider && tokenA && tokenB && fee) {
         const contract = getContract(
           UNIV3_FACTORY_ADDRESS,
           UniswapV3FactoryJson,

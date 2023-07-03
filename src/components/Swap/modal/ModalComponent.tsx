@@ -51,7 +51,7 @@ const ModalComponent = (props: ModalComponentProps) => {
           <Box flex={1}>
             <ModalHeader>{title}</ModalHeader>
           </Box>
-          <Box>
+          <Box className="btn-close-wrap">
             <ModalCloseButton size={'sm'} className="modal-close-btn" />
           </Box>
         </Flex>

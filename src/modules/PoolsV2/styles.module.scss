@@ -35,12 +35,49 @@
   }
 
   .topPoolBtn {
-    color: #FFFFFF;
+    color: #ffffff;
     border: 1px solid rgba(255, 255, 255, 0.1);
-    background-color: #0F0F0F!important;
+    background-color: #0f0f0f !important;
 
     &.isActive {
       background-color: #ebebeb33 !important;
+    }
+  }
+}
+
+.modalConfirm {
+  background-color: var(--bs-dark) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 15px !important;
+  :global {
+    .modal-header-wrap {
+      flex-direction: row;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      .chakra-modal__header {
+        padding: 0px;
+        text-align: center;
+        color: white;
+        line-height: 24px;
+        font-size: rem(16);
+      }
+      .btn-close-wrap {
+        position: absolute;
+        top: 0;
+        right: 0;
+        .chakra-modal__close-btn {
+          position: relative;
+          right: 0;
+          top: 0;
+          .chakra-icon {
+            color: white !important;
+          }
+        }
+      }
+    }
+    .chakra-modal__body {
+      padding: 0px !important;
     }
   }
 }

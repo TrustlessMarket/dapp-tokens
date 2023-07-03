@@ -1,17 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Avatar, Box, Flex, Text } from '@chakra-ui/react';
-import React from 'react';
-import s from './styles.module.scss';
-import { useFormState } from 'react-final-form';
-import { IToken } from '@/interfaces/token';
 import HorizontalItem from '@/components/Swap/horizontalItem';
 import { formatCurrency, getTokenIconUrl } from '@/utils';
+import { Avatar, Box, Flex, Text } from '@chakra-ui/react';
+import s from './styles.module.scss';
 
-const DetailPair = ({ amountValues, tickRange }: any) => {
-  const { values } = useFormState();
-  const tokenA: IToken = values?.tokenA;
-  const tokenB: IToken = values?.tokenB;
-
+const DetailPair = ({ amountValues, tickRange, tokenA, tokenB }: any) => {
   return (
     <Box className={s.container__body__pair}>
       <HorizontalItem

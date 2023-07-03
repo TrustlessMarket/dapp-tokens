@@ -360,3 +360,15 @@
     }
   }
 }
+
+.confirmAddLiquidityContainer {
+  &__title {
+    color: white !important;
+    font-weight: 500;
+  }
+  &__horizontalItem {
+    div {
+      color: white !important;
+    }
+  }
+}

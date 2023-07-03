@@ -25,6 +25,7 @@ import BigNumber from 'bignumber.js';
 import { useRouter } from 'next/router';
 import {
   forwardRef,
+  useCallback,
   useContext,
   useEffect,
   useImperativeHandle,
@@ -182,6 +183,8 @@ const FormAddPoolsV2Container = forwardRef<any, IFormAddPoolsV2Container>(
         tickUpper,
         _amount,
       });
+
+      console.log({ currentTick, tickLower, tickUpper, _amount, value });
 
       change('quoteAmount', value);
     };
