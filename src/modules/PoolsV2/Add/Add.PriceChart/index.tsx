@@ -244,8 +244,6 @@ const AddPriceChart: React.FC<IAddPriceChart> = ({address, poolDetail}) => {
     );
   }
 
-  console.log('formattedData', formattedData);
-
   const CustomBar = ({
                        x,
                        y,
@@ -285,7 +283,7 @@ const AddPriceChart: React.FC<IAddPriceChart> = ({address, poolDetail}) => {
                 <CustomToolTip chartProps={props} poolData={poolData} currentPrice={poolData.currentPrice} />
               )}
             />
-            <XAxis reversed={true} tick={false} />
+            <XAxis reversed={false} tick={false} />
             <Bar
               dataKey="activeLiquidity"
               fill="#2172E5"
@@ -298,11 +296,11 @@ const AddPriceChart: React.FC<IAddPriceChart> = ({address, poolDetail}) => {
               {zoomedData?.map((entry, index) => {
                 return <Cell key={`cell-${index}`} fill={entry.isCurrent ? '#ff007a' : '#2172E5'} />
               })}
-              <LabelList
+              {/*<LabelList
                 dataKey="activeLiquidity"
                 position="inside"
                 content={(props) => <CurrentPriceLabel chartProps={props} poolData={poolData} data={zoomedData} />}
-              />
+              />*/}
             </Bar>
           </BarChart>
         </ResponsiveContainer>

@@ -54,7 +54,28 @@ export function CustomToolTip({ chartProps, poolData, currentPrice }: CustomTool
             {poolData?.token0?.symbol}
           </Text>
         </RowBetween>
-        {currentPrice && price0 && currentPrice > price1 ? (
+        {
+          tvlToken0 > 0 && (
+            <RowBetween>
+              <Text fontWeight={500} color='#FFFFFF'>{poolData?.token0?.symbol} Locked: </Text>
+              <Text fontWeight={500} color='#FFFFFF'>
+                {tvlToken0 ? formatAmount(tvlToken0) : ''} {poolData?.token0?.symbol}
+              </Text>
+            </RowBetween>
+          )
+        }
+        {
+          tvlToken1 > 0 && (
+            <RowBetween>
+              <Text fontWeight={500} color='#FFFFFF'>{poolData?.token1?.symbol} Locked: </Text>
+              <Text fontWeight={500} color='#FFFFFF'>
+                {tvlToken1 ? formatAmount(tvlToken1) : ''} {poolData?.token1?.symbol}
+              </Text>
+            </RowBetween>
+          )
+        }
+
+        {/*{currentPrice && price0 && currentPrice > price1 ? (
           <RowBetween>
             <Text fontWeight={500} color='#FFFFFF'>{poolData?.token0?.symbol} Locked: </Text>
             <Text fontWeight={500} color='#FFFFFF'>
@@ -68,7 +89,7 @@ export function CustomToolTip({ chartProps, poolData, currentPrice }: CustomTool
               {tvlToken1 ? formatAmount(tvlToken1) : ''} {poolData?.token1?.symbol}
             </Text>
           </RowBetween>
-        )}
+        )}*/}
       </AutoColumn>
     </TooltipWrapper>
   )
