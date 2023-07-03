@@ -15,7 +15,7 @@ import {
 } from '@chakra-ui/react';
 import BigNumber from 'bignumber.js';
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
+import {useContext, useEffect, useState} from 'react';
 import {
   StyledHistoryContentContainer,
   StyledLeftContentContainer,
@@ -23,7 +23,6 @@ import {
   StyledTokenDetailContainer,
   StyledTokenTopInfo,
 } from './Token.styled';
-// import TokenChart from './Token.Chart';
 import { CDN_URL } from '@/configs';
 import { IToken } from '@/interfaces/token';
 import { getChartToken, getTokenRp } from '@/services/swap';
@@ -34,6 +33,8 @@ import TokenLeftInfo from './Token.LeftInfo';
 import TokenTopInfo from './Token.TopInfo';
 import { useWeb3React } from '@web3-react/core';
 import { useScreenLayout } from '@/hooks/useScreenLayout';
+import {WalletContext} from "@/contexts/wallet-context";
+import {IResourceChain} from "@/interfaces/chain";
 
 const TokenChart = dynamic(() => import('./Token.Chart'), {
   ssr: false,
@@ -51,6 +52,9 @@ const TokenDetail = () => {
 
   const { account, isActive } = useWeb3React();
 
+  const { getConnectedChainInfo } = useContext(WalletContext);
+  const chainInfo: IResourceChain = getConnectedChainInfo();
+
   useEffect(() => {
     if (address) {
       getData();
@@ -66,10 +70,12 @@ const TokenDetail = () => {
       const [resToken, resChart] = await Promise.all([
         getTokenRp({
           address,
+          network: chainInfo?.chain?.toLowerCase()
         }),
         getChartToken({
           contract_address: address,
           chart_type: 'minute',
+          network: chainInfo?.chain?.toLowerCase()
         }),
       ]);
       if (resToken.length === 0) {

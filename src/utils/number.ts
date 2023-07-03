@@ -29,7 +29,7 @@ export function tickToPrice(tick?: number): number {
 }
 
 export function getSqrtRatioAtTick(tick: number): BigNumber {
-  const absTick = tick < 0 ? BigNumber.from(-tick) : BigNumber.from(tick);
+  const absTick = Number(tick) < 0 ? BigNumber.from(-tick) : BigNumber.from(tick);
   if (absTick.gt(MAX_TICK)) throw 'T';
   let ratio = !absTick.and(BigNumber.from(0x1)).eq(BigNumber.from(0))
     ? BigNumber.from('0xfffcb933bd6fad37aa2d162d1a594001')

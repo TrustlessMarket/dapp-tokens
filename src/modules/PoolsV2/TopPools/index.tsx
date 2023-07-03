@@ -20,7 +20,7 @@ import {useWeb3React} from "@web3-react/core";
 import TopPoolsPair from "@/modules/PoolsV2/TopPools/TopPools.Pair";
 import TopPoolsItem from "@/modules/PoolsV2/TopPools/TopPools.Item";
 
-const LIMIT_PAGE = 30;
+const LIMIT_PAGE = 100;
 
 const TopPools = () => {
   const [liquidityList, setLiquidityList] = useState<any[]>([]);

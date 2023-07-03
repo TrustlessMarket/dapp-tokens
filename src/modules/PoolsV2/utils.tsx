@@ -2,6 +2,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { NULL_ADDRESS } from '@/constants/url';
 import { IPosition } from '@/interfaces/position';
+import store from '@/state';
+import { closeModal, openModal } from '@/state/modal';
 import { compareString, formatCurrency } from '@/utils';
 import { FeeAmount, MaxUint128 } from '@/utils/constants';
 import { getSqrtRatioAtTick } from '@/utils/number';
@@ -11,6 +13,8 @@ import { ethers } from 'ethers';
 import { isNumber } from 'lodash';
 import { IoWarning } from 'react-icons/io5';
 import { RxCircleBackslash, RxDotFilled } from 'react-icons/rx';
+import AddConfirm from './Add/Add.Confirm';
+import s from './styles.module.scss';
 
 export const isPool = (address: string): boolean => {
   if (address && !compareString(address, NULL_ADDRESS)) {
@@ -94,11 +98,9 @@ export const validateMaxRangeAmount = (_amount: any, values: any) => {
 
 export const handleChangeAmount = (
   type: 'baseAmount' | 'quoteAmount',
-  { _amount, currentTick, tickLower, tickUpper }: any,
+  { _amount = 0, currentTick, tickLower, tickUpper }: any,
 ) => {
   try {
-    console.log('currentTick', currentTick);
-
     const [baseAmount, quoteAmount] = amountDesiredChanged(
       currentTick,
       tickLower,
@@ -110,8 +112,6 @@ export const handleChangeAmount = (
       type === 'baseAmount' ? quoteAmount : baseAmount,
     );
   } catch (error) {
-    console.log('error', error);
-
     return 0;
   }
 };
@@ -176,9 +176,10 @@ export const getPooledAmount = (positionDetail?: IPosition) => {
   }
 };
 
-export const getRangeTick = (positionDetail?: IPosition) => {
+export const getRangeTick = (positionDetail?: IPosition, amounts: any[] = []) => {
   try {
-    const [amount0, amount1] = getPooledAmount(positionDetail);
+    const [amount0, amount1] =
+      amounts?.length === 0 ? getPooledAmount(positionDetail) : amounts;
 
     if (Number(amount0) > 0 && Number(amount1) > 0) {
       const tickUpper: any = positionDetail?.tickUpper;
@@ -251,5 +252,33 @@ export const getRangeTick = (positionDetail?: IPosition) => {
       percents: ['0', '0'],
       isRange: false,
     };
+  }
+};
+
+export const onShowAddLiquidityConfirm = async (
+  values: any,
+  onSubmit: (_: any) => void,
+) => {
+  try {
+    const id = 'addLiquidityV3';
+    const onClose = () => store.dispatch(closeModal({ id }));
+    store.dispatch(
+      openModal({
+        id,
+        theme: 'dark',
+        title: `Add Liquidity`,
+        className: s.modalConfirm,
+        modalProps: {
+          centered: true,
+          // size: mobileScreen ? 'full' : 'xl',
+          zIndex: 1,
+        },
+        render: () => (
+          <AddConfirm onSubmit={onSubmit} values={values} onClose={onClose} />
+        ),
+      }),
+    );
+  } catch (error) {
+    throw error;
   }
 };

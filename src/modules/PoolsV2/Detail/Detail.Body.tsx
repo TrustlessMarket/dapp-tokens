@@ -97,6 +97,8 @@ const DetailBody: React.FC<IDetailBody> = ({ positionDetail }) => {
             </Text>
             <Box mt={6} />
             <DetailPair
+              tokenA={tokenA}
+              tokenB={tokenB}
               amountValues={
                 isRevert
                   ? getPooledAmount(positionDetail).reverse()
@@ -120,7 +122,11 @@ const DetailBody: React.FC<IDetailBody> = ({ positionDetail }) => {
               <DetailClaimFee positionDetail={positionDetail} />
             </Flex>
             <Box mt={6} />
-            <DetailPair amountValues={isRevert ? fees.reverse() : fees} />
+            <DetailPair
+              tokenA={tokenA}
+              tokenB={tokenB}
+              amountValues={isRevert ? fees.reverse() : fees}
+            />
           </Box>
         </Flex>
       </GridItem>

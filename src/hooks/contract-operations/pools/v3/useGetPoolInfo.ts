@@ -33,14 +33,16 @@ const useGetPoolInfo: ContractOperationHook<IGetPoolInfoParams, any> = () => {
         const [token0] = sortAddressPair(baseToken, quoteToken);
 
         let currentPrice = formatSqrtPriceX96ToPrice(transaction.sqrtPriceX96);
+        let currentTick = transaction.tick;
 
         if (compareString(token0.address, quoteToken.address)) {
           currentPrice = new BigNumber(1).dividedBy(currentPrice).toString();
+          currentTick = new BigNumber(-1).multipliedBy(currentTick).toNumber();
         }
 
         return {
           currentPrice,
-          currentTick: transaction.tick,
+          currentTick,
         };
       }
 

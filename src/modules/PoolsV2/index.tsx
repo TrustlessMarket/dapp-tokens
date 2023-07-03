@@ -10,8 +10,6 @@ import {ROUTE_PATH} from '@/constants/route-path';
 import {L2_ETH_ADDRESS} from '@/configs';
 import {useRouter} from "next/router";
 import TopPools from "@/modules/PoolsV2/TopPools";
-import MyPositions from "@/modules/PoolsV2/MyPositions";
-import cx from 'classnames';
 
 const PoolsV2Page = () => {
   const [loading, setLoading] = useState<boolean>(false);

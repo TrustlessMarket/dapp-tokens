@@ -4,48 +4,32 @@
 import FiledButton from '@/components/Swap/button/filedButton';
 import InputWrapper from '@/components/Swap/form/inputWrapper';
 import WrapperConnected from '@/components/WrapperConnected';
-import { toastError } from '@/constants/error';
-import { IToken } from '@/interfaces/token';
-import { logErrorToServer } from '@/services/swap';
-import { useAppDispatch, useAppSelector } from '@/state/hooks';
-import {
-  requestReload,
-  requestReloadRealtime,
-  selectPnftExchange,
-} from '@/state/pnftExchange';
-import { getIsAuthenticatedSelector } from '@/state/user/selector';
+import {toastError} from '@/constants/error';
+import {IToken} from '@/interfaces/token';
+import {logErrorToServer} from '@/services/swap';
+import {useAppDispatch, useAppSelector} from '@/state/hooks';
+import {requestReload, requestReloadRealtime, selectPnftExchange,} from '@/state/pnftExchange';
+import {getIsAuthenticatedSelector} from '@/state/user/selector';
 import px2rem from '@/utils/px2rem';
-import { showError } from '@/utils/toast';
-import {
-  Box,
-  Center,
-  Flex,
-  forwardRef,
-  Grid,
-  GridItem,
-  Text,
-} from '@chakra-ui/react';
-import { useWeb3React } from '@web3-react/core';
+import {showError} from '@/utils/toast';
+import {Box, Center, Flex, forwardRef, Grid, GridItem, Text,} from '@chakra-ui/react';
+import {useWeb3React} from '@web3-react/core';
 import cx from 'classnames';
-import { useRouter } from 'next/router';
-import { useEffect, useImperativeHandle, useRef, useState } from 'react';
-import { Field, Form, useForm, useFormState } from 'react-final-form';
+import {useRouter} from 'next/router';
+import {useContext, useEffect, useImperativeHandle, useRef, useState} from 'react';
+import {Field, Form, useForm, useFormState} from 'react-final-form';
 import toast from 'react-hot-toast';
-import { useSelector } from 'react-redux';
+import {useSelector} from 'react-redux';
 import styles from './styles.module.scss';
-import {
-  getTokenDetail,
-  IUpdateTokenPayload,
-  updateTokenInfo,
-} from '@/services/token-explorer';
+import {getTokenDetail, IUpdateTokenPayload, updateTokenInfo,} from '@/services/token-explorer';
 import FieldText from '@/components/Swap/form/fieldText';
 import FileDropzoneUpload from '@/components/Swap/form/fileDropzoneUpload';
-import { uploadFile } from '@/services/file';
-import { compareString, formatCurrency, shortenAddress } from '@/utils';
-import BigNumber from 'bignumber.js';
-import { decimalToExponential } from '@/utils/format';
-import { ROUTE_PATH } from '@/constants/route-path';
-import { composeValidators, isTwitter } from '@/utils/formValidate';
+import {uploadFile} from '@/services/file';
+import {compareString, formatCurrency, shortenAddress} from '@/utils';
+import {ROUTE_PATH} from '@/constants/route-path';
+import {composeValidators, isTwitter} from '@/utils/formValidate';
+import {WalletContext} from "@/contexts/wallet-context";
+import {IResourceChain} from "@/interfaces/chain";
 
 export const MAX_FILE_SIZE = 1024 * 1024; // 375 MB
 
@@ -410,6 +394,8 @@ const TradingForm = () => {
   const dispatch = useAppDispatch();
   const { account } = useWeb3React();
   const router = useRouter();
+  const { getConnectedChainInfo } = useContext(WalletContext);
+  const chainInfo: IResourceChain = getConnectedChainInfo();
 
   const handleSubmit = async (values: any) => {
     const { tokenInfo } = values;
@@ -432,7 +418,11 @@ const TradingForm = () => {
         },
       };
 
-      const response = await updateTokenInfo(tokenInfo?.address, data);
+      const params = {
+        network: chainInfo?.chain?.toLowerCase()
+      }
+
+      const response = await updateTokenInfo(tokenInfo?.address, params, data);
 
       router.push(`${ROUTE_PATH.TOKEN}?address=${tokenInfo?.address}`);
       toast.success('Update token info successfully!');

@@ -29,7 +29,7 @@ const TopPoolsItem: React.FC<ITopPoolsItem> = ({poolDetail,columns}) => {
 
   const hasPositions = useMemo(() => {
     return (poolDetail?.positions?.length || 0) > 0;
-  }, [JSON.stringify(poolDetail)]);
+  }, [JSON.stringify(poolDetail?.positions)]);
 
   const { mobileScreen } = useWindowSize();
 

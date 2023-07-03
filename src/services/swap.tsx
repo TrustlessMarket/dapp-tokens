@@ -16,6 +16,7 @@ export const getTokenRp = async (
     sort?: string;
     sort_type?: number;
     search?: string;
+    network?: string;
   },
 ): Promise<IToken[]> => {
   const qs = '?' + queryString.stringify(params);
@@ -85,6 +86,7 @@ export const getChartToken = async (
   params: {
     contract_address: string;
     chart_type: string;
+    network?: string;
   } & IPagingParams,
 ) => {
   const qs = '?' + queryString.stringify(params);
@@ -98,6 +100,7 @@ export const getTradeHistory = async (
   params: {
     contract_address: string;
     user_address?: string;
+    network?: string;
   } & IPagingParams,
 ) => {
   const qs = '?' + queryString.stringify(params);

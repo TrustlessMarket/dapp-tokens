@@ -118,10 +118,10 @@ const FieldAmount = (props: FieldAmountProps) => {
               maxLength={maxLength}
               onChange={handleChange}
               onFocus={onFocus}
-              onBlur={(e) => {
+              onBlur={(e: any) => {
                 onBlur();
                 e?.target?.blur();
-                blurFieldChanged?.(e.target.value);
+                blurFieldChanged?.(e.target.rawValue);
               }}
               options={{
                 numeral: true,
