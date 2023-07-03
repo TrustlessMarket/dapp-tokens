@@ -13,6 +13,7 @@ export const ROUTE_PATH = {
   SWAP: '/swap',
   SWAP_V2: '/swap/v2',
   MARKETS: '/markets',
+  MARKETS_V2: '/markets/v2',
   GET_STARTED: '/get-started',
   TOKEN: '/token',
   UPDATE_TOKEN_INFO: '/update-token-info',

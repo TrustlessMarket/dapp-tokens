@@ -16,29 +16,34 @@ import {useWindowSize} from '@trustless-computer/dapp-core';
 import {gsap} from 'gsap';
 import Link from 'next/link';
 import {useRouter} from 'next/router';
-import {useEffect, useRef, useState} from 'react';
+import {useEffect, useMemo, useRef, useState} from 'react';
 import {Wrapper} from './Header.styled';
 import MenuMobile from './MenuMobile';
 import WalletHeader from './Wallet';
 import Banner from './banner';
+import HeaderSwitchNetwork from "@/layouts/Header/Header.SwitchNetwork";
+import {useSelector} from "react-redux";
+import {selectPnftExchange} from "@/state/pnftExchange";
+import {compareString} from "@/utils";
+import {L2_CHAIN_INFO} from "@/constants/chains";
 
 export const isScreenDarkMode = () => {
   return true;
 };
 
-export const HEADER_MENUS = () => ([
+export const HEADER_MENUS = (currentSelectedChain: any) => ([
   {
-    key: ROUTE_PATH.MARKETS,
-    route: ROUTE_PATH.MARKETS,
+    key: compareString(currentSelectedChain?.chain, L2_CHAIN_INFO.chain) ? ROUTE_PATH.MARKETS_V2 : ROUTE_PATH.MARKETS,
+    route: compareString(currentSelectedChain?.chain, L2_CHAIN_INFO.chain) ? ROUTE_PATH.MARKETS_V2 : ROUTE_PATH.MARKETS,
     name: 'Markets',
   },
   {
-    key: ROUTE_PATH.SWAP,
-    route: `${ROUTE_PATH.SWAP}?from_token=${WETH_ADDRESS}&to_token=${GM_ADDRESS}`,
+    key: compareString(currentSelectedChain?.chain, L2_CHAIN_INFO.chain) ? ROUTE_PATH.SWAP_V2 : ROUTE_PATH.SWAP,
+    route: `${compareString(currentSelectedChain?.chain, L2_CHAIN_INFO.chain) ? ROUTE_PATH.SWAP_V2 : ROUTE_PATH.SWAP}?from_token=${WETH_ADDRESS}&to_token=${GM_ADDRESS}`,
     name: 'Swap',
   },
   {
-    key: ROUTE_PATH.POOLS,
+    key: compareString(currentSelectedChain?.chain, L2_CHAIN_INFO.chain) ? ROUTE_PATH.POOLS_V2 : ROUTE_PATH.POOLS,
     route: ROUTE_PATH.POOLS,
     name: 'Pools',
   },
@@ -61,6 +66,7 @@ const Header = () => {
   const router = useRouter();
   const { headerHeight, showGetStarted, showLaunchpadGetStarted, showBannerPromotion, bannerHeight } =
     useScreenLayout();
+  const currentSelectedChain = useSelector(selectPnftExchange).currentChain;
 
   // const isTokensPage = useMemo(() => {
   //   return isScreenDarkMode();
@@ -80,6 +86,11 @@ const Header = () => {
     }
   }, [isOpenMenu]);
 
+  const headerMenu = useMemo(() => {
+    return HEADER_MENUS(currentSelectedChain);
+  }, [currentSelectedChain.chain]);
+
+
   return (
     <Wrapper style={{ height: headerHeight, margin: '0 auto' }}>
       <div
@@ -98,7 +109,7 @@ const Header = () => {
           {!mobileScreen && (
             <div className={'leftContainer'}>
               <div className="external-link">
-                {HEADER_MENUS().map((m) => (
+                {headerMenu.map((m) => (
                   <Link
                     key={m.route}
                     href={m.route}
@@ -112,6 +123,9 @@ const Header = () => {
           )}
         </div>
         <MenuMobile ref={refMenu} onCloseMenu={() => setIsOpenMenu(false)} />
+        <div className={"centerContainer"}>
+          <HeaderSwitchNetwork />
+        </div>
         <div className="rightContainer">
           {mobileScreen ? (
             <button className="btnMenuMobile" onClick={() => setIsOpenMenu(true)}>
