@@ -13,6 +13,7 @@ import {Token} from '@uniswap/sdk-core'
 import {TickProcessed} from "@/utils/liquidity";
 import {isAddress} from "@/utils";
 import {formatEther} from "ethers/lib/utils";
+import {getCurrentTickIdx} from "@/utils/number";
 
 const Wrapper = styled.div`
   position: relative;
@@ -151,10 +152,10 @@ const AddPriceChart: React.FC<IAddPriceChart> = ({address, poolDetail}) => {
   useEffect(() => {
     async function formatData() {
       if (ticksProcessed) {
+        console.log('ticksProcessed aaaa', ticksProcessed);
         const newData = await Promise.all(
           ticksProcessed.map(async (t: TickProcessed, i) => {
-            console.log('ticksProcessed tttt', t);
-            const active = t.tickIdx === (Math.floor(poolDetail.rootCurrentTick/TICK_SPACINGS[feeTier]) * TICK_SPACINGS[feeTier])
+            const active = t.tickIdx === getCurrentTickIdx(poolDetail.rootCurrentTick, TICK_SPACINGS[feeTier]);
             return {
               index: i,
               isCurrent: active,
@@ -167,12 +168,12 @@ const AddPriceChart: React.FC<IAddPriceChart> = ({address, poolDetail}) => {
           })
         )
         // offset the values to line off bars with TVL used to swap across bar
-        newData?.map((entry, i) => {
-          if (i > 0) {
-            newData[i - 1].tvlToken0 = entry.tvlToken0
-            newData[i - 1].tvlToken1 = entry.tvlToken1
-          }
-        })
+        // newData?.map((entry, i) => {
+        //   if (i > 0) {
+        //     newData[i - 1].tvlToken0 = entry.tvlToken0
+        //     newData[i - 1].tvlToken1 = entry.tvlToken1
+        //   }
+        // })
 
         if (newData) {
           if (loading) {

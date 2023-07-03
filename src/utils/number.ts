@@ -145,3 +145,11 @@ export const Q32 = BigNumber.from(2).pow(32);
 export const MAX_TICK = BigNumber.from(887272);
 export const getDeadline = () =>
   BigNumber.from(moment().add(30, 'seconds').unix().toString());
+
+export const getCurrentTickIdx = (tick: number, tickSpacing: number) => {
+  if (tick >= 0) {
+    return tick % tickSpacing == 0 ? tick : Math.floor(tick / tickSpacing) * tickSpacing
+  } else {
+    return tick % tickSpacing == 0 ? tick : Math.floor(tick / tickSpacing) * tickSpacing
+  }
+}
