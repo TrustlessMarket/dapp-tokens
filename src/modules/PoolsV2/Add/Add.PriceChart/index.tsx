@@ -20,13 +20,13 @@ import CustomToolTip from "@/modules/PoolsV2/Add/Add.PriceChart/CustomToolTip";
 const Wrapper = styled.div`
   position: relative;
   width: 100%;
-  height: 400px;
+  height: 275px;
 `
 
 const ControlsWrapper = styled.div`
   position: absolute;
   right: 40px;
-  bottom: 100px;
+  bottom: 50px;
   padding: 4px;
   border-radius: 8px;
   display: grid;
@@ -187,7 +187,6 @@ const AddPriceChart: React.FC<IAddPriceChart> = ({address, poolDetail}) => {
         return []
       }
     }
-    console.log('formattedData', formattedData);
     if (!formattedData || formattedData?.length <= 0) {
       formatData()
     }
@@ -269,13 +268,13 @@ const AddPriceChart: React.FC<IAddPriceChart> = ({address, poolDetail}) => {
         <ResponsiveContainer width="100%" height="100%">
           <BarChart
             width={500}
-            height={200}
+            height={400}
             data={zoomedData}
             margin={{
               top: 5,
               right: 30,
               left: 20,
-              bottom: 60,
+              bottom: 0,
             }}
           >
             <Tooltip
