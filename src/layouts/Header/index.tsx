@@ -90,7 +90,6 @@ const Header = () => {
     return HEADER_MENUS(currentSelectedChain);
   }, [currentSelectedChain.chain]);
 
-
   return (
     <Wrapper style={{ height: headerHeight, margin: '0 auto' }}>
       <div
