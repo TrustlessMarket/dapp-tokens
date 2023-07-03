@@ -213,9 +213,6 @@ const TopPoolsItem: React.FC<ITopPoolsItem> = ({poolDetail,columns}) => {
                 columns={columnsPosition}
                 showEmpty={false}
                 onItemClick={(e: IPosition) => {
-                  if (!e.pair?.pair) {
-                    return null;
-                  }
                   return router.push(`${ROUTE_PATH.POOLS_V2}/${e.id}`);
                 }}
               />
