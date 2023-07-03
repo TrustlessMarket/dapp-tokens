@@ -7,9 +7,9 @@ import BigNumber from 'bignumber.js';
 import { useRouter } from 'next/router';
 import React from 'react';
 import { BiChevronLeft } from 'react-icons/bi';
-import web3 from 'web3';
-import s from './styles.module.scss';
 import PoolsV2PositionStatus from '../PoolsV2.PositionStatus';
+import DetailIncrease from './Detail.Increase';
+import s from './styles.module.scss';
 
 interface IDetailHeader {
   positionDetail?: IPosition;
@@ -55,25 +55,14 @@ const DetailHeader: React.FC<IDetailHeader> = ({ positionDetail }) => {
             </Text>
             <Box className={s.container__percent}>
               {positionDetail?.fee
-                ? new BigNumber(web3.utils.toWei(positionDetail?.fee))
-                    .dividedBy(10000)
-                    .toString()
+                ? new BigNumber(positionDetail?.fee).dividedBy(10000).toString()
                 : '0'}
               %
             </Box>
             <PoolsV2PositionStatus positionDetail={positionDetail} />
           </Flex>
           <Flex gap={2}>
-            <FiledButton
-              btnSize="l"
-              className={s.increaseLiquidityBtn}
-              isDisabled={!Boolean(positionDetail)}
-              onClick={() =>
-                router.push(`${ROUTE_PATH.POOLS_V2_ADD}/${positionDetail?.id}`)
-              }
-            >
-              Increase Liquidity
-            </FiledButton>
+            <DetailIncrease positionDetail={positionDetail} />
             <FiledButton
               isDisabled={!Boolean(positionDetail)}
               onClick={() =>

@@ -29,4 +29,5 @@ export const ROUTE_PATH = {
   POOLS_V2: '/pools/v2',
   POOLS_V2_ADD: '/pools/v2/add',
   POOLS_V2_REMOVE: '/pools/v2/remove',
+  POOLS_V2_INCREASE: '/pools/v2/increase',
 };

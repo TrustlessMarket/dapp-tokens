@@ -13,7 +13,7 @@ import { getDeadline } from '@/utils/number';
 import { useWeb3React } from '@web3-react/core';
 import { useCallback } from 'react';
 import web3 from 'web3';
-import {scanTrx} from "@/services/swap-v3";
+import { scanTrx } from '@/services/swap-v3';
 
 export interface IIncreaseLiquidityV3 {
   tokenId: number;
@@ -54,7 +54,7 @@ const useIncreaseLiquidityV3: ContractOperationHook<
 
         store.dispatch(
           updateCurrentTransaction({
-            id: transactionType.removePoolApprove,
+            id: transactionType.createPool,
             status: TransactionStatus.pending,
             infoTexts: {
               pending: 'Transaction submitting...',

@@ -19,21 +19,22 @@ import s from './styles.module.scss';
 
 interface IAddConfirm {
   values: {
-    baseToken: IToken;
-    quoteToken: IToken;
+    baseToken?: IToken | undefined;
+    quoteToken?: IToken | undefined;
     tickUpper: any;
     tickLower: any;
     currentTick: any;
     baseAmount: any;
     quoteAmount: any;
     fee: any;
+    reFee: any;
     currentSelectPair: any;
     minPrice: any;
     maxPrice: any;
     currentPrice: any;
   };
   onClose: () => void;
-  onSubmit: (_: any) => void;
+  onSubmit?: (_: any) => void;
 }
 
 const AddConfirm: React.FC<IAddConfirm> = ({ values, onClose, onSubmit }) => {
@@ -45,7 +46,7 @@ const AddConfirm: React.FC<IAddConfirm> = ({ values, onClose, onSubmit }) => {
     currentTick,
     quoteAmount,
     baseAmount,
-    fee,
+    reFee,
     currentSelectPair,
     minPrice,
     maxPrice,
@@ -72,7 +73,7 @@ const AddConfirm: React.FC<IAddConfirm> = ({ values, onClose, onSubmit }) => {
   };
 
   const onClick = () => {
-    onSubmit(values);
+    onSubmit?.(values);
     onClose();
   };
 
@@ -87,7 +88,7 @@ const AddConfirm: React.FC<IAddConfirm> = ({ values, onClose, onSubmit }) => {
             <Avatar src={getTokenIconUrl(quoteToken)} />
           </AvatarGroup>
           <Text className={s.confirmAddLiquidityContainer__title}>
-            {baseToken.symbol} / {quoteToken.symbol}
+            {baseToken?.symbol} / {quoteToken?.symbol}
           </Text>
         </Flex>
         <PoolsV2PositionStatus
@@ -111,7 +112,7 @@ const AddConfirm: React.FC<IAddConfirm> = ({ values, onClose, onSubmit }) => {
       <HorizontalItem
         className={s.confirmAddLiquidityContainer__horizontalItem}
         label={'Free Tier'}
-        value={`${fee / 10000 / 2}%`}
+        value={`${reFee / 10000}%`}
       />
       <Divider borderColor={'#718096'} />
       <Flex alignItems={'center'} justifyContent={'space-between'}>
@@ -131,11 +132,11 @@ const AddConfirm: React.FC<IAddConfirm> = ({ values, onClose, onSubmit }) => {
             {formatCurrency(min)}
           </Text>
           <Text>
-            {tokenA.symbol} per {tokenB.symbol}
+            {tokenA?.symbol} per {tokenB?.symbol}
           </Text>
           {isRange && (
             <Text textAlign={'center'} className={sDetail.itemRangeContainer__note}>
-              Your position will be 100% {quoteToken.symbol} at this price.
+              Your position will be 100% {quoteToken?.symbol} at this price.
             </Text>
           )}
         </Flex>
@@ -145,11 +146,11 @@ const AddConfirm: React.FC<IAddConfirm> = ({ values, onClose, onSubmit }) => {
             {formatCurrency(maxPrice)}
           </Text>
           <Text>
-            {tokenA.symbol} per {tokenB.symbol}
+            {tokenA?.symbol} per {tokenB?.symbol}
           </Text>
           {isRange && (
             <Text textAlign={'center'} className={sDetail.itemRangeContainer__note}>
-              Your position will be 100% {baseToken.symbol} at this price.
+              Your position will be 100% {baseToken?.symbol} at this price.
             </Text>
           )}
         </Flex>
@@ -161,13 +162,15 @@ const AddConfirm: React.FC<IAddConfirm> = ({ values, onClose, onSubmit }) => {
           {formatCurrency(currentPrice)}
         </Text>
         <Text>
-          {tokenA.symbol} per {tokenB.symbol}
+          {tokenA?.symbol} per {tokenB?.symbol}
         </Text>
       </Flex>
       <Box mt={6} />
-      <FiledButton btnSize="h" onClick={onClick}>
-        Add
-      </FiledButton>
+      {onSubmit && (
+        <FiledButton btnSize="h" onClick={onClick}>
+          Add
+        </FiledButton>
+      )}
     </Box>
   );
 };

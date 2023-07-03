@@ -46,6 +46,7 @@ import AddItemToken from './Add.ItemToken';
 import AddPriceRange from './Add.PriceRange';
 import AddTokenBalance from './Add.TokenBalance';
 import s from './styles.module.scss';
+import AddFieldAmount from './Add.FieldAmount';
 
 interface IFormAddPoolsV2Container extends IPoolV2AddPair {
   handleSubmit: (_: any) => void;
@@ -184,8 +185,6 @@ const FormAddPoolsV2Container = forwardRef<any, IFormAddPoolsV2Container>(
         _amount,
       });
 
-      console.log({ currentTick, tickLower, tickUpper, _amount, value });
-
       change('quoteAmount', value);
     };
 
@@ -244,83 +243,23 @@ const FormAddPoolsV2Container = forwardRef<any, IFormAddPoolsV2Container>(
                 label="Deposit Amounts"
               >
                 {isHideAmount && <Box className={s.blur__fade} />}
-                <Box className={s.formContainer__left__amountWrap}>
-                  {isDisabledBaseAmount ? (
-                    <Box className={s.formContainer__left__amountWrap__locked}>
-                      <Empty
-                        src={`${CDN_URL}/icons/ic-locked-2.svg`}
-                        size={24}
-                        infoText="The market price is outside your specified price range. Single-asset deposit only."
-                      />
-                    </Box>
-                  ) : (
-                    <Field
-                      name="baseAmount"
-                      children={FieldAmount}
-                      validate={composeValidators(
-                        requiredAmount,
-                        validateBaseAmount,
-                      )}
-                      fieldChanged={onChangeBaseAmount}
-                      disabled={isDisabledBaseAmount}
-                      decimals={baseToken?.decimal || 18}
-                      className={s.formContainer__left__inputAmount}
-                      appendComp={
-                        baseToken && (
-                          <>
-                            <AddItemToken token={baseToken} hideName={true} />
-                          </>
-                        )
-                      }
-                      note={
-                        baseToken && (
-                          <>
-                            <Box />
-                            <AddTokenBalance token={baseToken} name="baseToken" />
-                          </>
-                        )
-                      }
-                    />
-                  )}
-                </Box>
+                <AddFieldAmount
+                  fieldName="baseAmount"
+                  amountName="baseToken"
+                  token={baseToken}
+                  validate={composeValidators(requiredAmount, validateBaseAmount)}
+                  fieldChanged={onChangeBaseAmount}
+                  isDisabledBaseAmount={isDisabledBaseAmount}
+                />
                 <Box mt={2} />
-                <Box className={s.formContainer__left__amountWrap}>
-                  {isDisabledQuoteAmount ? (
-                    <Box className={s.formContainer__left__amountWrap__locked}>
-                      <Empty
-                        size={24}
-                        src={`${CDN_URL}/icons/ic-locked-2.svg`}
-                        infoText="The market price is outside your specified price range. Single-asset deposit only."
-                      />
-                    </Box>
-                  ) : (
-                    <Field
-                      name="quoteAmount"
-                      children={FieldAmount}
-                      validate={composeValidators(
-                        requiredAmount,
-                        validateQuoteAmount,
-                      )}
-                      disabled={isDisabledQuoteAmount}
-                      fieldChanged={onChangeQuoteAmount}
-                      decimals={quoteToken?.decimal || 18}
-                      className={s.formContainer__left__inputAmount}
-                      appendComp={
-                        quoteToken && (
-                          <AddItemToken token={quoteToken} hideName={true} />
-                        )
-                      }
-                      note={
-                        quoteToken && (
-                          <>
-                            <Box />
-                            <AddTokenBalance token={quoteToken} name="quoteToken" />
-                          </>
-                        )
-                      }
-                    />
-                  )}
-                </Box>
+                <AddFieldAmount
+                  fieldName="quoteAmount"
+                  amountName="quoteToken"
+                  token={quoteToken}
+                  validate={composeValidators(requiredAmount, validateQuoteAmount)}
+                  fieldChanged={onChangeQuoteAmount}
+                  isDisabledBaseAmount={isDisabledQuoteAmount}
+                />
               </InputWrapper>
             </Box>
             <Flex className={s.formContainer__right}>
