@@ -90,6 +90,7 @@
     "react-slick": "^0.29.0",
     "react-svg": "^16.1.8",
     "react-virtualized": "^9.22.5",
+    "recharts": "^2.7.2",
     "redux": "^4.2.1",
     "sass": "^1.62.0",
     "sats-connect": "^0.1.11",

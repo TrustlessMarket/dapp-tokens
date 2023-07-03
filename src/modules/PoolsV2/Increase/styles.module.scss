@@ -1,0 +1,40 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  > div {
+    margin-top: rem(50);
+    margin-bottom: rem(50);
+    padding: 15px 30px;
+    max-width: 560px;
+    width: 100%;
+    background-color: #151515;
+    border-radius: 16px;
+  }
+  &__top_body {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+    position: relative;
+    align-items: center;
+    justify-content: center;
+    min-height: 55px;
+
+    h4 {
+      margin-bottom: 0;
+      color: white;
+      font-size: rem(20);
+      font-weight: 500;
+    }
+
+    &__right {
+      position: absolute;
+      right: 0;
+    }
+  }
+  &__empty {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 50vh;
+    width: 100%;
+  }
+}
