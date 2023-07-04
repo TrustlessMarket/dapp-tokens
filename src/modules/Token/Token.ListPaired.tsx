@@ -2,11 +2,11 @@
 import Empty from '@/components/Empty';
 import HorizontalItem from '@/components/HorizontalItem';
 import FiledButton from '@/components/Swap/button/filedButton';
-import { ROUTE_PATH } from '@/constants/route-path';
+import {ROUTE_PATH} from '@/constants/route-path';
 import useGetReserves from '@/hooks/contract-operations/swap/useReserves';
 import useSupplyERC20Liquid from '@/hooks/contract-operations/token/useSupplyERC20Liquid';
-import { IToken } from '@/interfaces/token';
-import { getListPaired } from '@/services/pool';
+import {IToken} from '@/interfaces/token';
+import {getListPaired} from '@/services/pool';
 import {abbreviateNumber, compareString, formatCurrency} from '@/utils';
 import {
   Accordion,
@@ -20,11 +20,10 @@ import {
   Text,
 } from '@chakra-ui/react';
 import moment from 'moment';
-import { useRouter } from 'next/router';
-import {useContext, useEffect, useState} from 'react';
+import {useRouter} from 'next/router';
+import {useEffect, useState} from 'react';
 import web3 from 'web3';
-import { DEFAULT_FROM_TOKEN_ADDRESS, ScreenType } from '../Pools';
-import {WalletContext} from "@/contexts/wallet-context";
+import {DEFAULT_FROM_TOKEN_ADDRESS, ScreenType} from '../Pools';
 import {IResourceChain} from "@/interfaces/chain";
 import {SupportedChainId} from "@/constants/chains";
 import {useSelector} from "react-redux";
@@ -158,12 +157,9 @@ const TokenListPaired = ({ data }: { data: IToken }) => {
 
   const router = useRouter();
 
-  const { getConnectedChainInfo } = useContext(WalletContext);
-  const chainInfo: IResourceChain = getConnectedChainInfo();
-
   useEffect(() => {
     getData();
-  }, [data?.address]);
+  }, [data?.address, currentSelectedChain?.chain]);
 
   const getData = async () => {
     if (!data?.address) {
@@ -173,7 +169,7 @@ const TokenListPaired = ({ data }: { data: IToken }) => {
     try {
       const response: any = await getListPaired({
         from_token: data.address,
-        network: chainInfo?.chain?.toLowerCase()
+        network: currentSelectedChain?.chain?.toLowerCase()
       });
 
       setList(response || []);

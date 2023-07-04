@@ -1,20 +1,21 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import ListTable, { ColumnProp } from '@/components/Swap/listTable';
-import { TC_EXPLORER } from '@/configs';
-import { IToken } from '@/interfaces/token';
-import { getTradeHistory } from '@/services/swap';
-import { colors } from '@/theme/colors';
-import { abbreviateNumber, compareString, formatCurrency } from '@/utils';
-import { Flex, Text } from '@chakra-ui/react';
-import { useWeb3React } from '@web3-react/core';
+import ListTable, {ColumnProp} from '@/components/Swap/listTable';
+import {TC_EXPLORER} from '@/configs';
+import {IToken} from '@/interfaces/token';
+import {getTradeHistory} from '@/services/swap';
+import {colors} from '@/theme/colors';
+import {abbreviateNumber, compareString, formatCurrency} from '@/utils';
+import {Flex, Text} from '@chakra-ui/react';
+import {useWeb3React} from '@web3-react/core';
 import moment from 'moment';
-import {useContext, useEffect, useMemo, useState} from 'react';
-import { RxArrowTopRight } from 'react-icons/rx';
-import { DEFAULT_FROM_TOKEN_ADDRESS } from '../Pools';
-import { StyledTokenTrading } from './Token.styled';
-import { px2rem, useWindowSize } from '@trustless-computer/dapp-core';
-import {WalletContext} from "@/contexts/wallet-context";
+import {useEffect, useMemo, useState} from 'react';
+import {RxArrowTopRight} from 'react-icons/rx';
+import {DEFAULT_FROM_TOKEN_ADDRESS} from '../Pools';
+import {StyledTokenTrading} from './Token.styled';
+import {px2rem, useWindowSize} from '@trustless-computer/dapp-core';
 import {IResourceChain} from "@/interfaces/chain";
+import {useSelector} from "react-redux";
+import {selectPnftExchange} from "@/state/pnftExchange";
 
 export const BASE_TOKEN_ETH_PAIR = '0x74B033e56434845E02c9bc4F0caC75438033b00D';
 
@@ -25,12 +26,11 @@ const TokenHistory = ({ data, isOwner }: { data: IToken; isOwner?: boolean }) =>
 
   const { mobileScreen } = useWindowSize();
 
-  const { getConnectedChainInfo } = useContext(WalletContext);
-  const chainInfo: IResourceChain = getConnectedChainInfo();
+  const currentSelectedChain: IResourceChain = useSelector(selectPnftExchange).currentChain;
 
   useEffect(() => {
     getList();
-  }, [account, isActive]);
+  }, [account, isActive, currentSelectedChain?.chain]);
 
   const getList = async () => {
     try {
@@ -39,7 +39,7 @@ const TokenHistory = ({ data, isOwner }: { data: IToken; isOwner?: boolean }) =>
         page: 1,
         limit: 100,
         user_address: isOwner ? account : '',
-        network: chainInfo?.chain?.toLowerCase()
+        network: currentSelectedChain?.chain?.toLowerCase()
       });
       setList(response);
     } catch (error) {
