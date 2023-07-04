@@ -32,6 +32,7 @@ import VerifiedBadgeToken from "@/modules/Tokens/verifiedBadgeToken";
 import TokenChartLast7Day from "@/modules/Tokens/Token.ChartLast7Day";
 import {useSelector} from "react-redux";
 import {selectPnftExchange} from "@/state/pnftExchange";
+import {L2_CHAIN_INFO} from "@/constants/chains";
 
 const LIMIT_PAGE = 100;
 
@@ -43,7 +44,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const [sort, setSort] = useState({ sort: '' });
   const { values } = useFormState();
   const { mobileScreen } = useWindowSize();
-  const currentSelectedChain: IResourceChain = useSelector(selectPnftExchange).currentChain;
+  const currentSelectedChain: IResourceChain = useSelector(selectPnftExchange).currentChain || L2_CHAIN_INFO;
 
   const fetchTokens = async (page = 1, isFetchMore = false) => {
     try {
