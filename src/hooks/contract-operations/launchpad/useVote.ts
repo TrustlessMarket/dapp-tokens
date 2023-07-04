@@ -5,7 +5,7 @@ import { WALLET_URL } from '@/configs';
 import { TransactionEventType } from '@/enums/transaction';
 import useCheckTxsBitcoin from '@/hooks/useCheckTxsBitcoin';
 import { ContractOperationHook, DAppType } from '@/interfaces/contract-operation';
-import { TransactionStatus } from '@/interfaces/walletTransaction';
+import { TransactionStatus } from '@/components/Swap/alertInfoProcessing/interface';
 import { logErrorToServer } from '@/services/swap';
 import store from '@/state';
 import { updateCurrentTransaction } from '@/state/pnftExchange';

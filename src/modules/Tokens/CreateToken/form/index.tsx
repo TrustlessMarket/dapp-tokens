@@ -11,26 +11,27 @@ import {useAppDispatch} from '@/state/hooks';
 import {requestReload, requestReloadRealtime, updateCurrentTransaction,} from '@/state/pnftExchange';
 import px2rem from '@/utils/px2rem';
 import {showError} from '@/utils/toast';
-import {Box, Flex, forwardRef, SimpleGrid, Text,} from '@chakra-ui/react';
+import {Box, Flex, forwardRef, SimpleGrid, Text} from '@chakra-ui/react';
 import {useWeb3React} from '@web3-react/core';
 import cx from 'classnames';
-import {useRouter} from 'next/router';
-import React, {useImperativeHandle, useRef, useState} from 'react';
+import React, {useContext, useImperativeHandle, useRef, useState} from 'react';
 import {Field, Form, useForm, useFormState} from 'react-final-form';
 import toast from 'react-hot-toast';
 import styles from './styles.module.scss';
-import {createTokenInfo, IUpdateTokenPayload,} from '@/services/token-explorer';
+import {createTokenInfo, IUpdateTokenPayload} from '@/services/token-explorer';
 import FieldText from '@/components/Swap/form/fieldText';
 import FileDropzoneUpload from '@/components/Swap/form/fileDropzoneUpload';
 import {uploadFile} from '@/services/file';
-import {composeValidators, required} from "@/utils/formValidate";
-import FieldAmount from "@/components/Swap/form/fieldAmount";
-import useContractOperation from "@/hooks/contract-operations/useContractOperation";
-import useCreateToken, {ICreateTokenParams} from "@/hooks/contract-operations/token/useCreateToken";
-import {DeployContractResponse} from "@/interfaces/contract-operation";
-import {TransactionStatus} from "@/interfaces/walletTransaction";
-import {transactionType} from "@/components/Swap/alertInfoProcessing/types";
-import {BiUpload} from "react-icons/bi";
+import {composeValidators, required} from '@/utils/formValidate';
+import FieldAmount from '@/components/Swap/form/fieldAmount';
+import useContractOperation from '@/hooks/contract-operations/useContractOperation';
+import useCreateToken, {ICreateTokenParams,} from '@/hooks/contract-operations/token/useCreateToken';
+import {DeployContractResponse} from '@/interfaces/contract-operation';
+import {TransactionStatus} from '@/components/Swap/alertInfoProcessing/interface';
+import {transactionType} from '@/components/Swap/alertInfoProcessing/types';
+import {BiUpload} from 'react-icons/bi';
+import {WalletContext} from "@/contexts/wallet-context";
+import {IResourceChain} from "@/interfaces/chain";
 
 export const MAX_FILE_SIZE = 1024 * 1024; // 375 MB
 
@@ -90,11 +91,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         <InputWrapper
           className={cx(styles.inputAmountWrap)}
           theme="light"
-          label={
-            <Text color={'#1C1C1C'}>
-              TOKEN
-            </Text>
-          }
+          label={<Text color={'#1C1C1C'}>TOKEN</Text>}
         >
           <Field
             name="tokenName"
@@ -102,18 +99,14 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             validate={composeValidators(required)}
             disabled={submitting}
             placeholder={'Enter token name'}
-            className={cx(styles.inputAmount, )}
+            className={cx(styles.inputAmount)}
             borderColor={'#ECECED'}
           />
         </InputWrapper>
         <InputWrapper
           className={cx(styles.inputAmountWrap)}
           theme="light"
-          label={
-            <Text color={'#1C1C1C'}>
-              SYMBOL
-            </Text>
-          }
+          label={<Text color={'#1C1C1C'}>SYMBOL</Text>}
         >
           <Field
             name="tokenSymbol"
@@ -121,7 +114,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             validate={composeValidators(required)}
             disabled={submitting}
             placeholder={'Enter symbol'}
-            className={cx(styles.inputAmount, )}
+            className={cx(styles.inputAmount)}
             borderColor={'#ECECED'}
           />
         </InputWrapper>
@@ -129,11 +122,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       <InputWrapper
         className={cx(styles.inputAmountWrap)}
         theme="light"
-        label={
-          <Text color={'#1C1C1C'}>
-            SUPPLY
-          </Text>
-        }
+        label={<Text color={'#1C1C1C'}>SUPPLY</Text>}
       >
         <Field
           name="tokenMaxSupply"
@@ -141,18 +130,14 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           validate={composeValidators(required)}
           disabled={submitting}
           placeholder={'Enter max supply'}
-          className={cx(styles.inputAmount, )}
+          className={cx(styles.inputAmount)}
           borderColor={'#ECECED'}
         />
       </InputWrapper>
       <InputWrapper
         className={cx(styles.inputAmountWrap, styles.inputBaseAmountWrap)}
         theme="light"
-        label={
-          <Text color={'#1C1C1C'}>
-            DESCRIPTION
-          </Text>
-        }
+        label={<Text color={'#1C1C1C'}>DESCRIPTION</Text>}
       >
         <Flex gap={4} direction={'column'}>
           <Field
@@ -169,10 +154,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           />
         </Flex>
       </InputWrapper>
-      <InputWrapper
-        className={cx(styles.submitVideo)}
-        theme="light"
-      >
+      <InputWrapper className={cx(styles.submitVideo)} theme="light">
         <FileDropzoneUpload
           className={styles.uploader}
           accept="image/*,audio/*,video/*"
@@ -180,8 +162,12 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           onChange={onFileChange}
           url={values?.thumbnail || tokenInfo?.thumbnail}
           loading={uploading}
-          text={<Text fontSize={""} color={"#000000"}>Upload token icon</Text>}
-          icon={<BiUpload color={"#000000"} fontSize={"20px"} fontWeight={700}/>}
+          text={
+            <Text fontSize={''} color={'#000000'}>
+              Upload token icon
+            </Text>
+          }
+          icon={<BiUpload color={'#000000'} fontSize={'20px'} fontWeight={700} />}
         />
         {/*{touched?.quoteAmount && errors.quoteAmount && (
           <Text fontSize="xs" color="brand.danger.400" mt={2}>
@@ -189,79 +175,63 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           </Text>
         )}*/}
       </InputWrapper>
-      <Text fontSize={px2rem(18)} fontWeight={500} color={'#1C1C1C'} opacity={"0.7"}>
+      <Text fontSize={px2rem(18)} fontWeight={500} color={'#1C1C1C'} opacity={'0.7'}>
         Social media
       </Text>
       <SimpleGrid columns={2} gap={4} mt={4}>
         <InputWrapper
           className={cx(styles.inputAmountWrap)}
           theme="light"
-          label={
-            <Text color={'#1C1C1C'}>
-              WEBSITE
-            </Text>
-          }
+          label={<Text color={'#1C1C1C'}>WEBSITE</Text>}
         >
           <Field
             name="website"
             children={FieldText}
             disabled={submitting}
             placeholder={'Enter Website'}
-            className={cx(styles.inputAmount, )}
+            className={cx(styles.inputAmount)}
             borderColor={'#ECECED'}
           />
         </InputWrapper>
         <InputWrapper
           className={cx(styles.inputAmountWrap)}
           theme="light"
-          label={
-            <Text color={'#1C1C1C'}>
-              DISCORD
-            </Text>
-          }
+          label={<Text color={'#1C1C1C'}>DISCORD</Text>}
         >
           <Field
             name="discord"
             children={FieldText}
             disabled={submitting}
             placeholder={'Enter Discord'}
-            className={cx(styles.inputAmount, )}
+            className={cx(styles.inputAmount)}
             borderColor={'#ECECED'}
           />
         </InputWrapper>
         <InputWrapper
           className={cx(styles.inputAmountWrap)}
           theme="light"
-          label={
-            <Text color={'#1C1C1C'}>
-              TWITTER
-            </Text>
-          }
+          label={<Text color={'#1C1C1C'}>TWITTER</Text>}
         >
           <Field
             name="twitter"
             children={FieldText}
             disabled={submitting}
             placeholder={'Enter Twitter'}
-            className={cx(styles.inputAmount, )}
+            className={cx(styles.inputAmount)}
             borderColor={'#ECECED'}
           />
         </InputWrapper>
         <InputWrapper
           className={cx(styles.inputAmountWrap)}
           theme="light"
-          label={
-            <Text color={'#1C1C1C'}>
-              TELEGRAM
-            </Text>
-          }
+          label={<Text color={'#1C1C1C'}>TELEGRAM</Text>}
         >
           <Field
             name="telegram"
             children={FieldText}
             disabled={submitting}
             placeholder={'Enter Telegram'}
-            className={cx(styles.inputAmount, )}
+            className={cx(styles.inputAmount)}
             borderColor={'#ECECED'}
           />
         </InputWrapper>
@@ -294,13 +264,14 @@ const CreateTokenForm = (props: any) => {
   const [submitting, setSubmitting] = useState(false);
   const dispatch = useAppDispatch();
   const { account } = useWeb3React();
-  const router = useRouter();
   const { run: createToken } = useContractOperation<
     ICreateTokenParams,
     DeployContractResponse | null
   >({
     operation: useCreateToken,
   });
+  const { getConnectedChainInfo } = useContext(WalletContext);
+  const chainInfo: IResourceChain = getConnectedChainInfo();
 
   const handleSubmit = async (values: any) => {
     try {
@@ -317,7 +288,7 @@ const CreateTokenForm = (props: any) => {
         maxSupply: Number(values?.tokenMaxSupply),
       });
 
-      if(!res) {
+      if (!res) {
         throw Error('Cannot create new Smart BRC-20 Token');
       }
 
@@ -340,14 +311,16 @@ const CreateTokenForm = (props: any) => {
       };
 
       const params = {
-        network: 'tc',
-        address: account
+        network: chainInfo?.chain?.toLowerCase(),
+        address: account,
       };
 
       const response = await createTokenInfo(params, data);
 
       // router.push(`${ROUTE_PATH.TOKEN}?address=${res.contractAddress}`);
-      toast.success('Transaction has been created. Please wait for few minutes.', {duration: 5000});
+      toast.success('Transaction has been created. Please wait for few minutes.', {
+        duration: 5000,
+      });
       // refForm.current?.reset();
       dispatch(requestReload());
       dispatch(requestReloadRealtime());

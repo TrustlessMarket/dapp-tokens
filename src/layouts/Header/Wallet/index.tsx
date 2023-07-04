@@ -14,6 +14,7 @@ import { TRUSTLESS_BRIDGE } from '@/constants/common';
 import { ROUTE_PATH } from '@/constants/route-path';
 import { WalletContext } from '@/contexts/wallet-context';
 import useBalanceERC20Token from '@/hooks/contract-operations/token/useBalanceERC20Token';
+import { IResourceChain } from '@/interfaces/chain';
 import {
   compareString,
   formatCurrency,
@@ -32,13 +33,15 @@ import web3 from 'web3';
 import { isScreenDarkMode } from '..';
 import { ConnectWalletButton, WalletBalance } from '../Header.styled';
 import { WalletPopover } from './Wallet.styled';
-import { SupportedChainId } from '@/constants/chains';
+import { TRUSTLESS_COMPUTER_CHAIN_INFO } from '@/constants/chains';
+import { selectPnftExchange } from '@/state/pnftExchange';
 
 const WalletHeader = () => {
   const router = useRouter();
   const { account, chainId, isActive } = useWeb3React();
   const user = useSelector(getUserSelector);
-  const { onDisconnect, onConnect, requestBtcAddress } = useContext(WalletContext);
+  const { onDisconnect, onConnect, requestBtcAddress, getConnectedChainInfo } =
+    useContext(WalletContext);
   const { mobileScreen } = useWindowSize();
 
   const isAuthenticated = useSelector(getIsAuthenticatedSelector);
@@ -46,6 +49,10 @@ const WalletHeader = () => {
 
   const { call: getBalanceErc20 } = useBalanceERC20Token();
   const [balanceTM, setBalanceTM] = useState('0');
+
+  const chainInfo: IResourceChain = getConnectedChainInfo();
+
+  const currentSelectedChain: IResourceChain = useSelector(selectPnftExchange).currentChain;
 
   const isTokenPage = useMemo(() => {
     return isScreenDarkMode();
@@ -221,7 +228,8 @@ const WalletHeader = () => {
     <>
       {account && isAuthenticated ? (
         <>
-          {!isSupportedChain(chainId) ? (
+          {!isSupportedChain(chainId) ||
+          !compareString(currentSelectedChain?.chainId, chainId) ? (
             <SelectedNetwork />
           ) : (
             <OverlayTrigger
@@ -240,13 +248,19 @@ const WalletHeader = () => {
               >
                 <WalletBalance className={isTokenPage ? 'isTokenPage' : ''}>
                   <div className="balance">
-                    <p>{formatCurrency(formatBTCPrice(btcBalance))} BTC</p>
-                    <span className="divider"></span>
+                    {compareString(
+                      chainId,
+                      TRUSTLESS_COMPUTER_CHAIN_INFO.chainId,
+                    ) && (
+                      <>
+                        <p>{formatCurrency(formatBTCPrice(btcBalance))} BTC</p>
+                        <span className="divider"></span>
+                      </>
+                    )}
+
                     <p>
                       {formatCurrency(web3.utils.fromWei(juiceBalance), 5)}{' '}
-                      {compareString(chainId, SupportedChainId.TRUSTLESS_COMPUTER)
-                        ? 'TC'
-                        : 'ETH'}
+                      {chainInfo.nativeCurrency.symbol}
                     </p>
                   </div>
                   <div className="avatar">

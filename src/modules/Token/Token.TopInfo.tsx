@@ -8,10 +8,16 @@ import { compareString, formatCurrency } from '@/utils';
 import { Box, Flex, Text } from '@chakra-ui/react';
 import { useWeb3React } from '@web3-react/core';
 import { useRouter } from 'next/router';
+import {SupportedChainId} from "@/constants/chains";
+import {IResourceChain} from "@/interfaces/chain";
+import {useSelector} from "react-redux";
+import {selectPnftExchange} from "@/state/pnftExchange";
+import {L2_ETH_ADDRESS, L2_WBTC_ADDRESS} from "@/configs";
 
 const TokenTopInfo = ({ data }: { data: IToken }) => {
   const router = useRouter();
   const { account } = useWeb3React();
+  const currentSelectedChain: IResourceChain = useSelector(selectPnftExchange).currentChain;
 
   return (
     <>
@@ -172,12 +178,14 @@ const TokenTopInfo = ({ data }: { data: IToken }) => {
             fontSize: '16px',
           }}
           onClick={() => {
+            const isL2 = compareString(currentSelectedChain?.chainId, SupportedChainId.L2);
             const from_token = compareString(data?.symbol, 'GM')
-              ? WETH_ADDRESS
-              : WBTC_ADDRESS;
+              ? isL2 ? L2_ETH_ADDRESS : WETH_ADDRESS
+              : isL2 ? L2_WBTC_ADDRESS : WBTC_ADDRESS;
             const to_token = compareString(from_token, data?.address) ? USDT_ADDRESS : data?.address;
+            const routePath = isL2 ? ROUTE_PATH.SWAP_V2 : ROUTE_PATH.SWAP;
             router.push(
-              `${ROUTE_PATH.SWAP}?from_token=${from_token}&to_token=${to_token}`,
+              `${routePath}?from_token=${from_token}&to_token=${to_token}`,
             );
           }}
         >

@@ -4,18 +4,18 @@ import {
   Box,
   Flex,
   FormControl,
-  FormErrorMessage,
   FormLabel,
   InputGroup,
   InputLeftElement,
   InputRightElement,
+  Text,
 } from '@chakra-ui/react';
 import Cleave from 'cleave.js/react';
 import React from 'react';
 
 import { formatCurrency } from '@/utils';
-import styles from './styles.module.scss';
 import { CleaveOptions } from 'cleave.js/options';
+import styles from './styles.module.scss';
 
 interface FieldAmountProps {
   input?: any;
@@ -31,6 +31,7 @@ interface FieldAmountProps {
   note?: React.ReactNode;
   rightLabel?: React.ReactNode;
   fieldChanged?: (_: any) => void;
+  blurFieldChanged?: (_: any) => void;
   hideError?: boolean;
   borderColor?: string;
   numberOptions?: CleaveOptions;
@@ -50,6 +51,7 @@ const FieldAmount = (props: FieldAmountProps) => {
     note,
     rightLabel,
     fieldChanged,
+    blurFieldChanged,
     // disabledInput, errorPlacement, zIndex, anchorAppend,
     hideError = false,
     borderColor = 'background.default',
@@ -72,83 +74,95 @@ const FieldAmount = (props: FieldAmountProps) => {
   const isError = meta.error && meta.touched;
 
   return (
-    <FormControl isInvalid={isError}>
-      {(label || rightLabel) && (
-        <Flex justifyContent={'space-between'}>
-          <Box>
-            <FormLabel fontSize="xs" fontWeight="medium">
-              {label}
-            </FormLabel>
-          </Box>
-          <Box>
-            {typeof rightLabel === 'object' ? (
-              rightLabel
-            ) : (
+    <>
+      <FormControl isInvalid={isError} className={isError && 'isError'}>
+        {(label || rightLabel) && (
+          <Flex justifyContent={'space-between'}>
+            <Box>
               <FormLabel fontSize="xs" fontWeight="medium">
-                {rightLabel}
+                {label}
               </FormLabel>
-            )}
+            </Box>
+            <Box>
+              {typeof rightLabel === 'object' ? (
+                rightLabel
+              ) : (
+                <FormLabel fontSize="xs" fontWeight="medium">
+                  {rightLabel}
+                </FormLabel>
+              )}
+            </Box>
+          </Flex>
+        )}
+        <InputGroup
+          borderStyle={'solid'}
+          borderWidth={1}
+          borderColor={shouldShowError ? 'brand.danger.400' : borderColor}
+          borderRadius={8}
+          bgColor="background.default"
+          overflow="hidden"
+        >
+          {prependComp && (
+            <InputLeftElement
+              children={prependComp}
+              ml={2}
+              mr={2}
+              height="100%"
+              position={'relative'}
+            />
+          )}
+          <Box className={styles.formControl}>
+            <Cleave
+              placeholder={placeholder}
+              value={formatCurrency(value)}
+              maxLength={maxLength}
+              onChange={handleChange}
+              onFocus={onFocus}
+              onBlur={(e: any) => {
+                onBlur();
+                e?.target?.blur();
+                blurFieldChanged?.(e.target.rawValue);
+              }}
+              options={{
+                numeral: true,
+                numeralThousandsGroupStyle: 'thousand',
+                numeralPositiveOnly: true,
+                numeralDecimalScale: decimals,
+                tailPrefix: true,
+                rawValueTrimPrefix: true,
+                noImmediatePrefix: false,
+                ...numberOptions,
+              }}
+              {...restProps}
+            />
           </Box>
-        </Flex>
-      )}
-      <InputGroup
-        borderStyle={'solid'}
-        borderWidth={1}
-        borderColor={shouldShowError ? 'brand.danger.400' : borderColor}
-        borderRadius={8}
-        bgColor="background.default"
-        overflow="hidden"
-      >
-        {prependComp && (
-          <InputLeftElement
-            children={prependComp}
-            ml={2}
-            mr={2}
-            height="100%"
-            position={'relative'}
-          />
-        )}
-        <Box className={styles.formControl}>
-          <Cleave
-            placeholder={placeholder}
-            value={formatCurrency(value)}
-            maxLength={maxLength}
-            onChange={handleChange}
-            onFocus={onFocus}
-            onBlur={(e) => {
-              onBlur();
-              e?.target?.blur();
-            }}
-            options={{
-              numeral: true,
-              numeralThousandsGroupStyle: 'thousand',
-              numeralPositiveOnly: true,
-              numeralDecimalScale: decimals,
-              tailPrefix: true,
-              rawValueTrimPrefix: true,
-              noImmediatePrefix: false,
-              ...numberOptions,
-            }}
-            {...restProps}
-          />
-        </Box>
-        {hasAppend && (
-          <InputRightElement
-            w="fit-content"
-            mr={2}
-            height="100%"
-            children={appendComp}
-            position={'relative'}
-          />
-        )}
-      </InputGroup>
-      {!hideError && (
-        <FormErrorMessage fontSize="sm" color="brand.danger.400">
+          {hasAppend && (
+            <InputRightElement
+              w="fit-content"
+              mr={2}
+              height="100%"
+              children={appendComp}
+              position={'relative'}
+            />
+          )}
+        </InputGroup>
+        {note && <div className="field-note">{note}</div>}
+      </FormControl>
+
+      {!hideError && isError && (
+        <Text
+          style={{
+            fontSize: '12px',
+            color: 'var(--chakra-colors-brand-danger-400)',
+            textAlign: 'left',
+            fontWeight: '400',
+          }}
+          className="error-text"
+        >
           {error}
-        </FormErrorMessage>
+        </Text>
       )}
-      <div className="field-note">{note}</div>
-    </FormControl>
+    </>
   );
 };
 

@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import {CDN_URL} from '@/configs';
+import { CDN_URL } from '@/configs';
+import { L2_CHAIN_INFO } from '@/constants/chains';
 import {
   GENERATIVE_DISCORD,
   GM_ADDRESS,
@@ -8,16 +9,20 @@ import {
   TRUSTLESS_GASSTATION,
   WETH_ADDRESS,
 } from '@/constants/common';
-import {ROUTE_PATH} from '@/constants/route-path';
-import {defaultProvider} from '@/contexts/screen-context';
-import {Flex, Link as LinkText, Text} from "@chakra-ui/react";
-import {useScreenLayout} from '@/hooks/useScreenLayout';
-import {useWindowSize} from '@trustless-computer/dapp-core';
-import {gsap} from 'gsap';
+import { ROUTE_PATH } from '@/constants/route-path';
+import { defaultProvider } from '@/contexts/screen-context';
+import { useScreenLayout } from '@/hooks/useScreenLayout';
+import HeaderSwitchNetwork from '@/layouts/Header/Header.SwitchNetwork';
+import { selectPnftExchange } from '@/state/pnftExchange';
+import { compareString } from '@/utils';
+import { Flex, Link as LinkText, Text } from '@chakra-ui/react';
+import { useWindowSize } from '@trustless-computer/dapp-core';
+import { gsap } from 'gsap';
 import Link from 'next/link';
-import {useRouter} from 'next/router';
-import {useEffect, useRef, useState} from 'react';
-import {Wrapper} from './Header.styled';
+import { useRouter } from 'next/router';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { useSelector } from 'react-redux';
+import { Wrapper } from './Header.styled';
 import MenuMobile from './MenuMobile';
 import WalletHeader from './Wallet';
 import Banner from './banner';
@@ -26,20 +31,34 @@ export const isScreenDarkMode = () => {
   return true;
 };
 
-export const HEADER_MENUS = () => ([
+export const HEADER_MENUS = (currentSelectedChain: any) => [
   {
-    key: ROUTE_PATH.MARKETS,
-    route: ROUTE_PATH.MARKETS,
+    key: compareString(currentSelectedChain?.chain, L2_CHAIN_INFO.chain)
+      ? ROUTE_PATH.MARKETS_V2
+      : ROUTE_PATH.MARKETS,
+    route: compareString(currentSelectedChain?.chain, L2_CHAIN_INFO.chain)
+      ? ROUTE_PATH.MARKETS_V2
+      : ROUTE_PATH.MARKETS,
     name: 'Markets',
   },
   {
-    key: ROUTE_PATH.SWAP,
-    route: `${ROUTE_PATH.SWAP}?from_token=${WETH_ADDRESS}&to_token=${GM_ADDRESS}`,
+    key: compareString(currentSelectedChain?.chain, L2_CHAIN_INFO.chain)
+      ? ROUTE_PATH.SWAP_V2
+      : ROUTE_PATH.SWAP,
+    route: `${
+      compareString(currentSelectedChain?.chain, L2_CHAIN_INFO.chain)
+        ? ROUTE_PATH.SWAP_V2
+        : ROUTE_PATH.SWAP
+    }?from_token=${WETH_ADDRESS}&to_token=${GM_ADDRESS}`,
     name: 'Swap',
   },
   {
-    key: ROUTE_PATH.POOLS,
-    route: ROUTE_PATH.POOLS,
+    key: compareString(currentSelectedChain?.chain, L2_CHAIN_INFO.chain)
+      ? ROUTE_PATH.POOLS_V2
+      : ROUTE_PATH.POOLS,
+    route: compareString(currentSelectedChain?.chain, L2_CHAIN_INFO.chain)
+      ? ROUTE_PATH.POOLS_V2
+      : ROUTE_PATH.POOLS,
     name: 'Pools',
   },
   {
@@ -52,15 +71,21 @@ export const HEADER_MENUS = () => ([
   //   route: ROUTE_PATH.PROPOSAL,
   //   name: 'Proposal',
   // },
-]);
+];
 
 const Header = () => {
   const refMenu = useRef<HTMLDivElement | null>(null);
   const [isOpenMenu, setIsOpenMenu] = useState<boolean>(false);
   const { mobileScreen } = useWindowSize();
   const router = useRouter();
-  const { headerHeight, showGetStarted, showLaunchpadGetStarted, showBannerPromotion, bannerHeight } =
-    useScreenLayout();
+  const {
+    headerHeight,
+    showGetStarted,
+    showLaunchpadGetStarted,
+    showBannerPromotion,
+    bannerHeight,
+  } = useScreenLayout();
+  const currentSelectedChain = useSelector(selectPnftExchange).currentChain;
 
   // const isTokensPage = useMemo(() => {
   //   return isScreenDarkMode();
@@ -80,6 +105,10 @@ const Header = () => {
     }
   }, [isOpenMenu]);
 
+  const headerMenu = useMemo(() => {
+    return HEADER_MENUS(currentSelectedChain);
+  }, [currentSelectedChain?.chain]);
+
   return (
     <Wrapper style={{ height: headerHeight, margin: '0 auto' }}>
       <div
@@ -87,7 +116,7 @@ const Header = () => {
         style={{ height: defaultProvider.headerHeight }}
       >
         <div className={'leftWrapper'}>
-          <Link className="logo" href={ROUTE_PATH.HOME}>
+          <Link className="logo" href={compareString(currentSelectedChain?.chain, L2_CHAIN_INFO.chain) ? ROUTE_PATH.HOME_V2 : ROUTE_PATH.HOME}>
             <img
               src={`${CDN_URL}/icons/logo-tc-market.svg`}
               alt="New Bitcoin DEX logo"
@@ -98,7 +127,7 @@ const Header = () => {
           {!mobileScreen && (
             <div className={'leftContainer'}>
               <div className="external-link">
-                {HEADER_MENUS().map((m) => (
+                {headerMenu.map((m) => (
                   <Link
                     key={m.route}
                     href={m.route}
@@ -112,6 +141,9 @@ const Header = () => {
           )}
         </div>
         <MenuMobile ref={refMenu} onCloseMenu={() => setIsOpenMenu(false)} />
+        {/* <div className={"centerContainer"}>
+          <HeaderSwitchNetwork />
+        </div> */}
         <div className="rightContainer">
           {mobileScreen ? (
             <button className="btnMenuMobile" onClick={() => setIsOpenMenu(true)}>
@@ -151,6 +183,7 @@ const Header = () => {
                   </Flex>
                 </Link>
               </div>
+              <HeaderSwitchNetwork />
               <WalletHeader />
             </>
           )}
@@ -202,11 +235,7 @@ const Header = () => {
           </Text>
         </Flex>
       )}
-      {
-        showBannerPromotion && (
-          <Banner />
-        )
-      }
+      {showBannerPromotion && <Banner />}
     </Wrapper>
   );
 };

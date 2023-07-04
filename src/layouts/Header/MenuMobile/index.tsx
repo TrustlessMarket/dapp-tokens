@@ -1,18 +1,23 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 // import IcAvatarDefault from '@/assets/icons/ic-avatar.svg';
 // import IcMenuClose from '@/assets/icons/ic_close_menu.svg';
-import {CDN_URL} from '@/configs';
-import {ROUTE_PATH} from '@/constants/route-path';
-import {AssetsContext} from '@/contexts/assets-context';
-import {getIsAuthenticatedSelector} from '@/state/user/selector';
-import {useRouter} from 'next/router';
-import React, {ForwardedRef, useContext} from 'react';
-import {useSelector} from 'react-redux';
-import {HEADER_MENUS} from '..';
-import {StyledLink} from '../Header.styled';
-import {Wrapper} from './MenuMobile.styled';
-import {Box, Flex, Text} from '@chakra-ui/react';
-import {GENERATIVE_DISCORD, NEW_BITCOIN_CITY, TRUSTLESS_GASSTATION} from '@/constants/common';
+import { CDN_URL } from '@/configs';
+import { ROUTE_PATH } from '@/constants/route-path';
+import { AssetsContext } from '@/contexts/assets-context';
+import { getIsAuthenticatedSelector } from '@/state/user/selector';
+import { useRouter } from 'next/router';
+import React, { ForwardedRef, useContext, useMemo } from 'react';
+import { useSelector } from 'react-redux';
+import { HEADER_MENUS } from '..';
+import { StyledLink } from '../Header.styled';
+import { Wrapper } from './MenuMobile.styled';
+import { Box, Flex, Text } from '@chakra-ui/react';
+import {
+  GENERATIVE_DISCORD,
+  NEW_BITCOIN_CITY,
+  TRUSTLESS_GASSTATION,
+} from '@/constants/common';
+import { selectPnftExchange } from '@/state/pnftExchange';
 
 interface IProp {
   onCloseMenu: () => void;
@@ -23,6 +28,11 @@ const MenuMobile = React.forwardRef(
     const { btcBalance, juiceBalance } = useContext(AssetsContext);
     const isAuthenticated = useSelector(getIsAuthenticatedSelector);
     const router = useRouter();
+    const currentSelectedChain = useSelector(selectPnftExchange).currentChain;
+
+    const headerMenu = useMemo(() => {
+      return HEADER_MENUS(currentSelectedChain);
+    }, [currentSelectedChain?.chain]);
 
     const handleConnectWallet = async () => {
       router.push(`${ROUTE_PATH.CONNECT_WALLET}?next=${window.location.href}`);
@@ -40,7 +50,7 @@ const MenuMobile = React.forwardRef(
             justifyContent={'space-between'}
           >
             <Box className="menu-container" flex={1}>
-              {HEADER_MENUS().map((item) => {
+              {headerMenu.map((item) => {
                 return (
                   <StyledLink
                     active={router?.pathname?.includes(item.key)}
@@ -53,7 +63,11 @@ const MenuMobile = React.forwardRef(
                   </StyledLink>
                 );
               })}
-              <StyledLink active={false} href={TRUSTLESS_GASSTATION} target={'_blank'}>
+              <StyledLink
+                active={false}
+                href={TRUSTLESS_GASSTATION}
+                target={'_blank'}
+              >
                 <Text>GET TC</Text>
                 <img
                   className="arrow-icon"

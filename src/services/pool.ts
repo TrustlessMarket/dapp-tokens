@@ -17,7 +17,7 @@ export const getPairAPR = async (params: { pair: string }) => {
   });
 };
 
-export const getListPaired = async (params: { from_token: string }) => {
+export const getListPaired = async (params: { from_token: string, network?: string }) => {
   const qs = '?' + queryString.stringify(params);
   return swrFetcher(`${API_EXCHANGE_URL}${API_PATH}/pair/list${qs}`, {
     method: 'GET',

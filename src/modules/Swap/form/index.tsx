@@ -29,9 +29,9 @@ import useBalanceERC20Token from '@/hooks/contract-operations/token/useBalanceER
 import useIsApproveERC20Token from '@/hooks/contract-operations/token/useIsApproveERC20Token';
 import useContractOperation from '@/hooks/contract-operations/useContractOperation';
 import {IToken} from '@/interfaces/token';
-import {TransactionStatus} from '@/interfaces/walletTransaction';
 import {getSwapRoutes, getSwapTokens, logErrorToServer} from '@/services/swap';
 import {useAppDispatch, useAppSelector} from '@/state/hooks';
+import {TransactionStatus} from '@/components/Swap/alertInfoProcessing/interface';
 import {
   requestReload,
   requestReloadRealtime,
@@ -97,7 +97,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const configs = useAppSelector(selectPnftExchange).configs;
   const swapFee = configs?.swapFee || 0.3;
 
-  const { account} = useWeb3React();
+  const { account } = useWeb3React();
   const needReload = useAppSelector(selectPnftExchange).needReload;
   const [exchangeRate, setExchangeRate] = useState('0');
 

@@ -1,18 +1,14 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-// import { WALLET_URL } from '@/configs';
-import { TC_EXPLORER } from '@/configs';
 import {
   TransactionStatus,
   WalletTransactionData,
-} from '@/interfaces/walletTransaction';
+} from '@/components/Swap/alertInfoProcessing/interface';
 import { useAppSelector } from '@/state/hooks';
 import {
   selectCurrentTransaction,
   updateCurrentTransaction,
 } from '@/state/pnftExchange';
 import { colors } from '@/theme/colors';
-import { compareString, shortCryptoAddress } from '@/utils';
+import { compareString, getExplorer, shortCryptoAddress } from '@/utils';
 import {
   Alert,
   AlertDescription,
@@ -22,12 +18,13 @@ import {
   Flex,
   useDisclosure,
 } from '@chakra-ui/react';
-import React, { useState } from 'react';
+import React from 'react';
 import { useDispatch } from 'react-redux';
+import { IAlertInfoProcess } from './interface';
 
 interface AlertInfoProcessProps {
   loading?: boolean;
-  processInfo: any;
+  processInfo?: IAlertInfoProcess;
 }
 
 const getTitle = {
@@ -39,16 +36,11 @@ const getTitle = {
 
 export const MAXIMUM_TIME_REQUEST = 10; // 10s
 
-const AlertInfoProcess: React.FC<AlertInfoProcessProps> = ({
-  loading,
-  processInfo,
-}) => {
-  const currentTransaction: WalletTransactionData | undefined = useAppSelector(
-    selectCurrentTransaction,
-  );
-  const { isOpen: isVisible, onClose } = useDisclosure({ defaultIsOpen: true });
+const AlertInfoProcess: React.FC<AlertInfoProcessProps> = ({ processInfo }) => {
+  const currentTransaction: WalletTransactionData | undefined | null =
+    useAppSelector(selectCurrentTransaction);
+  const { onClose } = useDisclosure({ defaultIsOpen: true });
   const dispatch = useDispatch();
-  const [count, setCount] = useState(1);
 
   const handleClose = () => {
     dispatch(updateCurrentTransaction(null));
@@ -62,7 +54,9 @@ const AlertInfoProcess: React.FC<AlertInfoProcessProps> = ({
     return null;
   }
 
-  let _title = currentTransaction ? getTitle?.[currentTransaction.status] : '';
+  let _title = currentTransaction?.status
+    ? getTitle?.[currentTransaction?.status]
+    : '';
 
   if (currentTransaction?.infoTexts?.success) {
     _title = currentTransaction?.infoTexts?.success;
@@ -109,7 +103,7 @@ const AlertInfoProcess: React.FC<AlertInfoProcessProps> = ({
             {currentTransaction?.status === TransactionStatus.success ? (
               <a
                 target="_blank"
-                href={`${TC_EXPLORER}/tx/${currentTransaction.hash}`}
+                href={getExplorer(currentTransaction.hash, 'tx')}
                 style={{ color: colors.bluePrimary }}
               >
                 {shortCryptoAddress(currentTransaction.hash, 30)}
@@ -119,19 +113,10 @@ const AlertInfoProcess: React.FC<AlertInfoProcessProps> = ({
             )}
           </AlertDescription>
         )}
-        {/* {count >= MAXIMUM_TIME_REQUEST &&
-          loading &&
-          currentTransaction &&
-          compareString(currentTransaction.status, TransactionStatus.pending) &&
-          currentTransaction?.hash && (
-            <StyledWarningNote>
-              {`Transaction taking too long, please open "Metamask" and click "Speed up".`}
-            </StyledWarningNote>
-          )} */}
       </Flex>
-      {currentTransaction &&
+      {currentTransaction?.status &&
         [TransactionStatus.error, TransactionStatus.success].includes(
-          currentTransaction?.status,
+          currentTransaction.status,
         ) && (
           <CloseButton
             position="absolute"

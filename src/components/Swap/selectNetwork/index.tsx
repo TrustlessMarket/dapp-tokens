@@ -2,17 +2,21 @@ import { CDN_URL } from '@/configs';
 import { TRUSTLESS_COMPUTER_CHAIN_INFO } from '@/constants/chains';
 import { TRUSTLESS_COMPUTER } from '@/constants/common';
 import { WalletContext } from '@/contexts/wallet-context';
-import { isSupportedChain } from '@/utils';
+import { compareString, isSupportedChain } from '@/utils';
 import { Button, Spinner, Text } from '@chakra-ui/react';
 import { useWeb3React } from '@web3-react/core';
 import { useContext, useState } from 'react';
 import { IoWarningSharp } from 'react-icons/io5';
 import styles from './styles.module.scss';
+import { IResourceChain } from '@/interfaces/chain';
+import { useAppSelector } from '@/state/hooks';
+import { selectPnftExchange } from '@/state/pnftExchange';
 
 const SelectedNetwork = ({}) => {
   const { chainId } = useWeb3React();
   const [loading, setLoading] = useState(false);
   const { onConnect, requestBtcAddress } = useContext(WalletContext);
+  const currentSelectedChain: IResourceChain = useAppSelector(selectPnftExchange).currentChain;
 
   const onHandleSwitchChain = async () => {
     try {
@@ -29,7 +33,10 @@ const SelectedNetwork = ({}) => {
     window.open(TRUSTLESS_COMPUTER, '_blank');
   };
 
-  if (!isSupportedChain(chainId)) {
+  if (
+    !isSupportedChain(chainId) ||
+    !compareString(currentSelectedChain?.chainId, chainId)
+  ) {
     return (
       <Button
         className={styles.btnButton}

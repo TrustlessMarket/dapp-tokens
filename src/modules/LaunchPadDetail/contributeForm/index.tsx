@@ -2,60 +2,64 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import ModalConfirmApprove from '@/components/ModalConfirmApprove';
-import {transactionType} from '@/components/Swap/alertInfoProcessing/types';
+import { transactionType } from '@/components/Swap/alertInfoProcessing/types';
 import FiledButton from '@/components/Swap/button/filedButton';
 import FieldAmount from '@/components/Swap/form/fieldAmount';
 import InputWrapper from '@/components/Swap/form/inputWrapper';
 import HorizontalItem from '@/components/Swap/horizontalItem';
 import TokenBalance from '@/components/Swap/tokenBalance';
 import WrapperConnected from '@/components/WrapperConnected';
-import {toastError} from '@/constants/error';
+import { toastError } from '@/constants/error';
 import useApproveERC20Token from '@/hooks/contract-operations/token/useApproveERC20Token';
 import useBalanceERC20Token from '@/hooks/contract-operations/token/useBalanceERC20Token';
 import useIsApproveERC20Token from '@/hooks/contract-operations/token/useIsApproveERC20Token';
-import {IToken} from '@/interfaces/token';
-import {TransactionStatus} from '@/interfaces/walletTransaction';
-import {logErrorToServer} from '@/services/swap';
-import {useAppDispatch, useAppSelector} from '@/state/hooks';
-import {closeModal, openModal} from '@/state/modal';
+import { IToken } from '@/interfaces/token';
+import { TransactionStatus } from '@/components/Swap/alertInfoProcessing/interface';
+import { logErrorToServer } from '@/services/swap';
+import { useAppDispatch, useAppSelector } from '@/state/hooks';
+import { closeModal, openModal } from '@/state/modal';
 import {
   requestReload,
   requestReloadRealtime,
   selectPnftExchange,
   updateCurrentTransaction,
 } from '@/state/pnftExchange';
-import {getIsAuthenticatedSelector} from '@/state/user/selector';
-import {colors} from '@/theme/colors';
-import {formatCurrency} from '@/utils';
-import {composeValidators, required} from '@/utils/formValidate';
+import { getIsAuthenticatedSelector } from '@/state/user/selector';
+import { colors } from '@/theme/colors';
+import { formatCurrency } from '@/utils';
+import { composeValidators, required } from '@/utils/formValidate';
 import px2rem from '@/utils/px2rem';
-import {showError} from '@/utils/toast';
-import {Box, Flex, forwardRef, Text,} from '@chakra-ui/react';
-import {useWeb3React} from '@web3-react/core';
+import { showError } from '@/utils/toast';
+import { Box, Flex, forwardRef, Text } from '@chakra-ui/react';
+import { useWeb3React } from '@web3-react/core';
 import BigNumber from 'bignumber.js';
 import cx from 'classnames';
 import debounce from 'lodash/debounce';
-import React, {useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState,} from 'react';
-import {Field, Form, useForm, useFormState} from 'react-final-form';
-import {useDispatch, useSelector} from 'react-redux';
+import React, {
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
+import { Field, Form, useForm, useFormState } from 'react-final-form';
+import { useDispatch, useSelector } from 'react-redux';
 import Web3 from 'web3';
 import styles from './styles.module.scss';
 import tokenIcons from '@/constants/tokenIcons';
-import toast from "react-hot-toast";
-import {useWindowSize} from "@trustless-computer/dapp-core";
-import useContractOperation from "@/hooks/contract-operations/useContractOperation";
-import useDepositPool from "@/hooks/contract-operations/launchpad/useDeposit";
+import toast from 'react-hot-toast';
+import { useWindowSize } from '@trustless-computer/dapp-core';
+import useContractOperation from '@/hooks/contract-operations/useContractOperation';
+import useDepositPool from '@/hooks/contract-operations/launchpad/useDeposit';
 
 export const MakeFormSwap = forwardRef((props, ref) => {
-  const {
-    onSubmit,
-    submitting,
-    poolDetail,
-  } = props;
+  const { onSubmit, submitting, poolDetail } = props;
   const [loading, setLoading] = useState(false);
   const [liquidityToken, setLiquidityToken] = useState<any>();
   const [launchpadToken, setLaunchpadToken] = useState<any>();
-  const [amountLiquidityTokenApproved, setAmountLiquidityTokenApproved] = useState('0');
+  const [amountLiquidityTokenApproved, setAmountLiquidityTokenApproved] =
+    useState('0');
   const { call: isApproved } = useIsApproveERC20Token();
   const { call: tokenBalance } = useBalanceERC20Token();
   const { call: approveToken } = useApproveERC20Token();
@@ -309,12 +313,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
 
   return (
     <form onSubmit={onSubmit} style={{ height: '100%' }}>
-      <Text
-        fontSize={px2rem(16)}
-        fontWeight={400}
-        color={"#1C1C1C"}
-        opacity={0.7}
-      >
+      <Text fontSize={px2rem(16)} fontWeight={400} color={'#1C1C1C'} opacity={0.7}>
         Deposit any amount of WETH.
       </Text>
       <InputWrapper
@@ -474,7 +473,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             onClick={onShowModalApprove}
             processInfo={{
               id: transactionType.createPoolApprove,
-              theme: 'light'
+              theme: 'light',
             }}
           >
             APPROVE USE OF {liquidityToken?.symbol}
@@ -489,7 +488,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             loadingText={submitting ? 'Processing' : ' '}
             processInfo={{
               id: transactionType.depositLaunchpad,
-              theme: 'light'
+              theme: 'light',
             }}
             style={{
               backgroundColor: colors.bluePrimary,
@@ -524,7 +523,7 @@ const ContributeForm = (props: any) => {
   const confirmDeposit = (values: any) => {
     const { liquidityAmount, launchpadAmount, onConfirm } = values;
     const id = 'modalDepositConfirm';
-    const close = () => dispatch(closeModal({id}));
+    const close = () => dispatch(closeModal({ id }));
     dispatch(
       openModal({
         id,
@@ -599,7 +598,7 @@ const ContributeForm = (props: any) => {
         launchpadAddress: poolDetail?.launchpad,
         boostRatio: '0',
         signature: '',
-        onBehalf: account
+        onBehalf: account,
       };
 
       if (boostInfo) {

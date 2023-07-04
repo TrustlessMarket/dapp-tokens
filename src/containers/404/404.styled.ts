@@ -1,6 +1,9 @@
-import styled, { DefaultTheme } from 'styled-components';
+import BodyContainer from '@/components/Swap/bodyContainer';
+import { colors } from '@/theme/colors';
+import { px2rem } from '@trustless-computer/dapp-core';
+import styled from 'styled-components';
 
-const Container = styled.div`
+const Container = styled(BodyContainer)`
   display: flex;
   flex: 1;
   flex-direction: column;
@@ -9,12 +12,12 @@ const Container = styled.div`
 
   .title {
     font-weight: 500;
-    font-size: 56px;
+    font-size: ${px2rem(56)};
     line-height: 66px;
     align-items: center;
     align-self: center;
     letter-spacing: -0.02em;
-    color: ${({ theme }: { theme: DefaultTheme }) => theme.white};
+    color: ${colors.white};
   }
 `;
 

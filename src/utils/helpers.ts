@@ -1,6 +1,10 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { L2_CHAIN_INFO } from '@/constants/chains';
 import { DEFAULT_GAS_PRICE, TOKEN_ICON_DEFAULT } from '@/constants/common';
+import { CHAIN_INFO } from '@/constants/storage-key';
 import tokenIcons from '@/constants/tokenIcons';
+import { IResourceChain } from '@/interfaces/chain';
 import { IToken } from '@/interfaces/token';
 import { getAddress } from '@ethersproject/address';
 import BigNumber from 'bignumber.js';
@@ -44,14 +48,17 @@ export const camelCaseKeys = (obj: any): any => {
 };
 
 export const sortAddressPair = (
-  tokenA: IToken,
-  tokenB: IToken,
-): [IToken, IToken] => {
-  const { token0, token1 } =
-    tokenA.address.toLowerCase() < tokenB.address.toLowerCase()
-      ? { token0: tokenA, token1: tokenB }
-      : { token0: tokenB, token1: tokenA };
-  return [token0, token1];
+  tokenA?: IToken | any,
+  tokenB?: IToken | any,
+): [IToken | any, IToken | any] => {
+  if (Boolean(tokenA?.address) && Boolean(tokenB?.address)) {
+    const { token0, token1 } =
+      tokenA.address.toLowerCase() < tokenB.address.toLowerCase()
+        ? { token0: tokenA, token1: tokenB }
+        : { token0: tokenB, token1: tokenA };
+    return [token0, token1];
+  }
+  return [tokenA, tokenB];
 };
 
 export const abbreviateNumber = (value: any) => {
@@ -100,4 +107,22 @@ export const getTokenIconUrl = (token: IToken | any) => {
     url = tokenIcons?.[token?.symbol?.toLowerCase()];
   }
   return url;
+};
+
+export const getExplorer = (
+  address: string,
+  type: 'address' | 'tx' = 'tx',
+  chain?: string,
+) => {
+  const connectedChain: IResourceChain = getLocalStorageChainInfo();
+  return `${chain || connectedChain.explorers[0].url}/${type}/${address}`;
+};
+
+export const getLocalStorageChainInfo = (): IResourceChain => {
+  const chainInfo = localStorage.getItem(CHAIN_INFO);
+  if (chainInfo) {
+    const parseChainInfo = JSON.parse(chainInfo);
+    return parseChainInfo;
+  }
+  return L2_CHAIN_INFO;
 };

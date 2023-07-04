@@ -1,0 +1,59 @@
+.switchContainer {
+  border: 1px solid var(--chakra-colors-gray-600);
+  border-radius: 4px;
+  overflow: hidden;
+  > div {
+    padding: 4px 10px;
+    cursor: pointer;
+    p {
+      color: var(--chakra-colors-gray-500);
+      font-size: rem(12);
+    }
+  }
+  &__active {
+    background-color: var(--chakra-colors-gray-50);
+    p {
+      color: #000000 !important;
+      font-weight: 500;
+    }
+  }
+}
+
+.itemChain {
+  align-items: center;
+  gap: 6px;
+  justify-content: space-between;
+  width: 100%;
+  img {
+    width: 24px;
+    height: 24px;
+    border-radius: 100%;
+  }
+  span {
+    color: rgb(186, 186, 186);
+  }
+  p {
+    color: white;
+    font-size: rem(14) !important;
+  }
+}
+
+.btnChainSelected {
+  background-color: transparent !important;
+  border-color: #5b5b5b !important;
+  border-radius: 100px;
+  padding: 4px 4px;
+}
+
+.chainList {
+  background-color: #151515 !important;
+  button {
+    background-color: transparent;
+    &:hover,
+    &:focus-visible,
+    &:focus,
+    &:active {
+      background-color: #5b5b5b;
+    }
+  }
+}

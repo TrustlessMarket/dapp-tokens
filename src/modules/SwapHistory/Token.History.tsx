@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import ListTable, {ColumnProp} from '@/components/Swap/listTable';
-import {MEMPOOL_URL, TC_EXPLORER, WALLET_URL} from '@/configs';
+import {MEMPOOL_URL, WALLET_URL} from '@/configs';
 import {getUserTradeHistory} from '@/services/swap';
 import {camelCaseKeys, formatCurrency, formatLongAddress} from '@/utils';
 import {Flex, Text} from '@chakra-ui/react';
@@ -8,13 +8,17 @@ import moment from 'moment';
 import React, {useEffect, useMemo, useState} from 'react';
 import {useWeb3React} from "@web3-react/core";
 import usePendingSwapTransactions from "@/hooks/contract-operations/swap/usePendingSwapTransactions";
+import {IResourceChain} from "@/interfaces/chain";
 import {useWindowSize} from "@trustless-computer/dapp-core";
+import {useSelector} from "react-redux";
+import {selectPnftExchange} from "@/state/pnftExchange";
 
 const TokenHistory = () => {
   const [list, setList] = useState<any[]>([]);
   const [listPending, setListPending] = useState<any[]>([]);
   const { account } = useWeb3React();
   const { mobileScreen } = useWindowSize();
+  const currentSelectedChain: IResourceChain = useSelector(selectPnftExchange).currentChain;
   const { call: getPendingSwapTransactions } = usePendingSwapTransactions();
 
   useEffect(() => {
@@ -22,7 +26,7 @@ const TokenHistory = () => {
       getList();
       getPendingTransactions();
     }
-  }, [account]);
+  }, [account, currentSelectedChain?.chain]);
 
   const getList = async () => {
     try {
@@ -30,6 +34,7 @@ const TokenHistory = () => {
         address: account as string,
         page: 1,
         limit: 30,
+        network: currentSelectedChain?.chain?.toLowerCase()
       });
       setList(response || []);
     } catch (error) {}
@@ -157,7 +162,7 @@ const TokenHistory = () => {
                         (
                           <a
                             title="explorer"
-                            href={`${TC_EXPLORER}/tx/${row.txHash}`}
+                            href={`${currentSelectedChain?.explorers[0]?.url}/tx/${row.txHash}`}
                             target="_blank"
                             style={{textDecoration: 'underline'}}
                           >
@@ -286,7 +291,7 @@ const TokenHistory = () => {
                   (
                     <a
                       title="explorer"
-                      href={`${TC_EXPLORER}/tx/${row.txHash}`}
+                      href={`${currentSelectedChain?.explorers[0]?.url}/tx/${row.txHash}`}
                       target="_blank"
                       style={{textDecoration: 'underline'}}
                     >

@@ -1,11 +1,11 @@
 import Layout from '@/layouts';
-import Swap from '@/modules/Swap';
+import Tokens from '@/modules/Tokens';
 
 export default function Home() {
   return (
     <>
       <Layout>
-        <Swap />
+        <Tokens />
       </Layout>
     </>
   );

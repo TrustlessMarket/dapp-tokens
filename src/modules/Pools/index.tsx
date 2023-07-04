@@ -4,57 +4,37 @@ import BodyContainer from '@/components/Swap/bodyContainer';
 import FiledButton from '@/components/Swap/button/filedButton';
 import InfoTooltip from '@/components/Swap/infoTooltip';
 import ListTable from '@/components/Swap/listTable';
-import {
-  CDN_URL,
-  DEFAULT_FROM_ADDRESS,
-  DEFAULT_TO_ADDRESS,
-  TRUSTLESS_MARKET_URL,
-} from '@/configs';
-import { USDC_ADDRESS, WBTC_ADDRESS, WETH_ADDRESS } from '@/constants/common';
-import { ROUTE_PATH } from '@/constants/route-path';
-import { LIQUID_PAIRS } from '@/constants/storage-key';
-import { ILiquidity } from '@/interfaces/liquidity';
-import { IToken } from '@/interfaces/token';
-import { getListLiquidity } from '@/services/swap';
-import { useAppSelector } from '@/state/hooks';
-import { selectPnftExchange } from '@/state/pnftExchange';
-import {
-  abbreviateNumber,
-  camelCaseKeys,
-  compareString,
-  formatCurrency,
-  getTokenIconUrl,
-} from '@/utils';
-import { formatAmountBigNumber } from '@/utils/format';
+import {DEFAULT_FROM_ADDRESS, DEFAULT_TO_ADDRESS, TRUSTLESS_MARKET_URL,} from '@/configs';
+import {USDC_ADDRESS, WBTC_ADDRESS, WETH_ADDRESS} from '@/constants/common';
+import {ROUTE_PATH} from '@/constants/route-path';
+import {LIQUID_PAIRS} from '@/constants/storage-key';
+import {ILiquidity} from '@/interfaces/liquidity';
+import {IToken} from '@/interfaces/token';
+import {getListLiquidity} from '@/services/swap';
+import {useAppSelector} from '@/state/hooks';
+import {selectPnftExchange} from '@/state/pnftExchange';
+import {abbreviateNumber, camelCaseKeys, compareString, formatCurrency, getTokenIconUrl,} from '@/utils';
+import {formatAmountBigNumber} from '@/utils/format';
 import px2rem from '@/utils/px2rem';
-import {
-  Box,
-  Center,
-  Flex,
-  Heading,
-  Icon,
-  IconButton,
-  Spinner,
-  Tag,
-  Text,
-} from '@chakra-ui/react';
-import { useWindowSize } from '@trustless-computer/dapp-core';
+import {Box, Center, Flex, Heading, Icon, IconButton, Spinner, Tag, Text,} from '@chakra-ui/react';
+import {useWindowSize} from '@trustless-computer/dapp-core';
 import BigNumber from 'bignumber.js';
-import { debounce } from 'lodash';
-import { useRouter } from 'next/router';
-import { useEffect, useMemo, useState } from 'react';
-import { AiOutlineMinusCircle, AiOutlinePlusCircle } from 'react-icons/ai';
-import { BsDownload, BsTwitter } from 'react-icons/bs';
-import { FiPlus } from 'react-icons/fi';
-import { IoArrowBackOutline } from 'react-icons/io5';
-import { TbDiscount2 } from 'react-icons/tb';
+import {debounce} from 'lodash';
+import {useRouter} from 'next/router';
+import {useEffect, useMemo, useState} from 'react';
+import {AiOutlineMinusCircle, AiOutlinePlusCircle} from 'react-icons/ai';
+import {BsDownload, BsTwitter} from 'react-icons/bs';
+import {FiPlus} from 'react-icons/fi';
+import {IoArrowBackOutline} from 'react-icons/io5';
+import {TbDiscount2} from 'react-icons/tb';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import { StyledLiquidNote, StyledTokens, UploadFileContainer } from './Pools.styled';
+import {StyledLiquidNote, StyledTokens, UploadFileContainer} from './Pools.styled';
 import CreateMarket from './form';
 import ImportPool from './form/importPool';
 import styles from './styles.module.scss';
-import { colors } from '@/theme/colors';
-import web3 from 'web3';
+import {colors} from '@/theme/colors';
+import {IResourceChain} from "@/interfaces/chain";
+import {useSelector} from "react-redux";
 
 export enum ScreenType {
   default = 'default',
@@ -76,6 +56,7 @@ const LiquidityContainer = () => {
   const { mobileScreen } = useWindowSize();
   const configs = useAppSelector(selectPnftExchange).configs;
   const liquidityFee = configs?.liquidityFee || 0.15;
+  const currentSelectedChain: IResourceChain = useSelector(selectPnftExchange).currentChain;
 
   const router = useRouter();
   const routerQuery = router.query;
@@ -95,7 +76,7 @@ const LiquidityContainer = () => {
   const fetchLiquidities = async (page = 1, isFetchMore = false) => {
     try {
       setIsFetching(true);
-      const res = await getListLiquidity({ limit: LIMIT_PAGE, page: page });
+      const res = await getListLiquidity({ limit: LIMIT_PAGE, page: page, network: currentSelectedChain.chain.toLowerCase() });
       if (isFetchMore) {
         setLiquidityList((prev) => [...prev, ...res]);
       } else {
@@ -940,7 +921,7 @@ const LiquidityContainer = () => {
   useEffect(() => {
     fetchMyLiquidities();
     fetchLiquidities();
-  }, [JSON.stringify(router.query)]);
+  }, [JSON.stringify(router.query), currentSelectedChain?.chain]);
 
   const fetchMyLiquidities = async () => {
     try {

@@ -1,10 +1,12 @@
-import { API_EXCHANGE_URL, API_URL } from '@/configs';
-import { IPagingParams } from '@/interfaces/api/query';
-import { IToken } from '@/interfaces/token';
-import { swrFetcher } from '@/utils/swr';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
+import {API_EXCHANGE_URL, API_URL} from '@/configs';
+import {IPagingParams} from '@/interfaces/api/query';
+import {IToken} from '@/interfaces/token';
+import {swrFetcher} from '@/utils/swr';
 import queryString from 'query-string';
-import { isProduction } from '@/utils/commons';
-import { ILiquidity } from '@/interfaces/liquidity';
+import {isProduction} from '@/utils/commons';
+import {ILiquidity} from '@/interfaces/liquidity';
 
 const API_PATH = '/swap';
 
@@ -14,6 +16,7 @@ export const getTokenRp = async (
     sort?: string;
     sort_type?: number;
     search?: string;
+    network?: string;
   },
 ): Promise<IToken[]> => {
   const qs = '?' + queryString.stringify(params);
@@ -27,6 +30,7 @@ export const getTokenRp = async (
 export interface IListTokenParams {
   is_test?: string;
   from_token?: string;
+  network?: string
 }
 
 export const getSwapTokens = async (
@@ -35,6 +39,17 @@ export const getSwapTokens = async (
   const qs = '?' + queryString.stringify(params);
 
   return swrFetcher(`${API_EXCHANGE_URL}${API_PATH}/token/list${qs}`, {
+    method: 'GET',
+    error: 'Fail to get tokens data',
+  });
+};
+
+export const getSwapTokensV1 = async (
+  params: IPagingParams & IListTokenParams,
+): Promise<IToken[]> => {
+  const qs = '?' + queryString.stringify(params);
+
+  return swrFetcher(`${API_EXCHANGE_URL}${API_PATH}/token/list/v1${qs}`, {
     method: 'GET',
     error: 'Fail to get tokens data',
   });
@@ -71,6 +86,7 @@ export const getChartToken = async (
   params: {
     contract_address: string;
     chart_type: string;
+    network?: string;
   } & IPagingParams,
 ) => {
   const qs = '?' + queryString.stringify(params);
@@ -84,6 +100,7 @@ export const getTradeHistory = async (
   params: {
     contract_address: string;
     user_address?: string;
+    network?: string;
   } & IPagingParams,
 ) => {
   const qs = '?' + queryString.stringify(params);
@@ -93,12 +110,31 @@ export const getTradeHistory = async (
   });
 };
 
-export const getSwapRoutes = async (params: {
+export interface ISwapRouteParams {
   from_token: string;
   to_token: string;
-}) => {
+  network?: string
+}
+
+export const getSwapRoutes = async (params: ISwapRouteParams) => {
   const qs = '?' + queryString.stringify(params);
-  return swrFetcher(`${API_URL}${API_PATH}/token/route${qs}`, {
+  return swrFetcher(`${API_EXCHANGE_URL}${API_PATH}/token/route${qs}`, {
+    method: 'GET',
+    error: 'Fail to get route',
+  });
+};
+
+export const getSwapRoutesV1 = async (params: ISwapRouteParams) => {
+  const qs = '?' + queryString.stringify(params);
+  return swrFetcher(`${API_EXCHANGE_URL}${API_PATH}/token/route/v1${qs}`, {
+    method: 'GET',
+    error: 'Fail to get route',
+  });
+};
+
+export const getSwapRoutesV2 = async (params: ISwapRouteParams) => {
+  const qs = '?' + queryString.stringify(params);
+  return swrFetcher(`${API_EXCHANGE_URL}${API_PATH}/token/route/v2${qs}`, {
     method: 'GET',
     error: 'Fail to get route',
   });
@@ -138,7 +174,9 @@ export const getTCTxDetailByHash = async (params: { tx_hash: string }) => {
 };
 
 export const getListLiquidity = async (
-  params: IPagingParams,
+  params: {
+    address?: string;
+  } & IPagingParams
 ): Promise<ILiquidity[]> => {
   const qs = '?' + queryString.stringify(params);
   return swrFetcher(`${API_EXCHANGE_URL}${API_PATH}/pair/apr/list${qs}`, {
