@@ -53,6 +53,11 @@
       font-size: rem(20);
       font-weight: 500;
     }
+
+    &__right {
+      position: absolute;
+      right: 0;
+    }
   }
 
   &__content_body {

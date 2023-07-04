@@ -3,6 +3,7 @@ import s from './styles.module.scss';
 import {Flex, Heading, Icon, IconButton} from '@chakra-ui/react';
 import {BiChevronLeft} from 'react-icons/bi';
 import {useRouter} from 'next/router';
+import SlippageSettingButton from "@/components/Swap/slippageSetting/v2/button";
 
 const RemoveTopHeader = () => {
   const router = useRouter();
@@ -29,6 +30,7 @@ const RemoveTopHeader = () => {
       />
       <Heading as={'h4'}>Remove Liquidity</Heading>
       <Flex className={s.container__top_body__right}>
+        <SlippageSettingButton />
       </Flex>
     </Flex>
   );

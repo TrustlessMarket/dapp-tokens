@@ -1,6 +1,7 @@
 export const ROUTE_PATH = {
   NOT_FOUND: '/404',
   HOME: '/',
+  HOME_V2: '/v2',
   DAPPS: '/dapps',
   COLLECTION: '/collection',
   INSCRIPTION: '/inscription',

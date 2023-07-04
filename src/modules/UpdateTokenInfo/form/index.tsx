@@ -67,6 +67,8 @@ export const MakeFormSwap = forwardRef((props, ref) => {
 
   const { account } = useWeb3React();
   const needReload = useAppSelector(selectPnftExchange).needReload;
+  const { getConnectedChainInfo } = useContext(WalletContext);
+  const chainInfo: IResourceChain = getConnectedChainInfo();
 
   const { values } = useFormState();
   const { change, restart } = useForm();
@@ -100,7 +102,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const fetchTokenDetail = async (address: any) => {
     try {
       setLoading(true);
-      const res = await getTokenDetail(address);
+      const res = await getTokenDetail(address, {network: chainInfo?.chain?.toLowerCase()});
       setTokenInfo(res);
       change('tokenInfo', res);
     } catch (err: unknown) {

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import {Flex, Icon, Td, Text, Tr} from "@chakra-ui/react";
+import {Center, Flex, Icon, Td, Text, Tr} from "@chakra-ui/react";
 import React, {useMemo, useState} from "react";
 import {ILiquidity} from '@/interfaces/liquidity';
 import px2rem from "@/utils/px2rem";
@@ -17,6 +17,8 @@ import {getPooledAmount} from "@/modules/PoolsV2/utils";
 import PoolsV2PositionStatus from "@/modules/PoolsV2/PoolsV2.PositionStatus";
 import PositionRemove from "@/modules/PoolsV2/MyPositions/Position.Remove";
 import {useWindowSize} from "@trustless-computer/dapp-core";
+import InfoTooltip from "@/components/Swap/infoTooltip";
+import {AiOutlinePlusCircle} from "react-icons/ai";
 
 interface ITopPoolsItem {
   poolDetail?: ILiquidity;
@@ -194,13 +196,32 @@ const TopPoolsItem: React.FC<ITopPoolsItem> = ({poolDetail,columns}) => {
           </Text>
         </Td>
         <Td borderColor={"rgba(255,255,255,0.1)"}>
-          {
-            hasPositions && (
-              <Flex justifyContent={"flex-end"}>
+          <Flex gap={2} justifyContent={"space-between"} alignItems={"center"}>
+            <InfoTooltip label={'New Position'}>
+              <Center
+                cursor={'pointer'}
+                fontSize={'24px'}
+                _hover={{
+                  color: '#0072ff',
+                }}
+                color = '#FFFFFF'
+              >
+                <AiOutlinePlusCircle
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    e.preventDefault();
+
+                    router.push(`${ROUTE_PATH.POOLS_V2_ADD}/${poolDetail?.token0Obj?.address}/${poolDetail?.token1Obj?.address}`)
+                  }}
+                />
+              </Center>
+            </InfoTooltip>
+            {
+              hasPositions && (
                 <Icon as={showPosition ? BiChevronUp : BiChevronDown } color={'#919AB0'} fontSize={px2rem(24)} />
-              </Flex>
-            )
-          }
+              )
+            }
+          </Flex>
         </Td>
       </Tr>
       {
