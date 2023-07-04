@@ -40,9 +40,10 @@ const SUPPORT_PATH_V2 = [
   ROUTE_PATH.POOLS_V2_ADD,
   ROUTE_PATH.POOLS_V2_INCREASE,
   ROUTE_PATH.POOLS_V2_REMOVE,
+  ROUTE_PATH.TOKEN_V2,
 ];
 
-const SUPPORT_PATH_V1 = [ROUTE_PATH.SWAP, ROUTE_PATH.MARKETS, ROUTE_PATH.POOLS];
+const SUPPORT_PATH_V1 = [ROUTE_PATH.SWAP, ROUTE_PATH.MARKETS, ROUTE_PATH.POOLS, ROUTE_PATH.TOKEN];
 
 const HeaderSwitchNetwork = () => {
   const dispatch = useAppDispatch();
@@ -64,6 +65,8 @@ const HeaderSwitchNetwork = () => {
           router.push(`${ROUTE_PATH.ORIGINAL_POOL}/nos`);
         } else if (routerPath.includes(ROUTE_PATH.MARKETS)) {
           router.push(`${ROUTE_PATH.ORIGINAL_MARKETS}/nos`);
+        } else if (routerPath.includes(ROUTE_PATH.TOKEN)) {
+          router.push(`${ROUTE_PATH.ORIGINAL_TOKEN}/nos`);
         }
       }
     } else if (
@@ -85,6 +88,8 @@ const HeaderSwitchNetwork = () => {
           router.push(`${ROUTE_PATH.ORIGINAL_POOL}/tc`);
         } else if (routerPath.includes(ROUTE_PATH.POOLS_V2_REMOVE)) {
           router.push(`${ROUTE_PATH.ORIGINAL_POOL}/tc`);
+        } else if (routerPath.includes(ROUTE_PATH.TOKEN_V2)) {
+          router.push(`${ROUTE_PATH.ORIGINAL_TOKEN}/tc`);
         }
       }
     }

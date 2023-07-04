@@ -36,4 +36,5 @@ export const ROUTE_PATH = {
   ORIGINAL_POOL: '/pools',
   ORIGINAL_SWAP: '/swap',
   ORIGINAL_MARKETS: '/markets',
+  ORIGINAL_TOKEN: '/token',
 };
