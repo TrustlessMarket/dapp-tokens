@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import ListTable, {ColumnProp} from '@/components/Swap/listTable';
-import {CDN_URL, TC_EXPLORER} from '@/configs';
+import {CDN_URL} from '@/configs';
 import {getTMTransferHistory} from '@/services/swap';
 import {compareString, formatCurrency} from '@/utils';
 import {Flex, Spinner, Text} from '@chakra-ui/react';
@@ -12,6 +12,9 @@ import {debounce} from "lodash";
 import InfiniteScroll from "react-infinite-scroll-component";
 import {colors} from "@/theme/colors";
 import styles from './styles.module.scss';
+import {IResourceChain} from "@/interfaces/chain";
+import {useSelector} from "react-redux";
+import {selectPnftExchange} from "@/state/pnftExchange";
 
 const LIMIT_PAGE = 30;
 
@@ -19,12 +22,13 @@ const TokenHistory = () => {
   const [isFetching, setIsFetching] = useState(false);
   const [list, setList] = useState<any[]>([]);
   const { account, } = useWeb3React();
+  const currentSelectedChain: IResourceChain = useSelector(selectPnftExchange).currentChain;
 
   useEffect(() => {
     if(account) {
       getList();
     }
-  }, [account]);
+  }, [account, currentSelectedChain?.chain]);
 
   const getList = async (page = 1, isFetchMore = false) => {
     try {
@@ -169,7 +173,7 @@ const TokenHistory = () => {
             <Flex color={"#FFFFFF"}>
               <a
                 title="explorer"
-                href={`${TC_EXPLORER}/tx/${row.txHash}`}
+                href={`${currentSelectedChain?.explorers[0]?.url}/tx/${row.txHash}`}
                 target="_blank"
               >
                 <RxExternalLink />
@@ -179,7 +183,7 @@ const TokenHistory = () => {
         },
       },
     ],
-    [account],
+    [account, currentSelectedChain?.chain],
   );
 
   return (
