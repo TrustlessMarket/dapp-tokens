@@ -14,7 +14,7 @@ import {
   StyledTokenDetailContainer,
   StyledTokenTopInfo,
 } from './Token.styled';
-import {CDN_URL, L2_ETH_ADDRESS} from '@/configs';
+import {CDN_URL, L2_WBTC_ADDRESS} from '@/configs';
 import {IToken} from '@/interfaces/token';
 import {getChartToken, getTokenRp} from '@/services/swap';
 import {sortBy} from 'lodash';
@@ -28,7 +28,7 @@ import {IResourceChain} from "@/interfaces/chain";
 import {useSelector} from "react-redux";
 import {selectPnftExchange} from "@/state/pnftExchange";
 import {SupportedChainId} from "@/constants/chains";
-import {WETH_ADDRESS} from "@/constants/common";
+import {WBTC_ADDRESS} from "@/constants/common";
 
 const TokenChart = dynamic(() => import('./Token.Chart'), {
   ssr: false,
@@ -52,7 +52,7 @@ const TokenDetail = () => {
     if (address) {
       getData();
     } else {
-      const address: any = isL2 ? L2_ETH_ADDRESS : WETH_ADDRESS;
+      const address: any = isL2 ? L2_WBTC_ADDRESS : WBTC_ADDRESS;
       router.replace(`${router.pathname}?address=${address}`);
     }
   }, [address, currentSelectedChain?.chain]);
