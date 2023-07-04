@@ -11,7 +11,7 @@ import {Flex, Spinner, useTheme} from "@chakra-ui/react";
 import {FeeAmount, TICK_SPACINGS} from '@uniswap/v3-sdk'
 import {Token} from '@uniswap/sdk-core'
 import {TickProcessed} from "@/utils/liquidity";
-import {isAddress} from "@/utils";
+import {compareString, isAddress} from "@/utils";
 import {formatEther} from "ethers/lib/utils";
 import {getCurrentTickIdx} from "@/utils/number";
 import {CurrentPriceLabel} from "@/modules/PoolsV2/Add/Add.PriceChart/CurrentPriceLabel";
@@ -20,7 +20,7 @@ import CustomToolTip from "@/modules/PoolsV2/Add/Add.PriceChart/CustomToolTip";
 const Wrapper = styled.div`
   position: relative;
   width: 100%;
-  height: 275px;
+  height: 291px;
 `
 
 const ControlsWrapper = styled.div`
@@ -88,11 +88,14 @@ const initialState = {
 interface IAddPriceChart {
   address: string;
   poolDetail: any;
+  baseToken: any;
 };
 
-const AddPriceChart: React.FC<IAddPriceChart> = ({address, poolDetail}) => {
+const AddPriceChart: React.FC<IAddPriceChart> = ({address, poolDetail, baseToken}) => {
   const { call: getPoolLiquidity } = useGetPoolLiquidity();
   const [ticksProcessed, setTicksProcessed] = useState([]);
+
+  console.log('poolDetail', poolDetail);
 
   // poolData
   const poolData = poolDetail;
@@ -119,6 +122,10 @@ const AddPriceChart: React.FC<IAddPriceChart> = ({address, poolDetail}) => {
 
   const [loading, setLoading] = useState(false)
   const [zoomState, setZoomState] = useState<ZoomStateProps>(initialState)
+
+  const isRevert = useMemo(() => {
+    return !compareString(baseToken?.address, poolData.token0.address)
+  }, [baseToken?.address, poolData.token0.address])
 
   useEffect(() => {
     async function fetch() {
@@ -154,20 +161,28 @@ const AddPriceChart: React.FC<IAddPriceChart> = ({address, poolDetail}) => {
     async function formatData() {
       if (ticksProcessed) {
         console.log('ticksProcessed aaaa', ticksProcessed);
-        const newData = await Promise.all(
+        let newData = await Promise.all(
           ticksProcessed.map(async (t: TickProcessed, i) => {
             const active = t.tickIdx === getCurrentTickIdx(poolDetail.rootCurrentTick, TICK_SPACINGS[feeTier]);
             return {
               index: i,
               isCurrent: active,
               activeLiquidity: parseFloat(formatEther(t.liquidityActive)),
-              price0: t.price0,
-              price1: t.price1,
-              tvlToken0: parseFloat(formatEther(t.tvl0)),
-              tvlToken1: parseFloat(formatEther(t.tvl1)),
+              price0: isRevert ? t.price1 : t.price0,
+              price1: isRevert ? t.price0 : t.price1,
+              tvlToken0: parseFloat(formatEther(isRevert ? t.tvl1 : t.tvl0)),
+              tvlToken1: parseFloat(formatEther(isRevert ? t.tvl0 : t.tvl1)),
+              token0: isRevert ? poolData.token1 : poolData.token0,
+              token1: isRevert ? poolData.token0 : poolData.token1,
             }
           })
         )
+
+        console.log('isRevert', isRevert);
+
+        if(isRevert) {
+          newData = newData.reverse();
+        }
         // offset the values to line off bars with TVL used to swap across bar
         // newData?.map((entry, i) => {
         //   if (i > 0) {
@@ -190,7 +205,7 @@ const AddPriceChart: React.FC<IAddPriceChart> = ({address, poolDetail}) => {
     if (!formattedData || formattedData?.length <= 0) {
       formatData()
     }
-  }, [feeTier, formattedData, loading, poolData.feeTier, token0, token1, ticksProcessed?.length])
+  }, [feeTier, formattedData, loading, poolData.feeTier, token0, token1, ticksProcessed?.length, isRevert])
 
   const atZoomMax = zoomState.left + ZOOM_INTERVAL >= zoomState.right - ZOOM_INTERVAL - 1
   const atZoomMin = zoomState.left - ZOOM_INTERVAL < 0
@@ -279,7 +294,7 @@ const AddPriceChart: React.FC<IAddPriceChart> = ({address, poolDetail}) => {
           >
             <Tooltip
               content={(props) => (
-                <CustomToolTip chartProps={props} poolData={poolData} currentPrice={poolData.currentPrice} />
+                <CustomToolTip chartProps={props} currentPrice={poolData.currentPrice} />
               )}
             />
             <XAxis reversed={false} tick={false} />

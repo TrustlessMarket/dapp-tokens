@@ -116,7 +116,7 @@ const Header = () => {
         style={{ height: defaultProvider.headerHeight }}
       >
         <div className={'leftWrapper'}>
-          <Link className="logo" href={ROUTE_PATH.HOME}>
+          <Link className="logo" href={compareString(currentSelectedChain?.chain, L2_CHAIN_INFO.chain) ? ROUTE_PATH.HOME_V2 : ROUTE_PATH.HOME}>
             <img
               src={`${CDN_URL}/icons/logo-tc-market.svg`}
               alt="New Bitcoin DEX logo"

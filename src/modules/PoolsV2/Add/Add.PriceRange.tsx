@@ -256,7 +256,6 @@ const AddPriceRange: React.FC<IAddPriceRange> = ({ loading }) => {
     return (
       <>
         <InputWrapper label={`Set Price Range`}>
-          <Box mt={4} />
           <Flex
             className={s.formContainer__right__rangeContainer__currentPrice}
             alignItems={'center'}
@@ -269,8 +268,8 @@ const AddPriceRange: React.FC<IAddPriceRange> = ({ loading }) => {
               {quoteToken.symbol} per {baseToken.symbol}
             </Text>
           </Flex>
-          <AddPriceChart address={values?.poolAddress} poolDetail={poolDetail}/>
-          <Flex mt={4} gap={2} className={s.formContainer__right__rangeContainer}>
+          <AddPriceChart address={values?.poolAddress} poolDetail={poolDetail} baseToken={baseToken}/>
+          <Flex mt={2} gap={2} className={s.formContainer__right__rangeContainer}>
             <Box className={s.formContainer__right__rangeContainer__item}>
               <Field
                 label="Min Price"

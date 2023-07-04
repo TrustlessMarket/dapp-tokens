@@ -7,11 +7,13 @@ import { IToken } from '@/interfaces/token';
 import { getTokenDetail } from '@/services/token-explorer';
 import { compareString, sortAddressPair } from '@/utils';
 import { useWeb3React } from '@web3-react/core';
-import { useCallback } from 'react';
+import {useCallback, useContext} from 'react';
 import Web3 from 'web3';
 import web3Eth from 'web3-eth-abi';
 import {getTCTxDetailByHash} from "@/services/swap";
 import {CONTRACT_METHOD_IDS} from "@/constants/methodId";
+import {WalletContext} from "@/contexts/wallet-context";
+import {IResourceChain} from "@/interfaces/chain";
 
 export interface IPendingSwapTransactionsParams {}
 
@@ -25,6 +27,8 @@ const usePendingSwapTransactions: ContractOperationHook<
     getTCTxByHash,
     getPendingInscribeTxsDetail,
   } = useBitcoin();
+  const { getConnectedChainInfo } = useContext(WalletContext);
+  const chainInfo: IResourceChain = getConnectedChainInfo();
 
   const call = useCallback(
     async ({}): Promise<any> => {
@@ -70,9 +74,10 @@ const usePendingSwapTransactions: ContractOperationHook<
               amount1_in = amountIn;
             }
 
+            const params = {network: chainInfo?.chain?.toLowerCase()};
             const [token0_obj, token1_obj] = await Promise.all([
-              getTokenDetail(token0.address),
-              getTokenDetail(token1.address),
+              getTokenDetail(token0.address, params),
+              getTokenDetail(token1.address, params),
             ]);
 
             response.push({
@@ -143,9 +148,10 @@ const usePendingSwapTransactions: ContractOperationHook<
               amount1_in = amountIn;
             }
 
+            const params = {network: chainInfo?.chain?.toLowerCase()};
             const [token0_obj, token1_obj] = await Promise.all([
-              getTokenDetail(token0.address),
-              getTokenDetail(token1.address),
+              getTokenDetail(token0.address, params),
+              getTokenDetail(token1.address, params),
             ]);
 
             // console.log('token0_obj, token1_obj', token0_obj, token1_obj);
