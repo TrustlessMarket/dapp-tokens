@@ -256,7 +256,7 @@ const FormAddPoolsV2Container = forwardRef<any, IFormAddPoolsV2Container>(
             <Flex className={s.formContainer__right}>
               <AddPriceRange loading={loading} />
               <Box mt={10} />
-              <WrapperConnected>
+              <WrapperConnected className={s.formContainer__right__btnContainer}>
                 <Box>
                   {!isTokenApproved && (
                     <AddApproveToken
