@@ -1,21 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import FiledButton from '@/components/Swap/button/filedButton';
-import { ROUTE_PATH } from '@/constants/route-path';
-import { camelCaseKeys } from '@/utils';
-import {
-  Spinner,
-  Tab,
-  TabList,
-  TabPanel,
-  TabPanels,
-  Tabs,
-  Text,
-  Tooltip,
-} from '@chakra-ui/react';
+import {ROUTE_PATH} from '@/constants/route-path';
+import {camelCaseKeys, compareString} from '@/utils';
+import {Spinner, Tab, TabList, TabPanel, TabPanels, Tabs, Text, Tooltip,} from '@chakra-ui/react';
 import BigNumber from 'bignumber.js';
-import { useRouter } from 'next/router';
-import {useContext, useEffect, useState} from 'react';
+import {useRouter} from 'next/router';
+import {useEffect, useState} from 'react';
 import {
   StyledHistoryContentContainer,
   StyledLeftContentContainer,
@@ -23,24 +14,29 @@ import {
   StyledTokenDetailContainer,
   StyledTokenTopInfo,
 } from './Token.styled';
-import { CDN_URL } from '@/configs';
-import { IToken } from '@/interfaces/token';
-import { getChartToken, getTokenRp } from '@/services/swap';
-import { sortBy } from 'lodash';
+import {CDN_URL, L2_WBTC_ADDRESS} from '@/configs';
+import {IToken} from '@/interfaces/token';
+import {getChartToken, getTokenRp} from '@/services/swap';
+import {sortBy} from 'lodash';
 import dynamic from 'next/dynamic';
 import TokenHistory from './Token.History';
 import TokenLeftInfo from './Token.LeftInfo';
 import TokenTopInfo from './Token.TopInfo';
-import { useWeb3React } from '@web3-react/core';
-import { useScreenLayout } from '@/hooks/useScreenLayout';
-import {WalletContext} from "@/contexts/wallet-context";
+import {useWeb3React} from '@web3-react/core';
+import {useScreenLayout} from '@/hooks/useScreenLayout';
 import {IResourceChain} from "@/interfaces/chain";
+import {useSelector} from "react-redux";
+import {selectPnftExchange} from "@/state/pnftExchange";
+import {SupportedChainId} from "@/constants/chains";
+import {WBTC_ADDRESS} from "@/constants/common";
 
 const TokenChart = dynamic(() => import('./Token.Chart'), {
   ssr: false,
 });
 
 const TokenDetail = () => {
+  const currentSelectedChain: IResourceChain = useSelector(selectPnftExchange).currentChain;
+  const isL2 = compareString(currentSelectedChain?.chainId, SupportedChainId.L2);
   const router = useRouter();
   const address: any = router.query?.address;
   const [loading, setLoading] = useState(true);
@@ -52,14 +48,14 @@ const TokenDetail = () => {
 
   const { account, isActive } = useWeb3React();
 
-  const { getConnectedChainInfo } = useContext(WalletContext);
-  const chainInfo: IResourceChain = getConnectedChainInfo();
-
   useEffect(() => {
     if (address) {
       getData();
+    } else {
+      const address: any = isL2 ? L2_WBTC_ADDRESS : WBTC_ADDRESS;
+      router.replace(`${router.pathname}?address=${address}`);
     }
-  }, [address]);
+  }, [address, currentSelectedChain?.chain]);
 
   const getData = async () => {
     try {
@@ -70,12 +66,12 @@ const TokenDetail = () => {
       const [resToken, resChart] = await Promise.all([
         getTokenRp({
           address,
-          network: chainInfo?.chain?.toLowerCase()
+          network: currentSelectedChain?.chain?.toLowerCase()
         }),
         getChartToken({
           contract_address: address,
           chart_type: 'minute',
-          network: chainInfo?.chain?.toLowerCase()
+          network: currentSelectedChain?.chain?.toLowerCase()
         }),
       ]);
       if (resToken.length === 0) {

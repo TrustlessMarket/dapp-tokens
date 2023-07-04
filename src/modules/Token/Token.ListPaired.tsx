@@ -2,12 +2,12 @@
 import Empty from '@/components/Empty';
 import HorizontalItem from '@/components/HorizontalItem';
 import FiledButton from '@/components/Swap/button/filedButton';
-import { ROUTE_PATH } from '@/constants/route-path';
+import {ROUTE_PATH} from '@/constants/route-path';
 import useGetReserves from '@/hooks/contract-operations/swap/useReserves';
 import useSupplyERC20Liquid from '@/hooks/contract-operations/token/useSupplyERC20Liquid';
-import { IToken } from '@/interfaces/token';
-import { getListPaired } from '@/services/pool';
-import { abbreviateNumber, formatCurrency } from '@/utils';
+import {IToken} from '@/interfaces/token';
+import {getListPaired} from '@/services/pool';
+import {abbreviateNumber, compareString, formatCurrency} from '@/utils';
 import {
   Accordion,
   AccordionButton,
@@ -20,17 +20,20 @@ import {
   Text,
 } from '@chakra-ui/react';
 import moment from 'moment';
-import { useRouter } from 'next/router';
-import {useContext, useEffect, useState} from 'react';
+import {useRouter} from 'next/router';
+import {useEffect, useState} from 'react';
 import web3 from 'web3';
-import { DEFAULT_FROM_TOKEN_ADDRESS, ScreenType } from '../Pools';
-import {WalletContext} from "@/contexts/wallet-context";
+import {DEFAULT_FROM_TOKEN_ADDRESS, ScreenType} from '../Pools';
 import {IResourceChain} from "@/interfaces/chain";
+import {SupportedChainId} from "@/constants/chains";
+import {useSelector} from "react-redux";
+import {selectPnftExchange} from "@/state/pnftExchange";
 
 const TokenPoolDetail = ({ paired }: { paired: any }) => {
   const router = useRouter();
   const token0: IToken = paired?.token0Obj;
   const token1: IToken = paired?.token1Obj;
+  const currentSelectedChain: IResourceChain = useSelector(selectPnftExchange).currentChain;
 
   const [supply, setSupply] = useState<any>({
     ownerSupply: '0',
@@ -115,11 +118,13 @@ const TokenPoolDetail = ({ paired }: { paired: any }) => {
           <FiledButton
             btnSize="l"
             style={{ color: 'white' }}
-            onClick={() =>
+            onClick={() => {
+              const isL2 = compareString(currentSelectedChain?.chainId, SupportedChainId.L2);
+              const routePath = isL2 ? ROUTE_PATH.SWAP_V2 : ROUTE_PATH.SWAP;
               router.push(
-                `${ROUTE_PATH.SWAP}?from_token=${token0?.address}&to_token=${token1.address}`,
+                `${routePath}?from_token=${token0?.address}&to_token=${token1.address}`,
               )
-            }
+            }}
           >
             Swap now
           </FiledButton>
@@ -127,11 +132,15 @@ const TokenPoolDetail = ({ paired }: { paired: any }) => {
             btnSize="l"
             variant={'outline'}
             className="btn-add-liquid"
-            onClick={() =>
+            onClick={() => {
+              const isL2 = compareString(currentSelectedChain?.chainId, SupportedChainId.L2);
+              const routePath = isL2
+                ? `${ROUTE_PATH.POOLS_V2_ADD}/${token0?.address}/${token1?.address}`
+                : `${ROUTE_PATH.POOLS}?type=${ScreenType.add_liquid}&f=${token0.address}&t=${token1.address}`;
               router.push(
-                `${ROUTE_PATH.POOLS}?type=${ScreenType.add_liquid}&f=${token0.address}&t=${token1.address}`,
+                `${routePath}`,
               )
-            }
+            }}
           >
             Add liquidity
           </FiledButton>
@@ -144,15 +153,13 @@ const TokenPoolDetail = ({ paired }: { paired: any }) => {
 const TokenListPaired = ({ data }: { data: IToken }) => {
   const [list, setList] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const currentSelectedChain: IResourceChain = useSelector(selectPnftExchange).currentChain;
 
   const router = useRouter();
 
-  const { getConnectedChainInfo } = useContext(WalletContext);
-  const chainInfo: IResourceChain = getConnectedChainInfo();
-
   useEffect(() => {
     getData();
-  }, [data?.address]);
+  }, [data?.address, currentSelectedChain?.chain]);
 
   const getData = async () => {
     if (!data?.address) {
@@ -162,7 +169,7 @@ const TokenListPaired = ({ data }: { data: IToken }) => {
     try {
       const response: any = await getListPaired({
         from_token: data.address,
-        network: chainInfo?.chain?.toLowerCase()
+        network: currentSelectedChain?.chain?.toLowerCase()
       });
 
       setList(response || []);
@@ -188,11 +195,15 @@ const TokenListPaired = ({ data }: { data: IToken }) => {
           <Text className="empty-pool">Empty pool</Text>
           <Box mt={6} />
           <FiledButton
-            onClick={() =>
+            onClick={() => {
+              const isL2 = compareString(currentSelectedChain?.chainId, SupportedChainId.L2);
+              const routePath = isL2
+                ? `${ROUTE_PATH.POOLS_V2_ADD}/${data.address}/${DEFAULT_FROM_TOKEN_ADDRESS}`
+                : `${ROUTE_PATH.POOLS}?type=${ScreenType.add_liquid}&f=${data.address}&t=${DEFAULT_FROM_TOKEN_ADDRESS}`;
               router.push(
-                `${ROUTE_PATH.POOLS}?type=${ScreenType.add_liquid}&f=${data.address}&t=${DEFAULT_FROM_TOKEN_ADDRESS}`,
+                `${routePath}`,
               )
-            }
+            }}
             btnSize="l"
             className="btn-add-liquid"
           >

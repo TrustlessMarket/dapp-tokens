@@ -16,7 +16,8 @@ export const ROUTE_PATH = {
   MARKETS: '/markets/tc',
   MARKETS_V2: '/markets/nos',
   GET_STARTED: '/get-started',
-  TOKEN: '/token',
+  TOKEN: '/token/tc',
+  TOKEN_V2: '/token/nos',
   UPDATE_TOKEN_INFO: '/update-token-info',
   IDO: '/ido',
   IDO_MANAGE: '/ido/manage',
@@ -35,4 +36,6 @@ export const ROUTE_PATH = {
   ORIGINAL_POOL: '/pools',
   ORIGINAL_SWAP: '/swap',
   ORIGINAL_MARKETS: '/markets',
+  ORIGINAL_TOKEN: '/token',
+  ORIGINAL_HOME: '/',
 };

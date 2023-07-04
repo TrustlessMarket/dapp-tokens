@@ -16,8 +16,7 @@ const SelectedNetwork = ({}) => {
   const { chainId } = useWeb3React();
   const [loading, setLoading] = useState(false);
   const { onConnect, requestBtcAddress } = useContext(WalletContext);
-  const currentSelectedChain: IResourceChain =
-    useAppSelector(selectPnftExchange).currentChain;
+  const currentSelectedChain: IResourceChain = useAppSelector(selectPnftExchange).currentChain;
 
   const onHandleSwitchChain = async () => {
     try {

@@ -44,12 +44,15 @@ const AddHeaderSwitchPair = () => {
 
     if (isPool(poolAddress)) {
       const _revertTickLower = isRevert ? -tickUpper : tickLower;
+
       const _revertTickUpper = isRevert ? -tickLower : tickUpper;
       change('currentTick', isRevert ? -currentTick : currentTick);
       change('tickLower', _revertTickLower);
       change('minPrice', tickToPrice(_revertTickLower));
       change('tickUpper', _revertTickUpper);
       change('maxPrice', tickToPrice(_revertTickUpper));
+
+      console.log('_priceLower-2', tickToPrice(_revertTickLower));
     }
 
     change('isRevert', isRevert);

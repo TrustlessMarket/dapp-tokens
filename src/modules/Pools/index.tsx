@@ -21,7 +21,7 @@ import {useWindowSize} from '@trustless-computer/dapp-core';
 import BigNumber from 'bignumber.js';
 import {debounce} from 'lodash';
 import {useRouter} from 'next/router';
-import {useContext, useEffect, useMemo, useState} from 'react';
+import {useEffect, useMemo, useState} from 'react';
 import {AiOutlineMinusCircle, AiOutlinePlusCircle} from 'react-icons/ai';
 import {BsDownload, BsTwitter} from 'react-icons/bs';
 import {FiPlus} from 'react-icons/fi';
@@ -33,8 +33,8 @@ import CreateMarket from './form';
 import ImportPool from './form/importPool';
 import styles from './styles.module.scss';
 import {colors} from '@/theme/colors';
-import {WalletContext} from "@/contexts/wallet-context";
 import {IResourceChain} from "@/interfaces/chain";
+import {useSelector} from "react-redux";
 
 export enum ScreenType {
   default = 'default',
@@ -56,8 +56,7 @@ const LiquidityContainer = () => {
   const { mobileScreen } = useWindowSize();
   const configs = useAppSelector(selectPnftExchange).configs;
   const liquidityFee = configs?.liquidityFee || 0.15;
-  const { getConnectedChainInfo } = useContext(WalletContext);
-  const chainInfo: IResourceChain = getConnectedChainInfo();
+  const currentSelectedChain: IResourceChain = useSelector(selectPnftExchange).currentChain;
 
   const router = useRouter();
   const routerQuery = router.query;
@@ -77,7 +76,7 @@ const LiquidityContainer = () => {
   const fetchLiquidities = async (page = 1, isFetchMore = false) => {
     try {
       setIsFetching(true);
-      const res = await getListLiquidity({ limit: LIMIT_PAGE, page: page, network: chainInfo.chain.toLowerCase() });
+      const res = await getListLiquidity({ limit: LIMIT_PAGE, page: page, network: currentSelectedChain.chain.toLowerCase() });
       if (isFetchMore) {
         setLiquidityList((prev) => [...prev, ...res]);
       } else {
@@ -920,7 +919,7 @@ const LiquidityContainer = () => {
   useEffect(() => {
     fetchMyLiquidities();
     fetchLiquidities();
-  }, [JSON.stringify(router.query)]);
+  }, [JSON.stringify(router.query), currentSelectedChain?.chain]);
 
   const fetchMyLiquidities = async () => {
     try {

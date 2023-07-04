@@ -6,7 +6,7 @@ import {IToken} from '@/interfaces/token';
 import {getTokenRp} from '@/services/swap';
 import {abbreviateNumber, formatCurrency, getTokenIconUrl} from '@/utils';
 import {debounce} from 'lodash';
-import React, {useContext, useEffect, useMemo, useRef, useState} from 'react';
+import React, {useEffect, useMemo, useRef, useState} from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import {StyledTokens, UploadFileContainer} from './Tokens.styled';
 import {ROUTE_PATH} from '@/constants/route-path';
@@ -29,8 +29,9 @@ import TokenChartLast7Day from './Token.ChartLast7Day';
 import VerifiedBadgeToken from './verifiedBadgeToken';
 import {FiSearch} from 'react-icons/fi';
 import {useWindowSize} from '@trustless-computer/dapp-core';
-import {WalletContext} from "@/contexts/wallet-context";
 import {IResourceChain} from "@/interfaces/chain";
+import {useSelector} from "react-redux";
+import {selectPnftExchange} from "@/state/pnftExchange";
 
 const LIMIT_PAGE = 100;
 
@@ -42,8 +43,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const [sort, setSort] = useState({ sort: '' });
   const { values } = useFormState();
   const { mobileScreen } = useWindowSize();
-  const { getConnectedChainInfo } = useContext(WalletContext);
-  const chainInfo: IResourceChain = getConnectedChainInfo();
+  const currentSelectedChain: IResourceChain = useSelector(selectPnftExchange).currentChain;
 
   const fetchTokens = async (page = 1, isFetchMore = false) => {
     try {
@@ -58,7 +58,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           sort: sortField,
           sort_type: sortType,
           search: search,
-          network: chainInfo?.chain?.toLowerCase()
+          network: currentSelectedChain?.chain?.toLowerCase()
         })) || [];
       if (isFetchMore) {
         setTokensList((prev) => [...prev, ...res]);
@@ -85,7 +85,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
 
   useEffect(() => {
     fetchTokens();
-  }, [JSON.stringify(sort), debounced, chainInfo?.chain]);
+  }, [JSON.stringify(sort), debounced, currentSelectedChain?.chain]);
 
   const columns: ColumnProp[] = useMemo(() => {
     if (mobileScreen) {
