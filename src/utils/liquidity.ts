@@ -8,6 +8,8 @@ import {BigNumber} from 'ethers';
 import {getMaxTick, getMinTick, getSqrtRatioAtTick, tickToPrice} from './number';
 import {FeeAmount, TICK_SPACINGS} from './constants';
 import {getAmountsForLiquidity} from './utilities';
+import {ISurroundingTicksParams} from "@/services/swap-v3";
+import {API_EXCHANGE_URL} from "@/configs";
 
 const DEFAULT_SURROUNDING_TICKS = 300
 
@@ -58,13 +60,15 @@ export const fetchInitializedTicks = async (
 ): Promise<Tick[]> => {
     let surroundingTicks: Tick[] = []
     let surroundingTicksResult: Tick[] = []
-    const response = await axios.get('https://dev.fprotocol.io/api/swap-v3/pool/surrounding-ticks', {
-        params: {
-            pool_address: poolAddress,
-            lower_tick: tickIdxLowerBound,
-            upper_tick: tickIdxUpperBound,
-        }
-    })
+    const params: ISurroundingTicksParams = {
+        pool_address: poolAddress,
+        lower_tick: tickIdxLowerBound,
+        upper_tick: tickIdxUpperBound,
+    }
+    // const response = await getSurroundingTicks(params);
+    const response = await axios.get(`${API_EXCHANGE_URL}/swap-v3/pool/surrounding-ticks`, {
+        params: params
+    });
     surroundingTicks = response.data.result;
     surroundingTicksResult = surroundingTicksResult.concat(surroundingTicks)
     return surroundingTicksResult

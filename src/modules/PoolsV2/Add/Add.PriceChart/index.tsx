@@ -95,8 +95,6 @@ const AddPriceChart: React.FC<IAddPriceChart> = ({address, poolDetail, baseToken
   const { call: getPoolLiquidity } = useGetPoolLiquidity();
   const [ticksProcessed, setTicksProcessed] = useState([]);
 
-  console.log('poolDetail', poolDetail);
-
   // poolData
   const poolData = poolDetail;
   const formattedAddress0 = isAddress(poolData.token0.address)

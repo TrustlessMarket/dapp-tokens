@@ -33,3 +33,19 @@ export const scanTrx = async (params: { tx_hash: string }) => {
     error: 'Fail to scan tx',
   });
 };
+
+export interface ISurroundingTicksParams {
+  pool_address: string;
+  lower_tick: number;
+  upper_tick: number;
+}
+
+export const getSurroundingTicks = async (
+  params: ISurroundingTicksParams
+): Promise<any> => {
+  const qs = '?' + queryString.stringify(params);
+  return swrFetcher(`${API_EXCHANGE_URL}${API_PATH}/pool/surrounding-ticks${qs}`, {
+    method: 'GET',
+    error: 'Fail to get list user positions',
+  });
+};
