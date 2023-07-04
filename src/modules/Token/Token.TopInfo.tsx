@@ -17,8 +17,7 @@ import {L2_ETH_ADDRESS, L2_WBTC_ADDRESS} from "@/configs";
 const TokenTopInfo = ({ data }: { data: IToken }) => {
   const router = useRouter();
   const { account } = useWeb3React();
-  const currentSelectedChain: IResourceChain =
-    useSelector(selectPnftExchange).currentChain;
+  const currentSelectedChain: IResourceChain = useSelector(selectPnftExchange).currentChain;
 
   return (
     <>

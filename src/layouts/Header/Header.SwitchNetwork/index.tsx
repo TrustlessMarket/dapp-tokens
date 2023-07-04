@@ -46,8 +46,7 @@ const SUPPORT_PATH_V1 = [ROUTE_PATH.SWAP, ROUTE_PATH.MARKETS, ROUTE_PATH.POOLS];
 
 const HeaderSwitchNetwork = () => {
   const dispatch = useAppDispatch();
-  const currentSelectedChain: IResourceChain =
-    useSelector(selectPnftExchange).currentChain;
+  const currentSelectedChain: IResourceChain = useSelector(selectPnftExchange).currentChain;
   const router = useRouter();
 
   const onChangeRouter = (_chainA?: any) => {

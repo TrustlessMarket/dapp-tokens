@@ -34,8 +34,7 @@ const TokenPoolDetail = ({ paired }: { paired: any }) => {
   const router = useRouter();
   const token0: IToken = paired?.token0Obj;
   const token1: IToken = paired?.token1Obj;
-  const currentSelectedChain: IResourceChain =
-    useSelector(selectPnftExchange).currentChain;
+  const currentSelectedChain: IResourceChain = useSelector(selectPnftExchange).currentChain;
 
   const [supply, setSupply] = useState<any>({
     ownerSupply: '0',
@@ -155,8 +154,7 @@ const TokenPoolDetail = ({ paired }: { paired: any }) => {
 const TokenListPaired = ({ data }: { data: IToken }) => {
   const [list, setList] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const currentSelectedChain: IResourceChain =
-    useSelector(selectPnftExchange).currentChain;
+  const currentSelectedChain: IResourceChain = useSelector(selectPnftExchange).currentChain;
 
   const router = useRouter();
 

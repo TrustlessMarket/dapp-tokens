@@ -52,8 +52,7 @@ const WalletHeader = () => {
 
   const chainInfo: IResourceChain = getConnectedChainInfo();
 
-  const currentSelectedChain: IResourceChain =
-    useSelector(selectPnftExchange).currentChain;
+  const currentSelectedChain: IResourceChain = useSelector(selectPnftExchange).currentChain;
 
   const isTokenPage = useMemo(() => {
     return isScreenDarkMode();
