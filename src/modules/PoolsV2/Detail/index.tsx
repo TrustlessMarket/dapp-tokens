@@ -58,35 +58,20 @@ const PoolsV2DetailPage: React.FC<IPoolsV2DetailPage> = () => {
       return null;
     }
 
-    const isRevert = compareString(
-      sortAddressPair(
-        positionDetail.pair?.token0Obj,
-        positionDetail.pair?.token1Obj,
-      )[0].address,
-      positionDetail.pair?.token0Obj,
-    );
-
     return (
       <Form
         onSubmit={() => {}}
         initialValues={{
           tokenA: positionDetail.pair?.token0Obj,
           tokenB: positionDetail.pair?.token1Obj,
-          currentSelectPair: isRevert
-            ? positionDetail.pair?.token0Obj
-            : positionDetail.pair?.token1Obj,
+          currentSelectPair: positionDetail.pair?.token0Obj,
           minPrice: tickToPrice(positionDetail?.tickLower),
           maxPrice: tickToPrice(positionDetail?.tickUpper),
-          currentPrice: isRevert
-            ? new BigNumber(1)
-                .dividedBy(positionDetail?.pair?.price as any)
-                .toFixed()
-            : positionDetail?.pair?.price,
+          currentPrice: tickToPrice(positionDetail?.pair?.tick),
           defaultTickLower: positionDetail?.tickLower,
           tickLower: positionDetail?.tickLower,
           defaultTickUpper: positionDetail?.tickLower,
           tickUpper: positionDetail?.tickUpper,
-          isRevert: isRevert,
         }}
       >
         {({ handleSubmit }) => (
