@@ -7,6 +7,8 @@ import { IResourceChain } from '@/interfaces/chain';
 import Web3 from 'web3';
 import { setWalletChainId } from './auth-storage';
 import { CHAIN_INFO } from '@/constants/storage-key';
+import store from '@/state';
+import { compareString } from './string';
 
 const API_PATH = 'https://chainid.network/chains.json';
 
@@ -29,7 +31,12 @@ export const getChainList = async (): Promise<Array<IResourceChain>> => {
 export function isSupportedChain(
   chainId: number | null | undefined,
 ): chainId is SupportedChainId {
-  return !!chainId && !!SupportedChainId[chainId];
+  const currentChain: IResourceChain = store.getState().pnftExchange.currentChain;
+  return (
+    !!chainId &&
+    !!SupportedChainId[chainId] &&
+    compareString(currentChain.chainId, chainId)
+  );
 }
 
 export const switchChain = async (chainId: SupportedChainId) => {
