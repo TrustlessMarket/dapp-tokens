@@ -513,7 +513,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   }, [sort.sort, mobileScreen]);
 
   const handleItemClick = (token: any) => {
-    router.push(`${ROUTE_PATH.TOKEN}?address=${token?.address}`);
+    router.push(`${ROUTE_PATH.TOKEN_V2}?address=${token?.address}`);
   };
 
   return (
