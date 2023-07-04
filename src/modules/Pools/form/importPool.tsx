@@ -41,6 +41,7 @@ import { BsPlus } from 'react-icons/bs';
 import Web3 from 'web3';
 import { ScreenType } from '..';
 import styles from './styles.module.scss';
+import { useWeb3React } from '@web3-react/core';
 
 interface MakeFormImportPoolProps {
   onSubmit: (_: any) => void;
@@ -430,11 +431,16 @@ const MakeFormImportPool: React.FC<MakeFormImportPoolProps> = ({
   );
 };
 
+export const getImportPoolKeyUser = (address?: string) => {
+  return `${LIQUID_PAIRS}_${address}`;
+};
+
 const ImportPool = () => {
   const { call: getPair } = useGetPair();
   const { call: getReserves } = useGetReserves();
   const { call: getSupply } = useSupplyERC20Liquid();
   const [submitting, setSubmitting] = useState(false);
+  const { account } = useWeb3React();
   const router = useRouter();
 
   const handleSubmit = async (values: any) => {
@@ -454,7 +460,7 @@ const ImportPool = () => {
         }),
       ]);
 
-      const _pairs = localStorage.getItem(LIQUID_PAIRS);
+      const _pairs = localStorage.getItem(getImportPoolKeyUser(account));
       let __pairs: IToken[] = [];
 
       if (_pairs) {
@@ -488,7 +494,7 @@ const ImportPool = () => {
           ...extraInfo,
         });
       }
-      localStorage.setItem(LIQUID_PAIRS, JSON.stringify(__pairs));
+      localStorage.setItem(getImportPoolKeyUser(account), JSON.stringify(__pairs));
       toast.success('This pool added successfully.');
       router.replace(`${ROUTE_PATH.POOLS}?type=${ScreenType.default}`);
     } catch (error) {

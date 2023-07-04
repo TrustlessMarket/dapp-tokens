@@ -60,7 +60,7 @@ export const L2_CHAIN_INFO = {
   name: `NOS ${isProduction() ? '' : 'Testnet'}`,
   title: '',
   chain: 'NOS',
-  icon: 'https://cdn.trustless.domains/icons/ic-penguin.svg',
+  icon: 'https://cdn.trustless.domains/icons/nos2.svg',
   rpc: [L2_NETWORK_RPC],
   faucets: [],
   nativeCurrency: {
