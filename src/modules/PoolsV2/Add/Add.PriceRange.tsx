@@ -26,7 +26,7 @@ import {
   validateMinRangeAmount,
 } from '../utils';
 import s from './styles.module.scss';
-import AddPriceChart from "@/modules/PoolsV2/Add/Add.PriceChart";
+import AddPriceChart from '@/modules/PoolsV2/Add/Add.PriceChart';
 
 interface IAddPriceRange {
   loading?: boolean;
@@ -99,9 +99,24 @@ const AddPriceRange: React.FC<IAddPriceRange> = ({ loading }) => {
           baseToken,
           quoteToken,
         });
+
         change('currentPrice', poolInfo.currentPrice);
+
+        const _priceLower: any = new BigNumber(poolInfo.currentPrice)
+          .minus(new BigNumber(poolInfo.currentPrice).dividedBy(2))
+          .toString();
+        const _priceUpper: any = new BigNumber(poolInfo.currentPrice)
+          .plus(new BigNumber(poolInfo.currentPrice).dividedBy(2))
+          .toString();
+
+        change('tickLower', priceToTick(_priceLower, TICK_SPACINGS[fee]));
+        change('minPrice', _priceLower);
+
+        change('tickUpper', priceToTick(_priceUpper, TICK_SPACINGS[fee]));
+        change('maxPrice', _priceUpper);
+
         change('currentTick', poolInfo.currentTick);
-        setPoolDetail({...poolInfo, feeTier: fee})
+        setPoolDetail({ ...poolInfo, feeTier: fee });
       }
       change('poolAddress', response);
     } catch (error) {
@@ -268,7 +283,11 @@ const AddPriceRange: React.FC<IAddPriceRange> = ({ loading }) => {
               {quoteToken.symbol} per {baseToken.symbol}
             </Text>
           </Flex>
-          <AddPriceChart address={values?.poolAddress} poolDetail={poolDetail} baseToken={baseToken}/>
+          <AddPriceChart
+            address={values?.poolAddress}
+            poolDetail={poolDetail}
+            baseToken={baseToken}
+          />
           <Flex mt={2} gap={2} className={s.formContainer__right__rangeContainer}>
             <Box className={s.formContainer__right__rangeContainer__item}>
               <Field

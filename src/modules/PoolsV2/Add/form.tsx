@@ -3,35 +3,25 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable react/no-children-prop */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import Empty from '@/components/Empty';
 import { transactionType } from '@/components/Swap/alertInfoProcessing/types';
 import FiledButton from '@/components/Swap/button/filedButton';
 import FilterButton from '@/components/Swap/filterToken';
-import FieldAmount from '@/components/Swap/form/fieldAmount';
 import InputWrapper from '@/components/Swap/form/inputWrapper';
 import WrapperConnected from '@/components/WrapperConnected';
-import { CDN_URL } from '@/configs';
 import { ROUTE_PATH } from '@/constants/route-path';
-import { WalletContext } from '@/contexts/wallet-context';
 import { IResourceChain } from '@/interfaces/chain';
 import { IToken } from '@/interfaces/token';
 import { IPoolV2AddPair } from '@/pages/pools/nos/add/[[...id]]';
 import { getTokens } from '@/services/token-explorer';
+import { useAppSelector } from '@/state/hooks';
+import { selectPnftExchange } from '@/state/pnftExchange';
 import { compareString } from '@/utils';
-import { FeeAmount } from '@/utils/constants';
 import { composeValidators, requiredAmount } from '@/utils/formValidate';
 import { Box, Flex } from '@chakra-ui/react';
 import BigNumber from 'bignumber.js';
 import { useRouter } from 'next/router';
-import {
-  forwardRef,
-  useCallback,
-  useContext,
-  useEffect,
-  useImperativeHandle,
-  useState,
-} from 'react';
-import { Field, useForm, useFormState } from 'react-final-form';
+import { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
+import { useForm, useFormState } from 'react-final-form';
 import {
   allowStep,
   checkBalanceIsApprove,
@@ -41,12 +31,11 @@ import {
 } from '../utils';
 import AddApproveToken from './Add.ApproveToken';
 import AddFeeTier from './Add.FeeTier';
+import AddFieldAmount from './Add.FieldAmount';
 import AddHeader from './Add.Header';
 import AddItemToken from './Add.ItemToken';
 import AddPriceRange from './Add.PriceRange';
-import AddTokenBalance from './Add.TokenBalance';
 import s from './styles.module.scss';
-import AddFieldAmount from './Add.FieldAmount';
 
 interface IFormAddPoolsV2Container extends IPoolV2AddPair {
   handleSubmit: (_: any) => void;
@@ -60,8 +49,8 @@ const FormAddPoolsV2Container = forwardRef<any, IFormAddPoolsV2Container>(
     const paramQuoteTokenAddress = ids?.[1];
     const paramFee = ids?.[2];
 
-    const { getConnectedChainInfo } = useContext(WalletContext);
-    const connectInfo: IResourceChain = getConnectedChainInfo();
+    const currentChain: IResourceChain =
+      useAppSelector(selectPnftExchange).currentChain;
 
     const router = useRouter();
 
@@ -111,8 +100,10 @@ const FormAddPoolsV2Container = forwardRef<any, IFormAddPoolsV2Container>(
     });
 
     useEffect(() => {
-      fetchData();
-    }, []);
+      if (currentChain) {
+        fetchData();
+      }
+    }, [currentChain?.chainId]);
 
     useEffect(() => {
       initialData();
@@ -125,7 +116,7 @@ const FormAddPoolsV2Container = forwardRef<any, IFormAddPoolsV2Container>(
           getTokens({
             page: 1,
             limit: 99,
-            network: connectInfo.nativeCurrency.symbol.toLowerCase(),
+            network: currentChain.chain.toLowerCase(),
           }),
         ]);
         setTokenList(_tokenList);
