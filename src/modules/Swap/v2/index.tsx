@@ -1,7 +1,5 @@
 import SwapForm from '@/modules/Swap/v2/form';
 import {StyledTokens, UploadFileContainer} from './Swap.styled';
-import {Text} from "@chakra-ui/react";
-import px2rem from "@/utils/px2rem";
 import BodyContainer from "@/components/Swap/bodyContainer";
 import styles from './styles.module.scss';
 
