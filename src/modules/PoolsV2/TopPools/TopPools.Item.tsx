@@ -196,7 +196,7 @@ const TopPoolsItem: React.FC<ITopPoolsItem> = ({poolDetail,columns}) => {
           </Text>
         </Td>
         <Td borderColor={"rgba(255,255,255,0.1)"}>
-          <Flex gap={2} mt={4} justifyContent={"space-between"}>
+          <Flex gap={2} justifyContent={"space-between"} alignItems={"center"}>
             <InfoTooltip label={'New Position'}>
               <Center
                 cursor={'pointer'}
