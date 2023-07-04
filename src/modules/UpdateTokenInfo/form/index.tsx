@@ -16,7 +16,7 @@ import {Box, Center, Flex, forwardRef, Grid, GridItem, Text,} from '@chakra-ui/r
 import {useWeb3React} from '@web3-react/core';
 import cx from 'classnames';
 import {useRouter} from 'next/router';
-import {useContext, useEffect, useImperativeHandle, useRef, useState} from 'react';
+import {useEffect, useImperativeHandle, useRef, useState} from 'react';
 import {Field, Form, useForm, useFormState} from 'react-final-form';
 import toast from 'react-hot-toast';
 import {useSelector} from 'react-redux';
@@ -28,7 +28,6 @@ import {uploadFile} from '@/services/file';
 import {compareString, formatCurrency, shortenAddress} from '@/utils';
 import {ROUTE_PATH} from '@/constants/route-path';
 import {composeValidators, isTwitter} from '@/utils/formValidate';
-import {WalletContext} from "@/contexts/wallet-context";
 import {IResourceChain} from "@/interfaces/chain";
 
 export const MAX_FILE_SIZE = 1024 * 1024; // 375 MB
@@ -67,8 +66,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
 
   const { account } = useWeb3React();
   const needReload = useAppSelector(selectPnftExchange).needReload;
-  const { getConnectedChainInfo } = useContext(WalletContext);
-  const chainInfo: IResourceChain = getConnectedChainInfo();
+  const currentSelectedChain: IResourceChain = useSelector(selectPnftExchange).currentChain;
 
   const { values } = useFormState();
   const { change, restart } = useForm();
@@ -97,12 +95,12 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     if (router?.query?.address) {
       fetchTokenDetail(router?.query?.address);
     }
-  }, [needReload, router?.query?.address]);
+  }, [needReload, router?.query?.address, currentSelectedChain?.chain]);
 
   const fetchTokenDetail = async (address: any) => {
     try {
       setLoading(true);
-      const res = await getTokenDetail(address, {network: chainInfo?.chain?.toLowerCase()});
+      const res = await getTokenDetail(address, {network: currentSelectedChain?.chain?.toLowerCase()});
       setTokenInfo(res);
       change('tokenInfo', res);
     } catch (err: unknown) {
@@ -396,8 +394,7 @@ const TradingForm = () => {
   const dispatch = useAppDispatch();
   const { account } = useWeb3React();
   const router = useRouter();
-  const { getConnectedChainInfo } = useContext(WalletContext);
-  const chainInfo: IResourceChain = getConnectedChainInfo();
+  const currentSelectedChain: IResourceChain = useSelector(selectPnftExchange).currentChain;
 
   const handleSubmit = async (values: any) => {
     const { tokenInfo } = values;
@@ -421,7 +418,7 @@ const TradingForm = () => {
       };
 
       const params = {
-        network: chainInfo?.chain?.toLowerCase()
+        network: currentSelectedChain?.chain?.toLowerCase()
       }
 
       const response = await updateTokenInfo(tokenInfo?.address, params, data);
