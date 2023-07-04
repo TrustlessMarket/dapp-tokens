@@ -1,19 +1,20 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-empty-interface */
-import { TransactionEventType } from '@/enums/transaction';
+import {TransactionEventType} from '@/enums/transaction';
 import useBitcoin from '@/hooks/useBitcoin';
-import { ContractOperationHook, DAppType } from '@/interfaces/contract-operation';
-import { IToken } from '@/interfaces/token';
-import { getTokenDetail } from '@/services/token-explorer';
-import { compareString, sortAddressPair } from '@/utils';
-import { useWeb3React } from '@web3-react/core';
-import {useCallback, useContext} from 'react';
+import {ContractOperationHook, DAppType} from '@/interfaces/contract-operation';
+import {IToken} from '@/interfaces/token';
+import {getTokenDetail} from '@/services/token-explorer';
+import {compareString, sortAddressPair} from '@/utils';
+import {useWeb3React} from '@web3-react/core';
+import {useCallback} from 'react';
 import Web3 from 'web3';
 import web3Eth from 'web3-eth-abi';
 import {getTCTxDetailByHash} from "@/services/swap";
 import {CONTRACT_METHOD_IDS} from "@/constants/methodId";
-import {WalletContext} from "@/contexts/wallet-context";
 import {IResourceChain} from "@/interfaces/chain";
+import {useSelector} from "react-redux";
+import {selectPnftExchange} from "@/state/pnftExchange";
 
 export interface IPendingSwapTransactionsParams {}
 
@@ -27,8 +28,7 @@ const usePendingSwapTransactions: ContractOperationHook<
     getTCTxByHash,
     getPendingInscribeTxsDetail,
   } = useBitcoin();
-  const { getConnectedChainInfo } = useContext(WalletContext);
-  const chainInfo: IResourceChain = getConnectedChainInfo();
+  const currentSelectedChain: IResourceChain = useSelector(selectPnftExchange).currentChain;
 
   const call = useCallback(
     async ({}): Promise<any> => {
@@ -74,7 +74,7 @@ const usePendingSwapTransactions: ContractOperationHook<
               amount1_in = amountIn;
             }
 
-            const params = {network: chainInfo?.chain?.toLowerCase()};
+            const params = {network: currentSelectedChain?.chain?.toLowerCase()};
             const [token0_obj, token1_obj] = await Promise.all([
               getTokenDetail(token0.address, params),
               getTokenDetail(token1.address, params),
@@ -148,7 +148,7 @@ const usePendingSwapTransactions: ContractOperationHook<
               amount1_in = amountIn;
             }
 
-            const params = {network: chainInfo?.chain?.toLowerCase()};
+            const params = {network: currentSelectedChain?.chain?.toLowerCase()};
             const [token0_obj, token1_obj] = await Promise.all([
               getTokenDetail(token0.address, params),
               getTokenDetail(token1.address, params),
