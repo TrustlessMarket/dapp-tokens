@@ -51,8 +51,6 @@ const AddHeaderSwitchPair = () => {
       change('minPrice', tickToPrice(_revertTickLower));
       change('tickUpper', _revertTickUpper);
       change('maxPrice', tickToPrice(_revertTickUpper));
-
-      console.log('_priceLower-2', tickToPrice(_revertTickLower));
     }
 
     change('isRevert', isRevert);

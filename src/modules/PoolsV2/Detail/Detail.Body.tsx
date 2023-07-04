@@ -56,7 +56,7 @@ const DetailBody: React.FC<IDetailBody> = ({ positionDetail }) => {
 
       let isRevert = false;
 
-      if (!compareString(token0.address, currentSelectPair.address)) {
+      if (!compareString(token0.address, tokenA)) {
         isRevert = true;
       }
 
