@@ -29,9 +29,7 @@ export const ItemChain = ({
     <Flex className={s.itemChain}>
       <Flex alignItems={'center'} gap={2}>
         <img src={_chain?.icon} />
-        <Text>
-          {showName ? <span>{_chain?.name}</span> : ''} {_chain?.chain}
-        </Text>
+        <Text>{showName ? _chain?.name : _chain?.chain}</Text>
       </Flex>
       {active && <BiCheck color="#fff" style={{ fontSize: 20 }} />}
     </Flex>
@@ -46,6 +44,7 @@ const SUPPORT_PATH_V2 = [
   ROUTE_PATH.POOLS_V2_INCREASE,
   ROUTE_PATH.POOLS_V2_REMOVE,
   ROUTE_PATH.TOKEN_V2,
+  ROUTE_PATH.HOME_V2,
 ];
 
 const SUPPORT_PATH_V1 = [
@@ -53,6 +52,7 @@ const SUPPORT_PATH_V1 = [
   ROUTE_PATH.MARKETS,
   ROUTE_PATH.POOLS,
   ROUTE_PATH.TOKEN,
+  ROUTE_PATH.HOME,
 ];
 
 const HeaderSwitchNetwork = () => {
@@ -78,6 +78,8 @@ const HeaderSwitchNetwork = () => {
           router.push(`${ROUTE_PATH.ORIGINAL_MARKETS}/nos`);
         } else if (routerPath.includes(ROUTE_PATH.TOKEN)) {
           router.push(`${ROUTE_PATH.ORIGINAL_TOKEN}/nos`);
+        } else if (routerPath.includes(ROUTE_PATH.HOME)) {
+          router.push(`${ROUTE_PATH.ORIGINAL_HOME}/nos`);
         }
       }
     } else if (
@@ -101,6 +103,8 @@ const HeaderSwitchNetwork = () => {
           router.push(`${ROUTE_PATH.ORIGINAL_POOL}/tc`);
         } else if (routerPath.includes(ROUTE_PATH.TOKEN_V2)) {
           router.push(`${ROUTE_PATH.ORIGINAL_TOKEN}/tc`);
+        } else if (routerPath.includes(ROUTE_PATH.HOME_V2)) {
+          router.push(`${ROUTE_PATH.ORIGINAL_HOME}/tc`);
         }
       }
     }
@@ -115,7 +119,7 @@ const HeaderSwitchNetwork = () => {
         </Flex>
       </MenuButton>
       <MenuList className={s.chainList}>
-        {[L2_CHAIN_INFO, TRUSTLESS_COMPUTER_CHAIN_INFO].map((c) => (
+        {[TRUSTLESS_COMPUTER_CHAIN_INFO, L2_CHAIN_INFO].map((c) => (
           <MenuItem onClick={() => onChangeRouter(c)} key={c.chainId}>
             <ItemChain
               _chain={c}

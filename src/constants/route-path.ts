@@ -37,4 +37,5 @@ export const ROUTE_PATH = {
   ORIGINAL_SWAP: '/swap',
   ORIGINAL_MARKETS: '/markets',
   ORIGINAL_TOKEN: '/token',
+  ORIGINAL_HOME: '/',
 };
