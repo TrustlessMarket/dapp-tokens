@@ -41,7 +41,11 @@ import {
 } from '@/constants/storage-key';
 import { IResourceChain } from '@/interfaces/chain';
 import { getCurrentProfile } from '@/services/profile';
-import { selectPnftExchange, updateCurrentChainId } from '@/state/pnftExchange';
+import {
+  selectPnftExchange,
+  updateCurrentChain,
+  updateCurrentChainId,
+} from '@/state/pnftExchange';
 import { isProduction } from '@/utils/commons';
 import { useRouter } from 'next/router';
 import * as TC_SDK from 'trustless-computer-sdk';
@@ -73,18 +77,20 @@ export const WalletProvider: React.FC<PropsWithChildren> = ({
   const { connector, provider, chainId } = useWeb3React();
   const dispatch = useAppDispatch();
   const user = useSelector(getUserSelector);
-  const currentChainId = useSelector(selectPnftExchange).currentChainId;
+  const currentChain: IResourceChain = useSelector(selectPnftExchange).currentChain;
+  const currentChainId = currentChain?.chainId;
   const router = useRouter();
 
   const getDefaultChain = useCallback(() => {
-    return SupportedChainId.L2;
+    const getChainInfo: IResourceChain = getLocalStorageChainInfo();
+    return getChainInfo?.chainId || SupportedChainId.L2;
   }, [router]);
 
   const getConnectedChainInfo = useCallback(() => {
     return getLocalStorageChainInfo();
   }, [router, user, chainId]);
 
-  const isChain = currentChainId || getDefaultChain();
+  const isChain: any = currentChainId || getDefaultChain();
   const isChainTC =
     !currentChainId ||
     compareString(currentChainId, SupportedChainId.TRUSTLESS_COMPUTER);
@@ -212,7 +218,9 @@ export const WalletProvider: React.FC<PropsWithChildren> = ({
       }
 
       const chainList = await getChainList();
-      const info = chainList.find((c: IResourceChain) => c.chainId === isChain);
+      const info = chainList.find((c: IResourceChain) =>
+        compareString(c.chainId, isChain),
+      );
       if (!info) {
         throw new Error(`Chain ${chainId} not supported`);
       }
@@ -262,6 +270,11 @@ export const WalletProvider: React.FC<PropsWithChildren> = ({
         // if (!isSupportedChain(prevChainId)) {
         //   await switchChain(isChain);
         // }
+
+        if (!currentChain) {
+          dispatch(updateCurrentChain(getLocalStorageChainInfo()));
+          dispatch(updateCurrentChainId(getLocalStorageChainInfo().chainId));
+        }
 
         if (accessToken) {
           const { walletAddress } = await getCurrentProfile();

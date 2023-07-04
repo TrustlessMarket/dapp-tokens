@@ -8,7 +8,7 @@ import useAddLiquidityV3, {
   IAddLiquidityV3,
 } from '@/hooks/contract-operations/pools/v3/useAddLiquidityV3';
 import useContractOperation from '@/hooks/contract-operations/useContractOperation';
-import { IPoolV2AddPair } from '@/pages/pools/v2/add/[[...id]]';
+import { IPoolV2AddPair } from '@/pages/pools/nos/add/[[...id]]';
 import { logErrorToServer } from '@/services/swap';
 import { requestReload, updateCurrentTransaction } from '@/state/pnftExchange';
 import { showError } from '@/utils/toast';

@@ -12,7 +12,7 @@ import useGetEarnedFee from '@/hooks/contract-operations/pools/v3/useGetEarnedFe
 import { IPosition } from '@/interfaces/position';
 import RemoveAmount from '@/modules/PoolsV2/Remove/Remove.Amount';
 import RemoveTopHeader from '@/modules/PoolsV2/Remove/Remove.TopHeader';
-import { IPoolV2AddPair } from '@/pages/pools/v2/add/[[...id]]';
+import { IPoolV2AddPair } from '@/pages/pools/nos/add/[[...id]]';
 import { colors } from '@/theme/colors';
 import { getTokenIconUrl } from '@/utils';
 import { Box, Divider, Flex, Text } from '@chakra-ui/react';
@@ -20,7 +20,7 @@ import { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
 import { useForm, useFormState } from 'react-final-form';
 import { getPooledAmount } from '../utils';
 import s from './styles.module.scss';
-import RemoveHeader from "@/modules/PoolsV2/Remove/Remove.Header";
+import RemoveHeader from '@/modules/PoolsV2/Remove/Remove.Header';
 
 interface IFormRemovePoolsV2Container extends IPoolV2AddPair {
   handleSubmit: (_: any) => void;
@@ -67,8 +67,8 @@ const FormRemovePoolsV2Container = forwardRef<any, IFormRemovePoolsV2Container>(
     return (
       <form onSubmit={handleSubmit}>
         <RemoveTopHeader />
-        <Box mt={4}/>
-        <RemoveHeader positionDetail={positionDetail}/>
+        <Box mt={4} />
+        <RemoveHeader positionDetail={positionDetail} />
         <Box className={s.container__content_body}>
           <Flex direction={'column'} gap={8} className={s.formContainer}>
             <Card
