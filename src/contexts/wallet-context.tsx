@@ -273,7 +273,7 @@ export const WalletProvider: React.FC<PropsWithChildren> = ({
 
         if (!currentChain) {
           dispatch(updateCurrentChain(getLocalStorageChainInfo()));
-          dispatch(updateCurrentChainId(getLocalStorageChainInfo().chainId));
+          dispatch(updateCurrentChainId(getLocalStorageChainInfo()?.chainId));
         }
 
         if (accessToken) {
