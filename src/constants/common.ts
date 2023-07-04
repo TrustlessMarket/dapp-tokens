@@ -1,5 +1,5 @@
 import { isDevelop } from '@/utils/commons';
-import { TM_ADDRESS } from '@/configs';
+import {L2_ETH_ADDRESS, L2_WBTC_ADDRESS, TM_ADDRESS} from '@/configs';
 
 export const PAGE_LOADED = 'PAGE_LOADED';
 export const PAGE_LOADING = 'PAGE_LOADING';
@@ -30,6 +30,11 @@ export const COMMON_TOKEN_CONTRACT = [
   USDC_ADDRESS,
   WETH_ADDRESS,
   TM_ADDRESS,
+];
+
+export const L2_COMMON_TOKEN_CONTRACT = [
+  L2_WBTC_ADDRESS,
+  L2_ETH_ADDRESS,
 ];
 
 export const COMMON_TOKEN_CONTRACT_INFO = {

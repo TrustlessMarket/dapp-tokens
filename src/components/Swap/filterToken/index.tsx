@@ -3,7 +3,7 @@ import FiledButton from '@/components/Swap/button/filedButton';
 import FieldText from '@/components/Swap/form/fieldText';
 import ListTable, { ColumnProp } from '@/components/Swap/listTable';
 import TokenBalance from '@/components/Swap/tokenBalance';
-import { COMMON_TOKEN_CONTRACT } from '@/constants/common';
+import {COMMON_TOKEN_CONTRACT, L2_COMMON_TOKEN_CONTRACT} from '@/constants/common';
 import useDebounce from '@/hooks/useDebounce';
 import { closeModal, openModal } from '@/state/modal';
 import { Box, Center, Flex, Icon, Text } from '@chakra-ui/react';
@@ -12,7 +12,7 @@ import cx from 'classnames';
 import { clone } from 'lodash';
 import React, { useEffect, useMemo, useState } from 'react';
 import { Field, Form, useFormState } from 'react-final-form';
-import { useDispatch } from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import { AiOutlineCaretDown } from 'react-icons/ai';
 import styles from './styles.module.scss';
 import { compareString } from '@/utils';
@@ -24,6 +24,9 @@ import VerifiedBadge, {
 import { IToken } from '@/interfaces/token';
 import { ImWarning } from 'react-icons/im';
 import { HiBadgeCheck } from 'react-icons/hi';
+import {IResourceChain} from "@/interfaces/chain";
+import {selectPnftExchange} from "@/state/pnftExchange";
+import {SupportedChainId} from "@/constants/chains";
 
 interface FilterButtonProps {
   data: any[] | undefined;
@@ -53,11 +56,14 @@ const FilterModal: React.FC<FilterModalProps> = ({
   const { mobileScreen } = useWindowSize();
   const { values } = useFormState();
   const [loading, setLoading] = useState(false);
+  const currentSelectedChain: IResourceChain = useSelector(selectPnftExchange).currentChain;
+  const isL2 = compareString(currentSelectedChain?.chainId, SupportedChainId.L2);
+  const commonContract = isL2 ? L2_COMMON_TOKEN_CONTRACT : COMMON_TOKEN_CONTRACT;
 
   const commonData = useMemo(() => {
     const res = [];
-    for (let i = 0; i < COMMON_TOKEN_CONTRACT.length; i++) {
-      const address = COMMON_TOKEN_CONTRACT[i];
+    for (let i = 0; i < commonContract.length; i++) {
+      const address = commonContract[i];
 
       const token = data?.find((e) => compareString(e?.address, address));
       if (token) {
