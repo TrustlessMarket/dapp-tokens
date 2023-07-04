@@ -8,7 +8,7 @@ export const TEMP_ADDRESS_WALLET_EVM = 'temp_address_wallet_evm';
 export const SLIPPAGE_VALUE = 'SLIPPAGE_VALUE';
 export const NOS_SLIPPAGE_VALUE = 'NOS_SLIPPAGE_VALUE';
 
-export const LIQUID_PAIRS = 'LIQUID_PAIRS';
+export const LIQUID_PAIRS = 'pool_pairs';
 
 export const IMPORTED_TOKENS = 'imported_tokens';
 
