@@ -93,6 +93,7 @@ const AddPriceRange: React.FC<IAddPriceRange> = ({ loading }) => {
       });
       change('currentPrice', 0);
       change('currentTick', 0);
+      change('poolAddress', response);
 
       if (isPool(response)) {
         const poolInfo = await getPoolInfo({
@@ -120,7 +121,6 @@ const AddPriceRange: React.FC<IAddPriceRange> = ({ loading }) => {
 
         setPoolDetail({ ...poolInfo, feeTier: fee });
       }
-      change('poolAddress', response);
     } catch (error) {
       console.log('errorerror', error);
     } finally {

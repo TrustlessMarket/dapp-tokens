@@ -9,7 +9,7 @@ import { IResourceChain } from '@/interfaces/chain';
 import { IPosition } from '@/interfaces/position';
 import { IToken } from '@/interfaces/token';
 import { getListUserPositions } from '@/services/swap-v3';
-import {compareString, formatCurrency, getTokenIconUrl} from '@/utils';
+import { compareString, formatCurrency, getTokenIconUrl } from '@/utils';
 import { tickToPrice } from '@/utils/number';
 import px2rem from '@/utils/px2rem';
 import { Box, Flex, Spinner, Text } from '@chakra-ui/react';
@@ -22,8 +22,8 @@ import { useContext, useEffect, useMemo, useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import PoolsV2PositionStatus from '../PoolsV2.PositionStatus';
 import styles from './styles.module.scss';
-import {getPooledAmount} from "@/modules/PoolsV2/utils";
-import PositionRemove from "@/modules/PoolsV2/MyPositions/Position.Remove";
+import { getPooledAmount } from '@/modules/PoolsV2/utils';
+import PositionRemove from '@/modules/PoolsV2/MyPositions/Position.Remove';
 
 const LIMIT_PAGE = 30;
 
@@ -141,7 +141,7 @@ const TopPools = () => {
         render(row: IPosition) {
           return (
             <Flex direction={'column'} fontSize={px2rem(14)}>
-              {tickToPrice(row?.tickLower || 0)}
+              {formatCurrency(tickToPrice(row?.tickLower || 0))}
             </Flex>
           );
         },
@@ -266,7 +266,7 @@ const TopPools = () => {
         render(row: IPosition) {
           return (
             <Flex gap={4} justifyContent={'center'}>
-              <PositionRemove positionDetail={row}/>
+              <PositionRemove positionDetail={row} />
             </Flex>
           );
         },

@@ -53,7 +53,7 @@ const TopPoolsItem: React.FC<ITopPoolsItem> = ({ poolDetail, columns }) => {
         render(row: IPosition) {
           return (
             <Flex direction={'column'} fontSize={px2rem(14)}>
-              {tickToPrice(row?.tickLower || 0)}
+              {formatCurrency(tickToPrice(row?.tickLower || 0))}
             </Flex>
           );
         },
@@ -74,7 +74,7 @@ const TopPoolsItem: React.FC<ITopPoolsItem> = ({ poolDetail, columns }) => {
         render(row: IPosition) {
           return (
             <Flex direction={'column'} fontSize={px2rem(14)}>
-              {tickToPrice(row?.tickUpper || 0)}
+              {formatCurrency(tickToPrice(row?.tickUpper || 0))}
             </Flex>
           );
         },

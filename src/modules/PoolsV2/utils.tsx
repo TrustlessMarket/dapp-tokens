@@ -185,6 +185,8 @@ export const getRangeTick = (positionDetail?: IPosition, amounts: any[] = []) =>
       const tickUpper: any = positionDetail?.tickUpper;
       const tick: any = positionDetail?.pair?.tick;
 
+      console.log(tickUpper, tick);
+
       const agg = new BigNumber(tickUpper)
         .dividedBy(tick)
         .multipliedBy(100)
