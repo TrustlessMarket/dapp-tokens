@@ -51,6 +51,7 @@ const AddPriceRange: React.FC<IAddPriceRange> = ({ loading }) => {
   const tickUpper: any = values?.tickUpper || '0';
   const baseAmount: any = values?.baseAmount || undefined;
   const quoteAmount: any = values?.baseAmount || undefined;
+  const [poolDetail, setPoolDetail] = useState();
 
   useEffect(() => {
     if (tickLower && tickUpper && currentTick && baseAmount && quoteAmount) {
@@ -100,6 +101,7 @@ const AddPriceRange: React.FC<IAddPriceRange> = ({ loading }) => {
         });
         change('currentPrice', poolInfo.currentPrice);
         change('currentTick', poolInfo.currentTick);
+        setPoolDetail({...poolInfo, feeTier: fee})
       }
       change('poolAddress', response);
     } catch (error) {
@@ -267,7 +269,7 @@ const AddPriceRange: React.FC<IAddPriceRange> = ({ loading }) => {
               {quoteToken.symbol} per {baseToken.symbol}
             </Text>
           </Flex>
-          <AddPriceChart />
+          <AddPriceChart address={values?.poolAddress} poolDetail={poolDetail}/>
           <Flex mt={4} gap={2} className={s.formContainer__right__rangeContainer}>
             <Box className={s.formContainer__right__rangeContainer__item}>
               <Field

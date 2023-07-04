@@ -28,12 +28,13 @@ const useGetPoolInfo: ContractOperationHook<IGetPoolInfoParams, any> = () => {
       if (provider && poolAddress) {
         const contract = getContract(poolAddress, UniswapV3PoolJson, provider);
 
-        const transaction = await contract.connect(provider).slot0();
+        const slot0 = await contract.connect(provider).slot0();
 
-        const [token0] = sortAddressPair(baseToken, quoteToken);
+        const [token0, token1] = sortAddressPair(baseToken, quoteToken);
 
-        let currentPrice = formatSqrtPriceX96ToPrice(transaction.sqrtPriceX96);
-        let currentTick = transaction.tick;
+        let currentPrice = formatSqrtPriceX96ToPrice(slot0.sqrtPriceX96);
+        let currentTick = slot0.tick;
+        const rootCurrentTick = slot0.tick;
 
         if (compareString(token0.address, quoteToken.address)) {
           currentPrice = new BigNumber(1).dividedBy(currentPrice).toString();
@@ -43,6 +44,9 @@ const useGetPoolInfo: ContractOperationHook<IGetPoolInfoParams, any> = () => {
         return {
           currentPrice,
           currentTick,
+          rootCurrentTick,
+          token0,
+          token1,
         };
       }
 
