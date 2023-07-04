@@ -28,7 +28,7 @@ export const CHAIN_ID_TO_NETWORK: any = {
 };
 
 export const TRUSTLESS_COMPUTER_CHAIN_INFO = {
-  name: `Trustless ${isProduction() ? 'Mainnet' : 'Testnet'}`,
+  name: `Trustless Computer ${isProduction() ? '' : 'Testnet'}`,
   title: '',
   chain: 'TC',
   icon: 'https://cdn.trustless.domains/icons/ic-penguin.svg',
@@ -57,10 +57,10 @@ export const TRUSTLESS_COMPUTER_CHAIN_INFO = {
 };
 
 export const L2_CHAIN_INFO = {
-  name: `NOS ${isProduction() ? 'Mainnet' : 'Testnet'}`,
+  name: `NOS ${isProduction() ? '' : 'Testnet'}`,
   title: '',
   chain: 'NOS',
-  icon: 'https://cdn.trustless.computer/icons/wallet_logo.svg',
+  icon: 'https://cdn.trustless.domains/icons/ic-penguin.svg',
   rpc: [L2_NETWORK_RPC],
   faucets: [],
   nativeCurrency: {
