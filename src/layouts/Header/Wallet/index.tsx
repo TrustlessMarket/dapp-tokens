@@ -32,6 +32,7 @@ import { isScreenDarkMode } from '..';
 import { ConnectWalletButton, WalletBalance } from '../Header.styled';
 import { WalletPopover } from './Wallet.styled';
 import { TRUSTLESS_COMPUTER_CHAIN_INFO } from '@/constants/chains';
+import { selectPnftExchange } from '@/state/pnftExchange';
 
 const WalletHeader = () => {
   const router = useRouter();
@@ -48,6 +49,9 @@ const WalletHeader = () => {
   const [balanceTM, setBalanceTM] = useState('0');
 
   const chainInfo: IResourceChain = getConnectedChainInfo();
+
+  const currentSelectedChain: IResourceChain =
+    useSelector(selectPnftExchange).currentChain;
 
   const isTokenPage = useMemo(() => {
     return isScreenDarkMode();
@@ -231,7 +235,8 @@ const WalletHeader = () => {
     <>
       {account && isAuthenticated ? (
         <>
-          {!isSupportedChain(chainId) ? (
+          {!isSupportedChain(chainId) ||
+          !compareString(currentSelectedChain?.chainId, chainId) ? (
             <SelectedNetwork />
           ) : (
             <OverlayTrigger

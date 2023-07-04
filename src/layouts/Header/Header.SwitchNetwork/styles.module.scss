@@ -18,3 +18,40 @@
     }
   }
 }
+
+.itemChain {
+  align-items: center;
+  gap: 6px;
+  img {
+    width: 24px;
+    height: 24px;
+    border-radius: 100%;
+  }
+  span {
+    color: rgb(186, 186, 186);
+  }
+  p {
+    color: white;
+    font-size: rem(14) !important;
+  }
+}
+
+.btnChainSelected {
+  background-color: transparent !important;
+  border-color: #5b5b5b !important;
+  border-radius: 100px;
+  padding: 4px 4px;
+}
+
+.chainList {
+  background-color: #151515 !important;
+  button {
+    background-color: transparent;
+    &:hover,
+    &:focus-visible,
+    &:focus,
+    &:active {
+      background-color: #5b5b5b;
+    }
+  }
+}

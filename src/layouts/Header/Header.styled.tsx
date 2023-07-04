@@ -75,7 +75,7 @@ const Wrapper = styled.div`
     display: flex;
     flex-direction: row;
     align-items: center;
-    gap: ${px2rem(32)};
+    gap: ${px2rem(12)};
     position: relative;
 
     .external-link {

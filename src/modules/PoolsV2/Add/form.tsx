@@ -15,7 +15,7 @@ import { ROUTE_PATH } from '@/constants/route-path';
 import { WalletContext } from '@/contexts/wallet-context';
 import { IResourceChain } from '@/interfaces/chain';
 import { IToken } from '@/interfaces/token';
-import { IPoolV2AddPair } from '@/pages/pools/v2/add/[[...id]]';
+import { IPoolV2AddPair } from '@/pages/pools/nos/add/[[...id]]';
 import { getTokens } from '@/services/token-explorer';
 import { compareString } from '@/utils';
 import { FeeAmount } from '@/utils/constants';

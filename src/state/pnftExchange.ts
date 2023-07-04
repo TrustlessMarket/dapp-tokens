@@ -1,10 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { WalletTransactionData } from '@/components/Swap/alertInfoProcessing/interface';
+import { NOS_SLIPPAGE_VALUE, SLIPPAGE_VALUE } from '@/constants/storage-key';
+import localStorage from '@/utils/localstorage';
 import { createSlice } from '@reduxjs/toolkit';
 import { RootState } from '.';
-import localStorage from '@/utils/localstorage';
-import {NOS_SLIPPAGE_VALUE, SLIPPAGE_VALUE} from '@/constants/storage-key';
-import { WalletTransactionData } from '@/components/Swap/alertInfoProcessing/interface';
-import {L2_CHAIN_INFO, SupportedChainId} from '@/constants/chains';
 
 interface NftyLendState {
   needReload: number;
@@ -28,8 +27,8 @@ const initialState: NftyLendState = {
   currentTransaction: undefined,
   showBanner: true,
   configs: {},
-  currentChainId: SupportedChainId.L2,
-  currentChain: L2_CHAIN_INFO
+  currentChainId: undefined,
+  currentChain: undefined,
 };
 
 const slice = createSlice({
@@ -86,7 +85,7 @@ export const {
   updateShowBanner,
   updateConfigs,
   updateCurrentChainId,
-  updateCurrentChain
+  updateCurrentChain,
 } = slice.actions;
 
 export const selectPnftExchange = (state: RootState) => state.pnftExchange;
