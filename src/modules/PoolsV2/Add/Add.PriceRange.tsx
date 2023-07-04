@@ -93,6 +93,7 @@ const AddPriceRange: React.FC<IAddPriceRange> = ({ loading }) => {
       });
       change('currentPrice', 0);
       change('currentTick', 0);
+
       if (isPool(response)) {
         const poolInfo = await getPoolInfo({
           poolAddress: response,
@@ -100,14 +101,14 @@ const AddPriceRange: React.FC<IAddPriceRange> = ({ loading }) => {
           quoteToken,
         });
 
+        change('poolInfo', poolInfo);
         change('currentPrice', poolInfo.currentPrice);
 
-        const _priceLower: any = new BigNumber(poolInfo.currentPrice)
-          .minus(new BigNumber(poolInfo.currentPrice).dividedBy(2))
-          .toString();
-        const _priceUpper: any = new BigNumber(poolInfo.currentPrice)
-          .plus(new BigNumber(poolInfo.currentPrice).dividedBy(2))
-          .toString();
+        const _priceLower: any =
+          Number(poolInfo.currentPrice) - Number(poolInfo.currentPrice) / 2;
+
+        const _priceUpper: any =
+          Number(poolInfo.currentPrice) + Number(poolInfo.currentPrice) / 2;
 
         change('tickLower', priceToTick(_priceLower, TICK_SPACINGS[fee]));
         change('minPrice', _priceLower);
@@ -116,6 +117,7 @@ const AddPriceRange: React.FC<IAddPriceRange> = ({ loading }) => {
         change('maxPrice', _priceUpper);
 
         change('currentTick', poolInfo.currentTick);
+
         setPoolDetail({ ...poolInfo, feeTier: fee });
       }
       change('poolAddress', response);
