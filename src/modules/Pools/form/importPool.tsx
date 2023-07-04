@@ -463,15 +463,18 @@ const ImportPool = () => {
       const findIndex = __pairs.findIndex((v: IToken) =>
         compareString(v.address, response),
       );
+
+      const [token0, token1] = sortAddressPair(baseToken, quoteToken);
+
       const extraInfo = {
-        name: `${baseToken.symbol}-${quoteToken.symbol}`,
-        symbol: `${baseToken.symbol}-${quoteToken.symbol}`,
+        name: `${token0.symbol}-${token1.symbol}`,
+        symbol: `${token0.symbol}-${token1.symbol}`,
         address: response,
         total_supply: resSupply.totalSupply,
         owner_supply: resSupply.ownerSupply,
-        from_address: baseToken.address,
+        from_address: token0.address,
         from_balance: resReserve._reserve0,
-        to_address: quoteToken.address,
+        to_address: token1.address,
         to_balance: resReserve._reserve1,
       };
       if (findIndex > -1) {
@@ -481,7 +484,7 @@ const ImportPool = () => {
         };
       } else {
         __pairs.push({
-          ...baseToken,
+          ...token0,
           ...extraInfo,
         });
       }

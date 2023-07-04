@@ -35,7 +35,7 @@ export function isSupportedChain(
   return (
     !!chainId &&
     !!SupportedChainId[chainId] &&
-    compareString(currentChain.chainId, chainId)
+    compareString(currentChain?.chainId, chainId)
   );
 }
 
