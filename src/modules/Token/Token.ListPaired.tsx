@@ -23,11 +23,13 @@ import moment from 'moment';
 import {useRouter} from 'next/router';
 import {useEffect, useState} from 'react';
 import web3 from 'web3';
-import {DEFAULT_FROM_TOKEN_ADDRESS, ScreenType} from '../Pools';
+import {ScreenType} from '../Pools';
 import {IResourceChain} from "@/interfaces/chain";
 import {SupportedChainId} from "@/constants/chains";
 import {useSelector} from "react-redux";
 import {selectPnftExchange} from "@/state/pnftExchange";
+import {L2_WBTC_ADDRESS} from "@/configs";
+import {WBTC_ADDRESS} from "@/constants/common";
 
 const TokenPoolDetail = ({ paired }: { paired: any }) => {
   const router = useRouter();
@@ -198,8 +200,8 @@ const TokenListPaired = ({ data }: { data: IToken }) => {
             onClick={() => {
               const isL2 = compareString(currentSelectedChain?.chainId, SupportedChainId.L2);
               const routePath = isL2
-                ? `${ROUTE_PATH.POOLS_V2_ADD}/${data.address}/${DEFAULT_FROM_TOKEN_ADDRESS}`
-                : `${ROUTE_PATH.POOLS}?type=${ScreenType.add_liquid}&f=${data.address}&t=${DEFAULT_FROM_TOKEN_ADDRESS}`;
+                ? `${ROUTE_PATH.POOLS_V2_ADD}/${data.address}/${L2_WBTC_ADDRESS}`
+                : `${ROUTE_PATH.POOLS}?type=${ScreenType.add_liquid}&f=${data.address}&t=${WBTC_ADDRESS}`;
               router.push(
                 `${routePath}`,
               )
