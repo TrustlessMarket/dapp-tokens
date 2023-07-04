@@ -17,9 +17,6 @@ const Swap = () => {
             <SwapForm />
           </div>
         </UploadFileContainer>
-        <Text fontSize="md" color="#FFFFFF" textAlign={'center'} margin={"0 auto"} maxW={px2rem(400)} position={"relative"}>
-          The current slippage is set at 100% due to Bitcoin’s long block time. Trade at your own risk.
-        </Text>
       </StyledTokens>
     </BodyContainer>
   );

@@ -124,7 +124,7 @@ const HeaderSwitchNetwork = () => {
             <ItemChain
               _chain={c}
               showName={true}
-              active={compareString(c.chainId, currentSelectedChain.chainId)}
+              active={compareString(c.chainId, currentSelectedChain?.chainId)}
             />
           </MenuItem>
         ))}
