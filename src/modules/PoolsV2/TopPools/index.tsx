@@ -4,8 +4,7 @@
 import {Box, Flex, Spinner, Text} from "@chakra-ui/react";
 import InfiniteScroll from "react-infinite-scroll-component";
 import ListTable from "@/components/Swap/listTable";
-import React, {useContext, useEffect, useMemo, useState} from "react";
-import {WalletContext} from "@/contexts/wallet-context";
+import React, {useEffect, useMemo, useState} from "react";
 import {IResourceChain} from "@/interfaces/chain";
 import {formatCurrency} from "@/utils";
 import {getListLiquidity} from "@/services/swap";
@@ -19,25 +18,27 @@ import styles from './styles.module.scss';
 import {useWeb3React} from "@web3-react/core";
 import TopPoolsPair from "@/modules/PoolsV2/TopPools/TopPools.Pair";
 import TopPoolsItem from "@/modules/PoolsV2/TopPools/TopPools.Item";
+import {useSelector} from "react-redux";
+import {selectPnftExchange} from "@/state/pnftExchange";
 
 const LIMIT_PAGE = 100;
 
 const TopPools = () => {
   const [liquidityList, setLiquidityList] = useState<any[]>([]);
-  const { getConnectedChainInfo } = useContext(WalletContext);
-  const chainInfo: IResourceChain = getConnectedChainInfo();
+  const currentSelectedChain: IResourceChain = useSelector(selectPnftExchange).currentChain;
+
   const [isFetching, setIsFetching] = useState(false);
   const { mobileScreen } = useWindowSize();
   const { account } = useWeb3React();
 
   useEffect(() => {
     fetchLiquidities();
-  }, [chainInfo?.chain, account]);
+  }, [currentSelectedChain?.chain, account]);
 
   const fetchLiquidities = async (page = 1, isFetchMore = false) => {
     try {
       setIsFetching(true);
-      const res = await getListLiquidity({ limit: LIMIT_PAGE, page: page, network: chainInfo?.chain?.toLowerCase(), address: account });
+      const res = await getListLiquidity({ limit: LIMIT_PAGE, page: page, network: currentSelectedChain?.chain?.toLowerCase(), address: account });
       if (isFetchMore) {
         setLiquidityList((prev) => [...prev, ...res]);
       } else {

@@ -53,7 +53,7 @@ const TokenDetail = () => {
       getData();
     } else {
       const address: any = isL2 ? L2_ETH_ADDRESS : WETH_ADDRESS;
-      router.push(`${router.pathname}?address=${address}`);
+      router.replace(`${router.pathname}?address=${address}`);
     }
   }, [address, currentSelectedChain?.chain]);
 
