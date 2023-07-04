@@ -20,7 +20,7 @@ import CustomToolTip from "@/modules/PoolsV2/Add/Add.PriceChart/CustomToolTip";
 const Wrapper = styled.div`
   position: relative;
   width: 100%;
-  height: 275px;
+  height: 291px;
 `
 
 const ControlsWrapper = styled.div`
