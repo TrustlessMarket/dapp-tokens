@@ -18,11 +18,12 @@ const TooltipWrapper = styled(LightCard)`
 
 interface CustomToolTipProps {
   chartProps: any
-  poolData: any
   currentPrice: number | undefined
 }
 
-export function CustomToolTip({ chartProps, poolData }: CustomToolTipProps) {
+export function CustomToolTip({ chartProps }: CustomToolTipProps) {
+  const token0 = chartProps?.payload?.[0]?.payload.token0
+  const token1 = chartProps?.payload?.[0]?.payload.token1
   const price0 = chartProps?.payload?.[0]?.payload.price0
   const price1 = chartProps?.payload?.[0]?.payload.price1
   const tvlToken0 = chartProps?.payload?.[0]?.payload.tvlToken0
@@ -33,33 +34,33 @@ export function CustomToolTip({ chartProps, poolData }: CustomToolTipProps) {
       <AutoColumn gap="sm">
         <Text fontWeight={500} color='#6C7284'>Tick stats</Text>
         <RowBetween>
-          <Text fontWeight={500} color='#FFFFFF'>{poolData?.token0?.symbol} Price: </Text>
+          <Text fontWeight={500} color='#FFFFFF'>{token0?.symbol} Price: </Text>
           <Text fontWeight={500} color='#FFFFFF'>
             {price0
               ? Number(price0).toLocaleString(undefined, {
                   minimumSignificantDigits: 1,
                 })
               : ''}{' '}
-            {poolData?.token1?.symbol}
+            {token1?.symbol}
           </Text>
         </RowBetween>
         <RowBetween>
-          <Text fontWeight={500} color='#FFFFFF'>{poolData?.token1?.symbol} Price: </Text>
+          <Text fontWeight={500} color='#FFFFFF'>{token1?.symbol} Price: </Text>
           <Text fontWeight={500} color='#FFFFFF'>
             {price1
               ? Number(price1).toLocaleString(undefined, {
                   minimumSignificantDigits: 1,
                 })
               : ''}{' '}
-            {poolData?.token0?.symbol}
+            {token0?.symbol}
           </Text>
         </RowBetween>
         {
           tvlToken0 > 0 && (
             <RowBetween>
-              <Text fontWeight={500} color='#FFFFFF'>{poolData?.token0?.symbol} Locked: </Text>
+              <Text fontWeight={500} color='#FFFFFF'>{token0?.symbol} Locked: </Text>
               <Text fontWeight={500} color='#FFFFFF'>
-                {tvlToken0 ? formatAmount(tvlToken0) : ''} {poolData?.token0?.symbol}
+                {tvlToken0 ? formatAmount(tvlToken0) : ''} {token0?.symbol}
               </Text>
             </RowBetween>
           )
@@ -67,9 +68,9 @@ export function CustomToolTip({ chartProps, poolData }: CustomToolTipProps) {
         {
           tvlToken1 > 0 && (
             <RowBetween>
-              <Text fontWeight={500} color='#FFFFFF'>{poolData?.token1?.symbol} Locked: </Text>
+              <Text fontWeight={500} color='#FFFFFF'>{token1?.symbol} Locked: </Text>
               <Text fontWeight={500} color='#FFFFFF'>
-                {tvlToken1 ? formatAmount(tvlToken1) : ''} {poolData?.token1?.symbol}
+                {tvlToken1 ? formatAmount(tvlToken1) : ''} {token1?.symbol}
               </Text>
             </RowBetween>
           )
@@ -77,16 +78,16 @@ export function CustomToolTip({ chartProps, poolData }: CustomToolTipProps) {
 
         {/*{currentPrice && price0 && currentPrice > price1 ? (
           <RowBetween>
-            <Text fontWeight={500} color='#FFFFFF'>{poolData?.token0?.symbol} Locked: </Text>
+            <Text fontWeight={500} color='#FFFFFF'>{token0?.symbol} Locked: </Text>
             <Text fontWeight={500} color='#FFFFFF'>
-              {tvlToken0 ? formatAmount(tvlToken0) : ''} {poolData?.token0?.symbol}
+              {tvlToken0 ? formatAmount(tvlToken0) : ''} {token0?.symbol}
             </Text>
           </RowBetween>
         ) : (
           <RowBetween>
-            <Text fontWeight={500} color='#FFFFFF'>{poolData?.token1?.symbol} Locked: </Text>
+            <Text fontWeight={500} color='#FFFFFF'>{token1?.symbol} Locked: </Text>
             <Text fontWeight={500} color='#FFFFFF'>
-              {tvlToken1 ? formatAmount(tvlToken1) : ''} {poolData?.token1?.symbol}
+              {tvlToken1 ? formatAmount(tvlToken1) : ''} {token1?.symbol}
             </Text>
           </RowBetween>
         )}*/}
