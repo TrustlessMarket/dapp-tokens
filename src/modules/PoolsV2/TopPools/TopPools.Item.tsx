@@ -1,31 +1,31 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import {Center, Flex, Icon, Td, Text, Tr} from "@chakra-ui/react";
-import React, {useMemo, useState} from "react";
-import {ILiquidity} from '@/interfaces/liquidity';
-import px2rem from "@/utils/px2rem";
-import TopPoolsPair from "@/modules/PoolsV2/TopPools/TopPools.Pair";
-import {formatCurrency, getTokenIconUrl} from "@/utils";
-import {BiChevronDown, BiChevronUp} from "react-icons/bi";
-import {IPosition} from "@/interfaces/position";
-import {ROUTE_PATH} from "@/constants/route-path";
-import ListTable from "@/components/Swap/listTable";
-import {useRouter} from "next/router";
-import {tickToPrice} from "@/utils/number";
-import {getPooledAmount} from "@/modules/PoolsV2/utils";
-import PoolsV2PositionStatus from "@/modules/PoolsV2/PoolsV2.PositionStatus";
-import PositionRemove from "@/modules/PoolsV2/MyPositions/Position.Remove";
-import {useWindowSize} from "@trustless-computer/dapp-core";
-import InfoTooltip from "@/components/Swap/infoTooltip";
-import {AiOutlinePlusCircle} from "react-icons/ai";
+import { Center, Flex, Icon, Td, Text, Tr } from '@chakra-ui/react';
+import React, { useMemo, useState } from 'react';
+import { ILiquidity } from '@/interfaces/liquidity';
+import px2rem from '@/utils/px2rem';
+import TopPoolsPair from '@/modules/PoolsV2/TopPools/TopPools.Pair';
+import { formatCurrency, getTokenIconUrl } from '@/utils';
+import { BiChevronDown, BiChevronUp } from 'react-icons/bi';
+import { IPosition } from '@/interfaces/position';
+import { ROUTE_PATH } from '@/constants/route-path';
+import ListTable from '@/components/Swap/listTable';
+import { useRouter } from 'next/router';
+import { tickToPrice } from '@/utils/number';
+import { getPooledAmount } from '@/modules/PoolsV2/utils';
+import PoolsV2PositionStatus from '@/modules/PoolsV2/PoolsV2.PositionStatus';
+import PositionRemove from '@/modules/PoolsV2/MyPositions/Position.Remove';
+import { useWindowSize } from '@trustless-computer/dapp-core';
+import InfoTooltip from '@/components/Swap/infoTooltip';
+import { AiOutlinePlusCircle } from 'react-icons/ai';
 
 interface ITopPoolsItem {
   poolDetail?: ILiquidity;
-  columns?: []
+  columns?: [];
 }
 
-const TopPoolsItem: React.FC<ITopPoolsItem> = ({poolDetail,columns}) => {
+const TopPoolsItem: React.FC<ITopPoolsItem> = ({ poolDetail, columns }) => {
   const router = useRouter();
   const [showPosition, setShowPositions] = useState(false);
 
@@ -157,7 +157,7 @@ const TopPoolsItem: React.FC<ITopPoolsItem> = ({poolDetail,columns}) => {
         render(row: IPosition) {
           return (
             <Flex gap={4} justifyContent={'center'}>
-              <PositionRemove positionDetail={row}/>
+              <PositionRemove positionDetail={row} />
             </Flex>
           );
         },
@@ -169,34 +169,34 @@ const TopPoolsItem: React.FC<ITopPoolsItem> = ({poolDetail,columns}) => {
     <>
       <Tr
         onClick={() => hasPositions && setShowPositions(!showPosition)}
-        cursor={hasPositions ? "pointer" : "auto"}
-        bg={showPosition ? "#1e1e22" : "none"}
+        cursor={hasPositions ? 'pointer' : 'auto'}
+        bg={showPosition ? '#1e1e22' : 'none'}
         _hover={{
-          bg: '#1e1e22'
+          bg: '#1e1e22',
         }}
       >
-        <Td borderColor={"rgba(255,255,255,0.1)"}>
+        <Td borderColor={'rgba(255,255,255,0.1)'}>
           <Flex fontSize={px2rem(14)} alignItems={'center'} gap={2}>
-            <TopPoolsPair poolDetail={poolDetail}/>
+            <TopPoolsPair poolDetail={poolDetail} />
           </Flex>
         </Td>
-        <Td color={"#FFFFFF"} borderColor={"rgba(255,255,255,0.1)"}>
+        <Td color={'#FFFFFF'} borderColor={'rgba(255,255,255,0.1)'}>
           <Text fontSize={px2rem(14)} textAlign={'left'}>
             ${formatCurrency(poolDetail?.liquidityUsd || 0, 2)}
           </Text>
         </Td>
-        <Td color={"#FFFFFF"} borderColor={"rgba(255,255,255,0.1)"}>
+        <Td color={'#FFFFFF'} borderColor={'rgba(255,255,255,0.1)'}>
           <Text fontSize={px2rem(14)} textAlign={'left'}>
             ${formatCurrency(poolDetail?.usdVolume || 0, 2)}
           </Text>
         </Td>
-        <Td color={"#FFFFFF"} borderColor={"rgba(255,255,255,0.1)"}>
+        <Td color={'#FFFFFF'} borderColor={'rgba(255,255,255,0.1)'}>
           <Text fontSize={px2rem(14)} textAlign={'left'}>
             ${formatCurrency(poolDetail?.usdTotalVolume || 0, 2)}
           </Text>
         </Td>
-        <Td borderColor={"rgba(255,255,255,0.1)"}>
-          <Flex gap={2} justifyContent={"space-between"} alignItems={"center"}>
+        <Td borderColor={'rgba(255,255,255,0.1)'}>
+          <Flex gap={2} justifyContent={'space-between'} alignItems={'center'}>
             <InfoTooltip label={'New Position'}>
               <Center
                 cursor={'pointer'}
@@ -204,45 +204,47 @@ const TopPoolsItem: React.FC<ITopPoolsItem> = ({poolDetail,columns}) => {
                 _hover={{
                   color: '#0072ff',
                 }}
-                color = '#FFFFFF'
+                color="#FFFFFF"
               >
                 <AiOutlinePlusCircle
                   onClick={(e) => {
                     e.stopPropagation();
                     e.preventDefault();
 
-                    router.push(`${ROUTE_PATH.POOLS_V2_ADD}/${poolDetail?.token0Obj?.address}/${poolDetail?.token1Obj?.address}`)
+                    router.push(
+                      `${ROUTE_PATH.POOLS_V2_ADD}/${poolDetail?.token0Obj?.address}/${poolDetail?.token1Obj?.address}/${poolDetail?.fee}`,
+                    );
                   }}
                 />
               </Center>
             </InfoTooltip>
-            {
-              hasPositions && (
-                <Icon as={showPosition ? BiChevronUp : BiChevronDown } color={'#919AB0'} fontSize={px2rem(24)} />
-              )
-            }
+            {hasPositions && (
+              <Icon
+                as={showPosition ? BiChevronUp : BiChevronDown}
+                color={'#919AB0'}
+                fontSize={px2rem(24)}
+              />
+            )}
           </Flex>
         </Td>
       </Tr>
-      {
-        showPosition && (
-          <Tr>
-            <Td color={'#FFF'} colSpan={5} borderColor={"rgba(255,255,255,0.1)"}>
-              <ListTable
-                // noHeader={true}
-                data={poolDetail?.positions}
-                columns={columnsPosition}
-                showEmpty={false}
-                onItemClick={(e: IPosition) => {
-                  return router.push(`${ROUTE_PATH.POOLS_V2}/${e.id}`);
-                }}
-              />
-            </Td>
-          </Tr>
-        )
-      }
+      {showPosition && (
+        <Tr>
+          <Td color={'#FFF'} colSpan={5} borderColor={'rgba(255,255,255,0.1)'}>
+            <ListTable
+              // noHeader={true}
+              data={poolDetail?.positions}
+              columns={columnsPosition}
+              showEmpty={false}
+              onItemClick={(e: IPosition) => {
+                return router.push(`${ROUTE_PATH.POOLS_V2}/${e.id}`);
+              }}
+            />
+          </Td>
+        </Tr>
+      )}
     </>
-  )
-}
+  );
+};
 
 export default TopPoolsItem;

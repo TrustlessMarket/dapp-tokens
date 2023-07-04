@@ -36,10 +36,21 @@ const useGetPoolInfo: ContractOperationHook<IGetPoolInfoParams, any> = () => {
         let currentTick = slot0.tick;
         const rootCurrentTick = slot0.tick;
 
+        console.log('slot0', compareString(token0.address, quoteToken.address));
+
         if (compareString(token0.address, quoteToken.address)) {
           currentPrice = new BigNumber(1).dividedBy(currentPrice).toString();
           currentTick = new BigNumber(-1).multipliedBy(currentTick).toNumber();
         }
+
+        console.log(
+          'slot0',
+          currentPrice,
+          currentTick,
+          rootCurrentTick,
+          token0,
+          token1,
+        );
 
         return {
           currentPrice,

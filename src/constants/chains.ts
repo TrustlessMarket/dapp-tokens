@@ -31,7 +31,7 @@ export const TRUSTLESS_COMPUTER_CHAIN_INFO = {
   name: `Trustless ${isProduction() ? 'Mainnet' : 'Testnet'}`,
   title: '',
   chain: 'TC',
-  icon: 'https://cdn.trustless.computer/icons/wallet_logo.svg',
+  icon: 'https://cdn.trustless.domains/icons/ic-penguin.svg',
   rpc: [TC_NETWORK_RPC],
   faucets: [],
   nativeCurrency: {

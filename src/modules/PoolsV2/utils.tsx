@@ -17,7 +17,7 @@ import AddConfirm from './Add/Add.Confirm';
 import s from './styles.module.scss';
 
 export const isPool = (address: string): boolean => {
-  if (address && !compareString(address, NULL_ADDRESS)) {
+  if (Boolean(address) && !compareString(address, NULL_ADDRESS)) {
     return true;
   }
   return false;
