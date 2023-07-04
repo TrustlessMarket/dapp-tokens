@@ -1,15 +1,15 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import BodyContainer from '@/components/Swap/bodyContainer';
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import s from './styles.module.scss';
-import {Box, Flex, Heading, Spinner} from '@chakra-ui/react';
+import { Box, Flex, Heading, Spinner } from '@chakra-ui/react';
 import FiledButton from '@/components/Swap/button/filedButton';
-import {colors} from '@/theme/colors';
-import {ROUTE_PATH} from '@/constants/route-path';
-import {L2_ETH_ADDRESS} from '@/configs';
-import {useRouter} from "next/router";
-import TopPools from "@/modules/PoolsV2/TopPools";
+import { colors } from '@/theme/colors';
+import { ROUTE_PATH } from '@/constants/route-path';
+import { L2_ETH_ADDRESS } from '@/configs';
+import { useRouter } from 'next/router';
+import TopPools from '@/modules/PoolsV2/TopPools';
 
 const PoolsV2Page = () => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -21,8 +21,6 @@ const PoolsV2Page = () => {
     }
 
     return <TopPools />;
-
-    return <></>;
   };
 
   return (
