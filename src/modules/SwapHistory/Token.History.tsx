@@ -304,7 +304,7 @@ const TokenHistory = () => {
         },
       ]
     },
-    [mobileScreen],
+    [mobileScreen, currentSelectedChain?.chain],
   );
 
   return (
