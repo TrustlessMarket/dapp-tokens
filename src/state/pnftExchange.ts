@@ -2,7 +2,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { RootState } from '.';
 import localStorage from '@/utils/localstorage';
-import { SLIPPAGE_VALUE } from '@/constants/storage-key';
+import {NOS_SLIPPAGE_VALUE, SLIPPAGE_VALUE} from '@/constants/storage-key';
 import { WalletTransactionData } from '@/components/Swap/alertInfoProcessing/interface';
 import {L2_CHAIN_INFO, SupportedChainId} from '@/constants/chains';
 
@@ -10,6 +10,7 @@ interface NftyLendState {
   needReload: number;
   reloadRealtime: number;
   slippage: number;
+  slippageNOS: number;
   loadingRealtime: boolean;
   currentTransaction: WalletTransactionData | undefined | null;
   showBanner: boolean;
@@ -22,6 +23,7 @@ const initialState: NftyLendState = {
   needReload: 0,
   reloadRealtime: 0,
   slippage: 100,
+  slippageNOS: 0.5,
   loadingRealtime: false,
   currentTransaction: undefined,
   showBanner: true,
@@ -43,6 +45,10 @@ const slice = createSlice({
     updateSlippage: (state, action) => {
       state.slippage = action.payload;
       localStorage.set(SLIPPAGE_VALUE, action.payload);
+    },
+    updateSlippageNOS: (state, action) => {
+      state.slippageNOS = action.payload;
+      localStorage.set(NOS_SLIPPAGE_VALUE, action.payload);
     },
     updateLoadingRealtime: (state, action) => {
       state.loadingRealtime = action.payload;
@@ -74,6 +80,7 @@ export const {
   requestReload,
   requestReloadRealtime,
   updateSlippage,
+  updateSlippageNOS,
   updateLoadingRealtime,
   updateCurrentTransaction,
   updateShowBanner,

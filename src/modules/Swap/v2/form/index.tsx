@@ -10,7 +10,7 @@ import FieldAmount from '@/components/Swap/form/fieldAmount';
 import InputWrapper from '@/components/Swap/form/inputWrapper';
 import HorizontalItem from '@/components/Swap/horizontalItem';
 import InfoTooltip from '@/components/Swap/infoTooltip';
-import SlippageSettingButton from '@/components/Swap/slippageSetting/button';
+import SlippageSettingButton from '@/components/Swap/slippageSetting/v2/button';
 import TokenBalance from '@/components/Swap/tokenBalance';
 import WrapperConnected from '@/components/WrapperConnected';
 import { CDN_URL, UNIV3_ROUTER_ADDRESS } from '@/configs';
@@ -117,7 +117,6 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const [isSwitching, setIsSwitching] = useState(false);
   const router = useRouter();
   const [swapRoutes, setSwapRoutes] = useState<any[]>([]);
-  const configs = useAppSelector(selectPnftExchange).configs;
 
   const { account } = useWeb3React();
   const [exchangeRate, setExchangeRate] = useState('0');
@@ -987,7 +986,7 @@ const TradingForm = () => {
   const { run: swapToken } = useContractOperation<ISwapERC20TokenParams, boolean>({
     operation: useSwapERC20Token,
   });
-  const slippage = useAppSelector(selectPnftExchange).slippage;
+  const slippage = useAppSelector(selectPnftExchange).slippageNOS;
   const { mobileScreen } = useWindowSize();
   const { call: getEstimateSwap } = useEstimateSwapERC20Token();
 
