@@ -18,14 +18,13 @@ import styles from './styles.module.scss';
 import {useWeb3React} from "@web3-react/core";
 import TopPoolsPair from "@/modules/PoolsV2/TopPools/TopPools.Pair";
 import TopPoolsItem from "@/modules/PoolsV2/TopPools/TopPools.Item";
-import {useSelector} from "react-redux";
-import {selectPnftExchange} from "@/state/pnftExchange";
+import {L2_CHAIN_INFO} from "@/constants/chains";
 
 const LIMIT_PAGE = 100;
 
 const TopPools = () => {
   const [liquidityList, setLiquidityList] = useState<any[]>([]);
-  const currentSelectedChain: IResourceChain = useSelector(selectPnftExchange).currentChain;
+  const currentSelectedChain: IResourceChain = L2_CHAIN_INFO;
 
   const [isFetching, setIsFetching] = useState(false);
   const { mobileScreen } = useWindowSize();

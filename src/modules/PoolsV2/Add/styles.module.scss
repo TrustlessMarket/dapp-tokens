@@ -159,6 +159,13 @@
   &__right {
     flex-direction: column;
     justify-content: space-between;
+    &__btnContainer {
+      padding: 0 !important;
+
+      > div {
+        width: 100%;
+      }
+    }
     &__btnInActive {
       background-color: var(--bs-gray-dark) !important;
     }
