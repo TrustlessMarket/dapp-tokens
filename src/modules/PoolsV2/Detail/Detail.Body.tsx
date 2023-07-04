@@ -32,6 +32,7 @@ const DetailBody: React.FC<IDetailBody> = ({ positionDetail }) => {
   const maxPrice = values.maxPrice;
   const tickLower: any = positionDetail?.tickLower;
   const tickUpper: any = positionDetail?.tickUpper;
+  const currentTick: any = positionDetail?.pair?.tick;
   const currentPrice = values.currentPrice;
   const tokenA: IToken = values.tokenA;
   const tokenB: IToken = values.tokenB;
@@ -52,16 +53,22 @@ const DetailBody: React.FC<IDetailBody> = ({ positionDetail }) => {
 
   const onSelectPair = (_tokenA?: IToken, _tokenB?: IToken) => {
     if (Boolean(_tokenA) && Boolean(_tokenB)) {
-      const [token0] = sortAddressPair(_tokenA, _tokenB);
-
       let isRevert = false;
 
-      if (!compareString(token0.address, tokenA)) {
+      if (!compareString(positionDetail?.pair?.token0, _tokenA?.address)) {
         isRevert = true;
       }
 
       const _revertTickLower = isRevert ? -tickUpper : tickLower;
       const _revertTickUpper = isRevert ? -tickLower : tickUpper;
+      const _revertTick = isRevert ? -currentTick : currentTick;
+
+      console.log(
+        'tickToPrice(_revertTickLower)',
+        currentSelectPair.address,
+        tickToPrice(_revertTickLower),
+        isRevert,
+      );
 
       restart({
         ...values,
@@ -73,9 +80,7 @@ const DetailBody: React.FC<IDetailBody> = ({ positionDetail }) => {
         tokenB: isRevert
           ? positionDetail?.pair?.token0Obj
           : positionDetail?.pair?.token1Obj,
-        currentPrice: isRevert
-          ? new BigNumber(1).dividedBy(positionDetail?.pair?.price as any).toFixed()
-          : positionDetail?.pair?.price,
+        currentPrice: tickToPrice(_revertTick),
         currentSelectPair: _tokenA,
         isRevert: isRevert,
       });
@@ -156,7 +161,7 @@ const DetailBody: React.FC<IDetailBody> = ({ positionDetail }) => {
               {formatCurrency(minPrice)}
             </Text>
             <Text>
-              {tokenA.symbol} per {tokenB.symbol}
+              {tokenB.symbol} per {tokenA.symbol}
             </Text>
             {isRange && (
               <Text className={s.itemRangeContainer__note}>
@@ -173,7 +178,7 @@ const DetailBody: React.FC<IDetailBody> = ({ positionDetail }) => {
               {formatCurrency(maxPrice)}
             </Text>
             <Text>
-              {tokenA.symbol} per {tokenB.symbol}
+              {tokenB.symbol} per {tokenA.symbol}
             </Text>
             {isRange && (
               <Text className={s.itemRangeContainer__note}>
@@ -189,7 +194,7 @@ const DetailBody: React.FC<IDetailBody> = ({ positionDetail }) => {
             {formatCurrency(currentPrice)}
           </Text>
           <Text>
-            {tokenA.symbol} per {tokenB.symbol}
+            {tokenB.symbol} per {tokenA.symbol}
           </Text>
         </Flex>
       </GridItem>
