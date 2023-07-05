@@ -84,8 +84,8 @@ const validateAmount = (_amount: any, values: any) => {
 };
 
 const validateDuration = (_amount: any, values: any) => {
-  if (!values?.detail && Number(_amount) > Number(isProduction() ? 30 : 0.02)) {
-    return `Max duration is ${formatCurrency(isProduction() ? 30 : 0.02)} day`;
+  if (!values?.detail && Number(_amount) > Number(30)) {
+    return `Max duration is ${formatCurrency(30)} day`;
   }
 
   return undefined;
