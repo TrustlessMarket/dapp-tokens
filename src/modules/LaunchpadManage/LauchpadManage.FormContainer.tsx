@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { LAUNCHPAD_FACTORY_ADDRESS } from '@/configs';
+import { toastError } from '@/constants/error';
 import { LAUNCHPAD_FORM_STEP } from '@/constants/storage-key';
 import useGetConfigLaunchpad, {
   ConfigLaunchpadResponse,
@@ -8,27 +8,26 @@ import useGetConfigLaunchpad, {
 import useApproveERC20Token from '@/hooks/contract-operations/token/useApproveERC20Token';
 import useBalanceERC20Token from '@/hooks/contract-operations/token/useBalanceERC20Token';
 import useIsApproveERC20Token from '@/hooks/contract-operations/token/useIsApproveERC20Token';
+import { IResourceChain } from '@/interfaces/chain';
 import { ILaunchpad } from '@/interfaces/launchpad';
 import { IToken } from '@/interfaces/token';
 import { getListLiquidityToken, getListOwnerToken } from '@/services/launchpad';
-import { camelCaseKeys, getLiquidityRatio } from '@/utils';
+import { useAppSelector } from '@/state/hooks';
+import { selectPnftExchange } from '@/state/pnftExchange';
+import { camelCaseKeys, getLaunchPadAddress } from '@/utils';
+import { showError } from '@/utils/toast';
 import { useWeb3React } from '@web3-react/core';
 import BigNumber from 'bignumber.js';
+import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 import { useForm, useFormState } from 'react-final-form';
+import { toast } from 'react-hot-toast';
 import web3 from 'web3';
 import LaunchpadFormStep1 from './LaunchpadFormStep1';
 import LaunchpadFormStep2 from './LaunchpadFormStep2';
 import LaunchpadFormStep3 from './LaunchpadFormStep3';
-import LaunchpadManageHeader from './header';
 import LaunchpadFormStep4 from './LaunchpadFormStep4';
-import { useRouter } from 'next/router';
-import { toast } from 'react-hot-toast';
-import { toastError } from '@/constants/error';
-import { showError } from '@/utils/toast';
-import { IResourceChain } from '@/interfaces/chain';
-import { useAppSelector } from '@/state/hooks';
-import { selectPnftExchange } from '@/state/pnftExchange';
+import LaunchpadManageHeader from './header';
 
 export interface LaunchpadManageFormContainerProps {
   loading: boolean;
@@ -86,7 +85,7 @@ const LaunchpadManageFormContainer: React.FC<LaunchpadManageFormContainerProps> 
       const [_isApprove, _tokenBalance] = await Promise.all([
         isApproved({
           erc20TokenAddress: token.address,
-          address: LAUNCHPAD_FACTORY_ADDRESS,
+          address: getLaunchPadAddress(),
         }),
         tokenBalance({
           erc20TokenAddress: token.address,
@@ -154,8 +153,9 @@ const LaunchpadManageFormContainer: React.FC<LaunchpadManageFormContainerProps> 
 
   const requestApproveToken = async (
     token: IToken | any,
-    approveContract: string = LAUNCHPAD_FACTORY_ADDRESS,
+    approveContract?: string,
   ) => {
+    const _approveContract = approveContract || getLaunchPadAddress();
     try {
       // dispatch(
       //   updateCurrentTransaction({
@@ -166,7 +166,7 @@ const LaunchpadManageFormContainer: React.FC<LaunchpadManageFormContainerProps> 
 
       const response: any = await approveToken({
         erc20TokenAddress: token.address,
-        address: approveContract,
+        address: _approveContract,
       });
       // dispatch(
       //   updateCurrentTransaction({
@@ -193,7 +193,7 @@ const LaunchpadManageFormContainer: React.FC<LaunchpadManageFormContainerProps> 
   }, []);
 
   useEffect(() => {
-    if (tokenSelected) {
+    if (tokenSelected && currentChain?.chain) {
       checkTokenApprove(tokenSelected);
     }
   }, [
@@ -203,6 +203,7 @@ const LaunchpadManageFormContainer: React.FC<LaunchpadManageFormContainerProps> 
     values?.liquidityBalance,
     step,
     cachedData,
+    currentChain?.chain,
   ]);
 
   useEffect(() => {

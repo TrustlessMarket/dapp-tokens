@@ -1,14 +1,13 @@
 import ERC20ABIJson from '@/abis/erc20.json';
 import { SupportedChainId } from '@/constants/chains';
 import { CONTRACT_METHOD_IDS } from '@/constants/methodId';
-import { AssetsContext } from '@/contexts/assets-context';
 import { TransactionEventType } from '@/enums/transaction';
 import useBitcoin from '@/hooks/useBitcoin';
 import { ContractOperationHook, DAppType } from '@/interfaces/contract-operation';
 import { compareString, getContract, isSupportedChain } from '@/utils';
 import { useWeb3React } from '@web3-react/core';
 import { maxBy } from 'lodash';
-import { useCallback, useContext } from 'react';
+import { useCallback } from 'react';
 import web3Eth from 'web3-eth-abi';
 
 export interface IIsApproveERC20TokenParams {
@@ -22,13 +21,12 @@ const useIsApproveERC20Token: ContractOperationHook<
 > = () => {
   const { account, chainId, provider } = useWeb3React();
   const isConnected = isSupportedChain(chainId);
-  const { btcBalance, feeRate } = useContext(AssetsContext);
   const { getUnInscribedTransactionDetailByAddress, getTCTxByHash } = useBitcoin();
 
   const call = useCallback(
     async (params: IIsApproveERC20TokenParams): Promise<string> => {
       const { erc20TokenAddress, address } = params;
-      if (account && provider && erc20TokenAddress && isConnected) {
+      if (account && provider && erc20TokenAddress && isConnected && address) {
         const contract = getContract(erc20TokenAddress, ERC20ABIJson.abi, provider);
 
         let amountApprove = '0';
@@ -67,7 +65,7 @@ const useIsApproveERC20Token: ContractOperationHook<
       }
       return '0';
     },
-    [account, provider, btcBalance, feeRate],
+    [account, provider],
   );
 
   return {

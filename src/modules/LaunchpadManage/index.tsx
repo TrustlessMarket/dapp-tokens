@@ -121,24 +121,29 @@ const LaunchpadManage = () => {
 
         if (values.isLastStep) {
           const signature = await getSignature(account);
-          const res = await createLaunchpad({
-            user_address: account,
-            video: values?.video,
-            image: values?.image,
-            description: values?.description,
-            signature,
-            qand_a: JSON.stringify(faqs),
-            id: detail?.id,
-            launchpad_token: tokenAddress,
-            liquidity_token: liquidAddress,
-            launchpad_balance: values.launchpadBalance,
-            liquidity_balance: values.liquidityBalance,
-            liquidity_ratio: values.liquidityRatioArg,
-            goal_balance: values.goalBalance,
-            twitter_post_url: values.twitterPostUrl,
-            threshold_balance: values.thresholdBalance || '0',
-            duration: Number(seconds),
-          });
+          const res = await createLaunchpad(
+            {
+              user_address: account,
+              video: values?.video,
+              image: values?.image,
+              description: values?.description,
+              signature,
+              qand_a: JSON.stringify(faqs),
+              id: detail?.id,
+              launchpad_token: tokenAddress,
+              liquidity_token: liquidAddress,
+              launchpad_balance: values.launchpadBalance,
+              liquidity_balance: values.liquidityBalance,
+              liquidity_ratio: values.liquidityRatioArg,
+              goal_balance: values.goalBalance,
+              twitter_post_url: values.twitterPostUrl,
+              threshold_balance: values.thresholdBalance || '0',
+              duration: Number(seconds),
+            },
+            {
+              network: currentChain?.chain?.toLowerCase(),
+            },
+          );
           if (values.boost_url && step === 3 && detail?.launchpad) {
             await importBoost(
               {

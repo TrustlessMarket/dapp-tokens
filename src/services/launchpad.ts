@@ -85,25 +85,29 @@ export const updateLaunchpadDescription = async (data: {
   });
 };
 
-export const createLaunchpad = async (data: {
-  user_address: string;
-  video: string;
-  image: string;
-  description: string;
-  qand_a?: string;
-  signature: string;
-  liquidity_token: string;
-  launchpad_token: string;
-  launchpad_balance: string;
-  liquidity_balance: string;
-  liquidity_ratio: string;
-  goal_balance: string;
-  threshold_balance: string;
-  twitter_post_url: string;
-  id?: string;
-  duration: number;
-}) => {
-  return swrFetcher(`${API_EXCHANGE_URL}${API_PATH}/create-update-launchpad`, {
+export const createLaunchpad = async (
+  data: {
+    user_address: string;
+    video: string;
+    image: string;
+    description: string;
+    qand_a?: string;
+    signature: string;
+    liquidity_token: string;
+    launchpad_token: string;
+    launchpad_balance: string;
+    liquidity_balance: string;
+    liquidity_ratio: string;
+    goal_balance: string;
+    threshold_balance: string;
+    twitter_post_url: string;
+    id?: string;
+    duration: number;
+  },
+  params?: IPagingParams,
+) => {
+  const qs = '?' + queryString.stringify(params || {});
+  return swrFetcher(`${API_EXCHANGE_URL}${API_PATH}/create-update-launchpad${qs}`, {
     method: 'POST',
     data,
     error: 'getListLiquidityToken',

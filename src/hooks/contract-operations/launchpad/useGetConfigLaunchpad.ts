@@ -2,14 +2,12 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import LaunchpadFactoryJson from '@/abis/LaunchpadFactory.json';
 // import LaunchpadFactoryL2Json from '@/abis/lau';
-import { L2_LAUNCHPAD_FACTORY_ADDRESS, LAUNCHPAD_FACTORY_ADDRESS } from '@/configs';
-import { SupportedChainId } from '@/constants/chains';
 import { TransactionEventType } from '@/enums/transaction';
 import { IResourceChain } from '@/interfaces/chain';
 import { ContractOperationHook, DAppType } from '@/interfaces/contract-operation';
 import { useAppSelector } from '@/state/hooks';
 import { selectPnftExchange } from '@/state/pnftExchange';
-import { compareString, getContract, getDefaultProvider } from '@/utils';
+import { getContract, getDefaultProvider, getLaunchPadAddress } from '@/utils';
 import { useCallback } from 'react';
 
 export interface ConfigLaunchpadResponse {
@@ -29,19 +27,11 @@ const useGetConfigLaunchpad: ContractOperationHook<
 
   const call = useCallback(async (): Promise<ConfigLaunchpadResponse> => {
     if (provider) {
-      let contract = getContract(
-        LAUNCHPAD_FACTORY_ADDRESS,
+      const contract = getContract(
+        getLaunchPadAddress(),
         LaunchpadFactoryJson,
         provider,
       );
-
-      if (compareString(currentChain.chainId, SupportedChainId.L2)) {
-        contract = getContract(
-          L2_LAUNCHPAD_FACTORY_ADDRESS,
-          LaunchpadFactoryJson,
-          provider,
-        );
-      }
 
       const transaction = await contract.connect(provider).getLaunchpadConfigs();
 

@@ -1,16 +1,19 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { TRUSTLESS_COMPUTER_CHAIN_INFO } from '@/constants/chains';
+import { SupportedChainId, TRUSTLESS_COMPUTER_CHAIN_INFO } from '@/constants/chains';
 import { DEFAULT_GAS_PRICE, TOKEN_ICON_DEFAULT } from '@/constants/common';
 import { CHAIN_INFO } from '@/constants/storage-key';
 import tokenIcons from '@/constants/tokenIcons';
 import { IResourceChain } from '@/interfaces/chain';
 import { IToken } from '@/interfaces/token';
+import store from '@/state';
 import { getAddress } from '@ethersproject/address';
 import BigNumber from 'bignumber.js';
 import { isEmpty, random } from 'lodash';
 import camelCase from 'lodash/camelCase';
 import web3 from 'web3';
+import { compareString } from './string';
+import { L2_LAUNCHPAD_FACTORY_ADDRESS, LAUNCHPAD_FACTORY_ADDRESS } from '@/configs';
 
 export function isAddress(value: string): string | false {
   try {
@@ -125,4 +128,13 @@ export const getLocalStorageChainInfo = (): IResourceChain => {
     return parseChainInfo;
   }
   return TRUSTLESS_COMPUTER_CHAIN_INFO;
+};
+
+export const getLaunchPadAddress = () => {
+  const currentChain: IResourceChain = store.getState().pnftExchange.currentChain;
+
+  if (compareString(currentChain.chainId, SupportedChainId.L2)) {
+    return L2_LAUNCHPAD_FACTORY_ADDRESS;
+  }
+  return LAUNCHPAD_FACTORY_ADDRESS;
 };
