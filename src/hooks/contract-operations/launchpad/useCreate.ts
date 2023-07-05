@@ -1,10 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import LaunchpadFactoryJson from '@/abis/LaunchpadFactory.json';
-import { LAUNCHPAD_FACTORY_ADDRESS } from '@/configs';
 import { TransactionEventType } from '@/enums/transaction';
 import { ContractOperationHook, DAppType } from '@/interfaces/contract-operation';
 import { logErrorToServer } from '@/services/swap';
-import { getContract, getDefaultGasPrice } from '@/utils';
+import { getContract, getDefaultGasPrice, getLaunchPadAddress } from '@/utils';
 import { useWeb3React } from '@web3-react/core';
 import BigNumber from 'bignumber.js';
 import { useCallback } from 'react';
@@ -42,7 +41,7 @@ const useCreateLaunchpad: ContractOperationHook<
 
       if (account && provider) {
         const contract = getContract(
-          LAUNCHPAD_FACTORY_ADDRESS,
+          getLaunchPadAddress(),
           LaunchpadFactoryJson,
           provider,
           account,

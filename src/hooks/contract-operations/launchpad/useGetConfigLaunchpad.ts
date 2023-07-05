@@ -1,10 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import LaunchpadFactoryJson from '@/abis/LaunchpadFactory.json';
-import { LAUNCHPAD_FACTORY_ADDRESS } from '@/configs';
+// import LaunchpadFactoryL2Json from '@/abis/lau';
 import { TransactionEventType } from '@/enums/transaction';
+import { IResourceChain } from '@/interfaces/chain';
 import { ContractOperationHook, DAppType } from '@/interfaces/contract-operation';
-import { getContract, getDefaultProvider } from '@/utils';
+import { useAppSelector } from '@/state/hooks';
+import { selectPnftExchange } from '@/state/pnftExchange';
+import { getContract, getDefaultProvider, getLaunchPadAddress } from '@/utils';
 import { useCallback } from 'react';
 
 export interface ConfigLaunchpadResponse {
@@ -18,10 +21,14 @@ const useGetConfigLaunchpad: ContractOperationHook<
   ConfigLaunchpadResponse
 > = () => {
   const provider = getDefaultProvider();
+
+  const currentChain: IResourceChain =
+    useAppSelector(selectPnftExchange).currentChain;
+
   const call = useCallback(async (): Promise<ConfigLaunchpadResponse> => {
     if (provider) {
       const contract = getContract(
-        LAUNCHPAD_FACTORY_ADDRESS,
+        getLaunchPadAddress(),
         LaunchpadFactoryJson,
         provider,
       );

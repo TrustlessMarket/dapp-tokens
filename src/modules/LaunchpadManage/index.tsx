@@ -41,6 +41,7 @@ import {
   PopoverNeedHelp,
   StyledLaunchpadManage,
 } from './LaunchpadManage.styled';
+import { IResourceChain } from '@/interfaces/chain';
 
 const LaunchpadManage = () => {
   const { getSignature } = useContext(WalletContext);
@@ -56,6 +57,8 @@ const LaunchpadManage = () => {
   const [error, setMessageError] = useState('');
   const { isOpen, onToggle, onClose } = useDisclosure();
   const needReload = useAppSelector(selectPnftExchange).needReload;
+  const currentChain: IResourceChain =
+    useAppSelector(selectPnftExchange).currentChain;
 
   const router = useRouter();
   const id = router.query?.id;
@@ -70,13 +73,14 @@ const LaunchpadManage = () => {
     }
 
     try {
-      const response: any = await Promise.all([getDetailLaunchpad({ id: id })]);
+      const response: any = await Promise.all([
+        getDetailLaunchpad({ id: id, network: currentChain?.chain?.toLowerCase() }),
+      ]);
       setDetail(response[0]);
     } catch (error) {}
   };
 
   const onSubmit = async (values: any) => {
-    console.log('values', values);
     setMessageError('');
 
     try {
@@ -115,33 +119,37 @@ const LaunchpadManage = () => {
           }),
         );
 
-        console.log('faqs', faqs);
-
         if (values.isLastStep) {
           const signature = await getSignature(account);
-          const res = await createLaunchpad({
-            user_address: account,
-            video: values?.video,
-            image: values?.image,
-            description: values?.description,
-            signature,
-            qand_a: JSON.stringify(faqs),
-            id: detail?.id,
-            launchpad_token: tokenAddress,
-            liquidity_token: liquidAddress,
-            launchpad_balance: values.launchpadBalance,
-            liquidity_balance: values.liquidityBalance,
-            liquidity_ratio: values.liquidityRatioArg,
-            goal_balance: values.goalBalance,
-            twitter_post_url: values.twitterPostUrl,
-            threshold_balance: values.thresholdBalance || '0',
-            duration: Number(seconds),
-          });
+          const res = await createLaunchpad(
+            {
+              user_address: account,
+              video: values?.video,
+              image: values?.image,
+              description: values?.description,
+              signature,
+              qand_a: JSON.stringify(faqs),
+              id: detail?.id,
+              launchpad_token: tokenAddress,
+              liquidity_token: liquidAddress,
+              launchpad_balance: values.launchpadBalance,
+              liquidity_balance: values.liquidityBalance,
+              liquidity_ratio: values.liquidityRatioArg,
+              goal_balance: values.goalBalance,
+              twitter_post_url: values.twitterPostUrl,
+              threshold_balance: values.thresholdBalance || '0',
+              duration: Number(seconds),
+            },
+            {
+              network: currentChain?.chain?.toLowerCase(),
+            },
+          );
           if (values.boost_url && step === 3 && detail?.launchpad) {
             await importBoost(
               {
                 pool_address: detail?.launchpad,
                 address: account,
+                network: currentChain?.chain?.toLowerCase(),
               },
               {
                 signature,

@@ -175,8 +175,6 @@ const LaunchpadFormStep1: React.FC<ILaunchpadFormStep1> = ({
   ]);
 
   const onUpdateTokenSelect = (_tokenUpdate: IToken) => {
-    console.log('_tokenUpdate', _tokenUpdate);
-
     change('launchpadTokenArg', _tokenUpdate);
   };
 

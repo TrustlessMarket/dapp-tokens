@@ -32,9 +32,10 @@ import { useWeb3React } from '@web3-react/core';
 import cx from 'classnames';
 import { useRouter } from 'next/router';
 import { useContext, useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import IdoFaqs from './faqs';
 import styles from './styles.module.scss';
+import {IResourceChain} from "@/interfaces/chain";
 
 const IdoDetailContainer = () => {
   const router = useRouter();
@@ -47,6 +48,8 @@ const IdoDetailContainer = () => {
   const [loading, setLoading] = useState(true);
 
   const [userBoost, setUserBoost] = useState(undefined);
+
+  const currentChain: IResourceChain = useSelector(selectPnftExchange).currentChain;
 
   const dispatch = useDispatch();
 
@@ -74,6 +77,7 @@ const IdoDetailContainer = () => {
         getUserBoost({
           address: account,
           pool_address: poolDetail?.launchpad,
+          network: currentChain?.chain?.toLowerCase()
         }),
       ]);
       setUserBoost(response[0]);

@@ -8,6 +8,9 @@ import React, {useEffect, useMemo, useState} from 'react';
 import {useWeb3React} from "@web3-react/core";
 import {getLaunchpadUserResultDetail} from "@/services/launchpad";
 import {colors} from "@/theme/colors";
+import {IResourceChain} from "@/interfaces/chain";
+import {useSelector} from "react-redux";
+import {selectPnftExchange} from "@/state/pnftExchange";
 
 interface LabelStatusMap {
   [name: string]: any;
@@ -38,6 +41,8 @@ const ContributeHistory = (props: any) => {
   const { account } = useWeb3React();
   const [loading, setLoading] = useState(true);
 
+  const currentChain: IResourceChain = useSelector(selectPnftExchange).currentChain;
+
   useEffect(() => {
     if(account && poolDetail?.launchpad) {
       getList();
@@ -51,6 +56,7 @@ const ContributeHistory = (props: any) => {
         pool_address: poolDetail?.launchpad,
         page: 1,
         limit: 30,
+        network: currentChain?.chain?.toLowerCase()
       });
       setList(response || []);
     } catch (error) {
