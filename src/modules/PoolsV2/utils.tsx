@@ -161,7 +161,7 @@ export const allowStep = (values: any) => {
 
 export const getPooledAmount = (positionDetail?: IPosition) => {
   try {
-    const currentSqrtRatioX96 = getSqrtRatioAtTick(positionDetail?.pair?.tick || 0);
+    const currentSqrtRatioX96 = ethers.BigNumber.from(positionDetail?.pair?.sqrtPriceX96);
     const lowerSqrtRatioX96 = getSqrtRatioAtTick(positionDetail?.tickLower || 0);
     const upperSqrtRatioX96 = getSqrtRatioAtTick(positionDetail?.tickUpper || 0);
 

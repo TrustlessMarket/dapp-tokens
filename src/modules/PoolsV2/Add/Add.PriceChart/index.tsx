@@ -158,7 +158,6 @@ const AddPriceChart: React.FC<IAddPriceChart> = ({address, poolDetail, baseToken
   useEffect(() => {
     async function formatData() {
       if (ticksProcessed) {
-        console.log('ticksProcessed aaaa', ticksProcessed);
         let newData = await Promise.all(
           ticksProcessed.map(async (t: TickProcessed, i) => {
             const active = t.tickIdx === getCurrentTickIdx(poolDetail.rootCurrentTick, TICK_SPACINGS[feeTier]);
@@ -175,8 +174,6 @@ const AddPriceChart: React.FC<IAddPriceChart> = ({address, poolDetail, baseToken
             }
           })
         )
-
-        console.log('isRevert', isRevert);
 
         if(isRevert) {
           newData = newData.reverse();

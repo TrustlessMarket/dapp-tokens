@@ -38,4 +38,5 @@ export interface Pair {
   fee?: string;
   tick?: number;
   price?: string;
+  sqrtPriceX96?: string;
 }
