@@ -15,6 +15,7 @@ import { useEffect } from 'react';
 import { BiCheck, BiChevronDown } from 'react-icons/bi';
 import { useSelector } from 'react-redux';
 import s from './styles.module.scss';
+import { CHAIN_INFO } from '@/constants/storage-key';
 
 export const ItemChain = ({
   _chain,
@@ -65,6 +66,7 @@ const HeaderSwitchNetwork = () => {
 
   const onChangeRouter = (_chainA?: any) => {
     dispatch(updateCurrentChain(_chainA));
+    localStorage.setItem(CHAIN_INFO, JSON.stringify(_chainA));
   };
 
   useEffect(() => {

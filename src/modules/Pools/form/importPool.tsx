@@ -42,6 +42,9 @@ import Web3 from 'web3';
 import { ScreenType } from '..';
 import styles from './styles.module.scss';
 import { useWeb3React } from '@web3-react/core';
+import { IResourceChain } from '@/interfaces/chain';
+import { useAppSelector } from '@/state/hooks';
+import { selectPnftExchange } from '@/state/pnftExchange';
 
 interface MakeFormImportPoolProps {
   onSubmit: (_: any) => void;
@@ -64,6 +67,9 @@ const MakeFormImportPool: React.FC<MakeFormImportPoolProps> = ({
     _reserve0: '-',
     _reserve1: '-',
   });
+
+  const currentChain: IResourceChain =
+    useAppSelector(selectPnftExchange).currentChain;
 
   const [loading, setLoading] = useState(false);
   const [baseToken, setBaseToken] = useState<IToken>();
@@ -197,6 +203,7 @@ const MakeFormImportPool: React.FC<MakeFormImportPoolProps> = ({
         limit: 500,
         page: page,
         is_test: isDevelop() ? '1' : '',
+        network: currentChain?.chain?.toLowerCase(),
       });
       let _list: IToken[] = camelCaseKeys(res);
       const _getImportTokens = getImportTokens();

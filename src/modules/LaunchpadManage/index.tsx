@@ -41,6 +41,7 @@ import {
   PopoverNeedHelp,
   StyledLaunchpadManage,
 } from './LaunchpadManage.styled';
+import { IResourceChain } from '@/interfaces/chain';
 
 const LaunchpadManage = () => {
   const { getSignature } = useContext(WalletContext);
@@ -56,6 +57,8 @@ const LaunchpadManage = () => {
   const [error, setMessageError] = useState('');
   const { isOpen, onToggle, onClose } = useDisclosure();
   const needReload = useAppSelector(selectPnftExchange).needReload;
+  const currentChain: IResourceChain =
+    useAppSelector(selectPnftExchange).currentChain;
 
   const router = useRouter();
   const id = router.query?.id;
@@ -70,13 +73,14 @@ const LaunchpadManage = () => {
     }
 
     try {
-      const response: any = await Promise.all([getDetailLaunchpad({ id: id })]);
+      const response: any = await Promise.all([
+        getDetailLaunchpad({ id: id, network: currentChain?.chain?.toLowerCase() }),
+      ]);
       setDetail(response[0]);
     } catch (error) {}
   };
 
   const onSubmit = async (values: any) => {
-    console.log('values', values);
     setMessageError('');
 
     try {
@@ -114,8 +118,6 @@ const LaunchpadManage = () => {
             label: values?.[`faq_a_${i + 1}`],
           }),
         );
-
-        console.log('faqs', faqs);
 
         if (values.isLastStep) {
           const signature = await getSignature(account);
