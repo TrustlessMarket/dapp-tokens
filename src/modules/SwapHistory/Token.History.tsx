@@ -18,7 +18,7 @@ const TokenHistory = () => {
   const [listPending, setListPending] = useState<any[]>([]);
   const { account } = useWeb3React();
   const { mobileScreen } = useWindowSize();
-  const currentSelectedChain: IResourceChain = useSelector(selectPnftExchange).currentChain;
+  const currentChain: IResourceChain = useSelector(selectPnftExchange).currentChain;
   const { call: getPendingSwapTransactions } = usePendingSwapTransactions();
 
   useEffect(() => {
@@ -26,7 +26,7 @@ const TokenHistory = () => {
       getList();
       getPendingTransactions();
     }
-  }, [account, currentSelectedChain?.chain]);
+  }, [account, currentChain?.chain]);
 
   const getList = async () => {
     try {
@@ -34,7 +34,7 @@ const TokenHistory = () => {
         address: account as string,
         page: 1,
         limit: 30,
-        network: currentSelectedChain?.chain?.toLowerCase()
+        network: currentChain?.chain?.toLowerCase()
       });
       setList(response || []);
     } catch (error) {}
@@ -162,7 +162,7 @@ const TokenHistory = () => {
                         (
                           <a
                             title="explorer"
-                            href={`${currentSelectedChain?.explorers[0]?.url}/tx/${row.txHash}`}
+                            href={`${currentChain?.explorers[0]?.url}/tx/${row.txHash}`}
                             target="_blank"
                             style={{textDecoration: 'underline'}}
                           >
@@ -291,7 +291,7 @@ const TokenHistory = () => {
                   (
                     <a
                       title="explorer"
-                      href={`${currentSelectedChain?.explorers[0]?.url}/tx/${row.txHash}`}
+                      href={`${currentChain?.explorers[0]?.url}/tx/${row.txHash}`}
                       target="_blank"
                       style={{textDecoration: 'underline'}}
                     >
@@ -304,7 +304,7 @@ const TokenHistory = () => {
         },
       ]
     },
-    [mobileScreen, currentSelectedChain?.chain],
+    [mobileScreen, currentChain?.chain],
   );
 
   return (

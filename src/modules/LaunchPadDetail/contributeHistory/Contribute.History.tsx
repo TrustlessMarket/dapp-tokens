@@ -47,7 +47,7 @@ const ContributeHistory = (props: any) => {
     if(account && poolDetail?.launchpad) {
       getList();
     }
-  }, [account, poolDetail?.launchpad]);
+  }, [account, poolDetail?.launchpad, currentChain?.chain]);
 
   const getList = async () => {
     try {
@@ -85,7 +85,7 @@ const ContributeHistory = (props: any) => {
             <Flex direction={"column"} color={"#FFFFFF"}>
               <a
                 target="_blank"
-                href={`${TC_EXPLORER}/tx/${row.txHash}`}
+                href={`${currentChain?.explorers[0]?.url}/tx/${row.txHash}`}
                 style={{textDecoration: 'underline', color: colors.bluePrimary}}
               >
                 {formatLongAddress(row?.txHash)}
@@ -150,7 +150,7 @@ const ContributeHistory = (props: any) => {
         },
       },
     ],
-    [],
+    [currentChain?.chain],
   );
 
   return (

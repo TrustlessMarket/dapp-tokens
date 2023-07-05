@@ -29,11 +29,11 @@ const MenuMobile = React.forwardRef(
     const { btcBalance, juiceBalance } = useContext(AssetsContext);
     const isAuthenticated = useSelector(getIsAuthenticatedSelector);
     const router = useRouter();
-    const currentSelectedChain = useSelector(selectPnftExchange).currentChain;
+    const currentChain = useSelector(selectPnftExchange).currentChain;
 
     const headerMenu = useMemo(() => {
-      return HEADER_MENUS(currentSelectedChain);
-    }, [currentSelectedChain?.chain]);
+      return HEADER_MENUS(currentChain);
+    }, [currentChain?.chain]);
 
     const handleConnectWallet = async () => {
       router.push(`${ROUTE_PATH.CONNECT_WALLET}?next=${window.location.href}`);

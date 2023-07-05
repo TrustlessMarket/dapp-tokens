@@ -26,11 +26,11 @@ const TokenHistory = ({ data, isOwner }: { data: IToken; isOwner?: boolean }) =>
 
   const { mobileScreen } = useWindowSize();
 
-  const currentSelectedChain: IResourceChain = useSelector(selectPnftExchange).currentChain;
+  const currentChain: IResourceChain = useSelector(selectPnftExchange).currentChain;
 
   useEffect(() => {
     getList();
-  }, [account, isActive, currentSelectedChain?.chain]);
+  }, [account, isActive, currentChain?.chain]);
 
   const getList = async () => {
     try {
@@ -39,7 +39,7 @@ const TokenHistory = ({ data, isOwner }: { data: IToken; isOwner?: boolean }) =>
         page: 1,
         limit: 100,
         user_address: isOwner ? account : '',
-        network: currentSelectedChain?.chain?.toLowerCase()
+        network: currentChain?.chain?.toLowerCase()
       });
       setList(response);
     } catch (error) {

@@ -43,7 +43,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const [sort, setSort] = useState({ sort: '' });
   const { values } = useFormState();
   const { mobileScreen } = useWindowSize();
-  const currentSelectedChain: IResourceChain = useSelector(selectPnftExchange).currentChain || L2_CHAIN_INFO;
+  const currentChain: IResourceChain = useSelector(selectPnftExchange).currentChain || L2_CHAIN_INFO;
 
   const fetchTokens = async (page = 1, isFetchMore = false) => {
     try {
@@ -58,7 +58,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           sort: sortField,
           sort_type: sortType,
           search: search,
-          network: currentSelectedChain?.chain?.toLowerCase()
+          network: currentChain?.chain?.toLowerCase()
         })) || [];
       if (isFetchMore) {
         setTokensList((prev) => [...prev, ...res]);
@@ -85,7 +85,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
 
   useEffect(() => {
     fetchTokens();
-  }, [JSON.stringify(sort), debounced, currentSelectedChain?.chainId]);
+  }, [JSON.stringify(sort), debounced, currentChain?.chainId]);
 
   const columns: ColumnProp[] = useMemo(() => {
     if (mobileScreen) {

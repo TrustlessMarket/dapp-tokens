@@ -14,8 +14,8 @@ import {SupportedChainId} from "@/constants/chains";
 import {L2_ETH_ADDRESS, L2_WBTC_ADDRESS} from "@/configs";
 
 const SwapHistory = () => {
-  const currentSelectedChain: IResourceChain = useSelector(selectPnftExchange).currentChain;
-  const isL2 = compareString(currentSelectedChain?.chainId, SupportedChainId.L2);
+  const currentChain: IResourceChain = useSelector(selectPnftExchange).currentChain;
+  const isL2 = compareString(currentChain?.chainId, SupportedChainId.L2);
   const routePathSwap = isL2 ? ROUTE_PATH.SWAP_V2 : ROUTE_PATH.SWAP;
   const routePathPools = isL2 ? ROUTE_PATH.POOLS_V2 : ROUTE_PATH.POOLS;
   const from_token = isL2 ? L2_ETH_ADDRESS : WETH_ADDRESS;

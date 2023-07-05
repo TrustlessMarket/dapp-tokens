@@ -52,8 +52,7 @@ const WalletHeader = () => {
 
   const chainInfo: IResourceChain = getConnectedChainInfo();
 
-  const currentSelectedChain: IResourceChain =
-    useSelector(selectPnftExchange).currentChain;
+  const currentChain: IResourceChain = useSelector(selectPnftExchange).currentChain;
 
   const isTokenPage = useMemo(() => {
     return isScreenDarkMode();
@@ -153,7 +152,7 @@ const WalletHeader = () => {
       </div>
       {user?.walletAddressBtcTaproot &&
         compareString(
-          currentSelectedChain?.chainId,
+          currentChain?.chainId,
           SupportedChainId.TRUSTLESS_COMPUTER,
         ) && (
           <>
@@ -234,7 +233,7 @@ const WalletHeader = () => {
       {account && isAuthenticated ? (
         <>
           {!isSupportedChain(chainId) ||
-          !compareString(currentSelectedChain?.chainId, chainId) ? (
+          !compareString(currentChain?.chainId, chainId) ? (
             <SelectedNetwork />
           ) : (
             <OverlayTrigger
@@ -254,7 +253,7 @@ const WalletHeader = () => {
                 <WalletBalance className={isTokenPage ? 'isTokenPage' : ''}>
                   <div className="balance">
                     {compareString(
-                      currentSelectedChain?.chainId,
+                      currentChain?.chainId,
                       TRUSTLESS_COMPUTER_CHAIN_INFO.chainId,
                     ) && (
                       <>

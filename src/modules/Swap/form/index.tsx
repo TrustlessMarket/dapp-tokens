@@ -100,7 +100,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const { account } = useWeb3React();
   const needReload = useAppSelector(selectPnftExchange).needReload;
   const [exchangeRate, setExchangeRate] = useState('0');
-  const currentSelectedChain = useSelector(selectPnftExchange).currentChain;
+  const currentChain = useSelector(selectPnftExchange).currentChain;
 
   // console.log('isSwitching', isSwitching);
   // console.log('amountBaseTokenApproved', amountBaseTokenApproved);
@@ -306,7 +306,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         limit: LIMIT_PAGE,
         page: page,
         is_test: isDevelop() ? '1' : '',
-        network: currentSelectedChain?.chain?.toLowerCase()
+        network: currentChain?.chain?.toLowerCase()
       });
 
       const list = res ? camelCaseKeys(res) : [];
@@ -336,7 +336,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         page: 1,
         is_test: isDevelop() ? '1' : '',
         from_token: from_token,
-        network: currentSelectedChain?.chain?.toLowerCase()
+        network: currentChain?.chain?.toLowerCase()
       });
       return res;
     } catch (err: unknown) {

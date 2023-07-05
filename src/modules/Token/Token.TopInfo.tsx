@@ -17,7 +17,7 @@ import {L2_ETH_ADDRESS, L2_WBTC_ADDRESS} from "@/configs";
 const TokenTopInfo = ({ data }: { data: IToken }) => {
   const router = useRouter();
   const { account } = useWeb3React();
-  const currentSelectedChain: IResourceChain = useSelector(selectPnftExchange).currentChain;
+  const currentChain: IResourceChain = useSelector(selectPnftExchange).currentChain;
 
   return (
     <>
@@ -178,7 +178,7 @@ const TokenTopInfo = ({ data }: { data: IToken }) => {
             fontSize: '16px',
           }}
           onClick={() => {
-            const isL2 = compareString(currentSelectedChain?.chainId, SupportedChainId.L2);
+            const isL2 = compareString(currentChain?.chainId, SupportedChainId.L2);
             const from_token = compareString(data?.symbol, 'GM')
               ? isL2 ? L2_ETH_ADDRESS : WETH_ADDRESS
               : isL2 ? L2_WBTC_ADDRESS : WBTC_ADDRESS;

@@ -66,7 +66,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
 
   const { account } = useWeb3React();
   const needReload = useAppSelector(selectPnftExchange).needReload;
-  const currentSelectedChain: IResourceChain = useSelector(selectPnftExchange).currentChain;
+  const currentChain: IResourceChain = useSelector(selectPnftExchange).currentChain;
 
   const { values } = useFormState();
   const { change, restart } = useForm();
@@ -95,12 +95,12 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     if (router?.query?.address) {
       fetchTokenDetail(router?.query?.address);
     }
-  }, [needReload, router?.query?.address, currentSelectedChain?.chain]);
+  }, [needReload, router?.query?.address, currentChain?.chain]);
 
   const fetchTokenDetail = async (address: any) => {
     try {
       setLoading(true);
-      const res = await getTokenDetail(address, {network: currentSelectedChain?.chain?.toLowerCase()});
+      const res = await getTokenDetail(address, {network: currentChain?.chain?.toLowerCase()});
       setTokenInfo(res);
       change('tokenInfo', res);
     } catch (err: unknown) {
@@ -394,7 +394,7 @@ const TradingForm = () => {
   const dispatch = useAppDispatch();
   const { account } = useWeb3React();
   const router = useRouter();
-  const currentSelectedChain: IResourceChain = useSelector(selectPnftExchange).currentChain;
+  const currentChain: IResourceChain = useSelector(selectPnftExchange).currentChain;
 
   const handleSubmit = async (values: any) => {
     const { tokenInfo } = values;
@@ -418,7 +418,7 @@ const TradingForm = () => {
       };
 
       const params = {
-        network: currentSelectedChain?.chain?.toLowerCase()
+        network: currentChain?.chain?.toLowerCase()
       }
 
       const response = await updateTokenInfo(tokenInfo?.address, params, data);

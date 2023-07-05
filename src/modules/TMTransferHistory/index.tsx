@@ -24,8 +24,8 @@ const TMTransferHistory = () => {
   const user = useSelector(getUserSelector);
   const { call: getBalanceErc20 } = useBalanceERC20Token();
   const [balanceTM, setBalanceTM] = useState('0');
-  const currentSelectedChain: IResourceChain = useSelector(selectPnftExchange).currentChain;
-  const isL2 = compareString(currentSelectedChain?.chainId, SupportedChainId.L2);
+  const currentChain: IResourceChain = useSelector(selectPnftExchange).currentChain;
+  const isL2 = compareString(currentChain?.chainId, SupportedChainId.L2);
   const routePathSwap = isL2 ? ROUTE_PATH.SWAP_V2 : ROUTE_PATH.SWAP;
   const routePathPools = isL2 ? ROUTE_PATH.POOLS_V2 : ROUTE_PATH.POOLS;
   const from_token = isL2 ? L2_ETH_ADDRESS : WETH_ADDRESS;

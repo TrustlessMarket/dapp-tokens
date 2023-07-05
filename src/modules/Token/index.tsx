@@ -35,8 +35,8 @@ const TokenChart = dynamic(() => import('./Token.Chart'), {
 });
 
 const TokenDetail = () => {
-  const currentSelectedChain: IResourceChain = useSelector(selectPnftExchange).currentChain;
-  const isL2 = compareString(currentSelectedChain?.chainId, SupportedChainId.L2);
+  const currentChain: IResourceChain = useSelector(selectPnftExchange).currentChain;
+  const isL2 = compareString(currentChain?.chainId, SupportedChainId.L2);
   const router = useRouter();
   const address: any = router.query?.address;
   const [loading, setLoading] = useState(true);
@@ -55,7 +55,7 @@ const TokenDetail = () => {
       const address: any = isL2 ? L2_WBTC_ADDRESS : WBTC_ADDRESS;
       router.replace(`${router.pathname}?address=${address}`);
     }
-  }, [address, currentSelectedChain?.chain]);
+  }, [address, currentChain?.chain]);
 
   const getData = async () => {
     try {
@@ -66,12 +66,12 @@ const TokenDetail = () => {
       const [resToken, resChart] = await Promise.all([
         getTokenRp({
           address,
-          network: currentSelectedChain?.chain?.toLowerCase()
+          network: currentChain?.chain?.toLowerCase()
         }),
         getChartToken({
           contract_address: address,
           chart_type: 'minute',
-          network: currentSelectedChain?.chain?.toLowerCase()
+          network: currentChain?.chain?.toLowerCase()
         }),
       ]);
       if (resToken.length === 0) {
