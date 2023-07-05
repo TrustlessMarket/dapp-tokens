@@ -110,6 +110,7 @@ import { getIsAuthenticatedSelector } from '@/state/user/selector';
 import { IoWarningOutline } from 'react-icons/io5';
 import { CHAIN_ID_TO_NETWORK, NETWORK_TO_CHAIN_ID } from '@/constants/chains';
 import { PREV_CHAIN_ID } from '@/constants/storage-key';
+import {IResourceChain} from "@/interfaces/chain";
 
 const CONTRIBUTION_METHODS = [
   {
@@ -947,6 +948,8 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
   const isFunding = [LAUNCHPAD_STATUS.Launching].includes(poolDetail?.state);
   const isVoting = [LAUNCHPAD_STATUS.Voting].includes(poolDetail?.state);
 
+  const currentChain: IResourceChain = useSelector(selectPnftExchange).currentChain;
+
   // console.log('poolDetail', poolDetail);
   // console.log('canEnd', canEnd);
   // console.log('canClaim', canClaim);
@@ -1004,6 +1007,7 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
         getUserBoost({
           address: account,
           pool_address: poolDetail?.launchpad,
+          network: currentChain?.chain?.toLowerCase()
         }),
         getLaunchpadDepositAddress({
           network: 'ethereum',
@@ -1012,9 +1016,11 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
         }),
         getVoteResultLaunchpad({
           pool_address: poolDetail?.launchpad,
+          network: currentChain?.chain?.toLowerCase()
         }),
         getDepositResultLaunchpad({
           pool_address: poolDetail?.launchpad,
+          network: currentChain?.chain?.toLowerCase()
         }),
       ]);
 
