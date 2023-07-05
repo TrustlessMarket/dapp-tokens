@@ -21,16 +21,30 @@ import {
   validateQuoteAmount,
 } from '../utils';
 import { forwardRef, useImperativeHandle } from 'react';
+import { compareString } from '@/utils';
+import { IPosition } from '@/interfaces/position';
+import { tickToPrice } from '@/utils/number';
 
 const IncreaseForm = forwardRef<any, any>(
-  ({ positionDetail, handleSubmit, submitting }: any, ref) => {
+  (
+    {
+      positionDetail,
+      handleSubmit,
+      submitting,
+    }: {
+      positionDetail: IPosition;
+      submitting?: boolean;
+      handleSubmit?: (_: any) => void;
+    },
+    ref,
+  ) => {
     const { change, restart } = useForm();
     const { values } = useFormState();
     const baseToken: IToken = values?.baseToken;
     const quoteToken: IToken = values?.quoteToken;
     const currentTick: any = values?.currentTick;
-    const tickLower: any = values?.tickLower;
-    const tickUpper: any = values?.tickUpper;
+    const tickLower: any = positionDetail.tickLower;
+    const tickUpper: any = positionDetail.tickUpper;
     const maxPrice: any = values?.maxPrice;
     const minPrice: any = values?.minPrice;
     const currentPrice: any = values?.currentPrice;
@@ -88,10 +102,36 @@ const IncreaseForm = forwardRef<any, any>(
       change('newBaseAmount', value);
     };
 
+    const onSelectPair = (_tokenA?: IToken, _tokenB?: IToken) => {
+      if (Boolean(_tokenA) && Boolean(_tokenB)) {
+        let isRevert = false;
+
+        if (!compareString(positionDetail?.pair?.token0, _tokenA?.address)) {
+          isRevert = true;
+        }
+
+        const _revertTickLower = isRevert ? -tickUpper : tickLower;
+        const _revertTickUpper = isRevert ? -tickLower : tickUpper;
+        const _revertTick = isRevert ? -currentTick : currentTick;
+
+        restart({
+          ...values,
+          minPrice: tickToPrice(_revertTickLower),
+          maxPrice: tickToPrice(_revertTickUpper),
+          baseToken: positionDetail?.pair?.token0Obj,
+          quoteToken: positionDetail?.pair?.token1Obj,
+          currentPrice: tickToPrice(_revertTick),
+          currentSelectPair: _tokenA,
+          isRevert: isRevert,
+        });
+      }
+    };
+
     return (
       <form onSubmit={handleSubmit}>
         <AddConfirm
           values={values as any}
+          onSelectPair={onSelectPair}
           onClose={() => {
             //
           }}
