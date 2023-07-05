@@ -39,6 +39,8 @@ import Jazzicon, { jsNumberForAddress } from 'react-jazzicon';
 import styles from './styles.module.scss';
 import { closeModal, openModal } from '@/state/modal';
 import ContributeHistory from '@/modules/LaunchPadDetail/contributeHistory';
+import {IResourceChain} from "@/interfaces/chain";
+import {L2_CHAIN_INFO} from "@/constants/chains";
 
 const AllowlistTable = ({
   poolDetail,
@@ -52,6 +54,7 @@ const AllowlistTable = ({
   const [scrollToIndex, setScrollToIndex] = useState<any>(undefined);
   const { mobileScreen, tabletScreen } = useWindowSize();
   const [isLoading, setIsLoading] = useState(true);
+  const currentChain: IResourceChain = useAppSelector(selectPnftExchange).currentChain || L2_CHAIN_INFO;
 
   const { account } = useWeb3React();
   const dispatch = useAppDispatch();
@@ -60,16 +63,17 @@ const AllowlistTable = ({
     if (poolDetail?.id) {
       fetchDepositInfo();
     }
-  }, [account, poolDetail?.id, needReload]);
+  }, [account, poolDetail?.id, needReload, currentChain?.chain]);
 
   const fetchDepositInfo = async () => {
     try {
       setIsLoading(true);
       const [deposits, userDeposit] = await Promise.all([
-        getDepositResultLaunchpad({ pool_address: poolDetail?.launchpad }),
+        getDepositResultLaunchpad({ pool_address: poolDetail?.launchpad, network: currentChain?.chain?.toLowerCase() }),
         getUserDepositInfoLaunchpad({
           pool_address: poolDetail?.launchpad,
           address: account,
+          network: currentChain?.chain?.toLowerCase()
         }),
       ]);
       const list = deposits?.map((item: any, index: number) => ({

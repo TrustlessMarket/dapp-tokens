@@ -36,7 +36,7 @@ export const scanLaunchpadTxHash = async (params: { tx_hash: string }) => {
 };
 
 export const getListLaunchpad = async (
-  params: { address?: string } & IPagingParams,
+  params: { address?: string, network?: string } & IPagingParams,
 ) => {
   const qs = '?' + queryString.stringify(params);
   return swrFetcher(`${API_EXCHANGE_URL}${API_PATH}/list${qs}`, {
@@ -60,6 +60,7 @@ export const getDetailLaunchpad = async (params: {
 export const getUserBoost = async (params: {
   address?: any;
   pool_address?: any;
+  network?: string;
 }) => {
   const qs = '?network=tc&' + queryString.stringify(params);
   return swrFetcher(`${API_EXCHANGE_URL}/users/boost${qs}`, {
@@ -114,7 +115,7 @@ export const createLaunchpad = async (
   });
 };
 
-export const getDepositResultLaunchpad = async (params: { pool_address?: any }) => {
+export const getDepositResultLaunchpad = async (params: { pool_address?: any, network?: string }) => {
   const qs = '?' + queryString.stringify(params);
   return swrFetcher(`${API_EXCHANGE_URL}${API_PATH}/result${qs}`, {
     method: 'GET',
@@ -125,6 +126,7 @@ export const getDepositResultLaunchpad = async (params: { pool_address?: any }) 
 export const getUserDepositInfoLaunchpad = async (params: {
   pool_address?: any;
   address?: any;
+  network?: string;
 }) => {
   const qs = '?' + queryString.stringify(params);
   return swrFetcher(`${API_EXCHANGE_URL}${API_PATH}/user-result${qs}`, {
@@ -151,7 +153,7 @@ export const importBoost = async (
   });
 };
 
-export const getVoteResultLaunchpad = async (params: { pool_address?: any }) => {
+export const getVoteResultLaunchpad = async (params: { pool_address?: any, network?: string }) => {
   const qs = '?' + queryString.stringify(params);
   return swrFetcher(`${API_EXCHANGE_URL}${API_PATH}/vote-result${qs}`, {
     method: 'GET',
@@ -159,7 +161,11 @@ export const getVoteResultLaunchpad = async (params: { pool_address?: any }) => 
   });
 };
 
-export const getLaunchpadDepositAddress = async (params: any) => {
+export const getLaunchpadDepositAddress = async (params: {
+  network?: string,
+  address?: string,
+  launchpad_id?: string,
+}) => {
   const qs = '?' + queryString.stringify(params);
   return swrFetcher(`${API_EXCHANGE_URL}${API_PATH}/deposit-address${qs}`, {
     method: 'GET',
@@ -167,7 +173,8 @@ export const getLaunchpadDepositAddress = async (params: any) => {
   });
 };
 
-export const getLaunchpadUserResultDetail = async (params: any) => {
+export const getLaunchpadUserResultDetail =
+  async (params: {address?: string, pool_address?: string} & IPagingParams) => {
   const qs = '?' + queryString.stringify(params);
   return swrFetcher(`${API_EXCHANGE_URL}${API_PATH}/user-result-detail${qs}`, {
     method: 'GET',
