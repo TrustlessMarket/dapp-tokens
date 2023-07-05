@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import {API_EXCHANGE_URL, API_URL} from '@/configs';
-import {IPagingParams} from '@/interfaces/api/query';
-import {IToken} from '@/interfaces/token';
-import {swrFetcher} from '@/utils/swr';
+import { API_EXCHANGE_URL, API_URL } from '@/configs';
+import { IPagingParams } from '@/interfaces/api/query';
+import { IToken } from '@/interfaces/token';
+import { swrFetcher } from '@/utils/swr';
 import queryString from 'query-string';
 
 const API_PATH = '/token-explorer';
@@ -28,7 +28,10 @@ export const getTokensByWallet = async (
   });
 };
 
-export const getTokenDetail = async (address: string, params: any): Promise<IToken> => {
+export const getTokenDetail = async (
+  address: string,
+  params: any,
+): Promise<IToken> => {
   const qs = '?' + queryString.stringify(params);
   return swrFetcher(`${API_EXCHANGE_URL}${API_PATH}/token/${address}${qs}`, {
     method: 'GET',
@@ -78,12 +81,16 @@ export const updateTokenInfo = (
 export const updateTwitterTokenInfo = (
   address: string,
   payload: IUpdateTokenPayload,
+  network?: any,
 ): Promise<IUpdateTokenResponse> => {
-  return swrFetcher(`${API_EXCHANGE_URL}${API_PATH}/token/${address}/twitter`, {
-    method: 'PUT',
-    data: payload,
-    error: 'Failed to update token info',
-  });
+  return swrFetcher(
+    `${API_EXCHANGE_URL}${API_PATH}/token/${address}/twitter?network=${network}`,
+    {
+      method: 'PUT',
+      data: payload,
+      error: 'Failed to update token info',
+    },
+  );
 };
 
 export interface ICreateTokenParams {
@@ -91,7 +98,10 @@ export interface ICreateTokenParams {
   address?: string;
 }
 
-export const createTokenInfo = (params: ICreateTokenParams, payload: IUpdateTokenPayload): Promise<IUpdateTokenResponse> => {
+export const createTokenInfo = (
+  params: ICreateTokenParams,
+  payload: IUpdateTokenPayload,
+): Promise<IUpdateTokenResponse> => {
   const qs = '?' + queryString.stringify(params);
   return swrFetcher(`${API_EXCHANGE_URL}${API_PATH}/token${qs}`, {
     method: 'POST',
