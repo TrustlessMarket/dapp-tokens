@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { CDN_URL } from '@/configs';
+import {CDN_URL, L2_ETH_ADDRESS, L2_WBTC_ADDRESS} from '@/configs';
 import { L2_CHAIN_INFO } from '@/constants/chains';
 import {
   GENERATIVE_DISCORD,
@@ -31,34 +31,22 @@ export const isScreenDarkMode = () => {
   return true;
 };
 
-export const HEADER_MENUS = (currentSelectedChain: any) => [
+export const HEADER_MENUS = (isL2: boolean) => [
   {
-    key: compareString(currentSelectedChain?.chain, L2_CHAIN_INFO.chain)
-      ? ROUTE_PATH.MARKETS_V2
-      : ROUTE_PATH.MARKETS,
-    route: compareString(currentSelectedChain?.chain, L2_CHAIN_INFO.chain)
-      ? ROUTE_PATH.MARKETS_V2
-      : ROUTE_PATH.MARKETS,
+    key: isL2 ? ROUTE_PATH.MARKETS_V2 : ROUTE_PATH.MARKETS,
+    route: isL2 ? ROUTE_PATH.MARKETS_V2 : ROUTE_PATH.MARKETS,
     name: 'Markets',
   },
   {
-    key: compareString(currentSelectedChain?.chain, L2_CHAIN_INFO.chain)
-      ? ROUTE_PATH.SWAP_V2
-      : ROUTE_PATH.SWAP,
+    key: isL2 ? ROUTE_PATH.SWAP_V2 : ROUTE_PATH.SWAP,
     route: `${
-      compareString(currentSelectedChain?.chain, L2_CHAIN_INFO.chain)
-        ? ROUTE_PATH.SWAP_V2
-        : ROUTE_PATH.SWAP
-    }?from_token=${WETH_ADDRESS}&to_token=${GM_ADDRESS}`,
+      isL2 ? ROUTE_PATH.SWAP_V2 : ROUTE_PATH.SWAP
+    }?from_token=${isL2 ? L2_ETH_ADDRESS : WETH_ADDRESS}&to_token=${isL2 ? L2_WBTC_ADDRESS : GM_ADDRESS}`,
     name: 'Swap',
   },
   {
-    key: compareString(currentSelectedChain?.chain, L2_CHAIN_INFO.chain)
-      ? ROUTE_PATH.POOLS_V2
-      : ROUTE_PATH.POOLS,
-    route: compareString(currentSelectedChain?.chain, L2_CHAIN_INFO.chain)
-      ? ROUTE_PATH.POOLS_V2
-      : ROUTE_PATH.POOLS,
+    key: isL2 ? ROUTE_PATH.POOLS_V2 : ROUTE_PATH.POOLS,
+    route: isL2 ? ROUTE_PATH.POOLS_V2 : ROUTE_PATH.POOLS,
     name: 'Pools',
   },
   {
@@ -105,9 +93,13 @@ const Header = () => {
     }
   }, [isOpenMenu]);
 
-  const headerMenu = useMemo(() => {
-    return HEADER_MENUS(currentSelectedChain);
+  const isL2 = useMemo(() => {
+    return compareString(currentSelectedChain?.chain, L2_CHAIN_INFO.chain);
   }, [currentSelectedChain?.chain]);
+
+  const headerMenu = useMemo(() => {
+    return HEADER_MENUS(isL2);
+  }, [isL2]);
 
   return (
     <Wrapper style={{ height: headerHeight, margin: '0 auto' }}>
@@ -116,7 +108,7 @@ const Header = () => {
         style={{ height: defaultProvider.headerHeight }}
       >
         <div className={'leftWrapper'}>
-          <Link className="logo" href={compareString(currentSelectedChain?.chain, L2_CHAIN_INFO.chain) ? ROUTE_PATH.HOME_V2 : ROUTE_PATH.HOME}>
+          <Link className="logo" href={isL2 ? ROUTE_PATH.HOME_V2 : ROUTE_PATH.HOME}>
             <img
               src={`${CDN_URL}/icons/logo-tc-market.svg`}
               alt="New Bitcoin DEX logo"
