@@ -17,7 +17,6 @@ import BodyContainer from '@/components/Swap/bodyContainer';
 import FieldText from '@/components/Swap/form/fieldText';
 import ListTable, {ColumnProp} from '@/components/Swap/listTable';
 import {CDN_URL, L2_ETH_ADDRESS, L2_WBTC_ADDRESS} from '@/configs';
-import {GM_ADDRESS} from '@/constants/common';
 import useDebounce from '@/hooks/useDebounce';
 import px2rem from '@/utils/px2rem';
 import {Field, Form, useFormState} from 'react-final-form';
@@ -558,7 +557,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         </div>
         <div className="upload_right">
           <Link
-            href={`${ROUTE_PATH.SWAP_V2}?from_token=${L2_ETH_ADDRESS}&to_token=${GM_ADDRESS}`}
+            href={`${ROUTE_PATH.SWAP_V2}?from_token=${L2_ETH_ADDRESS}&to_token=${L2_WBTC_ADDRESS}`}
           >
             <Button className="comming-soon-btn" background={'#3385FF'}>
               <Text
