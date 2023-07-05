@@ -65,7 +65,7 @@ const LaunchpadContainer = () => {
 
   useEffect(() => {
     getData();
-  }, [needReload, account]);
+  }, [needReload, account, currentChain?.chain]);
 
   const getData = async () => {
     try {
