@@ -26,6 +26,9 @@ import { useRouter } from 'next/router';
 import { toast } from 'react-hot-toast';
 import { toastError } from '@/constants/error';
 import { showError } from '@/utils/toast';
+import { IResourceChain } from '@/interfaces/chain';
+import { useAppSelector } from '@/state/hooks';
+import { selectPnftExchange } from '@/state/pnftExchange';
 
 export interface LaunchpadManageFormContainerProps {
   loading: boolean;
@@ -74,6 +77,9 @@ const LaunchpadManageFormContainer: React.FC<LaunchpadManageFormContainerProps> 
   const tokenSelected: IToken | undefined = values?.launchpadTokenArg;
 
   const cachedData = localStorage.getItem(LAUNCHPAD_FORM_STEP);
+
+  const currentChain: IResourceChain =
+    useAppSelector(selectPnftExchange).currentChain;
 
   const checkTokenApprove = async (token: IToken | any) => {
     try {
@@ -274,6 +280,7 @@ const LaunchpadManageFormContainer: React.FC<LaunchpadManageFormContainerProps> 
           address: account,
           page: 1,
           limit: 9999,
+          network: currentChain?.chain?.toLowerCase(),
         }),
       ]);
 
@@ -286,7 +293,7 @@ const LaunchpadManageFormContainer: React.FC<LaunchpadManageFormContainerProps> 
   const fetchData = async () => {
     try {
       const response = await Promise.all([
-        getListLiquidityToken(),
+        getListLiquidityToken({ network: currentChain?.chain?.toLowerCase() }),
         getConfigLaunchpad({}),
       ]);
 

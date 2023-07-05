@@ -6,8 +6,9 @@ import queryString from 'query-string';
 
 const API_PATH = '/launchpad';
 
-export const getListLiquidityToken = async () => {
-  return swrFetcher(`${API_EXCHANGE_URL}${API_PATH}/liquidity-token`, {
+export const getListLiquidityToken = async (params: IPagingParams) => {
+  const qs = '?' + queryString.stringify(params);
+  return swrFetcher(`${API_EXCHANGE_URL}${API_PATH}/liquidity-token${qs}`, {
     method: 'GET',
     error: 'getListLiquidityToken',
   });
@@ -47,6 +48,7 @@ export const getListLaunchpad = async (
 export const getDetailLaunchpad = async (params: {
   pool_address?: any;
   id?: any;
+  network?: any;
 }) => {
   const qs = '?' + queryString.stringify(params);
   return swrFetcher(`${API_EXCHANGE_URL}${API_PATH}/detail${qs}`, {
@@ -153,7 +155,7 @@ export const getVoteResultLaunchpad = async (params: { pool_address?: any }) => 
   });
 };
 
-export const getLaunchpadDepositAddress = async (params: any ) => {
+export const getLaunchpadDepositAddress = async (params: any) => {
   const qs = '?' + queryString.stringify(params);
   return swrFetcher(`${API_EXCHANGE_URL}${API_PATH}/deposit-address${qs}`, {
     method: 'GET',
@@ -161,7 +163,7 @@ export const getLaunchpadDepositAddress = async (params: any ) => {
   });
 };
 
-export const getLaunchpadUserResultDetail = async (params: any ) => {
+export const getLaunchpadUserResultDetail = async (params: any) => {
   const qs = '?' + queryString.stringify(params);
   return swrFetcher(`${API_EXCHANGE_URL}${API_PATH}/user-result-detail${qs}`, {
     method: 'GET',

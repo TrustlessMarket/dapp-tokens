@@ -1,10 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import LaunchpadFactoryJson from '@/abis/LaunchpadFactory.json';
-import { LAUNCHPAD_FACTORY_ADDRESS } from '@/configs';
+// import LaunchpadFactoryL2Json from '@/abis/lau';
+import { L2_LAUNCHPAD_FACTORY_ADDRESS, LAUNCHPAD_FACTORY_ADDRESS } from '@/configs';
+import { SupportedChainId } from '@/constants/chains';
 import { TransactionEventType } from '@/enums/transaction';
+import { IResourceChain } from '@/interfaces/chain';
 import { ContractOperationHook, DAppType } from '@/interfaces/contract-operation';
-import { getContract, getDefaultProvider } from '@/utils';
+import { useAppSelector } from '@/state/hooks';
+import { selectPnftExchange } from '@/state/pnftExchange';
+import { compareString, getContract, getDefaultProvider } from '@/utils';
 import { useCallback } from 'react';
 
 export interface ConfigLaunchpadResponse {
@@ -18,13 +23,25 @@ const useGetConfigLaunchpad: ContractOperationHook<
   ConfigLaunchpadResponse
 > = () => {
   const provider = getDefaultProvider();
+
+  const currentChain: IResourceChain =
+    useAppSelector(selectPnftExchange).currentChain;
+
   const call = useCallback(async (): Promise<ConfigLaunchpadResponse> => {
     if (provider) {
-      const contract = getContract(
+      let contract = getContract(
         LAUNCHPAD_FACTORY_ADDRESS,
         LaunchpadFactoryJson,
         provider,
       );
+
+      if (compareString(currentChain.chainId, SupportedChainId.L2)) {
+        contract = getContract(
+          L2_LAUNCHPAD_FACTORY_ADDRESS,
+          LaunchpadFactoryJson,
+          provider,
+        );
+      }
 
       const transaction = await contract.connect(provider).getLaunchpadConfigs();
 
