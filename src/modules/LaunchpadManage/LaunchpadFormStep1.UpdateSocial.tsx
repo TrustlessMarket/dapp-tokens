@@ -3,12 +3,14 @@
 import FiledButton from '@/components/Swap/button/filedButton';
 import FieldText from '@/components/Swap/form/fieldText';
 import { toastError } from '@/constants/error';
+import { IResourceChain } from '@/interfaces/chain';
 import { logErrorToServer } from '@/services/swap';
 import {
   IUpdateTokenPayload,
   updateTwitterTokenInfo,
 } from '@/services/token-explorer';
-import { requestReload } from '@/state/pnftExchange';
+import { useAppSelector } from '@/state/hooks';
+import { requestReload, selectPnftExchange } from '@/state/pnftExchange';
 import { composeValidators, isTwitter, required } from '@/utils/formValidate';
 import { showError } from '@/utils/toast';
 import { Box } from '@chakra-ui/react';
@@ -47,6 +49,8 @@ const LaunchpadFormStep1UpdateSocial: React.FC<any> = ({
   onClose,
   onUpdateTokenSelect,
 }) => {
+  const currentChain: IResourceChain =
+    useAppSelector(selectPnftExchange).currentChain;
   const [submitting, setSubmitting] = useState(false);
 
   const { account } = useWeb3React();
@@ -62,7 +66,11 @@ const LaunchpadFormStep1UpdateSocial: React.FC<any> = ({
           twitter: values?.twitter,
         },
       };
-      const response: any = await updateTwitterTokenInfo(detail?.address, data);
+      const response: any = await updateTwitterTokenInfo(
+        detail?.address,
+        data,
+        currentChain?.chain?.toLowerCase(),
+      );
       toast.success('Update token info successfully!');
       console.log('response', response);
 
