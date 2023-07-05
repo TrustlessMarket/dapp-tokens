@@ -34,23 +34,12 @@ const useIncreaseLiquidityV3: ContractOperationHook<
       const { tokenId, amount0Desired, amount1Desired, amount0Min, amount1Min } =
         params;
       if (provider) {
-        console.log('params', params);
-
         const contract = getContract(
           UNIV3_NONFUNGBILE_POSITION_MANAGER_ADDRESS,
           NonfungiblePositionManagerJson,
           provider,
           account,
         );
-
-        console.log({
-          tokenId,
-          amount0Desired: web3.utils.toWei(amount0Desired),
-          amount1Desired: web3.utils.toWei(amount1Desired),
-          amount0Min: web3.utils.toWei(amount0Min),
-          amount1Min: web3.utils.toWei(amount1Min),
-          deadline: getDeadline(),
-        });
 
         const transaction = await contract
           .connect(provider.getSigner(0))

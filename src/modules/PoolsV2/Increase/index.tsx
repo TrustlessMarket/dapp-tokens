@@ -75,7 +75,7 @@ const IncreaseLiquidity = () => {
         }),
       );
       const params: IIncreaseLiquidityV3 = {
-        tokenId: Number(positionDetail?.id),
+        tokenId: Number(positionDetail?.tokenId),
         amount0Desired: values?.newBaseAmount || '0',
         amount1Desired: values?.newQuoteAmount || '0',
         amount0Min: '0',
