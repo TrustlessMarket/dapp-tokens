@@ -18,6 +18,7 @@ import {
   TRUSTLESS_GASSTATION,
 } from '@/constants/common';
 import { selectPnftExchange } from '@/state/pnftExchange';
+import HeaderSwitchNetwork from '../Header.SwitchNetwork';
 
 interface IProp {
   onCloseMenu: () => void;
@@ -89,6 +90,10 @@ const MenuMobile = React.forwardRef(
                 />
               </StyledLink>
             </Box>
+            <Flex alignContent={'center'} justifyContent={'center'}>
+              <HeaderSwitchNetwork />
+            </Flex>
+            <Box mt={6} />
             {/* <Box>
               {isAuthenticated ? (
                 <div className="wallet mobile">
