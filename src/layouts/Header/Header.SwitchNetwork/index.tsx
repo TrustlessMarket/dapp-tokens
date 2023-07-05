@@ -45,6 +45,7 @@ const SUPPORT_PATH_V2 = [
   ROUTE_PATH.POOLS_V2_REMOVE,
   ROUTE_PATH.TOKEN_V2,
   ROUTE_PATH.HOME_V2,
+  ROUTE_PATH.LAUNCHPAD_V2
 ];
 
 const SUPPORT_PATH_V1 = [
@@ -53,6 +54,7 @@ const SUPPORT_PATH_V1 = [
   ROUTE_PATH.POOLS,
   ROUTE_PATH.TOKEN,
   ROUTE_PATH.HOME,
+  ROUTE_PATH.LAUNCHPAD,
 ];
 
 const HeaderSwitchNetwork = () => {
@@ -78,6 +80,8 @@ const HeaderSwitchNetwork = () => {
           router.push(`${ROUTE_PATH.ORIGINAL_MARKETS}/nos`);
         } else if (routerPath.includes(ROUTE_PATH.TOKEN)) {
           router.push(`${ROUTE_PATH.ORIGINAL_TOKEN}/nos`);
+        } else if (routerPath.includes(ROUTE_PATH.LAUNCHPAD)) {
+          router.push(`${ROUTE_PATH.ORIGINAL_LAUNCHPAD}/nos`);
         } else if (routerPath.includes(ROUTE_PATH.HOME)) {
           router.push(`${ROUTE_PATH.ORIGINAL_HOME}/nos`);
         }
@@ -103,6 +107,8 @@ const HeaderSwitchNetwork = () => {
           router.push(`${ROUTE_PATH.ORIGINAL_POOL}/tc`);
         } else if (routerPath.includes(ROUTE_PATH.TOKEN_V2)) {
           router.push(`${ROUTE_PATH.ORIGINAL_TOKEN}/tc`);
+        } else if (routerPath.includes(ROUTE_PATH.LAUNCHPAD_V2)) {
+          router.push(`${ROUTE_PATH.ORIGINAL_LAUNCHPAD}/tc`);
         } else if (routerPath.includes(ROUTE_PATH.HOME_V2)) {
           router.push(`${ROUTE_PATH.ORIGINAL_HOME}/tc`);
         }

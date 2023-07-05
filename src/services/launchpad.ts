@@ -35,7 +35,7 @@ export const scanLaunchpadTxHash = async (params: { tx_hash: string }) => {
 };
 
 export const getListLaunchpad = async (
-  params: { address?: string } & IPagingParams,
+  params: { address?: string, network?: string } & IPagingParams,
 ) => {
   const qs = '?' + queryString.stringify(params);
   return swrFetcher(`${API_EXCHANGE_URL}${API_PATH}/list${qs}`, {

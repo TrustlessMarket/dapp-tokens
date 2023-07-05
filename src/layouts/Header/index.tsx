@@ -50,8 +50,8 @@ export const HEADER_MENUS = (isL2: boolean) => [
     name: 'Pools',
   },
   {
-    key: ROUTE_PATH.LAUNCHPAD,
-    route: ROUTE_PATH.LAUNCHPAD,
+    key: isL2 ? ROUTE_PATH.LAUNCHPAD_V2 : ROUTE_PATH.LAUNCHPAD,
+    route: isL2 ? ROUTE_PATH.LAUNCHPAD_V2 : ROUTE_PATH.LAUNCHPAD,
     name: 'Launchpad',
   },
   // {

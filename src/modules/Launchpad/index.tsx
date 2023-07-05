@@ -37,6 +37,8 @@ import {closeModal, openModal} from "@/state/modal";
 import {useWindowSize} from "@trustless-computer/dapp-core";
 import CreateTokenForm from "@/modules/Tokens/CreateToken/form";
 import styles from './styles.module.scss';
+import {IResourceChain} from "@/interfaces/chain";
+import {TRUSTLESS_COMPUTER_CHAIN_INFO} from "@/constants/chains";
 
 const LaunchpadContainer = () => {
   const [data, setData] = useState<any[]>();
@@ -49,10 +51,11 @@ const LaunchpadContainer = () => {
   const { onDisconnect, onConnect, requestBtcAddress } = useContext(WalletContext);
   const [showModal, setShowModal] = useState(false);
   const { mobileScreen } = useWindowSize();
+  const currentSelectedChain: IResourceChain = useSelector(selectPnftExchange).currentChain || TRUSTLESS_COMPUTER_CHAIN_INFO;
 
   useEffect(() => {
     getData();
-  }, [needReload, account]);
+  }, [needReload, account, currentSelectedChain?.chain]);
 
   const getData = async () => {
     try {
@@ -60,6 +63,7 @@ const LaunchpadContainer = () => {
         page: 1,
         limit: 50,
         address: account,
+        network: currentSelectedChain?.chain?.toLowerCase()
       });
       setData(response);
     } catch (error) {
