@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import ListTable, {ColumnProp} from '@/components/Swap/listTable';
-import {TC_EXPLORER} from '@/configs';
 import {formatCurrency, formatLongAddress} from '@/utils';
 import {Flex, Text} from '@chakra-ui/react';
 import moment from 'moment';
