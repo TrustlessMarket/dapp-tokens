@@ -96,6 +96,7 @@ import { closeModal, openModal } from '@/state/modal';
 import ModalConfirmApprove from '@/components/ModalConfirmApprove';
 import { BiBell } from 'react-icons/bi';
 import HorizontalItem from '@/components/Swap/horizontalItem';
+import { IResourceChain } from '@/interfaces/chain';
 
 const LIMIT_PAGE = 50;
 
@@ -141,6 +142,9 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     ownerSupply: '0',
     totalSupply: '0',
   });
+
+  const currentChain: IResourceChain =
+    useAppSelector(selectPnftExchange).currentChain;
 
   const [apr, setApr] = useState(0);
 
@@ -356,6 +360,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         limit: LIMIT_PAGE * 10,
         page: page,
         is_test: isDevelop() ? '1' : '',
+        network: currentChain?.chain?.toLowerCase(),
       });
       let _list: IToken[] = camelCaseKeys(res);
       const _getImportTokens = getImportTokens();

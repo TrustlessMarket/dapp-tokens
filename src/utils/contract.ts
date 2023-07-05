@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-hooks/rules-of-hooks */
-import { L2_NETWORK_RPC } from '@/configs';
+import { L2_NETWORK_RPC, TC_NETWORK_RPC } from '@/configs';
 import { SupportedChainId } from '@/constants/chains';
 import { isAddress } from '@ethersproject/address';
 import { AddressZero } from '@ethersproject/constants';
@@ -10,6 +10,8 @@ import { useWeb3React } from '@web3-react/core';
 import { ethers } from 'ethers';
 import { isSupportedChain } from './chain';
 import { compareString } from './string';
+import store from '@/state';
+import { IResourceChain } from '@/interfaces/chain';
 
 function getProviderOrSigner(
   provider: JsonRpcProvider,
@@ -39,10 +41,15 @@ export function getContract(
 
 export const getDefaultProvider = () => {
   const { provider: defaultProvider, chainId } = useWeb3React();
+  const currentChain: IResourceChain = store.getState().pnftExchange.currentChain;
 
   let provider: any = defaultProvider;
   if ((!provider && window.ethereum) || !isSupportedChain(chainId)) {
-    provider = new ethers.providers.JsonRpcProvider(L2_NETWORK_RPC);
+    provider = new ethers.providers.JsonRpcProvider(
+      compareString(currentChain.chainId, SupportedChainId.L2)
+        ? L2_NETWORK_RPC
+        : TC_NETWORK_RPC,
+    );
   }
 
   return provider;
