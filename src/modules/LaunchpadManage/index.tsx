@@ -149,6 +149,7 @@ const LaunchpadManage = () => {
               {
                 pool_address: detail?.launchpad,
                 address: account,
+                network: currentChain?.chain?.toLowerCase(),
               },
               {
                 signature,
