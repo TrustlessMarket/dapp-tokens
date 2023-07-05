@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import ERC20ABIJson from '@/abis/erc20.json';
+import { SupportedChainId } from '@/constants/chains';
 import { CONTRACT_METHOD_IDS } from '@/constants/methodId';
 import { TransactionEventType } from '@/enums/transaction';
 import useBitcoin from '@/hooks/useBitcoin';
@@ -33,63 +34,68 @@ const useBalanceERC20Token: ContractOperationHook<
       if (account && provider && erc20TokenAddress && isConnected) {
         const contract = getContract(erc20TokenAddress, ERC20ABIJson.abi, provider);
 
-        const [transaction, pendingTXDs, unInscribedTxIDs] = await Promise.all([
+        const [transaction] = await Promise.all([
           contract.connect(provider.getSigner()).balanceOf(account),
-          getPendingInscribeTxsDetail(account),
-          getUnInscribedTransactionDetailByAddress(account),
         ]);
 
         let balance = transaction.toString();
 
-        const txs = unInscribedTxIDs
-          .map((v) => v.Hash)
-          .concat(pendingTXDs.map((v) => v.TCHash));
+        if (compareString(chainId, SupportedChainId.TRUSTLESS_COMPUTER)) {
+          const [pendingTXDs, unInscribedTxIDs] = await Promise.all([
+            getPendingInscribeTxsDetail(account),
+            getUnInscribedTransactionDetailByAddress(account),
+          ]);
 
-        for await (const pendingTXD of txs) {
-          const tCTxByHash = await getTCTxByHash(pendingTXD);
-          const startHex = tCTxByHash.input.slice(0, 10);
-          if (
-            [CONTRACT_METHOD_IDS.ADD_LIQUID, CONTRACT_METHOD_IDS.SWAP].includes(
-              startHex.toLowerCase(),
-            )
-          ) {
-            const _input = tCTxByHash.input.slice(10);
+          const txs = unInscribedTxIDs
+            .map((v) => v.Hash)
+            .concat(pendingTXDs.map((v) => v.TCHash));
+
+          for await (const pendingTXD of txs) {
+            const tCTxByHash = await getTCTxByHash(pendingTXD);
+            const startHex = tCTxByHash.input.slice(0, 10);
             if (
-              compareString(CONTRACT_METHOD_IDS.ADD_LIQUID, startHex.toLowerCase())
+              [CONTRACT_METHOD_IDS.ADD_LIQUID, CONTRACT_METHOD_IDS.SWAP].includes(
+                startHex.toLowerCase(),
+              )
             ) {
-              const value: any = web3Eth.decodeParameters(
-                [
-                  'address',
-                  'address',
-                  'uint256',
-                  'uint256',
-                  'uint256',
-                  'uint256',
-                  'address',
-                  'uint256',
-                ],
-                _input,
-              );
+              const _input = tCTxByHash.input.slice(10);
+              if (
+                compareString(CONTRACT_METHOD_IDS.ADD_LIQUID, startHex.toLowerCase())
+              ) {
+                const value: any = web3Eth.decodeParameters(
+                  [
+                    'address',
+                    'address',
+                    'uint256',
+                    'uint256',
+                    'uint256',
+                    'uint256',
+                    'address',
+                    'uint256',
+                  ],
+                  _input,
+                );
 
-              for (const key in value) {
-                if (Object.prototype.hasOwnProperty.call(value, key)) {
-                  const element = value[key];
-                  if (compareString(element, erc20TokenAddress)) {
-                    balance = new BigNumber(balance)
-                      .minus(value[`${Number(key) + 2}`])
-                      .toFixed();
+                for (const key in value) {
+                  if (Object.prototype.hasOwnProperty.call(value, key)) {
+                    const element = value[key];
+                    if (compareString(element, erc20TokenAddress)) {
+                      balance = new BigNumber(balance)
+                        .minus(value[`${Number(key) + 2}`])
+                        .toFixed();
+                    }
                   }
                 }
-              }
-            } else {
-              const value = web3Eth.decodeParameters(
-                ['uint256', 'uint256', 'address[]', 'address', 'uint256'],
-                _input,
-              );
-              const to_token = value['2'] as string[];
+              } else {
+                const value = web3Eth.decodeParameters(
+                  ['uint256', 'uint256', 'address[]', 'address', 'uint256'],
+                  _input,
+                );
+                const to_token = value['2'] as string[];
 
-              if (compareString(to_token[0], erc20TokenAddress.toString())) {
-                balance = new BigNumber(balance).minus(value['0']).toFixed();
+                if (compareString(to_token[0], erc20TokenAddress.toString())) {
+                  balance = new BigNumber(balance).minus(value['0']).toFixed();
+                }
               }
             }
           }
