@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { L2_CHAIN_INFO } from '@/constants/chains';
+import { TRUSTLESS_COMPUTER_CHAIN_INFO } from '@/constants/chains';
 import { DEFAULT_GAS_PRICE, TOKEN_ICON_DEFAULT } from '@/constants/common';
 import { CHAIN_INFO } from '@/constants/storage-key';
 import tokenIcons from '@/constants/tokenIcons';
@@ -124,5 +124,5 @@ export const getLocalStorageChainInfo = (): IResourceChain => {
     const parseChainInfo = JSON.parse(chainInfo);
     return parseChainInfo;
   }
-  return L2_CHAIN_INFO;
+  return TRUSTLESS_COMPUTER_CHAIN_INFO;
 };
