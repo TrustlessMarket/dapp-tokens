@@ -6,7 +6,7 @@ import store from '@/state';
 import { closeModal, openModal } from '@/state/modal';
 import { compareString, formatCurrency } from '@/utils';
 import { FeeAmount, MaxUint128 } from '@/utils/constants';
-import { getSqrtRatioAtTick } from '@/utils/number';
+import { getSqrtRatioAtTick, tickToPrice } from '@/utils/number';
 import { amountDesiredChanged, getAmountsForLiquidity } from '@/utils/utilities';
 import BigNumber from 'bignumber.js';
 import { ethers } from 'ethers';
@@ -15,6 +15,8 @@ import { IoWarning } from 'react-icons/io5';
 import { RxCircleBackslash, RxDotFilled } from 'react-icons/rx';
 import AddConfirm from './Add/Add.Confirm';
 import s from './styles.module.scss';
+import { useRef, useState } from 'react';
+import { IToken } from '@/interfaces/token';
 
 export const isPool = (address: string): boolean => {
   if (Boolean(address) && !compareString(address, NULL_ADDRESS)) {
@@ -278,11 +280,56 @@ export const onShowAddLiquidityConfirm = async (
           zIndex: 1,
         },
         render: () => (
-          <AddConfirm onSubmit={onSubmit} values={values} onClose={onClose} />
+          <ModalAddConfirm onSubmit={onSubmit} values={values} onClose={onClose} />
         ),
       }),
     );
   } catch (error) {
     throw error;
   }
+};
+
+export const ModalAddConfirm = ({ values, onSubmit, onClose }: any) => {
+  const refValues = useRef(values).current;
+  const [reValues, setReValues] = useState(values);
+
+  const onSelectPair = (_tokenA?: IToken, _tokenB?: IToken) => {
+    if (Boolean(_tokenA) && Boolean(_tokenB)) {
+      let isRevert = false;
+
+      if (!compareString(refValues?.baseToken?.address, _tokenA?.address)) {
+        isRevert = true;
+      }
+
+      const _revertTickLower = isRevert
+        ? -refValues?.tickUpper
+        : refValues?.tickLower;
+      const _revertTickUpper = isRevert
+        ? -refValues?.tickLower
+        : refValues?.tickUpper;
+      const _revertTick = isRevert
+        ? -refValues?.currentTick
+        : refValues?.currentTick;
+
+      setReValues((__values: any) => ({
+        ...__values,
+        minPrice: tickToPrice(_revertTickLower),
+        maxPrice: tickToPrice(_revertTickUpper),
+        baseToken: isRevert ? refValues?.quoteToken : refValues?.baseToken,
+        quoteToken: isRevert ? refValues?.baseToken : refValues?.quoteToken,
+        currentPrice: tickToPrice(_revertTick),
+        currentSelectPair: _tokenA,
+        isRevert: isRevert,
+      }));
+    }
+  };
+
+  return (
+    <AddConfirm
+      onSubmit={onSubmit}
+      values={reValues}
+      onClose={onClose}
+      onSelectPair={onSelectPair}
+    />
+  );
 };

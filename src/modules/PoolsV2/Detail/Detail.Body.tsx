@@ -63,13 +63,6 @@ const DetailBody: React.FC<IDetailBody> = ({ positionDetail }) => {
       const _revertTickUpper = isRevert ? -tickLower : tickUpper;
       const _revertTick = isRevert ? -currentTick : currentTick;
 
-      console.log(
-        'tickToPrice(_revertTickLower)',
-        currentSelectPair.address,
-        tickToPrice(_revertTickLower),
-        isRevert,
-      );
-
       restart({
         ...values,
         minPrice: tickToPrice(_revertTickLower),

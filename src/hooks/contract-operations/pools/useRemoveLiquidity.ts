@@ -83,7 +83,7 @@ const useRemoveLiquidity: ContractOperationHook<
             account,
             MaxUint256,
             {
-              gasLimit: '250000',
+              gasLimit: '400000',
               gasPrice: getDefaultGasPrice(),
             },
           );
