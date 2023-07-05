@@ -28,7 +28,7 @@ const usePendingSwapTransactions: ContractOperationHook<
     getTCTxByHash,
     getPendingInscribeTxsDetail,
   } = useBitcoin();
-  const currentSelectedChain: IResourceChain = useSelector(selectPnftExchange).currentChain;
+  const currentChain: IResourceChain = useSelector(selectPnftExchange).currentChain;
 
   const call = useCallback(
     async ({}): Promise<any> => {
@@ -74,7 +74,7 @@ const usePendingSwapTransactions: ContractOperationHook<
               amount1_in = amountIn;
             }
 
-            const params = {network: currentSelectedChain?.chain?.toLowerCase()};
+            const params = {network: currentChain?.chain?.toLowerCase()};
             const [token0_obj, token1_obj] = await Promise.all([
               getTokenDetail(token0.address, params),
               getTokenDetail(token1.address, params),
@@ -148,7 +148,7 @@ const usePendingSwapTransactions: ContractOperationHook<
               amount1_in = amountIn;
             }
 
-            const params = {network: currentSelectedChain?.chain?.toLowerCase()};
+            const params = {network: currentChain?.chain?.toLowerCase()};
             const [token0_obj, token1_obj] = await Promise.all([
               getTokenDetail(token0.address, params),
               getTokenDetail(token1.address, params),

@@ -22,13 +22,13 @@ const TokenHistory = () => {
   const [isFetching, setIsFetching] = useState(false);
   const [list, setList] = useState<any[]>([]);
   const { account, } = useWeb3React();
-  const currentSelectedChain: IResourceChain = useSelector(selectPnftExchange).currentChain;
+  const currentChain: IResourceChain = useSelector(selectPnftExchange).currentChain;
 
   useEffect(() => {
     if(account) {
       getList();
     }
-  }, [account, currentSelectedChain?.chain]);
+  }, [account, currentChain?.chain]);
 
   const getList = async (page = 1, isFetchMore = false) => {
     try {
@@ -173,7 +173,7 @@ const TokenHistory = () => {
             <Flex color={"#FFFFFF"}>
               <a
                 title="explorer"
-                href={`${currentSelectedChain?.explorers[0]?.url}/tx/${row.txHash}`}
+                href={`${currentChain?.explorers[0]?.url}/tx/${row.txHash}`}
                 target="_blank"
               >
                 <RxExternalLink />
@@ -183,7 +183,7 @@ const TokenHistory = () => {
         },
       },
     ],
-    [account, currentSelectedChain?.chain],
+    [account, currentChain?.chain],
   );
 
   return (

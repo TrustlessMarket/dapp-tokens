@@ -56,8 +56,8 @@ const FilterModal: React.FC<FilterModalProps> = ({
   const { mobileScreen } = useWindowSize();
   const { values } = useFormState();
   const [loading, setLoading] = useState(false);
-  const currentSelectedChain: IResourceChain = useSelector(selectPnftExchange).currentChain;
-  const isL2 = compareString(currentSelectedChain?.chainId, SupportedChainId.L2);
+  const currentChain: IResourceChain = useSelector(selectPnftExchange).currentChain;
+  const isL2 = compareString(currentChain?.chainId, SupportedChainId.L2);
   const commonContract = isL2 ? L2_COMMON_TOKEN_CONTRACT : COMMON_TOKEN_CONTRACT;
 
   const commonData = useMemo(() => {

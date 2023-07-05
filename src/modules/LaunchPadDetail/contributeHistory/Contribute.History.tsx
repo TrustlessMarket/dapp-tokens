@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import ListTable, {ColumnProp} from '@/components/Swap/listTable';
-import {TC_EXPLORER} from '@/configs';
 import {formatCurrency, formatLongAddress} from '@/utils';
 import {Flex, Text} from '@chakra-ui/react';
 import moment from 'moment';
@@ -47,7 +46,7 @@ const ContributeHistory = (props: any) => {
     if(account && poolDetail?.launchpad) {
       getList();
     }
-  }, [account, poolDetail?.launchpad]);
+  }, [account, poolDetail?.launchpad, currentChain?.chain]);
 
   const getList = async () => {
     try {
@@ -85,7 +84,7 @@ const ContributeHistory = (props: any) => {
             <Flex direction={"column"} color={"#FFFFFF"}>
               <a
                 target="_blank"
-                href={`${TC_EXPLORER}/tx/${row.txHash}`}
+                href={`${currentChain?.explorers[0]?.url}/tx/${row.txHash}`}
                 style={{textDecoration: 'underline', color: colors.bluePrimary}}
               >
                 {formatLongAddress(row?.txHash)}
@@ -150,7 +149,7 @@ const ContributeHistory = (props: any) => {
         },
       },
     ],
-    [],
+    [currentChain?.chain],
   );
 
   return (

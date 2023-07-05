@@ -73,7 +73,7 @@ const Header = () => {
     showBannerPromotion,
     bannerHeight,
   } = useScreenLayout();
-  const currentSelectedChain = useSelector(selectPnftExchange).currentChain;
+  const currentChain = useSelector(selectPnftExchange).currentChain;
 
   // const isTokensPage = useMemo(() => {
   //   return isScreenDarkMode();
@@ -94,8 +94,8 @@ const Header = () => {
   }, [isOpenMenu]);
 
   const isL2 = useMemo(() => {
-    return compareString(currentSelectedChain?.chain, L2_CHAIN_INFO.chain);
-  }, [currentSelectedChain?.chain]);
+    return compareString(currentChain?.chain, L2_CHAIN_INFO.chain);
+  }, [currentChain?.chain]);
 
   const headerMenu = useMemo(() => {
     return HEADER_MENUS(isL2);

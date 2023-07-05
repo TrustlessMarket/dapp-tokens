@@ -58,8 +58,7 @@ const SUPPORT_PATH_V1 = [
 
 const HeaderSwitchNetwork = () => {
   const dispatch = useAppDispatch();
-  const currentSelectedChain: IResourceChain =
-    useSelector(selectPnftExchange).currentChain;
+  const currentChain: IResourceChain = useSelector(selectPnftExchange).currentChain;
   const router = useRouter();
 
   const onChangeRouter = (_chainA?: any) => {
@@ -70,7 +69,7 @@ const HeaderSwitchNetwork = () => {
   useEffect(() => {
     const routerPath = router.pathname;
 
-    if (compareString(currentSelectedChain?.chainId, SupportedChainId.L2)) {
+    if (compareString(currentChain?.chainId, SupportedChainId.L2)) {
       if (SUPPORT_PATH_V1.findIndex((v) => routerPath.includes(v)) > -1) {
         if (routerPath.includes(ROUTE_PATH.SWAP)) {
           router.push(`${ROUTE_PATH.ORIGINAL_SWAP}/nos`);
@@ -86,7 +85,7 @@ const HeaderSwitchNetwork = () => {
       }
     } else if (
       compareString(
-        currentSelectedChain?.chainId,
+        currentChain?.chainId,
         SupportedChainId.TRUSTLESS_COMPUTER,
       )
     ) {
@@ -110,13 +109,13 @@ const HeaderSwitchNetwork = () => {
         }
       }
     }
-  }, [currentSelectedChain]);
+  }, [currentChain]);
 
   return (
     <Menu placement="bottom-end">
       <MenuButton className={s.btnChainSelected}>
         <Flex alignContent={'center'}>
-          <ItemChain _chain={currentSelectedChain} />
+          <ItemChain _chain={currentChain} />
           <BiChevronDown color="#FFFFFF" style={{ fontSize: 20 }} />
         </Flex>
       </MenuButton>
@@ -126,7 +125,7 @@ const HeaderSwitchNetwork = () => {
             <ItemChain
               _chain={c}
               showName={true}
-              active={compareString(c.chainId, currentSelectedChain?.chainId)}
+              active={compareString(c.chainId, currentChain?.chainId)}
             />
           </MenuItem>
         ))}

@@ -77,8 +77,7 @@ const LiquidityContainer = () => {
   const { account } = useWeb3React();
   const configs = useAppSelector(selectPnftExchange).configs;
   const liquidityFee = configs?.liquidityFee || 0.15;
-  const currentSelectedChain: IResourceChain =
-    useSelector(selectPnftExchange).currentChain;
+  const currentChain: IResourceChain = useSelector(selectPnftExchange).currentChain;
 
   const router = useRouter();
   const routerQuery = router.query;
@@ -101,7 +100,7 @@ const LiquidityContainer = () => {
       const res = await getListLiquidity({
         limit: LIMIT_PAGE,
         page: page,
-        network: currentSelectedChain.chain.toLowerCase(),
+        network: currentChain.chain.toLowerCase(),
       });
       if (isFetchMore) {
         setLiquidityList((prev) => [...prev, ...res]);
@@ -947,7 +946,7 @@ const LiquidityContainer = () => {
   useEffect(() => {
     fetchMyLiquidities();
     fetchLiquidities();
-  }, [JSON.stringify(router.query), currentSelectedChain?.chain, account]);
+  }, [JSON.stringify(router.query), currentChain?.chain, account]);
 
   const fetchMyLiquidities = async () => {
     try {
