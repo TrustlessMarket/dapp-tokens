@@ -11,7 +11,7 @@ import { logErrorToServer } from '@/services/swap';
 import store from '@/state';
 import { selectPnftExchange, updateCurrentTransaction } from '@/state/pnftExchange';
 import { colors } from '@/theme/colors';
-import { compareString, getContract, getDefaultGasPrice } from '@/utils';
+import { compareString, getContract, getDefaultGasPrice, getGasFee } from '@/utils';
 import { useWeb3React } from '@web3-react/core';
 import { useCallback } from 'react';
 import web3 from 'web3';
@@ -44,18 +44,20 @@ const useDepositPool: ContractOperationHook<IDepositPoolParams, any> = () => {
           account,
         );
 
-        const transaction = await contract
-          .connect(provider.getSigner())
-          .deposit(
-            web3.utils.toWei(amount),
-            boostRatio,
-            signature || Buffer.from([]),
-            onBehalf,
-            {
-              gasLimit: '250000',
-              gasPrice: getDefaultGasPrice(),
-            },
-          );
+        const transaction = await contract.connect(provider.getSigner()).deposit(
+          web3.utils.toWei(amount),
+          boostRatio,
+          signature || Buffer.from([]),
+          onBehalf,
+          compareString(currentChain.chainId, SupportedChainId.TRUSTLESS_COMPUTER)
+            ? {
+                gasLimit: '250000',
+                gasPrice: getDefaultGasPrice(),
+              }
+            : {
+                gasPrice: getGasFee(),
+              },
+        );
 
         logErrorToServer({
           type: 'logs',
@@ -70,7 +72,8 @@ const useDepositPool: ContractOperationHook<IDepositPoolParams, any> = () => {
               status: TransactionStatus.pending,
               id: transactionType.depositLaunchpad,
               infoTexts: {
-                pending: 'Transaction submitting...',
+                pending:
+                  'Transaction confirmed. Please wait for it to be processed.',
               },
             }),
           );

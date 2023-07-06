@@ -2,14 +2,14 @@
 /* eslint-disable react/no-children-prop */
 /* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import {Box, Button, Flex, Text,} from '@chakra-ui/react';
-import {SetStateAction, useCallback, useEffect, useState} from 'react';
+import { Box, Button, Flex, Text } from '@chakra-ui/react';
+import { SetStateAction, useCallback, useEffect, useState } from 'react';
 import styles from '../styles.module.scss';
 import debounce from 'lodash/debounce';
-import {useAppDispatch, useAppSelector} from '@/state/hooks';
-import {selectPnftExchange, updateSlippageNOS} from '@/state/pnftExchange';
+import { useAppDispatch, useAppSelector } from '@/state/hooks';
+import { selectPnftExchange, updateSlippageNOS } from '@/state/pnftExchange';
 
-const SLIPPAGES = [0.5, 1, 1.5, 2];
+export const SLIPPAGES = [0.5, 1, 1.5, 2];
 
 const SlippageSetting = ({ error: myError }: { error: any }) => {
   const [slippage, setSlippage] = useState(
@@ -54,7 +54,7 @@ const SlippageSetting = ({ error: myError }: { error: any }) => {
 
   return (
     <Box className={styles.wrapper}>
-      <Text fontSize="xs" fontWeight="medium" color={'#B1B5C3'} textAlign={"left"}>
+      <Text fontSize="xs" fontWeight="medium" color={'#B1B5C3'} textAlign={'left'}>
         Slippage Tolerance
       </Text>
       <Flex direction={'column'} mt={2}>
@@ -71,7 +71,12 @@ const SlippageSetting = ({ error: myError }: { error: any }) => {
             />
             <InputRightAddon children="%" />
           </InputGroup>*/}
-          <Flex gap={1} className={styles.listButton} justifyContent={"space-between"} w={"100%"}>
+          <Flex
+            gap={1}
+            className={styles.listButton}
+            justifyContent={'space-between'}
+            w={'100%'}
+          >
             {SLIPPAGES.map((value) => (
               <Button
                 key={value}

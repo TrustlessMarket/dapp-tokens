@@ -5,15 +5,15 @@ import { UNIV3_ROUTER_ADDRESS } from '@/configs';
 import { TransactionEventType } from '@/enums/transaction';
 import { ContractOperationHook, DAppType } from '@/interfaces/contract-operation';
 import { logErrorToServer } from '@/services/swap';
+import { scanTrx } from '@/services/swap-v3';
 import store from '@/state';
 import { updateCurrentTransaction } from '@/state/pnftExchange';
-import { getContract } from '@/utils';
+import { getContract, getGasFee } from '@/utils';
 import { getDeadline } from '@/utils/number';
 import { encodePath } from '@/utils/path';
 import { useWeb3React } from '@web3-react/core';
 import { useCallback } from 'react';
 import Web3 from 'web3';
-import {scanTrx} from "@/services/swap-v3";
 
 export interface ISwapERC20TokenParams {
   addresses: string[];
@@ -71,8 +71,7 @@ const useSwapERC20Token: ContractOperationHook<
         const transaction = await contract
           .connect(provider.getSigner())
           .exactInput(data, {
-            // gasLimit,
-            gasPrice: await provider.getGasPrice(),
+            gasPrice: getGasFee(),
           });
 
         logErrorToServer({
