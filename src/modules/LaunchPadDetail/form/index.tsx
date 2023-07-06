@@ -544,10 +544,10 @@ export const MakeFormSwap = forwardRef((props, ref) => {
                     id: transactionType.depositLaunchpad,
                   }}
                   style={{
-                    backgroundColor: isClaimLaunchpad
-                      ? colors.greenPrimary
-                      : isEndLaunchpad
+                    backgroundColor: isEndLaunchpad
                       ? colors.redPrimary
+                      : isClaimLaunchpad
+                      ? colors.greenPrimary
                       : isClaimLaunchpad
                       ? colors.greenPrimary
                       : isCancelLaunchpad
@@ -559,10 +559,10 @@ export const MakeFormSwap = forwardRef((props, ref) => {
                       : colors.bluePrimary,
                   }}
                 >
-                  {isClaimLaunchpad
-                    ? 'CLAIM THIS PROJECT'
-                    : isEndLaunchpad
+                  {isEndLaunchpad
                     ? 'END THIS PROJECT'
+                    : isClaimLaunchpad
+                    ? 'CLAIM THIS PROJECT'
                     : isCancelLaunchpad
                     ? 'CANCEL THIS PROJECT'
                     : isVoteRelease
@@ -963,7 +963,6 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
         ableVoteRelease,
         ableCancel,
         userBoost,
-        depositAddress,
         voteResults,
         depositResults,
       ] = await Promise.all([
@@ -988,11 +987,6 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
           address: account,
           pool_address: poolDetail?.launchpad,
           network: currentChain?.chain?.toLowerCase()
-        }),
-        getLaunchpadDepositAddress({
-          network: 'ethereum',
-          address: account,
-          launchpad_id: poolDetail?.id,
         }),
         getVoteResultLaunchpad({
           pool_address: poolDetail?.launchpad,
@@ -1024,7 +1018,15 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
       );
       setBoostInfo(userBoost);
 
-      setDepositAddressInfo(depositAddress);
+      if(compareString(poolDetail?.liquidityToken?.symbol, 'WETH')) {
+        const depositAddress = await getLaunchpadDepositAddress({
+          network: 'ethereum',
+          address: account,
+          launchpad_id: poolDetail?.id,
+        });
+
+        setDepositAddressInfo(depositAddress);
+      }
     } catch (error) {
       console.log('Launchpad detail form fetchData', error);
     }
@@ -1266,12 +1268,12 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
       );
 
       let response;
-      if (canClaim) {
-        response = await claimLaunchpad({
+      if (canEnd) {
+        response = await endLaunchpad({
           launchpadAddress: poolDetail?.launchpad,
         });
-      } else if (canEnd) {
-        response = await endLaunchpad({
+      } else if (canClaim) {
+        response = await claimLaunchpad({
           launchpadAddress: poolDetail?.launchpad,
         });
       } else if (canCancel) {
