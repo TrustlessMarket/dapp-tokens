@@ -963,7 +963,6 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
         ableVoteRelease,
         ableCancel,
         userBoost,
-        depositAddress,
         voteResults,
         depositResults,
       ] = await Promise.all([
@@ -988,11 +987,6 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
           address: account,
           pool_address: poolDetail?.launchpad,
           network: currentChain?.chain?.toLowerCase()
-        }),
-        getLaunchpadDepositAddress({
-          network: 'ethereum',
-          address: account,
-          launchpad_id: poolDetail?.id,
         }),
         getVoteResultLaunchpad({
           pool_address: poolDetail?.launchpad,
@@ -1024,7 +1018,15 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
       );
       setBoostInfo(userBoost);
 
-      setDepositAddressInfo(depositAddress);
+      if(compareString(poolDetail?.liquidityToken?.symbol, 'WETH')) {
+        const depositAddress = await getLaunchpadDepositAddress({
+          network: 'ethereum',
+          address: account,
+          launchpad_id: poolDetail?.id,
+        });
+
+        setDepositAddressInfo(depositAddress);
+      }
     } catch (error) {
       console.log('Launchpad detail form fetchData', error);
     }
