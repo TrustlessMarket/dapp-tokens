@@ -5,12 +5,12 @@ import SectionContainer from "@/components/Swap/sectionContainer";
 import TokenHistory from "@/modules/TMTransferHistory/Token.History";
 import {Box, Button, Flex, Text} from "@chakra-ui/react";
 import {useEffect, useState} from "react";
-import {L2_ETH_ADDRESS, L2_WBTC_ADDRESS, TM_ADDRESS} from "@/configs";
+import {L2_ETH_ADDRESS, L2_WBTC_ADDRESS} from "@/configs";
 import {useWeb3React} from "@web3-react/core";
 import {useSelector} from "react-redux";
 import {getUserSelector} from "@/state/user/selector";
 import useBalanceERC20Token from "@/hooks/contract-operations/token/useBalanceERC20Token";
-import {compareString, formatCurrency} from "@/utils";
+import {compareString, formatCurrency, getTMAddress} from "@/utils";
 import px2rem from "@/utils/px2rem";
 import Link from "next/link";
 import {ROUTE_PATH} from "@/constants/route-path";
@@ -33,7 +33,7 @@ const TMTransferHistory = () => {
 
   useEffect(() => {
     getBalanceTM();
-  }, [user?.walletAddress, isActive]);
+  }, [user?.walletAddress, isActive, currentChain?.chain]);
 
   const getBalanceTM = async () => {
     if (!user?.walletAddress || !isActive) {
@@ -42,7 +42,7 @@ const TMTransferHistory = () => {
 
     try {
       const response: any = await getBalanceErc20({
-        erc20TokenAddress: TM_ADDRESS,
+        erc20TokenAddress: getTMAddress(),
       });
       setBalanceTM(response);
     } catch (error) {}

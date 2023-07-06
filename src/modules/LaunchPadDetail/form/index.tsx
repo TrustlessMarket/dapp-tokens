@@ -29,7 +29,8 @@ import {
   getDepositResultLaunchpad,
   getLaunchpadDepositAddress,
   getUserBoost,
-  getVoteResultLaunchpad, scanLaunchpadTxHash,
+  getVoteResultLaunchpad,
+  scanLaunchpadTxHash,
 } from '@/services/launchpad';
 import {logErrorToServer} from '@/services/swap';
 import {useAppDispatch, useAppSelector} from '@/state/hooks';
@@ -47,6 +48,7 @@ import {
   compareString,
   formatCurrency,
   formatLongAddress,
+  getTMAddress,
   getTokenIconUrl,
   getWETHAddress,
   isConnectedTrustChain,
@@ -78,7 +80,7 @@ import useCancelLaunchPad from '@/hooks/contract-operations/launchpad/useCancel'
 import useVoteReleaseLaunchpad from '@/hooks/contract-operations/launchpad/useVoteRelease';
 import tokenIcons from '@/constants/tokenIcons';
 import VoteForm from '@/modules/ProposalDetail/voteForm';
-import {CDN_URL, TM_ADDRESS} from '@/configs';
+import {CDN_URL} from '@/configs';
 import DepositEth from '@/modules/LaunchPadDetail/depositEth';
 import ContributeForm from '@/modules/LaunchPadDetail/contributeForm';
 import {getIsAuthenticatedSelector} from '@/state/user/selector';
@@ -940,7 +942,7 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
   // console.log('=====');
 
   const votingToken = {
-    address: TM_ADDRESS,
+    address: getTMAddress(),
     thumbnail: 'https://i.ibb.co/TbshdC0/Icon-Token-TM-04.png',
     decimal: 18,
     symbol: 'TM',

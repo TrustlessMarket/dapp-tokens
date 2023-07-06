@@ -1,40 +1,35 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import IconSVG from '@/components/IconSVG';
-import { CDN_URL, TM_ADDRESS, WALLET_URL } from '@/configs';
+import {CDN_URL, WALLET_URL} from '@/configs';
 // import { ROUTE_PATH } from '@/constants/route-path';
-import { AssetsContext } from '@/contexts/assets-context';
-import { getIsAuthenticatedSelector, getUserSelector } from '@/state/user/selector';
-import { formatBTCPrice } from '@/utils/format';
-import { useWeb3React } from '@web3-react/core';
+import {AssetsContext} from '@/contexts/assets-context';
+import {getIsAuthenticatedSelector, getUserSelector} from '@/state/user/selector';
+import {formatBTCPrice} from '@/utils/format';
+import {useWeb3React} from '@web3-react/core';
 import copy from 'copy-to-clipboard';
 // import { useRouter } from 'next/router';
 import SelectedNetwork from '@/components/Swap/selectNetwork';
 import Text from '@/components/Text';
-import { TRUSTLESS_BRIDGE } from '@/constants/common';
-import { ROUTE_PATH } from '@/constants/route-path';
-import { WalletContext } from '@/contexts/wallet-context';
+import {TRUSTLESS_BRIDGE} from '@/constants/common';
+import {ROUTE_PATH} from '@/constants/route-path';
+import {WalletContext} from '@/contexts/wallet-context';
 import useBalanceERC20Token from '@/hooks/contract-operations/token/useBalanceERC20Token';
-import { IResourceChain } from '@/interfaces/chain';
-import {
-  compareString,
-  formatCurrency,
-  formatLongAddress,
-  isSupportedChain,
-} from '@/utils';
-import { showError } from '@/utils/toast';
-import { useWindowSize } from '@trustless-computer/dapp-core';
-import { useRouter } from 'next/router';
-import { useContext, useEffect, useMemo, useRef, useState } from 'react';
-import { OverlayTrigger } from 'react-bootstrap';
-import { toast } from 'react-hot-toast';
-import Jazzicon, { jsNumberForAddress } from 'react-jazzicon';
-import { useSelector } from 'react-redux';
+import {IResourceChain} from '@/interfaces/chain';
+import {compareString, formatCurrency, formatLongAddress, getTMAddress, isSupportedChain,} from '@/utils';
+import {showError} from '@/utils/toast';
+import {useWindowSize} from '@trustless-computer/dapp-core';
+import {useRouter} from 'next/router';
+import {useContext, useEffect, useMemo, useRef, useState} from 'react';
+import {OverlayTrigger} from 'react-bootstrap';
+import {toast} from 'react-hot-toast';
+import Jazzicon, {jsNumberForAddress} from 'react-jazzicon';
+import {useSelector} from 'react-redux';
 import web3 from 'web3';
-import { isScreenDarkMode } from '..';
-import { ConnectWalletButton, WalletBalance } from '../Header.styled';
-import { WalletPopover } from './Wallet.styled';
-import { SupportedChainId, TRUSTLESS_COMPUTER_CHAIN_INFO } from '@/constants/chains';
-import { selectPnftExchange } from '@/state/pnftExchange';
+import {isScreenDarkMode} from '..';
+import {ConnectWalletButton, WalletBalance} from '../Header.styled';
+import {WalletPopover} from './Wallet.styled';
+import {SupportedChainId, TRUSTLESS_COMPUTER_CHAIN_INFO} from '@/constants/chains';
+import {selectPnftExchange} from '@/state/pnftExchange';
 
 const WalletHeader = () => {
   const router = useRouter();
@@ -82,7 +77,7 @@ const WalletHeader = () => {
 
   useEffect(() => {
     getBalanceTM();
-  }, [user?.walletAddress, isActive]);
+  }, [user?.walletAddress, isActive, currentChain?.chain]);
 
   const getBalanceTM = async () => {
     if (!user?.walletAddress || !isActive) {
@@ -91,7 +86,7 @@ const WalletHeader = () => {
 
     try {
       const response: any = await getBalanceErc20({
-        erc20TokenAddress: TM_ADDRESS,
+        erc20TokenAddress: getTMAddress(),
       });
       setBalanceTM(response);
     } catch (error) {}

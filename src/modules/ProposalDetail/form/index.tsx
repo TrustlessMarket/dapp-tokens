@@ -13,8 +13,8 @@ import {useImperativeHandle, useRef, useState} from 'react';
 import {Form, useForm} from 'react-final-form';
 import styles from './styles.module.scss';
 import {ILaunchpad} from '@/interfaces/launchpad';
-import {TM_ADDRESS} from '@/configs';
 import px2rem from '@/utils/px2rem';
+import {getTMAddress} from "@/utils";
 
 export const MakeFormSwap = forwardRef((props, ref) => {
   const { onSubmit, submitting, poolDetail } = props;
@@ -84,7 +84,7 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
   const { mobileScreen } = useWindowSize();
 
   const votingToken = {
-    address: TM_ADDRESS,
+    address: getTMAddress(),
     thumbnail: 'https://i.ibb.co/TbshdC0/Icon-Token-TM-04.png',
     decimal: 18,
     symbol: 'TM',
