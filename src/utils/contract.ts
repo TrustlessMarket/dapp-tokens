@@ -64,3 +64,16 @@ export const isConnectedTrustChain = () => {
 
   return false;
 };
+
+export const getGasFee = async (): Promise<number> => {
+  const _rpc = L2_NETWORK_RPC;
+
+  if (_rpc) {
+    const provider = new ethers.providers.JsonRpcProvider(_rpc);
+    const gasPrice = await provider.getGasPrice();
+
+    return Number(gasPrice?.toString());
+  }
+
+  return 0;
+};

@@ -8,7 +8,7 @@ import { TransactionEventType } from '@/enums/transaction';
 import { ContractOperationHook, DAppType } from '@/interfaces/contract-operation';
 import store from '@/state';
 import { updateCurrentTransaction } from '@/state/pnftExchange';
-import { getContract } from '@/utils';
+import { getContract, getGasFee } from '@/utils';
 import { useWeb3React } from '@web3-react/core';
 import { useCallback } from 'react';
 import { scanTrx } from '@/services/swap-v3';
@@ -36,7 +36,9 @@ const useRemovePositionV3: ContractOperationHook<
 
         const transaction = await contract
           .connect(provider.getSigner(0))
-          .burn(tokenId);
+          .burn(tokenId, {
+            gasPrice: getGasFee(),
+          });
 
         store.dispatch(
           updateCurrentTransaction({
