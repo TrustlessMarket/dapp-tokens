@@ -1,13 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { WalletContext } from '@/contexts/wallet-context';
-import { getIsAuthenticatedSelector } from '@/state/user/selector';
+import {WalletContext} from '@/contexts/wallet-context';
+import {getIsAuthenticatedSelector} from '@/state/user/selector';
 import {compareString, isSupportedChain} from '@/utils';
-import { showError } from '@/utils/toast';
-import { useWeb3React } from '@web3-react/core';
-import React, { useContext } from 'react';
-import { useSelector } from 'react-redux';
-import { ButtonProps } from '../Button';
-import { StyledWrapperConnected } from './WrapperConnected.styled';
+import {showError} from '@/utils/toast';
+import {useWeb3React} from '@web3-react/core';
+import React, {useContext} from 'react';
+import {useSelector} from 'react-redux';
+import {ButtonProps} from '../Button';
+import {StyledWrapperConnected} from './WrapperConnected.styled';
 import {SupportedChainId} from "@/constants/chains";
 
 interface WrapperConnectedProps extends ButtonProps {
@@ -28,8 +28,13 @@ const WrapperConnected: React.FC<WrapperConnectedProps> = ({
   const { onDisconnect, onConnect, requestBtcAddress } = useContext(WalletContext);
   const trustChain = isSupportedChain(chainId);
   const isAuthenticated = useSelector(getIsAuthenticatedSelector);
+
   const isTCChain = chainId && compareString(
       SupportedChainId.TRUSTLESS_COMPUTER,
+      chainId,
+    );
+  const isNOSChain = chainId && compareString(
+      SupportedChainId.L2,
       chainId,
     );
 
@@ -61,7 +66,7 @@ const WrapperConnected: React.FC<WrapperConnectedProps> = ({
     }
   };
 
-  if (!isAuthenticated || !trustChain || (!isTCChain && forceSwitchChain)) {
+  if (!isAuthenticated || !trustChain || (!isTCChain && !isNOSChain && forceSwitchChain)) {
     return (
       <StyledWrapperConnected
         {...children?.props}
