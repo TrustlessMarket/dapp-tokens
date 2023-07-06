@@ -8,16 +8,16 @@ import { ContractOperationHook, DAppType } from '@/interfaces/contract-operation
 import { TransactionStatus } from '@/components/Swap/alertInfoProcessing/interface';
 import { logErrorToServer } from '@/services/swap';
 import store from '@/state';
-import {selectPnftExchange, updateCurrentTransaction} from '@/state/pnftExchange';
+import { selectPnftExchange, updateCurrentTransaction } from '@/state/pnftExchange';
 import { colors } from '@/theme/colors';
-import {compareString, getContract, getDefaultGasPrice} from '@/utils';
+import { compareString, getContract, getDefaultGasPrice } from '@/utils';
 import { useWeb3React } from '@web3-react/core';
 import { useCallback } from 'react';
 import web3 from 'web3';
-import {IResourceChain} from "@/interfaces/chain";
-import {useAppSelector} from "@/state/hooks";
-import {SupportedChainId} from "@/constants/chains";
-import {scanLaunchpadTxHash} from "@/services/launchpad";
+import { IResourceChain } from '@/interfaces/chain';
+import { useAppSelector } from '@/state/hooks';
+import { SupportedChainId } from '@/constants/chains';
+import { scanLaunchpadTxHash } from '@/services/launchpad';
 
 interface IDepositPoolParams {
   amount: string;
@@ -30,7 +30,8 @@ interface IDepositPoolParams {
 const useDepositPool: ContractOperationHook<IDepositPoolParams, boolean> = () => {
   const { account, provider } = useWeb3React();
   const { call: checkTxsBitcoin } = useCheckTxsBitcoin();
-  const currentChain: IResourceChain = useAppSelector(selectPnftExchange).currentChain;
+  const currentChain: IResourceChain =
+    useAppSelector(selectPnftExchange).currentChain;
 
   const call = useCallback(
     async (params: IDepositPoolParams): Promise<boolean> => {
@@ -101,10 +102,10 @@ const useDepositPool: ContractOperationHook<IDepositPoolParams, boolean> = () =>
           });
         }
 
-        await scanLaunchpadTxHash({
-          tx_hash: transaction.hash,
-          network: currentChain?.chain?.toLowerCase()
-        });
+        // await scanLaunchpadTxHash({
+        //   tx_hash: transaction.hash,
+        //   network: currentChain?.chain?.toLowerCase()
+        // });
 
         return transaction;
       }

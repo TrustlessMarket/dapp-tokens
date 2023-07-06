@@ -2,9 +2,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { SupportedChainId } from '@/constants/chains';
 import { ROUTE_PATH } from '@/constants/route-path';
-import { AssetsContext } from '@/contexts/assets-context';
+import { IResourceChain } from '@/interfaces/chain';
 import { ContractOperationHook } from '@/interfaces/contract-operation';
 import { logErrorToServer } from '@/services/swap';
+import { useAppSelector } from '@/state/hooks';
+import { selectPnftExchange } from '@/state/pnftExchange';
 import { getIsAuthenticatedSelector, getUserSelector } from '@/state/user/selector';
 import {
   capitalizeFirstLetter,
@@ -15,12 +17,8 @@ import {
 import { isProduction } from '@/utils/commons';
 import { useWeb3React } from '@web3-react/core';
 import { useRouter } from 'next/router';
-import { useContext } from 'react';
 import { useSelector } from 'react-redux';
 import * as TC_SDK from 'trustless-computer-sdk';
-import useBitcoin from '../useBitcoin';
-import { WalletContext } from '@/contexts/wallet-context';
-import { IResourceChain } from '@/interfaces/chain';
 
 interface IParams<P, R> {
   operation: ContractOperationHook<P, R>;
@@ -45,7 +43,8 @@ const useContractOperation = <P, R>(
   const isAuthenticated = useSelector(getIsAuthenticatedSelector);
   const user = useSelector(getUserSelector);
   const router = useRouter();
-  const { getConnectedChainInfo } = useContext(WalletContext);
+  const currentChain: IResourceChain =
+    useAppSelector(selectPnftExchange).currentChain;
 
   const checkAndSwitchChainIfNecessary = async (): Promise<void> => {
     if (!isSupportedChain(walletChainId)) {
@@ -70,8 +69,6 @@ const useContractOperation = <P, R>(
       // Check & switch network if necessary
       await checkAndSwitchChainIfNecessary();
 
-      const connectedChainInfo: IResourceChain = getConnectedChainInfo();
-
       if (!inscribeable) {
         // Make TC transaction
         console.time('____metamaskCreateTxTime');
@@ -88,12 +85,7 @@ const useContractOperation = <P, R>(
         ...params,
       });
 
-      if (
-        compareString(
-          connectedChainInfo.chainId,
-          SupportedChainId.TRUSTLESS_COMPUTER,
-        )
-      ) {
+      if (compareString(currentChain.chainId, SupportedChainId.TRUSTLESS_COMPUTER)) {
         TC_SDK.signTransaction({
           method: `${transactionType} ${dAppType}`,
           hash: Object(tx).hash,
