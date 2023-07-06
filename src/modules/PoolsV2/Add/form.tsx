@@ -116,7 +116,7 @@ const FormAddPoolsV2Container = forwardRef<any, IFormAddPoolsV2Container>(
           getTokens({
             page: 1,
             limit: 99,
-            network: currentChain.chain.toLowerCase(),
+            network: currentChain?.chain?.toLowerCase(),
           }),
         ]);
         setTokenList(_tokenList);

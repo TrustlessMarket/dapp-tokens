@@ -101,7 +101,7 @@ const LiquidityContainer = () => {
       const res = await getListLiquidity({
         limit: LIMIT_PAGE,
         page: page,
-        network: currentSelectedChain.chain.toLowerCase(),
+        network: currentSelectedChain?.chain?.toLowerCase(),
       });
       if (isFetchMore) {
         setLiquidityList((prev) => [...prev, ...res]);

@@ -54,10 +54,10 @@ const useIncreaseLiquidityV3: ContractOperationHook<
 
         store.dispatch(
           updateCurrentTransaction({
-            id: transactionType.createPool,
+            id: transactionType.increaseLiquidity,
             status: TransactionStatus.pending,
             infoTexts: {
-              pending: 'Transaction submitting...',
+              pending: 'Transaction confirmed. Please wait for it to be processed.',
             },
           }),
         );

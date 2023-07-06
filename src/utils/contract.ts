@@ -46,7 +46,7 @@ export const getDefaultProvider = () => {
   let provider: any = defaultProvider;
   if ((!provider && window.ethereum) || !isSupportedChain(chainId)) {
     provider = new ethers.providers.JsonRpcProvider(
-      compareString(currentChain.chainId, SupportedChainId.L2)
+      compareString(currentChain?.chainId, SupportedChainId.L2)
         ? L2_NETWORK_RPC
         : TC_NETWORK_RPC,
     );

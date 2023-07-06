@@ -1,34 +1,35 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { TransactionStatus } from '@/components/Swap/alertInfoProcessing/interface';
+import { transactionType } from '@/components/Swap/alertInfoProcessing/types';
 import BodyContainer from '@/components/Swap/bodyContainer';
+import { toastError } from '@/constants/error';
+import useIncreaseLiquidityV3, {
+  IIncreaseLiquidityV3,
+} from '@/hooks/contract-operations/pools/v3/useIncreaseLiquidityV3';
+import useContractOperation from '@/hooks/contract-operations/useContractOperation';
 import { IPosition } from '@/interfaces/position';
+import { IToken } from '@/interfaces/token';
+import { logErrorToServer } from '@/services/swap';
 import { getPositionDetail } from '@/services/swap-v3';
-import { colors } from '@/theme/colors';
-import { Box, Flex, Spinner } from '@chakra-ui/react';
-import { useRouter } from 'next/router';
-import { useEffect, useRef, useState } from 'react';
-import { Form } from 'react-final-form';
-import { getPooledAmount, onShowAddLiquidityConfirm } from '../utils';
-import IncreaseForm from './Increase.Form';
-import s from './styles.module.scss';
-import IncreaseHeader from './Increase.Header';
-import { tickToPrice } from '@/utils/number';
+import { useAppSelector } from '@/state/hooks';
 import {
   requestReload,
   selectPnftExchange,
   updateCurrentTransaction,
 } from '@/state/pnftExchange';
-import { useDispatch } from 'react-redux';
-import { logErrorToServer } from '@/services/swap';
-import { useWeb3React } from '@web3-react/core';
-import { toastError } from '@/constants/error';
+import { colors } from '@/theme/colors';
+import { tickToPrice } from '@/utils/number';
 import { showError } from '@/utils/toast';
-import { transactionType } from '@/components/Swap/alertInfoProcessing/types';
-import { TransactionStatus } from '@/components/Swap/alertInfoProcessing/interface';
-import useContractOperation from '@/hooks/contract-operations/useContractOperation';
-import useIncreaseLiquidityV3, {
-  IIncreaseLiquidityV3,
-} from '@/hooks/contract-operations/pools/v3/useIncreaseLiquidityV3';
-import { useAppSelector } from '@/state/hooks';
+import { Box, Flex, Spinner } from '@chakra-ui/react';
+import { useWeb3React } from '@web3-react/core';
+import BigNumber from 'bignumber.js';
+import { useRouter } from 'next/router';
+import { useEffect, useRef, useState } from 'react';
+import { Form } from 'react-final-form';
+import { useDispatch } from 'react-redux';
+import { getPooledAmount, onShowAddLiquidityConfirm } from '../utils';
+import IncreaseForm from './Increase.Form';
+import s from './styles.module.scss';
 
 const IncreaseLiquidity = () => {
   const router = useRouter();
@@ -38,6 +39,8 @@ const IncreaseLiquidity = () => {
   const [submitting, setSubmitting] = useState(false);
   const { account } = useWeb3React();
   const refForm = useRef<any>();
+
+  const slippage = useAppSelector(selectPnftExchange).slippageNOS;
 
   const { run: increaseLiquidityV3 } = useContractOperation({
     operation: useIncreaseLiquidityV3,
@@ -64,28 +67,45 @@ const IncreaseLiquidity = () => {
   };
 
   const onSubmit = async (values: any) => {
-    console.log('values', values);
-
     try {
       setSubmitting(true);
       dispatch(
         updateCurrentTransaction({
-          id: transactionType.createPool,
+          id: transactionType.increaseLiquidity,
           status: TransactionStatus.info,
         }),
       );
+
+      const baseAmount = values?.newBaseAmount || '0';
+      const quoteAmount = values?.newQuoteAmount || '0';
+
+      const baseToken: IToken = values?.baseToken;
+      const quoteToken: IToken = values?.quoteToken;
+
+      const amount0Min = new BigNumber(baseAmount)
+        .multipliedBy(100 - Number(slippage))
+        .dividedBy(100)
+        .decimalPlaces(baseToken.decimal as any)
+        .toString();
+
+      const amount1Min = new BigNumber(quoteAmount)
+        .multipliedBy(100 - Number(slippage))
+        .dividedBy(100)
+        .decimalPlaces(quoteToken?.decimal as any)
+        .toString();
+
       const params: IIncreaseLiquidityV3 = {
         tokenId: Number(positionDetail?.tokenId),
-        amount0Desired: values?.newBaseAmount || '0',
-        amount1Desired: values?.newQuoteAmount || '0',
-        amount0Min: '0',
-        amount1Min: '0',
+        amount0Desired: baseAmount,
+        amount1Desired: quoteAmount,
+        amount0Min: amount0Min,
+        amount1Min: amount1Min,
       };
 
       const response: any = await increaseLiquidityV3(params);
       dispatch(
         updateCurrentTransaction({
-          id: transactionType.createPool,
+          id: transactionType.increaseLiquidity,
           status: TransactionStatus.success,
           hash: response.hash,
           infoTexts: {
@@ -164,8 +184,6 @@ const IncreaseLiquidity = () => {
 
   return (
     <BodyContainer className={s.container}>
-      <IncreaseHeader />
-      <Box mt={4} />
       <Box className={s.container__body}>{renderContent()}</Box>
     </BodyContainer>
   );

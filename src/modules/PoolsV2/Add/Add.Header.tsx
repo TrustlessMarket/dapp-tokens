@@ -5,6 +5,7 @@ import { BiChevronLeft } from 'react-icons/bi';
 import { ROUTE_PATH } from '@/constants/route-path';
 import { useRouter } from 'next/router';
 import AddHeaderSwitchPair from './Add.Header.SwitchPair';
+import PoolsV2Settings from '../PoolsV2.Settings';
 
 const AddHeader = () => {
   const router = useRouter();
@@ -32,6 +33,7 @@ const AddHeader = () => {
       <Heading as={'h4'}>Add Liquidity</Heading>
       <Flex className={s.container__top_body__right}>
         <AddHeaderSwitchPair />
+        <PoolsV2Settings />
       </Flex>
     </Flex>
   );

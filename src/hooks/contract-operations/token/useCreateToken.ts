@@ -7,7 +7,7 @@ import {
 } from '@/interfaces/contract-operation';
 import { useWeb3React } from '@web3-react/core';
 import { ContractFactory } from 'ethers';
-import {useCallback, useContext} from 'react';
+import { useCallback, useContext } from 'react';
 import store from '@/state';
 import { updateCurrentTransaction } from '@/state/pnftExchange';
 import { TransactionStatus } from '@/components/Swap/alertInfoProcessing/interface';
@@ -15,11 +15,11 @@ import { transactionType } from '@/components/Swap/alertInfoProcessing/types';
 import { colors } from '@/theme/colors';
 import { WALLET_URL } from '@/configs';
 import useCheckTxsBitcoin from '@/hooks/useCheckTxsBitcoin';
-import {WalletContext} from "@/contexts/wallet-context";
-import {IResourceChain} from "@/interfaces/chain";
-import {compareString} from "@/utils";
-import {TRUSTLESS_COMPUTER_CHAIN_INFO} from "@/constants/chains";
-import {scanTrx} from "@/services/swap-v3";
+import { WalletContext } from '@/contexts/wallet-context';
+import { IResourceChain } from '@/interfaces/chain';
+import { compareString } from '@/utils';
+import { TRUSTLESS_COMPUTER_CHAIN_INFO } from '@/constants/chains';
+import { scanTrx } from '@/services/swap-v3';
 
 export interface ICreateTokenParams {
   name: string;
@@ -48,7 +48,7 @@ const useCreateToken: ContractOperationHook<
         );
         const contract = await factory.deploy(name, symbol, maxSupply);
 
-        if(compareString(chainInfo.chain, TRUSTLESS_COMPUTER_CHAIN_INFO.chain)) {
+        if (compareString(chainInfo.chain, TRUSTLESS_COMPUTER_CHAIN_INFO.chain)) {
           store.dispatch(
             updateCurrentTransaction({
               status: TransactionStatus.pending,
@@ -80,7 +80,8 @@ const useCreateToken: ContractOperationHook<
               id: transactionType.createToken,
               status: TransactionStatus.pending,
               infoTexts: {
-                pending: 'Transaction submitting...',
+                pending:
+                  'Transaction confirmed. Please wait for it to be processed.',
               },
             }),
           );

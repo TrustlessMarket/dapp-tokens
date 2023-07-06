@@ -9,6 +9,7 @@ export const transactionType = {
   depositLaunchpad: 'depositLaunchpad',
   votingProposal: 'votingProposal',
   createToken: 'createToken',
-  removeLiquidity: "removeLiquidity",
-  collectFee: "collectFee",
+  removeLiquidity: 'removeLiquidity',
+  collectFee: 'collectFee',
+  increaseLiquidity: 'increaseLiquidity',
 };

@@ -43,7 +43,7 @@ const useCollectFeeV3: ContractOperationHook<ICollectFeeV3, boolean> = () => {
             id: transactionType.collectFee,
             status: TransactionStatus.pending,
             infoTexts: {
-              pending: 'Transaction submitting...',
+              pending: 'Transaction confirmed. Please wait for it to be processed.',
             },
           }),
         );
