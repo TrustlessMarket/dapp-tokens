@@ -2,8 +2,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import ModalConfirmApprove from '@/components/ModalConfirmApprove';
-import SocialToken from '@/components/Social';
-import { transactionType } from '@/components/Swap/alertInfoProcessing/types';
+import {transactionType} from '@/components/Swap/alertInfoProcessing/types';
 import FiledButton from '@/components/Swap/button/filedButton';
 import FieldAmount from '@/components/Swap/form/fieldAmount';
 import InputWrapper from '@/components/Swap/form/inputWrapper';
@@ -11,15 +10,9 @@ import HorizontalItem from '@/components/Swap/horizontalItem';
 import InfoTooltip from '@/components/Swap/infoTooltip';
 import TokenBalance from '@/components/Swap/tokenBalance';
 import WrapperConnected from '@/components/WrapperConnected';
-import {
-  BRIDGE_SUPPORT_TOKEN,
-  TOKEN_ICON_DEFAULT,
-  TRUSTLESS_BRIDGE,
-  TRUSTLESS_GASSTATION,
-  WETH_ADDRESS,
-} from '@/constants/common';
-import { toastError } from '@/constants/error';
-import { AssetsContext } from '@/contexts/assets-context';
+import {BRIDGE_SUPPORT_TOKEN, TRUSTLESS_BRIDGE, TRUSTLESS_GASSTATION,} from '@/constants/common';
+import {toastError} from '@/constants/error';
+import {AssetsContext} from '@/contexts/assets-context';
 import useClaimLaunchPad from '@/hooks/contract-operations/launchpad/useClaim';
 import useDepositPool from '@/hooks/contract-operations/launchpad/useDeposit';
 import useEndLaunchPad from '@/hooks/contract-operations/launchpad/useEnd';
@@ -28,19 +21,19 @@ import useApproveERC20Token from '@/hooks/contract-operations/token/useApproveER
 import useBalanceERC20Token from '@/hooks/contract-operations/token/useBalanceERC20Token';
 import useIsApproveERC20Token from '@/hooks/contract-operations/token/useIsApproveERC20Token';
 import useContractOperation from '@/hooks/contract-operations/useContractOperation';
-import { ILaunchpad } from '@/interfaces/launchpad';
-import { IToken } from '@/interfaces/token';
-import { TransactionStatus } from '@/components/Swap/alertInfoProcessing/interface';
-import { LAUNCHPAD_STATUS } from '@/modules/Launchpad/Launchpad.Status';
+import {ILaunchpad} from '@/interfaces/launchpad';
+import {IToken} from '@/interfaces/token';
+import {TransactionStatus} from '@/components/Swap/alertInfoProcessing/interface';
+import {LAUNCHPAD_STATUS} from '@/modules/Launchpad/Launchpad.Status';
 import {
   getDepositResultLaunchpad,
   getLaunchpadDepositAddress,
   getUserBoost,
   getVoteResultLaunchpad,
 } from '@/services/launchpad';
-import { logErrorToServer } from '@/services/swap';
-import { useAppDispatch, useAppSelector } from '@/state/hooks';
-import { closeModal, openModal } from '@/state/modal';
+import {logErrorToServer} from '@/services/swap';
+import {useAppDispatch, useAppSelector} from '@/state/hooks';
+import {closeModal, openModal} from '@/state/modal';
 import {
   requestReload,
   requestReloadRealtime,
@@ -48,51 +41,33 @@ import {
   updateCurrentChainId,
   updateCurrentTransaction,
 } from '@/state/pnftExchange';
-import { colors } from '@/theme/colors';
+import {colors} from '@/theme/colors';
 import {
   abbreviateNumber,
   compareString,
   formatCurrency,
   formatLongAddress,
   getTokenIconUrl,
+  getWETHAddress,
   isConnectedTrustChain,
   isSupportedChain,
 } from '@/utils';
-import { composeValidators, required } from '@/utils/formValidate';
+import {composeValidators, required} from '@/utils/formValidate';
 import px2rem from '@/utils/px2rem';
-import { showError } from '@/utils/toast';
-import {
-  Box,
-  Center,
-  Flex,
-  forwardRef,
-  Progress,
-  Stat,
-  StatLabel,
-  StatNumber,
-  Text,
-  Tooltip,
-} from '@chakra-ui/react';
-import { useWindowSize } from '@trustless-computer/dapp-core';
-import { useWeb3React } from '@web3-react/core';
+import {showError} from '@/utils/toast';
+import {Box, Center, Flex, forwardRef, Progress, Stat, StatLabel, StatNumber, Text, Tooltip,} from '@chakra-ui/react';
+import {useWindowSize} from '@trustless-computer/dapp-core';
+import {useWeb3React} from '@web3-react/core';
 import BigNumber from 'bignumber.js';
 import cx from 'classnames';
 import debounce from 'lodash/debounce';
 import moment from 'moment';
 import Link from 'next/link';
-import React, {
-  useCallback,
-  useContext,
-  useEffect,
-  useImperativeHandle,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
-import { Field, Form, useForm, useFormState } from 'react-final-form';
+import React, {useCallback, useContext, useEffect, useImperativeHandle, useMemo, useRef, useState,} from 'react';
+import {Field, Form, useForm, useFormState} from 'react-final-form';
 import toast from 'react-hot-toast';
-import { BiBell } from 'react-icons/bi';
-import { useDispatch, useSelector } from 'react-redux';
+import {BiBell} from 'react-icons/bi';
+import {useDispatch, useSelector} from 'react-redux';
 import Web3 from 'web3';
 import styles from './styles.module.scss';
 import useIsAbleEnd from '@/hooks/contract-operations/launchpad/useIsAbleEnd';
@@ -103,13 +78,13 @@ import useCancelLaunchPad from '@/hooks/contract-operations/launchpad/useCancel'
 import useVoteReleaseLaunchpad from '@/hooks/contract-operations/launchpad/useVoteRelease';
 import tokenIcons from '@/constants/tokenIcons';
 import VoteForm from '@/modules/ProposalDetail/voteForm';
-import { CDN_URL, TM_ADDRESS } from '@/configs';
+import {CDN_URL, TM_ADDRESS} from '@/configs';
 import DepositEth from '@/modules/LaunchPadDetail/depositEth';
 import ContributeForm from '@/modules/LaunchPadDetail/contributeForm';
-import { getIsAuthenticatedSelector } from '@/state/user/selector';
-import { IoWarningOutline } from 'react-icons/io5';
-import { CHAIN_ID_TO_NETWORK, NETWORK_TO_CHAIN_ID } from '@/constants/chains';
-import { PREV_CHAIN_ID } from '@/constants/storage-key';
+import {getIsAuthenticatedSelector} from '@/state/user/selector';
+import {IoWarningOutline} from 'react-icons/io5';
+import {CHAIN_ID_TO_NETWORK, NETWORK_TO_CHAIN_ID} from '@/constants/chains';
+import {PREV_CHAIN_ID} from '@/constants/storage-key';
 import {IResourceChain} from "@/interfaces/chain";
 
 const CONTRIBUTION_METHODS = [
@@ -220,6 +195,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const { values } = useFormState();
   const { change, restart } = useForm();
   const btnDisabled = loading || !liquidityToken;
+  const wethAddress = getWETHAddress();
 
   const isRequireApprove = useMemo(() => {
     let result = false;
@@ -738,7 +714,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       </Flex>
       {isFunding && (
         <>
-          {compareString(liquidityToken?.address, WETH_ADDRESS) ? (
+          {compareString(liquidityToken?.address, wethAddress) ? (
             <Flex mt={4}>
               <Stat className={styles.infoColumn} flex={1}>
                 <StatLabel>Contribution method</StatLabel>
@@ -949,6 +925,8 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
   const isVoting = [LAUNCHPAD_STATUS.Voting].includes(poolDetail?.state);
 
   const currentChain: IResourceChain = useSelector(selectPnftExchange).currentChain;
+
+  const wethAddress = getWETHAddress();
 
   // console.log('poolDetail', poolDetail);
   // console.log('canEnd', canEnd);
@@ -1234,7 +1212,7 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
       confirmVoting(values);
     } else if (
       [LAUNCHPAD_STATUS.Launching].includes(poolDetail?.state) &&
-      compareString(liquidityToken?.address, WETH_ADDRESS)
+      compareString(liquidityToken?.address, wethAddress)
     ) {
       const { contributeMethod } = values;
 
