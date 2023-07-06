@@ -1,13 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import ModalConfirmApprove from '@/components/ModalConfirmApprove';
+import { TransactionStatus } from '@/components/Swap/alertInfoProcessing/interface';
 import { transactionType } from '@/components/Swap/alertInfoProcessing/types';
 import FiledButton from '@/components/Swap/button/filedButton';
 import { UNIV3_NONFUNGBILE_POSITION_MANAGER_ADDRESS } from '@/configs';
 import { toastError } from '@/constants/error';
 import useApproveERC20Token from '@/hooks/contract-operations/token/useApproveERC20Token';
-import useContractOperation from '@/hooks/contract-operations/useContractOperation';
 import { IToken } from '@/interfaces/token';
-import { TransactionStatus } from '@/components/Swap/alertInfoProcessing/interface';
 import { logErrorToServer } from '@/services/swap';
 import { closeModal, openModal } from '@/state/modal';
 import { requestReload, updateCurrentTransaction } from '@/state/pnftExchange';
@@ -27,9 +26,7 @@ const AddApproveToken: React.FC<IAddApproveToken> = ({ token }) => {
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
 
-  const { run: approveToken } = useContractOperation({
-    operation: useApproveERC20Token,
-  });
+  const { call: approveToken } = useApproveERC20Token();
 
   const onShowModalApprove = () => {
     const id = 'modalTokenApprovePoolsV2';

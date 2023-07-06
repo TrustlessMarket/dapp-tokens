@@ -52,6 +52,8 @@ import toast from 'react-hot-toast';
 import { useWindowSize } from '@trustless-computer/dapp-core';
 import useContractOperation from '@/hooks/contract-operations/useContractOperation';
 import useDepositPool from '@/hooks/contract-operations/launchpad/useDeposit';
+import {scanLaunchpadTxHash} from "@/services/launchpad";
+import {IResourceChain} from "@/interfaces/chain";
 
 export const MakeFormSwap = forwardRef((props, ref) => {
   const { onSubmit, submitting, poolDetail } = props;
@@ -509,6 +511,7 @@ const ContributeForm = (props: any) => {
   const dispatch = useAppDispatch();
   const { mobileScreen } = useWindowSize();
   const { account, isActive } = useWeb3React();
+  const currentChain: IResourceChain = useSelector(selectPnftExchange).currentChain;
 
   const { run: depositLaunchpad } = useContractOperation({
     operation: useDepositPool,
@@ -606,6 +609,11 @@ const ContributeForm = (props: any) => {
         data.signature = boostInfo.adminSignature;
       }
       const response = await depositLaunchpad(data);
+
+      await scanLaunchpadTxHash({
+        tx_hash: response.hash,
+        network: currentChain?.chain?.toLowerCase()
+      });
 
       toast.success('Transaction has been created. Please wait for few minutes.');
       refForm.current?.reset();

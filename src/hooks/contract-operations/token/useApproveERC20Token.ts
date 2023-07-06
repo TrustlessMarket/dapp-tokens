@@ -7,10 +7,13 @@ import { ContractOperationHook, DAppType } from '@/interfaces/contract-operation
 import { TransactionStatus } from '@/components/Swap/alertInfoProcessing/interface';
 import { logErrorToServer } from '@/services/swap';
 import store from '@/state';
-import { updateCurrentTransaction } from '@/state/pnftExchange';
-import { getContract, getDefaultGasPrice } from '@/utils';
+import { selectPnftExchange, updateCurrentTransaction } from '@/state/pnftExchange';
+import { compareString, getContract, getDefaultGasPrice } from '@/utils';
 import { useWeb3React } from '@web3-react/core';
 import { useCallback, useContext } from 'react';
+import { useAppSelector } from '@/state/hooks';
+import { IResourceChain } from '@/interfaces/chain';
+import { SupportedChainId } from '@/constants/chains';
 
 export interface IApproveERC20TokenParams {
   address: string;
@@ -23,6 +26,9 @@ const useApproveERC20Token: ContractOperationHook<
 > = () => {
   const { account, provider } = useWeb3React();
   const { btcBalance, feeRate } = useContext(AssetsContext);
+
+  const currentChain: IResourceChain =
+    useAppSelector(selectPnftExchange).currentChain;
 
   const call = useCallback(
     async (params: IApproveERC20TokenParams): Promise<boolean> => {
@@ -61,7 +67,11 @@ const useApproveERC20Token: ContractOperationHook<
           }),
         );
 
-        // await transaction.wait();
+        if (
+          !compareString(currentChain.chainId, SupportedChainId.TRUSTLESS_COMPUTER)
+        ) {
+          await transaction.wait();
+        }
 
         return transaction;
       }

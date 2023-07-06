@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import LaunchpadPoolJson from '@/abis/LaunchpadPool.json';
 import { transactionType } from '@/components/Swap/alertInfoProcessing/types';
@@ -16,7 +17,6 @@ import { useCallback } from 'react';
 import {SupportedChainId} from "@/constants/chains";
 import {IResourceChain} from "@/interfaces/chain";
 import {useAppSelector} from "@/state/hooks";
-import {scanLaunchpadTxHash} from "@/services/launchpad";
 
 interface IClaimLaunchPoolParams {
   launchpadAddress: string;
@@ -24,14 +24,14 @@ interface IClaimLaunchPoolParams {
 
 const useClaimLaunchPad: ContractOperationHook<
   IClaimLaunchPoolParams,
-  boolean
+  any
 > = () => {
   const { account, provider } = useWeb3React();
   const { call: checkTxsBitcoin } = useCheckTxsBitcoin();
   const currentChain: IResourceChain = useAppSelector(selectPnftExchange).currentChain;
 
   const call = useCallback(
-    async (params: IClaimLaunchPoolParams): Promise<boolean> => {
+    async (params: IClaimLaunchPoolParams): Promise<any> => {
       const { launchpadAddress } = params;
       if (account && provider && launchpadAddress) {
         const contract = getContract(
@@ -90,11 +90,6 @@ const useClaimLaunchPad: ContractOperationHook<
               ),
           });
         }
-
-        await scanLaunchpadTxHash({
-          tx_hash: transaction.hash,
-          network: currentChain?.chain?.toLowerCase()
-        });
 
         return transaction;
       }

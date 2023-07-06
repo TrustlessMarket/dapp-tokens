@@ -52,6 +52,8 @@ import ModalConfirmApprove from '@/components/ModalConfirmApprove';
 import useVoteLaunchpad from '@/hooks/contract-operations/launchpad/useVote';
 import moment from 'moment';
 import { colors } from '@/theme/colors';
+import {scanLaunchpadTxHash} from "@/services/launchpad";
+import {IResourceChain} from "@/interfaces/chain";
 
 const validateBaseAmount = (_amount: any, values: any) => {
   if (!_amount) {
@@ -417,6 +419,7 @@ const BuyForm = ({ poolDetail, votingToken, onClose }: any) => {
   const [submitting, setSubmitting] = useState(false);
   const dispatch = useAppDispatch();
   const { account, isActive } = useWeb3React();
+  const currentChain: IResourceChain = useAppSelector(selectPnftExchange).currentChain;
 
   const { run: voteLaunchpad } = useContractOperation({
     operation: useVoteLaunchpad,
@@ -442,6 +445,11 @@ const BuyForm = ({ poolDetail, votingToken, onClose }: any) => {
         launchpadAddress: poolDetail?.launchpad,
       };
       const response = await voteLaunchpad(data);
+
+      await scanLaunchpadTxHash({
+        tx_hash: response.hash,
+        network: currentChain?.chain?.toLowerCase()
+      });
 
       toast.success('Transaction has been created. Please wait for few minutes.');
       refForm.current?.reset();

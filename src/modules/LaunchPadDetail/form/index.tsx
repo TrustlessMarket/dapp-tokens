@@ -29,7 +29,7 @@ import {
   getDepositResultLaunchpad,
   getLaunchpadDepositAddress,
   getUserBoost,
-  getVoteResultLaunchpad,
+  getVoteResultLaunchpad, scanLaunchpadTxHash,
 } from '@/services/launchpad';
 import {logErrorToServer} from '@/services/swap';
 import {useAppDispatch, useAppSelector} from '@/state/hooks';
@@ -316,7 +316,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const getTokenBalance = async (token: IToken) => {
     try {
       const response = await tokenBalance({
-        erc20TokenAddress: token.address,
+        erc20TokenAddress: token?.address,
       });
       return response;
     } catch (error) {
@@ -1296,6 +1296,11 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
         }
         response = await depositLaunchpad(data);
       }
+
+      await scanLaunchpadTxHash({
+        tx_hash: response.hash,
+        network: currentChain?.chain?.toLowerCase()
+      });
 
       toast.success('Transaction has been created. Please wait for few minutes.');
       refForm.current?.reset();
