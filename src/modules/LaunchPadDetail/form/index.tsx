@@ -29,7 +29,7 @@ import {
   getDepositResultLaunchpad,
   getLaunchpadDepositAddress,
   getUserBoost,
-  getVoteResultLaunchpad,
+  getVoteResultLaunchpad, scanLaunchpadTxHash,
 } from '@/services/launchpad';
 import {logErrorToServer} from '@/services/swap';
 import {useAppDispatch, useAppSelector} from '@/state/hooks';
@@ -1296,6 +1296,11 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
         }
         response = await depositLaunchpad(data);
       }
+
+      await scanLaunchpadTxHash({
+        tx_hash: response.hash,
+        network: currentChain?.chain?.toLowerCase()
+      });
 
       toast.success('Transaction has been created. Please wait for few minutes.');
       refForm.current?.reset();

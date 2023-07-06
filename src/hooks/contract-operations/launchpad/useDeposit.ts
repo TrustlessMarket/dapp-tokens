@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import LaunchpadPoolJson from '@/abis/LaunchpadPool.json';
 import { transactionType } from '@/components/Swap/alertInfoProcessing/types';
@@ -17,7 +18,6 @@ import web3 from 'web3';
 import { IResourceChain } from '@/interfaces/chain';
 import { useAppSelector } from '@/state/hooks';
 import { SupportedChainId } from '@/constants/chains';
-import { scanLaunchpadTxHash } from '@/services/launchpad';
 
 interface IDepositPoolParams {
   amount: string;
@@ -27,14 +27,14 @@ interface IDepositPoolParams {
   onBehalf?: string;
 }
 
-const useDepositPool: ContractOperationHook<IDepositPoolParams, boolean> = () => {
+const useDepositPool: ContractOperationHook<IDepositPoolParams, any> = () => {
   const { account, provider } = useWeb3React();
   const { call: checkTxsBitcoin } = useCheckTxsBitcoin();
   const currentChain: IResourceChain =
     useAppSelector(selectPnftExchange).currentChain;
 
   const call = useCallback(
-    async (params: IDepositPoolParams): Promise<boolean> => {
+    async (params: IDepositPoolParams): Promise<any> => {
       const { amount, launchpadAddress, boostRatio, signature, onBehalf } = params;
       if (account && provider && launchpadAddress) {
         const contract = getContract(
@@ -101,11 +101,6 @@ const useDepositPool: ContractOperationHook<IDepositPoolParams, boolean> = () =>
               ),
           });
         }
-
-        // await scanLaunchpadTxHash({
-        //   tx_hash: transaction.hash,
-        //   network: currentChain?.chain?.toLowerCase()
-        // });
 
         return transaction;
       }
