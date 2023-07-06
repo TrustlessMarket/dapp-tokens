@@ -3,36 +3,38 @@ import ModalManager from '@/components/Swap/modal';
 import MyLoadingOverlay from '@/components/Swap/myLoadingOverlay';
 import ClientOnly from '@/components/Utils/ClientOnly';
 import Web3Provider from '@/components/Web3Provider';
-import { SEO_DESCRIPTION, SEO_IMAGE, SEO_TITLE } from '@/constants/seo';
-import { AssetsProvider } from '@/contexts/assets-context';
-import { ScreenLayoutProvider } from '@/contexts/screen-context';
-import { WalletProvider } from '@/contexts/wallet-context';
+import {SEO_DESCRIPTION, SEO_IMAGE, SEO_TITLE} from '@/constants/seo';
+import {AssetsProvider} from '@/contexts/assets-context';
+import {ScreenLayoutProvider} from '@/contexts/screen-context';
+import {WalletProvider} from '@/contexts/wallet-context';
 import store from '@/state';
 import '@/styles/index.scss';
 import ChakaDefaultProps from '@/theme/chakraDefaultProps';
-import ThemeProvider, { ThemedGlobalStyle } from '@/theme/theme';
+import ThemeProvider, {ThemedGlobalStyle} from '@/theme/theme';
 import customTheme from '@/theme/theme-chakra';
-import { ChakraProvider } from '@chakra-ui/react';
+import {ChakraProvider} from '@chakra-ui/react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import type { AppProps } from 'next/app';
+import type {AppProps} from 'next/app';
 import Head from 'next/head';
-import { useEffect, useState } from 'react';
-import { Toaster } from 'react-hot-toast';
-import { Provider } from 'react-redux';
+import {useEffect, useState} from 'react';
+import {Toaster} from 'react-hot-toast';
+import {Provider} from 'react-redux';
 import GoogleAnalytics from '../components/GA/GoogleAnalytics';
-import { getConfigs } from '@/services';
-import { updateConfigs } from '@/state/pnftExchange';
+import {getConfigs} from '@/services';
+import {updateAllConfigs} from '@/state/pnftExchange';
 
 export default function App({ Component, pageProps }: AppProps) {
   const { seoInfo = {} } = pageProps;
   const { title, description, image } = seoInfo;
+
   useEffect(() => {
     getConfigInfos();
   }, []);
 
   const getConfigInfos = async () => {
     const res = await getConfigs();
-    store.dispatch(updateConfigs(res?.tc));
+    store.dispatch(updateAllConfigs(res));
+    // store.dispatch(updateConfigs(res?.tc));
   };
 
   return (

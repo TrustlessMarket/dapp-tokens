@@ -16,6 +16,7 @@ interface NftyLendState {
   configs: any;
   currentChainId: any;
   currentChain: any;
+  allConfigs: any;
 }
 
 const initialState: NftyLendState = {
@@ -29,6 +30,7 @@ const initialState: NftyLendState = {
   configs: {},
   currentChainId: undefined,
   currentChain: undefined,
+  allConfigs: {}
 };
 
 const slice = createSlice({
@@ -66,6 +68,9 @@ const slice = createSlice({
     updateConfigs: (state, action) => {
       state.configs = action.payload;
     },
+    updateAllConfigs: (state, action) => {
+      state.allConfigs = action.payload;
+    },
     updateCurrentChainId: (state, action) => {
       state.currentChainId = action.payload;
     },
@@ -84,6 +89,7 @@ export const {
   updateCurrentTransaction,
   updateShowBanner,
   updateConfigs,
+  updateAllConfigs,
   updateCurrentChainId,
   updateCurrentChain,
 } = slice.actions;

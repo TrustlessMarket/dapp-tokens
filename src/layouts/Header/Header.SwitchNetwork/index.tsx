@@ -7,7 +7,7 @@ import {
 import { ROUTE_PATH } from '@/constants/route-path';
 import { IResourceChain } from '@/interfaces/chain';
 import { useAppDispatch } from '@/state/hooks';
-import { selectPnftExchange, updateCurrentChain } from '@/state/pnftExchange';
+import {selectPnftExchange, updateConfigs, updateCurrentChain} from '@/state/pnftExchange';
 import { compareString } from '@/utils';
 import { Flex, Menu, MenuButton, MenuItem, MenuList, Text } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
@@ -16,6 +16,7 @@ import { BiCheck, BiChevronDown } from 'react-icons/bi';
 import { useSelector } from 'react-redux';
 import s from './styles.module.scss';
 import { CHAIN_INFO } from '@/constants/storage-key';
+import store from "@/state";
 
 export const ItemChain = ({
   _chain,
@@ -60,6 +61,16 @@ const HeaderSwitchNetwork = () => {
   const dispatch = useAppDispatch();
   const currentChain: IResourceChain = useSelector(selectPnftExchange).currentChain;
   const router = useRouter();
+  const allConfigs: IResourceChain = store.getState().pnftExchange.allConfigs;
+
+  useEffect(() => {
+    if(allConfigs && currentChain?.chain) {
+      const key = currentChain?.chain?.toLowerCase() || '';
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      store.dispatch(updateConfigs(allConfigs[key]));
+    }
+  }, [JSON.stringify(allConfigs), currentChain?.chain])
 
   const onChangeRouter = (_chainA?: any) => {
     dispatch(updateCurrentChain(_chainA));
