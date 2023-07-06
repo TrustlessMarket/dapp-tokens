@@ -139,7 +139,7 @@ export const getLocalStorageChainInfo = (): IResourceChain => {
 export const getLaunchPadAddress = () => {
   const currentChain: IResourceChain = store.getState().pnftExchange.currentChain;
 
-  if (compareString(currentChain.chainId, SupportedChainId.L2)) {
+  if (compareString(currentChain?.chainId, SupportedChainId.L2)) {
     return L2_LAUNCHPAD_FACTORY_ADDRESS;
   }
   return LAUNCHPAD_FACTORY_ADDRESS;
@@ -148,7 +148,7 @@ export const getLaunchPadAddress = () => {
 export const getWETHAddress = () => {
   const currentChain: IResourceChain = store.getState().pnftExchange.currentChain;
 
-  if (compareString(currentChain.chainId, SupportedChainId.L2)) {
+  if (compareString(currentChain?.chainId, SupportedChainId.L2)) {
     return L2_ETH_ADDRESS;
   }
   return WETH_ADDRESS;
@@ -157,7 +157,7 @@ export const getWETHAddress = () => {
 export const getTMAddress = () => {
   const currentChain: IResourceChain = store.getState().pnftExchange.currentChain;
 
-  if (compareString(currentChain.chainId, SupportedChainId.L2)) {
+  if (compareString(currentChain?.chainId, SupportedChainId.L2)) {
     return L2_TM_ADDRESS;
   }
   return TM_ADDRESS;
