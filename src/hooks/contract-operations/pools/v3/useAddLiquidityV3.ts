@@ -10,7 +10,7 @@ import { TransactionStatus } from '@/components/Swap/alertInfoProcessing/interfa
 import { isPool } from '@/modules/PoolsV2/utils';
 import store from '@/state';
 import { updateCurrentTransaction } from '@/state/pnftExchange';
-import { compareString, getContract, sortAddressPair } from '@/utils';
+import { compareString, getContract, getGasFee, sortAddressPair } from '@/utils';
 import { getDeadline } from '@/utils/number';
 import { formatPriceToPriceSqrt } from '@/utils/utilities';
 import { useWeb3React } from '@web3-react/core';
@@ -70,46 +70,54 @@ const useAddLiquidityV3: ContractOperationHook<IAddLiquidityV3, boolean> = () =>
         let transaction;
 
         if (isPool(poolAddress)) {
-          transaction = await contract.connect(provider.getSigner(0)).mint({
-            token0: token0.address,
-            token1: token1.address,
-            fee: fee.toString(),
-            tickLower: lowerTick.toString(),
-            tickUpper: upperTick.toString(),
-            amount0Desired: web3.utils.toWei(amountADesired),
-            amount1Desired: web3.utils.toWei(amountBDesired),
-            amount0Min: web3.utils.toWei(amount0Min),
-            amount1Min: web3.utils.toWei(amount1Min),
-            recipient: account,
-            deadline: getDeadline(),
-          });
+          transaction = await contract.connect(provider.getSigner(0)).mint(
+            {
+              token0: token0.address,
+              token1: token1.address,
+              fee: fee.toString(),
+              tickLower: lowerTick.toString(),
+              tickUpper: upperTick.toString(),
+              amount0Desired: web3.utils.toWei(amountADesired),
+              amount1Desired: web3.utils.toWei(amountBDesired),
+              amount0Min: web3.utils.toWei(amount0Min),
+              amount1Min: web3.utils.toWei(amount1Min),
+              recipient: account,
+              deadline: getDeadline(),
+            },
+            { gasPrice: getGasFee() },
+          );
         } else {
-          transaction = await contract.connect(provider.getSigner(0)).multicall([
-            contract.interface.encodeFunctionData(
-              'createAndInitializePoolIfNecessary',
-              [
-                token0.address,
-                token1.address,
-                fee,
-                formatPriceToPriceSqrt(currentPrice),
-              ],
-            ),
-            contract.interface.encodeFunctionData('mint', [
-              {
-                token0: token0.address,
-                token1: token1.address,
-                fee: fee.toString(),
-                tickLower: lowerTick.toString(),
-                tickUpper: upperTick.toString(),
-                amount0Desired: web3.utils.toWei(amountADesired),
-                amount1Desired: web3.utils.toWei(amountBDesired),
-                amount0Min: web3.utils.toWei(amount0Min),
-                amount1Min: web3.utils.toWei(amount1Min),
-                recipient: account,
-                deadline: getDeadline(),
-              },
-            ]),
-          ]);
+          transaction = await contract.connect(provider.getSigner(0)).multicall(
+            [
+              contract.interface.encodeFunctionData(
+                'createAndInitializePoolIfNecessary',
+                [
+                  token0.address,
+                  token1.address,
+                  fee,
+                  formatPriceToPriceSqrt(currentPrice),
+                ],
+              ),
+              contract.interface.encodeFunctionData('mint', [
+                {
+                  token0: token0.address,
+                  token1: token1.address,
+                  fee: fee.toString(),
+                  tickLower: lowerTick.toString(),
+                  tickUpper: upperTick.toString(),
+                  amount0Desired: web3.utils.toWei(amountADesired),
+                  amount1Desired: web3.utils.toWei(amountBDesired),
+                  amount0Min: web3.utils.toWei(amount0Min),
+                  amount1Min: web3.utils.toWei(amount1Min),
+                  recipient: account,
+                  deadline: getDeadline(),
+                },
+              ]),
+            ],
+            {
+              gasPrice: getGasFee(),
+            },
+          );
         }
 
         store.dispatch(
