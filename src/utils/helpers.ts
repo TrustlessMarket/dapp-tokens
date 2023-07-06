@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { SupportedChainId, TRUSTLESS_COMPUTER_CHAIN_INFO } from '@/constants/chains';
-import { DEFAULT_GAS_PRICE, TOKEN_ICON_DEFAULT } from '@/constants/common';
+import {DEFAULT_GAS_PRICE, TOKEN_ICON_DEFAULT, WETH_ADDRESS} from '@/constants/common';
 import { CHAIN_INFO } from '@/constants/storage-key';
 import tokenIcons from '@/constants/tokenIcons';
 import { IResourceChain } from '@/interfaces/chain';
@@ -13,7 +13,7 @@ import { isEmpty, random } from 'lodash';
 import camelCase from 'lodash/camelCase';
 import web3 from 'web3';
 import { compareString } from './string';
-import { L2_LAUNCHPAD_FACTORY_ADDRESS, LAUNCHPAD_FACTORY_ADDRESS } from '@/configs';
+import {L2_ETH_ADDRESS, L2_LAUNCHPAD_FACTORY_ADDRESS, LAUNCHPAD_FACTORY_ADDRESS} from '@/configs';
 
 export function isAddress(value: string): string | false {
   try {
@@ -138,3 +138,12 @@ export const getLaunchPadAddress = () => {
   }
   return LAUNCHPAD_FACTORY_ADDRESS;
 };
+
+export const getWETHAddress = () => {
+  const currentChain: IResourceChain = store.getState().pnftExchange.currentChain;
+
+  if (compareString(currentChain.chainId, SupportedChainId.L2)) {
+    return L2_ETH_ADDRESS;
+  }
+  return WETH_ADDRESS;
+}
