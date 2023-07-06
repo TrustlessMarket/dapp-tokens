@@ -81,3 +81,62 @@
     }
   }
 }
+
+.btnSetting {
+  background-color: transparent;
+  background-image: none !important;
+}
+
+.listSetting {
+  background-color: #353945 !important;
+  padding: 0px !important;
+  border: none !important;
+  :global {
+    .chakra-popover__body {
+    }
+    .chakra-accordion {
+      .chakra-accordion__item {
+        box-shadow: none;
+        padding: 10px 0px;
+        button {
+          background-color: transparent;
+          box-shadow: none;
+          width: 100%;
+          justify-content: space-between;
+          padding: 0;
+          color: var(--chakra-colors-gray-400);
+        }
+      }
+      .chakra-accordion__panel {
+        border-radius: 0px;
+        background-color: transparent;
+        padding-left: 0;
+        padding-right: 0;
+      }
+    }
+  }
+}
+
+.slippageContainer {
+  .slippageSwitch {
+    border: 1px solid var(--chakra-colors-gray-600);
+    padding: 4px;
+    border-radius: 6px;
+    &__item {
+      border-radius: 4px;
+      padding: 0px 5px;
+      cursor: pointer;
+      p {
+        font-size: rem(14);
+        color: var(--chakra-colors-gray-400) !important;
+        text-align: center;
+      }
+    }
+    &__itemActive {
+      background-color: var(--chakra-colors-gray-100);
+      p {
+        color: black !important;
+      }
+    }
+  }
+}
