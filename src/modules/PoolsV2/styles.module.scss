@@ -81,3 +81,110 @@
     }
   }
 }
+
+.btnSetting {
+  background-color: transparent;
+  background-image: none !important;
+  height: 32px !important;
+  p {
+    font-size: rem(14);
+    color: var(--bs-gray-300) !important;
+  }
+}
+
+.btnSettingWithText {
+  background-color: var(--bs-gray-900);
+  gap: 10px;
+}
+
+.btnSettingWithTextWarning {
+  background-color: rgba(255, 140, 0, 0.2);
+  p {
+    color: rgba(255, 140, 0, 1) !important;
+  }
+}
+
+.listSetting {
+  background-color: #353945 !important;
+  padding: 0px !important;
+  border: none !important;
+  :global {
+    .chakra-popover__body {
+    }
+    .chakra-accordion {
+      .chakra-accordion__item {
+        box-shadow: none;
+        padding: 10px 0px;
+        button {
+          background-color: transparent;
+          box-shadow: none;
+          width: 100%;
+          justify-content: space-between;
+          padding: 0;
+          color: var(--chakra-colors-gray-400);
+        }
+      }
+      .chakra-accordion__panel {
+        border-radius: 0px;
+        background-color: transparent;
+        padding-left: 0;
+        padding-right: 0;
+      }
+    }
+  }
+}
+
+.slippageContainer {
+  .slippageSwitch {
+    border: 1px solid var(--chakra-colors-gray-600);
+    padding: 4px;
+    border-radius: 6px;
+    height: 40px;
+    &__item {
+      border-radius: 4px;
+      padding: 0px 5px;
+      cursor: pointer;
+      height: 31px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      p {
+        color: var(--chakra-colors-gray-400) !important;
+        text-align: center;
+      }
+    }
+    &__itemActive {
+      background-color: var(--chakra-colors-gray-100);
+      p {
+        color: black !important;
+      }
+    }
+    &__warning {
+      color: var(--chakra-colors-orange-300) !important;
+      font-size: rem(12);
+      line-height: 14px;
+    }
+  }
+  :global {
+    .chakra-form-control {
+      height: 40px;
+      border: 1px solid var(--chakra-colors-gray-600);
+      border-radius: 6px;
+      .chakra-input__group {
+        background-color: transparent;
+        border: none;
+      }
+      input {
+        height: 40px;
+        background-color: transparent;
+        color: white;
+        font-size: rem(16);
+      }
+    }
+  }
+  &__percent {
+    color: white !important;
+    font-weight: 500;
+    font-size: rem(14);
+  }
+}

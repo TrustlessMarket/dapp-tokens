@@ -8,7 +8,7 @@ import { TransactionEventType } from '@/enums/transaction';
 import { ContractOperationHook, DAppType } from '@/interfaces/contract-operation';
 import store from '@/state';
 import { updateCurrentTransaction } from '@/state/pnftExchange';
-import { getContract } from '@/utils';
+import { getContract, getGasFee } from '@/utils';
 import { getDeadline } from '@/utils/number';
 import { useWeb3React } from '@web3-react/core';
 import { useCallback } from 'react';
@@ -43,21 +43,26 @@ const useIncreaseLiquidityV3: ContractOperationHook<
 
         const transaction = await contract
           .connect(provider.getSigner(0))
-          .increaseLiquidity({
-            tokenId,
-            amount0Desired: web3.utils.toWei(amount0Desired),
-            amount1Desired: web3.utils.toWei(amount1Desired),
-            amount0Min: web3.utils.toWei(amount0Min),
-            amount1Min: web3.utils.toWei(amount1Min),
-            deadline: getDeadline(),
-          });
+          .increaseLiquidity(
+            {
+              tokenId,
+              amount0Desired: web3.utils.toWei(amount0Desired),
+              amount1Desired: web3.utils.toWei(amount1Desired),
+              amount0Min: web3.utils.toWei(amount0Min),
+              amount1Min: web3.utils.toWei(amount1Min),
+              deadline: getDeadline(),
+            },
+            {
+              gasPrice: getGasFee(),
+            },
+          );
 
         store.dispatch(
           updateCurrentTransaction({
-            id: transactionType.createPool,
+            id: transactionType.increaseLiquidity,
             status: TransactionStatus.pending,
             infoTexts: {
-              pending: 'Transaction submitting...',
+              pending: 'Transaction confirmed. Please wait for it to be processed.',
             },
           }),
         );

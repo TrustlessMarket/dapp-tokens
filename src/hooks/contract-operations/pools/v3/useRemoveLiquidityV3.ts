@@ -8,13 +8,13 @@ import { TransactionEventType } from '@/enums/transaction';
 import { ContractOperationHook, DAppType } from '@/interfaces/contract-operation';
 import store from '@/state';
 import { updateCurrentTransaction } from '@/state/pnftExchange';
-import { getContract } from '@/utils';
+import { getContract, getGasFee } from '@/utils';
 import { MaxUint128 } from '@/utils/constants';
 import { getDeadline } from '@/utils/number';
 import { useWeb3React } from '@web3-react/core';
 import { useCallback } from 'react';
 import web3 from 'web3';
-import {scanTrx} from "@/services/swap-v3";
+import { scanTrx } from '@/services/swap-v3';
 
 export interface IRemoveLiquidityV3 {
   tokenId?: number;
@@ -40,32 +40,37 @@ const useRemoveLiquidityV3: ContractOperationHook<
           account,
         );
 
-        const transaction = await contract.connect(provider.getSigner(0)).multicall([
-          contract.interface.encodeFunctionData('decreaseLiquidity', [
-            {
-              tokenId,
-              liquidity: web3.utils.toWei(liquidity),
-              amount0Min: web3.utils.toWei(amount0Min),
-              amount1Min: web3.utils.toWei(amount1Min),
-              deadline: getDeadline(),
-            }
-          ]),
-          contract.interface.encodeFunctionData('collect', [
-            {
-              tokenId,
-              recipient: account,
-              amount0Max: MaxUint128,
-              amount1Max: MaxUint128,
-            },
-          ]),
-        ]);
+        const transaction = await contract.connect(provider.getSigner(0)).multicall(
+          [
+            contract.interface.encodeFunctionData('decreaseLiquidity', [
+              {
+                tokenId,
+                liquidity: web3.utils.toWei(liquidity),
+                amount0Min: web3.utils.toWei(amount0Min),
+                amount1Min: web3.utils.toWei(amount1Min),
+                deadline: getDeadline(),
+              },
+            ]),
+            contract.interface.encodeFunctionData('collect', [
+              {
+                tokenId,
+                recipient: account,
+                amount0Max: MaxUint128,
+                amount1Max: MaxUint128,
+              },
+            ]),
+          ],
+          {
+            gasPrice: getGasFee(),
+          },
+        );
 
         store.dispatch(
           updateCurrentTransaction({
             id: transactionType.removeLiquidity,
             status: TransactionStatus.pending,
             infoTexts: {
-              pending: 'Transaction submitting...',
+              pending: 'Transaction confirmed. Please wait for it to be processed.',
             },
           }),
         );

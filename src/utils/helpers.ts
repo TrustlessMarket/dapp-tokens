@@ -13,7 +13,13 @@ import { isEmpty, random } from 'lodash';
 import camelCase from 'lodash/camelCase';
 import web3 from 'web3';
 import { compareString } from './string';
-import {L2_ETH_ADDRESS, L2_LAUNCHPAD_FACTORY_ADDRESS, LAUNCHPAD_FACTORY_ADDRESS} from '@/configs';
+import {
+  L2_ETH_ADDRESS,
+  L2_LAUNCHPAD_FACTORY_ADDRESS,
+  L2_TM_ADDRESS,
+  LAUNCHPAD_FACTORY_ADDRESS,
+  TM_ADDRESS
+} from '@/configs';
 
 export function isAddress(value: string): string | false {
   try {
@@ -146,4 +152,13 @@ export const getWETHAddress = () => {
     return L2_ETH_ADDRESS;
   }
   return WETH_ADDRESS;
+}
+
+export const getTMAddress = () => {
+  const currentChain: IResourceChain = store.getState().pnftExchange.currentChain;
+
+  if (compareString(currentChain.chainId, SupportedChainId.L2)) {
+    return L2_TM_ADDRESS;
+  }
+  return TM_ADDRESS;
 }

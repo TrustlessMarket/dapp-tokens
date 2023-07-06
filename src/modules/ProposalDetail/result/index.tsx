@@ -12,15 +12,19 @@ import { ILaunchpad } from '@/interfaces/launchpad';
 import px2rem from '@/utils/px2rem';
 import { LAUNCHPAD_STATUS } from '@/modules/Launchpad/Launchpad.Status';
 import BuyForm from '@/modules/LaunchPadDetail/form';
+import {IResourceChain} from "@/interfaces/chain";
+import {useSelector} from "react-redux";
 
 const ProposalResult = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
   const needReload = useAppSelector(selectPnftExchange).needReload;
   const [voteResult, setVoteResult] = useState<any>();
+  const currentChain: IResourceChain = useSelector(selectPnftExchange).currentChain;
 
   const getVoteResultProposalInfo = async () => {
     try {
       const response = await getVoteResultLaunchpad({
         pool_address: poolDetail?.launchpad,
+        network: currentChain?.chain?.toLowerCase()
       });
       setVoteResult(response);
     } catch (err) {

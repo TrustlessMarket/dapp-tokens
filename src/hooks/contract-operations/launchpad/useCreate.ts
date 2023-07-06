@@ -1,9 +1,19 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import LaunchpadFactoryJson from '@/abis/LaunchpadFactory.json';
+import { SupportedChainId } from '@/constants/chains';
 import { TransactionEventType } from '@/enums/transaction';
+import { IResourceChain } from '@/interfaces/chain';
 import { ContractOperationHook, DAppType } from '@/interfaces/contract-operation';
 import { logErrorToServer } from '@/services/swap';
-import { getContract, getDefaultGasPrice, getLaunchPadAddress } from '@/utils';
+import { useAppSelector } from '@/state/hooks';
+import { selectPnftExchange } from '@/state/pnftExchange';
+import {
+  compareString,
+  getContract,
+  getDefaultGasPrice,
+  getGasFee,
+  getLaunchPadAddress,
+} from '@/utils';
 import { useWeb3React } from '@web3-react/core';
 import BigNumber from 'bignumber.js';
 import { useCallback } from 'react';
@@ -25,6 +35,8 @@ const useCreateLaunchpad: ContractOperationHook<
   boolean
 > = () => {
   const { account, provider } = useWeb3React();
+  const currentChain: IResourceChain =
+    useAppSelector(selectPnftExchange).currentChain;
 
   const call = useCallback(
     async (params: ICreateLaunchpadParams): Promise<boolean> => {
@@ -62,10 +74,14 @@ const useCreateLaunchpad: ContractOperationHook<
             web3.utils.toWei(liquidityBalance),
             web3.utils.toWei(goalBalance),
             web3.utils.toWei(thresholdBalance),
-            {
-              gasLimit: '1100000',
-              gasPrice: getDefaultGasPrice(),
-            },
+            compareString(currentChain.chainId, SupportedChainId.TRUSTLESS_COMPUTER)
+              ? {
+                  gasLimit: '1100000',
+                  gasPrice: getDefaultGasPrice(),
+                }
+              : {
+                  gasPrice: getGasFee(),
+                },
           );
 
         logErrorToServer({

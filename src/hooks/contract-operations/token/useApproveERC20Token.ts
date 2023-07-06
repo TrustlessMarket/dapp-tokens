@@ -8,7 +8,7 @@ import { TransactionStatus } from '@/components/Swap/alertInfoProcessing/interfa
 import { logErrorToServer } from '@/services/swap';
 import store from '@/state';
 import { selectPnftExchange, updateCurrentTransaction } from '@/state/pnftExchange';
-import { compareString, getContract, getDefaultGasPrice } from '@/utils';
+import { compareString, getContract, getDefaultGasPrice, getGasFee } from '@/utils';
 import { useWeb3React } from '@web3-react/core';
 import { useCallback, useContext } from 'react';
 import { useAppSelector } from '@/state/hooks';
@@ -42,12 +42,18 @@ const useApproveERC20Token: ContractOperationHook<
           account,
         );
 
-        const transaction = await contract
-          .connect(provider.getSigner())
-          .approve(address, MaxUint256, {
-            gasLimit: '150000',
-            gasPrice: getDefaultGasPrice(),
-          });
+        const transaction = await contract.connect(provider.getSigner()).approve(
+          address,
+          MaxUint256,
+          compareString(currentChain.chainId, SupportedChainId.TRUSTLESS_COMPUTER)
+            ? {
+                gasLimit: '150000',
+                gasPrice: getDefaultGasPrice(),
+              }
+            : {
+                gasPrice: getGasFee(),
+              },
+        );
 
         logErrorToServer({
           type: 'logs',
