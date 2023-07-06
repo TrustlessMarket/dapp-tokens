@@ -680,8 +680,10 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             return (
               <>
                 {index > 0 && (
-                  <Flex gap={2} flex={1} alignItems={'center'} position={"relative"}>
-                    <Text position={"absolute"} left={"48%"} top={"-5px"}>{new BigNumber(pair.fee).div(10000).toString()}%</Text>
+                  <Flex gap={2} flex={1} alignItems={'center'} position={'relative'}>
+                    <Text position={'absolute'} left={'48%'} top={'-5px'}>
+                      {new BigNumber(pair.fee).div(10000).toString()}%
+                    </Text>
                     <Box className={'dot-line'}></Box>
                   </Flex>
                 )}

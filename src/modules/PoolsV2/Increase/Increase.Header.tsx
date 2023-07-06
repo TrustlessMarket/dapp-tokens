@@ -2,6 +2,7 @@ import { Flex, Heading, Icon, IconButton } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import { BiChevronLeft } from 'react-icons/bi';
 import s from './styles.module.scss';
+import PoolsV2Settings from '../PoolsV2.Settings';
 
 const IncreaseHeader = () => {
   const router = useRouter();
@@ -27,7 +28,9 @@ const IncreaseHeader = () => {
         aria-label={''}
       />
       <Heading as={'h4'}>Add Liquidity</Heading>
-      {/* <Flex className={s.container__top_body__right}></Flex> */}
+      <Flex className={s.container__top_body__right}>
+        <PoolsV2Settings />
+      </Flex>
     </Flex>
   );
 };

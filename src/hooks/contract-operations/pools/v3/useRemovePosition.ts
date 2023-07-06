@@ -11,7 +11,7 @@ import { updateCurrentTransaction } from '@/state/pnftExchange';
 import { getContract } from '@/utils';
 import { useWeb3React } from '@web3-react/core';
 import { useCallback } from 'react';
-import {scanTrx} from "@/services/swap-v3";
+import { scanTrx } from '@/services/swap-v3';
 
 export interface IRemovePositionV3 {
   tokenId?: number;
@@ -43,7 +43,7 @@ const useRemovePositionV3: ContractOperationHook<
             id: transactionType.removePoolApprove,
             status: TransactionStatus.pending,
             infoTexts: {
-              pending: 'Transaction submitting...',
+              pending: 'Transaction confirmed. Please wait for it to be processed.',
             },
           }),
         );

@@ -10,8 +10,12 @@ import useAddLiquidityV3, {
 import useContractOperation from '@/hooks/contract-operations/useContractOperation';
 import { IPoolV2AddPair } from '@/pages/pools/nos/add/[[...id]]';
 import { logErrorToServer } from '@/services/swap';
-import { requestReload, updateCurrentTransaction } from '@/state/pnftExchange';
-import { showError } from '@/utils/toast';
+import {
+  requestReload,
+  selectPnftExchange,
+  updateCurrentTransaction,
+} from '@/state/pnftExchange';
+import { showError, showSuccess } from '@/utils/toast';
 import { Box } from '@chakra-ui/react';
 import { useWeb3React } from '@web3-react/core';
 import { useRouter } from 'next/router';
@@ -21,6 +25,11 @@ import { useDispatch } from 'react-redux';
 import { onShowAddLiquidityConfirm } from '../utils';
 import FormAddPoolsV2Container from './form';
 import s from './styles.module.scss';
+import BigNumber from 'bignumber.js';
+import { IToken } from '@/interfaces/token';
+import { getExplorer } from '@/utils';
+import { isNaN } from 'lodash';
+import { useAppSelector } from '@/state/hooks';
 
 type IPoolsV2AddPage = IPoolV2AddPair;
 
@@ -28,6 +37,7 @@ const PoolsV2AddPage: React.FC<IPoolsV2AddPage> = ({ ids }) => {
   const router = useRouter();
   const dispatch = useDispatch();
   const { account } = useWeb3React();
+  const slippage = useAppSelector(selectPnftExchange).slippageNOS;
 
   const [submitting, setSubmitting] = useState(false);
 
@@ -46,35 +56,48 @@ const PoolsV2AddPage: React.FC<IPoolsV2AddPage> = ({ ids }) => {
           status: TransactionStatus.info,
         }),
       );
+
+      const baseAmount = values?.baseAmount || '0';
+      const quoteAmount = values?.quoteAmount || '0';
+
+      const baseToken: IToken = values?.baseToken;
+      const quoteToken: IToken = values?.quoteToken;
+
+      const amount0Min = new BigNumber(baseAmount)
+        .multipliedBy(100 - Number(slippage))
+        .dividedBy(100)
+        .decimalPlaces(baseToken.decimal as any)
+        .toString();
+
+      const amount1Min = new BigNumber(quoteAmount)
+        .multipliedBy(100 - Number(slippage))
+        .dividedBy(100)
+        .decimalPlaces(quoteToken?.decimal as any)
+        .toString();
+
       const params: IAddLiquidityV3 = {
-        tokenA: values?.baseToken,
-        tokenB: values?.quoteToken,
-        amountADesired: values?.baseAmount || '0',
+        tokenA: baseToken,
+        tokenB: quoteToken,
+        amountADesired: baseAmount,
         amountBDesired: values?.quoteAmount || '0',
         lowerTick: values?.tickLower,
         upperTick: values?.tickUpper,
         fee: values?.fee,
-        amount0Min: '0',
-        amount1Min: '0',
+        amount0Min: amount0Min,
+        amount1Min: amount1Min,
         currentPrice: values?.currentPrice,
         poolAddress: values?.poolAddress,
       };
 
       const response: any = await addLiquidityV3(params);
-      dispatch(
-        updateCurrentTransaction({
-          id: transactionType.createPool,
-          status: TransactionStatus.success,
-          hash: response.hash,
-          infoTexts: {
-            success: values?.poolAddress
-              ? `Pool has been added successfully.`
-              : `Pool has been created successfully.`,
-          },
-        }),
-      );
-      dispatch(requestReload());
-      refForm.current?.reset();
+      showSuccess({
+        message: values?.poolAddress
+          ? `Pool has been added successfully.`
+          : `Pool has been created successfully.`,
+        url: getExplorer(response.hash),
+      });
+      dispatch(updateCurrentTransaction(null));
+      router.back();
     } catch (err) {
       dispatch(updateCurrentTransaction(null));
       const message =

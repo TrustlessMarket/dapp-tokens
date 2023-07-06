@@ -24,6 +24,7 @@ import { forwardRef, useImperativeHandle } from 'react';
 import { compareString } from '@/utils';
 import { IPosition } from '@/interfaces/position';
 import { tickToPrice } from '@/utils/number';
+import IncreaseHeader from './Increase.Header';
 
 const IncreaseForm = forwardRef<any, any>(
   (
@@ -129,6 +130,8 @@ const IncreaseForm = forwardRef<any, any>(
 
     return (
       <form onSubmit={handleSubmit}>
+        <IncreaseHeader />
+        <Box mt={5} />
         <AddConfirm
           values={values as any}
           onSelectPair={onSelectPair}
@@ -176,7 +179,7 @@ const IncreaseForm = forwardRef<any, any>(
                 type="submit"
                 btnSize="h"
                 processInfo={{
-                  id: transactionType.createPool,
+                  id: transactionType.increaseLiquidity,
                 }}
               >
                 Preview
