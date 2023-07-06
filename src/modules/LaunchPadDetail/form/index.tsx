@@ -316,7 +316,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const getTokenBalance = async (token: IToken) => {
     try {
       const response = await tokenBalance({
-        erc20TokenAddress: token.address,
+        erc20TokenAddress: token?.address,
       });
       return response;
     } catch (error) {
