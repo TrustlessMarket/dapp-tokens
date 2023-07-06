@@ -856,7 +856,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             </Text>
           }
         />
-        <HorizontalItem
+        {/*<HorizontalItem
           label={
             <Flex
               fontSize={'sm'}
@@ -866,7 +866,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
               Reward: +0.1TM
             </Flex>
           }
-        />
+        />*/}
       </Box>
       {baseToken && quoteToken && values?.baseAmount && Number(exchangeRate) > 0 && (
         <Box mt={1}>

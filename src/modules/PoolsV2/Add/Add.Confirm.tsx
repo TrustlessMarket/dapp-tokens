@@ -35,9 +35,15 @@ interface IAddConfirm {
   };
   onClose: () => void;
   onSubmit?: (_: any) => void;
+  onSelectPair?: (_1?: IToken, _2?: IToken) => void;
 }
 
-const AddConfirm: React.FC<IAddConfirm> = ({ values, onClose, onSubmit }) => {
+const AddConfirm: React.FC<IAddConfirm> = ({
+  values,
+  onClose,
+  onSubmit,
+  onSelectPair,
+}) => {
   const {
     baseToken,
     quoteToken,
@@ -54,7 +60,6 @@ const AddConfirm: React.FC<IAddConfirm> = ({ values, onClose, onSubmit }) => {
   } = values;
 
   const [selectPair, setSelectPair] = useState(currentSelectPair);
-  const [min, setMin] = useState(minPrice);
 
   let [tokenA, tokenB] = [baseToken, quoteToken];
 
@@ -64,12 +69,9 @@ const AddConfirm: React.FC<IAddConfirm> = ({ values, onClose, onSubmit }) => {
     [tokenA, tokenB] = [quoteToken, baseToken];
   }
 
-  const onSelectPair = (tk1?: IToken, tk2?: IToken) => {
-    if (!compareString(token0.address, tk1?.address)) {
-      //   isRevert = true;
-    }
+  const onHandleSelectPair = (tk1?: IToken, tk2?: IToken) => {
     setSelectPair(tk1);
-    //
+    onSelectPair?.(tk1, tk2);
   };
 
   const onClick = () => {
@@ -84,11 +86,11 @@ const AddConfirm: React.FC<IAddConfirm> = ({ values, onClose, onSubmit }) => {
       <Flex gap={4} alignItems={'center'} justifyContent={'space-between'}>
         <Flex gap={2} alignItems={'center'}>
           <AvatarGroup size="sm">
-            <Avatar src={getTokenIconUrl(baseToken)} />
-            <Avatar src={getTokenIconUrl(quoteToken)} />
+            <Avatar src={getTokenIconUrl(tokenA)} />
+            <Avatar src={getTokenIconUrl(tokenB)} />
           </AvatarGroup>
           <Text className={s.confirmAddLiquidityContainer__title}>
-            {baseToken?.symbol} / {quoteToken?.symbol}
+            {tokenA?.symbol} / {tokenB?.symbol}
           </Text>
         </Flex>
         <PoolsV2PositionStatus
@@ -120,7 +122,7 @@ const AddConfirm: React.FC<IAddConfirm> = ({ values, onClose, onSubmit }) => {
         <SwitchSymbol
           tokenA={tokenA}
           tokenB={tokenB}
-          onSelectPair={onSelectPair}
+          onSelectPair={onHandleSelectPair}
           currentSelectPair={selectPair}
         />
       </Flex>
@@ -129,14 +131,14 @@ const AddConfirm: React.FC<IAddConfirm> = ({ values, onClose, onSubmit }) => {
         <Flex className={sDetail.itemRangeContainer}>
           <Text>Min price</Text>
           <Text className={sDetail.itemRangeContainer__price}>
-            {formatCurrency(min)}
+            {formatCurrency(minPrice)}
           </Text>
           <Text>
-            {tokenA?.symbol} per {tokenB?.symbol}
+            {tokenB?.symbol} per {tokenA?.symbol}
           </Text>
           {isRange && (
             <Text textAlign={'center'} className={sDetail.itemRangeContainer__note}>
-              Your position will be 100% {quoteToken?.symbol} at this price.
+              Your position will be 100% {tokenB?.symbol} at this price.
             </Text>
           )}
         </Flex>
@@ -146,11 +148,11 @@ const AddConfirm: React.FC<IAddConfirm> = ({ values, onClose, onSubmit }) => {
             {formatCurrency(maxPrice)}
           </Text>
           <Text>
-            {tokenA?.symbol} per {tokenB?.symbol}
+            {tokenB?.symbol} per {tokenA?.symbol}
           </Text>
           {isRange && (
             <Text textAlign={'center'} className={sDetail.itemRangeContainer__note}>
-              Your position will be 100% {baseToken?.symbol} at this price.
+              Your position will be 100% {tokenA?.symbol} at this price.
             </Text>
           )}
         </Flex>
@@ -162,7 +164,7 @@ const AddConfirm: React.FC<IAddConfirm> = ({ values, onClose, onSubmit }) => {
           {formatCurrency(currentPrice)}
         </Text>
         <Text>
-          {tokenA?.symbol} per {tokenB?.symbol}
+          {tokenB?.symbol} per {tokenA?.symbol}
         </Text>
       </Flex>
       <Box mt={6} />

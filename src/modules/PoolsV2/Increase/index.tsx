@@ -64,6 +64,8 @@ const IncreaseLiquidity = () => {
   };
 
   const onSubmit = async (values: any) => {
+    console.log('values', values);
+
     try {
       setSubmitting(true);
       dispatch(
@@ -73,7 +75,7 @@ const IncreaseLiquidity = () => {
         }),
       );
       const params: IIncreaseLiquidityV3 = {
-        tokenId: Number(positionDetail?.id),
+        tokenId: Number(positionDetail?.tokenId),
         amount0Desired: values?.newBaseAmount || '0',
         amount1Desired: values?.newQuoteAmount || '0',
         amount0Min: '0',
@@ -126,7 +128,6 @@ const IncreaseLiquidity = () => {
           onShowAddLiquidityConfirm(
             {
               ...e,
-
               baseAmount: e.newBaseAmount,
               quoteAmount: e.newQuoteAmount,
             },
@@ -146,7 +147,7 @@ const IncreaseLiquidity = () => {
           currentSelectPair: positionDetail?.pair?.token0Obj,
           minPrice: tickToPrice(positionDetail.tickLower),
           maxPrice: tickToPrice(positionDetail.tickUpper),
-          currentPrice: positionDetail.pair?.price,
+          currentPrice: tickToPrice(positionDetail.pair?.tick),
         }}
       >
         {({ handleSubmit }) => (
