@@ -102,12 +102,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const [quoteTokensList, setQuoteTokensList] = useState<IToken[]>([]);
   const { call: isApproved } = useIsApproveERC20Token();
   const { call: tokenBalance } = useBalanceERC20Token();
-  const { run: approveToken } = useContractOperation<
-    IApproveERC20TokenParams,
-    boolean
-  >({
-    operation: useApproveERC20Token,
-  });
+  const { call: approveToken } = useApproveERC20Token();
   const { call: getReserves } = useGetReserves();
   const [baseBalance, setBaseBalance] = useState<any>('0');
   const [quoteBalance, setQuoteBalance] = useState<any>('0');
@@ -680,8 +675,10 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             return (
               <>
                 {index > 0 && (
-                  <Flex gap={2} flex={1} alignItems={'center'} position={"relative"}>
-                    <Text position={"absolute"} left={"48%"} top={"-5px"}>{new BigNumber(pair.fee).div(10000).toString()}%</Text>
+                  <Flex gap={2} flex={1} alignItems={'center'} position={'relative'}>
+                    <Text position={'absolute'} left={'48%'} top={'-5px'}>
+                      {new BigNumber(pair.fee).div(10000).toString()}%
+                    </Text>
                     <Box className={'dot-line'}></Box>
                   </Flex>
                 )}
