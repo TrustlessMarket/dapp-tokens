@@ -1,22 +1,23 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { SupportedChainId, TRUSTLESS_COMPUTER_CHAIN_INFO } from '@/constants/chains';
+import {SupportedChainId, TRUSTLESS_COMPUTER_CHAIN_INFO} from '@/constants/chains';
 import {DEFAULT_GAS_PRICE, TOKEN_ICON_DEFAULT, WBTC_ADDRESS, WETH_ADDRESS} from '@/constants/common';
-import { CHAIN_INFO } from '@/constants/storage-key';
+import {CHAIN_INFO} from '@/constants/storage-key';
 import tokenIcons from '@/constants/tokenIcons';
-import { IResourceChain } from '@/interfaces/chain';
-import { IToken } from '@/interfaces/token';
+import {IResourceChain} from '@/interfaces/chain';
+import {IToken} from '@/interfaces/token';
 import store from '@/state';
-import { getAddress } from '@ethersproject/address';
+import {getAddress} from '@ethersproject/address';
 import BigNumber from 'bignumber.js';
-import { isEmpty, random } from 'lodash';
+import {isEmpty, random} from 'lodash';
 import camelCase from 'lodash/camelCase';
 import web3 from 'web3';
-import { compareString } from './string';
+import {compareString} from './string';
 import {
   L2_ETH_ADDRESS,
   L2_LAUNCHPAD_FACTORY_ADDRESS,
-  L2_TM_ADDRESS, L2_WBTC_ADDRESS,
+  L2_TM_ADDRESS,
+  L2_WBTC_ADDRESS,
   LAUNCHPAD_FACTORY_ADDRESS,
   TM_ADDRESS
 } from '@/configs';
