@@ -111,19 +111,7 @@ import { IoWarningOutline } from 'react-icons/io5';
 import { CHAIN_ID_TO_NETWORK, NETWORK_TO_CHAIN_ID } from '@/constants/chains';
 import { PREV_CHAIN_ID } from '@/constants/storage-key';
 
-const CONTRIBUTION_METHODS = [
-  {
-    id: 'tc',
-    title: 'From Your TC wallet',
-    desc: '',
-    img: `${CDN_URL}/pages/trustlessmarket/launchpad/ic-tc.png`,
-  },
-  {
-    id: 'eth',
-    title: 'From Ethereum wallet',
-    desc: 'Transfer your funds from an Ethereum wallet or directly from an exchange.',
-    img: `${CDN_URL}/pages/trustlessmarket/launchpad/ic-eth.png`,
-  },
+let CONTRIBUTION_METHODS = [
 ];
 
 const ContributionMethods = (props: any) => {
@@ -200,6 +188,40 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   } = props;
   const [loading, setLoading] = useState(false);
   const [liquidityToken, setLiquidityToken] = useState<any>();
+  if(liquidityToken?.address == WETH_ADDRESS)
+  {
+    CONTRIBUTION_METHODS = [
+      {
+        id: 'tc',
+        title: 'From Your TC wallet',
+        desc: '',
+        img: `${CDN_URL}/pages/trustlessmarket/launchpad/ic-tc.png`,
+      },
+      {
+        id: 'eth',
+        title: 'From Ethereum wallet',
+        desc: 'Transfer your funds from an Ethereum wallet or directly from an exchange.',
+        img: `${CDN_URL}/pages/trustlessmarket/launchpad/ic-eth.png`,
+      },
+    ];
+
+  } else{
+    CONTRIBUTION_METHODS = [
+      {
+        id: 'tc',
+        title: 'From Your TC wallet',
+        desc: '',
+        img: `${CDN_URL}/pages/trustlessmarket/launchpad/ic-tc.png`,
+      },
+      {
+        id: 'bitcoin',
+        title: 'From Bitcoin wallet',
+        desc: 'Transfer your funds from an Bitcoin wallet or directly from an exchange.',
+        img: `https://s2.coinmarketcap.com/static/img/coins/64x64/1.png`,
+      },
+    ];
+
+  }
   const [launchpadToken, setLaunchpadToken] = useState<any>();
   const [amountLiquidityTokenApproved, setAmountLiquidityTokenApproved] =
     useState('0');
@@ -219,6 +241,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const { values } = useFormState();
   const { change, restart } = useForm();
   const btnDisabled = loading || !liquidityToken;
+
 
   const isRequireApprove = useMemo(() => {
     let result = false;
@@ -490,6 +513,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       dispatch(updateCurrentChainId(NETWORK_TO_CHAIN_ID?.[method]));
     }
 
+
     change('contributeMethod', method);
   };
 
@@ -737,7 +761,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       </Flex>
       {isFunding && (
         <>
-          {compareString(liquidityToken?.address, WETH_ADDRESS) ? (
+
             <Flex mt={4}>
               <Stat className={styles.infoColumn} flex={1}>
                 <StatLabel>Contribution method</StatLabel>
@@ -746,82 +770,9 @@ export const MakeFormSwap = forwardRef((props, ref) => {
                 </StatNumber>
               </Stat>
             </Flex>
-          ) : (
-            <InputWrapper
-              className={cx(styles.inputAmountWrap, styles.inputBaseAmountWrap)}
-              theme="light"
-              label={
-                <Text fontSize={px2rem(14)} color={'#FFFFFF'}>
-                  Amount
-                </Text>
-              }
-            >
-              <Flex gap={4} direction={'column'}>
-                <Field
-                  name="liquidityAmount"
-                  children={FieldAmount}
-                  validate={composeValidators(required, validateBaseAmount)}
-                  fieldChanged={onChangeValueBaseAmount}
-                  disabled={submitting}
-                  // placeholder={"Enter number of tokens"}
-                  decimals={liquidityToken?.decimal || 18}
-                  className={styles.inputAmount}
-                  prependComp={
-                    liquidityToken && (
-                      <Flex
-                        gap={1}
-                        alignItems={'center'}
-                        color={'#FFFFFF'}
-                        paddingX={2}
-                      >
-                        <img
-                          src={tokenIcons[liquidityToken?.symbol?.toLowerCase()]}
-                          alt={liquidityToken?.thumbnail || 'default-icon'}
-                          className={'avatar'}
-                        />
-                        <Text fontSize={'sm'}>{liquidityToken?.symbol}</Text>
-                      </Flex>
-                    )
-                  }
-                  appendComp={
-                    liquidityToken && (
-                      <Flex gap={2} fontSize={px2rem(14)} color={'#FFFFFF'}>
-                        <Flex
-                          gap={1}
-                          alignItems={'center'}
-                          color={'#B6B6B6'}
-                          fontSize={px2rem(16)}
-                          fontWeight={'400'}
-                        >
-                          Balance:
-                          <TokenBalance
-                            token={liquidityToken}
-                            onBalanceChange={(_amount) =>
-                              setLiquidityBalance(_amount)
-                            }
-                          />
-                          {liquidityToken?.symbol}
-                        </Flex>
-                        <Text
-                          cursor={'pointer'}
-                          color={'#3385FF'}
-                          onClick={handleChangeMaxBaseAmount}
-                          bgColor={'#2E2E2E'}
-                          borderRadius={'4px'}
-                          padding={'1px 12px'}
-                          fontSize={px2rem(16)}
-                          fontWeight={'600'}
-                        >
-                          Max
-                        </Text>
-                      </Flex>
-                    )
-                  }
-                  borderColor={'#353945'}
-                />
-              </Flex>
-            </InputWrapper>
-          )}
+
+
+
         </>
       )}
       {values?.liquidityAmount && (
@@ -910,6 +861,8 @@ export const MakeFormSwap = forwardRef((props, ref) => {
 });
 
 const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
+
+
   const refForm = useRef<any>();
   const [submitting, setSubmitting] = useState(false);
   const dispatch = useAppDispatch();
@@ -973,6 +926,9 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
 
   const fetchData = async () => {
     try {
+
+
+
       const [
         ableEnd,
         ableClose,
@@ -1006,7 +962,7 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
           pool_address: poolDetail?.launchpad,
         }),
         getLaunchpadDepositAddress({
-          network: 'ethereum',
+          network: poolDetail?.liquidityTokenAddress.toLowerCase() == WETH_ADDRESS.toLowerCase()?"ethereum":"bitcoin",
           address: account,
           launchpad_id: poolDetail?.id,
         }),
@@ -1179,6 +1135,7 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
             <DepositEth
               onClose={close}
               address={depositAddressInfo?.depositAddress}
+              network={poolDetail?.liquidityTokenAddress.toLowerCase() === WETH_ADDRESS.toLowerCase()?"ethereum":"bitcoin"}
             />
           );
         },
@@ -1227,12 +1184,12 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
     if ([LAUNCHPAD_STATUS.Voting].includes(poolDetail?.state)) {
       confirmVoting(values);
     } else if (
-      [LAUNCHPAD_STATUS.Launching].includes(poolDetail?.state) &&
-      compareString(liquidityToken?.address, WETH_ADDRESS)
+      [LAUNCHPAD_STATUS.Launching].includes(poolDetail?.state)
     ) {
       const { contributeMethod } = values;
 
-      if (contributeMethod === 'eth') {
+
+      if (contributeMethod !== 'tc') {
         showContributeFromEthWallet();
       } else {
         showContributeFromTCWallet();

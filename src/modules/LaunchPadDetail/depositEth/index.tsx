@@ -12,7 +12,7 @@ import {useAppSelector} from "@/state/hooks";
 import {selectPnftExchange} from "@/state/pnftExchange";
 
 const DepositEth = (props: any) => {
-  const {address, onClose} = props;
+  const {address, onClose,network} = props;
   const configs = useAppSelector(selectPnftExchange).configs;
 
   return (
@@ -23,7 +23,7 @@ const DepositEth = (props: any) => {
         color={"#1C1C1C"}
         opacity={0.7}
       >
-        Here is your unique Ethereum address. You can send your ETH to this address from your Metamask or your Exchanges.
+        Here is your unique Ethereum address. You can send your {network} to this address from your Metamask or your Exchanges.
       </Text>
       <Flex justifyContent={"center"} mt={10} mb={10}>
         <QRCodeSVG width={175} height={175} value={address} />
@@ -31,7 +31,7 @@ const DepositEth = (props: any) => {
       <Text
         fontSize={px2rem(16)}
         fontWeight={500}
-      >Address (ERC20)</Text>
+      >Address {network}</Text>
       <InputGroup size="sm" mt={1}>
         <Input
           value={address}
