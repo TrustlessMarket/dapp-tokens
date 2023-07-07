@@ -4,7 +4,14 @@
 import Button from '@/components/Button';
 import {IToken} from '@/interfaces/token';
 import {getTokenRp} from '@/services/swap';
-import {abbreviateNumber, compareString, formatCurrency, getTokenIconUrl} from '@/utils';
+import {
+  abbreviateNumber,
+  compareString,
+  formatCurrency,
+  getTokenIconUrl,
+  getWBTCAddress,
+  getWETHAddress
+} from '@/utils';
 import {debounce} from 'lodash';
 import React, {useEffect, useMemo, useRef, useState} from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
@@ -18,7 +25,7 @@ import BodyContainer from '@/components/Swap/bodyContainer';
 import FieldText from '@/components/Swap/form/fieldText';
 import ListTable, {ColumnProp} from '@/components/Swap/listTable';
 import {CDN_URL} from '@/configs';
-import {GM_ADDRESS, WBTC_ADDRESS, WETH_ADDRESS} from '@/constants/common';
+import {GM_ADDRESS} from '@/constants/common';
 import useDebounce from '@/hooks/useDebounce';
 import px2rem from '@/utils/px2rem';
 import {Field, Form, useFormState} from 'react-final-form';
@@ -493,7 +500,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
                   const routePath = isL2 ? ROUTE_PATH.TOKEN_V2 : ROUTE_PATH.TOKEN;
 
                   router.push(
-                    `${routePath}?from_token=${WBTC_ADDRESS}&to_token=${row?.address}`,
+                    `${routePath}?from_token=${getWBTCAddress()}&to_token=${row?.address}`,
                   );
                 }}
                 title="Swap now"
@@ -565,7 +572,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         </div>
         <div className="upload_right">
           <Link
-            href={`${ROUTE_PATH.SWAP}?from_token=${WETH_ADDRESS}&to_token=${GM_ADDRESS}`}
+            href={`${isL2 ? ROUTE_PATH.SWAP_V2 : ROUTE_PATH.SWAP}?from_token=${getWETHAddress()}&to_token=${GM_ADDRESS}`}
           >
             <Button className="comming-soon-btn" background={'#3385FF'}>
               <Text
@@ -578,7 +585,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
               </Text>
             </Button>
           </Link>
-          <Link href={ROUTE_PATH.POOLS}>
+          <Link href={isL2 ? ROUTE_PATH.POOLS_V2 : ROUTE_PATH.POOLS}>
             <Button
               className="button-create-box"
               background={'white'}

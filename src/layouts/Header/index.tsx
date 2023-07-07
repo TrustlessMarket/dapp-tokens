@@ -33,8 +33,8 @@ export const isScreenDarkMode = () => {
 
 export const HEADER_MENUS = (isL2: boolean) => [
   {
-    key: isL2 ? ROUTE_PATH.MARKETS_V2 : ROUTE_PATH.MARKETS,
-    route: isL2 ? ROUTE_PATH.MARKETS_V2 : ROUTE_PATH.MARKETS,
+    key: ROUTE_PATH.MARKETS,
+    route: ROUTE_PATH.MARKETS,
     name: 'Markets',
   },
   {
@@ -108,7 +108,7 @@ const Header = () => {
         style={{ height: defaultProvider.headerHeight }}
       >
         <div className={'leftWrapper'}>
-          <Link className="logo" href={isL2 ? ROUTE_PATH.HOME_V2 : ROUTE_PATH.HOME}>
+          <Link className="logo" href={ROUTE_PATH.HOME}>
             <img
               src={`${CDN_URL}/icons/logo-tc-market.svg`}
               alt="New Bitcoin DEX logo"

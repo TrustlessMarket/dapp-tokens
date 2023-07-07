@@ -1,7 +1,6 @@
 export const ROUTE_PATH = {
   NOT_FOUND: '/404',
-  HOME: '/tc',
-  HOME_V2: '/nos',
+  HOME: '/',
   DAPPS: '/dapps',
   COLLECTION: '/collection',
   INSCRIPTION: '/inscription',
@@ -14,7 +13,6 @@ export const ROUTE_PATH = {
   SWAP: '/swap/tc',
   SWAP_V2: '/swap/nos',
   MARKETS: '/markets/tc',
-  MARKETS_V2: '/markets/nos',
   GET_STARTED: '/get-started',
   TOKEN: '/token/tc',
   TOKEN_V2: '/token/nos',
@@ -35,7 +33,5 @@ export const ROUTE_PATH = {
   POOLS_V2_INCREASE: '/pools/nos/increase',
   ORIGINAL_POOL: '/pools',
   ORIGINAL_SWAP: '/swap',
-  ORIGINAL_MARKETS: '/markets',
   ORIGINAL_TOKEN: '/token',
-  ORIGINAL_HOME: '/',
 };

@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { TRUSTLESS_COMPUTER_CHAIN_INFO } from '@/constants/chains';
-import { DEFAULT_GAS_PRICE, TOKEN_ICON_DEFAULT } from '@/constants/common';
+import {SupportedChainId, TRUSTLESS_COMPUTER_CHAIN_INFO} from '@/constants/chains';
+import {DEFAULT_GAS_PRICE, TOKEN_ICON_DEFAULT, WBTC_ADDRESS, WETH_ADDRESS} from '@/constants/common';
 import { CHAIN_INFO } from '@/constants/storage-key';
 import tokenIcons from '@/constants/tokenIcons';
 import { IResourceChain } from '@/interfaces/chain';
@@ -11,6 +11,9 @@ import BigNumber from 'bignumber.js';
 import { isEmpty, random } from 'lodash';
 import camelCase from 'lodash/camelCase';
 import web3 from 'web3';
+import store from "@/state";
+import {compareString} from "@/utils/string";
+import {L2_ETH_ADDRESS, L2_TM_ADDRESS, L2_WBTC_ADDRESS, TM_ADDRESS} from "@/configs";
 
 export function isAddress(value: string): string | false {
   try {
@@ -126,3 +129,30 @@ export const getLocalStorageChainInfo = (): IResourceChain => {
   }
   return TRUSTLESS_COMPUTER_CHAIN_INFO;
 };
+
+export const getWBTCAddress = () => {
+  const currentChain: IResourceChain = store.getState().pnftExchange.currentChain;
+
+  if (compareString(currentChain?.chainId, SupportedChainId.L2)) {
+    return L2_WBTC_ADDRESS;
+  }
+  return WBTC_ADDRESS;
+}
+
+export const getWETHAddress = () => {
+  const currentChain: IResourceChain = store.getState().pnftExchange.currentChain;
+
+  if (compareString(currentChain?.chainId, SupportedChainId.L2)) {
+    return L2_ETH_ADDRESS;
+  }
+  return WETH_ADDRESS;
+}
+
+export const getTMAddress = () => {
+  const currentChain: IResourceChain = store.getState().pnftExchange.currentChain;
+
+  if (compareString(currentChain?.chainId, SupportedChainId.L2)) {
+    return L2_TM_ADDRESS;
+  }
+  return TM_ADDRESS;
+}

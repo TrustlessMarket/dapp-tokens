@@ -1,5 +1,5 @@
 import Layout from '@/layouts';
-import Tokens from '@/modules/Tokens/v2';
+import Tokens from '@/modules/Tokens';
 
 export default function Home() {
   return (
