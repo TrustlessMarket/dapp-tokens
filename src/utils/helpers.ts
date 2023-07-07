@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { SupportedChainId, TRUSTLESS_COMPUTER_CHAIN_INFO } from '@/constants/chains';
-import {DEFAULT_GAS_PRICE, TOKEN_ICON_DEFAULT, WETH_ADDRESS} from '@/constants/common';
+import {DEFAULT_GAS_PRICE, TOKEN_ICON_DEFAULT, WBTC_ADDRESS, WETH_ADDRESS} from '@/constants/common';
 import { CHAIN_INFO } from '@/constants/storage-key';
 import tokenIcons from '@/constants/tokenIcons';
 import { IResourceChain } from '@/interfaces/chain';
@@ -16,7 +16,7 @@ import { compareString } from './string';
 import {
   L2_ETH_ADDRESS,
   L2_LAUNCHPAD_FACTORY_ADDRESS,
-  L2_TM_ADDRESS,
+  L2_TM_ADDRESS, L2_WBTC_ADDRESS,
   LAUNCHPAD_FACTORY_ADDRESS,
   TM_ADDRESS
 } from '@/configs';
@@ -144,6 +144,15 @@ export const getLaunchPadAddress = () => {
   }
   return LAUNCHPAD_FACTORY_ADDRESS;
 };
+
+export const getWBTCAddress = () => {
+  const currentChain: IResourceChain = store.getState().pnftExchange.currentChain;
+
+  if (compareString(currentChain?.chainId, SupportedChainId.L2)) {
+    return L2_WBTC_ADDRESS;
+  }
+  return WBTC_ADDRESS;
+}
 
 export const getWETHAddress = () => {
   const currentChain: IResourceChain = store.getState().pnftExchange.currentChain;
