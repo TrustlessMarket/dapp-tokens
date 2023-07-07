@@ -122,7 +122,7 @@ const PoolsV2AddPage: React.FC<IPoolsV2AddPage> = ({ ids }) => {
             onShowAddLiquidityConfirm(
               {
                 ...e,
-                reFee: Number(e?.fee) / 2,
+                reFee: Number(e?.fee),
               },
               onSubmit,
             )

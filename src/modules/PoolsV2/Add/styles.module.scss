@@ -141,12 +141,18 @@
           color: white !important;
           font-weight: bold;
           font-size: rem(16) !important;
+          line-height: rem(19);
         }
         &__desc {
           font-size: rem(11);
           color: var(--chakra-colors-gray-400) !important;
           line-height: 12px;
           margin-top: 5px;
+        }
+        &__descNote {
+          font-size: rem(8) !important;
+          color: rgba(255, 85, 0, 0.7) !important;
+          line-height: 12px;
         }
         &:hover {
           border-color: var(--chakra-colors-gray-300);
