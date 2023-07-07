@@ -59,28 +59,28 @@ export const feeTiers = [
     title: FeeAmount.LOWER / 10000 / 2,
     desc: 'Best for very stable pairs.',
     title2: FeeAmount.LOWER / 10000 / 2,
-    desc2: 'Flatform fee',
+    desc2: 'Platform',
   },
   {
     value: FeeAmount.LOW,
     title: FeeAmount.LOW / 10000 / 2,
     desc: 'Best for most pairs.',
     title2: FeeAmount.LOW / 10000 / 2,
-    desc2: 'Flatform fee',
+    desc2: 'Platform',
   },
   {
     value: FeeAmount.MEDIUM,
     title: FeeAmount.MEDIUM / 10000 / 2,
     desc: 'Best for stable pairs.',
     title2: FeeAmount.MEDIUM / 10000 / 2,
-    desc2: 'Flatform fee',
+    desc2: 'Platform',
   },
   {
     value: FeeAmount.HIGH,
     title: FeeAmount.HIGH / 10000 / 2,
     desc: 'Best for exotic pairs.',
     title2: FeeAmount.HIGH / 10000 / 2,
-    desc2: 'Flatform fee',
+    desc2: 'Platform',
   },
 ];
 
@@ -169,7 +169,9 @@ export const allowStep = (values: any) => {
 
 export const getPooledAmount = (positionDetail?: IPosition) => {
   try {
-    const currentSqrtRatioX96 = ethers.BigNumber.from(positionDetail?.pair?.sqrtPriceX96);
+    const currentSqrtRatioX96 = ethers.BigNumber.from(
+      positionDetail?.pair?.sqrtPriceX96,
+    );
     const lowerSqrtRatioX96 = getSqrtRatioAtTick(positionDetail?.tickLower || 0);
     const upperSqrtRatioX96 = getSqrtRatioAtTick(positionDetail?.tickUpper || 0);
 

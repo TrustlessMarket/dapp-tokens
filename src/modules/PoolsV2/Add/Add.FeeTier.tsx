@@ -32,7 +32,7 @@ const AddFeeTier = () => {
   return (
     <InputWrapper
       className={isHide ? s.blur : ''}
-      label={`Fee Tier: ${(fee || 0) / 10000 / 2}%`}
+      label={`Fee Tier: ${(fee || 0) / 10000}%`}
     >
       {isHide && <Box className={s.blur__fade} />}
       <Flex className={s.formContainer__left__feeTierContainer} gap={1.5}>
@@ -49,14 +49,13 @@ const AddFeeTier = () => {
             <Text className={s.formContainer__left__feeTierContainer__item__title}>
               {v.title}%
             </Text>
+            <Text
+              className={s.formContainer__left__feeTierContainer__item__descNote}
+            >
+              +{v.title2}% {v.desc2}
+            </Text>
             <Text className={s.formContainer__left__feeTierContainer__item__desc}>
               {v.desc}
-            </Text>
-            <Text className={s.formContainer__left__feeTierContainer__item__title}>
-              {v.title2}%
-            </Text>
-            <Text className={s.formContainer__left__feeTierContainer__item__desc}>
-              {v.desc2}
             </Text>
           </Box>
         ))}
