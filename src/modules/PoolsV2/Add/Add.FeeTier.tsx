@@ -52,6 +52,12 @@ const AddFeeTier = () => {
             <Text className={s.formContainer__left__feeTierContainer__item__desc}>
               {v.desc}
             </Text>
+            <Text className={s.formContainer__left__feeTierContainer__item__title}>
+              {v.title2}%
+            </Text>
+            <Text className={s.formContainer__left__feeTierContainer__item__desc}>
+              {v.desc2}
+            </Text>
           </Box>
         ))}
       </Flex>

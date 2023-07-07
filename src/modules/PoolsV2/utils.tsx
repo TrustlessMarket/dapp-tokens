@@ -58,21 +58,29 @@ export const feeTiers = [
     value: FeeAmount.LOWER,
     title: FeeAmount.LOWER / 10000 / 2,
     desc: 'Best for very stable pairs.',
+    title2: FeeAmount.LOWER / 10000 / 2,
+    desc2: 'Flatform fee',
   },
   {
     value: FeeAmount.LOW,
     title: FeeAmount.LOW / 10000 / 2,
     desc: 'Best for most pairs.',
+    title2: FeeAmount.LOW / 10000 / 2,
+    desc2: 'Flatform fee',
   },
   {
     value: FeeAmount.MEDIUM,
     title: FeeAmount.MEDIUM / 10000 / 2,
     desc: 'Best for stable pairs.',
+    title2: FeeAmount.MEDIUM / 10000 / 2,
+    desc2: 'Flatform fee',
   },
   {
     value: FeeAmount.HIGH,
     title: FeeAmount.HIGH / 10000 / 2,
     desc: 'Best for exotic pairs.',
+    title2: FeeAmount.HIGH / 10000 / 2,
+    desc2: 'Flatform fee',
   },
 ];
 
