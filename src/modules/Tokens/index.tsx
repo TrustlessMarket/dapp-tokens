@@ -4,7 +4,7 @@
 import Button from '@/components/Button';
 import {IToken} from '@/interfaces/token';
 import {getTokenRp} from '@/services/swap';
-import {abbreviateNumber, formatCurrency, getTokenIconUrl} from '@/utils';
+import {abbreviateNumber, compareString, formatCurrency, getTokenIconUrl} from '@/utils';
 import {debounce} from 'lodash';
 import React, {useEffect, useMemo, useRef, useState} from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
@@ -32,6 +32,7 @@ import {useWindowSize} from '@trustless-computer/dapp-core';
 import {IResourceChain} from "@/interfaces/chain";
 import {useSelector} from "react-redux";
 import {selectPnftExchange} from "@/state/pnftExchange";
+import {L2_CHAIN_INFO, TRUSTLESS_COMPUTER_CHAIN_INFO} from "@/constants/chains";
 
 const LIMIT_PAGE = 100;
 
@@ -43,7 +44,11 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const [sort, setSort] = useState({ sort: '' });
   const { values } = useFormState();
   const { mobileScreen } = useWindowSize();
-  const currentSelectedChain: IResourceChain = useSelector(selectPnftExchange).currentChain;
+  const currentSelectedChain: IResourceChain = useSelector(selectPnftExchange).currentChain || TRUSTLESS_COMPUTER_CHAIN_INFO;
+
+  const isL2 = useMemo(() => {
+    return compareString(currentSelectedChain?.chain, L2_CHAIN_INFO.chain);
+  }, [currentSelectedChain?.chain]);
 
   const fetchTokens = async (page = 1, isFetchMore = false) => {
     try {
@@ -485,8 +490,10 @@ export const MakeFormSwap = forwardRef((props, ref) => {
                 onClick={(e) => {
                   e.stopPropagation();
                   e.preventDefault();
+                  const routePath = isL2 ? ROUTE_PATH.TOKEN_V2 : ROUTE_PATH.TOKEN;
+
                   router.push(
-                    `${ROUTE_PATH.SWAP}?from_token=${WBTC_ADDRESS}&to_token=${row?.address}`,
+                    `${routePath}?from_token=${WBTC_ADDRESS}&to_token=${row?.address}`,
                   );
                 }}
                 title="Swap now"
@@ -512,7 +519,8 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   }, [sort.sort, mobileScreen]);
 
   const handleItemClick = (token: any) => {
-    router.push(`${ROUTE_PATH.TOKEN}?address=${token?.address}`);
+    const routePath = isL2 ? ROUTE_PATH.TOKEN_V2 : ROUTE_PATH.TOKEN;
+    router.push(`${routePath}?address=${token?.address}`);
   };
 
   return (
