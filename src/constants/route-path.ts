@@ -12,10 +12,9 @@ export const ROUTE_PATH = {
   ADD_POOL: '/add-pool',
   SWAP: '/swap/tc',
   SWAP_V2: '/swap/nos',
-  MARKETS: '/markets/tc',
+  MARKETS: '/markets',
   GET_STARTED: '/get-started',
-  TOKEN: '/token/tc',
-  TOKEN_V2: '/token/nos',
+  TOKEN: '/token',
   UPDATE_TOKEN_INFO: '/update-token-info',
   IDO: '/ido',
   IDO_MANAGE: '/ido/manage',
@@ -33,5 +32,4 @@ export const ROUTE_PATH = {
   POOLS_V2_INCREASE: '/pools/nos/increase',
   ORIGINAL_POOL: '/pools',
   ORIGINAL_SWAP: '/swap',
-  ORIGINAL_TOKEN: '/token',
 };

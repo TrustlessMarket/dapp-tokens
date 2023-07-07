@@ -497,10 +497,9 @@ export const MakeFormSwap = forwardRef((props, ref) => {
                 onClick={(e) => {
                   e.stopPropagation();
                   e.preventDefault();
-                  const routePath = isL2 ? ROUTE_PATH.TOKEN_V2 : ROUTE_PATH.TOKEN;
 
                   router.push(
-                    `${routePath}?from_token=${getWBTCAddress()}&to_token=${row?.address}`,
+                    `${ROUTE_PATH.TOKEN}?from_token=${getWBTCAddress()}&to_token=${row?.address}`,
                   );
                 }}
                 title="Swap now"
@@ -526,8 +525,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   }, [sort.sort, mobileScreen]);
 
   const handleItemClick = (token: any) => {
-    const routePath = isL2 ? ROUTE_PATH.TOKEN_V2 : ROUTE_PATH.TOKEN;
-    router.push(`${routePath}?address=${token?.address}`);
+    router.push(`${ROUTE_PATH.TOKEN}?address=${token?.address}`);
   };
 
   return (
