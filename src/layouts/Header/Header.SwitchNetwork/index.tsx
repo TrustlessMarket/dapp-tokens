@@ -16,6 +16,8 @@ import { BiCheck, BiChevronDown } from 'react-icons/bi';
 import { useSelector } from 'react-redux';
 import s from './styles.module.scss';
 import { CHAIN_INFO } from '@/constants/storage-key';
+import {L2_USDT_ADDRESS, L2_WBTC_ADDRESS} from "@/configs";
+import {GM_ADDRESS, WETH_ADDRESS} from "@/constants/common";
 
 export const ItemChain = ({
   _chain,
@@ -67,7 +69,7 @@ const HeaderSwitchNetwork = () => {
     if (compareString(currentSelectedChain?.chainId, SupportedChainId.L2)) {
       if (SUPPORT_PATH_V1.findIndex((v) => routerPath.includes(v)) > -1) {
         if (routerPath.includes(ROUTE_PATH.SWAP)) {
-          router.push(`${ROUTE_PATH.ORIGINAL_SWAP}/nos`);
+          router.push(`${ROUTE_PATH.ORIGINAL_SWAP}/nos?from_token=${L2_USDT_ADDRESS}&to_token=${L2_WBTC_ADDRESS}`);
         } else if (routerPath.includes(ROUTE_PATH.POOLS)) {
           router.push(`${ROUTE_PATH.ORIGINAL_POOL}/nos`);
         }
@@ -80,7 +82,7 @@ const HeaderSwitchNetwork = () => {
     ) {
       if (SUPPORT_PATH_V2.findIndex((v) => routerPath.includes(v)) > -1) {
         if (routerPath.includes(ROUTE_PATH.SWAP_V2)) {
-          router.push(`${ROUTE_PATH.ORIGINAL_SWAP}/tc`);
+          router.push(`${ROUTE_PATH.ORIGINAL_SWAP}/tc?from_token=${WETH_ADDRESS}&to_token=${GM_ADDRESS}`);
         } else if (routerPath.includes(ROUTE_PATH.POOLS_V2)) {
           router.push(`${ROUTE_PATH.ORIGINAL_POOL}/tc`);
         } else if (routerPath.includes(ROUTE_PATH.POOLS_V2_ADD)) {
