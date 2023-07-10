@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import ListTable, {ColumnProp} from '@/components/Swap/listTable';
-import {compareString, formatCurrency, formatLongAddress, getWETHAddress} from '@/utils';
+import { formatLongAddress} from '@/utils';
 import {Flex, Text} from '@chakra-ui/react';
 import {useEffect, useMemo, useState} from 'react';
 import {useWeb3React} from "@web3-react/core";
@@ -51,7 +51,7 @@ const DepositBtcHistory = (props: any) => {
 
   const getList = async () => {
     try {
-      let res = await fetch(
+      const res = await fetch(
           `https://blockstream.info${testnet}/api/address/${depositAddressInfo?.depositAddress}/txs`,
       ).then((res) => {
         return res.json();
