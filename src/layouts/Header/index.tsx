@@ -49,11 +49,11 @@ export const HEADER_MENUS = (isL2: boolean) => [
     route: isL2 ? ROUTE_PATH.POOLS_V2 : ROUTE_PATH.POOLS,
     name: 'Pools',
   },
-  {
-    key: ROUTE_PATH.LAUNCHPAD,
-    route: ROUTE_PATH.LAUNCHPAD,
-    name: 'Launchpad',
-  },
+  // {
+  //   key: ROUTE_PATH.LAUNCHPAD,
+  //   route: ROUTE_PATH.LAUNCHPAD,
+  //   name: 'Launchpad',
+  // },
   // {
   //   key: ROUTE_PATH.PROPOSAL,
   //   route: ROUTE_PATH.PROPOSAL,
@@ -73,7 +73,7 @@ const Header = () => {
     showBannerPromotion,
     bannerHeight,
   } = useScreenLayout();
-  const currentSelectedChain = useSelector(selectPnftExchange).currentChain;
+  const currentChain = useSelector(selectPnftExchange).currentChain;
 
   // const isTokensPage = useMemo(() => {
   //   return isScreenDarkMode();
@@ -94,11 +94,21 @@ const Header = () => {
   }, [isOpenMenu]);
 
   const isL2 = useMemo(() => {
-    return compareString(currentSelectedChain?.chain, L2_CHAIN_INFO.chain);
-  }, [currentSelectedChain?.chain]);
+    return compareString(currentChain?.chain, L2_CHAIN_INFO.chain);
+  }, [currentChain?.chain]);
 
   const headerMenu = useMemo(() => {
-    return HEADER_MENUS(isL2);
+    const menu = HEADER_MENUS(isL2);
+    if(!isL2) {
+      menu.push(
+        {
+          key: ROUTE_PATH.LAUNCHPAD,
+          route: ROUTE_PATH.LAUNCHPAD,
+          name: 'Launchpad',
+        }
+      );
+    }
+    return menu;
   }, [isL2]);
 
   return (
