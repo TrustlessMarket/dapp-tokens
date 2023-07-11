@@ -10,7 +10,7 @@ import HorizontalItem from '@/components/Swap/horizontalItem';
 import InfoTooltip from '@/components/Swap/infoTooltip';
 import TokenBalance from '@/components/Swap/tokenBalance';
 import WrapperConnected from '@/components/WrapperConnected';
-import {BRIDGE_SUPPORT_TOKEN, TRUSTLESS_BRIDGE, TRUSTLESS_GASSTATION,} from '@/constants/common';
+import {BRIDGE_SUPPORT_TOKEN, TRUSTLESS_BRIDGE, TRUSTLESS_GASSTATION} from '@/constants/common';
 import {toastError} from '@/constants/error';
 import {AssetsContext} from '@/contexts/assets-context';
 import useClaimLaunchPad from '@/hooks/contract-operations/launchpad/useClaim';
@@ -89,19 +89,7 @@ import {CHAIN_ID_TO_NETWORK, NETWORK_TO_CHAIN_ID} from '@/constants/chains';
 import {PREV_CHAIN_ID} from '@/constants/storage-key';
 import {IResourceChain} from "@/interfaces/chain";
 
-const CONTRIBUTION_METHODS = [
-  {
-    id: 'tc',
-    title: 'From Your TC wallet',
-    desc: '',
-    img: `${CDN_URL}/pages/trustlessmarket/launchpad/ic-tc.png`,
-  },
-  {
-    id: 'eth',
-    title: 'From Ethereum wallet',
-    desc: 'Transfer your funds from an Ethereum wallet or directly from an exchange.',
-    img: `${CDN_URL}/pages/trustlessmarket/launchpad/ic-eth.png`,
-  },
+let CONTRIBUTION_METHODS:any[] = [
 ];
 
 const ContributionMethods = (props: any) => {
@@ -111,55 +99,55 @@ const ContributionMethods = (props: any) => {
   const { account } = useWeb3React();
 
   return (
-    <Flex gap={3} flexDirection={['column', 'row']}>
-      {CONTRIBUTION_METHODS.map((method) => {
-        return (
-          <Flex
-            key={method.id}
-            flex={1}
-            gap={3}
-            onClick={() => {
-              onSelect && onSelect(method.id);
-            }}
-            cursor={'pointer'}
-            borderRadius={'8px'}
-            bgColor={'#000000'}
-            border={`1px solid ${selectId === method.id ? '#3385FF' : '#353945'}`}
-            alignItems={'center'}
-            paddingX={px2rem(20)}
-            paddingY={px2rem(16)}
-          >
-            <img width={40} height={40} alt={'network'} src={method.img} />
-            <Flex direction={'column'} flex={1} justifyContent={'flex-start'}>
-              <Text color={'#FFFFFF'} fontSize={px2rem(20)} fontWeight={500}>
-                {method.title}
-              </Text>
-              <Text
-                color={'#FFFFFF'}
-                fontSize={px2rem(14)}
-                fontWeight={400}
-                opacity={0.7}
-                mt={1}
+      <Flex gap={3} flexDirection={['column', 'row']}>
+        {CONTRIBUTION_METHODS.map((method) => {
+          return (
+              <Flex
+                  key={method.id}
+                  flex={1}
+                  gap={3}
+                  onClick={() => {
+                    onSelect && onSelect(method.id);
+                  }}
+                  cursor={'pointer'}
+                  borderRadius={'8px'}
+                  bgColor={'#000000'}
+                  border={`1px solid ${selectId === method.id ? '#3385FF' : '#353945'}`}
+                  alignItems={'center'}
+                  paddingX={px2rem(20)}
+                  paddingY={px2rem(16)}
               >
-                {method.desc
-                  ? method.desc
-                  : account
-                  ? formatLongAddress(account)
-                  : ''}
-              </Text>
-            </Flex>
-            <img
-              width={20}
-              height={20}
-              alt={'select'}
-              src={`${CDN_URL}/pages/trustlessmarket/launchpad/${
-                selectId === method.id ? 'ic-method-selected.png' : 'ic-method.png'
-              }`}
-            />
-          </Flex>
-        );
-      })}
-    </Flex>
+                <img width={40} height={40} alt={'network'} src={method.img} />
+                <Flex direction={'column'} flex={1} justifyContent={'flex-start'}>
+                  <Text color={'#FFFFFF'} fontSize={px2rem(20)} fontWeight={500}>
+                    {method.title}
+                  </Text>
+                  <Text
+                      color={'#FFFFFF'}
+                      fontSize={px2rem(14)}
+                      fontWeight={400}
+                      opacity={0.7}
+                      mt={1}
+                  >
+                    {method.desc
+                        ? method.desc
+                        : account
+                            ? formatLongAddress(account)
+                            : ''}
+                  </Text>
+                </Flex>
+                <img
+                    width={20}
+                    height={20}
+                    alt={'select'}
+                    src={`${CDN_URL}/pages/trustlessmarket/launchpad/${
+                        selectId === method.id ? 'ic-method-selected.png' : 'ic-method.png'
+                    }`}
+                />
+              </Flex>
+          );
+        })}
+      </Flex>
   );
 };
 
@@ -178,9 +166,43 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   } = props;
   const [loading, setLoading] = useState(false);
   const [liquidityToken, setLiquidityToken] = useState<any>();
+  if(compareString(liquidityToken?.address,getWETHAddress()))
+  {
+    CONTRIBUTION_METHODS = [
+      {
+        id: 'tc',
+        title: 'From Your TC wallet',
+        desc: '',
+        img: `${CDN_URL}/pages/trustlessmarket/launchpad/ic-tc.png`,
+      },
+      {
+        id: 'eth',
+        title: 'From Ethereum wallet',
+        desc: 'Transfer your funds from an Ethereum wallet or directly from an exchange.',
+        img: `${CDN_URL}/pages/trustlessmarket/launchpad/ic-eth.png`,
+      },
+    ];
+
+  } else{
+    CONTRIBUTION_METHODS = [
+      {
+        id: 'tc',
+        title: 'From Your TC wallet',
+        desc: '',
+        img: `${CDN_URL}/pages/trustlessmarket/launchpad/ic-tc.png`,
+      },
+      {
+        id: 'bitcoin',
+        title: 'From Bitcoin wallet',
+        desc: 'Transfer your funds from an Bitcoin wallet or directly from an exchange.',
+        img: `https://s2.coinmarketcap.com/static/img/coins/64x64/1.png`,
+      },
+    ];
+
+  }
   const [launchpadToken, setLaunchpadToken] = useState<any>();
   const [amountLiquidityTokenApproved, setAmountLiquidityTokenApproved] =
-    useState('0');
+      useState('0');
   const { call: isApproved } = useIsApproveERC20Token();
   const { call: tokenBalance } = useBalanceERC20Token();
   const { call: approveToken } = useApproveERC20Token();
@@ -203,12 +225,12 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     let result = false;
     try {
       result =
-        isAuthenticated &&
-        values?.liquidityAmount &&
-        !isNaN(Number(values?.liquidityAmount)) &&
-        new BigNumber(amountLiquidityTokenApproved || 0).lt(
-          Web3.utils.toWei(`${values?.liquidityAmount || 0}`, 'ether'),
-        );
+          isAuthenticated &&
+          values?.liquidityAmount &&
+          !isNaN(Number(values?.liquidityAmount)) &&
+          new BigNumber(amountLiquidityTokenApproved || 0).lt(
+              Web3.utils.toWei(`${values?.liquidityAmount || 0}`, 'ether'),
+          );
     } catch (err: any) {
       logErrorToServer({
         type: 'error',
@@ -225,17 +247,17 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const percent = useMemo(() => {
     if (poolDetail?.id) {
       return new BigNumber(poolDetail?.totalValue)
-        .div(poolDetail?.goalBalance)
-        .multipliedBy(100)
-        .toNumber();
+          .div(poolDetail?.goalBalance)
+          .multipliedBy(100)
+          .toNumber();
     }
 
     return 0;
   }, [poolDetail?.id, needReload]);
 
   const onBaseAmountChange = useCallback(
-    debounce((p) => handleBaseAmountChange(p), 1000),
-    [],
+      debounce((p) => handleBaseAmountChange(p), 1000),
+      [],
   );
 
   useImperativeHandle(ref, () => {
@@ -264,10 +286,10 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   useEffect(() => {
     if (isSupportedChain(chainId)) {
       change(
-        'contributeMethod',
-        CHAIN_ID_TO_NETWORK[
+          'contributeMethod',
+          CHAIN_ID_TO_NETWORK[
           chainId || (localStorage.getItem(PREV_CHAIN_ID) as any)
-        ] || 'tc',
+              ] || 'tc',
       );
     }
   }, [chainId]);
@@ -330,24 +352,24 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const requestApproveToken = async (token: IToken) => {
     try {
       dispatch(
-        updateCurrentTransaction({
-          id: transactionType.createPoolApprove,
-          status: TransactionStatus.info,
-        }),
+          updateCurrentTransaction({
+            id: transactionType.createPoolApprove,
+            status: TransactionStatus.info,
+          }),
       );
       const response: any = await approveToken({
         erc20TokenAddress: token.address,
         address: poolDetail?.launchpad,
       });
       dispatch(
-        updateCurrentTransaction({
-          status: TransactionStatus.success,
-          id: transactionType.createPoolApprove,
-          hash: response.hash,
-          infoTexts: {
-            success: `${token.symbol} has been approved successfully. You can swap now!`,
-          },
-        }),
+          updateCurrentTransaction({
+            status: TransactionStatus.success,
+            id: transactionType.createPoolApprove,
+            hash: response.hash,
+            infoTexts: {
+              success: `${token.symbol} has been approved successfully. You can swap now!`,
+            },
+          }),
       );
     } catch (error) {
       throw error;
@@ -357,33 +379,33 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   };
 
   const validateBaseAmount = useCallback(
-    (_amount: any) => {
-      if (!_amount) {
+      (_amount: any) => {
+        if (!_amount) {
+          return undefined;
+        }
+        if (new BigNumber(_amount).lte(0)) {
+          return `Required`;
+        }
+        if (new BigNumber(_amount).gt(liquidityBalance)) {
+          return `Insufficient balance.`;
+        }
+
+        if (
+            Number(poolDetail?.thresholdBalance || 0) > 0 &&
+            new BigNumber(_amount)
+                .plus(poolDetail?.totalValue)
+                .gt(poolDetail?.thresholdBalance)
+        ) {
+          return `Total amount deposit greater than ${
+              poolDetail?.thresholdBalance
+          }. Max allow deposit is ${new BigNumber(poolDetail?.thresholdBalance)
+              .minus(poolDetail?.totalValue)
+              .toNumber()}`;
+        }
+
         return undefined;
-      }
-      if (new BigNumber(_amount).lte(0)) {
-        return `Required`;
-      }
-      if (new BigNumber(_amount).gt(liquidityBalance)) {
-        return `Insufficient balance.`;
-      }
-
-      if (
-        Number(poolDetail?.thresholdBalance || 0) > 0 &&
-        new BigNumber(_amount)
-          .plus(poolDetail?.totalValue)
-          .gt(poolDetail?.thresholdBalance)
-      ) {
-        return `Total amount deposit greater than ${
-          poolDetail?.thresholdBalance
-        }. Max allow deposit is ${new BigNumber(poolDetail?.thresholdBalance)
-          .minus(poolDetail?.totalValue)
-          .toNumber()}`;
-      }
-
-      return undefined;
-    },
-    [values.liquidityAmount],
+      },
+      [values.liquidityAmount],
   );
 
   const onChangeValueBaseAmount = (amount: any) => {
@@ -394,9 +416,9 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   };
 
   const handleBaseAmountChange = ({
-    amount,
-    poolDetail,
-  }: {
+                                    amount,
+                                    poolDetail,
+                                  }: {
     amount: any;
     poolDetail: any;
   }) => {
@@ -404,8 +426,8 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       if (!amount || isNaN(Number(amount))) return;
 
       const launchpadAmount = new BigNumber(amount)
-        .div(new BigNumber(poolDetail?.totalValue || 0).plus(amount))
-        .multipliedBy(poolDetail?.launchpadBalance || 0);
+          .div(new BigNumber(poolDetail?.totalValue || 0).plus(amount))
+          .multipliedBy(poolDetail?.launchpadBalance || 0);
       change('launchpadAmount', launchpadAmount.toFixed());
     } catch (err: any) {
       logErrorToServer({
@@ -427,20 +449,20 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     const id = 'modal';
     const onClose = () => dispatch(closeModal({ id }));
     dispatch(
-      openModal({
-        id,
-        theme: 'dark',
-        title: `APPROVE USE OF ${liquidityToken?.symbol}`,
-        className: styles.modalContent,
-        modalProps: {
-          centered: true,
-          // size: mobileScreen ? 'full' : 'xl',
-          zIndex: 9999999,
-        },
-        render: () => (
-          <ModalConfirmApprove onApprove={onApprove} onClose={onClose} />
-        ),
-      }),
+        openModal({
+          id,
+          theme: 'dark',
+          title: `APPROVE USE OF ${liquidityToken?.symbol}`,
+          className: styles.modalContent,
+          modalProps: {
+            centered: true,
+            // size: mobileScreen ? 'full' : 'xl',
+            zIndex: 9999999,
+          },
+          render: () => (
+              <ModalConfirmApprove onApprove={onApprove} onClose={onClose} />
+          ),
+        }),
     );
   };
 
@@ -474,417 +496,344 @@ export const MakeFormSwap = forwardRef((props, ref) => {
 
   const renderActionButtons = () => {
     return (
-      <>
-        {(isFunding ||
-          isEndLaunchpad ||
-          isClaimLaunchpad ||
-          isCancelLaunchpad ||
-          isVoteRelease ||
-          isVoting) && (
-          <>
-            {isAuthenticated &&
-              !trustChain &&
-              values?.contributeMethod !== 'eth' && (
-                <Flex
-                  bg={'#FFFFFF'}
-                  borderRadius={'8px'}
-                  gap={2}
-                  alignItems={'center'}
-                  justifyContent={'center'}
-                  p={2}
-                  width={['100%', '80%']}
-                  marginX={'auto'}
+        <>
+          {(isFunding ||
+              isEndLaunchpad ||
+              isClaimLaunchpad ||
+              isCancelLaunchpad ||
+              isVoteRelease ||
+              isVoting) && (
+              <>
+                {isAuthenticated &&
+                    !trustChain &&
+                    values?.contributeMethod !== 'eth' && (
+                        <Flex
+                            bg={'#FFFFFF'}
+                            borderRadius={'8px'}
+                            gap={2}
+                            alignItems={'center'}
+                            justifyContent={'center'}
+                            p={2}
+                            width={['100%', '80%']}
+                            marginX={'auto'}
+                        >
+                          <IoWarningOutline color="#FF7E21" fontSize={'20px'} />
+                          <Text color={'#000000'}>
+                            You must switch to{' '}
+                            <Text as={'span'} color="#FF7E21" fontWeight={700}>
+                              Trustless Computer Network
+                            </Text>{' '}
+                            to do action.
+                          </Text>
+                        </Flex>
+                    )}
+                <WrapperConnected
+                    type={isRequireApprove ? 'button' : 'submit'}
+                    className={styles.submitButton}
+                    forceSwitchChain={values?.contributeMethod !== 'eth'}
+                    // forceSwitchChain={
+                    //   chainId &&
+                    //   values?.contributeMethod !== 'eth' &&
+                    //   !compareString(
+                    //     NETWORK_TO_CHAIN_ID?.[values?.contributeMethod],
+                    //     chainId,
+                    //   )
+                    // }
                 >
-                  <IoWarningOutline color="#FF7E21" fontSize={'20px'} />
-                  <Text color={'#000000'}>
-                    You must switch to{' '}
-                    <Text as={'span'} color="#FF7E21" fontWeight={700}>
-                      Trustless Computer Network
-                    </Text>{' '}
-                    to do action.
-                  </Text>
-                </Flex>
-              )}
-            <WrapperConnected
-              type={isRequireApprove ? 'button' : 'submit'}
-              className={styles.submitButton}
-              forceSwitchChain={values?.contributeMethod !== 'eth'}
-              // forceSwitchChain={
-              //   chainId &&
-              //   values?.contributeMethod !== 'eth' &&
-              //   !compareString(
-              //     NETWORK_TO_CHAIN_ID?.[values?.contributeMethod],
-              //     chainId,
-              //   )
-              // }
-            >
-              {isRequireApprove ? (
-                <FiledButton
-                  isLoading={loading}
-                  isDisabled={loading}
-                  loadingText="Processing"
-                  btnSize={'h'}
-                  containerConfig={{ flex: 1, mt: 6 }}
-                  onClick={onShowModalApprove}
-                  processInfo={{
-                    id: transactionType.createPoolApprove,
-                  }}
-                >
-                  APPROVE USE OF {liquidityToken?.symbol}
-                </FiledButton>
-              ) : (
-                <FiledButton
-                  isDisabled={submitting || btnDisabled}
-                  isLoading={submitting}
-                  type="submit"
-                  btnSize={'h'}
-                  containerConfig={{ flex: 1, mt: 6 }}
-                  loadingText={submitting ? 'Processing' : ' '}
-                  processInfo={{
-                    id: transactionType.depositLaunchpad,
-                  }}
-                  style={{
-                    backgroundColor: isEndLaunchpad
-                      ? colors.redPrimary
-                      : isClaimLaunchpad
-                      ? colors.greenPrimary
-                      : isClaimLaunchpad
-                      ? colors.greenPrimary
-                      : isCancelLaunchpad
-                      ? colors.redPrimary
-                      : isVoteRelease
-                      ? colors.bluePrimary
-                      : isVoting
-                      ? colors.bluePrimary
-                      : colors.bluePrimary,
-                  }}
-                >
-                  {isEndLaunchpad
-                    ? 'END THIS PROJECT'
-                    : isClaimLaunchpad
-                    ? 'CLAIM THIS PROJECT'
-                    : isCancelLaunchpad
-                    ? 'CANCEL THIS PROJECT'
-                    : isVoteRelease
-                    ? 'RELEASE VOTE'
-                    : isVoting
-                    ? 'SUPPORT THIS PROJECT'
-                    : 'CONTRIBUTE TO THIS PROJECT'}
-                </FiledButton>
-              )}
-            </WrapperConnected>
-          </>
-        )}
-        {!isActive && isVoting && (
-          <Text
-            fontSize={px2rem(14)}
-            fontWeight={'400'}
-            color={'rgba(255, 255, 255, 0.7)'}
-            textAlign={'center'}
-            mt={2}
-          >
-            Connect a wallet to vote.
-          </Text>
-        )}
-      </>
+                  {isRequireApprove ? (
+                      <FiledButton
+                          isLoading={loading}
+                          isDisabled={loading}
+                          loadingText="Processing"
+                          btnSize={'h'}
+                          containerConfig={{ flex: 1, mt: 6 }}
+                          onClick={onShowModalApprove}
+                          processInfo={{
+                            id: transactionType.createPoolApprove,
+                          }}
+                      >
+                        APPROVE USE OF {liquidityToken?.symbol}
+                      </FiledButton>
+                  ) : (
+                      <FiledButton
+                          isDisabled={submitting || btnDisabled}
+                          isLoading={submitting}
+                          type="submit"
+                          btnSize={'h'}
+                          containerConfig={{ flex: 1, mt: 6 }}
+                          loadingText={submitting ? 'Processing' : ' '}
+                          processInfo={{
+                            id: transactionType.depositLaunchpad,
+                          }}
+                          style={{
+                            backgroundColor: isEndLaunchpad
+                                ? colors.redPrimary
+                                : isClaimLaunchpad
+                                    ? colors.greenPrimary
+                                    : isClaimLaunchpad
+                                        ? colors.greenPrimary
+                                        : isCancelLaunchpad
+                                            ? colors.redPrimary
+                                            : isVoteRelease
+                                                ? colors.bluePrimary
+                                                : isVoting
+                                                    ? colors.bluePrimary
+                                                    : colors.bluePrimary,
+                          }}
+                      >
+                        {isEndLaunchpad
+                            ? 'END THIS PROJECT'
+                            : isClaimLaunchpad
+                                ? 'CLAIM THIS PROJECT'
+                                : isCancelLaunchpad
+                                    ? 'CANCEL THIS PROJECT'
+                                    : isVoteRelease
+                                        ? 'RELEASE VOTE'
+                                        : isVoting
+                                            ? 'SUPPORT THIS PROJECT'
+                                            : 'CONTRIBUTE TO THIS PROJECT'}
+                      </FiledButton>
+                  )}
+                </WrapperConnected>
+              </>
+          )}
+          {!isActive && isVoting && (
+              <Text
+                  fontSize={px2rem(14)}
+                  fontWeight={'400'}
+                  color={'rgba(255, 255, 255, 0.7)'}
+                  textAlign={'center'}
+                  mt={2}
+              >
+                Connect a wallet to vote.
+              </Text>
+          )}
+        </>
     );
   };
 
   if (
-    [LAUNCHPAD_STATUS.Voting, LAUNCHPAD_STATUS.NotPassed].includes(poolDetail?.state)
+      [LAUNCHPAD_STATUS.Voting, LAUNCHPAD_STATUS.NotPassed].includes(poolDetail?.state)
   ) {
     return [LAUNCHPAD_STATUS.Voting].includes(poolDetail?.state) ||
-      isEndLaunchpad ||
-      isVoteRelease ? (
-      <form onSubmit={onSubmit} style={{ height: '100%' }}>
-        <Box mb={12}>{renderActionButtons()}</Box>
-      </form>
+    isEndLaunchpad ||
+    isVoteRelease ? (
+        <form onSubmit={onSubmit} style={{ height: '100%' }}>
+          <Box mb={12}>{renderActionButtons()}</Box>
+        </form>
     ) : (
-      <></>
+        <></>
     );
   }
 
   return (
-    <form onSubmit={onSubmit} style={{ height: '100%' }}>
-      <Flex
-        justifyContent={['flex-start', 'space-between']}
-        flexDirection={['column', 'row']}
-        gap={[4, 0]}
-      >
-        <Stat className={styles.infoColumn}>
-          <StatLabel>Funded</StatLabel>
-          <StatNumber>
-            <InfoTooltip
-              label={`$${formatCurrency(poolDetail?.totalValueUsd || 0, 2)}`}
-            >
-              <Flex gap={1} alignItems={'center'}>
+      <form onSubmit={onSubmit} style={{ height: '100%' }}>
+        <Flex
+            justifyContent={['flex-start', 'space-between']}
+            flexDirection={['column', 'row']}
+            gap={[4, 0]}
+        >
+          <Stat className={styles.infoColumn}>
+            <StatLabel>Funded</StatLabel>
+            <StatNumber>
+              <InfoTooltip
+                  label={`$${formatCurrency(poolDetail?.totalValueUsd || 0, 2)}`}
+              >
                 <Flex gap={1} alignItems={'center'}>
-                  {formatCurrency(poolDetail?.totalValue || 0)}{' '}
-                  <img
-                    src={getTokenIconUrl(liquidityToken)}
-                    alt={liquidityToken?.thumbnail || 'default-icon'}
-                    className={'liquidity-token-avatar'}
-                  />
-                </Flex>
-                <Text fontSize={'20px'} fontWeight={'400'}>
-                  ({formatCurrency(percent, 2)}% funded)
-                </Text>
-              </Flex>
-            </InfoTooltip>
-          </StatNumber>
-        </Stat>
-        <Stat className={styles.infoColumn} textAlign={'left'}>
-          <StatLabel>
-            <Flex gap={1} justifyContent={['flex-start', 'flex-end']}>
-              <InfoTooltip
-                showIcon={true}
-                label={`The minimum amount ${
-                  isLaunchpadCreator ? 'you' : 'that the project'
-                } would like to raise. If the crowdfunding does not reach the Funding Goal, the funded amount will be returned to the contributors`}
-              >
-                {`Funding goal`}
-              </InfoTooltip>
-              /
-              <InfoTooltip
-                showIcon={true}
-                label={`The maximum amount ${
-                  isLaunchpadCreator ? 'you' : 'that the project'
-                } would like to raise. The crowdfunding will stop upon reaching its hard cap`}
-              >
-                Hard Cap
-              </InfoTooltip>
-            </Flex>
-          </StatLabel>
-          <StatNumber>
-            <Flex gap={1} justifyContent={['flex-start', 'flex-end']}>
-              <Flex gap={1} alignItems={'center'}>
-                {formatCurrency(poolDetail?.goalBalance || 0)}
-                <img
-                  src={getTokenIconUrl(liquidityToken)}
-                  alt={liquidityToken?.thumbnail || 'default-icon'}
-                  className={'liquidity-token-avatar'}
-                />
-              </Flex>
-              /
-              <Flex gap={1} alignItems={'center'}>
-                {Number(poolDetail?.thresholdBalance || 0) > 0 ? (
-                  <>
-                    {formatCurrency(poolDetail?.thresholdBalance || 0)}{' '}
+                  <Flex gap={1} alignItems={'center'}>
+                    {formatCurrency(poolDetail?.totalValue || 0)}{' '}
                     <img
+                        src={getTokenIconUrl(liquidityToken)}
+                        alt={liquidityToken?.thumbnail || 'default-icon'}
+                        className={'liquidity-token-avatar'}
+                    />
+                  </Flex>
+                  <Text fontSize={'20px'} fontWeight={'400'}>
+                    ({formatCurrency(percent, 2)}% funded)
+                  </Text>
+                </Flex>
+              </InfoTooltip>
+            </StatNumber>
+          </Stat>
+          <Stat className={styles.infoColumn} textAlign={'left'}>
+            <StatLabel>
+              <Flex gap={1} justifyContent={['flex-start', 'flex-end']}>
+                <InfoTooltip
+                    showIcon={true}
+                    label={`The minimum amount ${
+                        isLaunchpadCreator ? 'you' : 'that the project'
+                    } would like to raise. If the crowdfunding does not reach the Funding Goal, the funded amount will be returned to the contributors`}
+                >
+                  {`Funding goal`}
+                </InfoTooltip>
+                /
+                <InfoTooltip
+                    showIcon={true}
+                    label={`The maximum amount ${
+                        isLaunchpadCreator ? 'you' : 'that the project'
+                    } would like to raise. The crowdfunding will stop upon reaching its hard cap`}
+                >
+                  Hard Cap
+                </InfoTooltip>
+              </Flex>
+            </StatLabel>
+            <StatNumber>
+              <Flex gap={1} justifyContent={['flex-start', 'flex-end']}>
+                <Flex gap={1} alignItems={'center'}>
+                  {formatCurrency(poolDetail?.goalBalance || 0)}
+                  <img
                       src={getTokenIconUrl(liquidityToken)}
                       alt={liquidityToken?.thumbnail || 'default-icon'}
                       className={'liquidity-token-avatar'}
-                    />
-                  </>
-                ) : (
-                  'N/A'
-                )}
-              </Flex>
-            </Flex>
-          </StatNumber>
-        </Stat>
-      </Flex>
-      <Box className={styles.progressBar} mt={4}>
-        <Progress
-          w={['100%', '100%']}
-          h="10px"
-          value={percent}
-          borderRadius={20}
-        ></Progress>
-        {/*<Image src={fireImg} className={styles.fireImg} />*/}
-      </Box>
-      <Flex gap={6} color={'#FFFFFF'} mt={4} justifyContent={'space-between'}>
-        <Stat className={styles.infoColumn} flex={1}>
-          <StatLabel>
-            <InfoTooltip
-              showIcon={true}
-              label="The total number of tokens that the contributors will receive after the crowdfunding ends."
-            >
-              {`Reward pool`}
-            </InfoTooltip>
-          </StatLabel>
-          <StatNumber>
-            <Tooltip label={formatCurrency(poolDetail?.launchpadBalance || 0)}>
-              {abbreviateNumber(poolDetail?.launchpadBalance || 0)}
-            </Tooltip>
-          </StatNumber>
-        </Stat>
-        <Stat className={styles.infoColumn} flex={1} textAlign={'right'}>
-          <StatLabel>Contributors</StatLabel>
-          <StatNumber>{formatCurrency(poolDetail?.contributors || 0, 0)}</StatNumber>
-        </Stat>
-      </Flex>
-      {isFunding && (
-        <>
-          {compareString(liquidityToken?.address, wethAddress) ? (
-            <Flex mt={4}>
-              <Stat className={styles.infoColumn} flex={1}>
-                <StatLabel>Contribution method</StatLabel>
-                <StatNumber mt={2}>
-                  <ContributionMethods onSelect={onSelectContributeMethod} />
-                </StatNumber>
-              </Stat>
-            </Flex>
-          ) : (
-            <InputWrapper
-              className={cx(styles.inputAmountWrap, styles.inputBaseAmountWrap)}
-              theme="light"
-              label={
-                <Text fontSize={px2rem(14)} color={'#FFFFFF'}>
-                  Amount
-                </Text>
-              }
-            >
-              <Flex gap={4} direction={'column'}>
-                <Field
-                  name="liquidityAmount"
-                  children={FieldAmount}
-                  validate={composeValidators(required, validateBaseAmount)}
-                  fieldChanged={onChangeValueBaseAmount}
-                  disabled={submitting}
-                  // placeholder={"Enter number of tokens"}
-                  decimals={liquidityToken?.decimal || 18}
-                  className={styles.inputAmount}
-                  prependComp={
-                    liquidityToken && (
-                      <Flex
-                        gap={1}
-                        alignItems={'center'}
-                        color={'#FFFFFF'}
-                        paddingX={2}
-                      >
+                  />
+                </Flex>
+                /
+                <Flex gap={1} alignItems={'center'}>
+                  {Number(poolDetail?.thresholdBalance || 0) > 0 ? (
+                      <>
+                        {formatCurrency(poolDetail?.thresholdBalance || 0)}{' '}
                         <img
-                          src={tokenIcons[liquidityToken?.symbol?.toLowerCase()]}
-                          alt={liquidityToken?.thumbnail || 'default-icon'}
-                          className={'avatar'}
+                            src={getTokenIconUrl(liquidityToken)}
+                            alt={liquidityToken?.thumbnail || 'default-icon'}
+                            className={'liquidity-token-avatar'}
                         />
-                        <Text fontSize={'sm'}>{liquidityToken?.symbol}</Text>
-                      </Flex>
-                    )
-                  }
-                  appendComp={
-                    liquidityToken && (
-                      <Flex gap={2} fontSize={px2rem(14)} color={'#FFFFFF'}>
-                        <Flex
-                          gap={1}
-                          alignItems={'center'}
-                          color={'#B6B6B6'}
-                          fontSize={px2rem(16)}
-                          fontWeight={'400'}
-                        >
-                          Balance:
-                          <TokenBalance
-                            token={liquidityToken}
-                            onBalanceChange={(_amount) =>
-                              setLiquidityBalance(_amount)
-                            }
-                          />
-                          {liquidityToken?.symbol}
-                        </Flex>
-                        <Text
-                          cursor={'pointer'}
-                          color={'#3385FF'}
-                          onClick={handleChangeMaxBaseAmount}
-                          bgColor={'#2E2E2E'}
-                          borderRadius={'4px'}
-                          padding={'1px 12px'}
-                          fontSize={px2rem(16)}
-                          fontWeight={'600'}
-                        >
-                          Max
-                        </Text>
-                      </Flex>
-                    )
-                  }
-                  borderColor={'#353945'}
-                />
+                      </>
+                  ) : (
+                      'N/A'
+                  )}
+                </Flex>
               </Flex>
-            </InputWrapper>
-          )}
-        </>
-      )}
-      {values?.liquidityAmount && (
-        <Box mt={1}>
-          <HorizontalItem
-            label={
-              <Text fontSize={'sm'} color={'#B1B5C3'}>
-                Estimate receive amount
-              </Text>
-            }
-            value={
-              <Text fontSize={'sm'} color={'#FFFFFF'}>
-                {formatCurrency(values?.launchpadAmount, 6)}{' '}
-                {poolDetail?.launchpadToken?.symbol}
-              </Text>
-            }
-          />
+            </StatNumber>
+          </Stat>
+        </Flex>
+        <Box className={styles.progressBar} mt={4}>
+          <Progress
+              w={['100%', '100%']}
+              h="10px"
+              value={percent}
+              borderRadius={20}
+          ></Progress>
+          {/*<Image src={fireImg} className={styles.fireImg} />*/}
         </Box>
-      )}
-      {trustChain &&
-        isAuthenticated &&
-        isFunding &&
-        isLoadedAssets &&
-        values?.contributeMethod !== 'eth' &&
-        new BigNumber(juiceBalance || 0).lte(0) && (
-          <Flex gap={3} mt={4}>
-            <Center
-              w={'24px'}
-              h={'24px'}
-              borderRadius={'50%'}
-              bg={'rgba(255, 126, 33, 0.2)'}
-              as={'span'}
-            >
-              <BiBell color="#FF7E21" />
-            </Center>
-            <Text fontSize="sm" color="#FF7E21" textAlign={'left'}>
-              Your TC balance is insufficient. Buy more TC{' '}
-              <Link
-                href={TRUSTLESS_GASSTATION}
-                target={'_blank'}
-                style={{ textDecoration: 'underline' }}
+        <Flex gap={6} color={'#FFFFFF'} mt={4} justifyContent={'space-between'}>
+          <Stat className={styles.infoColumn} flex={1}>
+            <StatLabel>
+              <InfoTooltip
+                  showIcon={true}
+                  label="The total number of tokens that the contributors will receive after the crowdfunding ends."
               >
-                here
-              </Link>
-              .
-            </Text>
-          </Flex>
+                {`Reward pool`}
+              </InfoTooltip>
+            </StatLabel>
+            <StatNumber>
+              <Tooltip label={formatCurrency(poolDetail?.launchpadBalance || 0)}>
+                {abbreviateNumber(poolDetail?.launchpadBalance || 0)}
+              </Tooltip>
+            </StatNumber>
+          </Stat>
+          <Stat className={styles.infoColumn} flex={1} textAlign={'right'}>
+            <StatLabel>Contributors</StatLabel>
+            <StatNumber>{formatCurrency(poolDetail?.contributors || 0, 0)}</StatNumber>
+          </Stat>
+        </Flex>
+        {isFunding && (
+            <>
+
+              <Flex mt={4}>
+                <Stat className={styles.infoColumn} flex={1}>
+                  <StatLabel>Contribution method</StatLabel>
+                  <StatNumber mt={2}>
+                    <ContributionMethods onSelect={onSelectContributeMethod} />
+                  </StatNumber>
+                </Stat>
+              </Flex>
+
+
+
+            </>
         )}
-      {trustChain &&
-        isAuthenticated &&
-        isFunding &&
-        liquidityToken &&
-        values?.contributeMethod !== 'eth' &&
-        BRIDGE_SUPPORT_TOKEN.includes(liquidityToken?.symbol) &&
-        new BigNumber(liquidityBalance || 0).lte(0) && (
-          <Flex gap={3} mt={4}>
-            <Center
-              w={'24px'}
-              h={'24px'}
-              borderRadius={'50%'}
-              bg={'rgba(255, 126, 33, 0.2)'}
-              as={'span'}
-            >
-              <BiBell color="#FF7E21" />
-            </Center>
-            <Text fontSize="sm" color="#FF7E21" textAlign={'left'}>
-              You have an insufficient {liquidityToken?.symbol} balance. Consider
-              swapping your {liquidityToken?.symbol?.replace('W', '')} to Trustless
-              Network{' '}
-              <Link
-                href={`${TRUSTLESS_BRIDGE}${liquidityToken?.symbol
-                  ?.replace('W', '')
-                  ?.toLowerCase()}`}
-                target={'_blank'}
-                style={{ textDecoration: 'underline' }}
-              >
-                here
-              </Link>
-              .
-            </Text>
-          </Flex>
+        {values?.liquidityAmount && (
+            <Box mt={1}>
+              <HorizontalItem
+                  label={
+                    <Text fontSize={'sm'} color={'#B1B5C3'}>
+                      Estimate receive amount
+                    </Text>
+                  }
+                  value={
+                    <Text fontSize={'sm'} color={'#FFFFFF'}>
+                      {formatCurrency(values?.launchpadAmount, 6)}{' '}
+                      {poolDetail?.launchpadToken?.symbol}
+                    </Text>
+                  }
+              />
+            </Box>
         )}
-      <Box mt={6}>{renderActionButtons()}</Box>
-    </form>
+        {trustChain &&
+            isAuthenticated &&
+            isFunding &&
+            isLoadedAssets &&
+            values?.contributeMethod !== 'eth' &&
+            new BigNumber(juiceBalance || 0).lte(0) && (
+                <Flex gap={3} mt={4}>
+                  <Center
+                      w={'24px'}
+                      h={'24px'}
+                      borderRadius={'50%'}
+                      bg={'rgba(255, 126, 33, 0.2)'}
+                      as={'span'}
+                  >
+                    <BiBell color="#FF7E21" />
+                  </Center>
+                  <Text fontSize="sm" color="#FF7E21" textAlign={'left'}>
+                    Your TC balance is insufficient. Buy more TC{' '}
+                    <Link
+                        href={TRUSTLESS_GASSTATION}
+                        target={'_blank'}
+                        style={{ textDecoration: 'underline' }}
+                    >
+                      here
+                    </Link>
+                    .
+                  </Text>
+                </Flex>
+            )}
+        {trustChain &&
+            isAuthenticated &&
+            isFunding &&
+            liquidityToken &&
+            values?.contributeMethod !== 'eth' &&
+            BRIDGE_SUPPORT_TOKEN.includes(liquidityToken?.symbol) &&
+            new BigNumber(liquidityBalance || 0).lte(0) && (
+                <Flex gap={3} mt={4}>
+                  <Center
+                      w={'24px'}
+                      h={'24px'}
+                      borderRadius={'50%'}
+                      bg={'rgba(255, 126, 33, 0.2)'}
+                      as={'span'}
+                  >
+                    <BiBell color="#FF7E21" />
+                  </Center>
+                  <Text fontSize="sm" color="#FF7E21" textAlign={'left'}>
+                    You have an insufficient {liquidityToken?.symbol} balance. Consider
+                    swapping your {liquidityToken?.symbol?.replace('W', '')} to Trustless
+                    Network{' '}
+                    <Link
+                        href={`${TRUSTLESS_BRIDGE}${liquidityToken?.symbol
+                            ?.replace('W', '')
+                            ?.toLowerCase()}`}
+                        target={'_blank'}
+                        style={{ textDecoration: 'underline' }}
+                    >
+                      here
+                    </Link>
+                    .
+                  </Text>
+                </Flex>
+            )}
+        <Box mt={6}>{renderActionButtons()}</Box>
+      </form>
   );
 });
 
@@ -999,34 +948,34 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
       ]);
 
       setCanEnd(
-        ableEnd &&
+          ableEnd &&
           (isLaunchpadCreator ||
-            voteResults?.voters?.some((voter: any) =>
-              compareString(voter?.voter, account),
-            ) ||
-            depositResults?.some((depositer: any) =>
-              compareString(depositer?.userAddress, account),
-            )),
+              voteResults?.voters?.some((voter: any) =>
+                  compareString(voter?.voter, account),
+              ) ||
+              depositResults?.some((depositer: any) =>
+                  compareString(depositer?.userAddress, account),
+              )),
       );
       setCanClose(ableClose);
       setCanClaim(ableRedeem);
       setCanVoteRelease(ableVoteRelease);
       setCanCancel(
-        ableCancel &&
+          ableCancel &&
           isLaunchpadCreator &&
           [LAUNCHPAD_STATUS.Pending].includes(poolDetail?.state),
       );
       setBoostInfo(userBoost);
 
-      if(compareString(poolDetail?.liquidityToken?.symbol, 'WETH')) {
-        const depositAddress = await getLaunchpadDepositAddress({
-          network: 'ethereum',
-          address: account,
-          launchpad_id: poolDetail?.id,
-        });
 
-        setDepositAddressInfo(depositAddress);
-      }
+      const depositAddress = await getLaunchpadDepositAddress({
+        network: compareString(poolDetail?.liquidityTokenAddress,getWETHAddress())?"ethereum":"bitcoin",
+        address: account,
+        launchpad_id: poolDetail?.id,
+      });
+
+      setDepositAddressInfo(depositAddress);
+
     } catch (error) {
       console.log('Launchpad detail form fetchData', error);
     }
@@ -1034,90 +983,90 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
 
   const getConfirmTitle = () => {
     return canEnd
-      ? isLaunchpadCreator
-        ? 'Close My Launchpad'
-        : 'Close Launchpad'
-      : canClaim
-      ? [LAUNCHPAD_STATUS.Failed].includes(poolDetail?.state)
-        ? 'Claim your Funds'
-        : 'Claim your Reward'
-      : canCancel
-      ? 'Delete my launchpad'
-      : canVoteRelease
-      ? 'Release vote token'
-      : 'Confirm deposit';
+        ? isLaunchpadCreator
+            ? 'Close My Launchpad'
+            : 'Close Launchpad'
+        : canClaim
+            ? [LAUNCHPAD_STATUS.Failed].includes(poolDetail?.state)
+                ? 'Claim your Funds'
+                : 'Claim your Reward'
+            : canCancel
+                ? 'Delete my launchpad'
+                : canVoteRelease
+                    ? 'Release vote token'
+                    : 'Confirm deposit';
   };
 
   const getConfirmContent = (values: any) => {
     const { liquidityAmount, launchpadAmount, onConfirm } = values;
     return (
-      <Flex direction={'column'} gap={2}>
-        {canEnd ? (
-          <Box>
-            {isLaunchpadCreator
-              ? 'If you wish to close your launchpad, click Confirm below and your tokens will be immediately returned to your account.'
-              : 'If you wish to close this launchpad, click Confirm below.'}
-          </Box>
-        ) : canClaim ? (
-          <Box>
-            {[LAUNCHPAD_STATUS.Failed].includes(poolDetail?.state)
-              ? 'The launchpad did not reach the funding goal. Click Claim your Funds to get your funds back.'
-              : 'Congratulations! The launchpad has achieved its funding goal. Please click on "Claim" to receive your reward.'}
-          </Box>
-        ) : canCancel ? (
-          <Text>
-            If you wish to delete your launchpad, click Confirm below and your tokens
-            will be immediately returned to your account.
-          </Text>
-        ) : canVoteRelease ? (
-          <Text>Release launchpad to get back voting token.</Text>
-        ) : (
-          <>
-            <HorizontalItem
-              label={
-                <Text fontSize={'sm'} color={'#B1B5C3'}>
-                  Deposit amount
-                </Text>
-              }
-              value={
-                <Text fontSize={'sm'}>
-                  {formatCurrency(liquidityAmount, 6)}{' '}
-                  {poolDetail?.liquidityToken?.symbol}
-                </Text>
-              }
-            />
-            <HorizontalItem
-              label={
-                <Text fontSize={'sm'} color={'#B1B5C3'}>
-                  Estimate receive amount
-                </Text>
-              }
-              value={
-                <Text fontSize={'sm'}>
-                  {formatCurrency(launchpadAmount, 6)}{' '}
-                  {poolDetail?.launchpadToken?.symbol}
-                </Text>
-              }
-            />
-          </>
-        )}
-        <FiledButton
-          loadingText="Processing"
-          btnSize={'h'}
-          onClick={onConfirm}
-          mt={4}
-        >
-          {canClaim ? (
-            <>
-              {[LAUNCHPAD_STATUS.Failed].includes(poolDetail?.state)
-                ? 'Claim your Funds'
-                : 'Claim'}
-            </>
+        <Flex direction={'column'} gap={2}>
+          {canEnd ? (
+              <Box>
+                {isLaunchpadCreator
+                    ? 'If you wish to close your launchpad, click Confirm below and your tokens will be immediately returned to your account.'
+                    : 'If you wish to close this launchpad, click Confirm below.'}
+              </Box>
+          ) : canClaim ? (
+              <Box>
+                {[LAUNCHPAD_STATUS.Failed].includes(poolDetail?.state)
+                    ? 'The launchpad did not reach the funding goal. Click Claim your Funds to get your funds back.'
+                    : 'Congratulations! The launchpad has achieved its funding goal. Please click on "Claim" to receive your reward.'}
+              </Box>
+          ) : canCancel ? (
+              <Text>
+                If you wish to delete your launchpad, click Confirm below and your tokens
+                will be immediately returned to your account.
+              </Text>
+          ) : canVoteRelease ? (
+              <Text>Release launchpad to get back voting token.</Text>
           ) : (
-            'Confirm'
+              <>
+                <HorizontalItem
+                    label={
+                      <Text fontSize={'sm'} color={'#B1B5C3'}>
+                        Deposit amount
+                      </Text>
+                    }
+                    value={
+                      <Text fontSize={'sm'}>
+                        {formatCurrency(liquidityAmount, 6)}{' '}
+                        {poolDetail?.liquidityToken?.symbol}
+                      </Text>
+                    }
+                />
+                <HorizontalItem
+                    label={
+                      <Text fontSize={'sm'} color={'#B1B5C3'}>
+                        Estimate receive amount
+                      </Text>
+                    }
+                    value={
+                      <Text fontSize={'sm'}>
+                        {formatCurrency(launchpadAmount, 6)}{' '}
+                        {poolDetail?.launchpadToken?.symbol}
+                      </Text>
+                    }
+                />
+              </>
           )}
-        </FiledButton>
-      </Flex>
+          <FiledButton
+              loadingText="Processing"
+              btnSize={'h'}
+              onClick={onConfirm}
+              mt={4}
+          >
+            {canClaim ? (
+                <>
+                  {[LAUNCHPAD_STATUS.Failed].includes(poolDetail?.state)
+                      ? 'Claim your Funds'
+                      : 'Claim'}
+                </>
+            ) : (
+                'Confirm'
+            )}
+          </FiledButton>
+        </Flex>
     );
   };
 
@@ -1125,26 +1074,26 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
     const id = 'modalVoteConfirm';
     const close = () => dispatch(closeModal({ id }));
     dispatch(
-      openModal({
-        id,
-        theme: 'dark',
-        title: 'Support this Project',
-        className: styles.modalContent,
-        modalProps: {
-          centered: true,
-          size: mobileScreen ? 'full' : 'xl',
-          zIndex: 9999999,
-        },
-        render: () => (
-          <Flex>
-            <VoteForm
-              poolDetail={poolDetail}
-              votingToken={votingToken}
-              onClose={close}
-            />
-          </Flex>
-        ),
-      }),
+        openModal({
+          id,
+          theme: 'dark',
+          title: 'Support this Project',
+          className: styles.modalContent,
+          modalProps: {
+            centered: true,
+            size: mobileScreen ? 'full' : 'xl',
+            zIndex: 9999999,
+          },
+          render: () => (
+              <Flex>
+                <VoteForm
+                    poolDetail={poolDetail}
+                    votingToken={votingToken}
+                    onClose={close}
+                />
+              </Flex>
+          ),
+        }),
     );
   };
 
@@ -1152,25 +1101,26 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
     const id = 'modalDepositEthFromEthWallet';
     const close = () => dispatch(closeModal({ id }));
     dispatch(
-      openModal({
-        id,
-        theme: 'dark',
-        title: 'Project Contribution',
-        className: cx(styles.modalContent, styles.hideCloseButton),
-        modalProps: {
-          centered: true,
-          size: mobileScreen ? 'full' : 'xl',
-          zIndex: 9999999,
-        },
-        render: () => {
-          return (
-            <DepositEth
-              onClose={close}
-              address={depositAddressInfo?.depositAddress}
-            />
-          );
-        },
-      }),
+        openModal({
+          id,
+          theme: 'dark',
+          title: 'Project Contribution',
+          className: cx(styles.modalContent, styles.hideCloseButton),
+          modalProps: {
+            centered: true,
+            size: mobileScreen ? 'full' : 'xl',
+            zIndex: 9999999,
+          },
+          render: () => {
+            return (
+                <DepositEth
+                    onClose={close}
+                    address={depositAddressInfo?.depositAddress}
+                    network={compareString(poolDetail?.liquidityTokenAddress,getWETHAddress())?"ethereum":"bitcoin"}
+                />
+            );
+          },
+        }),
     );
   };
 
@@ -1178,26 +1128,26 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
     const id = 'modalDepositEthFromTCWallet';
     const close = () => dispatch(closeModal({ id }));
     dispatch(
-      openModal({
-        id,
-        theme: 'dark',
-        title: 'Project Contribution',
-        className: cx(styles.modalContent, styles.modalDeposit),
-        modalProps: {
-          centered: true,
-          size: mobileScreen ? 'full' : 'xl',
-          zIndex: 9999999,
-        },
-        render: () => {
-          return (
-            <ContributeForm
-              poolDetail={poolDetail}
-              boostInfo={boostInfo}
-              onClose={close}
-            />
-          );
-        },
-      }),
+        openModal({
+          id,
+          theme: 'dark',
+          title: 'Project Contribution',
+          className: cx(styles.modalContent, styles.modalDeposit),
+          modalProps: {
+            centered: true,
+            size: mobileScreen ? 'full' : 'xl',
+            zIndex: 9999999,
+          },
+          render: () => {
+            return (
+                <ContributeForm
+                    poolDetail={poolDetail}
+                    boostInfo={boostInfo}
+                    onClose={close}
+                />
+            );
+          },
+        }),
     );
   };
 
@@ -1205,8 +1155,8 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
     const liquidityToken = poolDetail?.liquidityToken;
 
     if (
-      [LAUNCHPAD_STATUS.Launching].includes(poolDetail?.state) &&
-      moment(poolDetail.launchEnd).subtract('1', 'h').isSameOrBefore(moment())
+        [LAUNCHPAD_STATUS.Launching].includes(poolDetail?.state) &&
+        moment(poolDetail.launchEnd).subtract('1', 'h').isSameOrBefore(moment())
     ) {
       toast.error('Sorry! The time to contribute has ended.');
       return;
@@ -1215,12 +1165,12 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
     if ([LAUNCHPAD_STATUS.Voting].includes(poolDetail?.state)) {
       confirmVoting(values);
     } else if (
-      [LAUNCHPAD_STATUS.Launching].includes(poolDetail?.state) &&
-      compareString(liquidityToken?.address, wethAddress)
+        [LAUNCHPAD_STATUS.Launching].includes(poolDetail?.state)
     ) {
       const { contributeMethod } = values;
 
-      if (contributeMethod === 'eth') {
+
+      if (contributeMethod !== 'tc') {
         showContributeFromEthWallet();
       } else {
         showContributeFromTCWallet();
@@ -1234,26 +1184,26 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
     const id = 'modalDepositConfirm';
     const close = () => dispatch(closeModal({ id }));
     dispatch(
-      openModal({
-        id,
-        theme: 'dark',
-        title: getConfirmTitle(),
-        className: styles.modalContent,
-        modalProps: {
-          centered: true,
-          size: mobileScreen ? 'full' : 'xl',
-          zIndex: 9999999,
-        },
-        render: () => {
-          return getConfirmContent({
-            ...values,
-            onConfirm: () => {
-              close();
-              handleDeposit(values);
-            },
-          });
-        },
-      }),
+        openModal({
+          id,
+          theme: 'dark',
+          title: getConfirmTitle(),
+          className: styles.modalContent,
+          modalProps: {
+            centered: true,
+            size: mobileScreen ? 'full' : 'xl',
+            zIndex: 9999999,
+          },
+          render: () => {
+            return getConfirmContent({
+              ...values,
+              onConfirm: () => {
+                close();
+                handleDeposit(values);
+              },
+            });
+          },
+        }),
     );
   };
 
@@ -1261,10 +1211,10 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
     try {
       setSubmitting(true);
       dispatch(
-        updateCurrentTransaction({
-          status: TransactionStatus.info,
-          id: transactionType.depositLaunchpad,
-        }),
+          updateCurrentTransaction({
+            status: TransactionStatus.info,
+            id: transactionType.depositLaunchpad,
+          }),
       );
 
       let response;
@@ -1329,33 +1279,33 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
   };
 
   return (
-    <Box className={styles.container}>
-      <Form
-        onSubmit={handleSubmit}
-        initialValues={{
-          contributeMethod:
-            CHAIN_ID_TO_NETWORK[
-              chainId || (localStorage.getItem(PREV_CHAIN_ID) as any)
-            ] || (mobileScreen ? 'eth' : 'tc'),
-        }}
-      >
-        {({ handleSubmit }) => (
-          <MakeFormSwap
-            ref={refForm}
+      <Box className={styles.container}>
+        <Form
             onSubmit={handleSubmit}
-            submitting={submitting}
-            poolDetail={poolDetail}
-            isCancelLaunchpad={canCancel}
-            isVoting={isVoting}
-            isFunding={isFunding}
-            isEndLaunchpad={canEnd}
-            isClaimLaunchpad={canClaim}
-            isVoteRelease={canVoteRelease}
-            boostInfo={boostInfo}
-          />
-        )}
-      </Form>
-    </Box>
+            initialValues={{
+              contributeMethod:
+                  CHAIN_ID_TO_NETWORK[
+                  chainId || (localStorage.getItem(PREV_CHAIN_ID) as any)
+                      ] || (mobileScreen ? 'eth' : 'tc'),
+            }}
+        >
+          {({ handleSubmit }) => (
+              <MakeFormSwap
+                  ref={refForm}
+                  onSubmit={handleSubmit}
+                  submitting={submitting}
+                  poolDetail={poolDetail}
+                  isCancelLaunchpad={canCancel}
+                  isVoting={isVoting}
+                  isFunding={isFunding}
+                  isEndLaunchpad={canEnd}
+                  isClaimLaunchpad={canClaim}
+                  isVoteRelease={canVoteRelease}
+                  boostInfo={boostInfo}
+              />
+          )}
+        </Form>
+      </Box>
   );
 };
 
