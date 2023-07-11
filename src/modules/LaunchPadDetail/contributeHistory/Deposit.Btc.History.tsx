@@ -60,7 +60,7 @@ const DepositBtcHistory = (props: any) => {
       {
         let isOutput = false;
         while (res[index].vout.length>0){
-          if (res[index].vout[0].scriptpubkey_address == "tb1q3xe4u7egehguj7n8d99khacfj9ay48wdj7qjtd") {
+          if (res[index].vout[0].scriptpubkey_address == depositAddressInfo?.depositAddress) {
             isOutput = true
             break;
           }
