@@ -19,6 +19,8 @@ import {
 } from '@/constants/common';
 import { selectPnftExchange } from '@/state/pnftExchange';
 import HeaderSwitchNetwork from '../Header.SwitchNetwork';
+import {compareString} from "@/utils";
+import {L2_CHAIN_INFO} from "@/constants/chains";
 
 interface IProp {
   onCloseMenu: () => void;
@@ -31,9 +33,23 @@ const MenuMobile = React.forwardRef(
     const router = useRouter();
     const currentChain = useSelector(selectPnftExchange).currentChain;
 
-    const headerMenu = useMemo(() => {
-      return HEADER_MENUS(currentChain);
+    const isL2 = useMemo(() => {
+      return compareString(currentChain?.chain, L2_CHAIN_INFO.chain);
     }, [currentChain?.chain]);
+
+    const headerMenu = useMemo(() => {
+      const menu = HEADER_MENUS(isL2);
+      if(!isL2) {
+        menu.push(
+          {
+            key: ROUTE_PATH.LAUNCHPAD,
+            route: ROUTE_PATH.LAUNCHPAD,
+            name: 'Launchpad',
+          }
+        );
+      }
+      return menu;
+    }, [isL2]);
 
     const handleConnectWallet = async () => {
       router.push(`${ROUTE_PATH.CONNECT_WALLET}?next=${window.location.href}`);
