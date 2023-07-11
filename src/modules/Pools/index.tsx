@@ -43,7 +43,7 @@ import { useWeb3React } from '@web3-react/core';
 import BigNumber from 'bignumber.js';
 import { debounce } from 'lodash';
 import { useRouter } from 'next/router';
-import { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { AiOutlineMinusCircle, AiOutlinePlusCircle } from 'react-icons/ai';
 import { BsDownload, BsTwitter } from 'react-icons/bs';
 import { FiPlus } from 'react-icons/fi';
@@ -55,6 +55,7 @@ import { StyledLiquidNote, StyledTokens, UploadFileContainer } from './Pools.sty
 import CreateMarket from './form';
 import ImportPool, { getImportPoolKeyUser } from './form/importPool';
 import styles from './styles.module.scss';
+import VerifiedBadgeToken from "@/modules/Tokens/verifiedBadgeToken";
 
 export enum ScreenType {
   default = 'default',
@@ -432,9 +433,9 @@ const LiquidityContainer = () => {
                     />
                   </Flex>
                   <Box>
-                    <Text fontWeight={'500'}>
-                      {token0Obj?.symbol} - {token1Obj?.symbol}
-                    </Text>
+                    <Flex fontWeight={'500'} gap={1}>
+                      {token0Obj?.symbol} <VerifiedBadgeToken token={token0Obj} onlyWarning/>- {token1Obj?.symbol} <VerifiedBadgeToken token={token1Obj} onlyWarning/>
+                    </Flex>
                     <Text
                       fontSize={px2rem(12)}
                       color={colors.white}
@@ -659,6 +660,7 @@ const LiquidityContainer = () => {
                   className={'avatar'}
                 />
                 <Text>{token0Obj?.symbol}</Text>
+                <VerifiedBadgeToken token={token0Obj} onlyWarning/>
               </Flex>
               <Flex gap={1} alignItems={'center'}>
                 <img
@@ -667,6 +669,7 @@ const LiquidityContainer = () => {
                   className={'avatar'}
                 />
                 <Text>{token1Obj?.symbol}</Text>
+                <VerifiedBadgeToken token={token1Obj} onlyWarning/>
               </Flex>
             </Flex>
           );
