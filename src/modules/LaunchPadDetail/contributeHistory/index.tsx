@@ -16,29 +16,29 @@ const TMTransferHistory = (props: any) => {
   const currentChain: IResourceChain = useSelector(selectPnftExchange).currentChain;
 
   return (
-    <Box className={styles.wrapper}>
-      <Box
-        className={styles.tabContainer}
-        flex={1}
-        mt={6}
-      >
-        <Tabs isFitted variant='soft-rounded'>
-          <TabList mb={6} mt={6}>
-            <Tab>{currentChain?.chain} Transaction</Tab>
-            <Tab>{compareString(poolDetail?.liquidityTokenAddress,getWETHAddress())?"ETH":"BITCOIN"} Transaction</Tab>
-          </TabList>
-          <TabPanels>
-            <TabPanel>
-              <ContributeHistory poolDetail={poolDetail} />
-            </TabPanel>
-            <TabPanel>
-              {compareString(poolDetail?.liquidityTokenAddress,getWETHAddress())?
-                  <DepositHistory poolDetail={poolDetail} />: <DepositBtcHistory poolDetail={poolDetail} />}
-            </TabPanel>
-          </TabPanels>
-        </Tabs>
+      <Box className={styles.wrapper}>
+        <Box
+            className={styles.tabContainer}
+            flex={1}
+            mt={6}
+        >
+          <Tabs isFitted variant='soft-rounded'>
+            <TabList mb={6} mt={6}>
+              <Tab>{currentChain?.chain} Transaction</Tab>
+              <Tab>{compareString(poolDetail?.liquidityTokenAddress,getWETHAddress())?"ETH":"BITCOIN"} Transaction</Tab>
+            </TabList>
+            <TabPanels>
+              <TabPanel>
+                <ContributeHistory poolDetail={poolDetail} />
+              </TabPanel>
+              <TabPanel>
+                {compareString(poolDetail?.liquidityTokenAddress,getWETHAddress())?
+                    <DepositHistory poolDetail={poolDetail} />: <DepositBtcHistory poolDetail={poolDetail} />}
+              </TabPanel>
+            </TabPanels>
+          </Tabs>
+        </Box>
       </Box>
-    </Box>
   );
 };
 

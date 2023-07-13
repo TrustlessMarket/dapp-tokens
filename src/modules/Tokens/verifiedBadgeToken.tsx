@@ -37,14 +37,20 @@ export const getBgColorStatus = (status: string) => {
   }
 }
 
-const VerifiedBadge: React.FC<any> = ({token} : {token: IToken}): React.ReactElement => {
+const VerifiedBadge: React.FC<any> = ({token, onlyWarning = false} : {token: IToken, onlyWarning: boolean}): React.ReactElement => {
   return token?.status ? (
     <>
       {
         token?.status === VERIFIED_STATUS.PREMIUM ? (
-          <Flex alignItems={"center"}>
-            <Icon as={HiBadgeCheck} fontSize={"14px"} color={getTextColorStatus(token.status)}/>
-          </Flex>
+          <>
+            {
+              !onlyWarning && (
+                <Flex alignItems={"center"}>
+                  <Icon as={HiBadgeCheck} fontSize={"14px"} color={getTextColorStatus(token.status)}/>
+                </Flex>
+              )
+            }
+          </>
         ) : (
           <InfoTooltip
             label={
@@ -72,7 +78,6 @@ const VerifiedBadge: React.FC<any> = ({token} : {token: IToken}): React.ReactEle
               />
             </Flex>
           </InfoTooltip>
-
         )
       }
     </>
