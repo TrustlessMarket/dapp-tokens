@@ -39,15 +39,6 @@ const MenuMobile = React.forwardRef(
 
     const headerMenu = useMemo(() => {
       const menu = HEADER_MENUS(isL2);
-      if(!isL2) {
-        menu.push(
-          {
-            key: ROUTE_PATH.LAUNCHPAD,
-            route: ROUTE_PATH.LAUNCHPAD,
-            name: 'Launchpad',
-          }
-        );
-      }
       return menu;
     }, [isL2]);
 
