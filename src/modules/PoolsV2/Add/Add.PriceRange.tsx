@@ -200,6 +200,7 @@ const AddPriceRange: React.FC<IAddPriceRange> = ({ loading }) => {
               fieldChanged={(e: any) =>
                 change('currentTick', priceToTick(e, TICK_SPACINGS[fee]))
               }
+              decimals={18}
             />
             <Box mt={2} />
             <HorizontalItem
@@ -245,6 +246,7 @@ const AddPriceRange: React.FC<IAddPriceRange> = ({ loading }) => {
                   children={FieldAmount}
                   validate={composeValidators(required, validateMaxRangeAmount)}
                   blurFieldChanged={(e: any) => onFieldChanged(e, 'max')}
+                  decimals={18}
                   prependComp={
                     <Box
                       className={s.formContainer__right__rangeContainer__rangeButton}
@@ -325,6 +327,7 @@ const AddPriceRange: React.FC<IAddPriceRange> = ({ loading }) => {
                 children={FieldAmount}
                 validate={composeValidators(required, validateMaxRangeAmount)}
                 blurFieldChanged={(e: any) => onFieldChanged(e, 'max')}
+                decimals={18}
                 prependComp={
                   <Box
                     className={s.formContainer__right__rangeContainer__rangeButton}
