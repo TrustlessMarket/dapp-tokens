@@ -45,7 +45,7 @@ const useApproveERC20Token: ContractOperationHook<
         const transaction = await contract.connect(provider.getSigner()).approve(
           address,
           MaxUint256,
-          compareString(currentChain.chainId, SupportedChainId.TRUSTLESS_COMPUTER)
+          compareString(currentChain?.chainId, SupportedChainId.TRUSTLESS_COMPUTER)
             ? {
                 gasLimit: '150000',
                 gasPrice: getDefaultGasPrice(),

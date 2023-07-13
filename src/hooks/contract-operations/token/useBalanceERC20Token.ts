@@ -4,7 +4,10 @@ import { SupportedChainId } from '@/constants/chains';
 import { CONTRACT_METHOD_IDS } from '@/constants/methodId';
 import { TransactionEventType } from '@/enums/transaction';
 import useBitcoin from '@/hooks/useBitcoin';
+import { IResourceChain } from '@/interfaces/chain';
 import { ContractOperationHook, DAppType } from '@/interfaces/contract-operation';
+import { useAppSelector } from '@/state/hooks';
+import { selectPnftExchange } from '@/state/pnftExchange';
 import { compareString, getContract, isSupportedChain } from '@/utils';
 import { useWeb3React } from '@web3-react/core';
 import BigNumber from 'bignumber.js';
@@ -21,6 +24,8 @@ const useBalanceERC20Token: ContractOperationHook<
   string
 > = () => {
   const { account, chainId, provider } = useWeb3React();
+  const currentChain: IResourceChain =
+    useAppSelector(selectPnftExchange).currentChain;
   const isConnected = isSupportedChain(chainId);
   const {
     getPendingInscribeTxsDetail,
@@ -40,7 +45,9 @@ const useBalanceERC20Token: ContractOperationHook<
 
         let balance = transaction.toString();
 
-        if (compareString(chainId, SupportedChainId.TRUSTLESS_COMPUTER)) {
+        if (
+          compareString(currentChain?.chainId, SupportedChainId.TRUSTLESS_COMPUTER)
+        ) {
           const [pendingTXDs, unInscribedTxIDs] = await Promise.all([
             getPendingInscribeTxsDetail(account),
             getUnInscribedTransactionDetailByAddress(account),
