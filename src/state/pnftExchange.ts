@@ -4,7 +4,6 @@ import {NOS_SLIPPAGE_VALUE, SLIPPAGE_VALUE} from '@/constants/storage-key';
 import localStorage from '@/utils/localstorage';
 import {createSlice} from '@reduxjs/toolkit';
 import {RootState} from '.';
-import {TRUSTLESS_COMPUTER_CHAIN_INFO} from "@/constants/chains";
 
 interface NftyLendState {
   needReload: number;
