@@ -241,6 +241,12 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   }, [baseToken?.address, quoteToken?.address]);
 
   useEffect(() => {
+    if(swapRoutes && Number(values.baseAmount) > 0) {
+      onChangeValueBaseAmount(values.baseAmount);
+    }
+  }, [JSON.stringify(swapRoutes)]);
+
+  useEffect(() => {
     change('baseBalance', baseBalance);
   }, [baseBalance]);
 
