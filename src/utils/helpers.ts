@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import {SupportedChainId, TRUSTLESS_COMPUTER_CHAIN_INFO} from '@/constants/chains';
+import {L2_CHAIN_INFO, SupportedChainId} from '@/constants/chains';
 import {DEFAULT_GAS_PRICE, TOKEN_ICON_DEFAULT, WBTC_ADDRESS, WETH_ADDRESS} from '@/constants/common';
 import {CHAIN_INFO} from '@/constants/storage-key';
 import tokenIcons from '@/constants/tokenIcons';
@@ -134,7 +134,7 @@ export const getLocalStorageChainInfo = (): IResourceChain => {
     const parseChainInfo = JSON.parse(chainInfo);
     return parseChainInfo;
   }
-  return TRUSTLESS_COMPUTER_CHAIN_INFO;
+  return L2_CHAIN_INFO;
 };
 
 export const getLaunchPadAddress = () => {
