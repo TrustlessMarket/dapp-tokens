@@ -256,6 +256,14 @@ export const StyledLaunchpadManageHeader = styled(Flex)`
 
   .btn-submit-container {
     flex: 1;
+    
+    > div {
+      width: fit-content;
+      > button {
+        padding: 0;
+        background: none;
+      }
+    }
   }
 `;
 
