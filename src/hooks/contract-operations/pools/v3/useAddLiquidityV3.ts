@@ -64,6 +64,7 @@ const useAddLiquidityV3: ContractOperationHook<IAddLiquidityV3, boolean> = () =>
 
         if (isRevert) {
           [amountADesired, amountBDesired] = [amountBDesired, amountADesired];
+          [amount0Min, amount1Min] = [amount1Min, amount0Min];
           [lowerTick, upperTick] = [-upperTick, -lowerTick];
         }
 
