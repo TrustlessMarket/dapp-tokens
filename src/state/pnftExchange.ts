@@ -30,7 +30,7 @@ const initialState: NftyLendState = {
   showBanner: true,
   configs: {},
   currentChainId: undefined,
-  currentChain: TRUSTLESS_COMPUTER_CHAIN_INFO,
+  currentChain: undefined,
   allConfigs: {}
 };
 

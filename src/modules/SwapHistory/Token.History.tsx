@@ -2,7 +2,7 @@
 import ListTable, {ColumnProp} from '@/components/Swap/listTable';
 import {MEMPOOL_URL, WALLET_URL} from '@/configs';
 import {getUserTradeHistory} from '@/services/swap';
-import {camelCaseKeys, formatCurrency, formatLongAddress} from '@/utils';
+import {camelCaseKeys, compareString, formatCurrency, formatLongAddress} from '@/utils';
 import {Flex, Text} from '@chakra-ui/react';
 import moment from 'moment';
 import React, {useEffect, useMemo, useState} from 'react';
@@ -12,6 +12,7 @@ import {IResourceChain} from "@/interfaces/chain";
 import {useWindowSize} from "@trustless-computer/dapp-core";
 import {useSelector} from "react-redux";
 import {selectPnftExchange} from "@/state/pnftExchange";
+import {L2_CHAIN_INFO} from "@/constants/chains";
 
 const TokenHistory = () => {
   const [list, setList] = useState<any[]>([]);
@@ -20,6 +21,10 @@ const TokenHistory = () => {
   const { mobileScreen } = useWindowSize();
   const currentChain: IResourceChain = useSelector(selectPnftExchange).currentChain;
   const { call: getPendingSwapTransactions } = usePendingSwapTransactions();
+
+  const isL2 = useMemo(() => {
+    return compareString(currentChain?.chain, L2_CHAIN_INFO.chain);
+  }, [currentChain?.chain]);
 
   useEffect(() => {
     if(account) {
@@ -90,16 +95,20 @@ const TokenHistory = () => {
               return (
                 <Flex direction={"column"} color={"#FFFFFF"}>
                   <Text fontWeight={"medium"}>{formatLongAddress(row?.txHash)}</Text>
-                  <Text>BTC: {row?.btcHash ? (
-                    <a
-                      title="explorer"
-                      href={`${MEMPOOL_URL}/tx/${row.btcHash}`}
-                      target="_blank"
-                      style={{textDecoration: 'underline', color: 'rgb(177, 227, 255)'}}
-                    >
-                      {formatLongAddress(row?.btcHash)}
-                    </a>
-                  ) : '--'}</Text>
+                  {
+                    !isL2 && (
+                      <Text>BTC: {row?.btcHash ? (
+                        <a
+                          title="explorer"
+                          href={`${MEMPOOL_URL}/tx/${row.btcHash}`}
+                          target="_blank"
+                          style={{textDecoration: 'underline', color: 'rgb(177, 227, 255)'}}
+                        >
+                          {formatLongAddress(row?.btcHash)}
+                        </a>
+                      ) : '--'}</Text>
+                    )
+                  }
                 </Flex>
               );
             },
@@ -194,16 +203,20 @@ const TokenHistory = () => {
             return (
               <Flex direction={"column"} color={"#FFFFFF"}>
                 <Text fontWeight={"medium"}>{formatLongAddress(row?.txHash)}</Text>
-                <Text>BTC: {row?.btcHash ? (
-                  <a
-                    title="explorer"
-                    href={`${MEMPOOL_URL}/tx/${row.btcHash}`}
-                    target="_blank"
-                    style={{textDecoration: 'underline', color: 'rgb(177, 227, 255)'}}
-                  >
-                    {formatLongAddress(row?.btcHash)}
-                  </a>
-                ) : '--'}</Text>
+                {
+                  !isL2 && (
+                    <Text>BTC: {row?.btcHash ? (
+                      <a
+                        title="explorer"
+                        href={`${MEMPOOL_URL}/tx/${row.btcHash}`}
+                        target="_blank"
+                        style={{textDecoration: 'underline', color: 'rgb(177, 227, 255)'}}
+                      >
+                        {formatLongAddress(row?.btcHash)}
+                      </a>
+                    ) : '--'}</Text>
+                  )
+                }
               </Flex>
             );
           },
