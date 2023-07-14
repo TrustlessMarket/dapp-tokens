@@ -197,9 +197,7 @@ const AddPriceRange: React.FC<IAddPriceRange> = ({ loading }) => {
               children={FieldAmount}
               name="currentPrice"
               validate={requiredAmount}
-              fieldChanged={(e: any) =>
-                change('currentTick', priceToTick(e, TICK_SPACINGS[fee]))
-              }
+              fieldChanged={(e: any) => change('currentTick', priceToTick(e, 1))}
               decimals={18}
             />
             <Box mt={2} />
