@@ -1,11 +1,12 @@
 import useBalanceERC20Token from '@/hooks/contract-operations/token/useBalanceERC20Token';
 import { IToken } from '@/interfaces/token';
-import { compareString, formatCurrency } from '@/utils';
+import { formatCurrency, isNativeToken } from '@/utils';
 import { Skeleton, Text } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import { useWeb3React } from '@web3-react/core';
 import { useAppSelector } from '@/state/hooks';
 import { selectPnftExchange } from '@/state/pnftExchange';
+import { ethers } from 'ethers';
 
 export interface ItemBalanceProps {
   token?: IToken | undefined;
@@ -27,9 +28,10 @@ const TokenBalance = (props: ItemBalanceProps) => {
   }, [token?.address, account, provider, needReload]);
 
   const fetchBalance = async () => {
+    if (!token) return
     try {
       setLoading(true);
-      const [_tokenBalance] = await Promise.all([getTokenBalance(token)]);
+      const [_tokenBalance] = await Promise.all([isNativeToken(token.address)? getAccountBalance(account) : getTokenBalance(token)]);
       if (_tokenBalance) {
         setBalance(_tokenBalance);
       }
@@ -42,12 +44,22 @@ const TokenBalance = (props: ItemBalanceProps) => {
     }
   };
 
+  const getAccountBalance = async (account : string | undefined) => {
+    if (!account || !provider) {
+      return;
+    }
+    try {
+      const response = await provider.getBalance(account);
+      return ethers.utils.formatEther(response?.toString());
+    } catch (error) {
+      console.log('error', error);
+      throw error;
+    }
+  };
+
   const getTokenBalance = async (token: IToken | undefined) => {
     if (!token) {
       return;
-    }
-    if (compareString(token.address, '0x2fe8d5A64afFc1d703aECa8a566f5e9FaeE0C00')) {
-      console.log('token', token);
     }
     try {
       const response = await tokenBalance({

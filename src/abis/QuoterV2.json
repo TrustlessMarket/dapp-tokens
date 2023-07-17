@@ -20,7 +20,7 @@
   },
   {
     "inputs": [],
-    "name": "WETH9",
+    "name": "WTC",
     "outputs": [
       {
         "internalType": "address",
@@ -53,7 +53,7 @@
       },
       {
         "internalType": "address",
-        "name": "_WETH9",
+        "name": "_WTC",
         "type": "address"
       }
     ],
@@ -286,11 +286,11 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "weth9Arg",
+        "name": "WTCArg",
         "type": "address"
       }
     ],
-    "name": "setWETH9",
+    "name": "setWTC",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

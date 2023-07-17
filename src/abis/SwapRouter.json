@@ -20,7 +20,7 @@
   },
   {
     "inputs": [],
-    "name": "WETH9",
+    "name": "WTC",
     "outputs": [
       {
         "internalType": "address",
@@ -267,7 +267,7 @@
       },
       {
         "internalType": "address",
-        "name": "_WETH9",
+        "name": "_WTC",
         "type": "address"
       }
     ],
@@ -310,7 +310,7 @@
   },
   {
     "inputs": [],
-    "name": "refundETH",
+    "name": "refundTC",
     "outputs": [],
     "stateMutability": "payable",
     "type": "function"
@@ -478,11 +478,11 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "weth9Arg",
+        "name": "WTCArg",
         "type": "address"
       }
     ],
-    "name": "setWETH9",
+    "name": "setWTC",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -592,7 +592,7 @@
         "type": "address"
       }
     ],
-    "name": "unwrapWETH9",
+    "name": "unwrapWTC",
     "outputs": [],
     "stateMutability": "payable",
     "type": "function"
@@ -620,7 +620,7 @@
         "type": "address"
       }
     ],
-    "name": "unwrapWETH9WithFee",
+    "name": "unwrapWTCWithFee",
     "outputs": [],
     "stateMutability": "payable",
     "type": "function"
