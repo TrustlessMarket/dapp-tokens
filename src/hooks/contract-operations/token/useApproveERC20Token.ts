@@ -1,19 +1,18 @@
 import ERC20ABIJson from '@/abis/erc20.json';
-import { transactionType } from '@/components/Swap/alertInfoProcessing/types';
-import { MaxUint256 } from '@/constants/url';
-import { AssetsContext } from '@/contexts/assets-context';
-import { TransactionEventType } from '@/enums/transaction';
-import { ContractOperationHook, DAppType } from '@/interfaces/contract-operation';
 import { TransactionStatus } from '@/components/Swap/alertInfoProcessing/interface';
+import { transactionType } from '@/components/Swap/alertInfoProcessing/types';
+import { SupportedChainId } from '@/constants/chains';
+import { MaxUint256 } from '@/constants/url';
+import { TransactionEventType } from '@/enums/transaction';
+import { IResourceChain } from '@/interfaces/chain';
+import { ContractOperationHook, DAppType } from '@/interfaces/contract-operation';
 import { logErrorToServer } from '@/services/swap';
 import store from '@/state';
+import { useAppSelector } from '@/state/hooks';
 import { selectPnftExchange, updateCurrentTransaction } from '@/state/pnftExchange';
 import { compareString, getContract, getDefaultGasPrice, getGasFee } from '@/utils';
 import { useWeb3React } from '@web3-react/core';
-import { useCallback, useContext } from 'react';
-import { useAppSelector } from '@/state/hooks';
-import { IResourceChain } from '@/interfaces/chain';
-import { SupportedChainId } from '@/constants/chains';
+import { useCallback } from 'react';
 
 export interface IApproveERC20TokenParams {
   address: string;
@@ -25,7 +24,6 @@ const useApproveERC20Token: ContractOperationHook<
   boolean
 > = () => {
   const { account, provider } = useWeb3React();
-  const { btcBalance, feeRate } = useContext(AssetsContext);
 
   const currentChain: IResourceChain =
     useAppSelector(selectPnftExchange).currentChain;
@@ -84,7 +82,7 @@ const useApproveERC20Token: ContractOperationHook<
 
       return false;
     },
-    [account, provider, btcBalance, feeRate],
+    [account, provider, currentChain],
   );
 
   return {

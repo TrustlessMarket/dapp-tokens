@@ -68,7 +68,7 @@ const useInfoERC20Token: ContractOperationHook<
         address: '',
       };
     },
-    [account, provider],
+    [account, provider, isTrustChain],
   );
 
   return {
