@@ -1,10 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import ListTable, {ColumnProp} from '@/components/Swap/listTable';
-import {TC_EXPLORER} from '@/configs';
 import {IToken} from '@/interfaces/token';
 import {getTradeHistory} from '@/services/swap';
 import {colors} from '@/theme/colors';
-import {abbreviateNumber, compareString, formatCurrency} from '@/utils';
+import {abbreviateNumber, compareString, formatCurrency, getExplorer} from '@/utils';
 import {Flex, Text} from '@chakra-ui/react';
 import {useWeb3React} from '@web3-react/core';
 import moment from 'moment';
@@ -295,7 +294,7 @@ const TokenHistory = ({ data, isOwner }: { data: IToken; isOwner?: boolean }) =>
             <Flex>
               <a
                 title="explorer"
-                href={`${TC_EXPLORER}/tx/${row.txHash}`}
+                href={getExplorer(row.txHash, 'tx')}
                 target="_blank"
                 className="link-explorer"
               >
