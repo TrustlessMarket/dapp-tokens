@@ -71,7 +71,7 @@ const useIsApproveERC20Token: ContractOperationHook<
       }
       return '0';
     },
-    [account, provider],
+    [account, provider, isConnected],
   );
 
   return {
