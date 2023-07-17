@@ -51,7 +51,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const [sort, setSort] = useState({ sort: '' });
   const { values } = useFormState();
   const { mobileScreen } = useWindowSize();
-  const currentChain: IResourceChain = useSelector(selectPnftExchange).currentChain || TRUSTLESS_COMPUTER_CHAIN_INFO;
+  const currentChain: IResourceChain = useSelector(selectPnftExchange).currentChain;
 
   const isL2 = useMemo(() => {
     return compareString(currentChain?.chain, L2_CHAIN_INFO.chain);
