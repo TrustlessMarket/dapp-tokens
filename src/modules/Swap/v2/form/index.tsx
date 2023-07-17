@@ -58,6 +58,7 @@ import {
   compareString,
   formatCurrency,
   getTokenIconUrl,
+  isNativeToken,
 } from '@/utils';
 import { isDevelop } from '@/utils/commons';
 import { composeValidators, required } from '@/utils/formValidate';
@@ -88,6 +89,8 @@ import { RiArrowUpDownLine } from 'react-icons/ri';
 import { useDispatch, useSelector } from 'react-redux';
 import Web3 from 'web3';
 import styles from './styles.module.scss';
+
+import { ethers } from 'ethers';
 
 const LIMIT_PAGE = 500;
 export const MakeFormSwap = forwardRef((props, ref) => {
@@ -337,6 +340,9 @@ export const MakeFormSwap = forwardRef((props, ref) => {
 
   const checkTokenApprove = async (token: IToken) => {
     try {
+      if (isNativeToken(token.address)) {
+        return ethers.constants.MaxUint256.toString()
+      }
       const response = await isApproved({
         erc20TokenAddress: token.address,
         address: UNIV3_ROUTER_ADDRESS,

@@ -172,3 +172,13 @@ export const getTMAddress = () => {
   }
   return TM_ADDRESS;
 }
+
+export const isNativeToken = (tokenAddress: string) => {
+  let isNative = false
+  if (compareString(tokenAddress, '0x8b485d217096cE20A09AF11D15ccCc63323C1469')) {
+    isNative = true
+  } else if (compareString(tokenAddress, '0xaD771ED0F8C5df06D21A7eDA3b00acD6688dD532')) {
+    isNative = true
+  }
+  return isNative
+}

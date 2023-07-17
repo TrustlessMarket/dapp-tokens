@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import SwapRouterJson from '@/abis/SwapRouter.json';
 import { TransactionStatus } from '@/components/Swap/alertInfoProcessing/interface';
 import { transactionType } from '@/components/Swap/alertInfoProcessing/types';
@@ -8,10 +9,11 @@ import { logErrorToServer } from '@/services/swap';
 import { scanTrx } from '@/services/swap-v3';
 import store from '@/state';
 import { updateCurrentTransaction } from '@/state/pnftExchange';
-import { getContract, getGasFee } from '@/utils';
+import { compareString, getContract, getGasFee } from '@/utils';
 import { getDeadline } from '@/utils/number';
 import { encodePath } from '@/utils/path';
 import { useWeb3React } from '@web3-react/core';
+import { ContractTransaction, ethers } from 'ethers';
 import { useCallback } from 'react';
 import Web3 from 'web3';
 
@@ -25,12 +27,12 @@ export interface ISwapERC20TokenParams {
 
 const useSwapERC20Token: ContractOperationHook<
   ISwapERC20TokenParams,
-  boolean
+  boolean | any
 > = () => {
   const { account, provider } = useWeb3React();
 
   const call = useCallback(
-    async (params: ISwapERC20TokenParams): Promise<boolean> => {
+    async (params: ISwapERC20TokenParams): Promise<boolean | any> => {
       const { addresses, fees, address, amount, amountOutMin } = params;
       if (account && provider) {
         const contract = getContract(
@@ -60,19 +62,55 @@ const useSwapERC20Token: ContractOperationHook<
         // }
 
         // const gasLimit = 50000 + addresses.length * 100000;
+        let recipient: string | undefined = address
+
+        const wtcAddress = await contract.WTC()
+        if (compareString(addresses[addresses.length - 1], wtcAddress)) {
+          recipient = ethers.constants.AddressZero
+        }
+
         const data = {
           path: encodePath(addresses, fees),
-          recipient: address,
+          recipient: recipient,
           deadline: getDeadline(),
           amountIn: Web3.utils.toWei(amount, 'ether'),
           amountOutMinimum: Web3.utils.toWei(amountOutMin, 'ether'),
         };
 
-        const transaction = await contract
-          .connect(provider.getSigner())
-          .exactInput(data, {
-            gasPrice: getGasFee(),
-          });
+        let transaction : ContractTransaction
+        if (compareString(addresses[0], wtcAddress)) {
+          transaction = await contract
+            .connect(provider.getSigner())
+            .exactInput(data, {
+              gasPrice: getGasFee(),
+              value: data.amountIn,
+            });
+        } else if (compareString(addresses[addresses.length - 1], wtcAddress)) {
+          transaction = await contract
+            .connect(provider.getSigner())
+            .multicall(
+              [
+                contract.interface.encodeFunctionData(
+                  'exactInput',
+                  [data]
+                ),
+                contract.interface.encodeFunctionData(
+                  'unwrapWTC',
+                  [
+                    0,
+                    address,
+                  ]
+                ),
+              ], {
+              gasPrice: getGasFee(),
+            });
+        } else {
+          transaction = await contract
+            .connect(provider.getSigner())
+            .exactInput(data, {
+              gasPrice: getGasFee(),
+            });
+        }
 
         logErrorToServer({
           type: 'logs',
