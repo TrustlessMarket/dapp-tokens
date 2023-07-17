@@ -20,7 +20,7 @@
   },
   {
     "inputs": [],
-    "name": "WETH9",
+    "name": "WTC",
     "outputs": [
       {
         "internalType": "address",
@@ -64,7 +64,7 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "_WETH9",
+        "name": "_WTC",
         "type": "address"
       },
       {
@@ -120,6 +120,24 @@
   {
     "inputs": [],
     "name": "renounceOwnership",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_WTC",
+        "type": "address"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "_nativeCurrencyLabelBytes",
+        "type": "bytes32"
+      }
+    ],
+    "name": "setWTC",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
