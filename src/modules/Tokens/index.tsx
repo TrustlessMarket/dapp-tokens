@@ -39,7 +39,7 @@ import {useWindowSize} from '@trustless-computer/dapp-core';
 import {IResourceChain} from "@/interfaces/chain";
 import {useSelector} from "react-redux";
 import {selectPnftExchange} from "@/state/pnftExchange";
-import {L2_CHAIN_INFO, TRUSTLESS_COMPUTER_CHAIN_INFO} from "@/constants/chains";
+import {L2_CHAIN_INFO} from "@/constants/chains";
 
 const LIMIT_PAGE = 100;
 
@@ -51,7 +51,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const [sort, setSort] = useState({ sort: '' });
   const { values } = useFormState();
   const { mobileScreen } = useWindowSize();
-  const currentChain: IResourceChain = useSelector(selectPnftExchange).currentChain || TRUSTLESS_COMPUTER_CHAIN_INFO;
+  const currentChain: IResourceChain = useSelector(selectPnftExchange).currentChain;
 
   const isL2 = useMemo(() => {
     return compareString(currentChain?.chain, L2_CHAIN_INFO.chain);
@@ -96,7 +96,9 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const debounced = useDebounce(values?.search_text);
 
   useEffect(() => {
-    fetchTokens();
+    if(currentChain?.chain) {
+      fetchTokens();
+    }
   }, [JSON.stringify(sort), debounced, currentChain?.chain]);
 
   const columns: ColumnProp[] = useMemo(() => {
