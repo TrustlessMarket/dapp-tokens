@@ -1,7 +1,14 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {L2_CHAIN_INFO, SupportedChainId} from '@/constants/chains';
-import {DEFAULT_GAS_PRICE, TOKEN_ICON_DEFAULT, WBTC_ADDRESS, WETH_ADDRESS} from '@/constants/common';
+import {
+  DEFAULT_GAS_PRICE,
+  L2_GASSTATION,
+  TOKEN_ICON_DEFAULT,
+  TRUSTLESS_GASSTATION,
+  WBTC_ADDRESS,
+  WETH_ADDRESS
+} from '@/constants/common';
 import {CHAIN_INFO} from '@/constants/storage-key';
 import tokenIcons from '@/constants/tokenIcons';
 import {IResourceChain} from '@/interfaces/chain';
@@ -171,6 +178,15 @@ export const getTMAddress = () => {
     return L2_TM_ADDRESS;
   }
   return TM_ADDRESS;
+}
+
+export const getTCGasStationddress = () => {
+  const currentChain: IResourceChain = store.getState().pnftExchange.currentChain;
+
+  if (compareString(currentChain?.chainId, SupportedChainId.L2)) {
+    return L2_GASSTATION;
+  }
+  return TRUSTLESS_GASSTATION;
 }
 
 export const isNativeToken = (tokenAddress: string) => {

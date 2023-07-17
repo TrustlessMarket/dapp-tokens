@@ -1,25 +1,21 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 // import IcAvatarDefault from '@/assets/icons/ic-avatar.svg';
 // import IcMenuClose from '@/assets/icons/ic_close_menu.svg';
-import { CDN_URL } from '@/configs';
-import { ROUTE_PATH } from '@/constants/route-path';
-import { AssetsContext } from '@/contexts/assets-context';
-import { getIsAuthenticatedSelector } from '@/state/user/selector';
-import { useRouter } from 'next/router';
-import React, { ForwardedRef, useContext, useMemo } from 'react';
-import { useSelector } from 'react-redux';
-import { HEADER_MENUS } from '..';
-import { StyledLink } from '../Header.styled';
-import { Wrapper } from './MenuMobile.styled';
-import { Box, Flex, Text } from '@chakra-ui/react';
-import {
-  GENERATIVE_DISCORD,
-  NEW_BITCOIN_CITY,
-  TRUSTLESS_GASSTATION,
-} from '@/constants/common';
-import { selectPnftExchange } from '@/state/pnftExchange';
+import {CDN_URL} from '@/configs';
+import {ROUTE_PATH} from '@/constants/route-path';
+import {AssetsContext} from '@/contexts/assets-context';
+import {getIsAuthenticatedSelector} from '@/state/user/selector';
+import {useRouter} from 'next/router';
+import React, {ForwardedRef, useContext, useMemo} from 'react';
+import {useSelector} from 'react-redux';
+import {HEADER_MENUS} from '..';
+import {StyledLink} from '../Header.styled';
+import {Wrapper} from './MenuMobile.styled';
+import {Box, Flex, Text} from '@chakra-ui/react';
+import {GENERATIVE_DISCORD, NEW_BITCOIN_CITY,} from '@/constants/common';
+import {selectPnftExchange} from '@/state/pnftExchange';
 import HeaderSwitchNetwork from '../Header.SwitchNetwork';
-import {compareString} from "@/utils";
+import {compareString, getTCGasStationddress} from "@/utils";
 import {L2_CHAIN_INFO} from "@/constants/chains";
 
 interface IProp {
@@ -73,7 +69,7 @@ const MenuMobile = React.forwardRef(
               })}
               <StyledLink
                 active={false}
-                href={TRUSTLESS_GASSTATION}
+                href={getTCGasStationddress()}
                 target={'_blank'}
               >
                 <Text>GET TC</Text>

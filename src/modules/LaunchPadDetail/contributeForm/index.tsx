@@ -420,7 +420,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             <Text fontSize="sm" color="#FF7E21" textAlign={'left'}>
               Your TC balance is insufficient. Buy more TC{' '}
               <Link
-                href={TRUSTLESS_GASSTATION}
+                href={getTCGasStationddress()}
                 target={'_blank'}
                 style={{ textDecoration: 'underline' }}
               >

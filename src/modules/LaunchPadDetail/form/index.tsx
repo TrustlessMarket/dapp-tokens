@@ -4,13 +4,10 @@
 import ModalConfirmApprove from '@/components/ModalConfirmApprove';
 import {transactionType} from '@/components/Swap/alertInfoProcessing/types';
 import FiledButton from '@/components/Swap/button/filedButton';
-import FieldAmount from '@/components/Swap/form/fieldAmount';
-import InputWrapper from '@/components/Swap/form/inputWrapper';
 import HorizontalItem from '@/components/Swap/horizontalItem';
 import InfoTooltip from '@/components/Swap/infoTooltip';
-import TokenBalance from '@/components/Swap/tokenBalance';
 import WrapperConnected from '@/components/WrapperConnected';
-import {BRIDGE_SUPPORT_TOKEN, TRUSTLESS_BRIDGE, TRUSTLESS_GASSTATION} from '@/constants/common';
+import {BRIDGE_SUPPORT_TOKEN, TRUSTLESS_BRIDGE} from '@/constants/common';
 import {toastError} from '@/constants/error';
 import {AssetsContext} from '@/contexts/assets-context';
 import useClaimLaunchPad from '@/hooks/contract-operations/launchpad/useClaim';
@@ -48,13 +45,13 @@ import {
   compareString,
   formatCurrency,
   formatLongAddress,
+  getTCGasStationddress,
   getTMAddress,
   getTokenIconUrl,
   getWETHAddress,
   isConnectedTrustChain,
   isSupportedChain,
 } from '@/utils';
-import {composeValidators, required} from '@/utils/formValidate';
 import px2rem from '@/utils/px2rem';
 import {showError} from '@/utils/toast';
 import {Box, Center, Flex, forwardRef, Progress, Stat, StatLabel, StatNumber, Text, Tooltip,} from '@chakra-ui/react';
@@ -66,7 +63,7 @@ import debounce from 'lodash/debounce';
 import moment from 'moment';
 import Link from 'next/link';
 import React, {useCallback, useContext, useEffect, useImperativeHandle, useMemo, useRef, useState,} from 'react';
-import {Field, Form, useForm, useFormState} from 'react-final-form';
+import {Form, useForm, useFormState} from 'react-final-form';
 import toast from 'react-hot-toast';
 import {BiBell} from 'react-icons/bi';
 import {useDispatch, useSelector} from 'react-redux';
@@ -78,7 +75,6 @@ import useIsAbleVoteRelease from '@/hooks/contract-operations/launchpad/useIsAbl
 import useIsAbleCancel from '@/hooks/contract-operations/launchpad/useIsAbleCancel';
 import useCancelLaunchPad from '@/hooks/contract-operations/launchpad/useCancel';
 import useVoteReleaseLaunchpad from '@/hooks/contract-operations/launchpad/useVoteRelease';
-import tokenIcons from '@/constants/tokenIcons';
 import VoteForm from '@/modules/ProposalDetail/voteForm';
 import {CDN_URL} from '@/configs';
 import DepositEth from '@/modules/LaunchPadDetail/depositEth';
@@ -788,7 +784,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
                   <Text fontSize="sm" color="#FF7E21" textAlign={'left'}>
                     Your TC balance is insufficient. Buy more TC{' '}
                     <Link
-                        href={TRUSTLESS_GASSTATION}
+                        href={getTCGasStationddress()}
                         target={'_blank'}
                         style={{ textDecoration: 'underline' }}
                     >
