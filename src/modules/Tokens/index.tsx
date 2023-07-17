@@ -96,7 +96,9 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const debounced = useDebounce(values?.search_text);
 
   useEffect(() => {
-    fetchTokens();
+    if(currentChain?.chain) {
+      fetchTokens();
+    }
   }, [JSON.stringify(sort), debounced, currentChain?.chain]);
 
   const columns: ColumnProp[] = useMemo(() => {

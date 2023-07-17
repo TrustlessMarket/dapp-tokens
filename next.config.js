@@ -5,7 +5,7 @@ const removeImports = require('next-remove-imports');
 
 const nextConfig = removeImports()({
   output: 'standalone',
-  reactStrictMode: true,
+  reactStrictMode: false,
   images: {
     dangerouslyAllowSVG: true,
     remotePatterns: [
