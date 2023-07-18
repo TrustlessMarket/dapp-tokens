@@ -69,10 +69,6 @@ const Header = () => {
   } = useScreenLayout();
   const currentChain = useSelector(selectPnftExchange).currentChain;
 
-  // const isTokensPage = useMemo(() => {
-  //   return isScreenDarkMode();
-  // }, [router?.pathname]);
-
   useEffect(() => {
     if (refMenu.current) {
       if (isOpenMenu) {

@@ -29,7 +29,7 @@ import {isScreenDarkMode} from '..';
 import {ConnectWalletButton, WalletBalance} from '../Header.styled';
 import {WalletPopover} from './Wallet.styled';
 import {L2_CHAIN_INFO, SupportedChainId, TRUSTLESS_COMPUTER_CHAIN_INFO} from '@/constants/chains';
-import {selectPnftExchange, updateCurrentChain} from '@/state/pnftExchange';
+import {selectPnftExchange, updateConfigs, updateCurrentChain} from '@/state/pnftExchange';
 import {CHAIN_INFO} from "@/constants/storage-key";
 import {useAppDispatch} from "@/state/hooks";
 
@@ -51,6 +51,7 @@ const WalletHeader = () => {
 
   const currentChain: IResourceChain = useSelector(selectPnftExchange).currentChain;
   const dispatch = useAppDispatch();
+  const allConfigs: any = useSelector(selectPnftExchange).allConfigs;
 
   const isL2 = useMemo(() => {
     return compareString(currentChain?.chain, L2_CHAIN_INFO.chain);
@@ -123,6 +124,8 @@ const WalletHeader = () => {
 
   const onChangeRouter = (_chainA?: any) => {
     dispatch(updateCurrentChain(_chainA));
+    const key = _chainA?.chain?.toLowerCase() || '';
+    dispatch(updateConfigs(allConfigs[key]));
     localStorage.setItem(CHAIN_INFO, JSON.stringify(_chainA));
   };
 
