@@ -170,7 +170,11 @@ const Header = () => {
                   </Flex>
                 </Link>
               </div>
-              <HeaderSwitchNetwork />
+              {
+                !isL2 && (
+                  <HeaderSwitchNetwork />
+                )
+              }
               <WalletHeader />
             </>
           )}

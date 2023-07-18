@@ -28,8 +28,10 @@ import web3 from 'web3';
 import {isScreenDarkMode} from '..';
 import {ConnectWalletButton, WalletBalance} from '../Header.styled';
 import {WalletPopover} from './Wallet.styled';
-import {SupportedChainId, TRUSTLESS_COMPUTER_CHAIN_INFO} from '@/constants/chains';
-import {selectPnftExchange} from '@/state/pnftExchange';
+import {L2_CHAIN_INFO, SupportedChainId, TRUSTLESS_COMPUTER_CHAIN_INFO} from '@/constants/chains';
+import {selectPnftExchange, updateCurrentChain} from '@/state/pnftExchange';
+import {CHAIN_INFO} from "@/constants/storage-key";
+import {useAppDispatch} from "@/state/hooks";
 
 const WalletHeader = () => {
   const router = useRouter();
@@ -48,6 +50,11 @@ const WalletHeader = () => {
   const chainInfo: IResourceChain = getConnectedChainInfo();
 
   const currentChain: IResourceChain = useSelector(selectPnftExchange).currentChain;
+  const dispatch = useAppDispatch();
+
+  const isL2 = useMemo(() => {
+    return compareString(currentChain?.chain, L2_CHAIN_INFO.chain);
+  }, [currentChain?.chain]);
 
   const isTokenPage = useMemo(() => {
     return isScreenDarkMode();
@@ -112,6 +119,11 @@ const WalletHeader = () => {
 
   const gotoBridge = (tab: string, tokenSymbol: string) => {
     window.open(`${TRUSTLESS_BRIDGE}${tokenSymbol}`);
+  };
+
+  const onChangeRouter = (_chainA?: any) => {
+    dispatch(updateCurrentChain(_chainA));
+    localStorage.setItem(CHAIN_INFO, JSON.stringify(_chainA));
   };
 
   const walletPopover = (
@@ -180,23 +192,29 @@ const WalletHeader = () => {
 
       <div className="divider"></div>
       <div className="cta">
-        <div className="wallet-link" onClick={() => window.open(WALLET_URL)}>
-          <IconSVG
-            src={`${CDN_URL}/icons/ic-wallet.svg`}
-            maxWidth="20"
-            color="black"
-            type="fill"
-          />
-          <Text size="medium">Wallet</Text>
-        </div>
-        <div className="wallet-link" onClick={() => gotoBridge('deposit', 'btc')}>
-          <IconSVG src={`/wrapbtc.svg`} maxWidth="20" color="black" type="fill" />
-          <Text size="medium">Wrap BTC</Text>
-        </div>
-        <div className="wallet-link" onClick={() => gotoBridge('deposit', 'eth')}>
-          <IconSVG src={`/wrapbtc.svg`} maxWidth="20" color="black" type="fill" />
-          <Text size="medium">Wrap ETH</Text>
-        </div>
+        {
+          !isL2 && (
+            <>
+              <div className="wallet-link" onClick={() => window.open(WALLET_URL)}>
+                <IconSVG
+                  src={`${CDN_URL}/icons/ic-wallet.svg`}
+                  maxWidth="20"
+                  color="black"
+                  type="fill"
+                />
+                <Text size="medium">Wallet</Text>
+              </div>
+              <div className="wallet-link" onClick={() => gotoBridge('deposit', 'btc')}>
+                <IconSVG src={`/wrapbtc.svg`} maxWidth="20" color="black" type="fill" />
+                <Text size="medium">Wrap BTC</Text>
+              </div>
+              <div className="wallet-link" onClick={() => gotoBridge('deposit', 'eth')}>
+                <IconSVG src={`/wrapbtc.svg`} maxWidth="20" color="black" type="fill" />
+                <Text size="medium">Wrap ETH</Text>
+              </div>
+            </>
+          )
+        }
         {user?.walletAddress && (
           <div
             className="wallet-link"
@@ -206,6 +224,17 @@ const WalletHeader = () => {
             <Text size="medium">{formatCurrency(balanceTM, 5)} TM</Text>
           </div>
         )}
+        {
+          isL2 && (
+            <div
+              className="wallet-link"
+              onClick={() => onChangeRouter(TRUSTLESS_COMPUTER_CHAIN_INFO)}
+            >
+              <img width={20} height={20} src={'https://cdn.trustless.domains/icons/tc_ic.svg'} style={{borderRadius: '50%'}} />
+              <Text size="small">Trustless Computer</Text>
+            </div>
+          )
+        }
 
         <div className="divider"></div>
         <div className="wallet-disconnect" onClick={onDisconnect}>
