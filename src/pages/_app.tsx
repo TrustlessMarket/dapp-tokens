@@ -21,7 +21,9 @@ import {Toaster} from 'react-hot-toast';
 import {Provider} from 'react-redux';
 import GoogleAnalytics from '../components/GA/GoogleAnalytics';
 import {getConfigs} from '@/services';
-import {updateAllConfigs} from '@/state/pnftExchange';
+import {updateAllConfigs, updateConfigs} from '@/state/pnftExchange';
+import {IResourceChain} from "@/interfaces/chain";
+import {getLocalStorageChainInfo} from "@/utils";
 
 export default function App({ Component, pageProps }: AppProps) {
   const { seoInfo = {} } = pageProps;
@@ -34,7 +36,10 @@ export default function App({ Component, pageProps }: AppProps) {
   const getConfigInfos = async () => {
     const res = await getConfigs();
     store.dispatch(updateAllConfigs(res));
-    // store.dispatch(updateConfigs(res?.tc));
+
+    const connectedChain: IResourceChain = getLocalStorageChainInfo();
+    const key = connectedChain?.chain?.toLowerCase() || '';
+    store.dispatch(updateConfigs(res[key]));
   };
 
   return (
