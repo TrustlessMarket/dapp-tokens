@@ -2,8 +2,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import ModalConfirmApprove from '@/components/ModalConfirmApprove';
-import {TransactionStatus} from '@/components/Swap/alertInfoProcessing/interface';
-import {transactionType} from '@/components/Swap/alertInfoProcessing/types';
+import { TransactionStatus } from '@/components/Swap/alertInfoProcessing/interface';
+import { transactionType } from '@/components/Swap/alertInfoProcessing/types';
 import FiledButton from '@/components/Swap/button/filedButton';
 import FilterButton from '@/components/Swap/filterToken';
 import FieldAmount from '@/components/Swap/form/fieldAmount';
@@ -13,56 +13,82 @@ import InfoTooltip from '@/components/Swap/infoTooltip';
 import SlippageSettingButton from '@/components/Swap/slippageSetting/v2/button';
 import TokenBalance from '@/components/Swap/tokenBalance';
 import WrapperConnected from '@/components/WrapperConnected';
-import {CDN_URL, UNIV3_ROUTER_ADDRESS} from '@/configs';
-import {L2_CHAIN_INFO} from '@/constants/chains';
-import {BRIDGE_SUPPORT_TOKEN, L2_GASSTATION, TRUSTLESS_BRIDGE, USDC_ADDRESS,} from '@/constants/common';
-import {toastError} from '@/constants/error';
-import {ROUTE_PATH} from '@/constants/route-path';
-import {AssetsContext} from '@/contexts/assets-context';
+import { CDN_URL, UNIV3_ROUTER_ADDRESS } from '@/configs';
+import { L2_CHAIN_INFO } from '@/constants/chains';
+import {
+  BRIDGE_SUPPORT_TOKEN,
+  L2_GASSTATION,
+  TRUSTLESS_BRIDGE,
+  USDC_ADDRESS,
+} from '@/constants/common';
+import { toastError } from '@/constants/error';
+import { ROUTE_PATH } from '@/constants/route-path';
+import { AssetsContext } from '@/contexts/assets-context';
 import useGetReserves from '@/hooks/contract-operations/swap/useReserves';
 import useEstimateSwapERC20Token, {
   IEstimateSwapERC20Token,
 } from '@/hooks/contract-operations/swap/v3/useEstimateSwapERC20Token';
-import useSwapERC20Token, {ISwapERC20TokenParams,} from '@/hooks/contract-operations/swap/v3/useSwapERC20Token';
+import useSwapERC20Token, {
+  ISwapERC20TokenParams,
+} from '@/hooks/contract-operations/swap/v3/useSwapERC20Token';
 import useApproveERC20Token from '@/hooks/contract-operations/token/useApproveERC20Token';
 import useBalanceERC20Token from '@/hooks/contract-operations/token/useBalanceERC20Token';
 import useIsApproveERC20Token from '@/hooks/contract-operations/token/useIsApproveERC20Token';
 import useContractOperation from '@/hooks/contract-operations/useContractOperation';
-import {IToken} from '@/interfaces/token';
-import {getSwapRoutesV2, getSwapTokensV1, ISwapRouteParams, logErrorToServer,} from '@/services/swap';
-import {useAppDispatch, useAppSelector} from '@/state/hooks';
-import {closeModal, openModal} from '@/state/modal';
+import { IToken } from '@/interfaces/token';
+import {
+  getSwapRoutesV2,
+  getSwapTokensV1,
+  ISwapRouteParams,
+  logErrorToServer,
+} from '@/services/swap';
+import { useAppDispatch, useAppSelector } from '@/state/hooks';
+import { closeModal, openModal } from '@/state/modal';
 import {
   requestReload,
   requestReloadRealtime,
   selectPnftExchange,
   updateCurrentTransaction,
 } from '@/state/pnftExchange';
-import {getIsAuthenticatedSelector} from '@/state/user/selector';
-import {camelCaseKeys, compareString, formatCurrency, getTokenIconUrl, isNativeToken,} from '@/utils';
-import {isDevelop} from '@/utils/commons';
-import {composeValidators, required} from '@/utils/formValidate';
+import { getIsAuthenticatedSelector } from '@/state/user/selector';
+import {
+  camelCaseKeys,
+  compareString,
+  formatCurrency,
+  getTokenIconUrl,
+  isNativeToken,
+} from '@/utils';
+import { isDevelop } from '@/utils/commons';
+import { composeValidators, required } from '@/utils/formValidate';
 import px2rem from '@/utils/px2rem';
-import {showError} from '@/utils/toast';
-import {Box, Center, Flex, forwardRef, Text} from '@chakra-ui/react';
-import {useWindowSize} from '@trustless-computer/dapp-core';
-import {useWeb3React} from '@web3-react/core';
+import { showError } from '@/utils/toast';
+import { Box, Center, Flex, forwardRef, Text } from '@chakra-ui/react';
+import { useWindowSize } from '@trustless-computer/dapp-core';
+import { useWeb3React } from '@web3-react/core';
 import BigNumber from 'bignumber.js';
 import cx from 'classnames';
 import debounce from 'lodash/debounce';
 import Link from 'next/link';
-import {useRouter} from 'next/router';
-import {useCallback, useContext, useEffect, useImperativeHandle, useMemo, useRef, useState,} from 'react';
-import {Field, Form, useForm, useFormState} from 'react-final-form';
+import { useRouter } from 'next/router';
+import {
+  useCallback,
+  useContext,
+  useEffect,
+  useImperativeHandle,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
+import { Field, Form, useForm, useFormState } from 'react-final-form';
 import toast from 'react-hot-toast';
-import {BiBell} from 'react-icons/bi';
-import {BsListCheck} from 'react-icons/bs';
-import {RiArrowUpDownLine} from 'react-icons/ri';
-import {useDispatch, useSelector} from 'react-redux';
+import { BiBell } from 'react-icons/bi';
+import { BsListCheck } from 'react-icons/bs';
+import { RiArrowUpDownLine } from 'react-icons/ri';
+import { useDispatch, useSelector } from 'react-redux';
 import Web3 from 'web3';
 import styles from './styles.module.scss';
 
-import {ethers} from 'ethers';
+import { ethers } from 'ethers';
 
 const LIMIT_PAGE = 500;
 export const MakeFormSwap = forwardRef((props, ref) => {
@@ -216,7 +242,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   }, [baseToken?.address, quoteToken?.address]);
 
   useEffect(() => {
-    if(swapRoutes && Number(values.baseAmount) > 0) {
+    if (swapRoutes && Number(values.baseAmount) > 0) {
       onChangeValueBaseAmount(values.baseAmount);
     }
   }, [JSON.stringify(swapRoutes)]);
@@ -313,7 +339,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const checkTokenApprove = async (token: IToken) => {
     try {
       if (isNativeToken(token.address)) {
-        return ethers.constants.MaxUint256.toString()
+        return ethers.constants.MaxUint256.toString();
       }
       const response = await isApproved({
         erc20TokenAddress: token.address,
@@ -361,6 +387,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         }),
       );
     } catch (error) {
+      dispatch(updateCurrentTransaction(null));
       throw error;
     } finally {
       // dispatch(updateCurrentTransaction(null));

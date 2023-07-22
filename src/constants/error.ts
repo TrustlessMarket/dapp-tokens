@@ -16,7 +16,7 @@ export const ERROR_CODE = {
 export const ERRORS = {
   ACTION_REJECTED: 'User rejected transaction',
   COMMON: `There's something wrong! Try again!`,
-  NOT_ENOUGH_GAS: `Not enough ETH to pay gas fee.`,
+  NOT_ENOUGH_GAS: `Not enough TC to pay gas fee.`,
   TOO_MANY_REQUEST: `Too many requests. Please wait some minutes, refresh and try again.`,
   MAX_FEE_PER_GAS: 'Max fee per gas less than block base fee. Please try again.',
   HIGH_GAS_FEE: 'Gas fee is too high. Please try again later.',
@@ -39,7 +39,9 @@ export const getMessageError = (e: any, option: any) => {
     e?.code?.toString() === ERROR_CODE.ERROR_MINUS_32603 &&
     e?.data?.code?.toString() === '-32000'
   ) {
-    title = '';
+    title = ERRORS.NOT_ENOUGH_GAS;
+    url = `https://tcgasstation.com/`;
+    linkText = 'Topup now';
   } else if (e?.message?.includes(ERRORS.YOUR_BALANCE_BTN_INSUFFICIENT)) {
     title = e?.message;
   } else if (compareString(e?.message, ERRORS.PENDING)) {
