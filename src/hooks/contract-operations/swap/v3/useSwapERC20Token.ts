@@ -81,7 +81,17 @@ const useSwapERC20Token: ContractOperationHook<
         if (compareString(addresses[0], wtcAddress)) {
           transaction = await contract
             .connect(provider.getSigner())
-            .exactInput(data, {
+             .multicall(
+              [
+                contract.interface.encodeFunctionData(
+                  'exactInput',
+                  [data]
+                ),
+                contract.interface.encodeFunctionData(
+                  'refundTC',
+                  []
+                ),
+              ], {
               gasPrice: getGasFee(),
               value: data.amountIn,
             });
