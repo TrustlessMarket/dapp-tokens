@@ -2,7 +2,7 @@ import { Box, Flex, Link, ListItem, Text, UnorderedList } from '@chakra-ui/react
 import { CDN_URL } from '@/configs';
 import React from 'react';
 import Step from '@/modules/GetStarted/step';
-import styles from './styles.module.scss';
+import styles from '../styles.module.scss';
 
 const STEPS = [
   {
