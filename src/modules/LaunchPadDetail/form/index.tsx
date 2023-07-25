@@ -81,7 +81,7 @@ import DepositEth from '@/modules/LaunchPadDetail/depositEth';
 import ContributeForm from '@/modules/LaunchPadDetail/contributeForm';
 import {getIsAuthenticatedSelector} from '@/state/user/selector';
 import {IoWarningOutline} from 'react-icons/io5';
-import {CHAIN_ID_TO_NETWORK, NETWORK_TO_CHAIN_ID} from '@/constants/chains';
+import {CHAIN_ID_TO_NETWORK, L2_CHAIN_INFO, NETWORK_TO_CHAIN_ID} from '@/constants/chains';
 import {PREV_CHAIN_ID} from '@/constants/storage-key';
 import {IResourceChain} from "@/interfaces/chain";
 
@@ -162,12 +162,18 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   } = props;
   const [loading, setLoading] = useState(false);
   const [liquidityToken, setLiquidityToken] = useState<any>();
+  const currentChain = useSelector(selectPnftExchange).currentChain;
+
+  const isL2 = useMemo(() => {
+    return compareString(currentChain?.chain, L2_CHAIN_INFO.chain);
+  }, [currentChain?.chain]);
+
   if(compareString(liquidityToken?.address,getWETHAddress()))
   {
     CONTRIBUTION_METHODS = [
       {
         id: 'tc',
-        title: 'From Your TC wallet',
+        title: `From Your ${isL2 ? 'Meta Mask wallet' : 'TC wallet'}`,
         desc: '',
         img: `${CDN_URL}/pages/trustlessmarket/launchpad/ic-tc.png`,
       },
@@ -183,7 +189,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     CONTRIBUTION_METHODS = [
       {
         id: 'tc',
-        title: 'From Your TC wallet',
+        title: `From Your ${isL2 ? 'Meta Mask wallet' : 'TC wallet'}`,
         desc: '',
         img: `${CDN_URL}/pages/trustlessmarket/launchpad/ic-tc.png`,
       },
