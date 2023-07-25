@@ -17,8 +17,8 @@ import { CDN_URL, UNIV3_ROUTER_ADDRESS } from '@/configs';
 import { L2_CHAIN_INFO } from '@/constants/chains';
 import {
   BRIDGE_SUPPORT_TOKEN,
+  L2_GASSTATION,
   TRUSTLESS_BRIDGE,
-  TRUSTLESS_GASSTATION,
   USDC_ADDRESS,
 } from '@/constants/common';
 import { toastError } from '@/constants/error';
@@ -31,17 +31,15 @@ import useEstimateSwapERC20Token, {
 import useSwapERC20Token, {
   ISwapERC20TokenParams,
 } from '@/hooks/contract-operations/swap/v3/useSwapERC20Token';
-import useApproveERC20Token, {
-  IApproveERC20TokenParams,
-} from '@/hooks/contract-operations/token/useApproveERC20Token';
+import useApproveERC20Token from '@/hooks/contract-operations/token/useApproveERC20Token';
 import useBalanceERC20Token from '@/hooks/contract-operations/token/useBalanceERC20Token';
 import useIsApproveERC20Token from '@/hooks/contract-operations/token/useIsApproveERC20Token';
 import useContractOperation from '@/hooks/contract-operations/useContractOperation';
 import { IToken } from '@/interfaces/token';
 import {
-  ISwapRouteParams,
   getSwapRoutesV2,
   getSwapTokensV1,
+  ISwapRouteParams,
   logErrorToServer,
 } from '@/services/swap';
 import { useAppDispatch, useAppSelector } from '@/state/hooks';
@@ -64,7 +62,7 @@ import { isDevelop } from '@/utils/commons';
 import { composeValidators, required } from '@/utils/formValidate';
 import px2rem from '@/utils/px2rem';
 import { showError } from '@/utils/toast';
-import { Box, Center, Flex, Text, forwardRef } from '@chakra-ui/react';
+import { Box, Center, Flex, forwardRef, Text } from '@chakra-ui/react';
 import { useWindowSize } from '@trustless-computer/dapp-core';
 import { useWeb3React } from '@web3-react/core';
 import BigNumber from 'bignumber.js';
@@ -244,7 +242,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   }, [baseToken?.address, quoteToken?.address]);
 
   useEffect(() => {
-    if(swapRoutes && Number(values.baseAmount) > 0) {
+    if (swapRoutes && Number(values.baseAmount) > 0) {
       onChangeValueBaseAmount(values.baseAmount);
     }
   }, [JSON.stringify(swapRoutes)]);
@@ -341,7 +339,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const checkTokenApprove = async (token: IToken) => {
     try {
       if (isNativeToken(token.address)) {
-        return ethers.constants.MaxUint256.toString()
+        return ethers.constants.MaxUint256.toString();
       }
       const response = await isApproved({
         erc20TokenAddress: token.address,
@@ -389,6 +387,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         }),
       );
     } catch (error) {
+      dispatch(updateCurrentTransaction(null));
       throw error;
     } finally {
       // dispatch(updateCurrentTransaction(null));
@@ -907,7 +906,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             <Text fontSize="sm" color="#FF7E21" textAlign={'left'}>
               Your TC balance is insufficient. Buy more TC{' '}
               <Link
-                href={TRUSTLESS_GASSTATION}
+                href={L2_GASSTATION}
                 target={'_blank'}
                 style={{ textDecoration: 'underline' }}
               >

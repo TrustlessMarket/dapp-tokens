@@ -1,43 +1,28 @@
-import {Box, Tab, TabList, TabPanel, TabPanels, Tabs} from "@chakra-ui/react";
-import styles from "@/modules/GetStarted/styles.module.scss";
-import BodyContainer from "@/components/Swap/bodyContainer";
-import SwapTokens from "@/modules/GetStarted/swapTokens";
-import CreateTokens from "@/modules/GetStarted/createTokens";
-import SectionContainer from "@/components/Swap/sectionContainer";
+import {useEffect} from "react";
+import {ROUTE_PATH} from "@/constants/route-path";
+import {useRouter} from "next/router";
+import {IResourceChain} from "@/interfaces/chain";
+import {useAppSelector} from "@/state/hooks";
+import {selectPnftExchange} from "@/state/pnftExchange";
+import {compareString} from "@/utils";
+import {L2_CHAIN_INFO} from "@/constants/chains";
+import GetStartedNos from './nos';
+import GetStartedTC from './tc';
 
 const GetStarted = () => {
-  return (
-    <BodyContainer className={styles.wrapper}>
-      <SectionContainer>
-        <div>
-          <h3 className={styles.upload_title}>Let’s get you ready for Bitcoin DeFi.</h3>
-        </div>
-        <Box
-          className={styles.tabContainer}
-          // style={{
-          //   borderTop: `1px solid ${colors.darkBorderColor}`,
-          //   maxHeight: '300px',
-          // }}
-          flex={1}
-          mt={6}
-        >
-          <Tabs isFitted variant='soft-rounded'>
-            <TabList mb={6} mt={6}>
-              <Tab>Swap tokens</Tab>
-              <Tab>Create tokens</Tab>
-            </TabList>
-            <TabPanels>
-              <TabPanel>
-                <SwapTokens />
-              </TabPanel>
-              <TabPanel>
-                <CreateTokens />
-              </TabPanel>
-            </TabPanels>
-          </Tabs>
-        </Box>
-      </SectionContainer>
-    </BodyContainer>
+  const router = useRouter();
+  const currentChain: IResourceChain = useAppSelector(selectPnftExchange).currentChain;
+
+  useEffect(() => {
+    if(currentChain?.chain) {
+      router.replace(`${ROUTE_PATH.GET_STARTED}?network=${currentChain?.chain?.toLowerCase()}`)
+    }
+  }, [currentChain?.chain]);
+
+  return compareString(router?.query?.network, L2_CHAIN_INFO.chain) ?  (
+    <GetStartedNos />
+  ) : (
+    <GetStartedTC />
   );
 };
 

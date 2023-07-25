@@ -57,6 +57,7 @@ const AddApproveToken: React.FC<IAddApproveToken> = ({ token }) => {
     } catch (err) {
       const message =
         (err as Error).message || 'Something went wrong. Please try again later.';
+
       logErrorToServer({
         type: 'error',
         address: account,

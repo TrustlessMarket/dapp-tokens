@@ -1,22 +1,17 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import {
-  L2_CHAIN_INFO,
-  SupportedChainId,
-  TRUSTLESS_COMPUTER_CHAIN_INFO,
-} from '@/constants/chains';
-import { ROUTE_PATH } from '@/constants/route-path';
-import { IResourceChain } from '@/interfaces/chain';
-import { useAppDispatch } from '@/state/hooks';
+import {L2_CHAIN_INFO, SupportedChainId, TRUSTLESS_COMPUTER_CHAIN_INFO,} from '@/constants/chains';
+import {ROUTE_PATH} from '@/constants/route-path';
+import {IResourceChain} from '@/interfaces/chain';
+import {useAppDispatch} from '@/state/hooks';
 import {selectPnftExchange, updateConfigs, updateCurrentChain} from '@/state/pnftExchange';
-import { compareString } from '@/utils';
-import { Flex, Menu, MenuButton, MenuItem, MenuList, Text } from '@chakra-ui/react';
-import { useRouter } from 'next/router';
-import { useEffect } from 'react';
-import { BiCheck, BiChevronDown } from 'react-icons/bi';
-import { useSelector } from 'react-redux';
+import {compareString} from '@/utils';
+import {Flex, Menu, MenuButton, MenuItem, MenuList, Text} from '@chakra-ui/react';
+import {useRouter} from 'next/router';
+import {useEffect} from 'react';
+import {BiCheck, BiChevronDown} from 'react-icons/bi';
+import {useSelector} from 'react-redux';
 import s from './styles.module.scss';
-import { CHAIN_INFO } from '@/constants/storage-key';
-import store from "@/state";
+import {CHAIN_INFO} from '@/constants/storage-key';
 import {L2_USDT_ADDRESS, L2_WBTC_ADDRESS} from "@/configs";
 import {GM_ADDRESS, WETH_ADDRESS} from "@/constants/common";
 
@@ -57,19 +52,12 @@ const HeaderSwitchNetwork = () => {
   const dispatch = useAppDispatch();
   const currentChain: IResourceChain = useSelector(selectPnftExchange).currentChain;
   const router = useRouter();
-  const allConfigs: IResourceChain = store.getState().pnftExchange.allConfigs;
-
-  useEffect(() => {
-    if(allConfigs && currentChain?.chain) {
-      const key = currentChain?.chain?.toLowerCase() || '';
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      store.dispatch(updateConfigs(allConfigs[key]));
-    }
-  }, [JSON.stringify(allConfigs), currentChain?.chain])
+  const allConfigs: any = useSelector(selectPnftExchange).allConfigs;
 
   const onChangeRouter = (_chainA?: any) => {
     dispatch(updateCurrentChain(_chainA));
+    const key = _chainA?.chain?.toLowerCase() || '';
+    dispatch(updateConfigs(allConfigs[key]));
     localStorage.setItem(CHAIN_INFO, JSON.stringify(_chainA));
   };
 

@@ -2,19 +2,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {CDN_URL, L2_USDT_ADDRESS, L2_WBTC_ADDRESS} from '@/configs';
 import {L2_CHAIN_INFO} from '@/constants/chains';
-import {
-  GENERATIVE_DISCORD,
-  GM_ADDRESS,
-  NEW_BITCOIN_CITY,
-  TRUSTLESS_GASSTATION,
-  WETH_ADDRESS,
-} from '@/constants/common';
+import {GENERATIVE_DISCORD, GM_ADDRESS, NEW_BITCOIN_CITY, WETH_ADDRESS,} from '@/constants/common';
 import {ROUTE_PATH} from '@/constants/route-path';
 import {defaultProvider} from '@/contexts/screen-context';
 import {useScreenLayout} from '@/hooks/useScreenLayout';
 import HeaderSwitchNetwork from '@/layouts/Header/Header.SwitchNetwork';
 import {selectPnftExchange} from '@/state/pnftExchange';
-import {compareString} from '@/utils';
+import {compareString, getTCGasStationddress} from '@/utils';
 import {Flex, Link as LinkText, Text} from '@chakra-ui/react';
 import {useWindowSize} from '@trustless-computer/dapp-core';
 import {gsap} from 'gsap';
@@ -74,10 +68,6 @@ const Header = () => {
     bannerHeight,
   } = useScreenLayout();
   const currentChain = useSelector(selectPnftExchange).currentChain;
-
-  // const isTokensPage = useMemo(() => {
-  //   return isScreenDarkMode();
-  // }, [router?.pathname]);
 
   useEffect(() => {
     if (refMenu.current) {
@@ -148,7 +138,7 @@ const Header = () => {
           ) : (
             <>
               <div className="external-link">
-                <Link href={TRUSTLESS_GASSTATION} target={'_blank'}>
+                <Link href={getTCGasStationddress()} target={'_blank'}>
                   <Flex gap={1} alignItems={'center'}>
                     <Text>GET TC</Text>
                     <img
@@ -176,7 +166,11 @@ const Header = () => {
                   </Flex>
                 </Link>
               </div>
-              <HeaderSwitchNetwork />
+              {
+                !isL2 && (
+                  <HeaderSwitchNetwork />
+                )
+              }
               <WalletHeader />
             </>
           )}

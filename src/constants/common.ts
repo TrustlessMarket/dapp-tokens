@@ -40,6 +40,7 @@ export const L2_COMMON_TOKEN_CONTRACT = [
 
 export const TRUSTLESS_FAUCET = 'https://trustlessfaucet.io/';
 export const TRUSTLESS_GASSTATION = 'https://tcgasstation.com/';
+export const L2_GASSTATION = 'https://newbitcoincity.com/topup?tab=buy-tc&address=';
 export const TRUSTLESS_BRIDGE = 'https://trustlessbridge.io/';
 export const TRUSTLESS_COMPUTER = 'https://trustless.computer/';
 export const GENERATIVE_DISCORD = 'https://generative.xyz/discord';
