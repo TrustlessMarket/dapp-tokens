@@ -169,7 +169,7 @@ const AboveTheFold = ({ poolDetail, userBoost }: any) => {
                 </Tooltip>
               ) : [LAUNCHPAD_STATUS.Launching].includes(poolDetail?.state) ? (
                 <Tooltip
-                  label={`${moment(poolDetail.launchEnd).subtract("1", "h").format('LLL')}`}
+                  label={`${moment(poolDetail.launchEnd).subtract("0", "h").format('LLL')}`}
                 >
                   <Flex
                     mt={2}
@@ -179,7 +179,7 @@ const AboveTheFold = ({ poolDetail, userBoost }: any) => {
                   >
                     <FaFireAlt />
                     <Text>
-                      <CountDownTimer end_time={moment(poolDetail.launchEnd).subtract("1", "h").toString()} />
+                      <CountDownTimer end_time={moment(poolDetail.launchEnd).subtract("0", "h").toString()} />
                     </Text>
                   </Flex>
                 </Tooltip>
@@ -189,7 +189,7 @@ const AboveTheFold = ({ poolDetail, userBoost }: any) => {
                 LAUNCHPAD_STATUS.PrepareToEndFunding,
                 LAUNCHPAD_STATUS.End,
               ].includes(poolDetail?.state) ? (
-                moment(poolDetail.launchEnd).subtract("1", "h").format('LLL')
+                moment(poolDetail.launchEnd).subtract("0", "h").format('LLL')
               ) : (
                 <></>
               )}

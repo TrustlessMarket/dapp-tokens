@@ -399,7 +399,7 @@ const LaunchpadContainer = () => {
                   <FaFireAlt />
                   <Text>
                     <CountDownTimer
-                      end_time={moment(row.launchEnd).subtract('1', 'h').toString()}
+                      end_time={moment(row.launchEnd).subtract('0', 'h').toString()}
                     />
                   </Text>
                 </Flex>
