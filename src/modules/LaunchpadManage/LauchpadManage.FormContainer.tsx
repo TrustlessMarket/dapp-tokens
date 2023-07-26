@@ -99,6 +99,7 @@ const LaunchpadManageFormContainer: React.FC<LaunchpadManageFormContainerProps> 
         checkBalanceIsApprove(
           web3.utils.fromWei(_isApprove),
           new BigNumber(values.launchpadBalance || '0')
+            .multipliedBy(1.05)
             .plus(values.liquidityBalance || '0')
             .toString(),
         ),
@@ -129,7 +130,13 @@ const LaunchpadManageFormContainer: React.FC<LaunchpadManageFormContainerProps> 
         address: tokenSelected?.address,
       });
       setIsApproveToken(
-        checkBalanceIsApprove(web3.utils.fromWei(_isApprove), values?.liquidValue),
+        checkBalanceIsApprove(
+          web3.utils.fromWei(_isApprove),
+          new BigNumber(values.launchpadBalance || '0')
+            .multipliedBy(1.05)
+            .plus(values.liquidityBalance || '0')
+            .toString(),
+        ),
       );
 
       toast.success(
