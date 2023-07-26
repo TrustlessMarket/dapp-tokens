@@ -316,7 +316,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   return (
     <form onSubmit={onSubmit} style={{ height: '100%' }}>
       <Text fontSize={px2rem(16)} fontWeight={400} color={'#1C1C1C'} opacity={0.7}>
-        Deposit any amount of WETH.
+        Deposit any amount of {liquidityToken?.symbol}.
       </Text>
       <InputWrapper
         className={cx(styles.inputAmountWrap, styles.inputBaseAmountWrap)}
