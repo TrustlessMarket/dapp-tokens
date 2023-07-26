@@ -175,7 +175,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         id: 'tc',
         title: `From Your ${isL2 ? 'Meta Mask wallet' : 'TC wallet'}`,
         desc: '',
-        img: `${CDN_URL}/pages/trustlessmarket/launchpad/ic-tc.png`,
+        img: `${CDN_URL}/pages/trustlessmarket/launchpad/${isL2 ? 'ic-metamask.svg' : 'ic-tc.png'}`,
       },
       {
         id: 'eth',
@@ -191,7 +191,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         id: 'tc',
         title: `From Your ${isL2 ? 'Meta Mask wallet' : 'TC wallet'}`,
         desc: '',
-        img: `${CDN_URL}/pages/trustlessmarket/launchpad/ic-tc.png`,
+        img: `${CDN_URL}/pages/trustlessmarket/launchpad/${isL2 ? 'ic-metamask.svg' : 'ic-tc.png'}`,
       },
       {
         id: 'bitcoin',
