@@ -96,7 +96,7 @@ const useCreateLaunchpad: ContractOperationHook<
 
       return false;
     },
-    [account, provider],
+    [account, provider, currentChain],
   );
 
   return {
