@@ -19,7 +19,7 @@ import { colors } from '@/theme/colors';
 import {
   abbreviateNumber,
   compareString,
-  formatCurrency,
+  formatCurrency, getTMAddress,
   getTokenIconUrl,
 } from '@/utils';
 import { Box, Flex, Progress, Text, Tooltip } from '@chakra-ui/react';
@@ -633,7 +633,7 @@ const LaunchpadContainer = () => {
               },
               {
                 q: 'How do I get TM token to vote for projects?',
-                a: `If you don’t have $TM, you can earn 1 $TM for each time you add liquidity and 0.1 $TM for each swap on <a href="${ROUTE_PATH.MARKETS}">New Bitcoin DEX</a>. Alternatively, join our <a href="https://discord.com/invite/HPuZHUexgv">Discord channel</a> for updates about potential $TM airdrops.
+                a: `You can swap TM to cast a vote for project <a href="${`${ROUTE_PATH.TOKEN}?address=${getTMAddress()}`}">here</a>.
             `,
               },
             ]}
