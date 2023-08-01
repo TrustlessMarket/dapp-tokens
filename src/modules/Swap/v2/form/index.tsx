@@ -138,8 +138,6 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const { change, restart } = useForm();
   const btnDisabled = loading || !baseToken || !quoteToken;
 
-  console.log('values', values);
-
   const swapFee = useMemo(() => {
     if (values?.bestRoute) {
       return new BigNumber(
@@ -321,6 +319,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
 
   const getSwapRoutesInfo = async (from_token: string, to_token: string) => {
     try {
+      setSwapRoutes([]);
       const params: ISwapRouteParams = {
         from_token: from_token,
         to_token: to_token,
@@ -332,7 +331,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       change('swapRoutes', response);
       return response;
     } catch (error) {
-      console.log('error', error);
+      console.log('getSwapRoutesInfo error', error);
     }
   };
 
