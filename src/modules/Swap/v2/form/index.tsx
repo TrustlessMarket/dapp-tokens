@@ -15,6 +15,7 @@ import TokenBalance from '@/components/Swap/tokenBalance';
 import WrapperConnected from '@/components/WrapperConnected';
 import { CDN_URL, UNIV3_ROUTER_ADDRESS } from '@/configs';
 import { L2_CHAIN_INFO } from '@/constants/chains';
+import web3 from "web3";
 import {
   BRIDGE_SUPPORT_TOKEN,
   L2_GASSTATION,
@@ -35,11 +36,8 @@ import useApproveERC20Token from '@/hooks/contract-operations/token/useApproveER
 import useBalanceERC20Token from '@/hooks/contract-operations/token/useBalanceERC20Token';
 import useIsApproveERC20Token from '@/hooks/contract-operations/token/useIsApproveERC20Token';
 import useContractOperation from '@/hooks/contract-operations/useContractOperation';
-import { IToken } from '@/interfaces/token';
+//import { IToken } from '@/interfaces/token';
 import {
-  getSwapRoutesV2,
-  getSwapTokensV1,
-  ISwapRouteParams,
   logErrorToServer,
 } from '@/services/swap';
 import { useAppDispatch, useAppSelector } from '@/state/hooks';
@@ -48,7 +46,7 @@ import {
   requestReload,
   requestReloadRealtime,
   selectPnftExchange,
-  updateCurrentTransaction,
+  updateCurrentTransaction
 } from '@/state/pnftExchange';
 import { getIsAuthenticatedSelector } from '@/state/user/selector';
 import {
@@ -87,11 +85,20 @@ import { RiArrowUpDownLine } from 'react-icons/ri';
 import { useDispatch, useSelector } from 'react-redux';
 import Web3 from 'web3';
 import styles from './styles.module.scss';
-
 import { ethers } from 'ethers';
-
+import { scanTrx } from '@/services/swap-v3';
+import store from '@/state';
+import {IToken,Token,CurrentConfig,connectBrowserExtensionWallet,getProvider, getCurrencyBalance,changeWallet,refreshProvider,WalletType,getWalletAddress,tokenSwap,TokenTrade, executeTrade, getSwapRoutesV2,
+  getSwapTokensV1,getBestRoute,setTOkenSwap,TransactionState,executeTradeSlippage,
+  ISwapRouteParams} from 'trustless-swap-sdk'
+import addUnitIfNeeded from "styled-components/native/dist/utils/addUnitIfNeeded";
 const LIMIT_PAGE = 500;
+
+
+
+
 export const MakeFormSwap = forwardRef((props, ref) => {
+  const [trade, setTrade] = useState<TokenTrade>()
   const { onSubmit, submitting } = props;
   const [loading, setLoading] = useState(false);
   const [baseToken, setBaseToken] = useState<any>();
@@ -137,6 +144,38 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const { values } = useFormState();
   const { change, restart } = useForm();
   const btnDisabled = loading || !baseToken || !quoteToken;
+
+  // Update wallet state given a block number
+
+  /*
+   const refreshBalances = useCallback(async () => {
+     const provider = getProvider()
+     const address = getWalletAddress()
+     if (!provider || !address) {
+       return
+     }
+
+     const tk0 = await getCurrencyBalance(provider, address, tokenSwap.in)
+
+     const tk1 = await getCurrencyBalance(provider, address,tokenSwap.out)
+
+     console.log("tk0",tk0)
+     console.log("tk1",tk1)
+
+
+     // Set Balances
+     setToken0Balance(
+         await getCurrencyBalance(provider, address, CurrentConfig.tokens.token0)
+     )
+     setToken1Balance(
+         await getCurrencyBalance(provider, address, CurrentConfig.tokens.token1)
+     )
+
+
+  }, [])
+ */
+
+// Event Handlers
 
   const swapFee = useMemo(() => {
     if (values?.bestRoute) {
@@ -206,7 +245,10 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   };
 
   useEffect(() => {
-    fetchTokens();
+    fetchTokens()
+    changeWallet(WalletType.EXTENSION,"","")
+    refreshProvider()
+     connectBrowserExtensionWallet()
   }, []);
 
   useEffect(() => {
@@ -263,11 +305,13 @@ export const MakeFormSwap = forwardRef((props, ref) => {
 
   const checkApproveBaseToken = async (token: any) => {
     const [_isApprove] = await Promise.all([checkTokenApprove(token)]);
+    console.log("checkApproveBaseToken",_isApprove);
     setAmountBaseTokenApproved(_isApprove);
   };
 
   const checkApproveQuoteToken = async (token: any) => {
     const [_isApprove] = await Promise.all([checkTokenApprove(token)]);
+    console.log("checkApproveQuoteToken",_isApprove);
     setAmountQuoteTokenApproved(_isApprove);
   };
 
@@ -493,6 +537,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           tokenIn: quoteToken,
           tokenOut: baseToken,
           swapRoutes: routes,
+          baseTokensList:baseTokensList
         });
       }
 
@@ -548,6 +593,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       tokenIn: baseToken,
       tokenOut: quoteToken,
       swapRoutes: swapRoutes,
+      baseTokensList:baseTokensList,
     });
   };
 
@@ -556,14 +602,16 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     tokenIn,
     tokenOut,
     swapRoutes,
+                                          baseTokensList,
   }: {
     amount: any;
     tokenIn: any;
     tokenOut: any;
     swapRoutes: any;
+    baseTokensList: any[],
   }) => {
     try {
-      if (
+      if (!tokenIn||!tokenOut||
         !amount ||
         isNaN(Number(amount)) ||
         !tokenIn?.address ||
@@ -571,7 +619,30 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       )
         return;
 
-      const estimateAmountOut = await calculateBestRoute(amount, swapRoutes);
+     // alert(amount)
+
+      const token1 = new Token(
+          1,
+          tokenIn.address,
+          tokenIn.decimal,
+          tokenIn.symbol,
+          tokenIn.symbol)
+
+      const token2 = new Token(
+          1,
+          tokenOut.address,
+          tokenOut.decimal,
+          tokenOut.symbol,
+          tokenOut.symbol)
+     // alert("tuanhm")
+     // alert(parseFloat( amount.toString()))
+      setTOkenSwap(token1,parseFloat( amount.toString()),token2,3000)
+
+
+
+      const outAmountOut = await calculateBestRoute(amount, swapRoutes,baseTokensList);
+      const estimateAmountOut =  web3.utils.fromWei(outAmountOut.toString())
+      console.log("estimateAmountOut",estimateAmountOut)
 
       const rate = new BigNumber(amount)
         .div(estimateAmountOut)
@@ -595,7 +666,10 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     onChangeValueBaseAmount(baseBalance);
   };
 
-  const calculateBestRoute = async (amount: any, swapRoutes: any) => {
+  const calculateBestRoute = async (amount: any, swapRoutes: any, baseTokensList: any[]) => {
+
+
+  /*
     const promises = swapRoutes.map((route: any) => {
       const addresses = route?.pathTokens?.map((token: IToken) => token.address);
       const fees = route?.pathPairs?.map((pair: any) => Number(pair.fee));
@@ -607,17 +681,18 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       };
       return getEstimateSwap(params);
     });
+  */
+    //alert(3)
+    console.log("baseTokensList",baseTokensList)
 
-    const res = await Promise.all(promises);
 
-    const result = Math.max(...res);
+    const rs = await getBestRoute(amount,swapRoutes,baseTokensList);
 
-    const indexBestRoute = res.indexOf(result);
-    const bestRoute = swapRoutes[indexBestRoute];
 
-    change('bestRoute', bestRoute);
-
-    return result;
+    change('bestRoute', rs[1]);
+    change('trade', rs[2]);
+    console.log("result",rs)
+    return rs[0];
   };
 
   const onShowModalApprove = () => {
@@ -986,6 +1061,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
 });
 
 const TradingForm = () => {
+  const [txState, setTxState] = useState<TransactionState>(TransactionState.New)
   const refForm = useRef<any>();
   const [submitting, setSubmitting] = useState(false);
   const dispatch = useAppDispatch();
@@ -996,7 +1072,6 @@ const TradingForm = () => {
   const slippage = useAppSelector(selectPnftExchange).slippageNOS;
   const { mobileScreen } = useWindowSize();
   const { call: getEstimateSwap } = useEstimateSwapERC20Token();
-
   useEffect(() => {
     return () => {
       dispatch(updateCurrentTransaction(null));
@@ -1102,8 +1177,12 @@ const TradingForm = () => {
   };
 
   const handleSwap = async (values: any) => {
-    const { baseToken, quoteToken, baseAmount, quoteAmount, swapRoutes, bestRoute } =
+    const { baseToken, quoteToken, baseAmount, quoteAmount, swapRoutes, bestRoute,trade } =
       values;
+    console.log("slippage",slippage*100)
+    console.log("trade",trade)
+
+
 
     try {
       setSubmitting(true);
@@ -1114,24 +1193,35 @@ const TradingForm = () => {
         }),
       );
 
-      const addresses = bestRoute?.pathTokens?.map((token: IToken) => token.address);
-      const fees = bestRoute?.pathPairs?.map((pair: any) => Number(pair.fee));
+      if (trade) {
+        const rs =  await executeTradeSlippage(trade,slippage*100)
+        setTxState(rs[0])
+        console.log(rs[1])
+        logErrorToServer({
+          type: 'logs',
+          address: account,
+          error: JSON.stringify(rs),
+          // message: `gasLimit: '${gasLimit}'`,
+        });
 
-      const amountOutMin = new BigNumber(quoteAmount)
-        .multipliedBy(100 - slippage)
-        .dividedBy(100)
-        .decimalPlaces(quoteToken?.decimal || 18)
-        .toString();
+        store.dispatch(
+            updateCurrentTransaction({
+              status: TransactionStatus.pending,
+              id: transactionType.createPoolApprove,
+              hash: rs[1].toString(),
+              infoTexts: {
+                pending: `Transaction confirmed. Please wait for it to be processed.`,
+              },
+            }),
+        );
 
-      const data = {
-        addresses: addresses,
-        fees: fees,
-        address: account,
-        amount: baseAmount,
-        amountOutMin: amountOutMin,
-      };
 
-      const response = await swapToken(data);
+
+        await scanTrx({
+          tx_hash: rs[1].toString(),
+        });
+      }
+
 
       toast.success('Transaction has been created. Please wait for few minutes.');
       refForm.current?.reset();
