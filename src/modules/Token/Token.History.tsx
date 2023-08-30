@@ -1,19 +1,27 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import ListTable, {ColumnProp} from '@/components/Swap/listTable';
-import {IToken} from '@/interfaces/token';
-import {getTradeHistory} from '@/services/swap';
-import {colors} from '@/theme/colors';
-import {abbreviateNumber, compareString, formatCurrency, getExplorer, getWBTCAddress, getWETHAddress} from '@/utils';
-import {Flex, Text} from '@chakra-ui/react';
-import {useWeb3React} from '@web3-react/core';
+import ListTable, { ColumnProp } from '@/components/Swap/listTable';
+import { IResourceChain } from '@/interfaces/chain';
+import { IToken } from '@/interfaces/token';
+import { getTradeHistory } from '@/services/swap';
+import { selectPnftExchange } from '@/state/pnftExchange';
+import { colors } from '@/theme/colors';
+import {
+  abbreviateNumber,
+  compareString,
+  formatCurrency,
+  getExplorer,
+  getTCAddress,
+  getWBTCAddress,
+  getWETHAddress,
+} from '@/utils';
+import { Flex, Text } from '@chakra-ui/react';
+import { px2rem, useWindowSize } from '@trustless-computer/dapp-core';
+import { useWeb3React } from '@web3-react/core';
 import moment from 'moment';
-import {useEffect, useMemo, useState} from 'react';
-import {RxArrowTopRight} from 'react-icons/rx';
-import {StyledTokenTrading} from './Token.styled';
-import {px2rem, useWindowSize} from '@trustless-computer/dapp-core';
-import {IResourceChain} from "@/interfaces/chain";
-import {useSelector} from "react-redux";
-import {selectPnftExchange} from "@/state/pnftExchange";
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { RxArrowTopRight } from 'react-icons/rx';
+import { useSelector } from 'react-redux';
+import { StyledTokenTrading } from './Token.styled';
 
 const TokenHistory = ({ data, isOwner }: { data: IToken; isOwner?: boolean }) => {
   const [list, setList] = useState<any[]>([]);
@@ -35,7 +43,7 @@ const TokenHistory = ({ data, isOwner }: { data: IToken; isOwner?: boolean }) =>
         page: 1,
         limit: 100,
         user_address: isOwner ? account : '',
-        network: currentChain?.chain?.toLowerCase()
+        network: currentChain?.chain?.toLowerCase(),
       });
       setList(response);
     } catch (error) {
@@ -44,17 +52,19 @@ const TokenHistory = ({ data, isOwner }: { data: IToken; isOwner?: boolean }) =>
     }
   };
 
+  const compareAddress = useCallback((token_address: string) => {
+    return (
+      compareString(token_address, getWBTCAddress()) ||
+      compareString(token_address, getWETHAddress()) ||
+      compareString(token_address, getTCAddress())
+    );
+  }, []);
+
   const checkIsSell = (row: any) => {
     let isSell = true;
-    const wBTCAddress = getWBTCAddress();
-    const wETHAddress = getWETHAddress();
     if (
-      ((compareString(row?.pair?.token0, wBTCAddress) ||
-        compareString(row?.pair?.token0, wETHAddress)) &&
-        Number(row.amount1Out) > 0) ||
-      ((compareString(row?.pair?.token1, wBTCAddress) ||
-        compareString(row?.pair?.token1, wETHAddress)) &&
-        Number(row.amount0Out) > 0)
+      (compareAddress(row?.pair?.token0) && Number(row.amount1Out) > 0) ||
+      (compareAddress(row?.pair?.token1) && Number(row.amount0Out) > 0)
     ) {
       isSell = false;
     }
@@ -62,37 +72,19 @@ const TokenHistory = ({ data, isOwner }: { data: IToken; isOwner?: boolean }) =>
   };
 
   const getAmount = (row: any) => {
-    const wBTCAddress = getWBTCAddress();
-    const wETHAddress = getWETHAddress();
-    if (
-      (compareString(row?.pair?.token0, wBTCAddress) ||
-        compareString(row?.pair?.token0, wETHAddress)) &&
-      Number(row.amount1Out) > 0
-    ) {
+    if (compareAddress(row?.pair?.token0) && Number(row.amount1Out) > 0) {
       return row.amount1Out;
     }
 
-    if (
-      (compareString(row?.pair?.token1, wBTCAddress) ||
-        compareString(row?.pair?.token1, wETHAddress)) &&
-      Number(row.amount0Out) > 0
-    ) {
+    if (compareAddress(row?.pair?.token1) && Number(row.amount0Out) > 0) {
       return row.amount0Out;
     }
 
-    if (
-      (!compareString(row?.pair?.token1, wBTCAddress) ||
-        !compareString(row?.pair?.token1, wETHAddress)) &&
-      Number(row.amount1In) > 0
-    ) {
+    if (!compareAddress(row?.pair?.token1) && Number(row.amount1In) > 0) {
       return row.amount1In;
     }
 
-    if (
-      (!compareString(row?.pair?.token0, wBTCAddress) ||
-        !compareString(row?.pair?.token0, wETHAddress)) &&
-      Number(row.amount0In) > 0
-    ) {
+    if (!compareAddress(row?.pair?.token0) && Number(row.amount0In) > 0) {
       return row.amount0In;
     }
 
@@ -162,7 +154,9 @@ const TokenHistory = ({ data, isOwner }: { data: IToken; isOwner?: boolean }) =>
                   }}
                   textAlign={'right'}
                 >
-                  {compareString(row.pair.token0Obj.symbol, row.baseTokenSymbol) ? row.pair.token1Obj.symbol : row.pair.token0Obj.symbol }
+                  {compareString(row.pair.token0Obj.symbol, row.baseTokenSymbol)
+                    ? row.pair.token1Obj.symbol
+                    : row.pair.token0Obj.symbol}
                 </Text>
               </>
             );
@@ -260,7 +254,10 @@ const TokenHistory = ({ data, isOwner }: { data: IToken; isOwner?: boolean }) =>
           const amount = getAmount(row);
           return (
             <Text>
-              {formatCurrency(amount, 18)} {compareString(row.pair.token0Obj.symbol, row.baseTokenSymbol) ? row.pair.token1Obj.symbol : row.pair.token0Obj.symbol }
+              {formatCurrency(amount, 18)}{' '}
+              {compareString(row.pair.token0Obj.symbol, row.baseTokenSymbol)
+                ? row.pair.token1Obj.symbol
+                : row.pair.token0Obj.symbol}
             </Text>
           );
         },

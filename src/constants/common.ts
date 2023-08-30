@@ -1,5 +1,10 @@
 import { isDevelop } from '@/utils/commons';
-import {L2_ETH_ADDRESS, L2_USDT_ADDRESS, L2_WBTC_ADDRESS, TM_ADDRESS} from '@/configs';
+import {
+  L2_ETH_ADDRESS,
+  L2_USDT_ADDRESS,
+  L2_WBTC_ADDRESS,
+  TM_ADDRESS,
+} from '@/configs';
 
 export const PAGE_LOADED = 'PAGE_LOADED';
 export const PAGE_LOADING = 'PAGE_LOADING';
@@ -10,6 +15,9 @@ export const BRIDGE_SUPPORT_TOKEN = ['WBTC', 'WETH'];
 export const WBTC_ADDRESS = isDevelop()
   ? '0x35Ee6CD47Ae96Ad50E3d85104196303394b350B4'
   : '0xfB83c18569fB43f1ABCbae09Baf7090bFFc8CBBD';
+export const TC_ADDRESS = isDevelop()
+  ? '0x8b485d217096cE20A09AF11D15ccCc63323C1469'
+  : '0xaD771ED0F8C5df06D21A7eDA3b00acD6688dD532';
 export const WETH_ADDRESS = isDevelop()
   ? '0x512C3651c9fC966ed657aCdc79b0eC538a016C7A'
   : '0x74B033e56434845E02c9bc4F0caC75438033b00D';
@@ -35,7 +43,7 @@ export const COMMON_TOKEN_CONTRACT = [
 export const L2_COMMON_TOKEN_CONTRACT = [
   L2_WBTC_ADDRESS,
   L2_ETH_ADDRESS,
-  L2_USDT_ADDRESS
+  L2_USDT_ADDRESS,
 ];
 
 export const TRUSTLESS_FAUCET = 'https://trustlessfaucet.io/';
