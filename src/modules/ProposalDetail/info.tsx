@@ -122,7 +122,7 @@ const ProposalInfo = ({ poolDetail }: ILaunchpad | any) => {
               label={`The initial price—set at the start of the public sale—is ${formatCurrency(
                 calcLaunchpadInitialPrice({
                   launchpadBalance: poolDetail?.launchpadBalance,
-                  liquidityRatioArg: poolDetail?.liquidityRatioArg,
+                  liquidityRatioArg: poolDetail?.liquidityRatio,
                   liquidityBalance: poolDetail?.liquidityBalance,
                 }),
               )} times higher than the crowdfunding price.`}
@@ -130,7 +130,7 @@ const ProposalInfo = ({ poolDetail }: ILaunchpad | any) => {
               <b>{`${formatCurrency(
                 calcLaunchpadInitialPrice({
                   launchpadBalance: poolDetail?.launchpadBalance,
-                  liquidityRatioArg: poolDetail?.liquidityRatioArg,
+                  liquidityRatioArg: poolDetail?.liquidityRatio,
                   liquidityBalance: poolDetail?.liquidityBalance,
                 }),
               )}x Crowdfunding price`}</b>

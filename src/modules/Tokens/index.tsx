@@ -501,7 +501,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
                   e.preventDefault();
 
                   router.push(
-                    `${ROUTE_PATH.TOKEN}?from_token=${getWBTCAddress()}&to_token=${row?.address}`,
+                    `${isL2 ? ROUTE_PATH.SWAP_V2 : ROUTE_PATH.SWAP}?from_token=${getWBTCAddress()}&to_token=${row?.address}`,
                   );
                 }}
                 title="Swap now"
@@ -524,7 +524,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         },
       },
     ];
-  }, [sort.sort, mobileScreen]);
+  }, [sort.sort, mobileScreen, isL2]);
 
   const handleItemClick = (token: any) => {
     router.push(`${ROUTE_PATH.TOKEN}?address=${token?.address}`);

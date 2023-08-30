@@ -1,32 +1,33 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import {L2_CHAIN_INFO, SupportedChainId} from '@/constants/chains';
+import { L2_CHAIN_INFO, SupportedChainId } from '@/constants/chains';
 import {
   DEFAULT_GAS_PRICE,
   L2_GASSTATION,
+  TC_ADDRESS,
   TOKEN_ICON_DEFAULT,
   TRUSTLESS_GASSTATION,
   WBTC_ADDRESS,
-  WETH_ADDRESS
+  WETH_ADDRESS,
 } from '@/constants/common';
-import {CHAIN_INFO} from '@/constants/storage-key';
+import { CHAIN_INFO } from '@/constants/storage-key';
 import tokenIcons from '@/constants/tokenIcons';
-import {IResourceChain} from '@/interfaces/chain';
-import {IToken} from '@/interfaces/token';
+import { IResourceChain } from '@/interfaces/chain';
+import { IToken } from '@/interfaces/token';
 import store from '@/state';
-import {getAddress} from '@ethersproject/address';
+import { getAddress } from '@ethersproject/address';
 import BigNumber from 'bignumber.js';
-import {isEmpty, random} from 'lodash';
+import { isEmpty, random } from 'lodash';
 import camelCase from 'lodash/camelCase';
 import web3 from 'web3';
-import {compareString} from './string';
+import { compareString } from './string';
 import {
   L2_ETH_ADDRESS,
   L2_LAUNCHPAD_FACTORY_ADDRESS,
   L2_TM_ADDRESS,
   L2_WBTC_ADDRESS,
   LAUNCHPAD_FACTORY_ADDRESS,
-  TM_ADDRESS
+  TM_ADDRESS,
 } from '@/configs';
 
 export function isAddress(value: string): string | false {
@@ -160,7 +161,11 @@ export const getWBTCAddress = () => {
     return L2_WBTC_ADDRESS;
   }
   return WBTC_ADDRESS;
-}
+};
+
+export const getTCAddress = () => {
+  return TC_ADDRESS;
+};
 
 export const getWETHAddress = () => {
   const currentChain: IResourceChain = store.getState().pnftExchange.currentChain;
@@ -169,7 +174,7 @@ export const getWETHAddress = () => {
     return L2_ETH_ADDRESS;
   }
   return WETH_ADDRESS;
-}
+};
 
 export const getTMAddress = () => {
   const currentChain: IResourceChain = store.getState().pnftExchange.currentChain;
@@ -178,7 +183,7 @@ export const getTMAddress = () => {
     return L2_TM_ADDRESS;
   }
   return TM_ADDRESS;
-}
+};
 
 export const getTCGasStationddress = () => {
   const currentChain: IResourceChain = store.getState().pnftExchange.currentChain;
@@ -187,14 +192,16 @@ export const getTCGasStationddress = () => {
     return L2_GASSTATION;
   }
   return TRUSTLESS_GASSTATION;
-}
+};
 
 export const isNativeToken = (tokenAddress: string) => {
-  let isNative = false
+  let isNative = false;
   if (compareString(tokenAddress, '0x8b485d217096cE20A09AF11D15ccCc63323C1469')) {
-    isNative = true
-  } else if (compareString(tokenAddress, '0xaD771ED0F8C5df06D21A7eDA3b00acD6688dD532')) {
-    isNative = true
+    isNative = true;
+  } else if (
+    compareString(tokenAddress, '0xaD771ED0F8C5df06D21A7eDA3b00acD6688dD532')
+  ) {
+    isNative = true;
   }
-  return isNative
-}
+  return isNative;
+};

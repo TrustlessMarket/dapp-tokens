@@ -12,13 +12,18 @@ import {ROUTE_PATH} from '@/constants/route-path';
 import {ILaunchpad} from '@/interfaces/launchpad';
 import {IToken} from '@/interfaces/token';
 import VerifiedBadgeLaunchpad from '@/modules/Launchpad/verifiedBadgeLaunchpad';
-import {getListLaunchpad} from '@/services/launchpad';
-import {useAppSelector} from '@/state/hooks';
-import {selectPnftExchange, updateCurrentTransaction} from '@/state/pnftExchange';
-import {colors} from '@/theme/colors';
-import {abbreviateNumber, compareString, formatCurrency, getTokenIconUrl,} from '@/utils';
-import {Box, Flex, Progress, Text, Tooltip} from '@chakra-ui/react';
-import {useWeb3React} from '@web3-react/core';
+import { getListLaunchpad } from '@/services/launchpad';
+import { useAppSelector } from '@/state/hooks';
+import { selectPnftExchange, updateCurrentTransaction } from '@/state/pnftExchange';
+import { colors } from '@/theme/colors';
+import {
+  abbreviateNumber,
+  compareString,
+  formatCurrency, getTMAddress,
+  getTokenIconUrl,
+} from '@/utils';
+import { Box, Flex, Progress, Text, Tooltip } from '@chakra-ui/react';
+import { useWeb3React } from '@web3-react/core';
 import BigNumber from 'bignumber.js';
 import moment from 'moment';
 import {useRouter} from 'next/router';
@@ -624,7 +629,7 @@ const LaunchpadContainer = () => {
               },
               {
                 q: 'How do I get TM token to vote for projects?',
-                a: `If you don’t have $TM, you can earn 1 $TM for each time you add liquidity and 0.1 $TM for each swap on <a href="${ROUTE_PATH.MARKETS}">New Bitcoin DEX</a>. Alternatively, join our <a href="https://discord.com/invite/HPuZHUexgv">Discord channel</a> for updates about potential $TM airdrops.
+                a: `You can swap TM to cast a vote for project <a href="${`${ROUTE_PATH.TOKEN}?address=${getTMAddress()}`}">here</a>.
             `,
               },
             ]}
