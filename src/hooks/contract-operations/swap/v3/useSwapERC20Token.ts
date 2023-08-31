@@ -45,7 +45,7 @@ const useSwapERC20Token: ContractOperationHook<
                         },
                     }),
                 );
-                await new Promise(f => setTimeout(f, 15000));
+                await new Promise(f => setTimeout(f, 10000));
 
                 //console.log('updateCurrentTransaction 4')
                 await scanTrx({
