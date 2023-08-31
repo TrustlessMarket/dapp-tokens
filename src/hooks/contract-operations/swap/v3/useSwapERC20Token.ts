@@ -1,177 +1,82 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import SwapRouterJson from '@/abis/SwapRouter.json';
 import { TransactionStatus } from '@/components/Swap/alertInfoProcessing/interface';
 import { transactionType } from '@/components/Swap/alertInfoProcessing/types';
-import { UNIV3_ROUTER_ADDRESS } from '@/configs';
 import { TransactionEventType } from '@/enums/transaction';
 import { ContractOperationHook, DAppType } from '@/interfaces/contract-operation';
 import { logErrorToServer } from '@/services/swap';
 import { scanTrx } from '@/services/swap-v3';
 import store from '@/state';
 import { updateCurrentTransaction } from '@/state/pnftExchange';
-import { compareString, getContract, getGasFee } from '@/utils';
-import { getDeadline } from '@/utils/number';
-import { encodePath } from '@/utils/path';
 import { useWeb3React } from '@web3-react/core';
-import { ContractTransaction, ethers } from 'ethers';
 import { useCallback } from 'react';
-import Web3 from 'web3';
+import {executeTradeSlippage,TokenTrade} from "trustless-swap-sdk"
 
 export interface ISwapERC20TokenParams {
-  addresses: string[];
-  fees: number[];
-  address?: string | undefined;
-  amount: string;
-  amountOutMin: string;
+    trade: TokenTrade;
+    slippage: number;
 }
 
 const useSwapERC20Token: ContractOperationHook<
-  ISwapERC20TokenParams,
-  boolean | any
-> = () => {
-  const { account, provider } = useWeb3React();
+    ISwapERC20TokenParams,
+    boolean | any
+    > = () => {
+    const { account, provider } = useWeb3React();
+    const call = useCallback(
+        async (params: ISwapERC20TokenParams): Promise<boolean | any> => {
+            const { trade, slippage } = params;
+            console.log(trade)
 
-  const call = useCallback(
-    async (params: ISwapERC20TokenParams): Promise<boolean | any> => {
-      const { addresses, fees, address, amount, amountOutMin } = params;
-      if (account && provider) {
-        const contract = getContract(
-          UNIV3_ROUTER_ADDRESS,
-          SwapRouterJson,
-          provider,
-          account,
-        );
+            if (account && provider) {
+                const rs =  await executeTradeSlippage(trade,slippage*100);
+                logErrorToServer({
+                    type: 'logs',
+                    address: account,
+                    error: JSON.stringify(rs),
+                    // message: `gasLimit: '${gasLimit}'`,
+                });
+                console.log("executeTradeSlippage",rs);
+                store.dispatch(
+                    updateCurrentTransaction({
+                        status: TransactionStatus.pending,
+                        id: transactionType.createPoolApprove,
+                        hash: rs[1].toString(),
+                        infoTexts: {
+                            pending: `Transaction confirmed. Please wait for it to be processed.`,
+                        },
+                    }),
+                );
+                await new Promise(f => setTimeout(f, 15000));
 
-        // let isPendingTx = false;
-        //
-        // const unInscribedTxIDs = await getUnInscribedTransactionDetailByAddress(
-        //   account,
-        // );
-        //
-        // for await (const unInscribedTxID of unInscribedTxIDs) {
-        //   const _getTxDetail = await getTCTxByHash(unInscribedTxID.Hash);
-        //   const _inputStart = _getTxDetail.input.slice(0, 10);
-        //
-        //   if (compareString(CONTRACT_METHOD_IDS.SWAP, _inputStart)) {
-        //     isPendingTx = true;
-        //   }
-        // }
-        //
-        // if (isPendingTx) {
-        //   throw Error(ERROR_CODE.PENDING);
-        // }
+                //console.log('updateCurrentTransaction 4')
+                await scanTrx({
+                    tx_hash:  rs[1].toString(),
+                });
+                //console.log('updateCurrentTransaction 5')
+                // alert("1234")
 
-        // const gasLimit = 50000 + addresses.length * 100000;
-        let recipient: string | undefined = address
+                store.dispatch(
+                    updateCurrentTransaction({
+                        status: TransactionStatus.success,
+                        id: transactionType.createPoolApprove,
+                        hash: rs[1].toString(),
+                        infoTexts: {
+                            pending: `Transaction sucess`,
+                        },
+                    }),
+                );
+                return rs;
+            }
 
-        const wtcAddress = await contract.WTC()
-        if (compareString(addresses[addresses.length - 1], wtcAddress)) {
-          recipient = ethers.constants.AddressZero
-        }
+            return false;
+        },
+        [account, provider],
+    );
 
-        const data = {
-          path: encodePath(addresses, fees),
-          recipient: recipient,
-          deadline: getDeadline(),
-          amountIn: Web3.utils.toWei(amount, 'ether'),
-          amountOutMinimum: Web3.utils.toWei(amountOutMin, 'ether'),
-        };
-
-        let transaction : ContractTransaction
-        if (compareString(addresses[0], wtcAddress)) {
-          transaction = await contract
-            .connect(provider.getSigner())
-             .multicall(
-              [
-                contract.interface.encodeFunctionData(
-                  'exactInput',
-                  [data]
-                ),
-                contract.interface.encodeFunctionData(
-                  'refundTC',
-                  []
-                ),
-              ], {
-              gasPrice: getGasFee(),
-              value: data.amountIn,
-            });
-        } else if (compareString(addresses[addresses.length - 1], wtcAddress)) {
-          transaction = await contract
-            .connect(provider.getSigner())
-            .multicall(
-              [
-                contract.interface.encodeFunctionData(
-                  'exactInput',
-                  [data]
-                ),
-                contract.interface.encodeFunctionData(
-                  'unwrapWTC',
-                  [
-                    0,
-                    address,
-                  ]
-                ),
-              ], {
-              gasPrice: getGasFee(),
-            });
-        } else {
-          transaction = await contract
-            .connect(provider.getSigner())
-            .exactInput(data, {
-              gasPrice: getGasFee(),
-            });
-        }
-
-        logErrorToServer({
-          type: 'logs',
-          address: account,
-          error: JSON.stringify(transaction),
-          // message: `gasLimit: '${gasLimit}'`,
-        });
-
-        store.dispatch(
-          updateCurrentTransaction({
-            status: TransactionStatus.pending,
-            id: transactionType.createPoolApprove,
-            hash: transaction.hash,
-            infoTexts: {
-              pending: `Transaction confirmed. Please wait for it to be processed.`,
-            },
-          }),
-        );
-
-        // checkTxsBitcoin({
-        //   txHash: transaction.hash,
-        //   fnAction: () =>
-        //     store.dispatch(
-        //       updateCurrentTransaction({
-        //         id: transactionType.createPoolApprove,
-        //         status: TransactionStatus.pending,
-        //         hash: transaction.hash,
-        //         infoTexts: {
-        //           pending: `Transaction confirmed. Please wait for it to be processed on the Bitcoin. Note that it may take up to 10 minutes for a block confirmation on the Bitcoin blockchain.`,
-        //         },
-        //       }),
-        //     ),
-        // });
-
-        await scanTrx({
-          tx_hash: transaction.hash,
-        });
-
-        return transaction;
-      }
-
-      return false;
-    },
-    [account, provider],
-  );
-
-  return {
-    call: call,
-    dAppType: DAppType.ERC20,
-    transactionType: TransactionEventType.CREATE,
-  };
+    return {
+        call: call,
+        dAppType: DAppType.ERC20,
+        transactionType: TransactionEventType.CREATE,
+    };
 };
 
 export default useSwapERC20Token;
