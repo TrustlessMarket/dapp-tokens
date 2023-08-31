@@ -212,11 +212,10 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   };
 
   useEffect(() => {
-    fetchTokens()
     changeWallet(WalletType.EXTENSION,"","")
     choiceConFig(isProduction() ? Environment.MAINNET : Environment.TESTNET);
     refreshProvider();
-    refreshProvider()
+    fetchTokens()
     connectBrowserExtensionWallet()
   }, []);
 
