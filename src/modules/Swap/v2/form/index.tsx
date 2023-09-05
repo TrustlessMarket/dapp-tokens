@@ -85,7 +85,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import Web3 from 'web3';
 import styles from './styles.module.scss';
 import { ethers } from 'ethers';
-import {IToken,Token,CurrentConfig,connectBrowserExtensionWallet,changeWallet,refreshProvider,WalletType,tokenSwap,TokenTrade, getSwapRoutesV2,
+import {IToken,Token,changeWallet,refreshProvider,WalletType,tokenSwap,TokenTrade, getSwapRoutesV2,
   getSwapTokensV1,getBestRouteExactIn,setTOkenSwap,TransactionState,Environment,
   ISwapRouteParams,choiceConFig} from 'trustless-swap-sdk'
 import {isProduction} from "@/utils/commons";
@@ -115,7 +115,8 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const router = useRouter();
   const [swapRoutes, setSwapRoutes] = useState<any[]>([]);
 
-  const { account } = useWeb3React();
+  const { account,provider } = useWeb3React();
+  console.log("account",account)
   const [exchangeRate, setExchangeRate] = useState('0');
   const { call: getEstimateSwap } = useEstimateSwapERC20Token();
 
@@ -212,12 +213,11 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   };
 
   useEffect(() => {
-    fetchTokens()
     changeWallet(WalletType.EXTENSION,"","")
     choiceConFig(isProduction() ? Environment.MAINNET : Environment.TESTNET);
-    refreshProvider();
-    refreshProvider()
-    connectBrowserExtensionWallet()
+    console.log("provider",provider)
+    refreshProvider(provider)
+    fetchTokens()
   }, []);
 
   useEffect(() => {
@@ -274,13 +274,11 @@ export const MakeFormSwap = forwardRef((props, ref) => {
 
   const checkApproveBaseToken = async (token: any) => {
     const [_isApprove] = await Promise.all([checkTokenApprove(token)]);
-    console.log("checkApproveBaseToken",_isApprove);
     setAmountBaseTokenApproved(_isApprove);
   };
 
   const checkApproveQuoteToken = async (token: any) => {
     const [_isApprove] = await Promise.all([checkTokenApprove(token)]);
-    console.log("checkApproveQuoteToken",_isApprove);
     setAmountQuoteTokenApproved(_isApprove);
   };
 
@@ -651,10 +649,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         return getEstimateSwap(params);
       });
     */
-    //alert(3)
     console.log("baseTokensList",baseTokensList)
-
-
     const rs = await getBestRouteExactIn(amount);
 
 
