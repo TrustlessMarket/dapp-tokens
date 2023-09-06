@@ -45,7 +45,13 @@ const useSwapERC20Token: ContractOperationHook<
                         },
                     }),
                 );
-                await new Promise(f => setTimeout(f, 15000));
+                let receipt = await provider.getTransactionReceipt(rs[1].toString())
+                const countTime = 0
+                while (!receipt && countTime<25) {
+                    await new Promise(f => setTimeout(f, 1000))
+                    receipt = await provider.getTransactionReceipt(rs[1].toString())
+                    console.log("count receipt",countTime,receipt)
+                }
 
                 //console.log('updateCurrentTransaction 4')
                 await scanTrx({
