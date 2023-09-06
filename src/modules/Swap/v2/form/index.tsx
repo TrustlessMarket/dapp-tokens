@@ -54,6 +54,7 @@ import {
   formatCurrency,
   getTokenIconUrl,
   isNativeToken,
+  isSupportedChain,
 } from '@/utils';
 import { isDevelop } from '@/utils/commons';
 import { composeValidators, required } from '@/utils/formValidate';
@@ -67,6 +68,7 @@ import cx from 'classnames';
 import debounce from 'lodash/debounce';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import { IResourceChain } from '@/interfaces/chain';
 import {
   useCallback,
   useContext,
@@ -115,7 +117,8 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const router = useRouter();
   const [swapRoutes, setSwapRoutes] = useState<any[]>([]);
 
-  const { account,provider } = useWeb3React();
+  const { account,provider, chainId } = useWeb3React();
+  const currentChain: IResourceChain = useAppSelector(selectPnftExchange).currentChain;
 
   console.log("account",account)
   const [exchangeRate, setExchangeRate] = useState('0');
@@ -261,14 +264,24 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   }, [baseBalance]);
 
   useEffect(() => {
-    if (account && baseToken?.address) {
-      checkApproveBaseToken(baseToken);
+    if (
+        isSupportedChain(chainId) &&
+        compareString(currentChain?.chainId, chainId)
+    ) {
+      if (account && baseToken?.address) {
+        checkApproveBaseToken(baseToken);
+      }
     }
   }, [account, baseToken?.address]);
 
   useEffect(() => {
-    if (account && quoteToken?.address) {
-      checkApproveQuoteToken(quoteToken);
+    if (
+        isSupportedChain(chainId) &&
+        compareString(currentChain?.chainId, chainId)
+    ) {
+      if (account && quoteToken?.address) {
+        checkApproveQuoteToken(quoteToken);
+      }
     }
   }, [account, quoteToken?.address]);
 
