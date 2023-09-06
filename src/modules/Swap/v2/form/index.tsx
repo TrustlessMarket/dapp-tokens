@@ -86,7 +86,7 @@ import Web3 from 'web3';
 import styles from './styles.module.scss';
 import { ethers } from 'ethers';
 import {IToken,Token,changeWallet,refreshProvider,WalletType,tokenSwap,TokenTrade, getSwapRoutesV2,
-  getSwapTokensV1,getBestRouteExactIn,setTOkenSwap,TransactionState,Environment,
+  getSwapTokensV1,getBestRouteExactIn,setTOkenSwap,TransactionState,Environment,connectBrowserExtensionWallet,
   ISwapRouteParams,choiceConFig} from 'trustless-swap-sdk'
 import {isProduction} from "@/utils/commons";
 const LIMIT_PAGE = 500;
@@ -116,6 +116,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const [swapRoutes, setSwapRoutes] = useState<any[]>([]);
 
   const { account,provider } = useWeb3React();
+
   console.log("account",account)
   const [exchangeRate, setExchangeRate] = useState('0');
   const { call: getEstimateSwap } = useEstimateSwapERC20Token();
@@ -215,8 +216,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   useEffect(() => {
     changeWallet(WalletType.EXTENSION,"","")
     choiceConFig(isProduction() ? Environment.MAINNET : Environment.TESTNET);
-    console.log("provider",provider)
-    refreshProvider(provider)
+    refreshProvider(provider);
     fetchTokens()
   }, []);
 
@@ -649,6 +649,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         return getEstimateSwap(params);
       });
     */
+    // const { account,provider1 } = useWeb3React();
     console.log("baseTokensList",baseTokensList)
     const rs = await getBestRouteExactIn(amount);
 
