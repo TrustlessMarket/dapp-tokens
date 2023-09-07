@@ -31,15 +31,20 @@ const useEstimateSwapERC20Token: ContractOperationHook<
           provider,
         );
 
-        const transaction = await contract
-          .connect(provider)
-          .callStatic
-          .quoteExactInput(
-            encodePath(addresses, fees),
-            Web3.utils.toWei(amount, 'ether')
-          );
+        try {
+          const transaction = await contract
+              .connect(provider)
+              .callStatic
+              .quoteExactInput(
+                  encodePath(addresses, fees),
+                  Web3.utils.toWei(amount, 'ether')
+              );
 
-        return Number(web3.utils.fromWei(transaction.amountOut.toString()));
+          return Number(web3.utils.fromWei(transaction.amountOut.toString()));
+        }
+        catch(err) {
+          return  -1
+        }
       }
 
       return 0;
