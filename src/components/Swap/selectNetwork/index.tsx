@@ -23,6 +23,7 @@ const SelectedNetwork = ({}) => {
       setLoading(true);
       await onConnect();
       await requestBtcAddress();
+      location.reload()
     } catch (error) {
     } finally {
       setLoading(false);
