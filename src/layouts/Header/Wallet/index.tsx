@@ -7,7 +7,6 @@ import {getIsAuthenticatedSelector, getUserSelector} from '@/state/user/selector
 import {formatBTCPrice} from '@/utils/format';
 import {useWeb3React} from '@web3-react/core';
 import copy from 'copy-to-clipboard';
-// import { useRouter } from 'next/router';
 import SelectedNetwork from '@/components/Swap/selectNetwork';
 import Text from '@/components/Text';
 import {TRUSTLESS_BRIDGE} from '@/constants/common';

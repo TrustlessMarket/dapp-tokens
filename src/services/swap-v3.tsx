@@ -28,7 +28,7 @@ export const getPositionDetail = async (
 
 export const scanTrx = async (params: { tx_hash: string }) => {
   const qs = '?' + queryString.stringify(params);
-  return swrFetcher(`${API_EXCHANGE_URL}/sync${API_PATH}/scan-transaction-hash${qs}`, {
+  return await swrFetcher(`${API_EXCHANGE_URL}/sync${API_PATH}/scan-transaction-hash${qs}`, {
     method: 'GET',
     error: 'Fail to scan tx',
   });
