@@ -30,6 +30,8 @@ import { useDispatch } from 'react-redux';
 import { getPooledAmount, onShowAddLiquidityConfirm } from '../utils';
 import IncreaseForm from './Increase.Form';
 import s from './styles.module.scss';
+import {changeWallet, choiceConFig, Environment, refreshProvider, WalletType} from "trustless-swap-sdk";
+import {isProduction} from "@/utils/commons";
 
 const IncreaseLiquidity = () => {
   const router = useRouter();
@@ -39,7 +41,7 @@ const IncreaseLiquidity = () => {
   const [submitting, setSubmitting] = useState(false);
   const { account } = useWeb3React();
   const refForm = useRef<any>();
-
+  const { provider } = useWeb3React();
   const slippage = useAppSelector(selectPnftExchange).slippageNOS;
 
   const { run: increaseLiquidityV3 } = useContractOperation({
@@ -53,6 +55,9 @@ const IncreaseLiquidity = () => {
   useEffect(() => {
     if (id) {
       getUserPositionDetail(id);
+      changeWallet(WalletType.EXTENSION,"","")
+      choiceConFig(isProduction() ? Environment.MAINNET : Environment.TESTNET);
+      refreshProvider(provider);
     }
   }, [id, needReload]);
 
@@ -103,16 +108,19 @@ const IncreaseLiquidity = () => {
       };
 
       const response: any = await increaseLiquidityV3(params);
+
+
       dispatch(
         updateCurrentTransaction({
           id: transactionType.increaseLiquidity,
           status: TransactionStatus.success,
           hash: response.hash,
           infoTexts: {
-            success: `Liquidity has been added successfully.`,
+            success:response===true? `Liquidity has been added successfully.`:'Liquidity add fail',
           },
         }),
       );
+
       dispatch(requestReload());
       refForm.current?.reset();
     } catch (err) {

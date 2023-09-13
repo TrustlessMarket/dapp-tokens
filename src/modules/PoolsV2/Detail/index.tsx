@@ -15,8 +15,11 @@ import DetailBody from './Detail.Body';
 import DetailHeader from './Detail.Header';
 import s from './styles.module.scss';
 import { tickToPrice } from '@/utils/number';
+import {changeWallet, choiceConFig, Environment, refreshProvider, WalletType} from "trustless-swap-sdk";
+import {isProduction} from "@/utils/commons";
 import { compareString, sortAddressPair } from '@/utils';
 import BigNumber from 'bignumber.js';
+import {useWeb3React} from "@web3-react/core";
 
 interface IPoolsV2DetailPage {
   //
@@ -26,12 +29,16 @@ const PoolsV2DetailPage: React.FC<IPoolsV2DetailPage> = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const router = useRouter();
   const [positionDetail, setPositionDetail] = useState<IPosition>();
-
+  const { provider } = useWeb3React();
   const id = router.query?.id;
 
   useEffect(() => {
     if (id) {
       getUserPositionDetail(id);
+        changeWallet(WalletType.EXTENSION,"","")
+        choiceConFig(isProduction() ? Environment.MAINNET : Environment.TESTNET);
+        //alert("123")
+        refreshProvider(provider);
     }
   }, [id]);
 

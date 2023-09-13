@@ -380,6 +380,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       const response = await tokenBalance({
         erc20TokenAddress: token.address,
       });
+      console.log("response",response)
       return response;
     } catch (error) {
       console.log('error', error);
@@ -599,7 +600,6 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       )
         return;
 
-      // alert(amount)
 
       const token1 = new Token(
           1,
@@ -621,7 +621,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
 
 
       const outAmountOut = await calculateBestRoute(amount, swapRoutes,baseTokensList);
-      const estimateAmountOut =  web3.utils.fromWei(outAmountOut.toString())
+      const estimateAmountOut =  web3.utils.fromWei(outAmountOut)
       console.log("estimateAmountOut",estimateAmountOut)
 
       const rate = new BigNumber(amount)
@@ -667,11 +667,11 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     const rs = await getBestRouteExactIn(amount);
 
 
-    change('bestRoute', rs[1]);
+    change('bestRoute', rs[1])
     console.log("trade", rs[2])
-    change('trade', rs[2]);
+    change('trade', rs[2])
     console.log("result",rs)
-    return rs[0];
+    return rs[3]
   };
 
   const onShowModalApprove = () => {

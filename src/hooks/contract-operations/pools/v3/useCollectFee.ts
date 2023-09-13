@@ -1,17 +1,14 @@
 /* eslint-disable prefer-const */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import NonfungiblePositionManagerJson from '@/abis/NonfungiblePositionManager.json';
 import { TransactionStatus } from '@/components/Swap/alertInfoProcessing/interface';
 import { transactionType } from '@/components/Swap/alertInfoProcessing/types';
-import { UNIV3_NONFUNGBILE_POSITION_MANAGER_ADDRESS } from '@/configs';
 import { TransactionEventType } from '@/enums/transaction';
 import { ContractOperationHook, DAppType } from '@/interfaces/contract-operation';
 import store from '@/state';
 import { updateCurrentTransaction } from '@/state/pnftExchange';
-import { getContract, getGasFee } from '@/utils';
-import { MaxUint128 } from '@/utils/constants';
 import { useWeb3React } from '@web3-react/core';
 import { useCallback } from 'react';
+import {CollectFeeeById} from 'trustless-swap-sdk'
 
 export interface ICollectFeeV3 {
   tokenId?: number;
@@ -24,24 +21,9 @@ const useCollectFeeV3: ContractOperationHook<ICollectFeeV3, boolean> = () => {
     async (params: ICollectFeeV3): Promise<boolean> => {
       const { tokenId } = params;
       if (provider && account) {
-        const contract = getContract(
-          UNIV3_NONFUNGBILE_POSITION_MANAGER_ADDRESS,
-          NonfungiblePositionManagerJson,
-          provider,
-          account,
-        );
 
-        const transaction = await contract.connect(provider.getSigner(0)).collect(
-          {
-            tokenId,
-            recipient: account,
-            amount0Max: MaxUint128,
-            amount1Max: MaxUint128,
-          },
-          {
-            gasPrice: getGasFee(),
-          },
-        );
+
+          await CollectFeeeById(tokenId)
 
         store.dispatch(
           updateCurrentTransaction({
@@ -53,7 +35,7 @@ const useCollectFeeV3: ContractOperationHook<ICollectFeeV3, boolean> = () => {
           }),
         );
 
-        return transaction;
+        return true;
       }
 
       return false;

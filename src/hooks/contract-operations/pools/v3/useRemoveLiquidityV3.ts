@@ -1,20 +1,17 @@
 /* eslint-disable prefer-const */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import NonfungiblePositionManagerJson from '@/abis/NonfungiblePositionManager.json';
 import { TransactionStatus } from '@/components/Swap/alertInfoProcessing/interface';
 import { transactionType } from '@/components/Swap/alertInfoProcessing/types';
-import { UNIV3_NONFUNGBILE_POSITION_MANAGER_ADDRESS } from '@/configs';
 import { TransactionEventType } from '@/enums/transaction';
 import { ContractOperationHook, DAppType } from '@/interfaces/contract-operation';
 import store from '@/state';
 import { updateCurrentTransaction } from '@/state/pnftExchange';
-import { getContract, getGasFee } from '@/utils';
-import { MaxUint128 } from '@/utils/constants';
 import { getDeadline } from '@/utils/number';
 import { useWeb3React } from '@web3-react/core';
 import { useCallback } from 'react';
 import web3 from 'web3';
 import { scanTrx } from '@/services/swap-v3';
+import {decreaseLiquidity,getWalletAddress,geSignerAddress} from 'trustless-swap-sdk'
 
 export interface IRemoveLiquidityV3 {
   tokenId?: number;
@@ -33,37 +30,12 @@ const useRemoveLiquidityV3: ContractOperationHook<
     async (params: IRemoveLiquidityV3): Promise<boolean> => {
       const { tokenId, liquidity, amount0Min, amount1Min } = params;
       if (provider) {
-        const contract = getContract(
-          UNIV3_NONFUNGBILE_POSITION_MANAGER_ADDRESS,
-          NonfungiblePositionManagerJson,
-          provider,
-          account,
-        );
 
-        const transaction = await contract.connect(provider.getSigner(0)).multicall(
-          [
-            contract.interface.encodeFunctionData('decreaseLiquidity', [
-              {
-                tokenId,
-                liquidity: web3.utils.toWei(liquidity),
-                amount0Min: web3.utils.toWei(amount0Min),
-                amount1Min: web3.utils.toWei(amount1Min),
-                deadline: getDeadline(),
-              },
-            ]),
-            contract.interface.encodeFunctionData('collect', [
-              {
-                tokenId,
-                recipient: account,
-                amount0Max: MaxUint128,
-                amount1Max: MaxUint128,
-              },
-            ]),
-          ],
-          {
-            gasPrice: getGasFee(),
-          },
-        );
+          console.log("getWalletAddress",await  getWalletAddress())
+
+          // alert(geSignerAddress)
+          console.log("geSignerAddress",await geSignerAddress())
+          const transaction = await  decreaseLiquidity(tokenId,web3.utils.toWei(liquidity),web3.utils.toWei(amount0Min),web3.utils.toWei(amount1Min),getDeadline())
 
         store.dispatch(
           updateCurrentTransaction({
@@ -76,10 +48,10 @@ const useRemoveLiquidityV3: ContractOperationHook<
         );
 
         await scanTrx({
-          tx_hash: transaction.hash,
+          tx_hash: transaction[1].toString(),
         });
 
-        return transaction;
+        return true;
       }
 
       return false;
