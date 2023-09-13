@@ -60,9 +60,8 @@ const useAddLiquidityV3: ContractOperationHook<IAddLiquidityV3, boolean> = () =>
                     [amount0Min, amount1Min] = [amount1Min, amount0Min];
                     [lowerTick, upperTick] = [-upperTick, -lowerTick];
                 }
-
                 const transaction =await addLiquidityIncludeCreatePool(!isPool(poolAddress),fee.toString(),token0.address,token1.address,
-                    web3.utils.toWei(amountADesired),web3.utils.toWei(amountBDesired),lowerTick.toString(),upperTick.toString(),
+                   amountADesired,amountBDesired,lowerTick.toString(),upperTick.toString(),
                     web3.utils.toWei(amount0Min),web3.utils.toWei(amount1Min),currentPrice,getDeadline())
 
 
