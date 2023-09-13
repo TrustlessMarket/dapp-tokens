@@ -63,6 +63,7 @@ const useAddLiquidityV3: ContractOperationHook<IAddLiquidityV3, boolean> = () =>
         const isRevert = !compareString(token0.address, tokenA.address);
 
         if (isRevert) {
+          currentPrice = 1 / currentPrice;
           [amountADesired, amountBDesired] = [amountBDesired, amountADesired];
           [amount0Min, amount1Min] = [amount1Min, amount0Min];
           [lowerTick, upperTick] = [-upperTick, -lowerTick];
