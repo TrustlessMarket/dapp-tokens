@@ -10,6 +10,7 @@ import store from '@/state';
 import { updateCurrentTransaction } from '@/state/pnftExchange';
 import { compareString, sortAddressPair } from '@/utils';
 import { getDeadline } from '@/utils/number';
+import { formatPriceToPriceSqrt } from '@/utils/utilities';
 import { useWeb3React } from '@web3-react/core';
 import { useCallback } from 'react';
 import web3 from 'web3';
@@ -49,20 +50,19 @@ const useAddLiquidityV3: ContractOperationHook<IAddLiquidityV3, boolean> = () =>
                 poolAddress,
             } = params;
             if (provider) {
-
                 let [token0, token1] = sortAddressPair(tokenA, tokenB);
-
                 const isRevert = !compareString(token0.address, tokenA.address);
 
 
                 if (isRevert) {
+                     currentPrice = 1 / currentPrice;
                     [amountADesired, amountBDesired] = [amountBDesired, amountADesired];
                     [amount0Min, amount1Min] = [amount1Min, amount0Min];
                     [lowerTick, upperTick] = [-upperTick, -lowerTick];
                 }
                 const transaction =await addLiquidityIncludeCreatePool(!isPool(poolAddress),fee.toString(),token0.address,token1.address,
                    amountADesired,amountBDesired,lowerTick.toString(),upperTick.toString(),
-                    web3.utils.toWei(amount0Min),web3.utils.toWei(amount1Min),currentPrice,getDeadline())
+                    web3.utils.toWei(amount0Min),web3.utils.toWei(amount1Min),formatPriceToPriceSqrt(currentPrice),getDeadline())
 
 
          store.dispatch(
