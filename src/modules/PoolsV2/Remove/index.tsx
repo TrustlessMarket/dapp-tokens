@@ -8,7 +8,7 @@ import {toastError} from '@/constants/error';
 import useContractOperation from '@/hooks/contract-operations/useContractOperation';
 import {IPosition} from '@/interfaces/position';
 import {logErrorToServer} from '@/services/swap';
-import {getPositionDetail} from '@/services/swap-v3';
+import {getPositionDetail} from 'trustless-swap-sdk';
 import {useAppSelector} from '@/state/hooks';
 import {requestReload, selectPnftExchange, updateCurrentTransaction,} from '@/state/pnftExchange';
 import {showError} from '@/utils/toast';

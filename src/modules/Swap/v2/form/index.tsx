@@ -380,6 +380,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       const response = await tokenBalance({
         erc20TokenAddress: token.address,
       });
+      console.log("response",response)
       return response;
     } catch (error) {
       console.log('error', error);

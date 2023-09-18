@@ -21,6 +21,9 @@ import { useForm, useFormState } from 'react-final-form';
 import { getPooledAmount } from '../utils';
 import s from './styles.module.scss';
 import RemoveHeader from '@/modules/PoolsV2/Remove/Remove.Header';
+import {changeWallet, choiceConFig, Environment, refreshProvider, WalletType} from "trustless-swap-sdk";
+import {isProduction} from "@/utils/commons";
+import {useWeb3React} from "@web3-react/core";
 
 interface IFormRemovePoolsV2Container extends IPoolV2AddPair {
   handleSubmit: (_: any) => void;
@@ -37,7 +40,7 @@ const FormRemovePoolsV2Container = forwardRef<any, IFormRemovePoolsV2Container>(
     const token0Obj = positionDetail?.pair?.token0Obj;
     const token1Obj = positionDetail?.pair?.token1Obj;
     const { values } = useFormState();
-
+    const { provider } = useWeb3React();
     const isDisabled = values?.percent <= 0;
 
     const { restart, change } = useForm();
@@ -52,6 +55,9 @@ const FormRemovePoolsV2Container = forwardRef<any, IFormRemovePoolsV2Container>(
       if (positionDetail?.tokenId) {
         getEarnedFeeInfo();
         onGetPooledAmount();
+          changeWallet(WalletType.EXTENSION,"","")
+          choiceConFig(isProduction() ? Environment.MAINNET : Environment.TESTNET);
+          refreshProvider(provider);
       }
     }, [JSON.stringify(positionDetail)]);
 

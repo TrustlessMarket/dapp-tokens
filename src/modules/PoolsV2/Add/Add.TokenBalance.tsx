@@ -10,6 +10,9 @@ import React, { useEffect } from 'react';
 import { useForm, useFormState } from 'react-final-form';
 import web3 from 'web3';
 import s from './styles.module.scss';
+import {ethers} from "ethers";
+import {useWeb3React} from "@web3-react/core";
+import {  isNativeToken } from '@/utils';
 
 interface IAddTokenBalance {
   token: IToken;
@@ -19,6 +22,7 @@ interface IAddTokenBalance {
 const AddTokenBalance: React.FC<IAddTokenBalance> = ({ token, name }) => {
   const { values } = useFormState();
   const { change } = useForm();
+  const { account, provider } = useWeb3React()
 
   const needReload = useAppSelector(selectPnftExchange).needReload;
 
@@ -38,11 +42,13 @@ const AddTokenBalance: React.FC<IAddTokenBalance> = ({ token, name }) => {
     change(balanceName, '0');
     change(amountApprovedName, '0');
     try {
+    //  alert(_token.address);
+      //alert(isNativeToken(_token.address));
       const [_isApprove, _tokenBalance] = await Promise.all([
         checkTokenApprove(_token),
-        getTokenBalance(_token),
+        !isNativeToken(_token.address)?getTokenBalance(_token):getAccountBalance(),
       ]);
-      change(amountApprovedName, web3.utils.fromWei(_isApprove));
+      change(amountApprovedName, !isNativeToken(_token.address)?web3.utils.fromWei(_isApprove):ethers.constants.MaxUint256.toString());
       change(balanceName, _tokenBalance);
     } catch (error) {
       console.log('error', error);
@@ -72,6 +78,20 @@ const AddTokenBalance: React.FC<IAddTokenBalance> = ({ token, name }) => {
       throw error;
     }
   };
+
+  const getAccountBalance = async () => {
+    if (!account || !provider) {
+      return;
+    }
+    try {
+      const response = await provider.getBalance(account);
+      return ethers.utils.formatEther(response?.toString());
+    } catch (error) {
+      console.log('error', error);
+      throw error;
+    }
+  };
+
 
   return (
     <>

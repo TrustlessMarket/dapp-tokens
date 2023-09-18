@@ -24,6 +24,9 @@ import PoolsV2PositionStatus from '../PoolsV2.PositionStatus';
 import styles from './styles.module.scss';
 import { getPooledAmount } from '@/modules/PoolsV2/utils';
 import PositionRemove from '@/modules/PoolsV2/MyPositions/Position.Remove';
+import {changeWallet, choiceConFig, Environment, refreshProvider, WalletType} from "trustless-swap-sdk";
+import {isProduction} from "@/utils/commons";
+
 
 const LIMIT_PAGE = 30;
 
@@ -35,6 +38,7 @@ const TopPools = () => {
   const { mobileScreen } = useWindowSize();
   const { account } = useWeb3React();
   const router = useRouter();
+  const { provider } = useWeb3React();
 
   useEffect(() => {
     if (account) {
@@ -50,6 +54,9 @@ const TopPools = () => {
         network: chainInfo?.chain?.toLowerCase(),
       });
       setPositionList(res);
+      changeWallet(WalletType.EXTENSION,"","")
+      choiceConFig(isProduction() ? Environment.MAINNET : Environment.TESTNET);
+      refreshProvider(provider);
     } catch (err: unknown) {
       console.log(err);
       console.log('Failed to fetch tokens owned');

@@ -7,7 +7,7 @@ import ListTable from "@/components/Swap/listTable";
 import React, {useEffect, useMemo, useState} from "react";
 import {IResourceChain} from "@/interfaces/chain";
 import {formatCurrency} from "@/utils";
-import {getListLiquidity} from "@/services/swap";
+import {getListLiquidity} from "trustless-swap-sdk";
 import {ILiquidity} from "@/interfaces/liquidity";
 import {TRUSTLESS_MARKET_URL} from "@/configs";
 import {ROUTE_PATH} from "@/constants/route-path";
@@ -37,7 +37,7 @@ const TopPools = () => {
   const fetchLiquidities = async (page = 1, isFetchMore = false) => {
     try {
       setIsFetching(true);
-      const res = await getListLiquidity({ limit: LIMIT_PAGE, page: page, network: currentSelectedChain?.chain?.toLowerCase(), address: account });
+      const res = await getListLiquidity(account);
       if (isFetchMore) {
         setLiquidityList((prev) => [...prev, ...res]);
       } else {

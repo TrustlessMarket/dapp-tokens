@@ -36,6 +36,9 @@ import AddHeader from './Add.Header';
 import AddItemToken from './Add.ItemToken';
 import AddPriceRange from './Add.PriceRange';
 import s from './styles.module.scss';
+import {changeWallet, choiceConFig, Environment, refreshProvider, WalletType} from "trustless-swap-sdk";
+import {isProduction} from "@/utils/commons";
+import {useWeb3React} from "@web3-react/core";
 
 interface IFormAddPoolsV2Container extends IPoolV2AddPair {
   handleSubmit: (_: any) => void;
@@ -48,6 +51,7 @@ const FormAddPoolsV2Container = forwardRef<any, IFormAddPoolsV2Container>(
     const paramBaseTokenAddress = ids?.[0];
     const paramQuoteTokenAddress = ids?.[1];
     const paramFee = ids?.[2];
+      const { provider } = useWeb3React();
 
     const currentChain: IResourceChain =
       useAppSelector(selectPnftExchange).currentChain;
@@ -101,6 +105,10 @@ const FormAddPoolsV2Container = forwardRef<any, IFormAddPoolsV2Container>(
 
     useEffect(() => {
       if (currentChain) {
+          changeWallet(WalletType.EXTENSION,"","")
+          choiceConFig(isProduction() ? Environment.MAINNET : Environment.TESTNET);
+          //alert("123")
+          refreshProvider(provider);
         fetchData();
       }
     }, [currentChain?.chainId]);
