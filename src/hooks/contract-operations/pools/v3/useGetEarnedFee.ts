@@ -1,15 +1,11 @@
 /* eslint-disable prefer-const */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import NonfungiblePositionManagerJson from '@/abis/NonfungiblePositionManager.json';
-import {UNIV3_NONFUNGBILE_POSITION_MANAGER_ADDRESS} from '@/configs';
 import {TransactionEventType} from '@/enums/transaction';
 import {ContractOperationHook, DAppType} from '@/interfaces/contract-operation';
-import {getContract} from '@/utils';
-import {MaxUint128} from '@/utils/constants';
 import {useWeb3React} from '@web3-react/core';
 import {useCallback} from 'react';
 import web3 from "web3";
-
+import {getEarnedFee} from "trustless-swap-sdk";
 export interface ICollectFeeV3 {
   tokenId?: number;
 }
@@ -21,23 +17,13 @@ const useGetEarnedFeeV3: ContractOperationHook<ICollectFeeV3, number[]> = () => 
     async (params: ICollectFeeV3): Promise<number[]> => {
       const { tokenId } = params;
       if (provider && account) {
-        const contract = getContract(
-          UNIV3_NONFUNGBILE_POSITION_MANAGER_ADDRESS,
-          NonfungiblePositionManagerJson,
-          provider,
-          account,
-        );
 
-        const transaction = await contract.callStatic.collect({
-          tokenId,
-          recipient: account,
-          amount0Max: MaxUint128,
-          amount1Max: MaxUint128,
-        });
+
+        const transaction = await getEarnedFee(tokenId);
 
         return [
-          Number(web3.utils.fromWei(transaction.amount0.toString())),
-          Number(web3.utils.fromWei(transaction.amount1.toString()))
+          Number(web3.utils.fromWei(transaction[0])),
+          Number(web3.utils.fromWei(transaction[1]))
         ];
       }
 

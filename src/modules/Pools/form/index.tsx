@@ -38,7 +38,7 @@ import { IToken } from '@/interfaces/token';
 import { TransactionStatus } from '@/components/Swap/alertInfoProcessing/interface';
 import { getPairAPR } from '@/services/pool';
 import { logErrorToServer } from '@/services/swap';
-import { getTokens } from '@/services/token-explorer';
+import { getTokens } from 'trustless-swap-sdk';
 import { useAppDispatch, useAppSelector } from '@/state/hooks';
 import {
   requestReload,
@@ -356,12 +356,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const fetchTokens = async (page = 1, _isFetchMore = false) => {
     try {
       setLoading(true);
-      const res = await getTokens({
-        limit: LIMIT_PAGE * 10,
-        page: page,
-        is_test: isDevelop() ? '1' : '',
-        network: currentChain?.chain?.toLowerCase(),
-      });
+      const res = await getTokens(LIMIT_PAGE);
       let _list: IToken[] = camelCaseKeys(res);
       const _getImportTokens = getImportTokens();
       _list = _getImportTokens.concat(_list);

@@ -1,17 +1,16 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import UniswapV3PoolJson from '@/abis/UniswapV3Pool.json';
 import { TransactionEventType } from '@/enums/transaction';
 import { ContractOperationHook, DAppType } from '@/interfaces/contract-operation';
 import { IToken } from '@/interfaces/token';
 import {
   compareString,
-  getContract,
   getDefaultProvider,
   sortAddressPair,
 } from '@/utils';
 import { formatSqrtPriceX96ToPrice } from '@/utils/number';
 import BigNumber from 'bignumber.js';
 import { useCallback } from 'react';
+import {getPoolFromAddress} from "trustless-swap-sdk";
 
 export interface IGetPoolInfoParams {
   poolAddress: string;
@@ -26,9 +25,8 @@ const useGetPoolInfo: ContractOperationHook<IGetPoolInfoParams, any> = () => {
     async (params: IGetPoolInfoParams): Promise<any> => {
       const { poolAddress, baseToken, quoteToken } = params;
       if (provider && poolAddress) {
-        const contract = getContract(poolAddress, UniswapV3PoolJson, provider);
-
-        const slot0 = await contract.connect(provider).slot0();
+        const pool = await getPoolFromAddress(poolAddress);
+        const slot0 = await pool.slot0();
 
         const [token0, token1] = sortAddressPair(baseToken, quoteToken);
 

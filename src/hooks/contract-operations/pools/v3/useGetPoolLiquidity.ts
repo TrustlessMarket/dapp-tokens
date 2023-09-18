@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import UniswapV3PoolJson from '@/abis/UniswapV3Pool.json';
 import {TransactionEventType} from '@/enums/transaction';
 import {ContractOperationHook, DAppType} from '@/interfaces/contract-operation';
-import {getContract, getDefaultProvider,} from '@/utils';
+import { getDefaultProvider,} from '@/utils';
 import {useCallback} from 'react';
 import {fetchTicksSurroundingPrice} from "@/utils/liquidity";
 import {FeeAmount} from "@/utils/constants";
 import {BigNumber} from "ethers";
+import {getPoolFromAddress} from "trustless-swap-sdk";
 
 export interface IGetPoolLiquidityParams {
   poolAddress: string;
@@ -20,10 +20,8 @@ const useGetPoolLiquidity: ContractOperationHook<IGetPoolLiquidityParams, any> =
     async (params: IGetPoolLiquidityParams): Promise<any> => {
       const { poolAddress, numSurroundingTicks = 300 } = params;
       if (provider && poolAddress) {
-        const contract = getContract(poolAddress, UniswapV3PoolJson, provider);
 
-        const pool = await contract.connect(provider);
-
+        const pool = await getPoolFromAddress(poolAddress);
         const slot0 = await pool.slot0();
         const fee: FeeAmount = await pool.fee();
         const liquidity: BigNumber = await pool.liquidity();

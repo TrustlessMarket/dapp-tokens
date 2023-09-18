@@ -4,7 +4,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import BodyContainer from '@/components/Swap/bodyContainer';
 import { IPosition } from '@/interfaces/position';
-import { getPositionDetail } from '@/services/swap-v3';
+import { getPositionDetail } from 'trustless-swap-sdk';
 import { colors } from '@/theme/colors';
 import { Box, Flex, Spinner } from '@chakra-ui/react';
 import cs from 'classnames';

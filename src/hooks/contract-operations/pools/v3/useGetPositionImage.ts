@@ -1,10 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import NonfungiblePositionManagerJson from '@/abis/NonfungiblePositionManager.json';
-import { UNIV3_NONFUNGBILE_POSITION_MANAGER_ADDRESS } from '@/configs';
 import { TransactionEventType } from '@/enums/transaction';
 import { ContractOperationHook, DAppType } from '@/interfaces/contract-operation';
-import { getContract, getDefaultProvider } from '@/utils';
+import {  getDefaultProvider } from '@/utils';
 import { useCallback } from 'react';
+import {getPositionImage} from "trustless-swap-sdk";
 
 export interface IGetPositionImageParams {
   tokenId?: number;
@@ -20,13 +19,7 @@ const useGetPositionImage: ContractOperationHook<
     async (params: IGetPositionImageParams): Promise<any> => {
       const { tokenId } = params;
       if (provider && tokenId) {
-        const contract = getContract(
-          UNIV3_NONFUNGBILE_POSITION_MANAGER_ADDRESS,
-          NonfungiblePositionManagerJson,
-          provider,
-        );
-
-        let transaction = await contract.connect(provider).tokenURI(tokenId);
+        let transaction = await getPositionImage(tokenId);
 
         transaction = transaction.replace('data:application/json;base64,', '');
         const decodedString = Buffer.from(transaction, 'base64').toString('utf-8');

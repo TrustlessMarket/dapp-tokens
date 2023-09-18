@@ -10,7 +10,7 @@ import useContractOperation from '@/hooks/contract-operations/useContractOperati
 import { IPosition } from '@/interfaces/position';
 import { IToken } from '@/interfaces/token';
 import { logErrorToServer } from '@/services/swap';
-import { getPositionDetail } from '@/services/swap-v3';
+import { getPositionDetail } from 'trustless-swap-sdk';
 import { useAppSelector } from '@/state/hooks';
 import {
   requestReload,
