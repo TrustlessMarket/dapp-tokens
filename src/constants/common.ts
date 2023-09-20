@@ -3,7 +3,8 @@ import {
   L2_ETH_ADDRESS,
   L2_USDT_ADDRESS,
   L2_WBTC_ADDRESS,
-  TM_ADDRESS,
+  L2_TM_ADDRESS,
+  L2_TC_ADDRESS,
 } from '@/configs';
 
 export const PAGE_LOADED = 'PAGE_LOADED';
@@ -37,14 +38,16 @@ export const COMMON_TOKEN_CONTRACT = [
   USDT_ADDRESS,
   USDC_ADDRESS,
   WETH_ADDRESS,
-  TM_ADDRESS,
 ];
 
 export const L2_COMMON_TOKEN_CONTRACT = [
   L2_WBTC_ADDRESS,
   L2_ETH_ADDRESS,
   L2_USDT_ADDRESS,
+  L2_TC_ADDRESS,
+  L2_TM_ADDRESS,
 ];
+
 
 export const TRUSTLESS_FAUCET = 'https://trustlessfaucet.io/';
 export const TRUSTLESS_GASSTATION = 'https://tcgasstation.com/';

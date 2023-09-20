@@ -34,43 +34,43 @@ const useSwapERC20Token: ContractOperationHook<
                     error: JSON.stringify(rs),
                     // message: `gasLimit: '${gasLimit}'`,
                 });
-                console.log("executeTradeSlippage",rs);
-                store.dispatch(
-                    updateCurrentTransaction({
-                        status: TransactionStatus.pending,
-                        id: transactionType.createPoolApprove,
-                        hash: rs[1].toString(),
-                        infoTexts: {
-                            pending: `Transaction confirmed. Please wait for it to be processed.`,
-                        },
-                    }),
-                );
-                let receipt = await provider.getTransactionReceipt(rs[1].toString())
-                const countTime = 0
-                while (!receipt && countTime<25) {
-                    await new Promise(f => setTimeout(f, 1000))
-                    receipt = await provider.getTransactionReceipt(rs[1].toString())
-                    console.log("count receipt",countTime,receipt)
+                if(rs[2]== undefined) {
+                    return false
+                } else {
+                    store.dispatch(
+                        updateCurrentTransaction({
+                            status: TransactionStatus.pending,
+                            id: transactionType.createPoolApprove,
+                            hash: rs[1].toString(),
+                            infoTexts: {
+                                pending: `Transaction confirmed. Please wait for it to be processed.`,
+                            },
+                        }),
+                    );
+                    let receipt = await provider.getTransactionReceipt(rs[1].toString())
+                    const countTime = 0
+                    while (!receipt && countTime < 25) {
+                        await new Promise(f => setTimeout(f, 1000))
+                        receipt = await provider.getTransactionReceipt(rs[1].toString())
+                        console.log("count receipt", countTime, receipt)
+                    }
+
+                    await scanTrx({
+                        tx_hash: rs[1].toString(),
+                    });
+
+                    store.dispatch(
+                        updateCurrentTransaction({
+                            status: TransactionStatus.success,
+                            id: transactionType.createPoolApprove,
+                            hash: rs[1].toString(),
+                            infoTexts: {
+                                pending: `Transaction sucess`,
+                            },
+                        }),
+                    );
+                    return rs;
                 }
-
-                //console.log('updateCurrentTransaction 4')
-                await scanTrx({
-                    tx_hash:  rs[1].toString(),
-                });
-                //console.log('updateCurrentTransaction 5')
-                // alert("1234")
-
-                store.dispatch(
-                    updateCurrentTransaction({
-                        status: TransactionStatus.success,
-                        id: transactionType.createPoolApprove,
-                        hash: rs[1].toString(),
-                        infoTexts: {
-                            pending: `Transaction sucess`,
-                        },
-                    }),
-                );
-                return rs;
             }
 
             return false;

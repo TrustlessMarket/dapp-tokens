@@ -7,6 +7,7 @@ import { useWeb3React } from '@web3-react/core';
 import { useAppSelector } from '@/state/hooks';
 import { selectPnftExchange } from '@/state/pnftExchange';
 import { ethers } from 'ethers';
+import localStorage from '@/utils/localstorage';
 
 export interface ItemBalanceProps {
   token?: IToken | undefined;
@@ -34,7 +35,19 @@ const TokenBalance = (props: ItemBalanceProps) => {
       const [_tokenBalance] = await Promise.all([isNativeToken(token.address)? getAccountBalance(account) : getTokenBalance(token)]);
       if (_tokenBalance) {
         setBalance(_tokenBalance);
+        let has_balance = localStorage.get("has_balance")
+        const list_has_balance = has_balance?has_balance.toString().split(","):[]
+        if(Number(_tokenBalance)>0)
+        {
+          const id = token.id.toString()
+          if(list_has_balance.indexOf(id)<0){
+            list_has_balance.push(id)
+            has_balance = list_has_balance.join()
+            localStorage.set("has_balance",has_balance)
+          }
+        }
       }
+
 
       onBalanceChange && onBalanceChange(_tokenBalance);
     } catch (error) {

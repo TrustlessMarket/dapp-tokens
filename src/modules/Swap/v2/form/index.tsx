@@ -91,6 +91,7 @@ import {IToken,Token,changeWallet,refreshProvider,WalletType,tokenSwap,TokenTrad
   getSwapTokensV1,getBestRouteExactIn,setTOkenSwap,TransactionState,Environment,connectBrowserExtensionWallet,
   ISwapRouteParams,choiceConFig} from 'trustless-swap-sdk'
 import {isProduction} from "@/utils/commons";
+import localStorage from '@/utils/localstorage';
 const LIMIT_PAGE = 500;
 
 export const MakeFormSwap = forwardRef((props, ref) => {
@@ -695,6 +696,28 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     );
   };
 
+  function sortData(listData:any[]) :any {
+    console.log("listData",listData)
+    const listPremium = []
+    const listHasAmount = []
+    const listRemain = []
+    const hasBalance = localStorage.get("has_balance")
+    const listHasBalance = hasBalance?hasBalance.toString().split(","):[]
+    for (const index in listData) {
+      const id =listData[index].id.toString()
+      if(listData[index].status==="premium")
+      {
+        listPremium.push(listData[index])
+      }else if (listHasBalance.indexOf(id)>=0){
+        listHasAmount.push(listData[index])
+      }else{
+        listRemain.push(listData[index])
+      }
+    }
+    console.log("listHasAmount",listHasAmount)
+    return listPremium.concat(listHasAmount,listRemain);
+  }
+
   const onApprove = async () => {
     try {
       setLoading(true);
@@ -831,7 +854,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
                 className={styles.inputAmount}
                 prependComp={
                   <FilterButton
-                      data={baseTokensList}
+                      data={sortData(baseTokensList)}
                       commonData={baseTokensList.slice(0, 3)}
                       handleSelectItem={handleSelectBaseToken}
                       parentClose={close}
@@ -893,7 +916,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
                 className={cx(styles.inputAmount)}
                 prependComp={
                   <FilterButton
-                      data={quoteTokensList}
+                      data={sortData(quoteTokensList)}
                       commonData={quoteTokensList.slice(0, 3)}
                       handleSelectItem={handleSelectQuoteToken}
                       parentClose={close}
@@ -1179,9 +1202,11 @@ const TradingForm = () => {
         trade: trade,
         slippage: slippage*100,
       };
-
       const response = await swapToken(data);
-
+      if(response=== false)
+      {
+        return
+      }
       toast.success('Transaction has been created. Please wait for few minutes.');
       refForm.current?.reset();
       dispatch(requestReload());
