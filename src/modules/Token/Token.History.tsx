@@ -254,7 +254,7 @@ const TokenHistory = ({ data, isOwner }: { data: IToken; isOwner?: boolean }) =>
           return (
             <Text>
               {formatCurrency(amount, 18)}{' '}
-              {compareString(row.pair.token0Obj.symbol, row.baseTokenSymbol)
+              {!checkIsSell(row)
                 ? row.pair.token1Obj.symbol
                 : row.pair.token0Obj.symbol}
             </Text>
