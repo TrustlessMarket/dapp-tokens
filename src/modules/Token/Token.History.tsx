@@ -62,10 +62,9 @@ const TokenHistory = ({ data, isOwner }: { data: IToken; isOwner?: boolean }) =>
 
   const checkIsSell = (row: any) => {
     let isSell = true;
-    if (
-      (compareAddress(row?.pair?.token0) && Number(row.amount1Out) > 0) ||
-      (compareAddress(row?.pair?.token1) && Number(row.amount0Out) > 0)
-    ) {
+    console.log("row",row)
+    if(Number(row.amount1Out) > 0)
+    {
       isSell = false;
     }
     return isSell;
