@@ -6,7 +6,7 @@ import { getTradeHistory } from '@/services/swap';
 import { selectPnftExchange } from '@/state/pnftExchange';
 import { colors } from '@/theme/colors';
 import {
-  L2_TC_ADDRESS,
+  L2_TC_ADDRESS,L2_GM_ADDRESS,L2_USDT_ADDRESS
 } from '@/configs';
 import {
   abbreviateNumber,
@@ -262,8 +262,8 @@ const TokenHistory = ({ data, isOwner }: { data: IToken; isOwner?: boolean }) =>
             <Text>
               {formatCurrency(amount, 18)}{' '}
               {!checkIsSell(row)
-                ? row.pair.token1Obj.symbol
-                : row.pair.token0Obj.symbol}
+                ? row.token.toString().toLocaleLowerCase()!=L2_TC_ADDRESS.toString().toLowerCase()&&row.token.toString().toLocaleLowerCase()!=L2_GM_ADDRESS.toString().toLowerCase()&&row.token.toString().toLocaleLowerCase()!=L2_USDT_ADDRESS.toString().toLowerCase()?row.pair.token0Obj.symbol:row.pair.token1Obj.symbol
+                : row.token.toString().toLocaleLowerCase()!=L2_TC_ADDRESS.toString().toLowerCase()&&row.token.toString().toLocaleLowerCase()!=L2_GM_ADDRESS.toString().toLowerCase()?row.pair.token1Obj.symbol:row.pair.token0Obj.symbol}
             </Text>
           );
         },

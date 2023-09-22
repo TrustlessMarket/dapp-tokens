@@ -53,6 +53,7 @@ export const L2_WBTC_ADDRESS: string = process.env.NEXT_PUBLIC_L2_WBTC!;
 export const L2_ETH_ADDRESS: string = process.env.NEXT_PUBLIC_L2_ETH!;
 export const L2_TM_ADDRESS: string = process.env.NEXT_PUBLIC_L2_TM_ADDRESS!;
 export const L2_TC_ADDRESS: string = process.env.NEXT_PUBLIC_L2_TC_ADDRESS!;
+export const L2_GM_ADDRESS: string = process.env.NEXT_PUBLIC_L2_GM_ADDRESS!;
 export const L2_USDT_ADDRESS: string = process.env.NEXT_PUBLIC_L2_USDT_ADDRESS!;
 export const L2_LAUNCHPAD_FACTORY_ADDRESS: string =
   process.env.NEXT_PUBLIC_L2_LAUNCHPAD_FACTORY!;
