@@ -6,6 +6,9 @@ import { getTradeHistory } from '@/services/swap';
 import { selectPnftExchange } from '@/state/pnftExchange';
 import { colors } from '@/theme/colors';
 import {
+  L2_TC_ADDRESS,
+} from '@/configs';
+import {
   abbreviateNumber,
   compareString,
   formatCurrency,
@@ -66,6 +69,10 @@ const TokenHistory = ({ data, isOwner }: { data: IToken; isOwner?: boolean }) =>
     if(Number(row.amount1Out) > 0)
     {
       isSell = false;
+    }
+    if(row.token.toString().toLocaleLowerCase()!=L2_TC_ADDRESS.toString().toLowerCase())
+    {
+      isSell = !isSell
     }
     return isSell;
   };
