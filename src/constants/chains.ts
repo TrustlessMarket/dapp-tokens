@@ -64,7 +64,7 @@ export const L2_CHAIN_INFO = {
   rpc: [L2_NETWORK_RPC],
   faucets: [],
   nativeCurrency: {
-    name: 'TCL2',
+    name: 'NOS',
     symbol: 'TC',
     decimals: 18,
   },

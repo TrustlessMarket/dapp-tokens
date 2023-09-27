@@ -7,6 +7,7 @@ import useBitcoin from '../useBitcoin';
 import { useSelector } from 'react-redux';
 import { getUserSelector } from '@/state/user/selector';
 import { AssetsContext } from '@/contexts/assets-context';
+import { getConnection } from '@/connection';
 
 interface IParams {
   chainId?: SupportedChainId;
@@ -15,7 +16,7 @@ interface IParams {
 const useCompleteUninscribedTransaction = (args: IParams) => {
   const { chainId = SupportedChainId.TRUSTLESS_COMPUTER } = args;
   const { feeRate, getAvailableAssetsCreateTx } = useContext(AssetsContext);
-  const { chainId: walletChainId } = useWeb3React();
+  const { chainId: walletChainId, connector } = useWeb3React();
   const { onConnect: onConnectMetamask } = useContext(WalletContext);
   const user = useSelector(getUserSelector);
   const { createInscribeTx, getUnInscribedTransactionByAddress } = useBitcoin();
@@ -33,8 +34,9 @@ const useCompleteUninscribedTransaction = (args: IParams) => {
   };
 
   const checkAndSwitchChainIfNecessary = async (): Promise<void> => {
+    const connection = getConnection(connector);
     if (walletChainId !== chainId) {
-      await switchChain(chainId);
+      await switchChain(chainId,connection);
     }
   };
 

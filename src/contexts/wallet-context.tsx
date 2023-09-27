@@ -103,7 +103,7 @@ export const WalletProvider: React.FC<PropsWithChildren> = ({
       }
       await connection.connector.activate();
       if (!isSupportedChain(chainId)) {
-        await switchChain(getDefaultChain());
+        await switchChain(getDefaultChain(),connection);
       }
       const addresses = await connector.provider?.request({
         method: 'eth_accounts',
@@ -147,7 +147,7 @@ export const WalletProvider: React.FC<PropsWithChildren> = ({
       await connection.connector.activate();
 
       if (!isSupportedChain(isChain) || !compareString(chainId, isChain)) {
-        await switchChain(isChain);
+        await switchChain(isChain,connection);
       }
       const addresses: any = await connector.provider?.request({
         method: 'eth_accounts',

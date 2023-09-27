@@ -9,6 +9,7 @@ import { getUserSelector } from '@/state/user/selector';
 import { AssetsContext } from '@/contexts/assets-context';
 import { updateStatusTransaction } from '@/services/profile';
 import { toast } from 'react-hot-toast';
+import { getConnection } from '@/connection';
 
 interface IParams {
   chainId?: SupportedChainId;
@@ -17,7 +18,7 @@ interface IParams {
 const useBatchCompleteUninscribedTransaction = (args: IParams) => {
   const { chainId = SupportedChainId.TRUSTLESS_COMPUTER } = args;
   const { feeRate, getAvailableAssetsCreateTx } = useContext(AssetsContext);
-  const { chainId: walletChainId, } = useWeb3React();
+  const { chainId: walletChainId, connector} = useWeb3React();
   const { onConnect: onConnectMetamask } = useContext(WalletContext);
   const user = useSelector(getUserSelector);
   const { createBatchInscribeTxs, getUnInscribedTransactionDetailByAddress } = useBitcoin();
@@ -36,8 +37,9 @@ const useBatchCompleteUninscribedTransaction = (args: IParams) => {
   };
 
   const checkAndSwitchChainIfNecessary = async (): Promise<void> => {
+    const connection = getConnection(connector);
     if (walletChainId !== chainId) {
-      await switchChain(chainId);
+      await switchChain(chainId,connection);
     }
   };
 

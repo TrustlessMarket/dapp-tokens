@@ -19,6 +19,7 @@ import { useWeb3React } from '@web3-react/core';
 import { useRouter } from 'next/router';
 import { useSelector } from 'react-redux';
 import * as TC_SDK from 'trustless-computer-sdk';
+import { getConnection } from '@/connection';
 
 interface IParams<P, R> {
   operation: ContractOperationHook<P, R>;
@@ -39,7 +40,7 @@ const useContractOperation = <P, R>(
     inscribeable = true,
   } = args;
   const { call, dAppType, transactionType } = operation();
-  const { chainId: walletChainId } = useWeb3React();
+  const { chainId: walletChainId,connector } = useWeb3React();
   const isAuthenticated = useSelector(getIsAuthenticatedSelector);
   const user = useSelector(getUserSelector);
   const router = useRouter();
@@ -47,8 +48,9 @@ const useContractOperation = <P, R>(
     useAppSelector(selectPnftExchange).currentChain;
 
   const checkAndSwitchChainIfNecessary = async (): Promise<void> => {
+    const connection = getConnection(connector);
     if (!isSupportedChain(walletChainId)) {
-      await switchChain(chainId);
+      await switchChain(chainId,connection);
     }
   };
 
