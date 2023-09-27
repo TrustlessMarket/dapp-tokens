@@ -53,7 +53,7 @@ export const switchChain = async (chainId: SupportedChainId,conn?: Connection) =
       const info = chainList.find((c: IResourceChain) => c.chainId === chainId);
       const addChainParameter  = {
         chainId: chainId,
-        chainName:  info,
+        chainName:  info!=undefined?info.name:"",
         rpcUrls: [info!=undefined?info.rpc[0]:""],
         nativeCurrency: info!=undefined?info.nativeCurrency:[],
         blockExplorerUrls: [ info!=undefined?info.explorers[0].url:""],
