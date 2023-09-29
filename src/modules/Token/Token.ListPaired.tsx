@@ -13,7 +13,7 @@ import { IResourceChain } from '@/interfaces/chain';
 import { IToken } from '@/interfaces/token';
 import { getListPaired } from '@/services/pool';
 import { selectPnftExchange } from '@/state/pnftExchange';
-import { abbreviateNumber, compareString, formatCurrency } from '@/utils';
+import {abbreviateNumber, compareString, formatCurrency, isLayer2Chain} from '@/utils';
 import {
   Accordion,
   AccordionButton,
@@ -134,7 +134,7 @@ const TokenPoolDetail = ({ paired }: { paired: any }) => {
             btnSize="l"
             style={{ color: 'white' }}
             onClick={() => {
-              const isL2 = compareString(currentChain?.chainId, SupportedChainId.L2);
+              const isL2 = isLayer2Chain(currentChain?.chainId || -1);
               const routePath = isL2 ? ROUTE_PATH.SWAP_V2 : ROUTE_PATH.SWAP;
               router.push(
                 `${routePath}?from_token=${token0?.address}&to_token=${token1.address}`,
@@ -148,7 +148,7 @@ const TokenPoolDetail = ({ paired }: { paired: any }) => {
             variant={'outline'}
             className="btn-add-liquid"
             onClick={() => {
-              const isL2 = compareString(currentChain?.chainId, SupportedChainId.L2);
+              const isL2 = isLayer2Chain(currentChain?.chainId || -1);
               const routePath = isL2
                 ? `${ROUTE_PATH.POOLS_V2_ADD}/${token0?.address}/${token1?.address}`
                 : `${ROUTE_PATH.POOLS}?type=${ScreenType.add_liquid}&f=${token0.address}&t=${token1.address}`;
@@ -209,7 +209,7 @@ const TokenListPaired = ({ data }: { data: IToken }) => {
           <Box mt={6} />
           <FiledButton
             onClick={() => {
-              const isL2 = compareString(currentChain?.chainId, SupportedChainId.L2);
+              const isL2 = isLayer2Chain(currentChain?.chainId || -1);
               const routePath = isL2
                 ? `${ROUTE_PATH.POOLS_V2_ADD}/${data.address}/${L2_WBTC_ADDRESS}`
                 : `${ROUTE_PATH.POOLS}?type=${ScreenType.add_liquid}&f=${data.address}&t=${WBTC_ADDRESS}`;

@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import ListTable, {ColumnProp} from '@/components/Swap/listTable';
 import {MEMPOOL_URL, WALLET_URL} from '@/configs';
+import useCheckIsLayer2 from "@/hooks/useCheckIsLayer2";
 import {getUserTradeHistory} from '@/services/swap';
-import {camelCaseKeys, compareString, formatCurrency, formatLongAddress} from '@/utils';
+import {camelCaseKeys, formatCurrency, formatLongAddress} from '@/utils';
 import {Flex, Text} from '@chakra-ui/react';
 import moment from 'moment';
 import React, {useEffect, useMemo, useState} from 'react';
@@ -12,7 +13,6 @@ import {IResourceChain} from "@/interfaces/chain";
 import {useWindowSize} from "@trustless-computer/dapp-core";
 import {useSelector} from "react-redux";
 import {selectPnftExchange} from "@/state/pnftExchange";
-import {L2_CHAIN_INFO} from "@/constants/chains";
 
 const TokenHistory = () => {
   const [list, setList] = useState<any[]>([]);
@@ -22,9 +22,7 @@ const TokenHistory = () => {
   const currentChain: IResourceChain = useSelector(selectPnftExchange).currentChain;
   const { call: getPendingSwapTransactions } = usePendingSwapTransactions();
 
-  const isL2 = useMemo(() => {
-    return compareString(currentChain?.chain, L2_CHAIN_INFO.chain);
-  }, [currentChain?.chain]);
+  const isL2 = useCheckIsLayer2();
 
   useEffect(() => {
     if(account) {

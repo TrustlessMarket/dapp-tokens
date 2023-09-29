@@ -14,7 +14,13 @@ import {ROUTE_PATH} from '@/constants/route-path';
 import {WalletContext} from '@/contexts/wallet-context';
 import useBalanceERC20Token from '@/hooks/contract-operations/token/useBalanceERC20Token';
 import {IResourceChain} from '@/interfaces/chain';
-import {compareString, formatCurrency, formatLongAddress, getTMAddress, isSupportedChain,} from '@/utils';
+import {
+  compareString,
+  formatCurrency,
+  formatLongAddress,
+  getTMAddress,
+  isSupportedChain,
+} from '@/utils';
 import {showError} from '@/utils/toast';
 import {useWindowSize} from '@trustless-computer/dapp-core';
 import {useRouter} from 'next/router';
@@ -27,10 +33,11 @@ import web3 from 'web3';
 import {isScreenDarkMode} from '..';
 import {ConnectWalletButton, WalletBalance} from '../Header.styled';
 import {WalletPopover} from './Wallet.styled';
-import {L2_CHAIN_INFO, SupportedChainId, TRUSTLESS_COMPUTER_CHAIN_INFO} from '@/constants/chains';
+import {SupportedChainId, TRUSTLESS_COMPUTER_CHAIN_INFO} from '@/constants/chains';
 import {selectPnftExchange, updateConfigs, updateCurrentChain} from '@/state/pnftExchange';
 import {CHAIN_INFO} from "@/constants/storage-key";
 import {useAppDispatch} from "@/state/hooks";
+import useCheckIsLayer2 from "@/hooks/useCheckIsLayer2";
 
 const WalletHeader = () => {
   const router = useRouter();
@@ -49,12 +56,11 @@ const WalletHeader = () => {
   const chainInfo: IResourceChain = getConnectedChainInfo();
 
   const currentChain: IResourceChain = useSelector(selectPnftExchange).currentChain;
+
   const dispatch = useAppDispatch();
   const allConfigs: any = useSelector(selectPnftExchange).allConfigs;
 
-  const isL2 = useMemo(() => {
-    return compareString(currentChain?.chain, L2_CHAIN_INFO.chain);
-  }, [currentChain?.chain]);
+  const isL2 = useCheckIsLayer2();
 
   const isTokenPage = useMemo(() => {
     return isScreenDarkMode();

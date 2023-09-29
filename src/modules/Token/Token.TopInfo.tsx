@@ -4,11 +4,10 @@ import {USDT_ADDRESS, WBTC_ADDRESS, WETH_ADDRESS} from '@/constants/common';
 import { ROUTE_PATH } from '@/constants/route-path';
 import { IToken } from '@/interfaces/token';
 import { colors } from '@/theme/colors';
-import { compareString, formatCurrency } from '@/utils';
+import {compareString, formatCurrency, isLayer2Chain} from '@/utils';
 import { Box, Flex, Text } from '@chakra-ui/react';
 import { useWeb3React } from '@web3-react/core';
 import { useRouter } from 'next/router';
-import {SupportedChainId} from "@/constants/chains";
 import {IResourceChain} from "@/interfaces/chain";
 import {useSelector} from "react-redux";
 import {selectPnftExchange} from "@/state/pnftExchange";
@@ -178,7 +177,7 @@ const TokenTopInfo = ({ data }: { data: IToken }) => {
             fontSize: '16px',
           }}
           onClick={() => {
-            const isL2 = compareString(currentChain?.chainId, SupportedChainId.L2);
+            const isL2 = isLayer2Chain(currentChain?.chainId || -1);
             const from_token = compareString(data?.symbol, 'GM')
               ? isL2 ? L2_ETH_ADDRESS : WETH_ADDRESS
               : isL2 ? L2_WBTC_ADDRESS : WBTC_ADDRESS;

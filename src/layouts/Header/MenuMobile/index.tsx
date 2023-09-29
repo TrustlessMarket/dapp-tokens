@@ -1,22 +1,16 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-// import IcAvatarDefault from '@/assets/icons/ic-avatar.svg';
-// import IcMenuClose from '@/assets/icons/ic_close_menu.svg';
 import {CDN_URL} from '@/configs';
 import {ROUTE_PATH} from '@/constants/route-path';
-import {AssetsContext} from '@/contexts/assets-context';
-import {getIsAuthenticatedSelector} from '@/state/user/selector';
 import {useRouter} from 'next/router';
-import React, {ForwardedRef, useContext, useMemo} from 'react';
-import {useSelector} from 'react-redux';
+import React, {ForwardedRef, useMemo} from 'react';
 import {HEADER_MENUS} from '..';
 import {StyledLink} from '../Header.styled';
 import {Wrapper} from './MenuMobile.styled';
 import {Box, Flex, Text} from '@chakra-ui/react';
 import {GENERATIVE_DISCORD, NEW_BITCOIN_CITY,} from '@/constants/common';
-import {selectPnftExchange} from '@/state/pnftExchange';
 import HeaderSwitchNetwork from '../Header.SwitchNetwork';
-import {compareString, getTCGasStationddress} from "@/utils";
-import {L2_CHAIN_INFO} from "@/constants/chains";
+import {getTCGasStationddress} from "@/utils";
+import useCheckIsLayer2 from "@/hooks/useCheckIsLayer2";
 
 interface IProp {
   onCloseMenu: () => void;
@@ -24,14 +18,9 @@ interface IProp {
 
 const MenuMobile = React.forwardRef(
   ({ onCloseMenu }: IProp, ref: ForwardedRef<HTMLDivElement>) => {
-    const { btcBalance, juiceBalance } = useContext(AssetsContext);
-    const isAuthenticated = useSelector(getIsAuthenticatedSelector);
     const router = useRouter();
-    const currentChain = useSelector(selectPnftExchange).currentChain;
 
-    const isL2 = useMemo(() => {
-      return compareString(currentChain?.chain, L2_CHAIN_INFO.chain);
-    }, [currentChain?.chain]);
+    const isL2 = useCheckIsLayer2();
 
     const headerMenu = useMemo(() => {
       const menu = HEADER_MENUS(isL2);

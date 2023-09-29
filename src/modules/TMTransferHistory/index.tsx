@@ -10,14 +10,14 @@ import {useWeb3React} from "@web3-react/core";
 import {useSelector} from "react-redux";
 import {getUserSelector} from "@/state/user/selector";
 import useBalanceERC20Token from "@/hooks/contract-operations/token/useBalanceERC20Token";
-import {compareString, formatCurrency, getTMAddress} from "@/utils";
+import {formatCurrency, getTMAddress} from "@/utils";
 import px2rem from "@/utils/px2rem";
 import Link from "next/link";
 import {ROUTE_PATH} from "@/constants/route-path";
 import {GM_ADDRESS, WETH_ADDRESS} from "@/constants/common";
 import {IResourceChain} from "@/interfaces/chain";
 import {selectPnftExchange} from "@/state/pnftExchange";
-import {SupportedChainId} from "@/constants/chains";
+import useCheckIsLayer2 from "@/hooks/useCheckIsLayer2";
 
 const TMTransferHistory = () => {
   const { isActive } = useWeb3React();
@@ -25,7 +25,7 @@ const TMTransferHistory = () => {
   const { call: getBalanceErc20 } = useBalanceERC20Token();
   const [balanceTM, setBalanceTM] = useState('0');
   const currentChain: IResourceChain = useSelector(selectPnftExchange).currentChain;
-  const isL2 = compareString(currentChain?.chainId, SupportedChainId.L2);
+  const isL2 = useCheckIsLayer2();
   const routePathSwap = isL2 ? ROUTE_PATH.SWAP_V2 : ROUTE_PATH.SWAP;
   const routePathPools = isL2 ? ROUTE_PATH.POOLS_V2 : ROUTE_PATH.POOLS;
   const from_token = isL2 ? L2_ETH_ADDRESS : WETH_ADDRESS;

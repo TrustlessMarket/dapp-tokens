@@ -12,7 +12,7 @@ import cx from 'classnames';
 import { clone } from 'lodash';
 import React, { useEffect, useMemo, useState } from 'react';
 import { Field, Form, useFormState } from 'react-final-form';
-import {useDispatch, useSelector} from 'react-redux';
+import {useDispatch} from 'react-redux';
 import { AiOutlineCaretDown } from 'react-icons/ai';
 import styles from './styles.module.scss';
 import { compareString } from '@/utils';
@@ -24,9 +24,7 @@ import VerifiedBadge, {
 import { IToken } from '@/interfaces/token';
 import { ImWarning } from 'react-icons/im';
 import { HiBadgeCheck } from 'react-icons/hi';
-import {IResourceChain} from "@/interfaces/chain";
-import {selectPnftExchange} from "@/state/pnftExchange";
-import {SupportedChainId} from "@/constants/chains";
+import useCheckIsLayer2 from "@/hooks/useCheckIsLayer2";
 
 interface FilterButtonProps {
   data: any[] | undefined;
@@ -56,8 +54,7 @@ const FilterModal: React.FC<FilterModalProps> = ({
   const { mobileScreen } = useWindowSize();
   const { values } = useFormState();
   const [loading, setLoading] = useState(false);
-  const currentChain: IResourceChain = useSelector(selectPnftExchange).currentChain;
-  const isL2 = compareString(currentChain?.chainId, SupportedChainId.L2);
+  const isL2 = useCheckIsLayer2();
   const commonContract = isL2 ? L2_COMMON_TOKEN_CONTRACT : COMMON_TOKEN_CONTRACT;
 
   const commonData = useMemo(() => {

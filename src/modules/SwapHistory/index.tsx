@@ -6,16 +6,11 @@ import TokenHistory from '@/modules/SwapHistory/Token.History';
 import { Box, Button, Flex, Text } from '@chakra-ui/react';
 import Link from 'next/link';
 import styles from './styles.module.scss';
-import {IResourceChain} from "@/interfaces/chain";
-import {useSelector} from "react-redux";
-import {selectPnftExchange} from "@/state/pnftExchange";
-import {compareString} from "@/utils";
-import {SupportedChainId} from "@/constants/chains";
 import {L2_ETH_ADDRESS, L2_WBTC_ADDRESS} from "@/configs";
+import useCheckIsLayer2 from "@/hooks/useCheckIsLayer2";
 
 const SwapHistory = () => {
-  const currentChain: IResourceChain = useSelector(selectPnftExchange).currentChain;
-  const isL2 = compareString(currentChain?.chainId, SupportedChainId.L2);
+  const isL2 = useCheckIsLayer2();
   const routePathSwap = isL2 ? ROUTE_PATH.SWAP_V2 : ROUTE_PATH.SWAP;
   const routePathPools = isL2 ? ROUTE_PATH.POOLS_V2 : ROUTE_PATH.POOLS;
   const from_token = isL2 ? L2_ETH_ADDRESS : WETH_ADDRESS;

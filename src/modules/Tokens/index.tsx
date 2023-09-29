@@ -6,7 +6,6 @@ import {IToken} from '@/interfaces/token';
 import {getTokenRp} from '@/services/swap';
 import {
   abbreviateNumber,
-  compareString,
   formatCurrency,
   getTokenIconUrl,
   getWBTCAddress,
@@ -39,11 +38,11 @@ import {useWindowSize} from '@trustless-computer/dapp-core';
 import {IResourceChain} from "@/interfaces/chain";
 import {useSelector} from "react-redux";
 import {selectPnftExchange} from "@/state/pnftExchange";
-import {L2_CHAIN_INFO} from "@/constants/chains";
+import useCheckIsLayer2 from "@/hooks/useCheckIsLayer2";
 
 const LIMIT_PAGE = 100;
 
-export const MakeFormSwap = forwardRef((props, ref) => {
+export const MakeFormSwap = forwardRef(() => {
   const router = useRouter();
   const [isFetching, setIsFetching] = useState(false);
 
@@ -53,9 +52,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const { mobileScreen } = useWindowSize();
   const currentChain: IResourceChain = useSelector(selectPnftExchange).currentChain;
 
-  const isL2 = useMemo(() => {
-    return compareString(currentChain?.chain, L2_CHAIN_INFO.chain);
-  }, [currentChain?.chain]);
+  const isL2 = useCheckIsLayer2();
 
   const fetchTokens = async (page = 1, isFetchMore = false) => {
     try {

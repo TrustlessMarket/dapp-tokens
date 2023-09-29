@@ -35,6 +35,8 @@ export default function App({ Component, pageProps }: AppProps) {
 
   const getConfigInfos = async () => {
     const res = await getConfigs();
+
+    console.log('res', res)
     store.dispatch(updateAllConfigs(res));
 
     const connectedChain: IResourceChain = getLocalStorageChainInfo();

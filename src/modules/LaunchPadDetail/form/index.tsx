@@ -84,6 +84,7 @@ import {IoWarningOutline} from 'react-icons/io5';
 import {CHAIN_ID_TO_NETWORK, L2_CHAIN_INFO, NETWORK_TO_CHAIN_ID} from '@/constants/chains';
 import {PREV_CHAIN_ID} from '@/constants/storage-key';
 import {IResourceChain} from "@/interfaces/chain";
+import useCheckIsLayer2 from "@/hooks/useCheckIsLayer2";
 
 let CONTRIBUTION_METHODS:any[] = [
 ];
@@ -164,9 +165,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const [liquidityToken, setLiquidityToken] = useState<any>();
   const currentChain = useSelector(selectPnftExchange).currentChain;
 
-  const isL2 = useMemo(() => {
-    return compareString(currentChain?.chain, L2_CHAIN_INFO.chain);
-  }, [currentChain?.chain]);
+  const isL2 = useCheckIsLayer2();
 
   if(compareString(liquidityToken?.address,getWETHAddress()))
   {

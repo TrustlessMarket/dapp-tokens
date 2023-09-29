@@ -8,9 +8,9 @@ import Web3 from 'web3';
 import { setWalletChainId } from './auth-storage';
 import { CHAIN_INFO } from '@/constants/storage-key';
 import store from '@/state';
-import { compareString } from './string';;
-//import {AddEthereumChainParameter} from "@web3-react/types";
+import { compareString } from './string';
 import { Connection } from '@/connection';
+import {isProduction} from "@/utils/commons";
 const API_PATH = 'https://chainid.network/chains.json';
 
 export const getChainList = async (): Promise<Array<IResourceChain>> => {
@@ -95,3 +95,18 @@ export const switchChain = async (chainId: SupportedChainId,conn?: Connection) =
     }
   }
 };
+
+
+const CHAIN_ID = {
+  TRUSTLESS_COMPUTER: isProduction() ? 22213 : 22215,
+  NOS: isProduction() ? 42213 : 42070,
+}
+
+const isLayer2Chain = (chainId: number): boolean => {
+    return chainId !== CHAIN_ID.TRUSTLESS_COMPUTER;
+}
+
+export {
+  CHAIN_ID,
+  isLayer2Chain,
+}

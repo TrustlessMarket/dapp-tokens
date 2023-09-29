@@ -1,25 +1,23 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {CDN_URL, L2_USDT_ADDRESS, L2_WBTC_ADDRESS} from '@/configs';
-import {L2_CHAIN_INFO} from '@/constants/chains';
 import {GENERATIVE_DISCORD, GM_ADDRESS, NEW_BITCOIN_CITY, WETH_ADDRESS,} from '@/constants/common';
 import {ROUTE_PATH} from '@/constants/route-path';
 import {defaultProvider} from '@/contexts/screen-context';
 import {useScreenLayout} from '@/hooks/useScreenLayout';
 import HeaderSwitchNetwork from '@/layouts/Header/Header.SwitchNetwork';
-import {selectPnftExchange} from '@/state/pnftExchange';
-import {compareString, getTCGasStationddress} from '@/utils';
+import {getTCGasStationddress} from '@/utils';
 import {Flex, Link as LinkText, Text} from '@chakra-ui/react';
 import {useWindowSize} from '@trustless-computer/dapp-core';
 import {gsap} from 'gsap';
 import Link from 'next/link';
 import {useRouter} from 'next/router';
 import {useEffect, useMemo, useRef, useState} from 'react';
-import {useSelector} from 'react-redux';
 import {Wrapper} from './Header.styled';
 import MenuMobile from './MenuMobile';
 import WalletHeader from './Wallet';
 import Banner from './banner';
+import useCheckIsLayer2 from "@/hooks/useCheckIsLayer2";
 
 export const isScreenDarkMode = () => {
   return true;
@@ -67,7 +65,6 @@ const Header = () => {
     showBannerPromotion,
     bannerHeight,
   } = useScreenLayout();
-  const currentChain = useSelector(selectPnftExchange).currentChain;
 
   useEffect(() => {
     if (refMenu.current) {
@@ -83,9 +80,7 @@ const Header = () => {
     }
   }, [isOpenMenu]);
 
-  const isL2 = useMemo(() => {
-    return compareString(currentChain?.chain, L2_CHAIN_INFO.chain);
-  }, [currentChain?.chain]);
+  const isL2 = useCheckIsLayer2();
 
   const headerMenu = useMemo(() => {
     const menu = HEADER_MENUS(isL2);
