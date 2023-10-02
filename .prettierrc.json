@@ -4,5 +4,6 @@
   "singleQuote": true,
   "printWidth": 85,
   "tabWidth": 2,
-  "endOfLine": "auto"
+  "endOfLine": "auto",
+  "object-curly-spacing": ["error", "always"]
 }

@@ -1,14 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import {API_EXCHANGE_URL} from '@/configs';
-import {swrFetcher} from '@/utils/swr';
+import { API_EXCHANGE_URL } from '@/configs';
+import { swrFetcher } from '@/utils/swr';
 import queryString from 'query-string';
-import {IPosition} from "@/interfaces/position";
+import { IPosition } from '@/interfaces/position';
 
 const API_PATH = '/swap-v3';
 
 export const getListUserPositions = async (
-  params: any
+  params: any,
 ): Promise<IPosition[]> => {
   const qs = '?' + queryString.stringify(params);
   return swrFetcher(`${API_EXCHANGE_URL}${API_PATH}/pool/user-position${qs}`, {
@@ -18,7 +18,7 @@ export const getListUserPositions = async (
 };
 
 export const getPositionDetail = async (
-  id: number
+  id: number,
 ): Promise<IPosition> => {
   return swrFetcher(`${API_EXCHANGE_URL}${API_PATH}/pool/user-position/${id}`, {
     method: 'GET',
@@ -41,7 +41,7 @@ export interface ISurroundingTicksParams {
 }
 
 export const getSurroundingTicks = async (
-  params: ISurroundingTicksParams
+  params: ISurroundingTicksParams,
 ): Promise<any> => {
   const qs = '?' + queryString.stringify(params);
   return swrFetcher(`${API_EXCHANGE_URL}${API_PATH}/pool/surrounding-ticks${qs}`, {
