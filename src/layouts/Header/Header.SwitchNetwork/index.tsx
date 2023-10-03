@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   convertNetworkToResourceChain,
-  SupportedChainId,
 } from '@/constants/chains';
 import { ROUTE_PATH } from '@/constants/route-path';
 import { IResourceChain } from '@/interfaces/chain';
@@ -12,7 +11,7 @@ import {
   updateConfigs,
   updateCurrentChain,
 } from '@/state/pnftExchange';
-import { CHAIN_ID, compareString } from '@/utils';
+import { CHAIN_ID, compareString, getChainNameRequestAPI, isCustomChain, isLayer2Chain } from '@/utils';
 import { Flex, Menu, MenuButton, MenuItem, MenuList, Text } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import React, { useEffect } from 'react';
@@ -69,8 +68,8 @@ const HeaderSwitchNetwork = () => {
   const configs = useSelector(configsSelector);
 
   const networks = React.useMemo(() => {
-    return isL2 ? configs.map(v => convertNetworkToResourceChain(v)).filter((v) => v?.chainId !== CHAIN_ID.TRUSTLESS_COMPUTER) : configs;
-  }, [isL2, configs])
+    return isL2 ? configs.map(v => convertNetworkToResourceChain(v)).filter((v) => Number(v?.chainId) !== CHAIN_ID.TRUSTLESS_COMPUTER) : configs;
+  }, [isL2, configs]);
 
   const onChangeRouter = (_chainA?: IResourceChain) => {
     dispatch(updateCurrentChain(_chainA));
@@ -82,18 +81,19 @@ const HeaderSwitchNetwork = () => {
   useEffect(() => {
     const routerPath = router.pathname;
 
-    if (compareString(currentChain?.chainId, SupportedChainId.L2)) {
+    if (isLayer2Chain(currentChain?.chainId || -1)) {
       if (SUPPORT_PATH_V1.findIndex((v) => routerPath.includes(v)) > -1) {
-        if (routerPath.includes(ROUTE_PATH.SWAP)) {
-          router.push(`${ROUTE_PATH.ORIGINAL_SWAP}/nos?from_token=${L2_USDT_ADDRESS}&to_token=${L2_WBTC_ADDRESS}`);
+        const chainName = getChainNameRequestAPI(currentChain).toLowerCase();
+        if (routerPath.includes(ROUTE_PATH.SWAP) && !isCustomChain(currentChain.chainId)) {
+          router.push(`${ROUTE_PATH.ORIGINAL_SWAP}/${chainName}?from_token=${L2_USDT_ADDRESS}&to_token=${L2_WBTC_ADDRESS}`);
         } else if (routerPath.includes(ROUTE_PATH.POOLS)) {
-          router.push(`${ROUTE_PATH.ORIGINAL_POOL}/nos`);
+          router.push(`${ROUTE_PATH.ORIGINAL_POOL}/${chainName}`);
         }
       }
     } else if (
       compareString(
         currentChain?.chainId,
-        SupportedChainId.TRUSTLESS_COMPUTER,
+        CHAIN_ID.TRUSTLESS_COMPUTER,
       )
     ) {
       if (SUPPORT_PATH_V2.findIndex((v) => routerPath.includes(v)) > -1) {

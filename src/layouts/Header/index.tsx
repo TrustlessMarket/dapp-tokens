@@ -6,7 +6,7 @@ import {ROUTE_PATH} from '@/constants/route-path';
 import {defaultProvider} from '@/contexts/screen-context';
 import {useScreenLayout} from '@/hooks/useScreenLayout';
 import HeaderSwitchNetwork from '@/layouts/Header/Header.SwitchNetwork';
-import {getTCGasStationddress} from '@/utils';
+import { getChainNameRequestAPI, getTCGasStationddress, isCustomChain } from '@/utils';
 import {Flex, Link as LinkText, Text} from '@chakra-ui/react';
 import {useWindowSize} from '@trustless-computer/dapp-core';
 import {gsap} from 'gsap';
@@ -18,22 +18,25 @@ import MenuMobile from './MenuMobile';
 import WalletHeader from './Wallet';
 import Banner from './banner';
 import useCheckIsLayer2 from "@/hooks/useCheckIsLayer2";
+import { useAppSelector } from '@/state/hooks';
+import { currentChainSelector } from '@/state/pnftExchange';
+import { IResourceChain } from '@/interfaces/chain';
 
 export const isScreenDarkMode = () => {
   return true;
 };
 
-export const HEADER_MENUS = (isL2: boolean) => [
+export const HEADER_MENUS = ({ isL2, isCustomChain, chainName }: { isL2: boolean, isCustomChain: boolean, chainName: string }) => [
   {
     key: ROUTE_PATH.MARKETS,
     route: ROUTE_PATH.MARKETS,
     name: 'Markets',
   },
   {
-    key: isL2 ? ROUTE_PATH.SWAP_V2 : ROUTE_PATH.SWAP,
+    key: isL2 ? `/swap/${chainName}` : ROUTE_PATH.SWAP,
     route: `${
-      isL2 ? ROUTE_PATH.SWAP_V2 : ROUTE_PATH.SWAP
-    }?from_token=${isL2 ? L2_USDT_ADDRESS : WETH_ADDRESS}&to_token=${isL2 ? L2_WBTC_ADDRESS : GM_ADDRESS}`,
+      isL2 ? `/swap/${chainName}` : ROUTE_PATH.SWAP
+    }${isCustomChain ? '' : `?from_token=${isL2 ? L2_USDT_ADDRESS : WETH_ADDRESS}&to_token=${isL2 ? L2_WBTC_ADDRESS : GM_ADDRESS}`}`,
     name: 'Swap',
   },
   {
@@ -58,6 +61,7 @@ const Header = () => {
   const [isOpenMenu, setIsOpenMenu] = useState<boolean>(false);
   const { mobileScreen } = useWindowSize();
   const router = useRouter();
+  const currentChain: IResourceChain = useAppSelector(currentChainSelector);
   const {
     headerHeight,
     showGetStarted,
@@ -83,9 +87,13 @@ const Header = () => {
   const isL2 = useCheckIsLayer2();
 
   const headerMenu = useMemo(() => {
-    const menu = HEADER_MENUS(isL2);
+    const menu = HEADER_MENUS({
+      isL2,
+      isCustomChain: isCustomChain(currentChain.chainId),
+      chainName: getChainNameRequestAPI(currentChain)
+    });
     return menu;
-  }, [isL2]);
+  }, [isL2, currentChain]);
 
   return (
     <Wrapper style={{ height: headerHeight, margin: '0 auto' }}>

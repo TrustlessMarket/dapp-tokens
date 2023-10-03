@@ -89,6 +89,7 @@ export const L2_CHAIN_INFO = {
 
 export const convertNetworkToResourceChain = (network: INetworkConfig): any => {
   const name = network.name ? network.name.toUpperCase() : 'UNKNOWN';
+  const chainID = Number(network.chainId);
   return {
     name: name,
     title: '',
@@ -97,14 +98,14 @@ export const convertNetworkToResourceChain = (network: INetworkConfig): any => {
     rpc: [network.rpcUrl],
     faucets: [],
     nativeCurrency: {
-      name: 'NOS',
+      name: 'TC',
       symbol: 'TC',
       decimals: 18,
     },
     infoURL: network.icon,
     shortName: name,
-    chainId: network.chainId,
-    networkId: network.chainId,
+    chainId: chainID,
+    networkId: chainID,
     slip44: 0,
     explorers: [
       {

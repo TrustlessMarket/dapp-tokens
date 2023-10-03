@@ -20,11 +20,12 @@ import { Toaster } from 'react-hot-toast';
 import { Provider } from 'react-redux';
 import GoogleAnalytics from '../components/GA/GoogleAnalytics';
 import { getConfigs } from '@/services';
-import { updateAllConfigs, updateConfigs } from '@/state/pnftExchange';
+import { updateAllConfigs, updateConfigs, updateCurrentChain, updateCurrentChainId } from '@/state/pnftExchange';
 import { IResourceChain } from "@/interfaces/chain";
 import { getLocalStorageChainInfo } from "@/utils";
 import { SERVICE_MOCKUP_CONFIGS } from "@/constants/services/configs.mockup";
 import { IConfigs } from '@/interfaces/state/pnftExchange';
+import { convertNetworkToResourceChain } from '@/constants/chains';
 
 export default function App({ Component, pageProps }: AppProps) {
   const { seoInfo = {} } = pageProps;
@@ -64,7 +65,10 @@ export default function App({ Component, pageProps }: AppProps) {
     })
 
     if (!!key && !!configs[key]) {
-      store.dispatch(updateConfigs(configs[key]));
+      const network = configs[key];
+      store.dispatch(updateConfigs(network));
+      store.dispatch(updateCurrentChain(convertNetworkToResourceChain(network)));
+      store.dispatch(updateCurrentChainId(Number(network.chainId)));
     } else {
       console.log('_app configs:: not found', key)
     }

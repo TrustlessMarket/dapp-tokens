@@ -9,8 +9,11 @@ import {Wrapper} from './MenuMobile.styled';
 import {Box, Flex, Text} from '@chakra-ui/react';
 import {GENERATIVE_DISCORD, NEW_BITCOIN_CITY,} from '@/constants/common';
 import HeaderSwitchNetwork from '../Header.SwitchNetwork';
-import {getTCGasStationddress} from "@/utils";
+import { getChainNameRequestAPI, getTCGasStationddress, isCustomChain } from '@/utils';
 import useCheckIsLayer2 from "@/hooks/useCheckIsLayer2";
+import { IResourceChain } from '@/interfaces/chain';
+import { useAppSelector } from '@/state/hooks';
+import { currentChainSelector } from '@/state/pnftExchange';
 
 interface IProp {
   onCloseMenu: () => void;
@@ -19,13 +22,18 @@ interface IProp {
 const MenuMobile = React.forwardRef(
   ({ onCloseMenu }: IProp, ref: ForwardedRef<HTMLDivElement>) => {
     const router = useRouter();
+    const currentChain: IResourceChain = useAppSelector(currentChainSelector);
 
     const isL2 = useCheckIsLayer2();
 
     const headerMenu = useMemo(() => {
-      const menu = HEADER_MENUS(isL2);
+      const menu = HEADER_MENUS({
+        isL2,
+        isCustomChain: isCustomChain(currentChain.chainId),
+        chainName: getChainNameRequestAPI(currentChain)
+      });
       return menu;
-    }, [isL2]);
+    }, [isL2, currentChain]);
 
     const handleConnectWallet = async () => {
       router.push(`${ROUTE_PATH.CONNECT_WALLET}?next=${window.location.href}`);

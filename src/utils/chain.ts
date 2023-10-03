@@ -107,11 +107,17 @@ const isLayer2Chain = (chainId: number): boolean => {
 };
 
 const getChainNameRequestAPI = (chain: IResourceChain): string => {
-  return chain.name;
+  return chain.name.toLowerCase();
 };
+
+const isCustomChain = (chainId: number | string): boolean => {
+  const chainIDs = [CHAIN_ID.TRUSTLESS_COMPUTER, CHAIN_ID.NOS];
+  return !chainIDs.includes(Number(chainId));
+}
 
 export {
   CHAIN_ID,
   isLayer2Chain,
   getChainNameRequestAPI,
+  isCustomChain
 };

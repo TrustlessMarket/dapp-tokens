@@ -5,11 +5,11 @@ import Button from '@/components/Button';
 import {IToken} from '@/interfaces/token';
 import {getTokenRp} from '@/services/swap';
 import {
-  abbreviateNumber,
+  abbreviateNumber, CHAIN_ID,
   formatCurrency, getChainNameRequestAPI,
   getTokenIconUrl,
   getWBTCAddress,
-  getWETHAddress,
+  getWETHAddress, isCustomChain,
 } from '@/utils';
 import {debounce} from 'lodash';
 import React, {useEffect, useMemo, useRef, useState} from 'react';
@@ -23,7 +23,7 @@ import {useRouter} from 'next/router';
 import BodyContainer from '@/components/Swap/bodyContainer';
 import FieldText from '@/components/Swap/form/fieldText';
 import ListTable, {ColumnProp} from '@/components/Swap/listTable';
-import {CDN_URL} from '@/configs';
+import { CDN_URL, L2_WBTC_ADDRESS } from '@/configs';
 import {GM_ADDRESS} from '@/constants/common';
 import useDebounce from '@/hooks/useDebounce';
 import px2rem from '@/utils/px2rem';
@@ -527,6 +527,18 @@ export const MakeFormSwap = forwardRef(() => {
     router.push(`${ROUTE_PATH.TOKEN}?address=${token?.address}`);
   };
 
+  const tradeNowRoute = React.useMemo(() => {
+    const prefix = isL2 ? `swap/${getChainNameRequestAPI(currentChain).toLowerCase()}` : ROUTE_PATH.SWAP;
+    const suffix =
+      isCustomChain(currentChain.chainId) ?
+        '' :
+        `?from_token=${getWETHAddress()}${isL2 ? `&to_token=${L2_WBTC_ADDRESS}` : ''}`;
+    return prefix + suffix;
+  }, [isL2, currentChain])
+
+  // /swap/nos?from_token=0x74B033e56434845E02c9bc4F0caC75438033b00D&to_token=0x2fe8d5A64afFc1d703aECa8a566f5e9FaeE0C003
+  // /swap/nos?from_token=0x43bDa480DE297A14cec95bFb1C6A313615f809Ef&to_token=0x2fe8d5A64afFc1d703aECa8a566f5e9FaeE0C003
+
   return (
     <StyledTokens>
       <div className="max-content">
@@ -568,7 +580,7 @@ export const MakeFormSwap = forwardRef(() => {
           </div>
         </div>
         <div className="upload_right">
-          <Link href={`${isL2 ? getChainNameRequestAPI(currentChain) : ROUTE_PATH.SWAP}`}>
+          <Link href={tradeNowRoute}>
             <Button className="comming-soon-btn" background={'#3385FF'}>
               <Text
                 size="medium"
