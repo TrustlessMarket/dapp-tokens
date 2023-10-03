@@ -5,6 +5,8 @@ import localStorage from '@/utils/localstorage';
 import { createSelector, createSlice } from '@reduxjs/toolkit';
 import { RootState } from '.';
 import { INetworkConfig } from '@/interfaces/state/pnftExchange';
+import { IResourceChain } from '@/interfaces/chain';
+import { L2_CHAIN_INFO } from '@/constants/chains';
 
 interface NftyLendState {
   needReload: number;
@@ -99,8 +101,18 @@ export const selectPnftExchange = (state: RootState) => state.pnftExchange;
 export const selectCurrentTransaction = (state: RootState) =>
   state.pnftExchange.currentTransaction;
 
+export const currentChainSelector = createSelector(selectPnftExchange, (pnftExchange): IResourceChain => {
+  return pnftExchange.currentChain || L2_CHAIN_INFO;
+});
+
 export const configsSelector = createSelector(selectPnftExchange, (allConfigs) => {
   return Object.values(allConfigs.allConfigs || {}) as INetworkConfig[];
+});
+
+export const getConfigsByChainIdSelector = createSelector(configsSelector, (configs) => {
+  return (chainId: number): INetworkConfig | undefined => {
+    return configs.find((config: INetworkConfig) => Number(config.chainId) === Number(chainId));
+  };
 });
 
 export default slice.reducer;

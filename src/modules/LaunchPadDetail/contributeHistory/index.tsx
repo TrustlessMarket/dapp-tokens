@@ -6,14 +6,14 @@ import ContributeHistory from "./Contribute.History";
 import {Box, Tab, TabList, TabPanel, TabPanels, Tabs} from "@chakra-ui/react";
 import {IResourceChain} from "@/interfaces/chain";
 import {useSelector} from "react-redux";
-import {selectPnftExchange} from "@/state/pnftExchange";
+import { currentChainSelector } from '@/state/pnftExchange';
 import {
   compareString,
   getWETHAddress
 } from '@/utils';
 const TMTransferHistory = (props: any) => {
   const { poolDetail } = props;
-  const currentChain: IResourceChain = useSelector(selectPnftExchange).currentChain;
+  const currentChain: IResourceChain = useSelector(currentChainSelector);
 
   return (
       <Box className={styles.wrapper}>

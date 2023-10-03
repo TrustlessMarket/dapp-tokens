@@ -1,15 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import ListTable, {ColumnProp} from '@/components/Swap/listTable';
-import {formatCurrency, formatLongAddress} from '@/utils';
-import {Flex, Text} from '@chakra-ui/react';
+import ListTable, { ColumnProp } from '@/components/Swap/listTable';
+import { formatCurrency, formatLongAddress } from '@/utils';
+import { Flex, Text } from '@chakra-ui/react';
 import moment from 'moment';
-import React, {useEffect, useMemo, useState} from 'react';
-import {useWeb3React} from "@web3-react/core";
-import {getLaunchpadUserResultDetail} from "@/services/launchpad";
-import {colors} from "@/theme/colors";
-import {IResourceChain} from "@/interfaces/chain";
-import {useSelector} from "react-redux";
-import {selectPnftExchange} from "@/state/pnftExchange";
+import React, { useEffect, useMemo, useState } from 'react';
+import { useWeb3React } from '@web3-react/core';
+import { getLaunchpadUserResultDetail } from '@/services/launchpad';
+import { colors } from '@/theme/colors';
+import { IResourceChain } from '@/interfaces/chain';
+import { useSelector } from 'react-redux';
+import { currentChainSelector } from '@/state/pnftExchange';
 
 interface LabelStatusMap {
   [name: string]: any;
@@ -40,10 +40,10 @@ const ContributeHistory = (props: any) => {
   const { account } = useWeb3React();
   const [loading, setLoading] = useState(true);
 
-  const currentChain: IResourceChain = useSelector(selectPnftExchange).currentChain;
+  const currentChain: IResourceChain = useSelector(currentChainSelector);
 
   useEffect(() => {
-    if(account && poolDetail?.launchpad) {
+    if (account && poolDetail?.launchpad) {
       getList();
     }
   }, [account, poolDetail?.launchpad, currentChain?.chain]);
@@ -55,7 +55,7 @@ const ContributeHistory = (props: any) => {
         pool_address: poolDetail?.launchpad,
         page: 1,
         limit: 30,
-        network: currentChain?.chain?.toLowerCase()
+        network: currentChain?.chain?.toLowerCase(),
       });
       setList(response || []);
     } catch (error) {
@@ -81,11 +81,11 @@ const ContributeHistory = (props: any) => {
         render(row: any) {
           console.log('row', row);
           return (
-            <Flex direction={"column"} color={"#FFFFFF"}>
+            <Flex direction={'column'} color={'#FFFFFF'}>
               <a
-                target="_blank"
+                target='_blank'
                 href={`${currentChain?.explorers[0]?.url}/tx/${row.txHash}`}
-                style={{textDecoration: 'underline', color: colors.bluePrimary}}
+                style={{ textDecoration: 'underline', color: colors.bluePrimary }}
               >
                 {formatLongAddress(row?.txHash)}
               </a>
@@ -106,7 +106,7 @@ const ContributeHistory = (props: any) => {
         },
         render(row: any) {
           return (
-            <Text color={"#000000"}>
+            <Text color={'#000000'}>
               {formatCurrency(row?.amount)} {poolDetail?.liquidityToken?.symbol}
             </Text>
           );
@@ -124,7 +124,7 @@ const ContributeHistory = (props: any) => {
           borderBottom: 'none',
         },
         render(row: any) {
-          return <Text color={"#000000"}>{row?.timestamp ? moment(row.timestamp).format('lll') : '-'}</Text>;
+          return <Text color={'#000000'}>{row?.timestamp ? moment(row.timestamp).format('lll') : '-'}</Text>;
         },
       },
       {

@@ -6,7 +6,7 @@ import useBitcoin from '@/hooks/useBitcoin';
 import { IResourceChain } from '@/interfaces/chain';
 import { ContractOperationHook, DAppType } from '@/interfaces/contract-operation';
 import { useAppSelector } from '@/state/hooks';
-import { selectPnftExchange } from '@/state/pnftExchange';
+import { currentChainSelector } from '@/state/pnftExchange';
 import { compareString, getContract, isSupportedChain } from '@/utils';
 import { useWeb3React } from '@web3-react/core';
 import { maxBy } from 'lodash';
@@ -18,14 +18,11 @@ export interface IIsApproveERC20TokenParams {
   address: string;
 }
 
-const useIsApproveERC20Token: ContractOperationHook<
-  IIsApproveERC20TokenParams,
-  string
-> = () => {
+const useIsApproveERC20Token: ContractOperationHook<IIsApproveERC20TokenParams,
+  string> = () => {
   const { account, provider } = useWeb3React();
   const { getUnInscribedTransactionDetailByAddress, getTCTxByHash } = useBitcoin();
-  const currentChain: IResourceChain =
-    useAppSelector(selectPnftExchange).currentChain;
+  const currentChain: IResourceChain = useAppSelector(currentChainSelector);
   const chainId = currentChain?.chainId;
   const isConnected = isSupportedChain(chainId);
 

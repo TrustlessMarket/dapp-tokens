@@ -44,7 +44,7 @@ import styles from './styles.module.scss';
 import { useWeb3React } from '@web3-react/core';
 import { IResourceChain } from '@/interfaces/chain';
 import { useAppSelector } from '@/state/hooks';
-import { selectPnftExchange } from '@/state/pnftExchange';
+import { currentChainSelector } from '@/state/pnftExchange';
 
 interface MakeFormImportPoolProps {
   onSubmit: (_: any) => void;
@@ -68,8 +68,7 @@ const MakeFormImportPool: React.FC<MakeFormImportPoolProps> = ({
     _reserve1: '-',
   });
 
-  const currentChain: IResourceChain =
-    useAppSelector(selectPnftExchange).currentChain;
+  const currentChain: IResourceChain = useAppSelector(currentChainSelector);
 
   const [loading, setLoading] = useState(false);
   const [baseToken, setBaseToken] = useState<IToken>();
@@ -295,7 +294,7 @@ const MakeFormImportPool: React.FC<MakeFormImportPoolProps> = ({
       .toFixed(18);
 
     return (
-      <Flex gap={4} flexWrap={'wrap'} className="price-pool-content" mt={2}>
+      <Flex gap={4} flexWrap={'wrap'} className='price-pool-content' mt={2}>
         <Box>
           <Stat>
             <StatNumber>
@@ -363,9 +362,9 @@ const MakeFormImportPool: React.FC<MakeFormImportPoolProps> = ({
           bg={'rgba(255, 255, 255, 0.2)'}
           as={'span'}
         >
-          <BiBell color="#FFFFFF" />
+          <BiBell color='#FFFFFF' />
         </Center>
-        <Text fontSize="sm" color="#FFFFFF" textAlign={'left'}>
+        <Text fontSize='sm' color='#FFFFFF' textAlign={'left'}>
           You don’t have liquidity in this pool yet.{' '}
           <Link
             href={`${ROUTE_PATH.POOLS}?type=${ScreenType.add_liquid}&f=${fromAddress}&t=${toAddress}`}
@@ -423,7 +422,7 @@ const MakeFormImportPool: React.FC<MakeFormImportPoolProps> = ({
         <FiledButton
           isDisabled={submitting}
           isLoading={submitting}
-          type="submit"
+          type='submit'
           // borderRadius={'100px !important'}
           // className="btn-submit"
           btnSize={'h'}

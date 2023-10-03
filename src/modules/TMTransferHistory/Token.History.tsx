@@ -1,31 +1,31 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import ListTable, {ColumnProp} from '@/components/Swap/listTable';
-import {CDN_URL} from '@/configs';
-import {getTMTransferHistory} from '@/services/swap';
-import {compareString, formatCurrency} from '@/utils';
-import {Flex, Spinner, Text} from '@chakra-ui/react';
+import ListTable, { ColumnProp } from '@/components/Swap/listTable';
+import { CDN_URL } from '@/configs';
+import { getTMTransferHistory } from '@/services/swap';
+import { compareString, formatCurrency } from '@/utils';
+import { Flex, Spinner, Text } from '@chakra-ui/react';
 import moment from 'moment';
-import React, {useEffect, useMemo, useState} from 'react';
-import {RxExternalLink} from 'react-icons/rx';
-import {useWeb3React} from "@web3-react/core";
-import {debounce} from "lodash";
-import InfiniteScroll from "react-infinite-scroll-component";
-import {colors} from "@/theme/colors";
+import React, { useEffect, useMemo, useState } from 'react';
+import { RxExternalLink } from 'react-icons/rx';
+import { useWeb3React } from '@web3-react/core';
+import { debounce } from 'lodash';
+import InfiniteScroll from 'react-infinite-scroll-component';
+import { colors } from '@/theme/colors';
 import styles from './styles.module.scss';
-import {IResourceChain} from "@/interfaces/chain";
-import {useSelector} from "react-redux";
-import {selectPnftExchange} from "@/state/pnftExchange";
+import { IResourceChain } from '@/interfaces/chain';
+import { useSelector } from 'react-redux';
+import { currentChainSelector } from '@/state/pnftExchange';
 
 const LIMIT_PAGE = 30;
 
 const TokenHistory = () => {
   const [isFetching, setIsFetching] = useState(false);
   const [list, setList] = useState<any[]>([]);
-  const { account, } = useWeb3React();
-  const currentChain: IResourceChain = useSelector(selectPnftExchange).currentChain;
+  const { account } = useWeb3React();
+  const currentChain: IResourceChain = useSelector(currentChainSelector);
 
   useEffect(() => {
-    if(account) {
+    if (account) {
       getList();
     }
   }, [account, currentChain?.chain]);
@@ -73,7 +73,7 @@ const TokenHistory = () => {
           borderBottom: 'none',
         },
         render(row: any, extraData: any, index: any) {
-          return <Text color={"#FFFFFF"}>{index + 1}</Text>;
+          return <Text color={'#FFFFFF'}>{index + 1}</Text>;
         },
       },
       {
@@ -89,7 +89,7 @@ const TokenHistory = () => {
         },
         render() {
           return (
-            <Flex color={"#FFFFFF"} gap={1} alignItems={"center"}>
+            <Flex color={'#FFFFFF'} gap={1} alignItems={'center'}>
               <img
                 width={20}
                 height={20}
@@ -135,7 +135,7 @@ const TokenHistory = () => {
           borderBottom: 'none',
         },
         render(row: any) {
-          return <Text color={"#FFFFFF"}>{moment(row.createdAt).format('lll')}</Text>;
+          return <Text color={'#FFFFFF'}>{moment(row.createdAt).format('lll')}</Text>;
         },
       },
       {
@@ -151,7 +151,7 @@ const TokenHistory = () => {
         },
         render(row: any) {
           return (
-            <Text color={"#FFFFFF"}>
+            <Text color={'#FFFFFF'}>
               {formatCurrency(row?.value, 18)}
             </Text>
           );
@@ -170,11 +170,11 @@ const TokenHistory = () => {
         },
         render(row: any) {
           return (
-            <Flex color={"#FFFFFF"}>
+            <Flex color={'#FFFFFF'}>
               <a
-                title="explorer"
+                title='explorer'
                 href={`${currentChain?.explorers[0]?.url}/tx/${row.txHash}`}
-                target="_blank"
+                target='_blank'
               >
                 <RxExternalLink />
               </a>
@@ -193,11 +193,11 @@ const TokenHistory = () => {
       hasMore={true}
       loader={
         isFetching && (
-          <Flex justifyContent={"center"} alignItems={"center"}>
+          <Flex justifyContent={'center'} alignItems={'center'}>
             <Spinner
-              speed="0.65s"
-              emptyColor="gray.200"
-              color="blue.500"
+              speed='0.65s'
+              emptyColor='gray.200'
+              color='blue.500'
             />
           </Flex>
         )

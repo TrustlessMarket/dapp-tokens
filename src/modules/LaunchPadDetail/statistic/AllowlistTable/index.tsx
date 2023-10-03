@@ -10,7 +10,7 @@ import {
   getUserDepositInfoLaunchpad,
 } from '@/services/launchpad';
 import { useAppDispatch, useAppSelector } from '@/state/hooks';
-import { selectPnftExchange } from '@/state/pnftExchange';
+import { currentChainSelector, selectPnftExchange } from '@/state/pnftExchange';
 import {
   abbreviateNumber,
   compareString,
@@ -54,7 +54,7 @@ const AllowlistTable = ({
   const [scrollToIndex, setScrollToIndex] = useState<any>(undefined);
   const { mobileScreen, tabletScreen } = useWindowSize();
   const [isLoading, setIsLoading] = useState(true);
-  const currentChain: IResourceChain = useAppSelector(selectPnftExchange).currentChain || L2_CHAIN_INFO;
+  const currentChain: IResourceChain = useAppSelector(currentChainSelector);
 
   const { account } = useWeb3React();
   const dispatch = useAppDispatch();

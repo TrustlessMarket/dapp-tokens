@@ -10,7 +10,7 @@ import {
   updateTwitterTokenInfo,
 } from '@/services/token-explorer';
 import { useAppSelector } from '@/state/hooks';
-import { requestReload, selectPnftExchange } from '@/state/pnftExchange';
+import { currentChainSelector, requestReload } from '@/state/pnftExchange';
 import { composeValidators, isTwitter, required } from '@/utils/formValidate';
 import { showError } from '@/utils/toast';
 import { Box } from '@chakra-ui/react';
@@ -49,8 +49,7 @@ const LaunchpadFormStep1UpdateSocial: React.FC<any> = ({
   onClose,
   onUpdateTokenSelect,
 }) => {
-  const currentChain: IResourceChain =
-    useAppSelector(selectPnftExchange).currentChain;
+  const currentChain: IResourceChain = useAppSelector(currentChainSelector);
   const [submitting, setSubmitting] = useState(false);
 
   const { account } = useWeb3React();

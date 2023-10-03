@@ -9,7 +9,7 @@ import { ContractOperationHook, DAppType } from '@/interfaces/contract-operation
 import { TransactionStatus } from '@/components/Swap/alertInfoProcessing/interface';
 import { logErrorToServer } from '@/services/swap';
 import store from '@/state';
-import { selectPnftExchange, updateCurrentTransaction } from '@/state/pnftExchange';
+import { currentChainSelector, selectPnftExchange, updateCurrentTransaction } from '@/state/pnftExchange';
 import { colors } from '@/theme/colors';
 import { compareString, getContract, getDefaultGasPrice, getGasFee } from '@/utils';
 import { useWeb3React } from '@web3-react/core';
@@ -25,8 +25,7 @@ interface IEndLaunchpadPoolParams {
 const useEndLaunchPad: ContractOperationHook<IEndLaunchpadPoolParams, any> = () => {
   const { account, provider } = useWeb3React();
   const { call: checkTxsBitcoin } = useCheckTxsBitcoin();
-  const currentChain: IResourceChain =
-    useAppSelector(selectPnftExchange).currentChain;
+  const currentChain: IResourceChain = useAppSelector(currentChainSelector);
 
   const call = useCallback(
     async (params: IEndLaunchpadPoolParams): Promise<any> => {

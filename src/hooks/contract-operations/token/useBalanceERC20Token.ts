@@ -7,7 +7,7 @@ import useBitcoin from '@/hooks/useBitcoin';
 import { IResourceChain } from '@/interfaces/chain';
 import { ContractOperationHook, DAppType } from '@/interfaces/contract-operation';
 import { useAppSelector } from '@/state/hooks';
-import { selectPnftExchange } from '@/state/pnftExchange';
+import { currentChainSelector } from '@/state/pnftExchange';
 import { compareString, getContract, isSupportedChain } from '@/utils';
 import { useWeb3React } from '@web3-react/core';
 import BigNumber from 'bignumber.js';
@@ -24,8 +24,7 @@ const useBalanceERC20Token: ContractOperationHook<
   string
 > = () => {
   const { account, chainId, provider } = useWeb3React();
-  const currentChain: IResourceChain =
-    useAppSelector(selectPnftExchange).currentChain;
+  const currentChain: IResourceChain = useAppSelector(currentChainSelector);
   const isConnected = isSupportedChain(chainId);
   const {
     getPendingInscribeTxsDetail,

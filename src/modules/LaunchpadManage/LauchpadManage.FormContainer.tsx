@@ -13,7 +13,7 @@ import { ILaunchpad } from '@/interfaces/launchpad';
 import { IToken } from '@/interfaces/token';
 import { getListLiquidityToken, getListOwnerToken } from '@/services/launchpad';
 import { useAppSelector } from '@/state/hooks';
-import { selectPnftExchange } from '@/state/pnftExchange';
+import { currentChainSelector, selectPnftExchange } from '@/state/pnftExchange';
 import { camelCaseKeys, getLaunchPadAddress } from '@/utils';
 import { showError } from '@/utils/toast';
 import { useWeb3React } from '@web3-react/core';
@@ -77,8 +77,7 @@ const LaunchpadManageFormContainer: React.FC<LaunchpadManageFormContainerProps> 
 
   const cachedData = localStorage.getItem(LAUNCHPAD_FORM_STEP);
 
-  const currentChain: IResourceChain =
-    useAppSelector(selectPnftExchange).currentChain;
+  const currentChain: IResourceChain = useAppSelector(currentChainSelector);
 
   const checkTokenApprove = async (token: IToken | any) => {
     try {

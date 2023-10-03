@@ -14,7 +14,6 @@ import SlippageSettingButton from '@/components/Swap/slippageSetting/v2/button';
 import TokenBalance from '@/components/Swap/tokenBalance';
 import WrapperConnected from '@/components/WrapperConnected';
 import { CDN_URL, UNIV3_ROUTER_ADDRESS } from '@/configs';
-import { L2_CHAIN_INFO } from '@/constants/chains';
 import web3 from 'web3';
 import {
   BRIDGE_SUPPORT_TOKEN,
@@ -25,7 +24,6 @@ import {
 import { toastError } from '@/constants/error';
 import { ROUTE_PATH } from '@/constants/route-path';
 import { AssetsContext } from '@/contexts/assets-context';
-import useGetReserves from '@/hooks/contract-operations/swap/useReserves';
 import useEstimateSwapERC20Token from '@/hooks/contract-operations/swap/v3/useEstimateSwapERC20Token';
 import useSwapERC20Token, {
   ISwapERC20TokenParams,
@@ -40,6 +38,8 @@ import {
 import { useAppDispatch, useAppSelector } from '@/state/hooks';
 import { closeModal, openModal } from '@/state/modal';
 import {
+  currentChainSelector,
+  getConfigsByChainIdSelector,
   requestReload,
   requestReloadRealtime,
   selectPnftExchange,
@@ -86,7 +86,7 @@ import Web3 from 'web3';
 import styles from './styles.module.scss';
 import { ethers } from 'ethers';
 import {
-  IToken, Token, changeWallet, refreshProvider, WalletType, tokenSwap, TokenTrade, getSwapRoutesV2,
+  IToken, Token, changeWallet, refreshProvider, WalletType, tokenSwap, getSwapRoutesV2,
   getSwapTokensV1, getBestRouteExactIn, setTOkenSwap, TransactionState, Environment,
   ISwapRouteParams, choiceConFig,
 } from 'trustless-swap-sdk';
@@ -118,7 +118,8 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const [swapRoutes, setSwapRoutes] = useState<any[]>([]);
 
   const { account, provider, chainId } = useWeb3React();
-  const currentChain: IResourceChain = useAppSelector(selectPnftExchange).currentChain;
+  const currentChain: IResourceChain = useAppSelector(currentChainSelector);
+  const currentConfig = useAppSelector(getConfigsByChainIdSelector)(currentChain.chainId);
 
   const [exchangeRate, setExchangeRate] = useState('0');
 
@@ -344,7 +345,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       const params: ISwapRouteParams = {
         from_token: from_token,
         to_token: to_token,
-        network: L2_CHAIN_INFO.chain.toLowerCase(),
+        network: getChainNameRequestAPI(currentChain),
       };
       const response = await getSwapRoutesV2(params);
 
@@ -361,9 +362,13 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       if (isNativeToken(token.address)) {
         return ethers.constants.MaxUint256.toString();
       }
+      if (!currentConfig) {
+        throw new Error('currentConfig is not defined');
+      }
       const response = await isApproved({
         erc20TokenAddress: token.address,
-        address: UNIV3_ROUTER_ADDRESS,
+        // note: change UNIV3_ROUTER_ADDRESS to currentConfig.swapRouterContractAddr
+        address: currentConfig.swapRouterContractAddr || UNIV3_ROUTER_ADDRESS,
       });
       return response;
     } catch (error) {
@@ -387,6 +392,10 @@ export const MakeFormSwap = forwardRef((props, ref) => {
 
   const requestApproveToken = async (token: IToken) => {
     try {
+      if (!currentConfig) {
+        throw new Error('currentConfig is not defined');
+      }
+
       dispatch(
         updateCurrentTransaction({
           id: transactionType.createPoolApprove,
@@ -395,7 +404,8 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       );
       const response: any = await approveToken({
         erc20TokenAddress: token.address,
-        address: UNIV3_ROUTER_ADDRESS,
+        // note: change UNIV3_ROUTER_ADDRESS to currentConfig.swapRouterContractAddr
+        address: currentConfig.swapRouterContractAddr || UNIV3_ROUTER_ADDRESS,
       });
       dispatch(
         updateCurrentTransaction({
@@ -1173,32 +1183,23 @@ const TradingForm = () => {
   };
 
   const handleSwap = async (values: any) => {
-    const { baseToken, quoteToken, baseAmount, quoteAmount, swapRoutes, bestRoute, trade } =
-      values;
+    const { trade } = values;
     console.log('slippage', slippage * 100);
     console.log('trade', trade);
 
 
     try {
       setSubmitting(true);
-
-      const addresses = bestRoute?.pathTokens?.map((token: IToken) => token.address);
-      const fees = bestRoute?.pathPairs?.map((pair: any) => Number(pair.fee));
-
-      const amountOutMin = new BigNumber(quoteAmount)
-        .multipliedBy(100 - slippage)
-        .dividedBy(100)
-        .decimalPlaces(quoteToken?.decimal || 18)
-        .toString();
-
       const data = {
         trade: trade,
         slippage: slippage * 100,
       };
       const response = await swapToken(data);
-      if (response === false) {
-        return;
+
+      if (!response) {
+        throw new Error('Transaction failed');
       }
+
       toast.success('Transaction has been created. Please wait for few minutes.');
       refForm.current?.reset();
       dispatch(requestReload());

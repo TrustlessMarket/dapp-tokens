@@ -8,7 +8,7 @@ import {toastError} from '@/constants/error';
 import {IToken} from '@/interfaces/token';
 import {logErrorToServer} from '@/services/swap';
 import {useAppDispatch, useAppSelector} from '@/state/hooks';
-import {requestReload, requestReloadRealtime, selectPnftExchange,} from '@/state/pnftExchange';
+import { currentChainSelector, requestReload, requestReloadRealtime, selectPnftExchange } from '@/state/pnftExchange';
 import {getIsAuthenticatedSelector} from '@/state/user/selector';
 import px2rem from '@/utils/px2rem';
 import {showError} from '@/utils/toast';
@@ -66,7 +66,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
 
   const { account } = useWeb3React();
   const needReload = useAppSelector(selectPnftExchange).needReload;
-  const currentChain: IResourceChain = useSelector(selectPnftExchange).currentChain;
+  const currentChain: IResourceChain = useSelector(currentChainSelector);
 
   const { values } = useFormState();
   const { change, restart } = useForm();
@@ -394,7 +394,7 @@ const TradingForm = () => {
   const dispatch = useAppDispatch();
   const { account } = useWeb3React();
   const router = useRouter();
-  const currentChain: IResourceChain = useSelector(selectPnftExchange).currentChain;
+  const currentChain: IResourceChain = useSelector(currentChainSelector);
 
   const handleSubmit = async (values: any) => {
     const { tokenInfo } = values;

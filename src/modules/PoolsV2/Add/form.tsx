@@ -14,7 +14,7 @@ import { IToken } from '@/interfaces/token';
 import { IPoolV2AddPair } from '@/pages/pools/nos/add/[[...id]]';
 import { getTokens } from '@/services/token-explorer';
 import { useAppSelector } from '@/state/hooks';
-import { selectPnftExchange } from '@/state/pnftExchange';
+import { currentChainSelector } from '@/state/pnftExchange';
 import { compareString } from '@/utils';
 import { composeValidators, requiredAmount } from '@/utils/formValidate';
 import { Box, Flex } from '@chakra-ui/react';
@@ -53,8 +53,7 @@ const FormAddPoolsV2Container = forwardRef<any, IFormAddPoolsV2Container>(
     const paramFee = ids?.[2];
       const { provider } = useWeb3React();
 
-    const currentChain: IResourceChain =
-      useAppSelector(selectPnftExchange).currentChain;
+    const currentChain: IResourceChain = useAppSelector(currentChainSelector);
 
     const router = useRouter();
 

@@ -10,13 +10,13 @@ import { IoWarningSharp } from 'react-icons/io5';
 import styles from './styles.module.scss';
 import { IResourceChain } from '@/interfaces/chain';
 import { useAppSelector } from '@/state/hooks';
-import { selectPnftExchange } from '@/state/pnftExchange';
+import { currentChainSelector } from '@/state/pnftExchange';
 
 const SelectedNetwork = ({}) => {
   const { chainId } = useWeb3React();
   const [loading, setLoading] = useState(false);
   const { onConnect, requestBtcAddress } = useContext(WalletContext);
-  const currentChain: IResourceChain = useAppSelector(selectPnftExchange).currentChain;
+  const currentChain: IResourceChain = useAppSelector(currentChainSelector);
 
   const onHandleSwitchChain = async () => {
     try {

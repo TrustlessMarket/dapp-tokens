@@ -6,7 +6,7 @@ import { IResourceChain } from '@/interfaces/chain';
 import { ContractOperationHook } from '@/interfaces/contract-operation';
 import { logErrorToServer } from '@/services/swap';
 import { useAppSelector } from '@/state/hooks';
-import { selectPnftExchange } from '@/state/pnftExchange';
+import { currentChainSelector, selectPnftExchange } from '@/state/pnftExchange';
 import { getIsAuthenticatedSelector, getUserSelector } from '@/state/user/selector';
 import {
   capitalizeFirstLetter,
@@ -44,8 +44,7 @@ const useContractOperation = <P, R>(
   const isAuthenticated = useSelector(getIsAuthenticatedSelector);
   const user = useSelector(getUserSelector);
   const router = useRouter();
-  const currentChain: IResourceChain =
-    useAppSelector(selectPnftExchange).currentChain;
+  const currentChain: IResourceChain = useAppSelector(currentChainSelector);
 
   const checkAndSwitchChainIfNecessary = async (): Promise<void> => {
     const connection = getConnection(connector);

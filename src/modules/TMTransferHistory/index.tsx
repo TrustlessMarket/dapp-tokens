@@ -16,7 +16,7 @@ import Link from "next/link";
 import {ROUTE_PATH} from "@/constants/route-path";
 import {GM_ADDRESS, WETH_ADDRESS} from "@/constants/common";
 import {IResourceChain} from "@/interfaces/chain";
-import {selectPnftExchange} from "@/state/pnftExchange";
+import { currentChainSelector } from '@/state/pnftExchange';
 import useCheckIsLayer2 from "@/hooks/useCheckIsLayer2";
 
 const TMTransferHistory = () => {
@@ -24,7 +24,7 @@ const TMTransferHistory = () => {
   const user = useSelector(getUserSelector);
   const { call: getBalanceErc20 } = useBalanceERC20Token();
   const [balanceTM, setBalanceTM] = useState('0');
-  const currentChain: IResourceChain = useSelector(selectPnftExchange).currentChain;
+  const currentChain: IResourceChain = useSelector(currentChainSelector);
   const isL2 = useCheckIsLayer2();
   const routePathSwap = isL2 ? ROUTE_PATH.SWAP_V2 : ROUTE_PATH.SWAP;
   const routePathPools = isL2 ? ROUTE_PATH.POOLS_V2 : ROUTE_PATH.POOLS;

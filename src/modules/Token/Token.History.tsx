@@ -3,10 +3,10 @@ import ListTable, { ColumnProp } from '@/components/Swap/listTable';
 import { IResourceChain } from '@/interfaces/chain';
 import { IToken } from '@/interfaces/token';
 import { getTradeHistory } from '@/services/swap';
-import { selectPnftExchange } from '@/state/pnftExchange';
+import { currentChainSelector } from '@/state/pnftExchange';
 import { colors } from '@/theme/colors';
 import {
-  L2_TC_ADDRESS,L2_GM_ADDRESS,L2_USDT_ADDRESS
+  L2_TC_ADDRESS, L2_GM_ADDRESS, L2_USDT_ADDRESS,
 } from '@/configs';
 import {
   abbreviateNumber,
@@ -33,7 +33,7 @@ const TokenHistory = ({ data, isOwner }: { data: IToken; isOwner?: boolean }) =>
 
   const { mobileScreen } = useWindowSize();
 
-  const currentChain: IResourceChain = useSelector(selectPnftExchange).currentChain;
+  const currentChain: IResourceChain = useSelector(currentChainSelector);
 
   useEffect(() => {
     getList();
@@ -65,14 +65,12 @@ const TokenHistory = ({ data, isOwner }: { data: IToken; isOwner?: boolean }) =>
 
   const checkIsSell = (row: any) => {
     let isSell = true;
-    console.log("row",row)
-    if(Number(row.amount1Out) > 0)
-    {
+    console.log('row', row);
+    if (Number(row.amount1Out) > 0) {
       isSell = false;
     }
-    if(row.token.toString().toLocaleLowerCase()!=L2_TC_ADDRESS.toString().toLowerCase())
-    {
-      isSell = !isSell
+    if (row.token.toString().toLocaleLowerCase() != L2_TC_ADDRESS.toString().toLowerCase()) {
+      isSell = !isSell;
     }
     return isSell;
   };
@@ -262,8 +260,8 @@ const TokenHistory = ({ data, isOwner }: { data: IToken; isOwner?: boolean }) =>
             <Text>
               {formatCurrency(amount, 18)}{' '}
               {!checkIsSell(row)
-                ? row.token.toString().toLocaleLowerCase()!=L2_TC_ADDRESS.toString().toLowerCase()&&row.token.toString().toLocaleLowerCase()!=L2_GM_ADDRESS.toString().toLowerCase()&&row.token.toString().toLocaleLowerCase()!=L2_USDT_ADDRESS.toString().toLowerCase()?row.pair.token0Obj.symbol:row.pair.token1Obj.symbol
-                : row.token.toString().toLocaleLowerCase()!=L2_TC_ADDRESS.toString().toLowerCase()&&row.token.toString().toLocaleLowerCase()!=L2_GM_ADDRESS.toString().toLowerCase()?row.pair.token1Obj.symbol:row.pair.token0Obj.symbol}
+                ? row.token.toString().toLocaleLowerCase() != L2_TC_ADDRESS.toString().toLowerCase() && row.token.toString().toLocaleLowerCase() != L2_GM_ADDRESS.toString().toLowerCase() && row.token.toString().toLocaleLowerCase() != L2_USDT_ADDRESS.toString().toLowerCase() ? row.pair.token0Obj.symbol : row.pair.token1Obj.symbol
+                : row.token.toString().toLocaleLowerCase() != L2_TC_ADDRESS.toString().toLowerCase() && row.token.toString().toLocaleLowerCase() != L2_GM_ADDRESS.toString().toLowerCase() ? row.pair.token1Obj.symbol : row.pair.token0Obj.symbol}
             </Text>
           );
         },
@@ -298,10 +296,10 @@ const TokenHistory = ({ data, isOwner }: { data: IToken; isOwner?: boolean }) =>
           return (
             <Flex>
               <a
-                title="explorer"
+                title='explorer'
                 href={getExplorer(row.txHash, 'tx')}
-                target="_blank"
-                className="link-explorer"
+                target='_blank'
+                className='link-explorer'
               >
                 <RxArrowTopRight style={{ fontSize: 18 }} />
               </a>

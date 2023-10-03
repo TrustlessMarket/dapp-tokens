@@ -14,7 +14,7 @@ import {IToken} from '@/interfaces/token';
 import VerifiedBadgeLaunchpad from '@/modules/Launchpad/verifiedBadgeLaunchpad';
 import { getListLaunchpad } from '@/services/launchpad';
 import { useAppSelector } from '@/state/hooks';
-import { selectPnftExchange, updateCurrentTransaction } from '@/state/pnftExchange';
+import { currentChainSelector, selectPnftExchange, updateCurrentTransaction } from '@/state/pnftExchange';
 import { colors } from '@/theme/colors';
 import {
   abbreviateNumber,
@@ -43,7 +43,6 @@ import {useWindowSize} from '@trustless-computer/dapp-core';
 import CreateTokenForm from '@/modules/Tokens/CreateToken/form';
 import styles from './styles.module.scss';
 import {IResourceChain} from "@/interfaces/chain";
-import {TRUSTLESS_COMPUTER_CHAIN_INFO} from "@/constants/chains";
 
 const LaunchpadContainer = () => {
   const [data, setData] = useState<any[]>();
@@ -57,8 +56,7 @@ const LaunchpadContainer = () => {
   const [showModal, setShowModal] = useState(false);
   const { mobileScreen } = useWindowSize();
 
-  const currentChain: IResourceChain =
-    useAppSelector(selectPnftExchange).currentChain || TRUSTLESS_COMPUTER_CHAIN_INFO;;
+  const currentChain: IResourceChain = useAppSelector(currentChainSelector);
 
   useEffect(() => {
     getData();

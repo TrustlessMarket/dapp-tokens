@@ -12,14 +12,14 @@ import usePendingSwapTransactions from "@/hooks/contract-operations/swap/usePend
 import {IResourceChain} from "@/interfaces/chain";
 import {useWindowSize} from "@trustless-computer/dapp-core";
 import {useSelector} from "react-redux";
-import {selectPnftExchange} from "@/state/pnftExchange";
+import { currentChainSelector } from '@/state/pnftExchange';
 
 const TokenHistory = () => {
   const [list, setList] = useState<any[]>([]);
   const [listPending, setListPending] = useState<any[]>([]);
   const { account } = useWeb3React();
   const { mobileScreen } = useWindowSize();
-  const currentChain: IResourceChain = useSelector(selectPnftExchange).currentChain;
+  const currentChain: IResourceChain = useSelector(currentChainSelector);
   const { call: getPendingSwapTransactions } = usePendingSwapTransactions();
 
   const isL2 = useCheckIsLayer2();

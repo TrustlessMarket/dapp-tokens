@@ -1,34 +1,33 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-empty-interface */
-import {TransactionEventType} from '@/enums/transaction';
+import { TransactionEventType } from '@/enums/transaction';
 import useBitcoin from '@/hooks/useBitcoin';
-import {ContractOperationHook, DAppType} from '@/interfaces/contract-operation';
-import {IToken} from '@/interfaces/token';
-import {getTokenDetail} from '@/services/token-explorer';
-import {compareString, sortAddressPair} from '@/utils';
-import {useWeb3React} from '@web3-react/core';
-import {useCallback} from 'react';
+import { ContractOperationHook, DAppType } from '@/interfaces/contract-operation';
+import { IToken } from '@/interfaces/token';
+import { getTokenDetail } from '@/services/token-explorer';
+import { compareString, sortAddressPair } from '@/utils';
+import { useWeb3React } from '@web3-react/core';
+import { useCallback } from 'react';
 import Web3 from 'web3';
 import web3Eth from 'web3-eth-abi';
-import {getTCTxDetailByHash} from "@/services/swap";
-import {CONTRACT_METHOD_IDS} from "@/constants/methodId";
-import {IResourceChain} from "@/interfaces/chain";
-import {useSelector} from "react-redux";
-import {selectPnftExchange} from "@/state/pnftExchange";
+import { getTCTxDetailByHash } from '@/services/swap';
+import { CONTRACT_METHOD_IDS } from '@/constants/methodId';
+import { IResourceChain } from '@/interfaces/chain';
+import { useSelector } from 'react-redux';
+import { currentChainSelector } from '@/state/pnftExchange';
 
-export interface IPendingSwapTransactionsParams {}
+export interface IPendingSwapTransactionsParams {
+}
 
-const usePendingSwapTransactions: ContractOperationHook<
-  IPendingSwapTransactionsParams,
-  string
-> = () => {
+const usePendingSwapTransactions: ContractOperationHook<IPendingSwapTransactionsParams,
+  string> = () => {
   const { account, provider } = useWeb3React();
   const {
     getUnInscribedTransactionDetailByAddress,
     getTCTxByHash,
     getPendingInscribeTxsDetail,
   } = useBitcoin();
-  const currentChain: IResourceChain = useSelector(selectPnftExchange).currentChain;
+  const currentChain: IResourceChain = useSelector(currentChainSelector);
 
   const call = useCallback(
     async ({}): Promise<any> => {
@@ -43,7 +42,7 @@ const usePendingSwapTransactions: ContractOperationHook<
         for await (const unInscribedTxID of unInscribedTxIDs) {
           const [_getTxDetail, _getTxDetail2] = await Promise.all([
             getTCTxByHash(unInscribedTxID.Hash),
-            getTCTxDetailByHash({tx_hash: unInscribedTxID.Hash})
+            getTCTxDetailByHash({ tx_hash: unInscribedTxID.Hash }),
           ]);
 
           const _inputStart = _getTxDetail.input.slice(0, 10);
@@ -74,7 +73,7 @@ const usePendingSwapTransactions: ContractOperationHook<
               amount1_in = amountIn;
             }
 
-            const params = {network: currentChain?.chain?.toLowerCase()};
+            const params = { network: currentChain?.chain?.toLowerCase() };
             const [token0_obj, token1_obj] = await Promise.all([
               getTokenDetail(token0.address, params),
               getTokenDetail(token1.address, params),
@@ -107,7 +106,7 @@ const usePendingSwapTransactions: ContractOperationHook<
         for await (const pendingTxID of pendingTxIds) {
           const [_getTxDetail, _getTxDetail2] = await Promise.all([
             getTCTxByHash(pendingTxID.TCHash),
-            getTCTxDetailByHash({tx_hash: pendingTxID.TCHash})
+            getTCTxDetailByHash({ tx_hash: pendingTxID.TCHash }),
           ]);
 
           const _inputStart = _getTxDetail.input.slice(0, 10);
@@ -148,7 +147,7 @@ const usePendingSwapTransactions: ContractOperationHook<
               amount1_in = amountIn;
             }
 
-            const params = {network: currentChain?.chain?.toLowerCase()};
+            const params = { network: currentChain?.chain?.toLowerCase() };
             const [token0_obj, token1_obj] = await Promise.all([
               getTokenDetail(token0.address, params),
               getTokenDetail(token1.address, params),

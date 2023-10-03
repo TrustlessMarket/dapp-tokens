@@ -16,7 +16,7 @@ import { ILiquidity } from '@/interfaces/liquidity';
 import { IToken } from '@/interfaces/token';
 import { getListLiquidity } from '@/services/swap';
 import { useAppSelector } from '@/state/hooks';
-import { selectPnftExchange } from '@/state/pnftExchange';
+import { currentChainSelector, selectPnftExchange } from '@/state/pnftExchange';
 import { colors } from '@/theme/colors';
 import {
   abbreviateNumber,
@@ -78,8 +78,7 @@ const LiquidityContainer = () => {
   const { account } = useWeb3React();
   const configs = useAppSelector(selectPnftExchange).configs;
   const liquidityFee = configs?.liquidityFee || 0.15;
-  const currentSelectedChain: IResourceChain =
-    useSelector(selectPnftExchange).currentChain;
+  const currentSelectedChain: IResourceChain = useSelector(currentChainSelector);
 
   const router = useRouter();
   const routerQuery = router.query;

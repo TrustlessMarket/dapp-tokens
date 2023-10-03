@@ -33,6 +33,7 @@ import {logErrorToServer} from '@/services/swap';
 import {useAppDispatch, useAppSelector} from '@/state/hooks';
 import {closeModal, openModal} from '@/state/modal';
 import {
+  currentChainSelector,
   requestReload,
   requestReloadRealtime,
   selectPnftExchange,
@@ -163,7 +164,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   } = props;
   const [loading, setLoading] = useState(false);
   const [liquidityToken, setLiquidityToken] = useState<any>();
-  const currentChain = useSelector(selectPnftExchange).currentChain;
+  const currentChain = useSelector(currentChainSelector);
 
   const isL2 = useCheckIsLayer2();
 
@@ -873,12 +874,11 @@ const BuyForm = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
   const [depositAddressInfo, setDepositAddressInfo] = useState<any>();
   const isLaunchpadCreator = compareString(poolDetail?.creatorAddress, account);
 
-  const isFunding = [LAUNCHPAD_STATUS.Launching].includes(poolDetail?.state);
-  const isVoting = [LAUNCHPAD_STATUS.Voting].includes(poolDetail?.state);
+  const isFunding = [LAUNCHPAD_STATUS.Launching].includes(poolDetail?.state as any);
+  const isVoting = [LAUNCHPAD_STATUS.Voting].includes(poolDetail?.state as any);
 
-  const currentChain: IResourceChain = useSelector(selectPnftExchange).currentChain;
+  const currentChain: IResourceChain = useSelector(currentChainSelector);
 
-  const wethAddress = getWETHAddress();
 
   // console.log('poolDetail', poolDetail);
   // console.log('canEnd', canEnd);

@@ -6,7 +6,7 @@ import { IResourceChain } from '@/interfaces/chain';
 import { ContractOperationHook, DAppType } from '@/interfaces/contract-operation';
 import { logErrorToServer } from '@/services/swap';
 import { useAppSelector } from '@/state/hooks';
-import { selectPnftExchange } from '@/state/pnftExchange';
+import { currentChainSelector, selectPnftExchange } from '@/state/pnftExchange';
 import {
   compareString,
   getContract,
@@ -35,8 +35,7 @@ const useCreateLaunchpad: ContractOperationHook<
   boolean
 > = () => {
   const { account, provider } = useWeb3React();
-  const currentChain: IResourceChain =
-    useAppSelector(selectPnftExchange).currentChain;
+  const currentChain: IResourceChain = useAppSelector(currentChainSelector);
 
   const call = useCallback(
     async (params: ICreateLaunchpadParams): Promise<boolean> => {

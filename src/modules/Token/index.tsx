@@ -26,14 +26,14 @@ import {useWeb3React} from '@web3-react/core';
 import {useScreenLayout} from '@/hooks/useScreenLayout';
 import {IResourceChain} from "@/interfaces/chain";
 import {useSelector} from "react-redux";
-import {selectPnftExchange} from "@/state/pnftExchange";
+import { currentChainSelector, selectPnftExchange } from '@/state/pnftExchange';
 
 const TokenChart = dynamic(() => import('./Token.Chart'), {
   ssr: false,
 });
 
 const TokenDetail = () => {
-  const currentChain: IResourceChain = useSelector(selectPnftExchange).currentChain;
+  const currentChain: IResourceChain = useSelector(currentChainSelector);
   const router = useRouter();
   const address: any = router.query?.address;
   const [loading, setLoading] = useState(true);

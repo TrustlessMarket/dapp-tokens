@@ -37,7 +37,7 @@ import {FiSearch} from 'react-icons/fi';
 import {useWindowSize} from '@trustless-computer/dapp-core';
 import {IResourceChain} from "@/interfaces/chain";
 import {useSelector} from "react-redux";
-import {selectPnftExchange} from "@/state/pnftExchange";
+import { currentChainSelector, selectPnftExchange } from '@/state/pnftExchange';
 import useCheckIsLayer2 from "@/hooks/useCheckIsLayer2";
 
 const LIMIT_PAGE = 100;
@@ -50,7 +50,7 @@ export const MakeFormSwap = forwardRef(() => {
   const [sort, setSort] = useState({ sort: '' });
   const { values } = useFormState();
   const { mobileScreen } = useWindowSize();
-  const currentChain: IResourceChain = useSelector(selectPnftExchange).currentChain;
+  const currentChain: IResourceChain = useSelector(currentChainSelector);
 
   const isL2 = useCheckIsLayer2();
 

@@ -53,11 +53,13 @@ export default function App({ Component, pageProps }: AppProps) {
       } as IConfigs[keyof IConfigs];
     });
 
-    console.log('configs 111', configs)
     store.dispatch(updateAllConfigs(configs));
 
     const connectedChain: IResourceChain = getLocalStorageChainInfo();
     const key = connectedChain?.chain?.toLowerCase() || '';
+
+    console.log('configs 111', configs, key)
+
     if (!!key && !!configs[key]) {
       store.dispatch(updateConfigs(configs[key]));
     }

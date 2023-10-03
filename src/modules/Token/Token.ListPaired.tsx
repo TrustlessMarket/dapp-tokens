@@ -12,7 +12,7 @@ import useSupplyERC20Liquid from '@/hooks/contract-operations/token/useSupplyERC
 import { IResourceChain } from '@/interfaces/chain';
 import { IToken } from '@/interfaces/token';
 import { getListPaired } from '@/services/pool';
-import { selectPnftExchange } from '@/state/pnftExchange';
+import { currentChainSelector, selectPnftExchange } from '@/state/pnftExchange';
 import {abbreviateNumber, compareString, formatCurrency, isLayer2Chain} from '@/utils';
 import {
   Accordion,
@@ -36,7 +36,7 @@ const TokenPoolDetail = ({ paired }: { paired: any }) => {
   const router = useRouter();
   const token0: IToken = paired?.token0Obj;
   const token1: IToken = paired?.token1Obj;
-  const currentChain: IResourceChain = useSelector(selectPnftExchange).currentChain;
+  const currentChain: IResourceChain = useSelector(currentChainSelector);
 
   const [supply, setSupply] = useState<any>({
     ownerSupply: '0',
@@ -166,7 +166,7 @@ const TokenPoolDetail = ({ paired }: { paired: any }) => {
 const TokenListPaired = ({ data }: { data: IToken }) => {
   const [list, setList] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const currentChain: IResourceChain = useSelector(selectPnftExchange).currentChain;
+  const currentChain: IResourceChain = useSelector(currentChainSelector);
 
   const router = useRouter();
 

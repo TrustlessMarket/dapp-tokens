@@ -19,6 +19,7 @@ import { logErrorToServer } from '@/services/swap';
 import { useAppDispatch, useAppSelector } from '@/state/hooks';
 import { closeModal, openModal } from '@/state/modal';
 import {
+  currentChainSelector,
   requestReload,
   requestReloadRealtime,
   selectPnftExchange,
@@ -52,8 +53,8 @@ import toast from 'react-hot-toast';
 import { useWindowSize } from '@trustless-computer/dapp-core';
 import useContractOperation from '@/hooks/contract-operations/useContractOperation';
 import useDepositPool from '@/hooks/contract-operations/launchpad/useDeposit';
-import {scanLaunchpadTxHash} from "@/services/launchpad";
-import {IResourceChain} from "@/interfaces/chain";
+import { scanLaunchpadTxHash } from '@/services/launchpad';
+import { IResourceChain } from '@/interfaces/chain';
 
 export const MakeFormSwap = forwardRef((props, ref) => {
   const { onSubmit, submitting, poolDetail } = props;
@@ -243,9 +244,9 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   };
 
   const handleBaseAmountChange = ({
-    amount,
-    poolDetail,
-  }: {
+                                    amount,
+                                    poolDetail,
+                                  }: {
     amount: any;
     poolDetail: any;
   }) => {
@@ -320,7 +321,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       </Text>
       <InputWrapper
         className={cx(styles.inputAmountWrap, styles.inputBaseAmountWrap)}
-        theme="light"
+        theme='light'
         label={
           <Text fontSize={px2rem(14)} color={'#FFFFFF'}>
             Amount
@@ -347,7 +348,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       >
         <Flex gap={4} direction={'column'}>
           <Field
-            name="liquidityAmount"
+            name='liquidityAmount'
             children={FieldAmount}
             validate={composeValidators(required, validateBaseAmount)}
             fieldChanged={onChangeValueBaseAmount}
@@ -469,7 +470,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           <FiledButton
             isLoading={loading}
             isDisabled={loading}
-            loadingText="Processing"
+            loadingText='Processing'
             btnSize={'h'}
             containerConfig={{ flex: 1, mt: 6 }}
             onClick={onShowModalApprove}
@@ -484,7 +485,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           <FiledButton
             isDisabled={submitting || btnDisabled}
             isLoading={submitting}
-            type="submit"
+            type='submit'
             btnSize={'h'}
             containerConfig={{ flex: 1, mt: 6 }}
             loadingText={submitting ? 'Processing' : ' '}
@@ -510,8 +511,8 @@ const ContributeForm = (props: any) => {
   const [submitting, setSubmitting] = useState(false);
   const dispatch = useAppDispatch();
   const { mobileScreen } = useWindowSize();
-  const { account, isActive } = useWeb3React();
-  const currentChain: IResourceChain = useSelector(selectPnftExchange).currentChain;
+  const { account } = useWeb3React();
+  const currentChain: IResourceChain = useSelector(currentChainSelector);
 
   const { run: depositLaunchpad } = useContractOperation({
     operation: useDepositPool,
@@ -568,7 +569,7 @@ const ContributeForm = (props: any) => {
                 }
               />
               <FiledButton
-                loadingText="Processing"
+                loadingText='Processing'
                 btnSize={'h'}
                 onClick={() => {
                   close();
@@ -612,7 +613,7 @@ const ContributeForm = (props: any) => {
 
       await scanLaunchpadTxHash({
         tx_hash: response.hash,
-        network: currentChain?.chain?.toLowerCase()
+        network: currentChain?.chain?.toLowerCase(),
       });
 
       toast.success('Transaction has been created. Please wait for few minutes.');

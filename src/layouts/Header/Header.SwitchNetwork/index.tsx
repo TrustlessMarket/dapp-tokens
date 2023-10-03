@@ -7,7 +7,7 @@ import { ROUTE_PATH } from '@/constants/route-path';
 import { IResourceChain } from '@/interfaces/chain';
 import { useAppDispatch } from '@/state/hooks';
 import {
-  configsSelector,
+  configsSelector, currentChainSelector,
   selectPnftExchange,
   updateConfigs,
   updateCurrentChain,
@@ -62,7 +62,7 @@ const SUPPORT_PATH_V1 = [
 
 const HeaderSwitchNetwork = () => {
   const dispatch = useAppDispatch();
-  const currentChain: IResourceChain = useSelector(selectPnftExchange).currentChain;
+  const currentChain: IResourceChain = useSelector(currentChainSelector);
   const router = useRouter();
   const isL2 = useCheckIsLayer2();
   const allConfigs: any = useSelector(selectPnftExchange).allConfigs;

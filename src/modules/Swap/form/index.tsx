@@ -33,6 +33,7 @@ import {getSwapRoutes, getSwapTokens, logErrorToServer} from '@/services/swap';
 import {useAppDispatch, useAppSelector} from '@/state/hooks';
 import {TransactionStatus} from '@/components/Swap/alertInfoProcessing/interface';
 import {
+  currentChainSelector,
   requestReload,
   requestReloadRealtime,
   selectPnftExchange,
@@ -100,7 +101,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const { account } = useWeb3React();
   const needReload = useAppSelector(selectPnftExchange).needReload;
   const [exchangeRate, setExchangeRate] = useState('0');
-  const currentChain = useSelector(selectPnftExchange).currentChain;
+  const currentChain = useSelector(currentChainSelector);
 
   // console.log('isSwitching', isSwitching);
   // console.log('amountBaseTokenApproved', amountBaseTokenApproved);

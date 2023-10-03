@@ -14,7 +14,7 @@ import {
   importBoost,
 } from '@/services/launchpad';
 import { useAppSelector } from '@/state/hooks';
-import { selectPnftExchange } from '@/state/pnftExchange';
+import { currentChainSelector, selectPnftExchange } from '@/state/pnftExchange';
 import { colors } from '@/theme/colors';
 import { showError } from '@/utils/toast';
 import {
@@ -57,8 +57,7 @@ const LaunchpadManage = () => {
   const [error, setMessageError] = useState('');
   const { isOpen, onToggle, onClose } = useDisclosure();
   const needReload = useAppSelector(selectPnftExchange).needReload;
-  const currentChain: IResourceChain =
-    useAppSelector(selectPnftExchange).currentChain;
+  const currentChain: IResourceChain = useAppSelector(currentChainSelector);
 
   const router = useRouter();
   const id = router.query?.id;

@@ -9,7 +9,7 @@ import { ContractOperationHook, DAppType } from '@/interfaces/contract-operation
 import { logErrorToServer } from '@/services/swap';
 import store from '@/state';
 import { useAppSelector } from '@/state/hooks';
-import { selectPnftExchange, updateCurrentTransaction } from '@/state/pnftExchange';
+import { currentChainSelector, updateCurrentTransaction } from '@/state/pnftExchange';
 import { compareString, getContract, getDefaultGasPrice, getGasFee } from '@/utils';
 import { useWeb3React } from '@web3-react/core';
 import { useCallback } from 'react';
@@ -25,8 +25,7 @@ const useApproveERC20Token: ContractOperationHook<
 > = () => {
   const { account, provider } = useWeb3React();
 
-  const currentChain: IResourceChain =
-    useAppSelector(selectPnftExchange).currentChain;
+  const currentChain: IResourceChain = useAppSelector(currentChainSelector);
 
   const call = useCallback(
     async (params: IApproveERC20TokenParams): Promise<boolean> => {
@@ -45,19 +44,19 @@ const useApproveERC20Token: ContractOperationHook<
           MaxUint256,
           compareString(currentChain?.chainId, SupportedChainId.TRUSTLESS_COMPUTER)
             ? {
-                gasLimit: '150000',
-                gasPrice: getDefaultGasPrice(),
-              }
+              gasLimit: '150000',
+              gasPrice: getDefaultGasPrice(),
+            }
             : {
-                gasPrice: getGasFee(),
-              },
+              gasPrice: getGasFee(),
+            },
         );
 
         logErrorToServer({
           type: 'logs',
           address: account,
           error: JSON.stringify(transaction),
-          message: "gasLimit: '150000'",
+          message: 'gasLimit: \'150000\'',
         });
 
         store.dispatch(

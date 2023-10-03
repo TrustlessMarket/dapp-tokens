@@ -42,7 +42,7 @@ import {
 import { IResourceChain } from '@/interfaces/chain';
 import { getCurrentProfile } from '@/services/profile';
 import {
-  selectPnftExchange,
+  currentChainSelector,
   updateCurrentChain,
   updateCurrentChainId,
 } from '@/state/pnftExchange';
@@ -77,7 +77,7 @@ export const WalletProvider: React.FC<PropsWithChildren> = ({
   const { connector, provider, chainId } = useWeb3React();
   const dispatch = useAppDispatch();
   const user = useSelector(getUserSelector);
-  const currentChain: IResourceChain = useSelector(selectPnftExchange).currentChain;
+  const currentChain: IResourceChain = useSelector(currentChainSelector);
   const currentChainId = currentChain?.chainId;
   const router = useRouter();
 

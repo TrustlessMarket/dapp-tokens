@@ -15,7 +15,7 @@ import {
 import AboveTheFoldVoting from '@/modules/ProposalDetail/aboveTheFold';
 import { getDetailLaunchpad, getUserBoost } from '@/services/launchpad';
 import { useAppSelector } from '@/state/hooks';
-import { selectPnftExchange, updateCurrentChainId } from '@/state/pnftExchange';
+import { currentChainSelector, selectPnftExchange, updateCurrentChainId } from '@/state/pnftExchange';
 import { colors } from '@/theme/colors';
 import px2rem from '@/utils/px2rem';
 import {
@@ -49,7 +49,7 @@ const IdoDetailContainer = () => {
 
   const [userBoost, setUserBoost] = useState(undefined);
 
-  const currentChain: IResourceChain = useSelector(selectPnftExchange).currentChain;
+  const currentChain: IResourceChain = useSelector(currentChainSelector);
 
   const dispatch = useDispatch();
 

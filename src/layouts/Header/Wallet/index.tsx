@@ -34,7 +34,7 @@ import {isScreenDarkMode} from '..';
 import {ConnectWalletButton, WalletBalance} from '../Header.styled';
 import {WalletPopover} from './Wallet.styled';
 import {SupportedChainId, TRUSTLESS_COMPUTER_CHAIN_INFO} from '@/constants/chains';
-import {selectPnftExchange, updateConfigs, updateCurrentChain} from '@/state/pnftExchange';
+import { currentChainSelector, selectPnftExchange, updateConfigs, updateCurrentChain } from '@/state/pnftExchange';
 import {CHAIN_INFO} from "@/constants/storage-key";
 import {useAppDispatch} from "@/state/hooks";
 import useCheckIsLayer2 from "@/hooks/useCheckIsLayer2";
@@ -55,7 +55,7 @@ const WalletHeader = () => {
 
   const chainInfo: IResourceChain = getConnectedChainInfo();
 
-  const currentChain: IResourceChain = useSelector(selectPnftExchange).currentChain;
+  const currentChain: IResourceChain = useSelector(currentChainSelector);
 
   const dispatch = useAppDispatch();
   const allConfigs: any = useSelector(selectPnftExchange).allConfigs;

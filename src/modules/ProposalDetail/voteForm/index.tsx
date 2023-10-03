@@ -11,6 +11,7 @@ import {TransactionStatus} from '@/components/Swap/alertInfoProcessing/interface
 import {logErrorToServer} from '@/services/swap';
 import {useAppDispatch, useAppSelector} from '@/state/hooks';
 import {
+  currentChainSelector,
   requestReload,
   requestReloadRealtime,
   selectPnftExchange,
@@ -411,8 +412,8 @@ const BuyForm = ({ poolDetail, votingToken, onClose }: any) => {
   const refForm = useRef<any>();
   const [submitting, setSubmitting] = useState(false);
   const dispatch = useAppDispatch();
-  const { account, isActive } = useWeb3React();
-  const currentChain: IResourceChain = useAppSelector(selectPnftExchange).currentChain;
+  const { account } = useWeb3React();
+  const currentChain: IResourceChain = useAppSelector(currentChainSelector);
 
   const { run: voteLaunchpad } = useContractOperation({
     operation: useVoteLaunchpad,

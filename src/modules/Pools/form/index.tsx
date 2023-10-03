@@ -143,9 +143,6 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     totalSupply: '0',
   });
 
-  const currentChain: IResourceChain =
-    useAppSelector(selectPnftExchange).currentChain;
-
   const [apr, setApr] = useState(0);
 
   const { juiceBalance, isLoadedAssets } = useContext(AssetsContext);

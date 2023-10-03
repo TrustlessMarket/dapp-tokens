@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { useAppSelector } from '@/state/hooks';
-import { selectPnftExchange } from '@/state/pnftExchange';
+import { currentChainSelector, selectPnftExchange } from '@/state/pnftExchange';
 import Side from '@/modules/ProposalDetail/result/side';
 import { Box } from '@chakra-ui/react';
 import styles from './styles.module.scss';
@@ -12,19 +12,19 @@ import { ILaunchpad } from '@/interfaces/launchpad';
 import px2rem from '@/utils/px2rem';
 import { LAUNCHPAD_STATUS } from '@/modules/Launchpad/Launchpad.Status';
 import BuyForm from '@/modules/LaunchPadDetail/form';
-import {IResourceChain} from "@/interfaces/chain";
-import {useSelector} from "react-redux";
+import { IResourceChain } from '@/interfaces/chain';
+import { useSelector } from 'react-redux';
 
 const ProposalResult = ({ poolDetail }: { poolDetail: ILaunchpad }) => {
   const needReload = useAppSelector(selectPnftExchange).needReload;
   const [voteResult, setVoteResult] = useState<any>();
-  const currentChain: IResourceChain = useSelector(selectPnftExchange).currentChain;
+  const currentChain: IResourceChain = useSelector(currentChainSelector);
 
   const getVoteResultProposalInfo = async () => {
     try {
       const response = await getVoteResultLaunchpad({
         pool_address: poolDetail?.launchpad,
-        network: currentChain?.chain?.toLowerCase()
+        network: currentChain?.chain?.toLowerCase(),
       });
       setVoteResult(response);
     } catch (err) {
