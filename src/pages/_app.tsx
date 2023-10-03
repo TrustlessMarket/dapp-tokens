@@ -58,10 +58,15 @@ export default function App({ Component, pageProps }: AppProps) {
     const connectedChain: IResourceChain = getLocalStorageChainInfo();
     const key = connectedChain?.chain?.toLowerCase() || '';
 
-    console.log('configs 111', configs, key)
+    console.log('_app configs:', {
+      configs,
+      key
+    })
 
     if (!!key && !!configs[key]) {
       store.dispatch(updateConfigs(configs[key]));
+    } else {
+      console.log('_app configs:: not found', key)
     }
   };
 

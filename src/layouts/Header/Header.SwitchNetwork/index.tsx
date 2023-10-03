@@ -68,11 +68,9 @@ const HeaderSwitchNetwork = () => {
   const allConfigs: any = useSelector(selectPnftExchange).allConfigs;
   const configs = useSelector(configsSelector);
 
-
   const networks = React.useMemo(() => {
     return isL2 ? configs.map(v => convertNetworkToResourceChain(v)).filter((v) => v?.chainId !== CHAIN_ID.TRUSTLESS_COMPUTER) : configs;
   }, [isL2, configs])
-
 
   const onChangeRouter = (_chainA?: IResourceChain) => {
     dispatch(updateCurrentChain(_chainA));

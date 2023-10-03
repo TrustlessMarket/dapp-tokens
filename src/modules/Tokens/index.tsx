@@ -6,10 +6,10 @@ import {IToken} from '@/interfaces/token';
 import {getTokenRp} from '@/services/swap';
 import {
   abbreviateNumber,
-  formatCurrency,
+  formatCurrency, getChainNameRequestAPI,
   getTokenIconUrl,
   getWBTCAddress,
-  getWETHAddress
+  getWETHAddress,
 } from '@/utils';
 import {debounce} from 'lodash';
 import React, {useEffect, useMemo, useRef, useState} from 'react';
@@ -568,9 +568,7 @@ export const MakeFormSwap = forwardRef(() => {
           </div>
         </div>
         <div className="upload_right">
-          <Link
-            href={`${isL2 ? ROUTE_PATH.SWAP_V2 : ROUTE_PATH.SWAP}?from_token=${getWETHAddress()}&to_token=${GM_ADDRESS}`}
-          >
+          <Link href={`${isL2 ? getChainNameRequestAPI(currentChain) : ROUTE_PATH.SWAP}`}>
             <Button className="comming-soon-btn" background={'#3385FF'}>
               <Text
                 size="medium"

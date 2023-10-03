@@ -39,7 +39,7 @@ import { useAppDispatch, useAppSelector } from '@/state/hooks';
 import { closeModal, openModal } from '@/state/modal';
 import {
   currentChainSelector,
-  getConfigsByChainIdSelector,
+  getConfigsChainSelector,
   requestReload,
   requestReloadRealtime,
   selectPnftExchange,
@@ -119,7 +119,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
 
   const { account, provider, chainId } = useWeb3React();
   const currentChain: IResourceChain = useAppSelector(currentChainSelector);
-  const currentConfig = useAppSelector(getConfigsByChainIdSelector)(currentChain.chainId);
+  const currentConfig = useAppSelector(getConfigsChainSelector);
 
   const [exchangeRate, setExchangeRate] = useState('0');
 

@@ -6,7 +6,7 @@ import { createSelector, createSlice } from '@reduxjs/toolkit';
 import { RootState } from '.';
 import { INetworkConfig } from '@/interfaces/state/pnftExchange';
 import { IResourceChain } from '@/interfaces/chain';
-import { L2_CHAIN_INFO } from '@/constants/chains';
+import { convertNetworkToResourceChain, L2_CHAIN_INFO } from '@/constants/chains';
 
 interface NftyLendState {
   needReload: number;
@@ -101,18 +101,30 @@ export const selectPnftExchange = (state: RootState) => state.pnftExchange;
 export const selectCurrentTransaction = (state: RootState) =>
   state.pnftExchange.currentTransaction;
 
-export const currentChainSelector = createSelector(selectPnftExchange, (pnftExchange): IResourceChain => {
-  return pnftExchange.currentChain || L2_CHAIN_INFO;
-});
-
 export const configsSelector = createSelector(selectPnftExchange, (allConfigs) => {
   return Object.values(allConfigs.allConfigs || {}) as INetworkConfig[];
 });
 
-export const getConfigsByChainIdSelector = createSelector(configsSelector, (configs) => {
-  return (chainId: number): INetworkConfig | undefined => {
-    return configs.find((config: INetworkConfig) => Number(config.chainId) === Number(chainId));
-  };
+export const currentChainSelector = createSelector(
+  configsSelector, selectPnftExchange,
+  (configs, selectPnftExchange): IResourceChain => {
+
+  const currentChain: INetworkConfig = selectPnftExchange.configs;
+
+  let chain: IResourceChain | undefined = undefined;
+
+  if (currentChain && !!configs.length) {
+    const config = configs.find((config: INetworkConfig) => Number(config.chainId) === Number(currentChain.chainId));
+    if (config) {
+      chain = convertNetworkToResourceChain(config);
+    }
+  }
+
+  return chain || L2_CHAIN_INFO;
+});
+
+export const getConfigsChainSelector = createSelector(currentChainSelector, configsSelector,(currentChain: IResourceChain, configs) => {
+  return configs.find((config: INetworkConfig) => Number(config.chainId) === Number(currentChain.chainId));
 });
 
 export default slice.reducer;
