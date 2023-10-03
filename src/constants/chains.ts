@@ -9,6 +9,7 @@ import {
   TC_NETWORK_RPC,
 } from '@/configs';
 import { isProduction } from '@/utils/commons';
+import { INetworkConfig } from '@/interfaces/state/pnftExchange';
 
 export enum SupportedChainId {
   ETH = Number(ETH_CHAIN_ID),
@@ -84,3 +85,36 @@ export const L2_CHAIN_INFO = {
     registry: '',
   },
 };
+
+
+export const convertNetworkToResourceChain = (network: INetworkConfig): any => {
+  const name = network.name ? network.name.toUpperCase() : 'UNKNOWN';
+  return {
+    name: name,
+    title: '',
+    chain: name,
+    icon: network.icon,
+    rpc: [network.rpcUrl],
+    faucets: [],
+    nativeCurrency: {
+      name: 'NOS',
+      symbol: 'TC',
+      decimals: 18,
+    },
+    infoURL: network.icon,
+    shortName: name,
+    chainId: network.chainId,
+    networkId: network.chainId,
+    slip44: 0,
+    explorers: [
+      {
+        name: 'Explorer',
+        url: network.explorerUrl,
+        standard: 'EIP3091',
+      },
+    ],
+    ens: {
+      registry: '',
+    },
+  }
+}

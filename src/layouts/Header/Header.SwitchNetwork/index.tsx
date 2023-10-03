@@ -1,29 +1,41 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import {L2_CHAIN_INFO, SupportedChainId, TRUSTLESS_COMPUTER_CHAIN_INFO,} from '@/constants/chains';
-import {ROUTE_PATH} from '@/constants/route-path';
-import {IResourceChain} from '@/interfaces/chain';
-import {useAppDispatch} from '@/state/hooks';
-import {selectPnftExchange, updateConfigs, updateCurrentChain} from '@/state/pnftExchange';
-import {compareString} from '@/utils';
-import {Flex, Menu, MenuButton, MenuItem, MenuList, Text} from '@chakra-ui/react';
-import {useRouter} from 'next/router';
-import {useEffect} from 'react';
-import {BiCheck, BiChevronDown} from 'react-icons/bi';
-import {useSelector} from 'react-redux';
+import {
+  convertNetworkToResourceChain,
+  SupportedChainId,
+} from '@/constants/chains';
+import { ROUTE_PATH } from '@/constants/route-path';
+import { IResourceChain } from '@/interfaces/chain';
+import { useAppDispatch } from '@/state/hooks';
+import {
+  configsSelector,
+  selectPnftExchange,
+  updateConfigs,
+  updateCurrentChain,
+} from '@/state/pnftExchange';
+import { CHAIN_ID, compareString } from '@/utils';
+import { Flex, Menu, MenuButton, MenuItem, MenuList, Text } from '@chakra-ui/react';
+import { useRouter } from 'next/router';
+import React, { useEffect } from 'react';
+import { BiCheck, BiChevronDown } from 'react-icons/bi';
+import { useSelector } from 'react-redux';
 import s from './styles.module.scss';
-import {CHAIN_INFO} from '@/constants/storage-key';
-import {L2_USDT_ADDRESS, L2_WBTC_ADDRESS} from "@/configs";
-import {GM_ADDRESS, WETH_ADDRESS} from "@/constants/common";
+import { CHAIN_INFO } from '@/constants/storage-key';
+import { L2_USDT_ADDRESS, L2_WBTC_ADDRESS } from '@/configs';
+import { GM_ADDRESS, WETH_ADDRESS } from '@/constants/common';
+import useCheckIsLayer2 from '@/hooks/useCheckIsLayer2';
+
+interface IProps {
+  _chain: IResourceChain;
+  showName?: boolean;
+  active?: boolean;
+}
 
 export const ItemChain = ({
   _chain,
   showName,
   active,
-}: {
-  _chain: IResourceChain;
-  showName?: boolean;
-  active?: boolean;
-}) => {
+}: IProps) => {
+
   return (
     <Flex className={s.itemChain}>
       <Flex alignItems={'center'} gap={2}>
@@ -52,9 +64,17 @@ const HeaderSwitchNetwork = () => {
   const dispatch = useAppDispatch();
   const currentChain: IResourceChain = useSelector(selectPnftExchange).currentChain;
   const router = useRouter();
+  const isL2 = useCheckIsLayer2();
   const allConfigs: any = useSelector(selectPnftExchange).allConfigs;
+  const configs = useSelector(configsSelector);
 
-  const onChangeRouter = (_chainA?: any) => {
+
+  const networks = React.useMemo(() => {
+    return isL2 ? configs.map(v => convertNetworkToResourceChain(v)).filter((v) => v?.chainId !== CHAIN_ID.TRUSTLESS_COMPUTER) : configs;
+  }, [isL2, configs])
+
+
+  const onChangeRouter = (_chainA?: IResourceChain) => {
     dispatch(updateCurrentChain(_chainA));
     const key = _chainA?.chain?.toLowerCase() || '';
     dispatch(updateConfigs(allConfigs[key]));
@@ -95,15 +115,15 @@ const HeaderSwitchNetwork = () => {
   }, [currentChain]);
 
   return (
-    <Menu placement="bottom-end">
+    <Menu placement='bottom-end'>
       <MenuButton className={s.btnChainSelected}>
         <Flex alignContent={'center'}>
           <ItemChain _chain={currentChain} />
-          <BiChevronDown color="#FFFFFF" style={{ fontSize: 20 }} />
+          <BiChevronDown color='#FFFFFF' style={{ fontSize: 20 }} />
         </Flex>
       </MenuButton>
       <MenuList className={s.chainList}>
-        {[TRUSTLESS_COMPUTER_CHAIN_INFO, L2_CHAIN_INFO].map((c) => (
+        {networks.map((c) => (
           <MenuItem onClick={() => onChangeRouter(c)} key={c.chainId}>
             <ItemChain
               _chain={c}

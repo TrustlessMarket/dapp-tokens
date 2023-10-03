@@ -15,7 +15,7 @@ import TokenBalance from '@/components/Swap/tokenBalance';
 import WrapperConnected from '@/components/WrapperConnected';
 import { CDN_URL, UNIV3_ROUTER_ADDRESS } from '@/configs';
 import { L2_CHAIN_INFO } from '@/constants/chains';
-import web3 from "web3";
+import web3 from 'web3';
 import {
   BRIDGE_SUPPORT_TOKEN,
   L2_GASSTATION,
@@ -26,9 +26,7 @@ import { toastError } from '@/constants/error';
 import { ROUTE_PATH } from '@/constants/route-path';
 import { AssetsContext } from '@/contexts/assets-context';
 import useGetReserves from '@/hooks/contract-operations/swap/useReserves';
-import useEstimateSwapERC20Token, {
-  IEstimateSwapERC20Token,
-} from '@/hooks/contract-operations/swap/v3/useEstimateSwapERC20Token';
+import useEstimateSwapERC20Token from '@/hooks/contract-operations/swap/v3/useEstimateSwapERC20Token';
 import useSwapERC20Token, {
   ISwapERC20TokenParams,
 } from '@/hooks/contract-operations/swap/v3/useSwapERC20Token';
@@ -45,13 +43,13 @@ import {
   requestReload,
   requestReloadRealtime,
   selectPnftExchange,
-  updateCurrentTransaction
+  updateCurrentTransaction,
 } from '@/state/pnftExchange';
 import { getIsAuthenticatedSelector } from '@/state/user/selector';
 import {
   camelCaseKeys,
   compareString,
-  formatCurrency,
+  formatCurrency, getChainNameRequestAPI,
   getTokenIconUrl,
   isNativeToken,
   isSupportedChain,
@@ -87,15 +85,17 @@ import { useDispatch, useSelector } from 'react-redux';
 import Web3 from 'web3';
 import styles from './styles.module.scss';
 import { ethers } from 'ethers';
-import {IToken,Token,changeWallet,refreshProvider,WalletType,tokenSwap,TokenTrade, getSwapRoutesV2,
-  getSwapTokensV1,getBestRouteExactIn,setTOkenSwap,TransactionState,Environment,connectBrowserExtensionWallet,
-  ISwapRouteParams,choiceConFig} from 'trustless-swap-sdk'
-import {isProduction} from "@/utils/commons";
+import {
+  IToken, Token, changeWallet, refreshProvider, WalletType, tokenSwap, TokenTrade, getSwapRoutesV2,
+  getSwapTokensV1, getBestRouteExactIn, setTOkenSwap, TransactionState, Environment,
+  ISwapRouteParams, choiceConFig,
+} from 'trustless-swap-sdk';
+import { isProduction } from '@/utils/commons';
 import localStorage from '@/utils/localstorage';
+
 const LIMIT_PAGE = 500;
 
 export const MakeFormSwap = forwardRef((props, ref) => {
-  const [trade, setTrade] = useState<TokenTrade>()
   const { onSubmit, submitting } = props;
   const [loading, setLoading] = useState(false);
   const [baseToken, setBaseToken] = useState<any>();
@@ -108,7 +108,6 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const { call: isApproved } = useIsApproveERC20Token();
   const { call: tokenBalance } = useBalanceERC20Token();
   const { call: approveToken } = useApproveERC20Token();
-  const { call: getReserves } = useGetReserves();
   const [baseBalance, setBaseBalance] = useState<any>('0');
   const [quoteBalance, setQuoteBalance] = useState<any>('0');
   const { juiceBalance, isLoadedAssets } = useContext(AssetsContext);
@@ -118,12 +117,10 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const router = useRouter();
   const [swapRoutes, setSwapRoutes] = useState<any[]>([]);
 
-  const { account,provider, chainId } = useWeb3React();
+  const { account, provider, chainId } = useWeb3React();
   const currentChain: IResourceChain = useAppSelector(selectPnftExchange).currentChain;
 
-  console.log("account",account)
   const [exchangeRate, setExchangeRate] = useState('0');
-  const { call: getEstimateSwap } = useEstimateSwapERC20Token();
 
   // console.log('chainInfo', chainInfo);
   // console.log('isSwitching', isSwitching);
@@ -153,13 +150,13 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const swapFee = useMemo(() => {
     if (values?.bestRoute) {
       return new BigNumber(
-          values?.bestRoute?.pathPairs?.reduce(
-              (result: any, pair: any) => result + Number(pair.fee),
-              0,
-          ),
+        values?.bestRoute?.pathPairs?.reduce(
+          (result: any, pair: any) => result + Number(pair.fee),
+          0,
+        ),
       )
-          .div(10000)
-          .toString();
+        .div(10000)
+        .toString();
     }
 
     return '0.3';
@@ -169,12 +166,12 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     let result = false;
     try {
       result =
-          isAuthenticated &&
-          values?.baseAmount &&
-          !isNaN(Number(values?.baseAmount)) &&
-          new BigNumber(amountBaseTokenApproved || 0).lt(
-              Web3.utils.toWei(`${values?.baseAmount || 0}`, 'ether'),
-          );
+        isAuthenticated &&
+        values?.baseAmount &&
+        !isNaN(Number(values?.baseAmount)) &&
+        new BigNumber(amountBaseTokenApproved || 0).lt(
+          Web3.utils.toWei(`${values?.baseAmount || 0}`, 'ether'),
+        );
     } catch (err: any) {
       logErrorToServer({
         type: 'error',
@@ -189,8 +186,8 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   }, [isAuthenticated, amountBaseTokenApproved, values?.baseAmount]);
 
   const onBaseAmountChange = useCallback(
-      debounce((p) => handleBaseAmountChange(p), 1000),
-      [],
+    debounce((p) => handleBaseAmountChange(p), 1000),
+    [],
   );
 
   useImperativeHandle(ref, () => {
@@ -218,16 +215,16 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   };
 
   useEffect(() => {
-    changeWallet(WalletType.EXTENSION,"","")
+    changeWallet(WalletType.EXTENSION, '', '');
     choiceConFig(isProduction() ? Environment.MAINNET : Environment.TESTNET);
     refreshProvider(provider);
-    fetchTokens()
+    fetchTokens();
   }, []);
 
   useEffect(() => {
     if (router?.query?.from_token) {
       const token = baseTokensList.find((t: any) =>
-          compareString(t.address, router?.query?.from_token),
+        compareString(t.address, router?.query?.from_token),
       );
 
       if (token) {
@@ -239,7 +236,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   useEffect(() => {
     if (router?.query?.to_token) {
       const token = quoteTokensList.find((t: any) =>
-          compareString(t.address, router?.query?.to_token),
+        compareString(t.address, router?.query?.to_token),
       );
 
       if (token) {
@@ -266,8 +263,8 @@ export const MakeFormSwap = forwardRef((props, ref) => {
 
   useEffect(() => {
     if (
-        isSupportedChain(chainId) &&
-        compareString(currentChain?.chainId, chainId)
+      isSupportedChain(chainId) &&
+      compareString(currentChain?.chainId, chainId)
     ) {
       if (account && baseToken?.address) {
         checkApproveBaseToken(baseToken);
@@ -277,8 +274,8 @@ export const MakeFormSwap = forwardRef((props, ref) => {
 
   useEffect(() => {
     if (
-        isSupportedChain(chainId) &&
-        compareString(currentChain?.chainId, chainId)
+      isSupportedChain(chainId) &&
+      compareString(currentChain?.chainId, chainId)
     ) {
       if (account && quoteToken?.address) {
         checkApproveQuoteToken(quoteToken);
@@ -303,7 +300,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         limit: LIMIT_PAGE,
         page: page,
         is_test: isDevelop() ? '1' : '',
-        network: L2_CHAIN_INFO.chain.toLowerCase(),
+        network: getChainNameRequestAPI(currentChain),
       });
 
       const list = res ? camelCaseKeys(res) : [];
@@ -333,12 +330,11 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         page: 1,
         is_test: isDevelop() ? '1' : '',
         from_token: from_token,
-        network: L2_CHAIN_INFO.chain.toLowerCase(),
+        network: getChainNameRequestAPI(currentChain),
       });
       return res;
     } catch (err: unknown) {
       console.log('Failed to fetch tokens owned');
-    } finally {
     }
   };
 
@@ -381,7 +377,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       const response = await tokenBalance({
         erc20TokenAddress: token.address,
       });
-      console.log("response",response)
+      console.log('response', response);
       return response;
     } catch (error) {
       console.log('error', error);
@@ -392,24 +388,24 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const requestApproveToken = async (token: IToken) => {
     try {
       dispatch(
-          updateCurrentTransaction({
-            id: transactionType.createPoolApprove,
-            status: TransactionStatus.info,
-          }),
+        updateCurrentTransaction({
+          id: transactionType.createPoolApprove,
+          status: TransactionStatus.info,
+        }),
       );
       const response: any = await approveToken({
         erc20TokenAddress: token.address,
         address: UNIV3_ROUTER_ADDRESS,
       });
       dispatch(
-          updateCurrentTransaction({
-            status: TransactionStatus.success,
-            id: transactionType.createPoolApprove,
-            hash: response.hash,
-            infoTexts: {
-              success: `${token.symbol} has been approved successfully. You can swap now!`,
-            },
-          }),
+        updateCurrentTransaction({
+          status: TransactionStatus.success,
+          id: transactionType.createPoolApprove,
+          hash: response.hash,
+          infoTexts: {
+            success: `${token.symbol} has been approved successfully. You can swap now!`,
+          },
+        }),
       );
     } catch (error) {
       dispatch(updateCurrentTransaction(null));
@@ -426,9 +422,9 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     setBaseToken(token);
     change('baseToken', token);
     router.replace(
-        `${ROUTE_PATH.SWAP_V2}?from_token=${token.address}&to_token=${
-            router?.query?.to_token || ''
-        }`,
+      `${ROUTE_PATH.SWAP_V2}?from_token=${token.address}&to_token=${
+        router?.query?.to_token || ''
+      }`,
     );
 
     try {
@@ -437,7 +433,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         setQuoteTokensList(camelCaseKeys(_fromTokens));
         if (quoteToken) {
           const findIndex = _fromTokens.findIndex((v: { address: unknown }) =>
-              compareString(v.address, quoteToken.address),
+            compareString(v.address, quoteToken.address),
           );
 
           if (findIndex < 0) {
@@ -449,12 +445,12 @@ export const MakeFormSwap = forwardRef((props, ref) => {
 
           if (router?.query?.to_token) {
             token = _fromTokens.find((t: { address: unknown }) =>
-                compareString(t.address, router?.query?.to_token),
+              compareString(t.address, router?.query?.to_token),
             );
           }
           if (!token) {
             token = _fromTokens.find((t: { address: unknown }) =>
-                compareString(t.address, USDC_ADDRESS),
+              compareString(t.address, USDC_ADDRESS),
             );
           }
           if (token) {
@@ -475,9 +471,9 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     setQuoteToken(token);
     change('quoteToken', token);
     router.replace(
-        `${ROUTE_PATH.SWAP_V2}?from_token=${
-            router?.query?.from_token || ''
-        }&to_token=${token.address}`,
+      `${ROUTE_PATH.SWAP_V2}?from_token=${
+        router?.query?.from_token || ''
+      }&to_token=${token.address}`,
     );
   };
 
@@ -498,9 +494,9 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     setAmountBaseTokenApproved(amountQuoteTokenApproved);
     setAmountQuoteTokenApproved(amountBaseTokenApproved);
     router.replace(
-        `${ROUTE_PATH.SWAP_V2}?from_token=${router?.query?.to_token || ''}&to_token=${
-            router?.query?.from_token || ''
-        }`,
+      `${ROUTE_PATH.SWAP_V2}?from_token=${router?.query?.to_token || ''}&to_token=${
+        router?.query?.from_token || ''
+      }`,
     );
 
     try {
@@ -510,8 +506,8 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         }
 
         const routes = await getSwapRoutesInfo(
-            quoteToken?.address,
-            baseToken?.address,
+          quoteToken?.address,
+          baseToken?.address,
         );
 
         onBaseAmountChange({
@@ -519,7 +515,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           tokenIn: quoteToken,
           tokenOut: baseToken,
           swapRoutes: routes,
-          baseTokensList:baseTokensList
+          baseTokensList: baseTokensList,
         });
       }
 
@@ -531,7 +527,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
           setQuoteTokensList(camelCaseKeys(_fromTokens));
           if (baseToken) {
             const findIndex = _fromTokens.findIndex((v) =>
-                compareString(v.address, baseToken.address),
+              compareString(v.address, baseToken.address),
             );
 
             if (findIndex < 0) {
@@ -549,20 +545,20 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   };
 
   const validateBaseAmount = useCallback(
-      (_amount: any) => {
-        if (!_amount) {
-          return undefined;
-        }
-        if (new BigNumber(_amount).lte(0)) {
-          return `Required`;
-        }
-        if (new BigNumber(_amount).gt(baseBalance)) {
-          return `Insufficient balance.`;
-        }
-
+    (_amount: any) => {
+      if (!_amount) {
         return undefined;
-      },
-      [values.baseAmount],
+      }
+      if (new BigNumber(_amount).lte(0)) {
+        return `Required`;
+      }
+      if (new BigNumber(_amount).gt(baseBalance)) {
+        return `Insufficient balance.`;
+      }
+
+      return undefined;
+    },
+    [values.baseAmount],
   );
 
   const validateQuoteAmount = useCallback(() => {
@@ -575,7 +571,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       tokenIn: baseToken,
       tokenOut: quoteToken,
       swapRoutes: swapRoutes,
-      baseTokensList:baseTokensList,
+      baseTokensList: baseTokensList,
     });
   };
 
@@ -593,41 +589,40 @@ export const MakeFormSwap = forwardRef((props, ref) => {
     baseTokensList: any[],
   }) => {
     try {
-      if (!tokenIn||!tokenOut||
-          !amount ||
-          isNaN(Number(amount)) ||
-          !tokenIn?.address ||
-          !tokenOut?.address
+      if (!tokenIn || !tokenOut ||
+        !amount ||
+        isNaN(Number(amount)) ||
+        !tokenIn?.address ||
+        !tokenOut?.address
       )
         return;
 
 
       const token1 = new Token(
-          1,
-          tokenIn.address,
-          tokenIn.decimal,
-          tokenIn.symbol,
-          tokenIn.symbol)
+        1,
+        tokenIn.address,
+        tokenIn.decimal,
+        tokenIn.symbol,
+        tokenIn.symbol);
 
       const token2 = new Token(
-          1,
-          tokenOut.address,
-          tokenOut.decimal,
-          tokenOut.symbol,
-          tokenOut.symbol)
-      setTOkenSwap(token1,parseFloat( amount.toString()),token2,3000)
+        1,
+        tokenOut.address,
+        tokenOut.decimal,
+        tokenOut.symbol,
+        tokenOut.symbol);
+      setTOkenSwap(token1, parseFloat(amount.toString()), token2, 3000);
 
-      console.log("tokenSwap",tokenSwap)
+      console.log('tokenSwap', tokenSwap);
 
 
-
-      const outAmountOut = await calculateBestRoute(amount, swapRoutes,baseTokensList);
-      const estimateAmountOut =  web3.utils.fromWei(outAmountOut)
-      console.log("estimateAmountOut",estimateAmountOut)
+      const outAmountOut = await calculateBestRoute(amount, swapRoutes, baseTokensList);
+      const estimateAmountOut = web3.utils.fromWei(outAmountOut);
+      console.log('estimateAmountOut', estimateAmountOut);
 
       const rate = new BigNumber(amount)
-          .div(estimateAmountOut)
-          .decimalPlaces(tokenIn?.decimal || 18);
+        .div(estimateAmountOut)
+        .decimalPlaces(tokenIn?.decimal || 18);
 
       setExchangeRate(rate.toString());
       change('quoteAmount', estimateAmountOut);
@@ -663,59 +658,58 @@ export const MakeFormSwap = forwardRef((props, ref) => {
         return getEstimateSwap(params);
       });
     */
-   // const { account,provider1 } = useWeb3React();
-    console.log("baseTokensList",baseTokensList)
+    // const { account,provider1 } = useWeb3React();
+    console.log('baseTokensList', baseTokensList);
     const rs = await getBestRouteExactIn(amount);
 
 
-    change('bestRoute', rs[1])
-    console.log("trade", rs[2])
-    change('trade', rs[2])
-    console.log("result",rs)
-    return rs[3]
+    change('bestRoute', rs[1]);
+    console.log('trade', rs[2]);
+    change('trade', rs[2]);
+    console.log('result', rs);
+    return rs[3];
   };
 
   const onShowModalApprove = () => {
     const id = 'modal';
     const onClose = () => dispatch(closeModal({ id }));
     dispatch(
-        openModal({
-          id,
-          theme: 'dark',
-          title: `APPROVE USE OF ${baseToken?.symbol}`,
-          className: styles.modalContent,
-          modalProps: {
-            centered: true,
-            // size: mobileScreen ? 'full' : 'xl',
-            zIndex: 9999999,
-          },
-          render: () => (
-              <ModalConfirmApprove onApprove={onApprove} onClose={onClose} />
-          ),
-        }),
+      openModal({
+        id,
+        theme: 'dark',
+        title: `APPROVE USE OF ${baseToken?.symbol}`,
+        className: styles.modalContent,
+        modalProps: {
+          centered: true,
+          // size: mobileScreen ? 'full' : 'xl',
+          zIndex: 9999999,
+        },
+        render: () => (
+          <ModalConfirmApprove onApprove={onApprove} onClose={onClose} />
+        ),
+      }),
     );
   };
 
-  function sortData(listData:any[]) :any {
-    console.log("listData",listData)
-    const listPremium = []
-    const listHasAmount = []
-    const listRemain = []
-    const hasBalance = localStorage.get("has_balance")
-    const listHasBalance = hasBalance?hasBalance.toString().split(","):[]
+  function sortData(listData: any[]): any {
+    console.log('listData', listData);
+    const listPremium = [];
+    const listHasAmount = [];
+    const listRemain = [];
+    const hasBalance = localStorage.get('has_balance');
+    const listHasBalance = hasBalance ? hasBalance.toString().split(',') : [];
     for (const index in listData) {
-      const id =listData[index].id.toString()
-      if(listData[index].status==="premium")
-      {
-        listPremium.push(listData[index])
-      }else if (listHasBalance.indexOf(id)>=0){
-        listHasAmount.push(listData[index])
-      }else{
-        listRemain.push(listData[index])
+      const id = listData[index].id.toString();
+      if (listData[index].status === 'premium') {
+        listPremium.push(listData[index]);
+      } else if (listHasBalance.indexOf(id) >= 0) {
+        listHasAmount.push(listData[index]);
+      } else {
+        listRemain.push(listData[index]);
       }
     }
-    console.log("listHasAmount",listHasAmount)
-    return listPremium.concat(listHasAmount,listRemain);
+    console.log('listHasAmount', listHasAmount);
+    return listPremium.concat(listHasAmount, listRemain);
   }
 
   const onApprove = async () => {
@@ -740,207 +734,207 @@ export const MakeFormSwap = forwardRef((props, ref) => {
 
   const renderRoutePath = () => {
     return (
-        <Flex
-            direction={'column'}
-            alignItems={'flex-start'}
-            fontSize={'xs'}
-            gap={2}
-            mt={2}
-        >
-          <Flex gap={1} alignItems={'center'}>
-            <img
-                src={
-                  'https://cdn.trustless.computer/upload/1683642593326956421-1683642593-route.svg'
-                }
-                alt={'router-icon'}
-            />
-            <Text className={'router-text'}>Auto Router</Text>
-          </Flex>
-          <Flex justifyContent={'space-between'} w={'100%'} color={'#FFFFFF'} gap={2}>
-            {values?.bestRoute?.pathTokens?.map((token: IToken, index: number) => {
-              const pair = values?.bestRoute?.pathPairs[index - 1];
-              return (
-                  <>
-                    {index > 0 && (
-                        <Flex gap={2} flex={1} alignItems={'center'} position={'relative'}>
-                          <Text position={'absolute'} left={'48%'} top={'-5px'}>
-                            {new BigNumber(pair.fee).div(10000).toString()}%
-                          </Text>
-                          <Box className={'dot-line'}></Box>
-                        </Flex>
-                    )}
-                    <Flex gap={2} alignItems={'center'}>
-                      <img
-                          // width={25}
-                          // height={25}
-                          src={getTokenIconUrl(token)}
-                          alt={token?.thumbnail || 'default-icon'}
-                          className={'avatar'}
-                      />
-                      {!token?.thumbnail && <Text>{token?.symbol}</Text>}
-                    </Flex>
-                  </>
-              );
-            })}
-          </Flex>
+      <Flex
+        direction={'column'}
+        alignItems={'flex-start'}
+        fontSize={'xs'}
+        gap={2}
+        mt={2}
+      >
+        <Flex gap={1} alignItems={'center'}>
+          <img
+            src={
+              'https://cdn.trustless.computer/upload/1683642593326956421-1683642593-route.svg'
+            }
+            alt={'router-icon'}
+          />
+          <Text className={'router-text'}>Auto Router</Text>
         </Flex>
+        <Flex justifyContent={'space-between'} w={'100%'} color={'#FFFFFF'} gap={2}>
+          {values?.bestRoute?.pathTokens?.map((token: IToken, index: number) => {
+            const pair = values?.bestRoute?.pathPairs[index - 1];
+            return (
+              <>
+                {index > 0 && (
+                  <Flex gap={2} flex={1} alignItems={'center'} position={'relative'}>
+                    <Text position={'absolute'} left={'48%'} top={'-5px'}>
+                      {new BigNumber(pair.fee).div(10000).toString()}%
+                    </Text>
+                    <Box className={'dot-line'}></Box>
+                  </Flex>
+                )}
+                <Flex gap={2} alignItems={'center'}>
+                  <img
+                    // width={25}
+                    // height={25}
+                    src={getTokenIconUrl(token)}
+                    alt={token?.thumbnail || 'default-icon'}
+                    className={'avatar'}
+                  />
+                  {!token?.thumbnail && <Text>{token?.symbol}</Text>}
+                </Flex>
+              </>
+            );
+          })}
+        </Flex>
+      </Flex>
     );
   };
 
   return (
-      <form onSubmit={onSubmit} style={{ height: '100%' }}>
-        <HorizontalItem
-            label={<Text fontSize={'md'} color={'#B1B5C3'}></Text>}
-            value={
-              <Flex gap={1}>
-                <InfoTooltip label={'History'}>
-                  <Center
-                      w={'40px'}
-                      h={'40px'}
-                      borderRadius={'50%'}
-                      bgColor={'#353945'}
-                      cursor={'pointer'}
-                      onClick={() => router.push(ROUTE_PATH.SWAP_HISTORY)}
-                  >
-                    <BsListCheck color="#FFFFFF" fontSize={'20px'} />
-                  </Center>
-                </InfoTooltip>
-                <SlippageSettingButton />
+    <form onSubmit={onSubmit} style={{ height: '100%' }}>
+      <HorizontalItem
+        label={<Text fontSize={'md'} color={'#B1B5C3'}></Text>}
+        value={
+          <Flex gap={1}>
+            <InfoTooltip label={'History'}>
+              <Center
+                w={'40px'}
+                h={'40px'}
+                borderRadius={'50%'}
+                bgColor={'#353945'}
+                cursor={'pointer'}
+                onClick={() => router.push(ROUTE_PATH.SWAP_HISTORY)}
+              >
+                <BsListCheck color='#FFFFFF' fontSize={'20px'} />
+              </Center>
+            </InfoTooltip>
+            <SlippageSettingButton />
+          </Flex>
+        }
+      />
+      <InputWrapper
+        className={cx(styles.inputAmountWrap, styles.inputBaseAmountWrap)}
+        theme='light'
+        label={
+          <Text fontSize={px2rem(14)} color={'#FFFFFF'}>
+            Swap from
+          </Text>
+        }
+        rightLabel={
+          baseToken && (
+            <Flex gap={2} fontSize={px2rem(14)} color={'#FFFFFF'}>
+              <Flex gap={1} alignItems={'center'}>
+                Balance:
+                <TokenBalance
+                  token={baseToken}
+                  onBalanceChange={(_amount) => setBaseBalance(_amount)}
+                />
+                {baseToken?.symbol}
               </Flex>
-            }
-        />
-        <InputWrapper
-            className={cx(styles.inputAmountWrap, styles.inputBaseAmountWrap)}
-            theme="light"
-            label={
-              <Text fontSize={px2rem(14)} color={'#FFFFFF'}>
-                Swap from
+              <Text
+                cursor={'pointer'}
+                color={'#3385FF'}
+                onClick={handleChangeMaxBaseAmount}
+                bgColor={'rgba(51, 133, 255, 0.2)'}
+                borderRadius={'4px'}
+                padding={'1px 12px'}
+              >
+                MAX
               </Text>
+            </Flex>
+          )
+        }
+      >
+        <Flex gap={4} direction={'column'}>
+          <Field
+            name='baseAmount'
+            children={FieldAmount}
+            validate={composeValidators(required, validateBaseAmount)}
+            fieldChanged={onChangeValueBaseAmount}
+            disabled={submitting}
+            // placeholder={"Enter number of tokens"}
+            decimals={baseToken?.decimal || 18}
+            className={styles.inputAmount}
+            prependComp={
+              <FilterButton
+                data={sortData(baseTokensList)}
+                commonData={baseTokensList.slice(0, 3)}
+                handleSelectItem={handleSelectBaseToken}
+                parentClose={close}
+                value={baseToken}
+              />
             }
-            rightLabel={
-              baseToken && (
-                  <Flex gap={2} fontSize={px2rem(14)} color={'#FFFFFF'}>
-                    <Flex gap={1} alignItems={'center'}>
-                      Balance:
-                      <TokenBalance
-                          token={baseToken}
-                          onBalanceChange={(_amount) => setBaseBalance(_amount)}
-                      />
-                      {baseToken?.symbol}
-                    </Flex>
-                    <Text
-                        cursor={'pointer'}
-                        color={'#3385FF'}
-                        onClick={handleChangeMaxBaseAmount}
-                        bgColor={'rgba(51, 133, 255, 0.2)'}
-                        borderRadius={'4px'}
-                        padding={'1px 12px'}
-                    >
-                      MAX
-                    </Text>
-                  </Flex>
-              )
-            }
-        >
-          <Flex gap={4} direction={'column'}>
-            <Field
-                name="baseAmount"
-                children={FieldAmount}
-                validate={composeValidators(required, validateBaseAmount)}
-                fieldChanged={onChangeValueBaseAmount}
-                disabled={submitting}
-                // placeholder={"Enter number of tokens"}
-                decimals={baseToken?.decimal || 18}
-                className={styles.inputAmount}
-                prependComp={
-                  <FilterButton
-                      data={sortData(baseTokensList)}
-                      commonData={baseTokensList.slice(0, 3)}
-                      handleSelectItem={handleSelectBaseToken}
-                      parentClose={close}
-                      value={baseToken}
-                  />
-                }
-                borderColor={'#353945'}
-            />
-          </Flex>
-        </InputWrapper>
-        <Box mt={4} />
-        <Flex justifyContent={'center'}>
-          <Center
-              onClick={onChangeTransferType}
-              w={'40px'}
-              h={'40px'}
-              borderRadius={'50%'}
-              cursor={'pointer'}
-              p={2}
-              bgColor={'#353945'}
-          >
-            <RiArrowUpDownLine color="#FFFFFF" fontSize={'20px'} />
-          </Center>
-        </Flex>
-        <Box mt={4} />
-        <InputWrapper
-            className={cx(styles.inputAmountWrap, styles.inputQuoteAmountWrap)}
-            theme="light"
-            label={
-              <Text fontSize={px2rem(14)} color={'#FFFFFF'}>
-                Swap to
-              </Text>
-            }
-            rightLabel={
-              quoteToken && (
-                  <Flex gap={2} fontSize={px2rem(14)} color={'#FFFFFF'}>
-                    <Flex gap={1} alignItems={'center'}>
-                      Balance:
-                      <TokenBalance
-                          token={quoteToken}
-                          onBalanceChange={(_amount) => setQuoteBalance(_amount)}
-                      />
-                      {quoteToken?.symbol}
-                    </Flex>
-                  </Flex>
-              )
-            }
-        >
-          <Flex gap={4} direction={'column'}>
-            <Field
-                name="quoteAmount"
-                // placeholder={`0 ${revertCoin[1].symbol}`}
-                children={FieldAmount}
-                validate={composeValidators(required, validateQuoteAmount)}
-                // fieldChanged={onChangeValueQuoteAmount}
-                disabled={true}
-                // placeholder={"Enter number of tokens"}
-                decimals={quoteToken?.decimal || 18}
-                className={cx(styles.inputAmount)}
-                prependComp={
-                  <FilterButton
-                      data={sortData(quoteTokensList)}
-                      commonData={quoteTokensList.slice(0, 3)}
-                      handleSelectItem={handleSelectQuoteToken}
-                      parentClose={close}
-                      value={quoteToken}
-                  />
-                }
-                // hideError={true}
-                borderColor={'#353945'}
-            />
-          </Flex>
-        </InputWrapper>
-        <Box mt={1}>
-          <HorizontalItem
-              label={
-                <Text
-                    fontSize={'sm'}
-                    fontWeight={'medium'}
-                    color={'rgba(255, 255, 255, 0.7)'}
-                >
-                  Fee: {swapFee}%
-                </Text>
-              }
+            borderColor={'#353945'}
           />
-          {/*<HorizontalItem
+        </Flex>
+      </InputWrapper>
+      <Box mt={4} />
+      <Flex justifyContent={'center'}>
+        <Center
+          onClick={onChangeTransferType}
+          w={'40px'}
+          h={'40px'}
+          borderRadius={'50%'}
+          cursor={'pointer'}
+          p={2}
+          bgColor={'#353945'}
+        >
+          <RiArrowUpDownLine color='#FFFFFF' fontSize={'20px'} />
+        </Center>
+      </Flex>
+      <Box mt={4} />
+      <InputWrapper
+        className={cx(styles.inputAmountWrap, styles.inputQuoteAmountWrap)}
+        theme='light'
+        label={
+          <Text fontSize={px2rem(14)} color={'#FFFFFF'}>
+            Swap to
+          </Text>
+        }
+        rightLabel={
+          quoteToken && (
+            <Flex gap={2} fontSize={px2rem(14)} color={'#FFFFFF'}>
+              <Flex gap={1} alignItems={'center'}>
+                Balance:
+                <TokenBalance
+                  token={quoteToken}
+                  onBalanceChange={(_amount) => setQuoteBalance(_amount)}
+                />
+                {quoteToken?.symbol}
+              </Flex>
+            </Flex>
+          )
+        }
+      >
+        <Flex gap={4} direction={'column'}>
+          <Field
+            name='quoteAmount'
+            // placeholder={`0 ${revertCoin[1].symbol}`}
+            children={FieldAmount}
+            validate={composeValidators(required, validateQuoteAmount)}
+            // fieldChanged={onChangeValueQuoteAmount}
+            disabled={true}
+            // placeholder={"Enter number of tokens"}
+            decimals={quoteToken?.decimal || 18}
+            className={cx(styles.inputAmount)}
+            prependComp={
+              <FilterButton
+                data={sortData(quoteTokensList)}
+                commonData={quoteTokensList.slice(0, 3)}
+                handleSelectItem={handleSelectQuoteToken}
+                parentClose={close}
+                value={quoteToken}
+              />
+            }
+            // hideError={true}
+            borderColor={'#353945'}
+          />
+        </Flex>
+      </InputWrapper>
+      <Box mt={1}>
+        <HorizontalItem
+          label={
+            <Text
+              fontSize={'sm'}
+              fontWeight={'medium'}
+              color={'rgba(255, 255, 255, 0.7)'}
+            >
+              Fee: {swapFee}%
+            </Text>
+          }
+        />
+        {/*<HorizontalItem
           label={
             <Flex
               fontSize={'sm'}
@@ -951,119 +945,119 @@ export const MakeFormSwap = forwardRef((props, ref) => {
             </Flex>
           }
         />*/}
+      </Box>
+      {baseToken && quoteToken && values?.baseAmount && Number(exchangeRate) > 0 && (
+        <Box mt={1}>
+          <HorizontalItem
+            label={
+              <Text fontSize={'sm'} fontWeight={'medium'} color={'#FFFFFF'}>
+                1 {quoteToken?.symbol} =&nbsp;
+                {formatCurrency(exchangeRate.toString(), baseToken?.decimal || 18)}
+                &nbsp;{baseToken?.symbol}
+              </Text>
+            }
+          />
         </Box>
-        {baseToken && quoteToken && values?.baseAmount && Number(exchangeRate) > 0 && (
-            <Box mt={1}>
-              <HorizontalItem
-                  label={
-                    <Text fontSize={'sm'} fontWeight={'medium'} color={'#FFFFFF'}>
-                      1 {quoteToken?.symbol} =&nbsp;
-                      {formatCurrency(exchangeRate.toString(), baseToken?.decimal || 18)}
-                      &nbsp;{baseToken?.symbol}
-                    </Text>
-                  }
-              />
-            </Box>
-        )}
-        {baseToken && quoteToken && <>{renderRoutePath()}</>}
-        {isAuthenticated &&
+      )}
+      {baseToken && quoteToken && <>{renderRoutePath()}</>}
+      {isAuthenticated &&
         isLoadedAssets &&
         new BigNumber(juiceBalance || 0).lte(0) && (
-            <Flex gap={3} mt={2}>
-              <Center
-                  w={'24px'}
-                  h={'24px'}
-                  borderRadius={'50%'}
-                  bg={'rgba(255, 126, 33, 0.2)'}
-                  as={'span'}
+          <Flex gap={3} mt={2}>
+            <Center
+              w={'24px'}
+              h={'24px'}
+              borderRadius={'50%'}
+              bg={'rgba(255, 126, 33, 0.2)'}
+              as={'span'}
+            >
+              <BiBell color='#FF7E21' />
+            </Center>
+            <Text fontSize='sm' color='#FF7E21' textAlign={'left'}>
+              Your TC balance is insufficient. Buy more TC{' '}
+              <Link
+                href={L2_GASSTATION}
+                target={'_blank'}
+                style={{ textDecoration: 'underline' }}
               >
-                <BiBell color="#FF7E21" />
-              </Center>
-              <Text fontSize="sm" color="#FF7E21" textAlign={'left'}>
-                Your TC balance is insufficient. Buy more TC{' '}
-                <Link
-                    href={L2_GASSTATION}
-                    target={'_blank'}
-                    style={{ textDecoration: 'underline' }}
-                >
-                  here
-                </Link>
-                .
-              </Text>
-            </Flex>
+                here
+              </Link>
+              .
+            </Text>
+          </Flex>
         )}
-        {isAuthenticated &&
+      {isAuthenticated &&
         baseToken &&
         BRIDGE_SUPPORT_TOKEN.includes(baseToken?.symbol) &&
         new BigNumber(baseBalance || 0).lte(0) && (
-            <Flex gap={3} mt={2}>
-              <Center
-                  w={'24px'}
-                  h={'24px'}
-                  borderRadius={'50%'}
-                  bg={'rgba(255, 126, 33, 0.2)'}
-                  as={'span'}
+          <Flex gap={3} mt={2}>
+            <Center
+              w={'24px'}
+              h={'24px'}
+              borderRadius={'50%'}
+              bg={'rgba(255, 126, 33, 0.2)'}
+              as={'span'}
+            >
+              <BiBell color='#FF7E21' />
+            </Center>
+            <Text fontSize='sm' color='#FF7E21' textAlign={'left'}>
+              Insufficient {baseToken?.symbol} balance! Consider swapping your{' '}
+              {baseToken?.symbol?.replace('W', '')} to trustless network{' '}
+              <Link
+                href={`${TRUSTLESS_BRIDGE}${baseToken?.symbol
+                  ?.replace('W', '')
+                  ?.toLowerCase()}`}
+                target={'_blank'}
+                style={{ textDecoration: 'underline' }}
               >
-                <BiBell color="#FF7E21" />
-              </Center>
-              <Text fontSize="sm" color="#FF7E21" textAlign={'left'}>
-                Insufficient {baseToken?.symbol} balance! Consider swapping your{' '}
-                {baseToken?.symbol?.replace('W', '')} to trustless network{' '}
-                <Link
-                    href={`${TRUSTLESS_BRIDGE}${baseToken?.symbol
-                        ?.replace('W', '')
-                        ?.toLowerCase()}`}
-                    target={'_blank'}
-                    style={{ textDecoration: 'underline' }}
-                >
-                  here
-                </Link>
-                .
-              </Text>
-            </Flex>
+                here
+              </Link>
+              .
+            </Text>
+          </Flex>
         )}
-        <Box mt={8} />
-        <WrapperConnected
-            type={isRequireApprove ? 'button' : 'submit'}
-            className={styles.submitButton}
-        >
-          {isRequireApprove ? (
-              <FiledButton
-                  isLoading={loading}
-                  isDisabled={loading}
-                  loadingText="Processing"
-                  btnSize={'h'}
-                  onClick={onShowModalApprove}
-                  processInfo={{
-                    id: transactionType.createPoolApprove,
-                  }}
-              >
-                APPROVE USE OF {baseToken?.symbol}
-              </FiledButton>
-          ) : (
-              <FiledButton
-                  isDisabled={submitting || btnDisabled}
-                  isLoading={submitting}
-                  type="submit"
-                  // borderRadius={'100px !important'}
-                  // className="btn-submit"
-                  btnSize={'h'}
-                  containerConfig={{ flex: 1 }}
-                  loadingText={submitting ? 'Processing' : ' '}
-                  processInfo={{
-                    id: transactionType.createPoolApprove,
-                  }}
-              >
-                SWAP
-              </FiledButton>
-          )}
-        </WrapperConnected>
-      </form>
+      <Box mt={8} />
+      <WrapperConnected
+        type={isRequireApprove ? 'button' : 'submit'}
+        className={styles.submitButton}
+      >
+        {isRequireApprove ? (
+          <FiledButton
+            isLoading={loading}
+            isDisabled={loading}
+            loadingText='Processing'
+            btnSize={'h'}
+            onClick={onShowModalApprove}
+            processInfo={{
+              id: transactionType.createPoolApprove,
+            }}
+          >
+            APPROVE USE OF {baseToken?.symbol}
+          </FiledButton>
+        ) : (
+          <FiledButton
+            isDisabled={submitting || btnDisabled}
+            isLoading={submitting}
+            type='submit'
+            // borderRadius={'100px !important'}
+            // className="btn-submit"
+            btnSize={'h'}
+            containerConfig={{ flex: 1 }}
+            loadingText={submitting ? 'Processing' : ' '}
+            processInfo={{
+              id: transactionType.createPoolApprove,
+            }}
+          >
+            SWAP
+          </FiledButton>
+        )}
+      </WrapperConnected>
+    </form>
   );
 });
 
 const TradingForm = () => {
-  const [txState, setTxState] = useState<TransactionState>(TransactionState.New)
+  const [txState, setTxState] = useState<TransactionState>(TransactionState.New);
   const refForm = useRef<any>();
   const [submitting, setSubmitting] = useState(false);
   const dispatch = useAppDispatch();
@@ -1085,82 +1079,82 @@ const TradingForm = () => {
     const id = 'modalSwapConfirm';
     // const close = () => dispatch(closeModal({id}));
     dispatch(
-        openModal({
-          id,
-          theme: 'dark',
-          title: 'Confirm swap',
-          className: styles.modalContent,
-          modalProps: {
-            centered: true,
-            size: mobileScreen ? 'full' : 'xl',
-            zIndex: 9999999,
-          },
-          render: () => (
-              <Flex direction={'column'} gap={2}>
-                <HorizontalItem
-                    label={
-                      <Text fontSize={'sm'} color={'#B1B5C3'}>
-                        Swap amount
-                      </Text>
-                    }
-                    value={
-                      <Text fontSize={'sm'}>
-                        {formatCurrency(baseAmount, 6)} {baseToken?.symbol}
-                      </Text>
-                    }
-                />
-                <HorizontalItem
-                    label={
-                      <Text fontSize={'sm'} color={'#B1B5C3'}>
-                        Estimate receive amount
-                      </Text>
-                    }
-                    value={
-                      <Text fontSize={'sm'}>
-                        {formatCurrency(quoteAmount, 6)} {quoteToken?.symbol}
-                      </Text>
-                    }
-                />
-                <HorizontalItem
-                    label={
-                      <Text fontSize={'sm'} color={'#B1B5C3'}>
-                        Slippage
-                      </Text>
-                    }
-                    value={<Text fontSize={'sm'}>{slippage}%</Text>}
-                />
-                <Flex
-                    gap={1}
-                    alignItems={slippage === 100 ? 'center' : 'flex-start'}
-                    mt={2}
-                >
-                  <img
-                      src={`${CDN_URL}/icons/icon-information.png`}
-                      alt="info"
-                      style={{ width: 25, height: 25, minWidth: 25, minHeight: 25 }}
-                  />
-                  <Text
-                      fontSize="sm"
-                      color="brand.warning.400"
-                      textAlign={'left'}
-                      maxW={'500px'}
-                  >
-                    {slippage === 100
-                        ? `Your current slippage is set at 100%. Trade at your own risk.`
-                        : `Your slippage percentage of ${slippage}% means that if the price changes by ${slippage}%, your transaction will fail and revert. If you wish to change your slippage percentage, please close this confirmation popup and go to the top of the swap box where you can set a different slippage value.`}
-                  </Text>
-                </Flex>
-                <FiledButton
-                    loadingText="Processing"
-                    btnSize={'h'}
-                    onClick={onConfirm}
-                    mt={4}
-                >
-                  Confirm
-                </FiledButton>
-              </Flex>
-          ),
-        }),
+      openModal({
+        id,
+        theme: 'dark',
+        title: 'Confirm swap',
+        className: styles.modalContent,
+        modalProps: {
+          centered: true,
+          size: mobileScreen ? 'full' : 'xl',
+          zIndex: 9999999,
+        },
+        render: () => (
+          <Flex direction={'column'} gap={2}>
+            <HorizontalItem
+              label={
+                <Text fontSize={'sm'} color={'#B1B5C3'}>
+                  Swap amount
+                </Text>
+              }
+              value={
+                <Text fontSize={'sm'}>
+                  {formatCurrency(baseAmount, 6)} {baseToken?.symbol}
+                </Text>
+              }
+            />
+            <HorizontalItem
+              label={
+                <Text fontSize={'sm'} color={'#B1B5C3'}>
+                  Estimate receive amount
+                </Text>
+              }
+              value={
+                <Text fontSize={'sm'}>
+                  {formatCurrency(quoteAmount, 6)} {quoteToken?.symbol}
+                </Text>
+              }
+            />
+            <HorizontalItem
+              label={
+                <Text fontSize={'sm'} color={'#B1B5C3'}>
+                  Slippage
+                </Text>
+              }
+              value={<Text fontSize={'sm'}>{slippage}%</Text>}
+            />
+            <Flex
+              gap={1}
+              alignItems={slippage === 100 ? 'center' : 'flex-start'}
+              mt={2}
+            >
+              <img
+                src={`${CDN_URL}/icons/icon-information.png`}
+                alt='info'
+                style={{ width: 25, height: 25, minWidth: 25, minHeight: 25 }}
+              />
+              <Text
+                fontSize='sm'
+                color='brand.warning.400'
+                textAlign={'left'}
+                maxW={'500px'}
+              >
+                {slippage === 100
+                  ? `Your current slippage is set at 100%. Trade at your own risk.`
+                  : `Your slippage percentage of ${slippage}% means that if the price changes by ${slippage}%, your transaction will fail and revert. If you wish to change your slippage percentage, please close this confirmation popup and go to the top of the swap box where you can set a different slippage value.`}
+              </Text>
+            </Flex>
+            <FiledButton
+              loadingText='Processing'
+              btnSize={'h'}
+              onClick={onConfirm}
+              mt={4}
+            >
+              Confirm
+            </FiledButton>
+          </Flex>
+        ),
+      }),
     );
   };
 
@@ -1179,11 +1173,10 @@ const TradingForm = () => {
   };
 
   const handleSwap = async (values: any) => {
-    const { baseToken, quoteToken, baseAmount, quoteAmount, swapRoutes, bestRoute,trade } =
-        values;
-    console.log("slippage",slippage*100)
-    console.log("trade",trade)
-
+    const { baseToken, quoteToken, baseAmount, quoteAmount, swapRoutes, bestRoute, trade } =
+      values;
+    console.log('slippage', slippage * 100);
+    console.log('trade', trade);
 
 
     try {
@@ -1193,19 +1186,18 @@ const TradingForm = () => {
       const fees = bestRoute?.pathPairs?.map((pair: any) => Number(pair.fee));
 
       const amountOutMin = new BigNumber(quoteAmount)
-          .multipliedBy(100 - slippage)
-          .dividedBy(100)
-          .decimalPlaces(quoteToken?.decimal || 18)
-          .toString();
+        .multipliedBy(100 - slippage)
+        .dividedBy(100)
+        .decimalPlaces(quoteToken?.decimal || 18)
+        .toString();
 
       const data = {
         trade: trade,
-        slippage: slippage*100,
+        slippage: slippage * 100,
       };
       const response = await swapToken(data);
-      if(response=== false)
-      {
-        return
+      if (response === false) {
+        return;
       }
       toast.success('Transaction has been created. Please wait for few minutes.');
       refForm.current?.reset();
@@ -1230,17 +1222,17 @@ const TradingForm = () => {
   };
 
   return (
-      <Box className={styles.container}>
-        <Form onSubmit={handleSubmit} initialValues={{}}>
-          {({ handleSubmit }) => (
-              <MakeFormSwap
-                  ref={refForm}
-                  onSubmit={handleSubmit}
-                  submitting={submitting}
-              />
-          )}
-        </Form>
-      </Box>
+    <Box className={styles.container}>
+      <Form onSubmit={handleSubmit} initialValues={{}}>
+        {({ handleSubmit }) => (
+          <MakeFormSwap
+            ref={refForm}
+            onSubmit={handleSubmit}
+            submitting={submitting}
+          />
+        )}
+      </Form>
+    </Box>
   );
 };
 

@@ -24,6 +24,7 @@ import { updateAllConfigs, updateConfigs } from '@/state/pnftExchange';
 import { IResourceChain } from "@/interfaces/chain";
 import { getLocalStorageChainInfo } from "@/utils";
 import { SERVICE_MOCKUP_CONFIGS } from "@/constants/services/configs.mockup";
+import { IConfigs } from '@/interfaces/state/pnftExchange';
 
 export default function App({ Component, pageProps }: AppProps) {
   const { seoInfo = {} } = pageProps;
@@ -36,11 +37,22 @@ export default function App({ Component, pageProps }: AppProps) {
   const getConfigInfos = async () => {
     const res = await getConfigs();
 
-    // TODO: Camel: remove this line after api is ready
+    // TODO: LEON: remove this line after api is ready
     const configs = {
       ...res,
       'bsc': SERVICE_MOCKUP_CONFIGS
-    } as any;
+    } as IConfigs;
+
+    const keys = Object.keys(configs);
+
+    keys.forEach((key) => {
+      const config = configs[key];
+      configs[key] = {
+        ...config,
+        name: key,
+      } as IConfigs[keyof IConfigs];
+    });
+
     console.log('configs 111', configs)
     store.dispatch(updateAllConfigs(configs));
 

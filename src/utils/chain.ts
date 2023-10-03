@@ -10,7 +10,8 @@ import { CHAIN_INFO } from '@/constants/storage-key';
 import store from '@/state';
 import { compareString } from './string';
 import { Connection } from '@/connection';
-import {isProduction} from "@/utils/commons";
+import { isProduction } from '@/utils/commons';
+
 const API_PATH = 'https://chainid.network/chains.json';
 
 export const getChainList = async (): Promise<Array<IResourceChain>> => {
@@ -40,9 +41,8 @@ export function isSupportedChain(
   );
 }
 
-export const switchChain = async (chainId: SupportedChainId,conn?: Connection) => {
-  if(conn==undefined)
-  {
+export const switchChain = async (chainId: SupportedChainId, conn?: Connection) => {
+  if (conn == undefined) {
     throw new Error(`Connect error`);
   }
   if (!isSupportedChain(chainId)) {
@@ -51,15 +51,15 @@ export const switchChain = async (chainId: SupportedChainId,conn?: Connection) =
     try {
       const chainList = await getChainList();
       const info = chainList.find((c: IResourceChain) => c.chainId === chainId);
-      const addChainParameter  = {
+      const addChainParameter = {
         chainId: chainId,
-        chainName:  info!=undefined?info.name:"",
-        rpcUrls: [info!=undefined?info.rpc[0]:""],
-        nativeCurrency: info!=undefined?info.nativeCurrency:[],
-        blockExplorerUrls: [ info!=undefined?info.explorers[0].url:""],
-      }
-      console.log(addChainParameter)
-      await conn.connector.activate(addChainParameter)
+        chainName: info != undefined ? info.name : '',
+        rpcUrls: [info != undefined ? info.rpc[0] : ''],
+        nativeCurrency: info != undefined ? info.nativeCurrency : [],
+        blockExplorerUrls: [info != undefined ? info.explorers[0].url : ''],
+      };
+      console.log(addChainParameter);
+      await conn.connector.activate(addChainParameter);
       setWalletChainId(chainId);
     } catch (err: unknown) {
       if (Object(err).code !== 4902) throw err;
@@ -100,13 +100,18 @@ export const switchChain = async (chainId: SupportedChainId,conn?: Connection) =
 const CHAIN_ID = {
   TRUSTLESS_COMPUTER: isProduction() ? 22213 : 22215,
   NOS: isProduction() ? 42213 : 42070,
-}
+};
 
 const isLayer2Chain = (chainId: number): boolean => {
-    return chainId !== CHAIN_ID.TRUSTLESS_COMPUTER;
-}
+  return chainId !== CHAIN_ID.TRUSTLESS_COMPUTER;
+};
+
+const getChainNameRequestAPI = (chain: IResourceChain): string => {
+  return chain.name;
+};
 
 export {
   CHAIN_ID,
   isLayer2Chain,
-}
+  getChainNameRequestAPI,
+};
