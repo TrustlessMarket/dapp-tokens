@@ -70,7 +70,10 @@ const HeaderSwitchNetwork = () => {
 
   useEffect(() => {
     const slug = router.query.slug as string;
-    if (!!currentChain && !compareString(slug, currentChain.chain)) {
+    const isSwap = router.pathname.includes(ROUTE_PATH.ORIGINAL_SWAP) && !!slug;
+
+    // case swap
+    if (isSwap && !!currentChain && !compareString(slug, currentChain.chain)) {
       const chainName = getChainNameRequestAPI(currentChain);
       switch (currentChain.chainId) {
         case CHAIN_ID.TRUSTLESS_COMPUTER:

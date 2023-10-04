@@ -30,7 +30,7 @@ const Layout: React.FC<LayoutProps> = ({ children, isHideFooter }) => {
     <>
       <Header />
       {children}
-      <Footer isHide={isHideFooter} />
+      <Footer isHide={Boolean(isHideFooter)} />
     </>
   );
 };
