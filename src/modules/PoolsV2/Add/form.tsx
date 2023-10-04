@@ -104,10 +104,6 @@ const FormAddPoolsV2Container = forwardRef<any, IFormAddPoolsV2Container>(
 
     useEffect(() => {
       if (currentChain) {
-          changeWallet(WalletType.EXTENSION,"","")
-          choiceConFig(isProduction() ? Environment.MAINNET : Environment.TESTNET);
-          //alert("123")
-          refreshProvider(provider);
         fetchData();
       }
     }, [currentChain?.chainId]);

@@ -35,10 +35,6 @@ const PoolsV2DetailPage: React.FC<IPoolsV2DetailPage> = () => {
   useEffect(() => {
     if (id) {
       getUserPositionDetail(id);
-        changeWallet(WalletType.EXTENSION,"","")
-        choiceConFig(isProduction() ? Environment.MAINNET : Environment.TESTNET);
-        //alert("123")
-        refreshProvider(provider);
     }
   }, [id]);
 

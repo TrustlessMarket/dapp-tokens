@@ -3,7 +3,8 @@
 // App configs
 export const APP_ENV: string = process.env.NEXT_PUBLIC_MODE!;
 export const API_URL: string = process.env.NEXT_PUBLIC_API_URL!;
-export const API_EXCHANGE_URL: string = process.env.NEXT_PUBLIC_API_EXCHANGE_URL!;
+export const ROOT_API: string = process.env.NEXT_PUBLIC_API_EXCHANGE_URL!;
+export const API_EXCHANGE_URL: string = ROOT_API + '/api';
 export const TC_NETWORK_RPC: string = process.env.NEXT_PUBLIC_TC_NETWORK_RPC!;
 export const TC_EXPLORER: string = process.env.NEXT_PUBLIC_TC_EXPLORER!;
 export const CDN_URL: string = process.env.NEXT_PUBLIC_CDN_URL!;
@@ -57,5 +58,6 @@ export const L2_GM_ADDRESS: string = process.env.NEXT_PUBLIC_L2_GM_ADDRESS!;
 export const L2_USDT_ADDRESS: string = process.env.NEXT_PUBLIC_L2_USDT_ADDRESS!;
 export const L2_LAUNCHPAD_FACTORY_ADDRESS: string =
   process.env.NEXT_PUBLIC_L2_LAUNCHPAD_FACTORY!;
+
 
 /* eslint-enable @typescript-eslint/no-non-null-assertion */

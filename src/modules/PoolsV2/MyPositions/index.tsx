@@ -54,8 +54,6 @@ const TopPools = () => {
         network: chainInfo?.chain?.toLowerCase(),
       });
       setPositionList(res);
-      changeWallet(WalletType.EXTENSION,"","")
-      choiceConFig(isProduction() ? Environment.MAINNET : Environment.TESTNET);
       refreshProvider(provider);
     } catch (err: unknown) {
       console.log(err);

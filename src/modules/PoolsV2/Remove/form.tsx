@@ -55,9 +55,6 @@ const FormRemovePoolsV2Container = forwardRef<any, IFormRemovePoolsV2Container>(
       if (positionDetail?.tokenId) {
         getEarnedFeeInfo();
         onGetPooledAmount();
-          changeWallet(WalletType.EXTENSION,"","")
-          choiceConFig(isProduction() ? Environment.MAINNET : Environment.TESTNET);
-          refreshProvider(provider);
       }
     }, [JSON.stringify(positionDetail)]);
 

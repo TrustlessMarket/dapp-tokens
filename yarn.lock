@@ -3557,6 +3557,11 @@ bech32@^2.0.0:
   resolved "https://registry.yarnpkg.com/bech32/-/bech32-2.0.0.tgz#078d3686535075c8c79709f054b1b226a133b355"
   integrity sha512-LcknSilhIGatDAsY1ak2I8VtGaHNhgMSYVxFrGLXv+xLHytaKZKcaUJJUE7qmBr7h33o5YQwP55pMI0xmkpJwg==
 
+big-number@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/big-number/-/big-number-2.0.0.tgz#98548eda9393b445791670a213aed6f6dcd66ee3"
+  integrity sha512-C67Su0g+XsmXADX/UM9L/+xSbqqwq0D/qGJs2ky6Noy2FDuCZnC38ZSXODiaBvqWma2VYRZEXgm4H74PS6tCDg==
+
 big.js@^5.2.2:
   version "5.2.2"
   resolved "https://registry.yarnpkg.com/big.js/-/big.js-5.2.2.tgz#65f0af382f578bcdc742bd9c281e9cb2d7768328"
@@ -11201,13 +11206,14 @@ trough@^2.0.0:
     web3 "^1.9.0"
     wif "^2.0.6"
 
-trustless-swap-sdk@^0.1.48:
-  version "0.1.48"
-  resolved "https://registry.yarnpkg.com/trustless-swap-sdk/-/trustless-swap-sdk-0.1.48.tgz#5cee4f5ceb0adfffabcd2979f3673dd23b0d1e21"
-  integrity sha512-Z3p0nAkBqCQAmTwlnyDw+R/46fvPJr9GMMiWkhBF6Bdr5fVtYFILK/lE2IbwpW3MWqt7og4QBM+E0UiAdjOadA==
+trustless-swap-sdk@^0.1.168:
+  version "0.1.168"
+  resolved "https://registry.yarnpkg.com/trustless-swap-sdk/-/trustless-swap-sdk-0.1.168.tgz#2a47351fe34898a15085d97e7f24892b9f67b532"
+  integrity sha512-ZR8qu9mMHfDbduvIZ6+RWbG6CUFLlomsS1/tQvSBaXNJOM69mwxmDj/+bA4D/N9RMRJE7fmSnk2zFqm4TUct6g==
   dependencies:
     "@ethersproject/abi" "^5.0.12"
     "@ethersproject/solidity" "^5.0.9"
+    big-number "^2.0.0"
     big.js "^5.2.2"
     decimal.js-light "^2.5.0"
     ethers "^5.7.2"

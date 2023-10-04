@@ -26,6 +26,7 @@ import { getLocalStorageChainInfo } from "@/utils";
 import { SERVICE_MOCKUP_CONFIGS } from "@/constants/services/configs.mockup";
 import { IConfigs } from '@/interfaces/state/pnftExchange';
 import { convertNetworkToResourceChain } from '@/constants/chains';
+import { ConfigProvider } from '@/contexts/config-context';
 
 export default function App({ Component, pageProps }: AppProps) {
   const { seoInfo = {} } = pageProps;
@@ -212,10 +213,12 @@ export default function App({ Component, pageProps }: AppProps) {
                 <WalletProvider>
                   <ScreenLayoutProvider>
                     <AssetsProvider>
-                      <Hydrated>
-                        <GoogleAnalytics />
-                        <Component {...pageProps} />
-                      </Hydrated>
+                      <ConfigProvider>
+                        <Hydrated>
+                          <GoogleAnalytics />
+                          <Component {...pageProps} />
+                        </Hydrated>
+                      </ConfigProvider>
                     </AssetsProvider>
                     <Toaster position="top-center" reverseOrder={false} />
                     <ModalManager />

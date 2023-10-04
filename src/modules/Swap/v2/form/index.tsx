@@ -86,11 +86,16 @@ import Web3 from 'web3';
 import styles from './styles.module.scss';
 import { ethers } from 'ethers';
 import {
-  IToken, Token, changeWallet, refreshProvider, WalletType, tokenSwap, getSwapRoutesV2,
-  getSwapTokensV1, getBestRouteExactIn, setTOkenSwap, TransactionState, Environment,
-  ISwapRouteParams, choiceConFig,
+  IToken,
+  Token,
+  tokenSwap,
+  getSwapRoutesV2,
+  getSwapTokensV1,
+  getBestRouteExactIn,
+  setTOkenSwap,
+  TransactionState,
+  ISwapRouteParams,
 } from 'trustless-swap-sdk';
-import { isProduction } from '@/utils/commons';
 import localStorage from '@/utils/localstorage';
 
 const LIMIT_PAGE = 500;
@@ -216,9 +221,6 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   };
 
   useEffect(() => {
-    changeWallet(WalletType.EXTENSION, '', '');
-    choiceConFig(isProduction() ? Environment.MAINNET : Environment.TESTNET);
-    refreshProvider(provider);
     fetchTokens();
   }, []);
 
