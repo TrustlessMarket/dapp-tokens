@@ -222,7 +222,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
 
   useEffect(() => {
     fetchTokens();
-  }, []);
+  }, [currentChain]);
 
   useEffect(() => {
     if (router?.query?.from_token) {
