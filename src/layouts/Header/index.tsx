@@ -41,7 +41,7 @@ export const HEADER_MENUS = ({ isL2, isCustomChain, chainName }: { isL2: boolean
   },
   {
     key: isL2 ? ROUTE_PATH.POOLS_V2 : ROUTE_PATH.POOLS,
-    route: isL2 ? ROUTE_PATH.POOLS_V2 : ROUTE_PATH.POOLS,
+    route: `${isL2 ? `/pools/${chainName}` : ROUTE_PATH.POOLS}`,
     name: 'Pools',
   },
   {

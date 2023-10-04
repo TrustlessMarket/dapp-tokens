@@ -12,7 +12,7 @@ import useGetEarnedFee from '@/hooks/contract-operations/pools/v3/useGetEarnedFe
 import { IPosition } from '@/interfaces/position';
 import RemoveAmount from '@/modules/PoolsV2/Remove/Remove.Amount';
 import RemoveTopHeader from '@/modules/PoolsV2/Remove/Remove.TopHeader';
-import { IPoolV2AddPair } from '@/pages/pools/nos/add/[[...id]]';
+import { IPoolV2AddPair } from '@/pages/pools/[slug]/add/[[...id]]';
 import { colors } from '@/theme/colors';
 import { getTokenIconUrl } from '@/utils';
 import { Box, Divider, Flex, Text } from '@chakra-ui/react';

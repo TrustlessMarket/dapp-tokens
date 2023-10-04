@@ -11,7 +11,7 @@ import WrapperConnected from '@/components/WrapperConnected';
 import { ROUTE_PATH } from '@/constants/route-path';
 import { IResourceChain } from '@/interfaces/chain';
 import { IToken } from '@/interfaces/token';
-import { IPoolV2AddPair } from '@/pages/pools/nos/add/[[...id]]';
+import { IPoolV2AddPair } from '@/pages/pools/[slug]/add/[[...id]]';
 import { getTokens } from '@/services/token-explorer';
 import { useAppSelector } from '@/state/hooks';
 import { currentChainSelector } from '@/state/pnftExchange';
