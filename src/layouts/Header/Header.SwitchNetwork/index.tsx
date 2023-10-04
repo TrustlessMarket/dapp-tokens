@@ -12,7 +12,7 @@ import {
   updateCurrentChain,
   updateCurrentChainId,
 } from '@/state/pnftExchange';
-import { CHAIN_ID, compareString, getChainNameRequestAPI, isCustomChain, isLayer2Chain } from '@/utils';
+import { CHAIN_ID, compareString, getChainNameRequestAPI } from '@/utils';
 import { Flex, Menu, MenuButton, MenuItem, MenuList, Text } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import React, { useEffect } from 'react';
@@ -30,35 +30,17 @@ interface IProps {
   active?: boolean;
 }
 
-export const ItemChain = ({
-  _chain,
-  showName,
-  active,
-}: IProps) => {
-
+export const ItemChain = ({ _chain, showName, active }: IProps) => {
   return (
     <Flex className={s.itemChain}>
       <Flex alignItems={'center'} gap={2}>
-        <img src={_chain?.icon} />
+        <img src={_chain?.icon} alt="image-chain" />
         <Text>{showName ? _chain?.name : _chain?.chain}</Text>
       </Flex>
-      {active && <BiCheck color="#fff" style={{ fontSize: 20 }} />}
+      {active && <BiCheck color='#fff' style={{ fontSize: 20 }} />}
     </Flex>
   );
 };
-
-const SUPPORT_PATH_V2 = [
-  ROUTE_PATH.SWAP_V2,
-  ROUTE_PATH.POOLS_V2,
-  ROUTE_PATH.POOLS_V2_ADD,
-  ROUTE_PATH.POOLS_V2_INCREASE,
-  ROUTE_PATH.POOLS_V2_REMOVE,
-];
-
-const SUPPORT_PATH_V1 = [
-  ROUTE_PATH.SWAP,
-  ROUTE_PATH.POOLS,
-];
 
 const HeaderSwitchNetwork = () => {
   const dispatch = useAppDispatch();
@@ -69,7 +51,9 @@ const HeaderSwitchNetwork = () => {
   const configs = useSelector(configsSelector);
 
   const networks = React.useMemo(() => {
-    return isL2 ? configs.map(v => convertNetworkToResourceChain(v)).filter((v) => Number(v?.chainId) !== CHAIN_ID.TRUSTLESS_COMPUTER) : configs;
+    return isL2 ?
+      configs.map(v => convertNetworkToResourceChain(v)).filter((v) => Number(v?.chainId) !== CHAIN_ID.TRUSTLESS_COMPUTER) :
+      configs.map(v => convertNetworkToResourceChain(v));
   }, [isL2, configs]);
 
   const onChangeRouter = (_chainA?: IResourceChain) => {
@@ -85,35 +69,18 @@ const HeaderSwitchNetwork = () => {
   };
 
   useEffect(() => {
-    const routerPath = router.pathname;
-
-    if (isLayer2Chain(currentChain?.chainId || -1)) {
-      if (SUPPORT_PATH_V1.findIndex((v) => routerPath.includes(v)) > -1) {
-        const chainName = getChainNameRequestAPI(currentChain).toLowerCase();
-        if (routerPath.includes(ROUTE_PATH.SWAP) && !isCustomChain(currentChain.chainId)) {
-          router.push(`${ROUTE_PATH.ORIGINAL_SWAP}/${chainName}?from_token=${L2_USDT_ADDRESS}&to_token=${L2_WBTC_ADDRESS}`);
-        } else if (routerPath.includes(ROUTE_PATH.POOLS)) {
-          router.push(`${ROUTE_PATH.ORIGINAL_POOL}/${chainName}`);
-        }
-      }
-    } else if (
-      compareString(
-        currentChain?.chainId,
-        CHAIN_ID.TRUSTLESS_COMPUTER,
-      )
-    ) {
-      if (SUPPORT_PATH_V2.findIndex((v) => routerPath.includes(v)) > -1) {
-        if (routerPath.includes(ROUTE_PATH.SWAP_V2)) {
+    const slug = router.query.slug as string;
+    if (!!currentChain && !compareString(slug, currentChain.chain)) {
+      const chainName = getChainNameRequestAPI(currentChain);
+      switch (currentChain.chainId) {
+        case CHAIN_ID.TRUSTLESS_COMPUTER:
           router.push(`${ROUTE_PATH.ORIGINAL_SWAP}/tc?from_token=${WETH_ADDRESS}&to_token=${GM_ADDRESS}`);
-        } else if (routerPath.includes(ROUTE_PATH.POOLS_V2)) {
-          router.push(`${ROUTE_PATH.ORIGINAL_POOL}/tc`);
-        } else if (routerPath.includes(ROUTE_PATH.POOLS_V2_ADD)) {
-          router.push(`${ROUTE_PATH.ORIGINAL_POOL}/tc`);
-        } else if (routerPath.includes(ROUTE_PATH.POOLS_V2_INCREASE)) {
-          router.push(`${ROUTE_PATH.ORIGINAL_POOL}/tc`);
-        } else if (routerPath.includes(ROUTE_PATH.POOLS_V2_REMOVE)) {
-          router.push(`${ROUTE_PATH.ORIGINAL_POOL}/tc`);
-        }
+          break;
+        case CHAIN_ID.NOS:
+          router.push(`${ROUTE_PATH.ORIGINAL_SWAP}/${chainName}?from_token=${L2_USDT_ADDRESS}&to_token=${L2_WBTC_ADDRESS}`);
+          break;
+        default:
+          router.push(`${ROUTE_PATH.ORIGINAL_SWAP}/${chainName}`);
       }
     }
   }, [currentChain]);
