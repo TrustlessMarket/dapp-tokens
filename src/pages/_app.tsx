@@ -31,49 +31,57 @@ import { ConfigProvider } from '@/contexts/config-context';
 export default function App({ Component, pageProps }: AppProps) {
   const { seoInfo = {} } = pageProps;
   const { title, description, image } = seoInfo;
+  const [loading, setLoading] = useState(false);
+
+  const getConfigInfos = async () => {
+    setLoading(true);
+    try {
+      const res = await getConfigs();
+
+      // TODO: LEON: remove this line after api is ready
+      const configs = {
+        ...res,
+        'bsc': SERVICE_MOCKUP_CONFIGS
+      } as IConfigs;
+
+      const keys = Object.keys(configs);
+
+      keys.forEach((key) => {
+        const config = configs[key];
+        configs[key] = {
+          ...config,
+          name: key,
+        } as IConfigs[keyof IConfigs];
+      });
+
+      store.dispatch(updateAllConfigs(configs));
+
+      const connectedChain: IResourceChain = getLocalStorageChainInfo();
+      const key = connectedChain?.chain?.toLowerCase() || '';
+
+      console.log('_app configs:', {
+        configs,
+        key
+      })
+
+      if (!!key && !!configs[key]) {
+        const network = configs[key];
+        store.dispatch(updateConfigs(network));
+        store.dispatch(updateCurrentChain(convertNetworkToResourceChain(network)));
+        store.dispatch(updateCurrentChainId(Number(network.chainId)));
+      } else {
+        console.log('_app configs:: not found', key)
+      }
+    } catch (e) {
+      console.log('_app configs:: error', e);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     getConfigInfos();
   }, []);
-
-  const getConfigInfos = async () => {
-    const res = await getConfigs();
-
-    // TODO: LEON: remove this line after api is ready
-    const configs = {
-      ...res,
-      'bsc': SERVICE_MOCKUP_CONFIGS
-    } as IConfigs;
-
-    const keys = Object.keys(configs);
-
-    keys.forEach((key) => {
-      const config = configs[key];
-      configs[key] = {
-        ...config,
-        name: key,
-      } as IConfigs[keyof IConfigs];
-    });
-
-    store.dispatch(updateAllConfigs(configs));
-
-    const connectedChain: IResourceChain = getLocalStorageChainInfo();
-    const key = connectedChain?.chain?.toLowerCase() || '';
-
-    console.log('_app configs:', {
-      configs,
-      key
-    })
-
-    if (!!key && !!configs[key]) {
-      const network = configs[key];
-      store.dispatch(updateConfigs(network));
-      store.dispatch(updateCurrentChain(convertNetworkToResourceChain(network)));
-      store.dispatch(updateCurrentChainId(Number(network.chainId)));
-    } else {
-      console.log('_app configs:: not found', key)
-    }
-  };
 
   return (
     <>
@@ -216,7 +224,9 @@ export default function App({ Component, pageProps }: AppProps) {
                       <ConfigProvider>
                         <Hydrated>
                           <GoogleAnalytics />
-                          <Component {...pageProps} />
+                          {!loading && (
+                            <Component {...pageProps} />
+                          )}
                         </Hydrated>
                       </ConfigProvider>
                     </AssetsProvider>
