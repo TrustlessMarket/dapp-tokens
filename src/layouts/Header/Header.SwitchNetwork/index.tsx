@@ -10,6 +10,7 @@ import {
   selectPnftExchange,
   updateConfigs,
   updateCurrentChain,
+  updateCurrentChainId,
 } from '@/state/pnftExchange';
 import { CHAIN_ID, compareString, getChainNameRequestAPI, isCustomChain, isLayer2Chain } from '@/utils';
 import { Flex, Menu, MenuButton, MenuItem, MenuList, Text } from '@chakra-ui/react';
@@ -72,10 +73,15 @@ const HeaderSwitchNetwork = () => {
   }, [isL2, configs]);
 
   const onChangeRouter = (_chainA?: IResourceChain) => {
-    dispatch(updateCurrentChain(_chainA));
     const key = _chainA?.chain?.toLowerCase() || '';
-    dispatch(updateConfigs(allConfigs[key]));
-    localStorage.setItem(CHAIN_INFO, JSON.stringify(_chainA));
+    if (key && allConfigs[key]) {
+      const network = allConfigs[key];
+      dispatch(updateCurrentChain(_chainA));
+      dispatch(updateConfigs(network));
+      dispatch(updateCurrentChain(convertNetworkToResourceChain(network)));
+      dispatch(updateCurrentChainId(Number(network.chainId)));
+      localStorage.setItem(CHAIN_INFO, JSON.stringify(_chainA));
+    }
   };
 
   useEffect(() => {

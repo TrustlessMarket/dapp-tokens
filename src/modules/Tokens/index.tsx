@@ -592,11 +592,10 @@ export const MakeFormSwap = forwardRef(() => {
               </Text>
             </Button>
           </Link>
-          <Link href={isL2 ? ROUTE_PATH.POOLS_V2 : ROUTE_PATH.POOLS}>
+          <Link href={isL2 ? `/pools/${getChainNameRequestAPI(currentChain)}` : ROUTE_PATH.POOLS}>
             <Button
               className="button-create-box"
               background={'white'}
-              // onClick={handleCreateToken}
             >
               <Text
                 size="medium"

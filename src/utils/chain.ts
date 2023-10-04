@@ -18,11 +18,12 @@ export const getChainList = async (): Promise<Array<IResourceChain>> => {
   try {
     const res = await fetch(API_PATH);
     const data = await res.json();
-    return [
-      ...data,
-      TRUSTLESS_COMPUTER_CHAIN_INFO,
-      L2_CHAIN_INFO,
-    ] as Array<IResourceChain>;
+    const currentChain: IResourceChain = store.getState().pnftExchange.currentChain;
+    let chains = [TRUSTLESS_COMPUTER_CHAIN_INFO, L2_CHAIN_INFO, ...data];
+    if (currentChain) {
+      chains = [currentChain, ...chains];
+    }
+    return chains as Array<IResourceChain>;
   } catch (err: unknown) {
     console.log('Failed to get chain list');
     console.log(err);
@@ -113,11 +114,11 @@ const getChainNameRequestAPI = (chain: IResourceChain): string => {
 const isCustomChain = (chainId: number | string): boolean => {
   const chainIDs = [CHAIN_ID.TRUSTLESS_COMPUTER, CHAIN_ID.NOS];
   return !chainIDs.includes(Number(chainId));
-}
+};
 
 export {
   CHAIN_ID,
   isLayer2Chain,
   getChainNameRequestAPI,
-  isCustomChain
+  isCustomChain,
 };

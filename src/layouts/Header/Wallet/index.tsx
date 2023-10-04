@@ -1,19 +1,18 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import IconSVG from '@/components/IconSVG';
-import {CDN_URL, WALLET_URL} from '@/configs';
-// import { ROUTE_PATH } from '@/constants/route-path';
-import {AssetsContext} from '@/contexts/assets-context';
-import {getIsAuthenticatedSelector, getUserSelector} from '@/state/user/selector';
-import {formatBTCPrice} from '@/utils/format';
-import {useWeb3React} from '@web3-react/core';
+import { CDN_URL, WALLET_URL } from '@/configs';
+import { AssetsContext } from '@/contexts/assets-context';
+import { getIsAuthenticatedSelector, getUserSelector } from '@/state/user/selector';
+import { formatBTCPrice } from '@/utils/format';
+import { useWeb3React } from '@web3-react/core';
 import copy from 'copy-to-clipboard';
 import SelectedNetwork from '@/components/Swap/selectNetwork';
 import Text from '@/components/Text';
-import {TRUSTLESS_BRIDGE} from '@/constants/common';
-import {ROUTE_PATH} from '@/constants/route-path';
-import {WalletContext} from '@/contexts/wallet-context';
+import { TRUSTLESS_BRIDGE } from '@/constants/common';
+import { ROUTE_PATH } from '@/constants/route-path';
+import { WalletContext } from '@/contexts/wallet-context';
 import useBalanceERC20Token from '@/hooks/contract-operations/token/useBalanceERC20Token';
-import {IResourceChain} from '@/interfaces/chain';
+import { IResourceChain } from '@/interfaces/chain';
 import {
   compareString,
   formatCurrency,
@@ -21,23 +20,23 @@ import {
   getTMAddress,
   isSupportedChain,
 } from '@/utils';
-import {showError} from '@/utils/toast';
-import {useWindowSize} from '@trustless-computer/dapp-core';
-import {useRouter} from 'next/router';
-import {useContext, useEffect, useMemo, useRef, useState} from 'react';
-import {OverlayTrigger} from 'react-bootstrap';
-import {toast} from 'react-hot-toast';
-import Jazzicon, {jsNumberForAddress} from 'react-jazzicon';
-import {useSelector} from 'react-redux';
+import { showError } from '@/utils/toast';
+import { useWindowSize } from '@trustless-computer/dapp-core';
+import { useRouter } from 'next/router';
+import { useContext, useEffect, useMemo, useRef, useState } from 'react';
+import { OverlayTrigger } from 'react-bootstrap';
+import { toast } from 'react-hot-toast';
+import Jazzicon, { jsNumberForAddress } from 'react-jazzicon';
+import { useSelector } from 'react-redux';
 import web3 from 'web3';
-import {isScreenDarkMode} from '..';
-import {ConnectWalletButton, WalletBalance} from '../Header.styled';
-import {WalletPopover} from './Wallet.styled';
-import {SupportedChainId, TRUSTLESS_COMPUTER_CHAIN_INFO} from '@/constants/chains';
+import { isScreenDarkMode } from '..';
+import { ConnectWalletButton, WalletBalance } from '../Header.styled';
+import { WalletPopover } from './Wallet.styled';
+import { SupportedChainId, TRUSTLESS_COMPUTER_CHAIN_INFO } from '@/constants/chains';
 import { currentChainSelector, selectPnftExchange, updateConfigs, updateCurrentChain } from '@/state/pnftExchange';
-import {CHAIN_INFO} from "@/constants/storage-key";
-import {useAppDispatch} from "@/state/hooks";
-import useCheckIsLayer2 from "@/hooks/useCheckIsLayer2";
+import { CHAIN_INFO } from '@/constants/storage-key';
+import { useAppDispatch } from '@/state/hooks';
+import useCheckIsLayer2 from '@/hooks/useCheckIsLayer2';
 
 const WalletHeader = () => {
   const router = useRouter();
@@ -102,7 +101,8 @@ const WalletHeader = () => {
         erc20TokenAddress: getTMAddress(),
       });
       setBalanceTM(response);
-    } catch (error) {}
+    } catch (error) {
+    }
   };
 
   const [show, setShow] = useState(false);
@@ -136,32 +136,32 @@ const WalletHeader = () => {
 
   const walletPopover = (
     <WalletPopover
-      id="wallet-header"
+      id='wallet-header'
       onMouseEnter={handleOnMouseEnter}
       onMouseLeave={handleOnMouseLeave}
       show={show}
     >
-      <div className="wallet-tc">
-        <div className="wallet-item">
+      <div className='wallet-tc'>
+        <div className='wallet-item'>
           <IconSVG
             src={`${CDN_URL}/icons/ic-penguin.svg`}
-            maxWidth="24"
-            maxHeight="24"
-            type="fill"
+            maxWidth='24'
+            maxHeight='24'
+            type='fill'
           />
-          <Text size={'regular'} className="address" fontWeight="regular">
+          <Text size={'regular'} className='address' fontWeight='regular'>
             {formatLongAddress(user?.walletAddress || '')}
           </Text>
         </div>
         <div
-          className="icCopy"
+          className='icCopy'
           onClick={() => onClickCopy(user?.walletAddress || '')}
         >
           <IconSVG
             src={`${CDN_URL}/icons/ic-copy.svg`}
-            color="black"
-            maxWidth="16"
-            type="stroke"
+            color='black'
+            maxWidth='16'
+            type='stroke'
           ></IconSVG>
         </div>
       </div>
@@ -171,94 +171,96 @@ const WalletHeader = () => {
           SupportedChainId.TRUSTLESS_COMPUTER,
         ) && (
           <>
-            <div className="divider"></div>
-            <div className="wallet-btc">
-              <div className="wallet-item">
+            <div className='divider'></div>
+            <div className='wallet-btc'>
+              <div className='wallet-item'>
                 <IconSVG
                   src={`${CDN_URL}/icons/ic-btc.svg`}
-                  maxWidth="24"
-                  maxHeight="24"
+                  maxWidth='24'
+                  maxHeight='24'
                 />
-                <Text size={'regular'} className="address" fontWeight="regular">
+                <Text size={'regular'} className='address' fontWeight='regular'>
                   {formatLongAddress(user?.walletAddressBtcTaproot || '')}
                 </Text>
               </div>
               <div
-                className="icCopy"
+                className='icCopy'
                 onClick={() => onClickCopy(user?.walletAddressBtcTaproot || '')}
               >
                 <IconSVG
                   src={`${CDN_URL}/icons/ic-copy.svg`}
-                  color="black"
-                  maxWidth="16"
-                  type="stroke"
-                ></IconSVG>
+                  color='black'
+                  maxWidth='16'
+                  type='stroke'
+                />
               </div>
             </div>
           </>
         )}
 
-      <div className="divider"></div>
-      <div className="cta">
+      <div className='divider'></div>
+      <div className='cta'>
         {
           !isL2 && (
             <>
-              <div className="wallet-link" onClick={() => window.open(WALLET_URL)}>
+              <div className='wallet-link' onClick={() => window.open(WALLET_URL)}>
                 <IconSVG
                   src={`${CDN_URL}/icons/ic-wallet.svg`}
-                  maxWidth="20"
-                  color="black"
-                  type="fill"
+                  maxWidth='20'
+                  color='black'
+                  type='fill'
                 />
-                <Text size="medium">Wallet</Text>
+                <Text size='medium'>Wallet</Text>
               </div>
-              <div className="wallet-link" onClick={() => gotoBridge('deposit', 'btc')}>
-                <IconSVG src={`/wrapbtc.svg`} maxWidth="20" color="black" type="fill" />
-                <Text size="medium">Wrap BTC</Text>
+              <div className='wallet-link' onClick={() => gotoBridge('deposit', 'btc')}>
+                <IconSVG src={`/wrapbtc.svg`} maxWidth='20' color='black' type='fill' />
+                <Text size='medium'>Wrap BTC</Text>
               </div>
-              <div className="wallet-link" onClick={() => gotoBridge('deposit', 'eth')}>
-                <IconSVG src={`/wrapbtc.svg`} maxWidth="20" color="black" type="fill" />
-                <Text size="medium">Wrap ETH</Text>
+              <div className='wallet-link' onClick={() => gotoBridge('deposit', 'eth')}>
+                <IconSVG src={`/wrapbtc.svg`} maxWidth='20' color='black' type='fill' />
+                <Text size='medium'>Wrap ETH</Text>
               </div>
             </>
           )
         }
         {user?.walletAddress && (
           <div
-            className="wallet-link"
+            className='wallet-link'
             onClick={() => window.open(ROUTE_PATH.TM_TRANSFER_HISTORY, '_self')}
           >
             <img width={20} height={20} src={`${CDN_URL}/icons/tm_icon.png`} />
-            <Text size="medium">{formatCurrency(balanceTM, 5)} TM</Text>
+            <Text size='medium'>{formatCurrency(balanceTM, 5)} TM</Text>
           </div>
         )}
         {
           isL2 && (
             <div
-              className="wallet-link"
+              className='wallet-link'
               onClick={() => onChangeRouter(TRUSTLESS_COMPUTER_CHAIN_INFO)}
             >
-              <img width={20} height={20} src={'https://cdn.trustless.domains/icons/tc_ic.svg'} style={{borderRadius: '50%'}} />
-              <Text size="small">Trustless Computer</Text>
+              <img width={20} height={20} src={'https://cdn.trustless.domains/icons/tc_ic.svg'}
+                   style={{ borderRadius: '50%' }} />
+              <Text size='small'>Trustless Computer</Text>
             </div>
           )
         }
 
-        <div className="divider"></div>
-        <div className="wallet-disconnect" onClick={onDisconnect}>
+        <div className='divider'></div>
+        <div className='wallet-disconnect' onClick={onDisconnect}>
           <IconSVG
             src={`${CDN_URL}/icons/ic-logout.svg`}
-            maxWidth="20"
-            color="red"
-            type="stroke"
+            maxWidth='20'
+            color='red'
+            type='stroke'
           />
-          <Text size="medium" className={'disconnect-text'}>
+          <Text size='medium' className={'disconnect-text'}>
             Disconnect
           </Text>
         </div>
       </div>
     </WalletPopover>
   );
+
 
   return (
     <>
@@ -270,27 +272,26 @@ const WalletHeader = () => {
           ) : (
             <OverlayTrigger
               trigger={['hover', 'focus']}
-              placement="bottom"
+              placement='bottom'
               overlay={walletPopover}
               container={ref}
               show={show}
             >
               <div
                 className={`wallet ${mobileScreen ? 'isMobile' : ''}`}
-                // onClick={() => window.open(TC_WEB_URL)}
                 ref={ref}
                 onMouseEnter={handleOnMouseEnter}
                 onMouseLeave={handleOnMouseLeave}
               >
                 <WalletBalance className={isTokenPage ? 'isTokenPage' : ''}>
-                  <div className="balance">
+                  <div className='balance'>
                     {compareString(
                       currentChain?.chainId,
                       TRUSTLESS_COMPUTER_CHAIN_INFO.chainId,
                     ) && (
                       <>
                         <p>{formatCurrency(formatBTCPrice(btcBalance))} BTC</p>
-                        <span className="divider"></span>
+                        <span className='divider' />
                       </>
                     )}
 
@@ -299,7 +300,7 @@ const WalletHeader = () => {
                       {chainInfo.nativeCurrency.symbol}
                     </p>
                   </div>
-                  <div className="avatar">
+                  <div className='avatar'>
                     <Jazzicon diameter={32} seed={jsNumberForAddress(account)} />
                   </div>
                 </WalletBalance>
@@ -308,7 +309,7 @@ const WalletHeader = () => {
           )}
         </>
       ) : (
-        <ConnectWalletButton className="hideMobile" onClick={handleConnectWallet}>
+        <ConnectWalletButton className='hideMobile' onClick={handleConnectWallet}>
           {isConnecting ? 'Connecting...' : 'Connect wallet'}
         </ConnectWalletButton>
       )}

@@ -18,6 +18,7 @@ import { useSelector } from 'react-redux';
 // import { getAccessToken, setAccessToken } from '@/utils/auth-storage';
 import { SupportedChainId } from '@/constants/chains';
 import {
+  CHAIN_ID,
   compareString,
   getChainList,
   getLocalStorageChainInfo,
@@ -31,7 +32,6 @@ import {
 } from '@/utils/auth-storage';
 import Web3 from 'web3';
 import { provider } from 'web3-core';
-// import { getCurrentProfile } from '@/services/profile';
 import { ROUTE_PATH } from '@/constants/route-path';
 import {
   CHAIN_INFO,
@@ -72,8 +72,8 @@ const initialValue: IWalletContext = {
 export const WalletContext = React.createContext<IWalletContext>(initialValue);
 
 export const WalletProvider: React.FC<PropsWithChildren> = ({
-  children,
-}: PropsWithChildren): React.ReactElement => {
+                                                              children,
+                                                            }: PropsWithChildren): React.ReactElement => {
   const { connector, provider, chainId } = useWeb3React();
   const dispatch = useAppDispatch();
   const user = useSelector(getUserSelector);
@@ -91,9 +91,10 @@ export const WalletProvider: React.FC<PropsWithChildren> = ({
   }, [router, user, chainId]);
 
   const isChain: any = currentChainId || getDefaultChain();
+
   const isChainTC =
     !currentChainId ||
-    compareString(currentChainId, SupportedChainId.TRUSTLESS_COMPUTER);
+    compareString(currentChainId, CHAIN_ID.TRUSTLESS_COMPUTER);
 
   const getSignature = React.useCallback(
     async (message: string): Promise<string> => {
@@ -103,7 +104,7 @@ export const WalletProvider: React.FC<PropsWithChildren> = ({
       }
       await connection.connector.activate();
       if (!isSupportedChain(chainId)) {
-        await switchChain(getDefaultChain(),connection);
+        await switchChain(getDefaultChain(), connection);
       }
       const addresses = await connector.provider?.request({
         method: 'eth_accounts',
@@ -147,7 +148,7 @@ export const WalletProvider: React.FC<PropsWithChildren> = ({
       await connection.connector.activate();
 
       if (!isSupportedChain(isChain) || !compareString(chainId, isChain)) {
-        await switchChain(isChain,connection);
+        await switchChain(isChain, connection);
       }
       const addresses: any = await connector.provider?.request({
         method: 'eth_accounts',
