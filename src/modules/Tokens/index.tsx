@@ -496,10 +496,12 @@ export const MakeFormSwap = forwardRef(() => {
                 onClick={(e) => {
                   e.stopPropagation();
                   e.preventDefault();
-
-                  router.push(
-                    `${isL2 ? ROUTE_PATH.SWAP_V2 : ROUTE_PATH.SWAP}?from_token=${getWBTCAddress()}&to_token=${row?.address}`,
-                  );
+                  const prefix = isL2 ? `swap/${getChainNameRequestAPI(currentChain).toLowerCase()}` : ROUTE_PATH.SWAP;
+                  const suffix =
+                    isCustomChain(currentChain.chainId) ?
+                      '' :
+                      `?from_token=${getWETHAddress()}${isL2 ? `&to_token=${row?.address}` : ''}`;
+                  router.push(`${prefix}${suffix}`);
                 }}
                 title="Swap now"
                 color={'#FFFFFF'}

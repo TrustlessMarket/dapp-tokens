@@ -1,5 +1,5 @@
 import Layout from '@/layouts';
-import Swap from '@/modules/Swap/v2';
+import Swap from '@/modules/Swap';
 
 export default function SwapPage() {
   return (
