@@ -9,21 +9,19 @@ import copy from 'copy-to-clipboard';
 import SelectedNetwork from '@/components/Swap/selectNetwork';
 import Text from '@/components/Text';
 import { TRUSTLESS_BRIDGE } from '@/constants/common';
-import { ROUTE_PATH } from '@/constants/route-path';
 import { WalletContext } from '@/contexts/wallet-context';
-import useBalanceERC20Token from '@/hooks/contract-operations/token/useBalanceERC20Token';
 import { IResourceChain } from '@/interfaces/chain';
 import {
+  CHAIN_ID,
   compareString,
   formatCurrency,
   formatLongAddress,
-  getTMAddress,
   isSupportedChain,
 } from '@/utils';
 import { showError } from '@/utils/toast';
 import { useWindowSize } from '@trustless-computer/dapp-core';
 import { useRouter } from 'next/router';
-import { useContext, useEffect, useMemo, useRef, useState } from 'react';
+import { useContext, useMemo, useRef, useState } from 'react';
 import { OverlayTrigger } from 'react-bootstrap';
 import { toast } from 'react-hot-toast';
 import Jazzicon, { jsNumberForAddress } from 'react-jazzicon';
@@ -32,15 +30,12 @@ import web3 from 'web3';
 import { isScreenDarkMode } from '..';
 import { ConnectWalletButton, WalletBalance } from '../Header.styled';
 import { WalletPopover } from './Wallet.styled';
-import { SupportedChainId, TRUSTLESS_COMPUTER_CHAIN_INFO } from '@/constants/chains';
-import { currentChainSelector, selectPnftExchange, updateConfigs, updateCurrentChain } from '@/state/pnftExchange';
-import { CHAIN_INFO } from '@/constants/storage-key';
-import { useAppDispatch } from '@/state/hooks';
+import { currentChainSelector } from '@/state/pnftExchange';
 import useCheckIsLayer2 from '@/hooks/useCheckIsLayer2';
 
 const WalletHeader = () => {
   const router = useRouter();
-  const { account, chainId, isActive } = useWeb3React();
+  const { account, chainId } = useWeb3React();
   const user = useSelector(getUserSelector);
   const { onDisconnect, onConnect, requestBtcAddress, getConnectedChainInfo } =
     useContext(WalletContext);
@@ -49,15 +44,12 @@ const WalletHeader = () => {
   const isAuthenticated = useSelector(getIsAuthenticatedSelector);
   const { btcBalance, juiceBalance } = useContext(AssetsContext);
 
-  const { call: getBalanceErc20 } = useBalanceERC20Token();
-  const [balanceTM, setBalanceTM] = useState('0');
-
   const chainInfo: IResourceChain = getConnectedChainInfo();
 
   const currentChain: IResourceChain = useSelector(currentChainSelector);
 
-  const dispatch = useAppDispatch();
-  const allConfigs: any = useSelector(selectPnftExchange).allConfigs;
+  // const dispatch = useAppDispatch();
+  // const allConfigs: any = useSelector(selectPnftExchange).allConfigs;
 
   const isL2 = useCheckIsLayer2();
 
@@ -87,23 +79,23 @@ const WalletHeader = () => {
     }
   };
 
-  useEffect(() => {
-    getBalanceTM();
-  }, [user?.walletAddress, isActive, currentChain?.chain]);
-
-  const getBalanceTM = async () => {
-    if (!user?.walletAddress || !isActive) {
-      return;
-    }
-
-    try {
-      const response: any = await getBalanceErc20({
-        erc20TokenAddress: getTMAddress(),
-      });
-      setBalanceTM(response);
-    } catch (error) {
-    }
-  };
+  // const getBalanceTM = async () => {
+  //   if (!user?.walletAddress || !isActive) {
+  //     return;
+  //   }
+  //
+  //   try {
+  //     const response: any = await getBalanceErc20({
+  //       erc20TokenAddress: getTMAddress(),
+  //     });
+  //     // setBalanceTM(response);
+  //   } catch (error) {
+  //   }
+  // };
+  //
+  // useEffect(() => {
+  //   getBalanceTM();
+  // }, [user?.walletAddress, isActive, currentChain?.chain]);
 
   const [show, setShow] = useState(false);
   const handleOnMouseEnter = () => {
@@ -127,12 +119,12 @@ const WalletHeader = () => {
     window.open(`${TRUSTLESS_BRIDGE}${tokenSymbol}`);
   };
 
-  const onChangeRouter = (_chainA?: any) => {
-    dispatch(updateCurrentChain(_chainA));
-    const key = _chainA?.chain?.toLowerCase() || '';
-    dispatch(updateConfigs(allConfigs[key]));
-    localStorage.setItem(CHAIN_INFO, JSON.stringify(_chainA));
-  };
+  // const onChangeRouter = (_chainA?: any) => {
+  //   dispatch(updateCurrentChain(_chainA));
+  //   const key = _chainA?.chain?.toLowerCase() || '';
+  //   dispatch(updateConfigs(allConfigs[key]));
+  //   localStorage.setItem(CHAIN_INFO, JSON.stringify(_chainA));
+  // };
 
   const walletPopover = (
     <WalletPopover
@@ -162,13 +154,13 @@ const WalletHeader = () => {
             color='black'
             maxWidth='16'
             type='stroke'
-          ></IconSVG>
+          />
         </div>
       </div>
       {user?.walletAddressBtcTaproot &&
         compareString(
           currentChain?.chainId,
-          SupportedChainId.TRUSTLESS_COMPUTER,
+          CHAIN_ID.TRUSTLESS_COMPUTER,
         ) && (
           <>
             <div className='divider'></div>
@@ -198,7 +190,7 @@ const WalletHeader = () => {
           </>
         )}
 
-      <div className='divider'></div>
+      {/*<div className='divider' />*/}
       <div className='cta'>
         {
           !isL2 && (
@@ -216,34 +208,34 @@ const WalletHeader = () => {
                 <IconSVG src={`/wrapbtc.svg`} maxWidth='20' color='black' type='fill' />
                 <Text size='medium'>Wrap BTC</Text>
               </div>
-              <div className='wallet-link' onClick={() => gotoBridge('deposit', 'eth')}>
-                <IconSVG src={`/wrapbtc.svg`} maxWidth='20' color='black' type='fill' />
-                <Text size='medium'>Wrap ETH</Text>
-              </div>
+              {/*<div className='wallet-link' onClick={() => gotoBridge('deposit', 'eth')}>*/}
+              {/*  <IconSVG src={`/wrapbtc.svg`} maxWidth='20' color='black' type='fill' />*/}
+              {/*  <Text size='medium'>Wrap ETH</Text>*/}
+              {/*</div>*/}
             </>
           )
         }
-        {user?.walletAddress && (
-          <div
-            className='wallet-link'
-            onClick={() => window.open(ROUTE_PATH.TM_TRANSFER_HISTORY, '_self')}
-          >
-            <img width={20} height={20} src={`${CDN_URL}/icons/tm_icon.png`} />
-            <Text size='medium'>{formatCurrency(balanceTM, 5)} TM</Text>
-          </div>
-        )}
-        {
-          isL2 && (
-            <div
-              className='wallet-link'
-              onClick={() => onChangeRouter(TRUSTLESS_COMPUTER_CHAIN_INFO)}
-            >
-              <img width={20} height={20} src={'https://cdn.trustless.domains/icons/tc_ic.svg'}
-                   style={{ borderRadius: '50%' }} />
-              <Text size='small'>Trustless Computer</Text>
-            </div>
-          )
-        }
+        {/*{user?.walletAddress && (*/}
+        {/*  <div*/}
+        {/*    className='wallet-link'*/}
+        {/*    onClick={() => window.open(ROUTE_PATH.TM_TRANSFER_HISTORY, '_self')}*/}
+        {/*  >*/}
+        {/*    <img width={20} height={20} src={`${CDN_URL}/icons/tm_icon.png`} />*/}
+        {/*    <Text size='medium'>{formatCurrency(balanceTM, 5)} TM</Text>*/}
+        {/*  </div>*/}
+        {/*)}*/}
+        {/*{*/}
+        {/*  isL2 && (*/}
+        {/*    <div*/}
+        {/*      className='wallet-link'*/}
+        {/*      onClick={() => onChangeRouter(TRUSTLESS_COMPUTER_CHAIN_INFO)}*/}
+        {/*    >*/}
+        {/*      <img width={20} height={20} src={'https://cdn.trustless.domains/icons/tc_ic.svg'}*/}
+        {/*           style={{ borderRadius: '50%' }} />*/}
+        {/*      <Text size='small'>Trustless Computer</Text>*/}
+        {/*    </div>*/}
+        {/*  )*/}
+        {/*}*/}
 
         <div className='divider'></div>
         <div className='wallet-disconnect' onClick={onDisconnect}>
@@ -287,7 +279,7 @@ const WalletHeader = () => {
                   <div className='balance'>
                     {compareString(
                       currentChain?.chainId,
-                      TRUSTLESS_COMPUTER_CHAIN_INFO.chainId,
+                      CHAIN_ID.TRUSTLESS_COMPUTER,
                     ) && (
                       <>
                         <p>{formatCurrency(formatBTCPrice(btcBalance))} BTC</p>

@@ -33,7 +33,7 @@ export const ConfigProvider: React.FC<PropsWithChildren> = ({
   );
   const currentChain: IResourceChain = useAppSelector(currentChainSelector);
 
-  const onSetConfigSDK = () => {
+  const onSetConfigSDK = React.useCallback(() => {
     if (!currentConfigChain || !currentChain) return;
     changeWallet(WalletType.EXTENSION, '', '');
     refreshProvider(provider);
@@ -51,9 +51,9 @@ export const ConfigProvider: React.FC<PropsWithChildren> = ({
       rpc: currentConfigChain.rpcUrl,
       tokens_list: [],
     });
-  };
+  }, [currentChain, currentConfigChain, provider]);
 
-  React.useEffect(onSetConfigSDK, [currentChain, currentConfigChain]);
+  React.useEffect(onSetConfigSDK, [currentChain, currentConfigChain, provider]);
 
   const contextValues = useMemo((): IConfigContext => {
     return { onSetConfigSDK };
