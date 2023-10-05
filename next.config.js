@@ -82,6 +82,16 @@ const nextConfig = removeImports()({
       'node_modules',
       '@emotion/hash',
     );
+    config.resolve.alias['@emotion/memoize'] = path.resolve(
+      __dirname,
+      'node_modules',
+      '@emotion/memoize',
+    );
+    config.resolve.alias['@emotion/is-prop-valid'] = path.resolve(
+      __dirname,
+      'node_modules',
+      '@emotion/is-prop-valid',
+    );
     config.resolve.alias['@emotion/unitless'] = path.resolve(
       __dirname,
       'node_modules',
@@ -108,6 +118,22 @@ const nextConfig = removeImports()({
       'node_modules',
       'bech32',
     );
+    config.resolve.alias['base-x'] = path.resolve(
+      __dirname,
+      'node_modules',
+      'base-x',
+    );
+    config.resolve.alias['bitcoinjs-lib'] = path.resolve(
+      __dirname,
+      'node_modules',
+      'bitcoinjs-lib',
+    );
+    config.resolve.alias['bs58'] = path.resolve(__dirname, 'node_modules', 'bs58');
+    config.resolve.alias['bs58check'] = path.resolve(
+      __dirname,
+      'node_modules',
+      'bs58check',
+    );
     config.resolve.alias['buffer'] = path.resolve(
       __dirname,
       'node_modules',
@@ -117,6 +143,11 @@ const nextConfig = removeImports()({
       __dirname,
       'node_modules',
       'cookie',
+    );
+    config.resolve.alias['dom-helpers'] = path.resolve(
+      __dirname,
+      'node_modules',
+      'dom-helpers',
     );
     config.resolve.alias['deepmerge'] = path.resolve(
       __dirname,
@@ -128,6 +159,11 @@ const nextConfig = removeImports()({
       'node_modules',
       'ethers',
     );
+    config.resolve.alias['eventemitter3'] = path.resolve(
+      __dirname,
+      'node_modules',
+      'eventemitter3',
+    );
     config.resolve.alias['inherits'] = path.resolve(
       __dirname,
       'node_modules',
@@ -138,6 +174,11 @@ const nextConfig = removeImports()({
       'node_modules',
       'react-fast-compare',
     );
+    config.resolve.alias['react-transition-group'] = path.resolve(
+      __dirname,
+      'node_modules',
+      'react-transition-group',
+    );
     config.resolve.alias['react-is'] = path.resolve(
       __dirname,
       'node_modules',
@@ -147,6 +188,11 @@ const nextConfig = removeImports()({
       __dirname,
       'node_modules',
       'readable-stream',
+    );
+    config.resolve.alias['rehype-prism-plus'] = path.resolve(
+      __dirname,
+      'node_modules',
+      'rehype-prism-plus',
     );
     config.resolve.alias['safe-buffer'] = path.resolve(
       __dirname,
