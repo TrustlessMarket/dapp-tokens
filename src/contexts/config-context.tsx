@@ -1,5 +1,11 @@
 import React, { PropsWithChildren, useMemo } from 'react';
-import { changeWallet, Environment, refreshProvider, setConfig, WalletType } from 'trustless-swap-sdk';
+import {
+  changeWallet,
+  Environment,
+  refreshProvider,
+  setConfig,
+  WalletType,
+} from 'trustless-swap-sdk';
 import { isProduction } from '@/utils/commons';
 import { useWeb3React } from '@web3-react/core';
 import { useAppSelector } from '@/state/hooks';
@@ -18,9 +24,13 @@ const initialValue: IConfigContext = {
 
 export const ConfigContext = React.createContext<IConfigContext>(initialValue);
 
-export const ConfigProvider: React.FC<PropsWithChildren> = ({ children }: PropsWithChildren): React.ReactElement => {
+export const ConfigProvider: React.FC<PropsWithChildren> = ({
+  children,
+}: PropsWithChildren): React.ReactElement => {
   const { provider } = useWeb3React();
-  const currentConfigChain: INetworkConfig | undefined = useAppSelector(getConfigsChainSelector);
+  const currentConfigChain: INetworkConfig | undefined = useAppSelector(
+    getConfigsChainSelector,
+  );
   const currentChain: IResourceChain = useAppSelector(currentChainSelector);
 
   const onSetConfigSDK = () => {
@@ -29,20 +39,21 @@ export const ConfigProvider: React.FC<PropsWithChildren> = ({ children }: PropsW
     refreshProvider(provider);
     setConfig({
       API_ROOT: ROOT_API,
-      NONFUNGIBLE_POSITION_MANAGER_CONTRACT_ADDRESS: currentConfigChain.swapNonfungibleTokenPositionManager,
+      NONFUNGIBLE_POSITION_MANAGER_CONTRACT_ADDRESS:
+        currentConfigChain.swapNonfungibleTokenPositionManager,
       POOL_FACTORY_CONTRACT_ADDRESS: currentConfigChain.swapFactoryContractAddr,
       QUOTER_CONTRACT_ADDRESS: currentConfigChain.swapQuoterV2ContractAddr,
       SWAP_ROUTER_ADDRESS: currentConfigChain.swapRouterContractAddr,
       TC_CONTRACT_ADDRESS: currentConfigChain.wtcContractAddress,
       WETH_CONTRACT_ADDRESS: currentConfigChain.wethContractAddress || '',
-      chainName: currentConfigChain.chainName,
+      chainName: currentConfigChain.chainName || currentConfigChain.name,
       env: isProduction() ? Environment.MAINNET : Environment.TESTNET,
       rpc: currentConfigChain.rpcUrl,
       tokens_list: [],
     });
   };
 
-  React.useEffect(onSetConfigSDK, [currentChain, currentConfigChain])
+  React.useEffect(onSetConfigSDK, [currentChain, currentConfigChain]);
 
   const contextValues = useMemo((): IConfigContext => {
     return { onSetConfigSDK };

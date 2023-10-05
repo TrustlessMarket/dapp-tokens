@@ -10,10 +10,13 @@ import { ROUTE_PATH } from '@/constants/route-path';
 import { L2_ETH_ADDRESS } from '@/configs';
 import { useRouter } from 'next/router';
 import TopPools from '@/modules/PoolsV2/TopPools';
+import { useAppSelector } from '@/state/hooks';
+import { currentPoolPathSelector } from '@/state/pnftExchange';
 
 const PoolsV2Page = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const router = useRouter();
+  const currentPoolPath = useAppSelector(currentPoolPathSelector);
 
   const renderContent = () => {
     if (loading) {
@@ -29,9 +32,7 @@ const PoolsV2Page = () => {
         <Heading as={'h3'}>Pools</Heading>
         <Flex gap={2}>
           <FiledButton
-            onClick={() =>
-              router.push(`${ROUTE_PATH.POOLS_V2_ADD}/${L2_ETH_ADDRESS}`)
-            }
+            onClick={() => router.push(`${currentPoolPath}/add/${L2_ETH_ADDRESS}`)}
             btnSize="l"
           >
             + New Position

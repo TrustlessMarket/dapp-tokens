@@ -2,13 +2,16 @@ import React from 'react';
 import s from './styles.module.scss';
 import { Flex, Heading, Icon, IconButton } from '@chakra-ui/react';
 import { BiChevronLeft } from 'react-icons/bi';
-import { ROUTE_PATH } from '@/constants/route-path';
 import { useRouter } from 'next/router';
 import AddHeaderSwitchPair from './Add.Header.SwitchPair';
 import PoolsV2Settings from '../PoolsV2.Settings';
+import { useAppSelector } from '@/state/hooks';
+import { currentPoolPathSelector } from '@/state/pnftExchange';
 
 const AddHeader = () => {
   const router = useRouter();
+  const currentPoolPath = useAppSelector(currentPoolPathSelector);
+
   return (
     <Flex className={s.container__top_body}>
       <IconButton
@@ -27,7 +30,7 @@ const AddHeader = () => {
             fontSize={'30px'}
           />
         }
-        onClick={() => router.replace(`${ROUTE_PATH.POOLS_V2}`)}
+        onClick={() => router.replace(`${currentPoolPath}`)}
         aria-label={''}
       />
       <Heading as={'h4'}>Add Liquidity</Heading>

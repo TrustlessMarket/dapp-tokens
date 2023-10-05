@@ -12,8 +12,13 @@ import useSupplyERC20Liquid from '@/hooks/contract-operations/token/useSupplyERC
 import { IResourceChain } from '@/interfaces/chain';
 import { IToken } from '@/interfaces/token';
 import { getListPaired } from '@/services/pool';
-import { currentChainSelector, selectPnftExchange } from '@/state/pnftExchange';
-import {abbreviateNumber, compareString, formatCurrency, isLayer2Chain} from '@/utils';
+import { currentChainSelector, currentPoolPathSelector } from '@/state/pnftExchange';
+import {
+  abbreviateNumber,
+  compareString,
+  formatCurrency,
+  isLayer2Chain,
+} from '@/utils';
 import {
   Accordion,
   AccordionButton,
@@ -37,6 +42,7 @@ const TokenPoolDetail = ({ paired }: { paired: any }) => {
   const token0: IToken = paired?.token0Obj;
   const token1: IToken = paired?.token1Obj;
   const currentChain: IResourceChain = useSelector(currentChainSelector);
+  const currentPoolPath = useSelector(currentPoolPathSelector);
 
   const [supply, setSupply] = useState<any>({
     ownerSupply: '0',
@@ -108,18 +114,12 @@ const TokenPoolDetail = ({ paired }: { paired: any }) => {
         />
         <HorizontalItem
           label={`${
-            compareString(
-              currentChain?.chainId,
-              SupportedChainId.TRUSTLESS_COMPUTER,
-            )
+            compareString(currentChain?.chainId, SupportedChainId.TRUSTLESS_COMPUTER)
               ? 'APR:'
               : 'Fee tier:'
           } `}
           value={`${formatCurrency(
-            compareString(
-              currentChain?.chainId,
-              SupportedChainId.TRUSTLESS_COMPUTER,
-            )
+            compareString(currentChain?.chainId, SupportedChainId.TRUSTLESS_COMPUTER)
               ? paired?.apr
               : new BigNumber(paired?.fee).dividedBy(10000).toFixed(),
             2,
@@ -150,7 +150,7 @@ const TokenPoolDetail = ({ paired }: { paired: any }) => {
             onClick={() => {
               const isL2 = isLayer2Chain(currentChain?.chainId || -1);
               const routePath = isL2
-                ? `${ROUTE_PATH.POOLS_V2_ADD}/${token0?.address}/${token1?.address}`
+                ? `${currentPoolPath}/add/${token0?.address}/${token1?.address}`
                 : `${ROUTE_PATH.POOLS}?type=${ScreenType.add_liquid}&f=${token0.address}&t=${token1.address}`;
               router.push(`${routePath}`);
             }}
@@ -167,6 +167,7 @@ const TokenListPaired = ({ data }: { data: IToken }) => {
   const [list, setList] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const currentChain: IResourceChain = useSelector(currentChainSelector);
+  const currentPoolPath = useSelector(currentPoolPathSelector);
 
   const router = useRouter();
 
@@ -182,7 +183,7 @@ const TokenListPaired = ({ data }: { data: IToken }) => {
     try {
       const response: any = await getListPaired({
         from_token: data.address,
-        network: currentChain?.chain?.toLowerCase()
+        network: currentChain?.chain?.toLowerCase(),
       });
 
       setList(response || []);
@@ -211,7 +212,7 @@ const TokenListPaired = ({ data }: { data: IToken }) => {
             onClick={() => {
               const isL2 = isLayer2Chain(currentChain?.chainId || -1);
               const routePath = isL2
-                ? `${ROUTE_PATH.POOLS_V2_ADD}/${data.address}/${L2_WBTC_ADDRESS}`
+                ? `${currentPoolPath}/add/${data.address}/${L2_WBTC_ADDRESS}`
                 : `${ROUTE_PATH.POOLS}?type=${ScreenType.add_liquid}&f=${data.address}&t=${WBTC_ADDRESS}`;
               router.push(`${routePath}`);
             }}

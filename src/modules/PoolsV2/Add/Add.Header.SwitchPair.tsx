@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { ROUTE_PATH } from '@/constants/route-path';
 import { IToken } from '@/interfaces/token';
 import { compareString, sortAddressPair } from '@/utils';
 import { tickToPrice } from '@/utils/number';
@@ -10,8 +9,12 @@ import { useCallback, useEffect } from 'react';
 import { useField, useForm, useFormState } from 'react-final-form';
 import s from './styles.module.scss';
 import { isPool } from '../utils';
+import { useAppSelector } from '@/state/hooks';
+import { currentPoolPathSelector } from '@/state/pnftExchange';
 
 const AddHeaderSwitchPair = () => {
+  const currentPoolPath = useAppSelector(currentPoolPathSelector);
+
   const router = useRouter();
   const { change } = useForm();
   const { values } = useFormState();
@@ -60,7 +63,7 @@ const AddHeaderSwitchPair = () => {
 
   const onChangeRouter = (_tkA?: IToken, _tkB?: IToken) => {
     return router.replace(
-      `${ROUTE_PATH.POOLS_V2_ADD}/${_tkA?.address}/${_tkB?.address}`,
+      `${currentPoolPath}/add/${_tkA?.address}/${_tkB?.address}`,
     );
   };
 

@@ -14,7 +14,7 @@ import { IToken } from '@/interfaces/token';
 import { IPoolV2AddPair } from '@/pages/pools/[slug]/add/[[...id]]';
 import { getTokens } from '@/services/token-explorer';
 import { useAppSelector } from '@/state/hooks';
-import { currentChainSelector } from '@/state/pnftExchange';
+import { currentChainSelector, currentPoolPathSelector } from '@/state/pnftExchange';
 import { compareString } from '@/utils';
 import { composeValidators, requiredAmount } from '@/utils/formValidate';
 import { Box, Flex } from '@chakra-ui/react';
@@ -36,9 +36,15 @@ import AddHeader from './Add.Header';
 import AddItemToken from './Add.ItemToken';
 import AddPriceRange from './Add.PriceRange';
 import s from './styles.module.scss';
-import {changeWallet, choiceConFig, Environment, refreshProvider, WalletType} from "trustless-swap-sdk";
-import {isProduction} from "@/utils/commons";
-import {useWeb3React} from "@web3-react/core";
+import {
+  changeWallet,
+  choiceConFig,
+  Environment,
+  refreshProvider,
+  WalletType,
+} from 'trustless-swap-sdk';
+import { isProduction } from '@/utils/commons';
+import { useWeb3React } from '@web3-react/core';
 
 interface IFormAddPoolsV2Container extends IPoolV2AddPair {
   handleSubmit: (_: any) => void;
@@ -51,9 +57,10 @@ const FormAddPoolsV2Container = forwardRef<any, IFormAddPoolsV2Container>(
     const paramBaseTokenAddress = ids?.[0];
     const paramQuoteTokenAddress = ids?.[1];
     const paramFee = ids?.[2];
-      const { provider } = useWeb3React();
+    const { provider } = useWeb3React();
 
     const currentChain: IResourceChain = useAppSelector(currentChainSelector);
+    const currentPoolPath = useAppSelector(currentPoolPathSelector);
 
     const router = useRouter();
 
@@ -152,7 +159,7 @@ const FormAddPoolsV2Container = forwardRef<any, IFormAddPoolsV2Container>(
     const onSelectBaseToken = (_token: IToken) => {
       change('baseToken', _token);
       change('currentSelectPair', _token);
-      let _router = `${ROUTE_PATH.POOLS_V2_ADD}/${_token.address}`;
+      let _router = `${currentPoolPath}/add/${_token.address}`;
       if (paramQuoteTokenAddress) {
         _router += `/${paramQuoteTokenAddress}`;
       }
@@ -161,7 +168,7 @@ const FormAddPoolsV2Container = forwardRef<any, IFormAddPoolsV2Container>(
 
     const onSelectQuoteToken = (_token: IToken) => {
       change('quoteToken', _token);
-      let _router = `${ROUTE_PATH.POOLS_V2_ADD}`;
+      let _router = `${currentPoolPath}/add`;
       if (paramBaseTokenAddress) {
         _router += `/${paramBaseTokenAddress}`;
       }

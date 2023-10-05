@@ -1,6 +1,7 @@
 import FiledButton from '@/components/Swap/button/filedButton';
-import { ROUTE_PATH } from '@/constants/route-path';
 import { IPosition } from '@/interfaces/position';
+import { useAppSelector } from '@/state/hooks';
+import { currentPoolPathSelector } from '@/state/pnftExchange';
 import { getTokenIconUrl } from '@/utils';
 import { Box, Flex, Icon, IconButton, Text } from '@chakra-ui/react';
 import BigNumber from 'bignumber.js';
@@ -17,6 +18,8 @@ interface IDetailHeader {
 
 const DetailHeader: React.FC<IDetailHeader> = ({ positionDetail }) => {
   const router = useRouter();
+  const currentPoolPath = useAppSelector(currentPoolPathSelector);
+
   return (
     <Box className={s.container__header}>
       <Flex alignItems={'center'} gap={1}>
@@ -34,7 +37,7 @@ const DetailHeader: React.FC<IDetailHeader> = ({ positionDetail }) => {
               fontSize={'30px'}
             />
           }
-          onClick={() => router.replace(`${ROUTE_PATH.POOLS_V2}`)}
+          onClick={() => router.replace(`${currentPoolPath}`)}
           aria-label={''}
         />
         <Text color={'rgba(255, 255, 255, 0.5)'}>Back to Pools</Text>
@@ -66,7 +69,7 @@ const DetailHeader: React.FC<IDetailHeader> = ({ positionDetail }) => {
             <FiledButton
               isDisabled={!Boolean(positionDetail)}
               onClick={() =>
-                router.push(`${ROUTE_PATH.POOLS_V2_REMOVE}/${positionDetail?.id}`)
+                router.push(`${currentPoolPath}/remove/${positionDetail?.id}`)
               }
               btnSize="l"
             >

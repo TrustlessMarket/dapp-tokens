@@ -19,6 +19,8 @@ import PositionRemove from '@/modules/PoolsV2/MyPositions/Position.Remove';
 import { useWindowSize } from '@trustless-computer/dapp-core';
 import InfoTooltip from '@/components/Swap/infoTooltip';
 import { AiOutlinePlusCircle } from 'react-icons/ai';
+import { useAppSelector } from '@/state/hooks';
+import { currentPoolPathSelector } from '@/state/pnftExchange';
 
 interface ITopPoolsItem {
   poolDetail?: ILiquidity;
@@ -26,6 +28,8 @@ interface ITopPoolsItem {
 }
 
 const TopPoolsItem: React.FC<ITopPoolsItem> = ({ poolDetail, columns }) => {
+  const currentPoolPath = useAppSelector(currentPoolPathSelector);
+
   const router = useRouter();
   const [showPosition, setShowPositions] = useState(false);
 
@@ -211,8 +215,8 @@ const TopPoolsItem: React.FC<ITopPoolsItem> = ({ poolDetail, columns }) => {
                     e.stopPropagation();
                     e.preventDefault();
 
-                    router.push(
-                      `${ROUTE_PATH.POOLS_V2_ADD}/${poolDetail?.token0Obj?.address}/${poolDetail?.token1Obj?.address}/${poolDetail?.fee}`,
+                    router.replace(
+                      `${currentPoolPath}/add/${poolDetail?.token0Obj?.address}/${poolDetail?.token1Obj?.address}/${poolDetail?.fee}`,
                     );
                   }}
                 />
@@ -237,7 +241,7 @@ const TopPoolsItem: React.FC<ITopPoolsItem> = ({ poolDetail, columns }) => {
               columns={columnsPosition}
               showEmpty={false}
               onItemClick={(e: IPosition) => {
-                return router.push(`${ROUTE_PATH.POOLS_V2}/${e.id}`);
+                return router.push(`${currentPoolPath}/${e.id}`);
               }}
             />
           </Td>

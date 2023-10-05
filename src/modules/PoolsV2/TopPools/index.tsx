@@ -1,37 +1,42 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import {Box, Flex, Spinner, Text} from "@chakra-ui/react";
-import InfiniteScroll from "react-infinite-scroll-component";
-import ListTable from "@/components/Swap/listTable";
-import React, {useEffect, useMemo, useState} from "react";
-import {IResourceChain} from "@/interfaces/chain";
-import {formatCurrency} from "@/utils";
-import {getListLiquidity} from "trustless-swap-sdk";
-import {ILiquidity} from "@/interfaces/liquidity";
-import {TRUSTLESS_MARKET_URL} from "@/configs";
-import {ROUTE_PATH} from "@/constants/route-path";
-import px2rem from "@/utils/px2rem";
-import {debounce} from "lodash";
-import {useWindowSize} from "@trustless-computer/dapp-core";
+import { Box, Flex, Spinner, Text } from '@chakra-ui/react';
+import InfiniteScroll from 'react-infinite-scroll-component';
+import ListTable from '@/components/Swap/listTable';
+import React, { useEffect, useMemo, useState } from 'react';
+import { IResourceChain } from '@/interfaces/chain';
+import { formatCurrency } from '@/utils';
+import { getListLiquidity } from 'trustless-swap-sdk';
+import { ILiquidity } from '@/interfaces/liquidity';
+import { TRUSTLESS_MARKET_URL } from '@/configs';
+import { ROUTE_PATH } from '@/constants/route-path';
+import px2rem from '@/utils/px2rem';
+import { debounce } from 'lodash';
+import { useWindowSize } from '@trustless-computer/dapp-core';
 import styles from './styles.module.scss';
-import {useWeb3React} from "@web3-react/core";
-import TopPoolsPair from "@/modules/PoolsV2/TopPools/TopPools.Pair";
-import TopPoolsItem from "@/modules/PoolsV2/TopPools/TopPools.Item";
-import {L2_CHAIN_INFO} from "@/constants/chains";
+import { useWeb3React } from '@web3-react/core';
+import TopPoolsPair from '@/modules/PoolsV2/TopPools/TopPools.Pair';
+import TopPoolsItem from '@/modules/PoolsV2/TopPools/TopPools.Item';
+import { L2_CHAIN_INFO } from '@/constants/chains';
+import { useAppSelector } from '@/state/hooks';
+import { currentChainSelector } from '@/state/pnftExchange';
 
 const LIMIT_PAGE = 100;
 
 const TopPools = () => {
   const [liquidityList, setLiquidityList] = useState<any[]>([]);
-  const currentSelectedChain: IResourceChain = L2_CHAIN_INFO;
+  // const currentSelectedChain: IResourceChain = L2_CHAIN_INFO;
+  const currentSelectedChain = useAppSelector(currentChainSelector);
 
   const [isFetching, setIsFetching] = useState(false);
   const { mobileScreen } = useWindowSize();
   const { account } = useWeb3React();
 
   useEffect(() => {
-    fetchLiquidities();
+    setTimeout(() => {
+      fetchLiquidities();
+    }, 1000);
   }, [currentSelectedChain?.chain, account]);
 
   const fetchLiquidities = async (page = 1, isFetchMore = false) => {
@@ -94,7 +99,7 @@ const TopPools = () => {
         render(row: ILiquidity) {
           return (
             <Flex fontSize={px2rem(14)} alignItems={'center'} gap={2}>
-              <TopPoolsPair poolDetail={row}/>
+              <TopPoolsPair poolDetail={row} />
             </Flex>
           );
         },
@@ -197,10 +202,7 @@ const TopPools = () => {
           backgroundColor: '#1E1E22',
         },
         render(row: ILiquidity) {
-          return (
-            <Text fontSize={px2rem(14)} textAlign={'left'}>
-            </Text>
-          );
+          return <Text fontSize={px2rem(14)} textAlign={'left'}></Text>;
         },
       },
     ];
@@ -234,10 +236,8 @@ const TopPools = () => {
           columns={columns}
           showEmpty={false}
           ItemListComponent={(row, extraData, columns, i) => {
-            return (
-              <TopPoolsItem poolDetail={row} columns={columns}/>
-            );
-         }}
+            return <TopPoolsItem poolDetail={row} columns={columns} />;
+          }}
         />
       </InfiniteScroll>
     </Box>

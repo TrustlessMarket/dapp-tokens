@@ -9,9 +9,12 @@ import cs from 'classnames';
 import { compareString } from '@/utils';
 import Text from '@/components/Text';
 import { useRouter } from 'next/router';
-import { ROUTE_PATH } from '@/constants/route-path';
+import { useAppSelector } from '@/state/hooks';
+import { currentPoolPathSelector } from '@/state/pnftExchange';
 
 const AddFeeTier = () => {
+  const currentPoolPath = useAppSelector(currentPoolPathSelector);
+
   const router = useRouter();
   const { values } = useFormState();
   const { change } = useForm();
@@ -23,7 +26,7 @@ const AddFeeTier = () => {
     change('fee', v.value);
     const [baseTokenAddress, quoteTokenAddress] = ids;
     return router.replace(
-      `${ROUTE_PATH.POOLS_V2_ADD}/${baseTokenAddress}/${quoteTokenAddress}/${v.value}`,
+      `${currentPoolPath}/add/${baseTokenAddress}/${quoteTokenAddress}/${v.value}`,
     );
   };
 

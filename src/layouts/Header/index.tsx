@@ -1,23 +1,32 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import {CDN_URL, L2_USDT_ADDRESS, L2_WBTC_ADDRESS} from '@/configs';
-import {GENERATIVE_DISCORD, GM_ADDRESS, NEW_BITCOIN_CITY, WETH_ADDRESS,} from '@/constants/common';
-import {ROUTE_PATH} from '@/constants/route-path';
-import {defaultProvider} from '@/contexts/screen-context';
-import {useScreenLayout} from '@/hooks/useScreenLayout';
+import { CDN_URL, L2_USDT_ADDRESS, L2_WBTC_ADDRESS } from '@/configs';
+import {
+  GENERATIVE_DISCORD,
+  GM_ADDRESS,
+  NEW_BITCOIN_CITY,
+  WETH_ADDRESS,
+} from '@/constants/common';
+import { ROUTE_PATH } from '@/constants/route-path';
+import { defaultProvider } from '@/contexts/screen-context';
+import { useScreenLayout } from '@/hooks/useScreenLayout';
 import HeaderSwitchNetwork from '@/layouts/Header/Header.SwitchNetwork';
-import { getChainNameRequestAPI, getTCGasStationddress, isCustomChain } from '@/utils';
-import {Flex, Link as LinkText, Text} from '@chakra-ui/react';
-import {useWindowSize} from '@trustless-computer/dapp-core';
-import {gsap} from 'gsap';
+import {
+  getChainNameRequestAPI,
+  getTCGasStationddress,
+  isCustomChain,
+} from '@/utils';
+import { Flex, Link as LinkText, Text } from '@chakra-ui/react';
+import { useWindowSize } from '@trustless-computer/dapp-core';
+import { gsap } from 'gsap';
 import Link from 'next/link';
-import {useRouter} from 'next/router';
-import {useEffect, useMemo, useRef, useState} from 'react';
-import {Wrapper} from './Header.styled';
+import { useRouter } from 'next/router';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { Wrapper } from './Header.styled';
 import MenuMobile from './MenuMobile';
 import WalletHeader from './Wallet';
 import Banner from './banner';
-import useCheckIsLayer2 from "@/hooks/useCheckIsLayer2";
+import useCheckIsLayer2 from '@/hooks/useCheckIsLayer2';
 import { useAppSelector } from '@/state/hooks';
 import { currentChainSelector } from '@/state/pnftExchange';
 import { IResourceChain } from '@/interfaces/chain';
@@ -26,7 +35,15 @@ export const isScreenDarkMode = () => {
   return true;
 };
 
-export const HEADER_MENUS = ({ isL2, isCustomChain, chainName }: { isL2: boolean, isCustomChain: boolean, chainName: string }) => [
+export const HEADER_MENUS = ({
+  isL2,
+  isCustomChain,
+  chainName,
+}: {
+  isL2: boolean;
+  isCustomChain: boolean;
+  chainName: string;
+}) => [
   {
     key: ROUTE_PATH.MARKETS,
     route: ROUTE_PATH.MARKETS,
@@ -34,14 +51,20 @@ export const HEADER_MENUS = ({ isL2, isCustomChain, chainName }: { isL2: boolean
   },
   {
     key: isL2 ? `/swap/${chainName}` : ROUTE_PATH.SWAP,
-    route: `${
-      isL2 ? `/swap/${chainName}` : ROUTE_PATH.SWAP
-    }${isCustomChain ? '' : `?from_token=${isL2 ? L2_USDT_ADDRESS : WETH_ADDRESS}&to_token=${isL2 ? L2_WBTC_ADDRESS : GM_ADDRESS}`}`,
+    route: `${isL2 ? `/swap/${chainName}` : ROUTE_PATH.SWAP}${
+      isCustomChain
+        ? ''
+        : `?from_token=${isL2 ? L2_USDT_ADDRESS : WETH_ADDRESS}&to_token=${
+            isL2 ? L2_WBTC_ADDRESS : GM_ADDRESS
+          }`
+    }`,
     name: 'Swap',
   },
   {
-    key: isL2 ? ROUTE_PATH.POOLS_V2 : ROUTE_PATH.POOLS,
-    route: `${isL2 ? `/pools/${chainName}` : ROUTE_PATH.POOLS}`,
+    key: isL2 ? `/${ROUTE_PATH.ORIGINAL_POOL}/${chainName}` : ROUTE_PATH.POOLS,
+    route: `${
+      isL2 ? `/${ROUTE_PATH.ORIGINAL_POOL}/${chainName}` : ROUTE_PATH.POOLS
+    }`,
     name: 'Pools',
   },
   {
@@ -90,7 +113,7 @@ const Header = () => {
     const menu = HEADER_MENUS({
       isL2,
       isCustomChain: isCustomChain(currentChain.chainId),
-      chainName: getChainNameRequestAPI(currentChain)
+      chainName: getChainNameRequestAPI(currentChain),
     });
     return menu;
   }, [isL2, currentChain]);

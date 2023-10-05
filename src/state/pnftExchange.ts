@@ -7,6 +7,8 @@ import { RootState } from '.';
 import { INetworkConfig } from '@/interfaces/state/pnftExchange';
 import { IResourceChain } from '@/interfaces/chain';
 import { convertNetworkToResourceChain, L2_CHAIN_INFO } from '@/constants/chains';
+import { getChainNameRequestAPI } from '@/utils/chain';
+import { ROUTE_PATH } from '@/constants/route-path';
 
 interface NftyLendState {
   needReload: number;
@@ -106,25 +108,43 @@ export const configsSelector = createSelector(selectPnftExchange, (allConfigs) =
 });
 
 export const currentChainSelector = createSelector(
-  configsSelector, selectPnftExchange,
+  configsSelector,
+  selectPnftExchange,
   (configs, selectPnftExchange): IResourceChain => {
+    const currentChain: INetworkConfig = selectPnftExchange.configs;
 
-  const currentChain: INetworkConfig = selectPnftExchange.configs;
+    let chain: IResourceChain | undefined = undefined;
 
-  let chain: IResourceChain | undefined = undefined;
-
-  if (currentChain && !!configs.length) {
-    const config = configs.find((config: INetworkConfig) => Number(config.chainId) === Number(currentChain.chainId));
-    if (config) {
-      chain = convertNetworkToResourceChain(config);
+    if (currentChain && !!configs.length) {
+      const config = configs.find(
+        (config: INetworkConfig) =>
+          Number(config.chainId) === Number(currentChain.chainId),
+      );
+      if (config) {
+        chain = convertNetworkToResourceChain(config);
+      }
     }
-  }
 
-  return chain || L2_CHAIN_INFO;
-});
+    return chain || L2_CHAIN_INFO;
+  },
+);
 
-export const getConfigsChainSelector = createSelector(currentChainSelector, configsSelector,(currentChain: IResourceChain, configs) => {
-  return configs.find((config: INetworkConfig) => Number(config.chainId) === Number(currentChain.chainId));
-});
+export const getConfigsChainSelector = createSelector(
+  currentChainSelector,
+  configsSelector,
+  (currentChain: IResourceChain, configs) => {
+    return configs.find(
+      (config: INetworkConfig) =>
+        Number(config.chainId) === Number(currentChain.chainId),
+    );
+  },
+);
+
+export const currentPoolPathSelector = createSelector(
+  currentChainSelector,
+  (currentChain): string => {
+    return `/${ROUTE_PATH.ORIGINAL_POOL}/${getChainNameRequestAPI(currentChain)}`;
+  },
+);
 
 export default slice.reducer;

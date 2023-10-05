@@ -6,13 +6,17 @@ import TokenHistory from '@/modules/SwapHistory/Token.History';
 import { Box, Button, Flex, Text } from '@chakra-ui/react';
 import Link from 'next/link';
 import styles from './styles.module.scss';
-import {L2_ETH_ADDRESS, L2_WBTC_ADDRESS} from "@/configs";
-import useCheckIsLayer2 from "@/hooks/useCheckIsLayer2";
+import { L2_ETH_ADDRESS, L2_WBTC_ADDRESS } from '@/configs';
+import useCheckIsLayer2 from '@/hooks/useCheckIsLayer2';
+import { useAppSelector } from '@/state/hooks';
+import { currentPoolPathSelector } from '@/state/pnftExchange';
 
 const SwapHistory = () => {
+  const currentPoolPath = useAppSelector(currentPoolPathSelector);
+
   const isL2 = useCheckIsLayer2();
   const routePathSwap = isL2 ? ROUTE_PATH.SWAP_V2 : ROUTE_PATH.SWAP;
-  const routePathPools = isL2 ? ROUTE_PATH.POOLS_V2 : ROUTE_PATH.POOLS;
+  const routePathPools = isL2 ? currentPoolPath : ROUTE_PATH.POOLS;
   const from_token = isL2 ? L2_ETH_ADDRESS : WETH_ADDRESS;
   const to_token = isL2 ? L2_WBTC_ADDRESS : GM_ADDRESS;
 

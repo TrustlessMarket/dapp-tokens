@@ -24,13 +24,22 @@ import PoolsV2PositionStatus from '../PoolsV2.PositionStatus';
 import styles from './styles.module.scss';
 import { getPooledAmount } from '@/modules/PoolsV2/utils';
 import PositionRemove from '@/modules/PoolsV2/MyPositions/Position.Remove';
-import {changeWallet, choiceConFig, Environment, refreshProvider, WalletType} from "trustless-swap-sdk";
-import {isProduction} from "@/utils/commons";
-
+import {
+  changeWallet,
+  choiceConFig,
+  Environment,
+  refreshProvider,
+  WalletType,
+} from 'trustless-swap-sdk';
+import { isProduction } from '@/utils/commons';
+import { useAppSelector } from '@/state/hooks';
+import { currentPoolPathSelector } from '@/state/pnftExchange';
 
 const LIMIT_PAGE = 30;
 
 const TopPools = () => {
+  const currentPoolPath = useAppSelector(currentPoolPathSelector);
+
   const [positionList, setPositionList] = useState<any[]>([]);
   const { getConnectedChainInfo } = useContext(WalletContext);
   const chainInfo: IResourceChain = getConnectedChainInfo();
@@ -309,7 +318,7 @@ const TopPools = () => {
             if (!e.pair?.pair) {
               return null;
             }
-            return router.push(`${ROUTE_PATH.POOLS_V2}/${e.id}`);
+            return router.push(`${currentPoolPath}/${e.id}`);
           }}
         />
       </InfiniteScroll>

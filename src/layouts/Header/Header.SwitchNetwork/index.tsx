@@ -1,12 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import {
-  convertNetworkToResourceChain,
-} from '@/constants/chains';
+import { convertNetworkToResourceChain } from '@/constants/chains';
 import { ROUTE_PATH } from '@/constants/route-path';
 import { IResourceChain } from '@/interfaces/chain';
 import { useAppDispatch } from '@/state/hooks';
 import {
-  configsSelector, currentChainSelector,
+  configsSelector,
+  currentChainSelector,
   selectPnftExchange,
   updateConfigs,
   updateCurrentChain,
@@ -37,7 +36,7 @@ export const ItemChain = ({ _chain, showName, active }: IProps) => {
         <img src={_chain?.icon} alt="image-chain" />
         <Text>{showName ? _chain?.name : _chain?.chain}</Text>
       </Flex>
-      {active && <BiCheck color='#fff' style={{ fontSize: 20 }} />}
+      {active && <BiCheck color="#fff" style={{ fontSize: 20 }} />}
     </Flex>
   );
 };
@@ -51,9 +50,11 @@ const HeaderSwitchNetwork = () => {
   const configs = useSelector(configsSelector);
 
   const networks = React.useMemo(() => {
-    return isL2 ?
-      configs.map(v => convertNetworkToResourceChain(v)).filter((v) => Number(v?.chainId) !== CHAIN_ID.TRUSTLESS_COMPUTER) :
-      configs.map(v => convertNetworkToResourceChain(v));
+    return isL2
+      ? configs
+          .map((v) => convertNetworkToResourceChain(v))
+          .filter((v) => Number(v?.chainId) !== CHAIN_ID.TRUSTLESS_COMPUTER)
+      : configs.map((v) => convertNetworkToResourceChain(v));
   }, [isL2, configs]);
 
   const onChangeRouter = (_chainA?: IResourceChain) => {
@@ -71,29 +72,46 @@ const HeaderSwitchNetwork = () => {
   useEffect(() => {
     const slug = router.query.slug as string;
     const isSwap = router.pathname.includes(ROUTE_PATH.ORIGINAL_SWAP) && !!slug;
+    const isPool = router.pathname.includes(ROUTE_PATH.ORIGINAL_POOL) && !!slug;
 
     // case swap
     if (isSwap && !!currentChain && !compareString(slug, currentChain.chain)) {
       const chainName = getChainNameRequestAPI(currentChain);
       switch (currentChain.chainId) {
         case CHAIN_ID.TRUSTLESS_COMPUTER:
-          router.push(`${ROUTE_PATH.ORIGINAL_SWAP}/tc?from_token=${WETH_ADDRESS}&to_token=${GM_ADDRESS}`);
+          router.push(
+            `${ROUTE_PATH.ORIGINAL_SWAP}/tc?from_token=${WETH_ADDRESS}&to_token=${GM_ADDRESS}`,
+          );
           break;
         case CHAIN_ID.NOS:
-          router.push(`${ROUTE_PATH.ORIGINAL_SWAP}/${chainName}?from_token=${L2_USDT_ADDRESS}&to_token=${L2_WBTC_ADDRESS}`);
+          router.push(
+            `${ROUTE_PATH.ORIGINAL_SWAP}/${chainName}?from_token=${L2_USDT_ADDRESS}&to_token=${L2_WBTC_ADDRESS}`,
+          );
           break;
         default:
           router.push(`${ROUTE_PATH.ORIGINAL_SWAP}/${chainName}`);
       }
     }
+
+    // case pool
+    if (isPool && !!currentChain && !compareString(slug, currentChain.chain)) {
+      const chainName = getChainNameRequestAPI(currentChain);
+      switch (currentChain.chainId) {
+        case CHAIN_ID.TRUSTLESS_COMPUTER:
+          router.push(`${ROUTE_PATH.ORIGINAL_POOL}/tc`);
+          break;
+        default:
+          router.push(`${ROUTE_PATH.ORIGINAL_POOL}/${chainName}`);
+      }
+    }
   }, [currentChain]);
 
   return (
-    <Menu placement='bottom-end'>
+    <Menu placement="bottom-end">
       <MenuButton className={s.btnChainSelected}>
         <Flex alignContent={'center'}>
           <ItemChain _chain={currentChain} />
-          <BiChevronDown color='#FFFFFF' style={{ fontSize: 20 }} />
+          <BiChevronDown color="#FFFFFF" style={{ fontSize: 20 }} />
         </Flex>
       </MenuButton>
       <MenuList className={s.chainList}>
