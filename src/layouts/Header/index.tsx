@@ -20,7 +20,6 @@ import { Flex, Link as LinkText, Text } from '@chakra-ui/react';
 import { useWindowSize } from '@trustless-computer/dapp-core';
 import { gsap } from 'gsap';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Wrapper } from './Header.styled';
 import MenuMobile from './MenuMobile';
@@ -61,7 +60,7 @@ export const HEADER_MENUS = ({
     name: 'Swap',
   },
   {
-    key: isL2 ? `/${ROUTE_PATH.ORIGINAL_POOL}/${chainName}` : ROUTE_PATH.POOLS,
+    key: isL2 ? `${ROUTE_PATH.ORIGINAL_POOL}/${chainName}` : ROUTE_PATH.POOLS,
     route: `${
       isL2 ? `/${ROUTE_PATH.ORIGINAL_POOL}/${chainName}` : ROUTE_PATH.POOLS
     }`,
@@ -83,7 +82,6 @@ const Header = () => {
   const refMenu = useRef<HTMLDivElement | null>(null);
   const [isOpenMenu, setIsOpenMenu] = useState<boolean>(false);
   const { mobileScreen } = useWindowSize();
-  const router = useRouter();
   const currentChain: IResourceChain = useAppSelector(currentChainSelector);
   const {
     headerHeight,
@@ -140,7 +138,9 @@ const Header = () => {
                   <Link
                     key={m.route}
                     href={m.route}
-                    className={router?.pathname?.includes(m.key) ? 'isSelected' : ''}
+                    className={
+                      window.location.pathname.includes(m.key) ? 'isSelected' : ''
+                    }
                   >
                     {m.name}
                   </Link>
