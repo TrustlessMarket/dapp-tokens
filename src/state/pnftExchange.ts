@@ -143,7 +143,7 @@ export const getConfigsChainSelector = createSelector(
 export const currentPoolPathSelector = createSelector(
   currentChainSelector,
   (currentChain): string => {
-    return `/${ROUTE_PATH.ORIGINAL_POOL}/${getChainNameRequestAPI(currentChain)}`;
+    return `${ROUTE_PATH.ORIGINAL_POOL}/${getChainNameRequestAPI(currentChain)}`;
   },
 );
 
