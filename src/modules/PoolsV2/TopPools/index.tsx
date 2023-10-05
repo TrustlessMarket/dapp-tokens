@@ -36,7 +36,7 @@ const TopPools = () => {
   useEffect(() => {
     setTimeout(() => {
       fetchLiquidities();
-    }, 1000);
+    }, 300);
   }, [currentSelectedChain?.chain, account]);
 
   const fetchLiquidities = async (page = 1, isFetchMore = false) => {
