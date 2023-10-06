@@ -61,9 +61,7 @@ export const HEADER_MENUS = ({
   },
   {
     key: isL2 ? `${ROUTE_PATH.ORIGINAL_POOL}/${chainName}` : ROUTE_PATH.POOLS,
-    route: `${
-      isL2 ? `/${ROUTE_PATH.ORIGINAL_POOL}/${chainName}` : ROUTE_PATH.POOLS
-    }`,
+    route: `${isL2 ? `${ROUTE_PATH.ORIGINAL_POOL}/${chainName}` : ROUTE_PATH.POOLS}`,
     name: 'Pools',
   },
   {
