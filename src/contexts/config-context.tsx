@@ -13,6 +13,7 @@ import { currentChainSelector, getConfigsChainSelector } from '@/state/pnftExcha
 import { INetworkConfig } from '@/interfaces/state/pnftExchange';
 import { ROOT_API } from '@/configs';
 import { IResourceChain } from '@/interfaces/chain';
+import { getChainNameRequestAPI } from '@/utils';
 
 export interface IConfigContext {
   onSetConfigSDK: () => void;
@@ -46,9 +47,9 @@ export const ConfigProvider: React.FC<PropsWithChildren> = ({
       SWAP_ROUTER_ADDRESS: currentConfigChain.swapRouterContractAddr,
       TC_CONTRACT_ADDRESS: currentConfigChain.wtcContractAddress,
       WETH_CONTRACT_ADDRESS: currentConfigChain.wethContractAddress || '',
-      chainName: currentConfigChain.chainName || currentConfigChain.name,
+      chainName: getChainNameRequestAPI(currentChain),
       env: isProduction() ? Environment.MAINNET : Environment.TESTNET,
-      rpc: currentConfigChain.rpcUrl,
+      rpc: currentConfigChain.rpc,
       tokens_list: [],
     });
   }, [currentChain, currentConfigChain, provider]);

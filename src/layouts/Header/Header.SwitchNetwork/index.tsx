@@ -22,19 +22,19 @@ import { CHAIN_INFO } from '@/constants/storage-key';
 import { L2_USDT_ADDRESS, L2_WBTC_ADDRESS } from '@/configs';
 import { GM_ADDRESS, WETH_ADDRESS } from '@/constants/common';
 import useCheckIsLayer2 from '@/hooks/useCheckIsLayer2';
+import { INetworkConfig } from '@/interfaces/state/pnftExchange';
 
 interface IProps {
   _chain: IResourceChain;
-  showName?: boolean;
   active?: boolean;
 }
 
-export const ItemChain = ({ _chain, showName, active }: IProps) => {
+export const ItemChain = ({ _chain, active }: IProps) => {
   return (
     <Flex className={s.itemChain}>
       <Flex alignItems={'center'} gap={2}>
         <img src={_chain?.icon} alt="image-chain" />
-        <Text>{showName ? _chain?.name : _chain?.chain}</Text>
+        <Text>{_chain?.chain}</Text>
       </Flex>
       {active && <BiCheck color="#fff" style={{ fontSize: 20 }} />}
     </Flex>
@@ -58,9 +58,10 @@ const HeaderSwitchNetwork = () => {
   }, [isL2, configs]);
 
   const onChangeRouter = (_chainA?: IResourceChain) => {
-    const key = _chainA?.chain?.toLowerCase() || '';
-    if (key && allConfigs[key]) {
-      const network = allConfigs[key];
+    const configs = Object.values(allConfigs) || [];
+    const network = ((configs || []) as INetworkConfig[]).find(v => compareString(v.chainId, _chainA?.chainId))
+
+    if (!!network) {
       dispatch(updateCurrentChain(_chainA));
       dispatch(updateConfigs(network));
       dispatch(updateCurrentChain(convertNetworkToResourceChain(network)));
@@ -119,7 +120,6 @@ const HeaderSwitchNetwork = () => {
           <MenuItem onClick={() => onChangeRouter(c)} key={c.chainId}>
             <ItemChain
               _chain={c}
-              showName={true}
               active={compareString(c.chainId, currentChain?.chainId)}
             />
           </MenuItem>

@@ -108,7 +108,7 @@ const isLayer2Chain = (chainId: number): boolean => {
 };
 
 const getChainNameRequestAPI = (chain: IResourceChain): string => {
-  return chain.name.toLowerCase();
+  return chain.chain.toLowerCase();
 };
 
 const isCustomChain = (chainId: number | string): boolean => {

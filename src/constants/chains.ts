@@ -88,14 +88,16 @@ export const L2_CHAIN_INFO = {
 
 
 export const convertNetworkToResourceChain = (network: INetworkConfig): any => {
-  const name = network.name ? network.name.toUpperCase() : 'UNKNOWN';
+  const chain = network.name ? network.name.toUpperCase() : 'UNKNOWN';
   const chainID = Number(network.chainId);
+  const chainName = network.chainName ? network.chainName : 'UNKNOWN';
+
   return {
-    name: name,
+    name: chain,
     title: '',
-    chain: name,
+    chain: chainName,
     icon: network.icon,
-    rpc: [network.rpcUrl],
+    rpc: [network.rpc],
     faucets: [],
     nativeCurrency: {
       name: 'TC',
@@ -103,7 +105,7 @@ export const convertNetworkToResourceChain = (network: INetworkConfig): any => {
       decimals: 18,
     },
     infoURL: network.icon,
-    shortName: name,
+    shortName: chain,
     chainId: chainID,
     networkId: chainID,
     slip44: 0,

@@ -1,7 +1,7 @@
 interface INetworkConfig {
   name: string;
   icon: string;
-  rpcUrl: string;
+  rpc: string;
   explorerUrl: string;
   chainName: string;
   chainId: string;
