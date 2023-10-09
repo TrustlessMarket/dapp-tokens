@@ -219,10 +219,7 @@ export const WalletProvider: React.FC<PropsWithChildren> = ({
       }
 
       const chainList = await getChainList();
-      console.log('chainList', chainList);
-      const info = chainList.find((c: IResourceChain) =>
-        compareString(c.chainId, isChain),
-      );
+      const info = chainList.find((c: IResourceChain) => c.chainId === isChain);
       if (!info) {
         throw new Error(`Chain ${chainId} not supported`);
       }

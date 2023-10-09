@@ -37,7 +37,6 @@ export function isSupportedChain(
   const currentChain: IResourceChain = store.getState().pnftExchange.currentChain;
   return (
     !!chainId &&
-    !!SupportedChainId[chainId] &&
     compareString(currentChain?.chainId, chainId)
   );
 }
@@ -59,7 +58,7 @@ export const switchChain = async (chainId: SupportedChainId, conn?: Connection) 
         nativeCurrency: info != undefined ? info.nativeCurrency : [],
         blockExplorerUrls: [info != undefined ? info.explorers[0].url : ''],
       };
-      console.log(addChainParameter);
+      console.log('addChainParameter: ', info, addChainParameter);
       await conn.connector.activate(addChainParameter);
       setWalletChainId(chainId);
     } catch (err: unknown) {

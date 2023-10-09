@@ -2,7 +2,7 @@ interface INetworkConfig {
   name: string;
   icon: string;
   rpc: string;
-  explorerUrl: string;
+  explorer: string;
   chainName: string;
   chainId: string;
   ggAdminAddr: string;

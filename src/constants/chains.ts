@@ -112,7 +112,7 @@ export const convertNetworkToResourceChain = (network: INetworkConfig): any => {
     explorers: [
       {
         name: 'Explorer',
-        url: network.explorerUrl,
+        url: network.explorer,
         standard: 'EIP3091',
       },
     ],
