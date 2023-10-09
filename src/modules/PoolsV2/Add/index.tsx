@@ -89,6 +89,8 @@ const PoolsV2AddPage: React.FC<IPoolsV2AddPage> = ({ ids }) => {
         poolAddress: values?.poolAddress,
       };
 
+      console.log('params', params);
+
       const response: any = await addLiquidityV3(params);
       showSuccess({
         message: values?.poolAddress
