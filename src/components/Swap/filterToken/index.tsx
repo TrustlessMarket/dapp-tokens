@@ -15,7 +15,7 @@ import { Field, Form, useFormState } from 'react-final-form';
 import {useDispatch} from 'react-redux';
 import { AiOutlineCaretDown } from 'react-icons/ai';
 import styles from './styles.module.scss';
-import { compareString } from '@/utils';
+import { compareString, getContract } from '@/utils';
 import { RxMagnifyingGlass } from 'react-icons/rx';
 import VerifiedBadge, {
   getTextColorStatus,
@@ -25,6 +25,11 @@ import { IToken } from '@/interfaces/token';
 import { ImWarning } from 'react-icons/im';
 import { HiBadgeCheck } from 'react-icons/hi';
 import useCheckIsLayer2 from "@/hooks/useCheckIsLayer2";
+import ERC20ABIJson from '@/abis/erc20.json';
+import { useWeb3React } from '@web3-react/core';
+import { useAppSelector } from '@/state/hooks';
+import { currentChainSelector } from '@/state/pnftExchange';
+import { IResourceChain } from '@/interfaces/chain';
 
 interface FilterButtonProps {
   data: any[] | undefined;
@@ -51,7 +56,12 @@ const FilterModal: React.FC<FilterModalProps> = ({
   // commonData,
   onExtraSearch,
 }) => {
+
+  const currentChain: IResourceChain = useAppSelector(currentChainSelector)
+
+  console.log('data', data);
   const { mobileScreen } = useWindowSize();
+  const { provider } = useWeb3React();
   const { values } = useFormState();
   const [loading, setLoading] = useState(false);
   const isL2 = useCheckIsLayer2();
@@ -142,6 +152,39 @@ const FilterModal: React.FC<FilterModalProps> = ({
           v.symbol?.toLowerCase().includes(text.toLowerCase()) ||
           v.address.toLowerCase().includes(text.toLowerCase()),
       );
+
+      if (provider && !__data.length && text.startsWith('0x')) {
+        const contract = getContract(text, ERC20ABIJson.abi, provider);
+        const [symbol, name, decimals] = await Promise.all([
+          await contract?.symbol(),
+          await contract?.name(),
+          await contract?.decimals(),
+        ]);
+
+        if (symbol && name && decimals) {
+          const id = `${new Date().getTime()}`;
+          const token: DataRow = {
+            id: id,
+            name: name,
+            code: id,
+            img: '',
+            symbol: symbol as string,
+            address: text,
+            network: currentChain.chain,
+            extra_item: {
+              id: id,
+              address: text,
+              name: name,
+              symbol: symbol,
+              decimals: decimals,
+              chain: currentChain.chain,
+              baseTokenSymbol: symbol,
+              network: currentChain.chain,
+            }
+          };
+          __data.push(token);
+        }
+      }
 
       if (__data.length === 0 && onExtraSearch) {
         try {

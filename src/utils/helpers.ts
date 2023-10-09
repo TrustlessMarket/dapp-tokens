@@ -196,11 +196,8 @@ export const getTCGasStationddress = () => {
 
 export const isNativeToken = (tokenAddress: string) => {
   let isNative = false;
-  if (compareString(tokenAddress, '0x8b485d217096cE20A09AF11D15ccCc63323C1469')) {
-    isNative = true;
-  } else if (
-    compareString(tokenAddress, '0xaD771ED0F8C5df06D21A7eDA3b00acD6688dD532')
-  ) {
+  const wTCContractAddress = Object.values(store.getState().pnftExchange.allConfigs || {}).map((v: any) => v.wtcContractAddress).filter(v => !!v);
+  if (wTCContractAddress.some((address: string) => compareString(tokenAddress, address))) {
     isNative = true;
   }
   return isNative;

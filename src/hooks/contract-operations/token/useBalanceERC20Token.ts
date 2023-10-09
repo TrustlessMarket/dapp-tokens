@@ -12,8 +12,8 @@ import { compareString, getContract, isSupportedChain } from '@/utils';
 import { useWeb3React } from '@web3-react/core';
 import BigNumber from 'bignumber.js';
 import { useCallback } from 'react';
-import web3 from 'web3';
 import web3Eth from 'web3-eth-abi';
+import { ethers } from 'ethers';
 
 export interface IBalanceERC20TokenParams {
   erc20TokenAddress: string;
@@ -38,8 +38,9 @@ const useBalanceERC20Token: ContractOperationHook<
       if (account && provider && erc20TokenAddress && isConnected) {
         const contract = getContract(erc20TokenAddress, ERC20ABIJson.abi, provider);
 
-        const [transaction] = await Promise.all([
+        const [transaction, decimals] = await Promise.all([
           contract.connect(provider.getSigner()).balanceOf(account),
+          contract.connect(provider.getSigner()).decimals(),
         ]);
 
         let balance = transaction.toString();
@@ -107,7 +108,7 @@ const useBalanceERC20Token: ContractOperationHook<
           }
         }
 
-        return web3.utils.fromWei(balance);
+        return ethers.utils.formatUnits(balance, decimals);
       }
       return '0';
     },

@@ -53,12 +53,12 @@ export const switchChain = async (chainId: SupportedChainId, conn?: Connection) 
       const info = chainList.find((c: IResourceChain) => c.chainId === chainId);
       const addChainParameter = {
         chainId: chainId,
-        chainName: info != undefined ? info.name : '',
+        chainName: info != undefined ? info.chain : '',
         rpcUrls: [info != undefined ? info.rpc[0] : ''],
         nativeCurrency: info != undefined ? info.nativeCurrency : [],
         blockExplorerUrls: [info != undefined ? info.explorers[0].url : ''],
       };
-      console.log('addChainParameter: ', info, addChainParameter);
+      console.log('addChainParameter: ', addChainParameter);
       await conn.connector.activate(addChainParameter);
       setWalletChainId(chainId);
     } catch (err: unknown) {
