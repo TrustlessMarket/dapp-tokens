@@ -1205,6 +1205,7 @@ const TradingForm = () => {
       const response = await swapToken(data);
       if(response=== false)
       {
+        toast.error('user cancel transaction.')
         return
       }
       toast.success('Transaction has been created. Please wait for few minutes.');

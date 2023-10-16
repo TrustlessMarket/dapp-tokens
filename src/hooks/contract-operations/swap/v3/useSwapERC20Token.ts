@@ -34,9 +34,21 @@ const useSwapERC20Token: ContractOperationHook<
                     error: JSON.stringify(rs),
                     // message: `gasLimit: '${gasLimit}'`,
                 });
-                if(rs[2]== undefined) {
+                console.log("rs",rs)
+                if(rs[1]== undefined) {
+                    store.dispatch(
+                        updateCurrentTransaction({
+                            status: TransactionStatus.error,
+                            id: transactionType.createPoolApprove,
+                            hash: "",
+                            infoTexts: {
+                                error: `User cancel transactions`,
+                            },
+                        }),
+                    );
                     return false
                 } else {
+                    console.log("vao day 1")
                     store.dispatch(
                         updateCurrentTransaction({
                             status: TransactionStatus.pending,
@@ -54,6 +66,7 @@ const useSwapERC20Token: ContractOperationHook<
                         receipt = await provider.getTransactionReceipt(rs[1].toString())
                         console.log("count receipt", countTime, receipt)
                     }
+                    console.log("vao day 2")
 
                     await scanTrx({
                         tx_hash: rs[1].toString(),
@@ -69,11 +82,12 @@ const useSwapERC20Token: ContractOperationHook<
                             },
                         }),
                     );
+                    console.log("vao day 3")
                     return rs;
                 }
             }
 
-            return false;
+            return true;
         },
         [account, provider],
     );
