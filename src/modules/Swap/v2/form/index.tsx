@@ -93,6 +93,9 @@ import {IToken,Token,changeWallet,refreshProvider,WalletType,tokenSwap,TokenTrad
 import {isProduction} from "@/utils/commons";
 import localStorage from '@/utils/localstorage';
 const LIMIT_PAGE = 500;
+import {
+  L2_TC_ADDRESS
+} from '@/configs';
 
 export const MakeFormSwap = forwardRef((props, ref) => {
   const [trade, setTrade] = useState<TokenTrade>()
@@ -620,7 +623,7 @@ export const MakeFormSwap = forwardRef((props, ref) => {
       console.log("tokenSwap",tokenSwap)
 
 
-
+      //alert(amount)
       const outAmountOut = await calculateBestRoute(amount, swapRoutes,baseTokensList);
       const estimateAmountOut =  web3.utils.fromWei(outAmountOut)
       console.log("estimateAmountOut",estimateAmountOut)
@@ -643,8 +646,18 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   };
 
   const handleChangeMaxBaseAmount = () => {
+    console.log("baseToken",baseToken)
+    //alert(baseBalance)
+    let newBaseBalance = baseBalance
+    if(L2_TC_ADDRESS==baseToken["address"] ) {
+      newBaseBalance = baseBalance - 0.01
+      if (newBaseBalance < 0) {
+        newBaseBalance = 0
+      }
+    }
+   // alert(newBaseBalance)
     change('baseAmount', baseBalance);
-    onChangeValueBaseAmount(baseBalance);
+    onChangeValueBaseAmount(newBaseBalance);
   };
 
   const calculateBestRoute = async (amount: any, swapRoutes: any, baseTokensList: any[]) => {
