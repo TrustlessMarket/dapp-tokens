@@ -262,7 +262,8 @@ const TokenHistory = ({ data, isOwner }: { data: IToken; isOwner?: boolean }) =>
             <Text>
               {formatCurrency(amount, 18)}{' '}
               {!checkIsSell(row)
-                ? row.token.toString().toLocaleLowerCase()!=L2_TC_ADDRESS.toString().toLowerCase()&&row.token.toString().toLocaleLowerCase()!=L2_GM_ADDRESS.toString().toLowerCase()&&row.token.toString().toLocaleLowerCase()!=L2_USDT_ADDRESS.toString().toLowerCase()?row.pair.token0Obj.symbol:row.pair.token1Obj.symbol
+                ? row.token.toString().toLocaleLowerCase()!=L2_TC_ADDRESS.toString().toLowerCase()
+                 &&row.token.toString().toLocaleLowerCase()!=L2_USDT_ADDRESS.toString().toLowerCase()?row.pair.token0Obj.symbol:row.pair.token1Obj.symbol
                 : row.token.toString().toLocaleLowerCase()!=L2_TC_ADDRESS.toString().toLowerCase()&&row.token.toString().toLocaleLowerCase()!=L2_GM_ADDRESS.toString().toLowerCase()?row.pair.token1Obj.symbol:row.pair.token0Obj.symbol}
             </Text>
           );
