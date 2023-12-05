@@ -55,7 +55,7 @@ import { StyledLiquidNote, StyledTokens, UploadFileContainer } from './Pools.sty
 import CreateMarket from './form';
 import ImportPool, { getImportPoolKeyUser } from './form/importPool';
 import styles from './styles.module.scss';
-import VerifiedBadgeToken from "@/modules/Tokens/verifiedBadgeToken";
+import VerifiedBadgeToken from '@/modules/Tokens/verifiedBadgeToken';
 
 export enum ScreenType {
   default = 'default',
@@ -65,7 +65,7 @@ export enum ScreenType {
   remove = 'remove',
 }
 
-const LIMIT_PAGE = 30;
+const LIMIT_PAGE = 9999999999;
 
 export const DEFAULT_FROM_TOKEN_ADDRESS = DEFAULT_FROM_ADDRESS;
 export const DEFAULT_TO_TOKEN_ADDRESS = DEFAULT_TO_ADDRESS;
@@ -434,7 +434,10 @@ const LiquidityContainer = () => {
                   </Flex>
                   <Box>
                     <Flex fontWeight={'500'} gap={1}>
-                      {token0Obj?.symbol} <VerifiedBadgeToken token={token0Obj} onlyWarning/>- {token1Obj?.symbol} <VerifiedBadgeToken token={token1Obj} onlyWarning/>
+                      {token0Obj?.symbol}{' '}
+                      <VerifiedBadgeToken token={token0Obj} onlyWarning />-{' '}
+                      {token1Obj?.symbol}{' '}
+                      <VerifiedBadgeToken token={token1Obj} onlyWarning />
                     </Flex>
                     <Text
                       fontSize={px2rem(12)}
@@ -660,7 +663,7 @@ const LiquidityContainer = () => {
                   className={'avatar'}
                 />
                 <Text>{token0Obj?.symbol}</Text>
-                <VerifiedBadgeToken token={token0Obj} onlyWarning/>
+                <VerifiedBadgeToken token={token0Obj} onlyWarning />
               </Flex>
               <Flex gap={1} alignItems={'center'}>
                 <img
@@ -669,7 +672,7 @@ const LiquidityContainer = () => {
                   className={'avatar'}
                 />
                 <Text>{token1Obj?.symbol}</Text>
-                <VerifiedBadgeToken token={token1Obj} onlyWarning/>
+                <VerifiedBadgeToken token={token1Obj} onlyWarning />
               </Flex>
             </Flex>
           );
