@@ -38,7 +38,6 @@ import { IToken } from '@/interfaces/token';
 import { TransactionStatus } from '@/components/Swap/alertInfoProcessing/interface';
 import { getPairAPR } from '@/services/pool';
 import { logErrorToServer } from '@/services/swap';
-import { getTokens } from 'trustless-swap-sdk';
 import { useAppDispatch, useAppSelector } from '@/state/hooks';
 import {
   requestReload,
@@ -97,8 +96,9 @@ import ModalConfirmApprove from '@/components/ModalConfirmApprove';
 import { BiBell } from 'react-icons/bi';
 import HorizontalItem from '@/components/Swap/horizontalItem';
 import { IResourceChain } from '@/interfaces/chain';
+import { getTokens } from '@/services/token-explorer';
 
-const LIMIT_PAGE = 50;
+const LIMIT_PAGE = 999999;
 
 export const MakeFormSwap = forwardRef((props, ref) => {
   const { onSubmit, submitting, fromAddress, toAddress } = props;
@@ -356,7 +356,12 @@ export const MakeFormSwap = forwardRef((props, ref) => {
   const fetchTokens = async (page = 1, _isFetchMore = false) => {
     try {
       setLoading(true);
-      const res = await getTokens(LIMIT_PAGE);
+      const res = await getTokens({
+        limit: 999999,
+        page: page,
+        is_test: isDevelop() ? '1' : '',
+        network: currentChain?.chain?.toLowerCase(),
+      });
       let _list: IToken[] = camelCaseKeys(res);
       const _getImportTokens = getImportTokens();
       _list = _getImportTokens.concat(_list);

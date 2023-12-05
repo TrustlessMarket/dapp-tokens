@@ -200,7 +200,7 @@ const MakeFormImportPool: React.FC<MakeFormImportPoolProps> = ({
   const fetchTokens = async (page = 1, _isFetchMore = false) => {
     try {
       const res = await getTokens({
-        limit: 500,
+        limit: 999999,
         page: page,
         is_test: isDevelop() ? '1' : '',
         network: currentChain?.chain?.toLowerCase(),
