@@ -11201,14 +11201,15 @@ trough@^2.0.0:
     web3 "^1.9.0"
     wif "^2.0.6"
 
-trustless-swap-sdk@^0.1.48:
-  version "0.1.48"
-  resolved "https://registry.yarnpkg.com/trustless-swap-sdk/-/trustless-swap-sdk-0.1.48.tgz#5cee4f5ceb0adfffabcd2979f3673dd23b0d1e21"
-  integrity sha512-Z3p0nAkBqCQAmTwlnyDw+R/46fvPJr9GMMiWkhBF6Bdr5fVtYFILK/lE2IbwpW3MWqt7og4QBM+E0UiAdjOadA==
+trustless-swap-sdk@^0.1.182:
+  version "0.1.194"
+  resolved "https://registry.yarnpkg.com/trustless-swap-sdk/-/trustless-swap-sdk-0.1.194.tgz#3af9f4e779853205fd4db6270669d52cc8b58789"
+  integrity sha512-1ykhziqiVYL2TCv2Gqa3JuR5c4evyzWehVH0tMeksCmBJTpxms9wy+aWLgs45La+9f3ZIpDdjfktkrsexBOVCQ==
   dependencies:
     "@ethersproject/abi" "^5.0.12"
     "@ethersproject/solidity" "^5.0.9"
     big.js "^5.2.2"
+    bignumber.js "^9.1.1"
     decimal.js-light "^2.5.0"
     ethers "^5.7.2"
     jsbi "^3.1.4"

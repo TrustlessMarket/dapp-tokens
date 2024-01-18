@@ -475,25 +475,23 @@ const LiquidityContainer = () => {
                       />
                     </Center>
                   </InfoTooltip>
-                  {Number(share) > 0 && (
-                    <InfoTooltip label={'Remove Liquidity'}>
-                      <Center
-                        cursor={'pointer'}
-                        fontSize={'24px'}
-                        _hover={{
-                          color: '#FF0000',
-                        }}
-                      >
-                        <AiOutlineMinusCircle
-                          onClick={() =>
-                            router.replace(
-                              `${ROUTE_PATH.POOLS}?type=${ScreenType.remove}&f=${row?.token0Obj?.address}&t=${row?.token1Obj?.address}`,
-                            )
-                          }
-                        />
-                      </Center>
-                    </InfoTooltip>
-                  )}
+                  <InfoTooltip label={'Remove Liquidity'}>
+                    <Center
+                      cursor={'pointer'}
+                      fontSize={'24px'}
+                      _hover={{
+                        color: '#FF0000',
+                      }}
+                    >
+                      <AiOutlineMinusCircle
+                        onClick={() =>
+                          router.replace(
+                            `${ROUTE_PATH.POOLS}?type=${ScreenType.remove}&f=${row?.token0Obj?.address}&t=${row?.token1Obj?.address}`,
+                          )
+                        }
+                      />
+                    </Center>
+                  </InfoTooltip>
                   <InfoTooltip label={'Share Twitter'}>
                     <Center
                       cursor={'pointer'}
@@ -913,25 +911,23 @@ const LiquidityContainer = () => {
                   />
                 </Center>
               </InfoTooltip>
-              {Number(share) > 0 && (
-                <InfoTooltip label={'Remove Liquidity'}>
-                  <Center
-                    cursor={'pointer'}
-                    fontSize={'24px'}
-                    _hover={{
-                      color: '#FF0000',
-                    }}
-                  >
-                    <AiOutlineMinusCircle
-                      onClick={() =>
-                        router.replace(
-                          `${ROUTE_PATH.POOLS}?type=${ScreenType.remove}&f=${row?.token0Obj?.address}&t=${row?.token1Obj?.address}`,
-                        )
-                      }
-                    />
-                  </Center>
-                </InfoTooltip>
-              )}
+              <InfoTooltip label={'Remove Liquidity'}>
+                <Center
+                  cursor={'pointer'}
+                  fontSize={'24px'}
+                  _hover={{
+                    color: '#FF0000',
+                  }}
+                >
+                  <AiOutlineMinusCircle
+                    onClick={() =>
+                      router.replace(
+                        `${ROUTE_PATH.POOLS}?type=${ScreenType.remove}&f=${row?.token0Obj?.address}&t=${row?.token1Obj?.address}`,
+                      )
+                    }
+                  />
+                </Center>
+              </InfoTooltip>
               <InfoTooltip label={'Share Twitter'}>
                 <Center
                   cursor={'pointer'}
